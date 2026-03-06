@@ -1,0 +1,27 @@
+{
+  "csv": "/home/nicksung/Desktop/nicksung/mf_field/hf_data/data_car.csv",
+  "vtk_dir": "/home/nicksung/Desktop/nicksung/mf_field/hf_data/PressureVTK",
+  "lf_ckpt_dir": "/home/nicksung/Desktop/nicksung/mf_field/lf_data/checkpoints_car",
+  "lf_weights": "film_best.pth",
+  "epochs": 2500,
+  "batch_size": 16,
+  "lr": 0.0005,
+  "train_ratio": 0.8,
+  "val_ratio": 0.1,
+  "test_ratio": 0.1,
+  "n_points": 8192,
+  "max_pts_load": "100000",
+  "device": "cuda:0",
+  "amp": true,
+  "model": {
+    "cond_dim": 23,
+    "coord_dim": 4,
+    "output_dim": 1,
+    "hidden_dim": 512,
+    "num_layers": 8,
+    "extra_layers": 5
+  },
+  "total_params": 8683009,
+  "train_frac": 0.1,
+  "run_name": "frac010"
+}

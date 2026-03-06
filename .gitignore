@@ -1,0 +1,30 @@
+# ── Large data directories (never commit) ────────────────────────────────────
+PressureVTK/
+npz_data/
+npz_surface_data/
+
+# Individual large file types (fallback)
+*.vtk
+*.vtu
+*.vtp
+*.h5
+*.hdf5
+*.npz
+
+# CSV data files (large)
+hf_data/*.csv
+lf_data/*.csv
+
+# ── Model checkpoints ─────────────────────────────────────────────────────────
+*.pth
+*.pt
+
+# ── Python cache ──────────────────────────────────────────────────────────────
+__pycache__/
+*.pyc
+*.pyo
+.ipynb_checkpoints/
+
+# ── OS ────────────────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
