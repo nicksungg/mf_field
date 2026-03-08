@@ -1,0 +1,30 @@
+{
+  "model_type": "MFTransolver",
+  "csv": "/home/nicksung/Desktop/nicksung/mf_field/hf_data/data_car.csv",
+  "vtk_dir": "/home/nicksung/Desktop/nicksung/mf_field/hf_data/PressureVTK",
+  "npz_dir": "/home/nicksung/Desktop/nicksung/mf_field/lf_data/npz_surface_data",
+  "epochs": 2500,
+  "batch_size": 8,
+  "lr": 0.0003,
+  "train_ratio": 0.8,
+  "val_ratio": 0.1,
+  "test_ratio": 0.1,
+  "n_lf": 2048,
+  "n_hf": 8192,
+  "max_pts_hf": "100000",
+  "device": "cuda:0",
+  "amp": true,
+  "train_frac": 0.1,
+  "run_name": "frac010",
+  "model": {
+    "cond_dim": 23,
+    "hidden_dim": 256,
+    "n_slices": 32,
+    "num_heads": 8,
+    "encoder_layers": 3,
+    "residual_layers": 3,
+    "pos_enc_freqs": 6
+  },
+  "total_params": 1094434,
+  "trainable_params": 1094434
+}

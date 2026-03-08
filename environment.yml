@@ -1,0 +1,16 @@
+name: mf_field
+channels:
+  - conda-forge
+  - defaults
+
+dependencies:
+  - python=3.13
+  - numpy=2.3.5
+  - pandas=3.0.1
+  - matplotlib=3.10.3
+
+  # PyTorch + CUDA (pip has the latest CUDA builds; conda lags behind)
+  - pip
+  - pip:
+    - torch==2.7.1+cu126 --index-url https://download.pytorch.org/whl/cu126
+    - pyvista==0.45.3
