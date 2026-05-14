@@ -1,0 +1,50 @@
+{
+  "_doc": "FIXED reference values. Built from paper_comparison_table.csv (v9 vs paper) plus the source-paper numbers themselves. Lower nRMSE is better. 'l<k>' = highest-fidelity test; 'OOD' = out-of-distribution test split. Baselines are what the factory must beat.",
+  "datasets": {
+    "poisson_local": {
+      "source": "li2022ifc / niu2024mfrnp",
+      "metric": "nRMSE",
+      "splits": {
+        "test_l2": { "paper": 0.0076, "paper_std": 0.000749, "v9": 0.013924, "v9_std": 0.000625 },
+        "test_l3": { "paper": 0.0073, "paper_std": 0.000525, "v9": 0.0168,   "v9_std": 0.000680 },
+        "test_l5": { "paper": 0.0046, "paper_std": 0.000120, "v9": 0.023363, "v9_std": 0.008331 },
+        "ood_l2":  { "paper": 0.017,  "paper_std": 0.00272,  "v9": 0.054432, "v9_std": 0.009179 },
+        "ood_l3":  { "paper": 0.018,  "paper_std": 0.00127,  "v9": 0.054679, "v9_std": 0.005340 },
+        "ood_l5":  { "paper": 0.013,  "paper_std": 0.000276, "v9": 0.062590, "v9_std": 0.013875 }
+      }
+    },
+    "heat_local": {
+      "source": "li2022ifc / niu2024mfrnp",
+      "metric": "nRMSE",
+      "splits": {
+        "test_l2": { "paper": 0.005,  "paper_std": 0.000327, "v9": 0.000922, "v9_std": 0.000031 },
+        "test_l3": { "paper": 0.0039, "paper_std": 0.000294, "v9": 0.001048, "v9_std": 0.000264 },
+        "test_l5": { "paper": 0.0045, "paper_std": 0.000294, "v9": 0.001332, "v9_std": 0.000176 },
+        "ood_l2":  { "paper": 0.005,  "paper_std": 0.000133, "v9": 0.005941, "v9_std": 0.001381 },
+        "ood_l3":  { "paper": 0.004,  "paper_std": 0.000382, "v9": 0.005520, "v9_std": 0.001428 },
+        "ood_l5":  { "paper": 0.012,  "paper_std": 0.0105,   "v9": 0.005210, "v9_std": 0.000637 }
+      }
+    },
+    "fluid": {
+      "source": "niu2024mfrnp",
+      "metric": "nRMSE",
+      "splits": {
+        "test_l2": { "paper": 0.129, "paper_std": 0.000819, "v9": 0.029856, "v9_std": 0.0044 }
+      }
+    },
+    "ifc_heat":  { "source": "li2022ifc",          "metric": "nRMSE", "splits": {} },
+    "ifc_poisson": { "source": "li2022ifc",        "metric": "nRMSE", "splits": {} },
+    "chin_chun_isothermal": { "source": "chin_chun_buildingflow", "metric": "nRMSE", "splits": {} },
+    "chin_chun_potential":  { "source": "chin_chun_buildingflow", "metric": "nRMSE", "splits": {} },
+    "era5":      { "source": "era5_reanalysis",    "metric": "nRMSE", "splits": {} },
+    "pm_test":   { "source": "era5_reanalysis (alias)", "metric": "nRMSE", "splits": {} },
+    "advection_diffusion_generated": { "source": "kent2026noisemf",     "metric": "nRMSE", "splits": {} },
+    "allen_cahn_generated":          { "source": "penwarden2022mfpinns", "metric": "nRMSE", "splits": {} },
+    "burgers_generated":             { "source": "li2020fno",           "metric": "nRMSE", "splits": {} },
+    "burgers_param_generated":       { "source": "li2020fno",           "metric": "nRMSE", "splits": {} },
+    "darcy_generated":               { "source": "tripathy2018deepuq",  "metric": "nRMSE", "splits": {} },
+    "heat_generated":                { "source": "li2022ifc",           "metric": "nRMSE", "splits": {} },
+    "lid_driven_cavity_generated":   { "source": "ghia1982highre",      "metric": "nRMSE", "splits": {} },
+    "poisson_generated":             { "source": "li2022ifc",           "metric": "nRMSE", "splits": {} }
+  }
+}

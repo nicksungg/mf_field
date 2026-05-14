@@ -1,0 +1,24 @@
+{
+  "_doc": "Full benchmark across all 17 datasets. Run via `eval/run_full.sbatch` as a SLURM array job. Not used in the per-cycle loop.",
+  "datasets": [
+    { "name": "ifc_heat",                      "epochs": 2500, "loader": "ifc_raw" },
+    { "name": "ifc_poisson",                   "epochs": 2500, "loader": "ifc_raw" },
+    { "name": "chin_chun_isothermal",          "epochs": 2500, "loader": "ifc_raw" },
+    { "name": "chin_chun_potential",           "epochs": 2500, "loader": "ifc_raw" },
+    { "name": "poisson_local",                 "epochs": 2500, "loader": "npz_l5" },
+    { "name": "heat_local",                    "epochs": 2500, "loader": "npz_l5" },
+    { "name": "fluid",                         "epochs": 2500, "loader": "npz_l2" },
+    { "name": "era5",                          "epochs": 2500, "loader": "npz_l9" },
+    { "name": "pm_test",                       "epochs": 2500, "loader": "npz_l9" },
+    { "name": "advection_diffusion_generated", "epochs": 2500, "loader": "npz_l2" },
+    { "name": "allen_cahn_generated",          "epochs": 2500, "loader": "npz_l3" },
+    { "name": "burgers_generated",             "epochs": 2500, "loader": "npz_l3" },
+    { "name": "burgers_param_generated",       "epochs": 2500, "loader": "npz_l3" },
+    { "name": "darcy_generated",               "epochs": 2500, "loader": "npz_l3" },
+    { "name": "heat_generated",                "epochs": 2500, "loader": "npz_l3" },
+    { "name": "lid_driven_cavity_generated",   "epochs": 2500, "loader": "npz_l3" },
+    { "name": "poisson_generated",             "epochs": 2500, "loader": "npz_l3" }
+  ],
+  "seed": 42,
+  "per_call_timeout_seconds": 86400
+}
