@@ -23,7 +23,9 @@ HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 
 from model_v9 import MFTransolver_v9, param_count  # noqa: E402
-from train_v9 import IFCRawMultiStreamDataset, hybrid_loss, make_collate_fn, get_prior_weight  # noqa: E402
+from train_v9 import IFCRawMultiStreamDataset as TrainDataset, hybrid_loss, make_collate_fn, get_prior_weight  # noqa: E402
+# eval_v9.IFCRawMultiStreamDataset has the synthetic-LF-from-HF fallback for HF-only test/ood splits
+from eval_v9 import IFCRawMultiStreamDataset as EvalDataset  # noqa: E402
 from torch.utils.data import DataLoader, random_split  # noqa: E402
 
 
@@ -66,7 +68,7 @@ def run(args):
     scaler = torch.amp.GradScaler("cuda", enabled=use_amp)
 
     ds_dir = Path(args.dataset_dir)
-    train_full = IFCRawMultiStreamDataset(ds_dir, split="train")
+    train_full = TrainDataset(ds_dir, split="train")
     n_val = max(1, int(len(train_full) * p["val_frac"]))
     n_tr = max(1, len(train_full) - n_val)
     if n_tr + n_val > len(train_full):
@@ -147,7 +149,8 @@ def run(args):
     if best_ckpt.exists():
         model.load_state_dict(torch.load(best_ckpt, map_location=device)["model"])
 
-    # evaluate on every test/ood split present in ds_dir
+    # evaluate on every test/ood split present in ds_dir; EvalDataset handles
+    # the HF-only-test case by synthesizing LF from HF via downsampling.
     splits = {}
     t_eval = time.time()
     for sub in ("test", "ood"):
@@ -155,7 +158,7 @@ def run(args):
         if not sub_dir.exists():
             continue
         try:
-            ds = IFCRawMultiStreamDataset(ds_dir, split=sub)
+            ds = EvalDataset(ds_dir, split=sub)
         except Exception as e:
             splits[sub] = {"error": str(e)}
             continue

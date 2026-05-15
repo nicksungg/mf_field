@@ -26,7 +26,7 @@
 #SBATCH --error=logs/smoke_%j.err
 
 set -euo pipefail
-cd "$(dirname "$(realpath "$0")")/.."
+cd /orcd/data/faez/001/nick/mf_field/factory_mffp
 
 mkdir -p logs results checkpoints
 
