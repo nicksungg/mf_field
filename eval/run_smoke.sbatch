@@ -30,10 +30,9 @@ cd "$(dirname "$(realpath "$0")")/.."
 
 mkdir -p logs results checkpoints
 
-# Activate the environment (Python 3.12 via miniforge + .venv)
-source /orcd/data/faez/001/nick/mf_field/akash/remote-factory-main/activate-env.sh >/dev/null
-# Ensure the project's own python uses our venv interpreter
-PY=/orcd/data/faez/001/nick/mf_field/akash/remote-factory-main/.venv/bin/python
+# Load python + paths
+source scripts/env.sh
+PY="$MFFP_PY"
 
 # Trap USR1 (sent ~90s before walltime kills us) so we exit cleanly with code 0
 # and SLURM requeues the job. Checkpoints inside smoke_eval.py save us.

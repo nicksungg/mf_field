@@ -13,6 +13,7 @@
 set -uo pipefail
 cd "$(dirname "$(realpath "$0")")/.."
 mkdir -p results logs
+source scripts/env.sh
 
 PARTITION="${MFFP_PARTITION:-mit_preemptable}"
 FALLBACK="${MFFP_FALLBACK_PARTITION:-mit_normal_gpu}"
@@ -44,5 +45,5 @@ EOF
 fi
 
 echo "[cycle_eval] done. metric:"
-/orcd/data/faez/001/nick/mf_field/akash/remote-factory-main/.venv/bin/python -c \
+"$MFFP_PY" -c \
     "import json; d=json.loads(open('$RESULT').read()); print('  metric_value=', d.get('metric_value'))"

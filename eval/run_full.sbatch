@@ -26,8 +26,8 @@ set -euo pipefail
 cd "$(dirname "$(realpath "$0")")/.."
 
 mkdir -p logs results checkpoints
-source /orcd/data/faez/001/nick/mf_field/akash/remote-factory-main/activate-env.sh >/dev/null
-PY=/orcd/data/faez/001/nick/mf_field/akash/remote-factory-main/.venv/bin/python
+source scripts/env.sh
+PY="$MFFP_PY"
 
 FAMILIES_CSV="${1:-v9_baseline}"
 TASK_ID="${SLURM_ARRAY_TASK_ID:-0}"

@@ -63,5 +63,5 @@ Beat published nRMSE baselines on every multi-fidelity field-prediction dataset 
 
 ## Smoke Test
 ```bash
-/orcd/data/faez/001/nick/mf_field/akash/remote-factory-main/.venv/bin/python -c "import json; d = json.loads(open('results/smoke_latest.json').read()); assert 'metric_value' in d; print('OK', d['metric_value'])"
+.venv/bin/python -c "import json; d = json.loads(open('results/smoke_latest.json').read()); assert 'metric_value' in d; print('OK', d['metric_value'])"
 ```
