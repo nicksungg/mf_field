@@ -17,10 +17,12 @@ EXTRA_VARS=$(env | awk -F= '/^(CLAUDE_CODE_|CLAUDECODE|AI_AGENT|CLAUDE_AGENT_SDK
 UNSET_CMD=""
 for v in $EXTRA_VARS; do UNSET_CMD+="unset $v; "; done
 
-# Inside the tmux session we need the same activate steps as scripts/env.sh
-INNER="$UNSET_CMD source $PROJECT/scripts/env.sh && exec factory ceo $PROJECT --mode research --loop --interval 60 --no-github"
+# Inside the tmux session we need the same activate steps as scripts/env.sh.
+# `factory run --loop` is the heartbeat command (factory ceo is single-shot).
+# Trailing `; bash` keeps the pane alive after factory exits so we can inspect.
+INNER="$UNSET_CMD source $PROJECT/scripts/env.sh && factory run $PROJECT --mode research --loop --interval 60 --no-github; echo '[factory run exited]'; exec bash"
 
-tmux new-session -d -s "$SESSION" "$INNER" \
+tmux new-session -d -s "$SESSION" "bash -lc \"$INNER\"" \
   || { echo "tmux new-session failed"; exit 1; }
 
 echo "Factory launched in tmux session: $SESSION"
