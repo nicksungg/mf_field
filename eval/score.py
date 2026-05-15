@@ -28,7 +28,8 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 
 def discover_models(models_dir: Path) -> list[dict]:
     families = []
-    for d in sorted(models_dir.iterdir()):
+    # 1) all model families under models/
+    for d in sorted(models_dir.iterdir()) if models_dir.exists() else []:
         if not d.is_dir():
             continue
         manifest = d / "manifest.json"
@@ -37,6 +38,15 @@ def discover_models(models_dir: Path) -> list[dict]:
             families.append({"path": d, "manifest": json.loads(manifest.read_text())})
         else:
             print(f"[skip] {d.name}: missing manifest.json or smoke_eval.py", file=sys.stderr)
+    # 2) frozen reference implementations under references/
+    refs_dir = models_dir.parent / "references"
+    for d in sorted(refs_dir.iterdir()) if refs_dir.exists() else []:
+        if not d.is_dir():
+            continue
+        manifest = d / "manifest.json"
+        smoke = d / "smoke_eval.py"
+        if manifest.exists() and smoke.exists():
+            families.append({"path": d, "manifest": json.loads(manifest.read_text())})
     return families
 
 

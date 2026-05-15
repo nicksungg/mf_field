@@ -37,7 +37,7 @@ cd /orcd/data/faez/001/nick/mf_field/factory_mffp
 
 # Smoke-test the contract on v9_baseline with 2 epochs, on a node that has a GPU
 salloc -p mit_normal_gpu --gres=gpu:1 -t 30 --pty bash
-python models/v9_baseline/smoke_eval.py \
+python references/v9_baseline/smoke_eval.py \
     --dataset_dir data/ifc_heat --dataset_name ifc_heat \
     --epochs 2 --out /tmp/x.json --ckpt_dir /tmp/c --seed 0
 ```

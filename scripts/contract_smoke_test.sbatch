@@ -21,7 +21,7 @@ echo "[$(date)] host=$(hostname) part=$SLURM_JOB_PARTITION gpu=$(nvidia-smi -L |
 "$MFFP_PY" -c "import torch; print('torch', torch.__version__, 'cuda_avail', torch.cuda.is_available())"
 
 echo "[$(date)] running 2-epoch v9_baseline on ifc_heat..."
-"$MFFP_PY" models/v9_baseline/smoke_eval.py \
+"$MFFP_PY" references/v9_baseline/smoke_eval.py \
     --dataset_dir data/ifc_heat --dataset_name ifc_heat \
     --epochs 2 --out results/contract_test.json \
     --ckpt_dir checkpoints/contract_test --seed 0

@@ -27,7 +27,7 @@ models/<family>/
 
 The optimization target (`composite_nRMSE` in `eval/score.py`) only ranks model families against each other on our smoke datasets. The **published paper numbers** in `baselines/paper_baselines.json` are the actual yardstick — a family is "interesting" once it matches or beats the source paper on the same dataset. The leaderboard appended to each cycle's results JSON shows both ours and the paper number side-by-side.
 
-`models/v9_baseline/` is **not** the baseline to beat — it's a worked example of how multi-fidelity fusion can be plugged into a SOTA point-cloud transformer (gated fusion + Transolver-style slicing). It runs every cycle for direct comparison, but its presence is purely for reference.
+`references/v9_baseline/` is **not** the baseline to beat — it's a worked example of how multi-fidelity fusion can be plugged into a SOTA point-cloud transformer (gated fusion + Transolver-style slicing). It runs every cycle for direct comparison, but its presence is purely for reference.
 
 ## Inspiration sources (read but do NOT copy/clone — Builder must implement from scratch)
 
@@ -35,7 +35,7 @@ The factory's Researcher should consult:
 
 - `../papers_summary.csv` — local literature catalog (li2022ifc, niu2024mfrnp, taghizadeh2024mfgnn, gladstone2024mfgunet, songia2026mfgraphns, kent2026noisemf, …) — and **expand it** with new papers found via WebSearch.
 - `../baselines/paper_baselines.json` — published numbers per dataset (the bar).
-- `models/v9_baseline/model_v9.py` — one worked example, not the template.
+- `references/v9_baseline/model_v9.py` — one worked example, not the template.
 
 Promising directions worth exploring (non-exhaustive — the Strategist will pick):
 

@@ -58,7 +58,7 @@ factory ceo /orcd/data/faez/001/nick/mf_field/factory_mffp --mode research
 
 The CEO will:
 1. Read `factory.md` and detect research mode (because `## Research Target` is present).
-2. **Observe** — Researcher reads `papers_summary.csv`, `models/v9_baseline/model_v9.py`, the dataset README, prior `results/history.jsonl`.
+2. **Observe** — Researcher reads `papers_summary.csv`, `references/v9_baseline/model_v9.py`, the dataset README, prior `results/history.jsonl`.
 3. **Hypothesize** — Strategist proposes 1–2 hypotheses (each = a new model family in `models/<family>/`).
 4. **Build** — Builder implements `models/<family>/manifest.json` + `smoke_eval.py`.
 5. **Eval** — runs `bash scripts/cycle_eval.sh` → submits `eval/run_smoke.sbatch` → blocks until done → reads `results/smoke_latest.json`.

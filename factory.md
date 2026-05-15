@@ -1,19 +1,18 @@
 # MFFP — Multi-Fidelity Field Prediction Research Project
 
 ## Goal
-Invent new multi-fidelity field-prediction model families that beat the published paper nRMSE numbers in `baselines/paper_baselines.json` on as many of the 17 benchmark datasets in `data/` as possible. The bar is the **paper numbers**, not v9 — v9_baseline is one worked example of incorporating multi-fidelity ideas into a SOTA architecture, kept in-tree as a reference implementation only.
+Invent new multi-fidelity field-prediction model families that beat the published paper nRMSE numbers in `baselines/paper_baselines.json` on as many of the 17 benchmark datasets in `data/` as possible. The bar is the **paper numbers**, not v9 — `references/v9_baseline/` is one worked example of incorporating multi-fidelity ideas into a SOTA architecture, kept in-tree as a reference implementation only.
 
 ## Scope
 ### Modifiable
 - models/**
-- !models/v9_baseline/**
 
 ## Guards
-- Do not modify anything under `data/`, `baselines/`, `eval/`, or `models/v9_baseline/`.
+- Do not modify anything under `data/`, `baselines/`, `eval/`, `references/`, or `scripts/`.
 - Do not edit `baselines/paper_baselines.json` — these are fixed reference numbers from the published papers.
 - Do not delete or rename existing model families. Add new ones in `models/<new_family>/`.
 - Every new model family MUST satisfy `eval/MODEL_CONTRACT.md` (manifest.json + smoke_eval.py with the specified signature and JSON schema).
-- New family code must implement architectures from scratch from the source paper(s), not from `models/v9_baseline/`. v9 is one of many references, not the template.
+- New family code must implement architectures from scratch from the source paper(s), not from `references/v9_baseline/`. v9 is one of many references, not the template.
 
 ## Research Target
 - objective: minimize composite_nRMSE across all smoke datasets, eventually all 17 benchmark datasets
@@ -25,17 +24,16 @@ Invent new multi-fidelity field-prediction model families that beat the publishe
 - timeout: 14400
 
 ## Mutable Surfaces
-- models/*/manifest.json
-- models/*/smoke_eval.py
-- models/*/**/*.py
+- models/**
 
 ## Fixed Surfaces
 - data/**
 - baselines/**
 - eval/**
-- models/v9_baseline/**
+- references/**
 - factory.md
 - README.md
+- scripts/**
 
 ## Research Constraints
 - Each new model family must cite the paper(s) that inspired it in `models/<family>/INSPIRATION.md` (one paragraph + bibtex_keys from `papers_summary.csv` and any other papers found by the Researcher). If the inspiration paper is missing from `papers_summary.csv`, append a row.
