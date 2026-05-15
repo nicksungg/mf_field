@@ -111,11 +111,18 @@ def per_dataset_nrmse(res: dict) -> float | None:
 
 
 def composite(results: list[dict], datasets: list[dict]) -> dict:
+    """
+    Geometric-mean composite over (best per dataset). Geomean is scale-invariant
+    across datasets, so improving 0.15 -> 0.075 contributes the same factor as
+    improving 18 -> 9. Arithmetic mean would let one bad dataset dominate.
+    """
+    import math
+
     by_dataset: dict[str, list[dict]] = {ds["name"]: [] for ds in datasets}
     for r in results:
         by_dataset.setdefault(r["dataset"], []).append(r)
 
-    leaderboard, per_ds_best = {}, []
+    leaderboard, per_ds_best, per_ds_arith = {}, [], []
     for ds_name, runs in by_dataset.items():
         scored = [(per_dataset_nrmse(r), r) for r in runs]
         scored = [(v, r) for v, r in scored if v is not None]
@@ -129,10 +136,19 @@ def composite(results: list[dict], datasets: list[dict]) -> dict:
             "ranked": [{"model": r["model"], "nRMSE": v} for v, r in scored],
             "n_runs": len(runs),
         }
-        per_ds_best.append(best_val)
+        per_ds_best.append(max(best_val, 1e-12))
+        per_ds_arith.append(best_val)
 
-    composite_nrmse = sum(per_ds_best) / len(per_ds_best) if per_ds_best else float("inf")
-    return {"composite_nRMSE": composite_nrmse, "leaderboard": leaderboard,
+    if per_ds_best:
+        log_mean = sum(math.log(v) for v in per_ds_best) / len(per_ds_best)
+        geomean = math.exp(log_mean)
+    else:
+        geomean = float("inf")
+    arith = sum(per_ds_arith) / len(per_ds_arith) if per_ds_arith else float("inf")
+    return {"composite_nRMSE": geomean,
+            "composite_nRMSE_geomean": geomean,
+            "composite_nRMSE_arith": arith,
+            "leaderboard": leaderboard,
             "n_datasets_scored": len(per_ds_best)}
 
 
