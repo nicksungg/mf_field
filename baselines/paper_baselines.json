@@ -1,5 +1,6 @@
 {
-  "_doc": "FIXED reference values. Built from paper_comparison_table.csv (v9 vs paper) plus the source-paper numbers themselves. Lower nRMSE is better. 'l<k>' = highest-fidelity test; 'OOD' = out-of-distribution test split. Baselines are what the factory must beat.",
+  "_doc": "FIXED reference values from the published papers. Lower nRMSE is better. 'l<k>' = level-k fidelity test split; 'OOD' = out-of-distribution test split. The Researcher should add splits to any dataset whose `splits` is empty by reading the source paper's results tables and adding entries of the form `{ \"paper\": <number>, \"paper_std\": <number> }`. The score.py composite uses geomean across reported splits.",
+  "_researcher_todo": "Fill in 'splits' for: ifc_heat, ifc_poisson, chin_chun_isothermal, chin_chun_potential, era5, pm_test, *_generated. Numbers live in the corresponding source paper (see 'source' field). Without paper numbers the vs_paper view in score.py shows null and we can't tell when we've matched SOTA.",
   "datasets": {
     "poisson_local": {
       "source": "li2022ifc / niu2024mfrnp",

@@ -110,19 +110,46 @@ def per_dataset_nrmse(res: dict) -> float | None:
     return sum(vals) / len(vals)
 
 
+def load_paper_baselines() -> dict:
+    p = PROJECT_ROOT / "baselines" / "paper_baselines.json"
+    if not p.exists():
+        return {}
+    return json.loads(p.read_text()).get("datasets", {})
+
+
+def best_paper_nrmse(ds_name: str, paper_baselines: dict) -> float | None:
+    """Per dataset, take the geomean across reported splits' paper nRMSE.
+    Returns None if no paper number is on file for this dataset."""
+    import math
+    ds = paper_baselines.get(ds_name, {})
+    splits = ds.get("splits", {})
+    vals = [s["paper"] for s in splits.values()
+            if isinstance(s, dict) and isinstance(s.get("paper"), (int, float))]
+    if not vals:
+        return None
+    log_mean = sum(math.log(max(v, 1e-12)) for v in vals) / len(vals)
+    return math.exp(log_mean)
+
+
 def composite(results: list[dict], datasets: list[dict]) -> dict:
     """
     Geometric-mean composite over (best per dataset). Geomean is scale-invariant
     across datasets, so improving 0.15 -> 0.075 contributes the same factor as
     improving 18 -> 9. Arithmetic mean would let one bad dataset dominate.
+
+    Side-output `vs_paper`: per-dataset comparison against `baselines/paper_baselines.json`.
+    The composite metric itself does NOT use paper baselines (we want the loop to
+    optimize even when no paper number is on file), but the vs_paper view tells you
+    whether a model has reached SOTA.
     """
     import math
+    paper_baselines = load_paper_baselines()
 
     by_dataset: dict[str, list[dict]] = {ds["name"]: [] for ds in datasets}
     for r in results:
         by_dataset.setdefault(r["dataset"], []).append(r)
 
-    leaderboard, per_ds_best, per_ds_arith = {}, [], []
+    leaderboard, per_ds_best, per_ds_arith, vs_paper = {}, [], [], {}
     for ds_name, runs in by_dataset.items():
         scored = [(per_dataset_nrmse(r), r) for r in runs]
         scored = [(v, r) for v, r in scored if v is not None]
@@ -139,16 +166,28 @@ def composite(results: list[dict], datasets: list[dict]) -> dict:
         per_ds_best.append(max(best_val, 1e-12))
         per_ds_arith.append(best_val)
 
+        paper_n = best_paper_nrmse(ds_name, paper_baselines)
+        vs_paper[ds_name] = {
+            "ours_best_nRMSE": best_val,
+            "ours_best_model": best_run["model"],
+            "paper_nRMSE_geomean": paper_n,
+            "ratio_ours_over_paper": (best_val / paper_n) if paper_n else None,
+            "beats_paper": (paper_n is not None and best_val < paper_n),
+        }
+
     if per_ds_best:
         log_mean = sum(math.log(v) for v in per_ds_best) / len(per_ds_best)
         geomean = math.exp(log_mean)
     else:
         geomean = float("inf")
     arith = sum(per_ds_arith) / len(per_ds_arith) if per_ds_arith else float("inf")
+    n_beats = sum(1 for v in vs_paper.values() if v.get("beats_paper"))
     return {"composite_nRMSE": geomean,
             "composite_nRMSE_geomean": geomean,
             "composite_nRMSE_arith": arith,
             "leaderboard": leaderboard,
+            "vs_paper": vs_paper,
+            "n_datasets_beating_paper": n_beats,
             "n_datasets_scored": len(per_ds_best)}
 
 
