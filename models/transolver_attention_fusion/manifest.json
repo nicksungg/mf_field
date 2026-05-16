@@ -1,0 +1,9 @@
+{
+  "name": "transolver_attention_fusion",
+  "version": "0.1.0",
+  "description": "Transolver backbone with ITERATED cross-fidelity attention as the multi-fidelity fusion mechanism. Different from v9_baseline (which uses a single gated MLP over multiple LF streams) and transolver_residual (hard residual on top of LF interp): here HF queries attend through N stacked cross-attention blocks, each refining the HF representation against the LF context. This stress-tests the 'attention IS the fusion' hypothesis without an explicit residual or gate.",
+  "supports": ["ifc_raw"],
+  "smoke_entrypoint": "smoke_eval.py",
+  "frozen": false,
+  "inspired_by": ["wu2024transolver", "li2024oformer", "vaswani2017attention"]
+}

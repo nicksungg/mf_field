@@ -31,8 +31,9 @@ PY="$MFFP_PY"
 
 FAMILIES_CSV="${1:-v9_baseline}"
 TASK_ID="${SLURM_ARRAY_TASK_ID:-0}"
+CONFIG="${MFFP_FULL_CONFIG:-eval/full_config.json}"
 
 trap 'echo "[$(date)] USR1 — saving and exiting"; sleep 30; exit 0' USR1
 
-echo "[$(date)] full benchmark task=$TASK_ID families=$FAMILIES_CSV"
-"$PY" eval/launch_full.py --array_index "$TASK_ID" --families "$FAMILIES_CSV"
+echo "[$(date)] full benchmark task=$TASK_ID families=$FAMILIES_CSV config=$CONFIG"
+"$PY" eval/launch_full.py --array_index "$TASK_ID" --families "$FAMILIES_CSV" --config "$CONFIG"

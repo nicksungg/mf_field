@@ -33,8 +33,20 @@
         "test_l2": { "paper": 0.129, "paper_std": 0.000819, "v9": 0.029856, "v9_std": 0.0044 }
       }
     },
-    "ifc_heat":  { "source": "li2022ifc",          "metric": "nRMSE", "splits": {} },
-    "ifc_poisson": { "source": "li2022ifc",        "metric": "nRMSE", "splits": {} },
+    "ifc_heat":  {
+      "source": "li2022ifc",
+      "metric": "nRMSE",
+      "splits": {
+        "test_hf": { "paper": 0.074, "paper_method": "IFC-ODE2", "paper_method_alt": "IFC-GPODE 0.061" }
+      }
+    },
+    "ifc_poisson": {
+      "source": "li2022ifc",
+      "metric": "nRMSE",
+      "splits": {
+        "test_hf": { "paper": 0.036, "paper_method": "IFC-ODE2", "paper_method_alt": "IFC-GPODE 0.018" }
+      }
+    },
     "chin_chun_isothermal": { "source": "chin_chun_buildingflow", "metric": "nRMSE", "splits": {} },
     "chin_chun_potential":  { "source": "chin_chun_buildingflow", "metric": "nRMSE", "splits": {} },
     "era5":      { "source": "era5_reanalysis",    "metric": "nRMSE", "splits": {} },
