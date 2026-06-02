@@ -16,7 +16,21 @@ upsampled to the 64×64 HF grid following li2022ifc §6.1, so the FNO sees a
 single input resolution and the coregionalization head handles the fidelity
 mixing.
 
-bibtex_keys: li2020fno, li2022ifc
+H2 adds a two-stage LF→HF transfer-learning training schedule on top of the
+unchanged architecture: Stage 1 warms up the FNO trunk and the coregionalization
+basis on LF-only samples (m != hf_m) with a higher learning rate, then Stage 2
+fine-tunes on the full multi-fidelity training set (LF + HF) with a lower
+learning rate and a fresh optimizer + scheduler at the stage boundary. The
+LF→HF transfer recipe is taken from `lyu2023mffno` (the MF-FNO transfer-learning
+baseline that pretrains a single FNO on abundant LF data and fine-tunes on
+scarce HF data); the coregionalization basis it sits on top of is from
+`li2022ifc` (already cited above). The K=10 basis is kept trainable through
+Stage 1 so LF m-values supervise the basis weights; the fresh per-stage
+optimizer/scheduler follows the bar's deliberate choice (stale Stage-1
+momentum is a documented cause of fine-tune divergence —
+`krishnapriyan2021characterizing`).
+
+bibtex_keys: li2020fno, li2022ifc, lyu2023mffno
 
 ```bibtex
 @inproceedings{li2020fno,
