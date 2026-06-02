@@ -86,18 +86,19 @@ class FNOCoregionalization(nn.Module):
         hidden_channels: int = 64,
         K: int = 10,
         n_blocks: int = 4,
-        modes: int = 12,
-        grid_size: int = 64,
+        modes_h: int = 12,
+        modes_w: int = 12,
+        grid: tuple = (64, 64),
         b_hidden: int = 64,
     ):
         super().__init__()
         self.cond_dim = cond_dim
         self.K = K
-        self.grid_size = grid_size
+        self.grid = (int(grid[0]), int(grid[1]))
 
         self.lift = nn.Conv2d(cond_dim + 2, hidden_channels, 1)
         self.blocks = nn.ModuleList(
-            FNOBlock(hidden_channels, modes, modes) for _ in range(n_blocks)
+            FNOBlock(hidden_channels, modes_h, modes_w) for _ in range(n_blocks)
         )
         self.proj = nn.Sequential(
             nn.Conv2d(hidden_channels, hidden_channels, 1),
@@ -120,8 +121,9 @@ class FNOCoregionalization(nn.Module):
         self.register_buffer("scalers", torch.zeros(0, dtype=torch.float32))
 
         # Coordinate channels in [-1, 1] x [-1, 1]
-        ys = torch.linspace(-1.0, 1.0, grid_size)
-        xs = torch.linspace(-1.0, 1.0, grid_size)
+        H, W = self.grid
+        ys = torch.linspace(-1.0, 1.0, H)
+        xs = torch.linspace(-1.0, 1.0, W)
         gy, gx = torch.meshgrid(ys, xs, indexing="ij")
         self.register_buffer(
             "coord_grid", torch.stack([gy, gx], dim=0).unsqueeze(0)
@@ -142,7 +144,7 @@ class FNOCoregionalization(nn.Module):
 
     def forward(self, X: torch.Tensor, m: torch.Tensor) -> torch.Tensor:
         B = X.shape[0]
-        H = W = self.grid_size
+        H, W = self.grid
 
         X_grid = X.view(B, self.cond_dim, 1, 1).expand(B, self.cond_dim, H, W)
         coords = self.coord_grid.expand(B, 2, H, W)
