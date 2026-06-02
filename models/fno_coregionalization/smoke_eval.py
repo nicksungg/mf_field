@@ -65,10 +65,15 @@ SMOKE_DEFAULTS = dict(
     batch_size=8,
     lr=3e-4,
     weight_decay=1e-5,
-    hidden_channels=32,
-    K=10,
-    n_blocks=4,
-    modes_cap=12,
+    # H1 (cycle-008): paper-config capacity bump on the repaired constructor.
+    # hidden_channels 32→128, K 10→20, n_blocks 4→6, modes_cap 12→16, plus
+    # b_hidden=128 wired in (was constructor default 64). Values mirror
+    # models/fno_coregionalization/full_config.json (li2022ifc paper config).
+    hidden_channels=128,
+    K=20,
+    n_blocks=6,
+    modes_cap=16,
+    b_hidden=128,
     val_frac=0.1,
     ckpt_every=10,
     grad_clip=1.0,
@@ -270,6 +275,7 @@ def run(args) -> dict:
         modes_h=modes_h,
         modes_w=modes_w,
         grid=grid,
+        b_hidden=p["b_hidden"],
     ).to(device)
     # Scalers are computed once from the full train subset (LF + HF) and
     # applied across both stages — no per-stage rescaling (H2).
