@@ -26,9 +26,11 @@ import torch.nn.functional as F
 
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
+sys.path.insert(0, str(HERE.parent))
 
 from data import build_loaders  # noqa: E402
 from model import FNOMFStack, param_count  # noqa: E402
+from _common.recipe_hash import recipe_hash  # noqa: E402
 
 
 # Smoke config = scaled-down full_config.json (full uses hidden=64).
@@ -39,10 +41,10 @@ SMOKE_DEFAULTS = dict(
     lr=3e-4,
     weight_decay=1e-5,
     val_frac=0.1,
-    hidden=32,
-    agg_hidden=32,
-    n_blocks=3,
-    modes_per_level=(4, 8, 12, 12),
+    hidden=64,
+    agg_hidden=64,
+    n_blocks=4,
+    modes_per_level=(4, 8, 16, 20),
     native_resolutions=(8, 16, 32, 64),
     hf_loss_weight=1.0,
     baseline_anchor_weight=0.5,
@@ -152,8 +154,10 @@ def run(args):
     torch.manual_seed(args.seed)
     np.random.seed(args.seed)
     p = SMOKE_DEFAULTS
+    rh = recipe_hash(SMOKE_DEFAULTS)
     hf_fid_w, lf_fid_w = resolve_fidelity_weights(args.dataset_name, p)
     print(f"[loss-weights] dataset={args.dataset_name} hf_fid_weight={hf_fid_w} lf_fid_weight={lf_fid_w}")
+    print(f"[recipe] hash={rh}")
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(f"[device] {device}")
@@ -196,13 +200,17 @@ def run(args):
     if last_ckpt.exists():
         try:
             sd = torch.load(last_ckpt, map_location=device, weights_only=False)
-            if sd.get("epochs_target") == args.epochs and sd.get("cond_dim") == cond_dim:
+            if (sd.get("epochs_target") == args.epochs
+                    and sd.get("cond_dim") == cond_dim
+                    and sd.get("recipe_hash") == rh):
                 model.load_state_dict(sd["model"])
                 opt.load_state_dict(sd["opt"])
                 sched.load_state_dict(sd["sched"])
                 start_epoch = sd["epoch"] + 1
                 best_val = sd.get("best_val", float("inf"))
                 print(f"[resume] from epoch {start_epoch}/{args.epochs} best_val={best_val:.4e}")
+            else:
+                print(f"[fresh] checkpoint guard mismatch (recipe_hash={sd.get('recipe_hash')} vs {rh}) — discarding")
         except Exception as e:
             print(f"[resume] failed to load checkpoint ({e}); starting fresh")
 
@@ -258,6 +266,7 @@ def run(args):
                 "epoch": epoch,
                 "epochs_target": args.epochs,
                 "cond_dim": cond_dim,
+                "recipe_hash": rh,
                 "model": model.state_dict(),
                 "opt": opt.state_dict(),
                 "sched": sched.state_dict(),

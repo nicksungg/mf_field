@@ -51,12 +51,14 @@ from torch.utils.data import DataLoader, Dataset, Subset, random_split
 HERE = Path(__file__).resolve().parent
 REPO_ROOT = HERE.parent.parent
 sys.path.insert(0, str(HERE))
+sys.path.insert(0, str(HERE.parent))
 sys.path.insert(0, str(REPO_ROOT))
 
 from model import FNOCoregionalization, param_count  # noqa: E402
 from data_adapters import load_mf_dataset  # noqa: E402
 from data_adapters.geometry import resolve_grid  # noqa: E402
 from data_adapters.metrics import finalize_and_write  # noqa: E402
+from _common.recipe_hash import recipe_hash  # noqa: E402
 
 
 WORK_CAP = 256  # longest side of the working grid; only era5/pm_test exceed it.
@@ -242,8 +244,10 @@ def run(args) -> dict:
     torch.manual_seed(args.seed)
     np.random.seed(args.seed)
     p = SMOKE_DEFAULTS
+    rh = recipe_hash(SMOKE_DEFAULTS)
 
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+    print(f"[device] {device} [recipe] hash={rh}")
     ds_dir = Path(args.dataset_dir)
 
     train_data = load_mf_dataset(ds_dir, split="train")
@@ -313,7 +317,8 @@ def run(args) -> dict:
             if (sd.get("stage") == 2
                     and sd.get("epoch") == args.epochs
                     and sd.get("epochs_target") == args.epochs
-                    and sd.get("grid") == list(grid)):
+                    and sd.get("grid") == list(grid)
+                    and sd.get("recipe_hash") == rh):
                 ck_m = sd["model"].get("m_keys")
                 ck_s = sd["model"].get("scalers")
                 if ck_m is not None and ck_s is not None:
@@ -323,6 +328,8 @@ def run(args) -> dict:
                 trained = True
                 print(f"[resume] finished checkpoint (stage 2, epoch {args.epochs}), "
                       f"best_val={best_val:.4e}")
+            else:
+                print(f"[fresh] checkpoint guard mismatch (recipe_hash={sd.get('recipe_hash')} vs {rh}) — discarding")
         except Exception as e:
             print(f"[resume] failed ({e}) — starting fresh")
 
@@ -330,6 +337,7 @@ def run(args) -> dict:
         torch.save({
             "stage": stage, "epoch": epoch, "epochs_target": args.epochs,
             "grid": list(grid),
+            "recipe_hash": rh,
             "model": model.state_dict(),
             "best_val": best_val,
         }, last_ckpt)
