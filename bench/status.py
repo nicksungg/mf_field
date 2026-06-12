@@ -6,7 +6,7 @@ ROOT = "/orcd/data/faez/001/nick/mf_field/factory_mffp"
 os.chdir(ROOT)
 fams = ["fno_mf_stack","fno_coregionalization","fno_coreg_residual","fno_coreg_conditioned","fno_coreg_lf_hf_transfer",
         "transolver_residual","transolver_attention_fusion","v9_baseline",
-        "mfrnp","mf_deeponet","d_mfd","mf_fno_transfer","mf_fno_transfer_2m","mf_fno_transfer_film","fno_additive","fno_autoregressive","fno_multilevel"]
+        "mfrnp","mf_deeponet","d_mfd","mf_fno_transfer","mf_fno_transfer_2m","mf_fno_transfer_film","fno_additive","fno_autoregressive","fno_multilevel","fno_fire_distcond","fno_dino_residual","fno_fire_mcdropout"]
 dss = ["ifc_heat","ifc_poisson","poisson_local","heat_local","fluid","era5",
        "pm_test","advection_diffusion_generated","allen_cahn_generated",
        "burgers_generated","burgers_param_generated","darcy_generated",
