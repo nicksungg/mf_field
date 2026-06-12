@@ -49,6 +49,12 @@ class IFCRawMultiStreamDataset(Dataset):
 		self.split = split
 		self.synthetic_lf_from_hf = False
 
+		# npz_l datasets (e.g. the 256² cavity): the test split carries all
+		# fidelity levels, so real LF is used directly (no synth-from-HF).
+		from train_v9 import _npz_populate
+		if _npz_populate(self, self.dataset_dir, split):
+			return
+
 		split_dir = self.dataset_dir / split
 		fid_dirs = sorted(
 			[p for p in split_dir.iterdir() if p.is_dir() and p.name.startswith("fidelity_")],

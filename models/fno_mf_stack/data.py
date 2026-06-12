@@ -26,7 +26,16 @@ def load_split(ds_dir: Path, split: str):
 
     For training: walks every fidelity_<R>/ directory under train/.
     For test: only the highest-fidelity directory is present (test/fidelity_64).
+
+    npz_l datasets (no cat.pkl / fidelity_* dirs, e.g. the 256² cavity) are read
+    through the shared data_adapters shim so this model runs on them unchanged.
     """
+    ds_dir = Path(ds_dir)
+    if not (ds_dir / "cat.pkl").exists():
+        import sys
+        sys.path.insert(0, str(Path(__file__).resolve().parents[2]))  # factory_mffp root
+        from data_adapters.npz_compat import level_dicts
+        return level_dicts(ds_dir, split)
     cat = load_cat(ds_dir)
     if split == "train":
         t_list = cat["train"]["t_list"]

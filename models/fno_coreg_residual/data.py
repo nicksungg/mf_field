@@ -39,7 +39,16 @@ def load_split_levels(ds_dir: Path, split: str) -> Tuple[List[Dict], Dict]:
 
     level_idx is always the global fidelity-ladder index from cat['train'],
     so test/ood (which usually only carry HF) resolve to the last level.
+
+    npz_l datasets (no cat.pkl / fidelity_* dirs, e.g. the 256² cavity) are read
+    through the shared data_adapters shim so this model runs on them unchanged.
     """
+    ds_dir = Path(ds_dir)
+    if not (ds_dir / "cat.pkl").exists():
+        import sys
+        sys.path.insert(0, str(Path(__file__).resolve().parents[2]))  # factory_mffp root
+        from data_adapters.npz_compat import level_dicts
+        return level_dicts(ds_dir, split)
     cat = load_cat(ds_dir)
     train_t_list = list(cat["train"]["t_list"])
     n_levels = len(train_t_list)

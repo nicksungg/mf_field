@@ -12,6 +12,31 @@ from torch.utils.data import DataLoader, Dataset, random_split
 from model_v9 import MFTransolver_v9, param_count
 
 
+def _npz_populate(self, dataset_dir, split) -> bool:
+	"""Populate an IFCRawMultiStreamDataset from an npz_l dataset.
+
+	Returns True if `dataset_dir` is npz_l (no fidelity_* dirs) and was loaded
+	via the shared data_adapters shim, else False (caller reads ifc_raw dirs).
+	Fields are 2-D (N, H, W); fidelity key = native resolution, HF = max.
+	"""
+	import sys
+	sys.path.insert(0, str(Path(dataset_dir).parent.parent))
+	from data_adapters.npz_compat import has_npz_layout, per_fidelity
+	if not has_npz_layout(dataset_dir, split):
+		return False
+	res, x_by, y_by = per_fidelity(dataset_dir, split)
+	self.fids = res
+	self.hf_fid = max(res)
+	self.lf_fids = [f for f in res if f != self.hf_fid]
+	self.x_by_fid = x_by
+	self.y_by_fid = y_by
+	self.n_samples = x_by[self.hf_fid].shape[0]
+	self.cond_dim = x_by[self.hf_fid].shape[1]
+	self.sample_ids = [f"{Path(dataset_dir).name}_{split}_{i:04d}" for i in range(self.n_samples)]
+	self.synthetic_lf_from_hf = False
+	return True
+
+
 def field_to_points(field: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
 	if field.ndim == 2:
 		field = field[None, ...]
@@ -48,6 +73,12 @@ class IFCRawMultiStreamDataset(Dataset):
 	def __init__(self, dataset_dir: Path, split: str):
 		self.dataset_dir = Path(dataset_dir)
 		self.split = split
+
+		# npz_l datasets (no fidelity_* dirs, e.g. the 256² cavity): read per-
+		# fidelity arrays via the shared data_adapters shim so this model runs
+		# on them unchanged. Fidelity key = native resolution, HF = max.
+		if _npz_populate(self, self.dataset_dir, split):
+			return
 
 		split_dir = self.dataset_dir / split
 		fid_dirs = sorted(

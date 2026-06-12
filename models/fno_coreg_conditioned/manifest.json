@@ -1,0 +1,6 @@
+{
+  "name": "fno_coreg_conditioned",
+  "description": "Single full-resolution HF FNO with FiLM-via-LayerNorm conditioning on the fidelity index m. Each FNO block applies GroupNorm followed by per-channel affine (γ(m), β(m)) produced by an MLP on [m, m^2]. The IFC outer-product basis is replaced by FiLM affines; m-modulation lives in the normalisation layer rather than a K-dim coregionalization head. Per-fidelity output scaler retained.",
+  "supports": ["ifc_raw"],
+  "frozen": false
+}

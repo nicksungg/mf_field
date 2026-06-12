@@ -195,16 +195,20 @@ def run(args) -> dict:
         print(f"  level {lvl['level_idx']} m={lvl['m']:.4f} res={lvl['native_res']} "
               f"n_train={lvl['Xs'].shape[0]} scaler={scaler_dict[lvl['level_idx']]:.4g}")
 
+    # Native resolutions come from the data, not the ifc-ladder default, so the
+    # per-level FNO output grids match the loaded dataset (e.g. the 256² cavity
+    # ladder 32/64/128/256, not ifc_heat's 8/16/32/64).
+    data_native_res = [lvl["native_res"] for lvl, _ in train_loaders]
     model = FNOCoregResidual(
         cond_dim=cond_dim,
-        native_resolutions=list(p["native_resolutions"][:n_levels]),
+        native_resolutions=data_native_res,
         modes_per_level=list(p["modes_per_level"][:n_levels]),
         hidden=p["hidden"],
         decoder_hidden=p["decoder_hidden"],
         K=p["K"],
         n_blocks=p["n_blocks"],
         b_hidden=p["b_hidden"],
-        hf_res=int(p["native_resolutions"][n_levels - 1]),
+        hf_res=int(data_native_res[n_levels - 1]),
     ).to(device)
     model.set_scaler(scaler_dict)
     scaler_tensor = model.scaler
