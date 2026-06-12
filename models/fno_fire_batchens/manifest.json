@@ -1,0 +1,10 @@
+{
+  "name": "fno_fire_batchens",
+  "description": "FIRE-family distribution-conditioned residual where the LF predictive distribution comes from batch/multi-head ensemble (shared trunk, 5 heads). Shares the backbone + residual pipeline (models/_common/fire_core,fire_methods) with the other fire_* families so the ablation isolates the UNCERTAINTY SOURCE. HF = mu_LF + delta(x,[mu,sigma,q10,q50,q90]).",
+  "supports": [
+    "ifc_raw",
+    "npz_l"
+  ],
+  "external": false,
+  "paper": "Wen et al. 2020 BatchEnsemble (arXiv:2002.06715)"
+}
