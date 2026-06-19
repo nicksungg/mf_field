@@ -368,7 +368,10 @@ class _LastLayerBase:
             ys.append(torch.from_numpy(Y[i:i + self.p["batch_size"]]).reshape(-1) / s_lf)
         F_ = torch.cat(feats, 0); y_ = torch.cat(ys, 0)
         if F_.shape[0] > max_rows:
-            sel = torch.linspace(0, F_.shape[0] - 1, max_rows).long()
+            # float64 + clamp: float32 linspace can't represent integers >~16.7M
+            # exactly, rounding the endpoint up to N and overflowing the index.
+            sel = torch.linspace(0, F_.shape[0] - 1, max_rows, dtype=torch.float64).long()
+            sel.clamp_(max=F_.shape[0] - 1)
             F_, y_ = F_[sel], y_[sel]
         return F_.to(self.device), y_.to(self.device)
 

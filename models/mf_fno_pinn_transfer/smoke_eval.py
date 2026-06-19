@@ -39,7 +39,7 @@ WORK_CAP = 256
 PINN_POISSON = {"poisson_generated", "poisson_local"}
 SMOKE = dict(hidden_channels=64, n_blocks=4, modes_cap=12, batch_size=16,
              lr_pretrain=1e-3, lr_finetune=3e-4, weight_decay=1e-5, grad_clip=1.0,
-             lam_pde=0.1, lam_bc=0.1)
+             lam_pde=1e-3, lam_bc=1e-3, pde_warmup_frac=0.5)
 
 
 def _cap_grid(grid, cap=WORK_CAP):
@@ -114,9 +114,12 @@ def _train_pinn(model, X_d, Y_d, scaler, X_c, f_c, f_scale, epochs, lr, p, devic
     Xt = torch.from_numpy(X_d).float(); Yt = torch.from_numpy(Y_d).float() / scaler
     Xct = torch.from_numpy(X_c).float(); fct = torch.from_numpy(f_c).float() / f_scale  # normalized f
     nd = X_d.shape[0]; nc = X_c.shape[0]; bs = min(p["batch_size"], nd)
-    lam, lam_bc = p["lam_pde"], p["lam_bc"]
+    lam_max, lam_bc = p["lam_pde"], p["lam_bc"]
+    warm = p.get("pde_warmup_frac", 0.5) * epochs   # data-first: physics ramps in after this
     g = torch.Generator().manual_seed(0)
-    for _ in range(epochs):
+    for ep in range(epochs):
+        # ramp physics weight 0 -> lam_max over (warm, epochs): fit data first, then enforce PDE
+        lam = lam_max * min(1.0, max(0.0, (ep - warm) / max(1.0, epochs - warm)))
         model.train()
         perm = torch.randperm(nd, generator=g); permc = torch.randperm(nc, generator=g)
         for bi, i in enumerate(range(0, nd, bs)):
@@ -160,8 +163,8 @@ def run(args, out_path: Path) -> dict:
     # physics only on square Poisson grids where f(x) is exact
     use_pinn = (args.dataset_name in PINN_POISSON) and (grid[0] == grid[1])
     pinn_meta = {"pinn_enabled": bool(use_pinn)}
-    R = grid[0]; h = 1.0 / (R - 1)
     if use_pinn:
+        R = grid[0]; h = 1.0 / (R - 1)  # safe: use_pinn ⇒ square 2-D grid (R>1)
         W, f_scale, rel = _fit_forcing(X_hf, Y_hf, R, h)
         # collocation = abundant LF inputs ∪ HF inputs; f computed exactly from x
         X_coll = np.concatenate([X_lf, X_hf], 0)
