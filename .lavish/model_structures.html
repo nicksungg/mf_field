@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="luxury">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MFFP model structures — fusion mechanisms from the code</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daisyui@5.5.19/daisyui.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daisyui@5.5.19/themes.css">
+<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.2.4/dist/index.global.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  :where(.grid, .flex) > * { min-width: 0; }
+  :where(p, h1, h2, h3, h4, li, dd, td, th, .badge) { overflow-wrap: anywhere; }
+  :where(img, svg) { max-width: 100%; height: auto; }
+  .diagram-panel { background:#fbfbfd; border-radius:0.9rem; padding:0.6rem 0.4rem; overflow-x:auto; border:1px solid #e2e3ea; }
+  .diagram-panel pre.mermaid { background:transparent; margin:0; text-align:center; }
+  .eq { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size:0.86rem; }
+</style>
+<script type="module">
+  import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.15.0/dist/mermaid.esm.min.mjs";
+  mermaid.initialize({ startOnLoad: true, theme: "neutral", securityLevel: "loose",
+                       flowchart: { htmlLabels: true, curve: "basis", padding: 8 } });
+</script>
+</head>
+<body class="bg-base-100 text-base-content">
+<div class="max-w-6xl mx-auto px-4 py-8">
+
+  <!-- ===== header ===== -->
+  <header class="mb-6">
+    <p class="text-sm uppercase tracking-widest text-primary/80 mb-1">MFFP · multi-fidelity field prediction</p>
+    <h1 class="text-3xl sm:text-4xl font-bold text-primary mb-2">Model structures — how each family fuses low- &amp; high-fidelity</h1>
+    <p class="text-base-content/80 max-w-3xl">
+      The <em>backbones</em> (FNO, DeepONet, Transolver, DINOv2) are published online, so what is diagrammed here is the part that is
+      <strong>repo-specific and not online</strong>: the <strong>multi-fidelity fusion mechanism</strong> of each family, extracted directly from its
+      <code>model.py</code> / <code>smoke_eval.py</code> (not from the paper's idealized version).
+    </p>
+  </header>
+
+  <!-- how to read + provenance -->
+  <div class="grid md:grid-cols-3 gap-4 mb-6">
+    <div class="card card-border bg-base-200 md:col-span-2">
+      <div class="card-body p-5">
+        <h2 class="card-title text-lg">How to read the diagrams</h2>
+        <div class="flex flex-wrap gap-2 mt-1">
+          <span class="badge badge-lg" style="background:#dbeafe;color:#1e3a5f;border-color:#2563eb">LF data / input</span>
+          <span class="badge badge-lg" style="background:#fef3c7;color:#7c2d12;border-color:#d97706">HF data / fidelity m</span>
+          <span class="badge badge-lg" style="background:#f1f5f9;color:#1e293b;border-color:#64748b">module / op</span>
+          <span class="badge badge-lg" style="background:#dcfce7;color:#14532d;border-color:#16a34a;border-width:2px"><b>FUSION point</b></span>
+          <span class="badge badge-lg" style="background:#ede9fe;color:#4c1d95;border-color:#7c3aed">HF output</span>
+          <span class="badge badge-lg" style="background:#e5e7eb;color:#374151;border-color:#6b7280;border-style:dashed">frozen</span>
+          <span class="badge badge-lg" style="background:#fee2e2;color:#7f1d1d;border-color:#dc2626;border-style:dashed">loss term</span>
+        </div>
+        <p class="text-sm text-base-content/70 mt-2">
+          The <b>green node is the spot where LF and HF information actually combine</b> — the one thing that differs across families.
+          <code>X</code> = condition vector (PDE params); <code>m</code> = continuous fidelity index; <code>mu / sigma / q10..q90</code> = per-pixel LF distribution fields.
+        </p>
+      </div>
+    </div>
+    <div class="card card-border bg-base-200">
+      <div class="card-body p-5">
+        <h2 class="card-title text-lg">Provenance</h2>
+        <p class="text-sm text-base-content/70">Diagrams built from the actual forward passes in:</p>
+        <ul class="text-xs text-base-content/70 list-disc ml-4 mt-1 space-y-0.5">
+          <li><code>models/_common/fire_core.py</code></li>
+          <li><code>models/mf_fno_pinn_transfer/*</code>, <code>mf_fno_transfer_bar/*</code></li>
+          <li><code>models/fno_coreg*/model.py</code>, <code>fno_mf_stack/*</code></li>
+          <li><code>models/fno_fire_distcond/*</code>, <code>fno_fire_mcdropout/*</code></li>
+          <li><code>models/transolver_*/model.py</code>, <code>fno_dino_*/*</code></li>
+        </ul>
+        <p class="text-xs text-base-content/50 mt-2">Design source: Lavish Tailwind+DaisyUI CDN (repo has no web design system).</p>
+      </div>
+    </div>
+  </div>
+
+  <div role="alert" class="alert alert-soft alert-info mb-8">
+    <span class="text-sm">Annotate anything that looks wrong or unclear — click a node, an equation, or a caption. Open questions for you are collected at the bottom.</span>
+  </div>
+
+  <!-- ===== Glossary ===== -->
+  <section class="mb-8">
+    <div tabindex="0" class="collapse collapse-open collapse-arrow bg-base-200 border border-base-content/10">
+      <div class="collapse-title text-lg font-semibold text-primary">Glossary — the two bits of multi-fidelity jargon</div>
+      <div class="collapse-content text-sm text-base-content/85 space-y-3">
+        <div>
+          <p class="font-semibold text-base-content">Continuous fidelity index <code>m</code></p>
+          <p>Multi-fidelity data is usually a <em>ladder</em> of fidelities, not just LF vs HF — here four grid levels 8→16→32→64, labelled <code>m ∈ {0.0, 0.143, 0.429, 1.0}</code>. <b>m and resolution are correlated</b> — m rises monotonically with grid size — but m is a separate label the dataset <em>assigns</em>, not one <em>computed</em> from the pixel count (which is why the values aren't a clean function of 8/16/32/64). It gets its own coordinate because "fidelity" in general can come from solver tolerance, timestep, or physics approximations, not only resolution; and the model uses both — each per-fidelity FNO runs at the native <em>grid</em>, while <code>m</code> is the scalar the conditioning head uses to interpolate between fidelities. <b>Continuous</b> means <code>m</code> is treated as a real number (not a discrete category), so a model can interpolate between training levels or extrapolate beyond them — the IFC idea: model the field <code>f(x, m)</code> as a smooth function of <code>m</code>, where <code>m → ∞</code> is the "infinite-fidelity" (true) limit. In these diagrams the coregionalization &amp; stack families feed <code>m</code> in (via <code>B(m) = MLP[m, m²]</code> or FiLM); the transfer &amp; FIRE families do <em>not</em> — there MF lives in the training schedule, which is exactly why <code>m</code> is absent from those diagrams.</p>
+        </div>
+        <div>
+          <p class="font-semibold text-base-content">Per-pixel LF distribution fields <code>mu, sigma, q10, q50, q90</code></p>
+          <p>FIRE makes the LF model output a <b>distribution</b> at each pixel (via an ensemble / MC-dropout / quantile head) instead of a single number, then summarises that distribution with five fields per pixel: <b>mu</b> = mean (the LF point prediction, also the base in <code>HF = mu + delta</code>); <b>sigma</b> = standard deviation = how uncertain the LF model is there (large where ensemble members disagree — sharp gradients, fronts, boundaries); <b>q10 / q50 / q90</b> = the 10th / 50th (median) / 90th percentiles, which capture spread (<code>q90 − q10</code>) and skew without assuming a Gaussian. The LF→HF error is largest exactly where the LF model is uncertain, so feeding these channels lets the HF correction "see where LF is shaky" and concentrate its correction there.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Block reference ===== -->
+  <section class="mb-8">
+    <div tabindex="0" class="collapse collapse-arrow bg-base-200 border border-base-content/10">
+      <div class="collapse-title text-lg font-semibold text-primary">Block reference — what every block does (appendix · click to expand)</div>
+      <div class="collapse-content">
+        <p class="text-sm text-base-content/70 mb-2">The diagrams reuse one vocabulary of blocks. Each row is a block <em>type</em>; the per-family captions give the specifics.</p>
+        <div class="overflow-x-auto rounded-box border border-base-content/10 bg-base-100">
+          <table class="table table-zebra table-sm">
+            <thead><tr class="text-primary"><th class="w-1/3">Block</th><th>Purpose</th></tr></thead>
+            <tbody>
+              <tr class="bg-base-300/40"><td colspan="2" class="font-semibold text-base-content">FNO backbone (shared by 24/30)</td></tr>
+              <tr><td><code>broadcast X</code></td><td>Turn the scalar condition vector X into constant image channels the conv net can read.</td></tr>
+              <tr><td><code>coord grid</code></td><td>Absolute (x, y) position channels, so the network knows where on the field it is.</td></tr>
+              <tr><td><code>lift (1×1 conv)</code></td><td>Project the input channels up to the working hidden width (64).</td></tr>
+              <tr><td><code>SpectralConv2d</code></td><td>The FNO core: FFT → keep the low Fourier modes → learnable complex weights → inverse FFT. Global mixing; this is where high frequencies get truncated.</td></tr>
+              <tr><td><code>local path (1×1 conv)</code></td><td>Pointwise, per-pixel channel mixing run in parallel with the spectral path.</td></tr>
+              <tr><td><code>sum (spectral + local)</code></td><td>Add global (spectral) and local (pointwise) features — the body of one FNO block.</td></tr>
+              <tr><td><code>GroupNorm → GELU</code></td><td>Normalisation + nonlinearity inside each block (repeated ×4).</td></tr>
+              <tr><td><code>proj head</code></td><td>Map the hidden channels down to the output field.</td></tr>
+              <tr class="bg-base-300/40"><td colspan="2" class="font-semibold text-base-content">Conditioning (transfer / coregionalization)</td></tr>
+              <tr><td><code>FiLM MLP (γ, β)</code></td><td>Produce a per-channel scale (γ) and shift (β) from X (or m); zero-init so it starts as the identity.</td></tr>
+              <tr><td><code>apply γ·z + β</code></td><td>Inject the condition by modulating features in every block (FiLM).</td></tr>
+              <tr><td><code>FiLMNorm</code></td><td>GroupNorm followed by the FiLM affine — conditioning lives in the norm layer.</td></tr>
+              <tr><td><code>B(m) = MLP[m, m²]</code></td><td>Produce K mixing weights from the fidelity index m.</td></tr>
+              <tr><td><code>latent basis h (K)</code></td><td>The K shared spatial "basis" fields the coregionalization head mixes.</td></tr>
+              <tr><td><code>Σ B_k(m)·h_k</code></td><td>Combine the K basis fields with the m-dependent weights (coregionalization output).</td></tr>
+              <tr><td><code>scaler[m]</code></td><td>Per-fidelity output rescale, to undo the per-level value-scale differences.</td></tr>
+              <tr class="bg-base-300/40"><td colspan="2" class="font-semibold text-base-content">Discrepancy / stack</td></tr>
+              <tr><td><code>per-fidelity FNOs (8/16/32)</code></td><td>One small FNO per LF resolution level.</td></tr>
+              <tr><td><code>decoders → 1ch</code></td><td>Turn each level's latent into a single decoded field.</td></tr>
+              <tr><td><code>upsample + concat</code></td><td>Bring the LF fields up to the HF grid and stack them.</td></tr>
+              <tr><td><code>MFRNP aggregator</code></td><td>A pointwise MLP that fuses the stacked LF fields (+ m) into one HF baseline.</td></tr>
+              <tr><td><code>HF FNO (delta)</code></td><td>Predict the residual correction on top of the baseline.</td></tr>
+              <tr><td><code>pred = baseline + delta</code></td><td>Additive combination of the LF baseline and the learned correction.</td></tr>
+              <tr class="bg-base-300/40"><td colspan="2" class="font-semibold text-base-content">FIRE</td></tr>
+              <tr><td><code>LF model (ensemble / MC-dropout)</code></td><td>Produce a predictive <em>distribution</em> for the LF field, not just a mean.</td></tr>
+              <tr><td><code>mu / sigma / q10·q50·q90</code></td><td>Per-pixel summary of that distribution (mean, spread, quantiles).</td></tr>
+              <tr><td><code>residual r = Y_hf − mu_LF</code></td><td>The target the correction network learns.</td></tr>
+              <tr><td><code>FNO2dAug (delta)</code></td><td>Residual FNO conditioned on X + the 5 distribution channels.</td></tr>
+              <tr><td><code>HF = mu_LF + delta</code></td><td>Additive fusion of the LF mean and the learned correction.</td></tr>
+              <tr class="bg-base-300/40"><td colspan="2" class="font-semibold text-base-content">Transformer (Transolver)</td></tr>
+              <tr><td><code>soft-NN interp (lf_interp)</code></td><td>Non-learned interpolation of LF values at the HF query points — the hard residual base.</td></tr>
+              <tr><td><code>HF / LF encoders</code></td><td>MLP + LayerNorm token embeddings for the HF queries and the LF context.</td></tr>
+              <tr><td><code>self slice-attention</code></td><td>Physics-attention over HF tokens (groups tokens into "slices").</td></tr>
+              <tr><td><code>cross slice-attention HF→LF</code></td><td>HF tokens attend to LF slice context — the fusion.</td></tr>
+              <tr><td><code>delta MLP / head</code></td><td>Produce the correction (zero-init, so it starts at the LF base).</td></tr>
+              <tr class="bg-base-300/40"><td colspan="2" class="font-semibold text-base-content">Vision (DINO)</td></tr>
+              <tr><td><code>FNO_LF</code></td><td>Predict the LF field from the parameters.</td></tr>
+              <tr><td><code>render as image</code></td><td>Turn the LF field into a 3-channel 224×224 image.</td></tr>
+              <tr><td><code>DINOv2 (frozen)</code></td><td>Encode that image into a 768-d embedding (no training).</td></tr>
+              <tr><td><code>embed proj</code></td><td>Project the embedding down to a small conditioning vector.</td></tr>
+              <tr><td><code>concat / fuse</code></td><td>Add the embedding to the FNO_delta input.</td></tr>
+              <tr class="bg-base-300/40"><td colspan="2" class="font-semibold text-base-content">Loss nodes (training only, not forward-pass)</td></tr>
+              <tr><td><code>data loss</code></td><td>MSE to the few HF samples.</td></tr>
+              <tr><td><code>pde loss</code></td><td>Penalise the PDE residual ∇²u − f (PINN).</td></tr>
+              <tr><td><code>bc loss</code></td><td>Penalise boundary-condition violation.</td></tr>
+              <tr><td><code>loss = data + λ·pde + λ_bc·bc</code></td><td>The total training objective.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Section 0: shared backbone ===== -->
+  <section class="mb-10">
+    <h2 class="text-2xl font-bold text-primary mb-1">0 · The shared FNO backbone <span class="badge badge-neutral align-middle">24 of 30 families</span></h2>
+    <p class="text-base-content/75 mb-3 max-w-3xl">Single-fidelity by itself — every FNO family stacks its fusion mechanism on top of this. The key structural fact (and the reason high-frequency solutions are hard): <b>SpectralConv2d keeps only the low Fourier bands and zeros the rest.</b></p>
+    <div class="diagram-panel">
+<pre class="mermaid">
+flowchart TD
+  cond["cond vector X · B x cond_dim<br/><b>→ the equation's settings for this case</b>"]:::lfdata
+  bcast["broadcast X to grid<br/><b>→ copy those settings onto every pixel so the network can use them</b>"]:::module
+  coords["coord grid · B x 2 x H x W<br/><b>→ tell the network where each pixel sits on the grid</b>"]:::module
+  cat["concat on channels<br/><b>→ stack all the inputs together</b>"]:::module
+  lift["lift · 1x1 Conv2d to hidden=64<br/><b>→ widen to 64 features so the network has room to work</b>"]:::module
+  spec["SpectralConv2d · rfft2, keep low bands :mh,:mw and -mh:,:mw, complex weights, irfft2<br/><b>→ mix information across the whole image (but drops the finest detail)</b>"]:::module
+  pw["local path · 1x1 Conv2d w<br/><b>→ also mix each pixel on its own, to keep fine detail</b>"]:::module
+  add["sum · spectral + local<br/><b>→ combine the whole-image view and the per-pixel view</b>"]:::module
+  act["GroupNorm to GELU<br/><b>→ tidy up, then repeat 4 times</b>"]:::module
+  proj["proj · 1x1 Conv, GELU, 1x1 Conv to out_ch<br/><b>→ shrink back down to one predicted field</b>"]:::module
+  out["field · B x H x W<br/><b>→ the predicted field</b>"]:::output
+  cond --> bcast --> cat
+  coords --> cat
+  cat --> lift --> spec
+  lift --> pw
+  spec --> add
+  pw --> add
+  add --> act
+  act -->|"repeat x4 blocks"| spec
+  act --> proj --> out
+  classDef lfdata fill:#dbeafe,stroke:#2563eb,color:#1e3a5f;
+  classDef hfdata fill:#fef3c7,stroke:#d97706,color:#7c2d12;
+  classDef module fill:#f1f5f9,stroke:#64748b,color:#1e293b;
+  classDef fusion fill:#dcfce7,stroke:#16a34a,stroke-width:2px,color:#14532d;
+  classDef output fill:#ede9fe,stroke:#7c3aed,color:#4c1d95;
+  classDef frozen fill:#e5e7eb,stroke:#6b7280,color:#374151,stroke-dasharray:4 3;
+  classDef loss fill:#fee2e2,stroke:#dc2626,color:#7f1d1d,stroke-dasharray:4 3;
+</pre>
+        <p class="text-xs font-semibold mt-1" style="color:#15803d">Performance payoff — Shared by 24/30 families; the spectral truncation here is the high-frequency ceiling every FNO family inherits.</p>
+    </div>
+    <p class="text-sm text-base-content/65 mt-2">The condition vector enters as constant spatial channels (k=0 mode); the spectral path mixes globally, the 1×1 conv locally. No down/up-sampling — H×W is preserved. <code>out_ch</code> is re-used by FIRE heads (1 for fields, len(taus) for quantiles, 3M for MDN).</p>
+  </section>
+
+  <!-- ===== Section 1: transfer ===== -->
+  <section class="mb-10">
+    <h2 class="text-2xl font-bold text-primary mb-1">1 · Transfer-learning — the winners</h2>
+    <p class="text-base-content/75 mb-4 max-w-3xl">MF lives in the <b>training schedule</b>, not in extra architecture: pretrain on abundant LF, fine-tune the same weights on scarce HF.</p>
+
+    <div class="grid lg:grid-cols-2 gap-5">
+      <div class="card card-border bg-base-200">
+        <div class="card-body p-5">
+          <div class="flex items-center justify-between flex-wrap gap-2">
+            <h3 class="card-title text-lg">mf_fno_transfer <span class="text-base-content/50 text-sm font-normal">(+ _2m, _film)</span></h3>
+            <span class="badge badge-soft badge-success">#8 · #10 · #1</span>
+          </div>
+          <p class="text-sm text-base-content/70">Plain transfer-FNO. <b>m never enters the network.</b></p>
+          <div class="diagram-panel mt-1">
+<pre class="mermaid">
+flowchart TD
+  X["cond vector X<br/><b>→ the equation's settings</b>"]:::lfdata
+  net["FNO backbone · X broadcast + coords<br/><b>→ one plain FNO; the fidelity level is not an input here</b>"]:::module
+  field["field u · x per-stage scaler<br/><b>→ the prediction (rescaled)</b>"]:::output
+  X --> net --> field
+  s1["Stage 1 · pretrain on abundant LF<br/><b>→ first, learn on the plentiful cheap data</b>"]:::lfdata
+  theta["shared FNO weights theta<br/><b>→ reuse those learned weights = how cheap and accurate data get fused</b>"]:::fusion
+  s2["Stage 2 · fine-tune on scarce HF<br/><b>→ then adjust on the few accurate samples</b>"]:::hfdata
+  s1 --> theta --> s2
+  classDef lfdata fill:#dbeafe,stroke:#2563eb,color:#1e3a5f;
+  classDef hfdata fill:#fef3c7,stroke:#d97706,color:#7c2d12;
+  classDef module fill:#f1f5f9,stroke:#64748b,color:#1e293b;
+  classDef fusion fill:#dcfce7,stroke:#16a34a,stroke-width:2px,color:#14532d;
+  classDef output fill:#ede9fe,stroke:#7c3aed,color:#4c1d95;
+</pre>
+        <p class="text-xs font-semibold mt-1" style="color:#15803d">Performance payoff — #8 (and #1 as _film) — transfer alone is the strongest simple baseline; the schedule is the whole trick.</p>
+          </div>
+          <p class="eq mt-2 p-2 rounded bg-base-300 text-base-content/90">u = scaler · FNO_theta( [broadcast(X), coords] )</p>
+          <p class="text-sm text-base-content/65">Fusion = <b>shared weights carried across the two stages</b> (warm-start). <code>_film</code> swaps concat→FiLM (the #1 model); <code>_2m</code> is a width-matched capacity control.</p>
+        </div>
+      </div>
+
+      <div class="card card-border bg-base-200">
+        <div class="card-body p-5">
+          <div class="flex items-center justify-between flex-wrap gap-2">
+            <h3 class="card-title text-lg">mf_fno_pinn_transfer <span class="text-base-content/50 text-sm font-normal">(champion)</span></h3>
+            <span class="badge badge-soft badge-success">#2 · lowest error</span>
+          </div>
+          <p class="text-sm text-base-content/70">FiLM transfer + a Poisson PDE-residual loss (Poisson datasets only).</p>
+          <div class="diagram-panel mt-1">
+<pre class="mermaid">
+flowchart TD
+  X["cond vector X<br/><b>→ the equation's settings</b>"]:::lfdata
+  film["FiLM MLP: gamma,beta from X (zero-init)<br/><b>→ tweak the features per case from the settings — the change that makes it #1</b>"]:::fusion
+  coords["coord grid (only tensor input)<br/><b>→ where each pixel sits</b>"]:::module
+  lift["lift: 1x1 Conv to width 64<br/><b>→ widen to 64 features</b>"]:::module
+  block["FNO block: SpectralConv + 1x1<br/><b>→ one FNO layer (whole-image + per-pixel mixing)</b>"]:::module
+  gn["GroupNorm (affine off)<br/><b>→ tidy the features before the tweak</b>"]:::module
+  apply["apply gamma·z + beta per block<br/><b>→ apply the per-case tweak in every layer</b>"]:::fusion
+  proj["proj head<br/><b>→ shrink to the output field</b>"]:::module
+  u["u_pred<br/><b>→ the prediction</b>"]:::output
+  coords --> lift --> block --> gn --> apply --> proj --> u
+  X --> film --> apply
+  apply -->|"x4 blocks"| block
+  lap["Laplacian grad^2 u (5-pt stencil)<br/><b>→ check how well it obeys the equation</b>"]:::module
+  fx["f(X)=W·[X,X^2,1] closed-form<br/><b>→ work out the equation's source term from the settings</b>"]:::module
+  data["data loss: MSE(u, Y_hf)<br/><b>→ match the few accurate samples</b>"]:::loss
+  pde["pde loss: grad^2 u vs f on LF+HF collocation<br/><b>→ also obey the physics everywhere (extra free guidance)</b>"]:::loss
+  bc["bc loss: Dirichlet boundary<br/><b>→ and be zero on the boundary</b>"]:::loss
+  loss["loss = data + lambda·pde + lambda_bc·bc (Poisson only)<br/><b>→ the full training goal (physics only on Poisson)</b>"]:::loss
+  u --> data --> loss
+  u --> lap --> pde --> loss
+  fx --> pde
+  u --> bc --> loss
+  classDef lfdata fill:#dbeafe,stroke:#2563eb,color:#1e3a5f;
+  classDef module fill:#f1f5f9,stroke:#64748b,color:#1e293b;
+  classDef fusion fill:#dcfce7,stroke:#16a34a,stroke-width:2px,color:#14532d;
+  classDef output fill:#ede9fe,stroke:#7c3aed,color:#4c1d95;
+  classDef loss fill:#fee2e2,stroke:#dc2626,color:#7f1d1d,stroke-dasharray:4 3;
+</pre>
+        <p class="text-xs font-semibold mt-1" style="color:#15803d">Performance payoff — #2 / lowest error (~1.2%) — FiLM + PINN stacked on transfer; the two green blocks are where the win comes from.</p>
+          </div>
+          <p class="text-sm text-base-content/65">FiLM conditions on <b>X, not m</b> (zero-init ⇒ identity at start). <code>f(X)</code> is fit once by least-squares to the HF Laplacian (rel-L2 ≈ 1e-7); physics weight ramps in after 50% of epochs. Non-Poisson datasets fall back to plain FiLM-transfer.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Section 2: coregionalization ===== -->
+  <section class="mb-10">
+    <h2 class="text-2xl font-bold text-primary mb-1">2 · Coregionalization — continuous-fidelity head</h2>
+    <p class="text-base-content/75 mb-4 max-w-3xl">The fidelity index <code>m</code> modulates a latent field. Three families differ in <em>how</em> m enters.</p>
+    <div class="grid lg:grid-cols-3 gap-5">
+
+      <div class="card card-border bg-base-200">
+        <div class="card-body p-5">
+          <div class="flex items-center justify-between flex-wrap gap-2"><h3 class="card-title text-base">fno_coregionalization</h3><span class="badge badge-soft">#20</span></div>
+          <p class="text-sm text-base-content/70">IFC basis: m = mixing weights over K latent fields.</p>
+          <div class="diagram-panel mt-1">
+<pre class="mermaid">
+flowchart TD
+  X["cond X<br/><b>→ the equation's settings</b>"]:::lfdata
+  back["FNO backbone<br/><b>→ shared FNO (it never sees the fidelity level)</b>"]:::module
+  h["latent basis h · K x H x W<br/><b>→ K reusable building-block fields</b>"]:::module
+  m["fidelity m<br/><b>→ the fidelity level</b>"]:::hfdata
+  bm["B(m) = MLP[m, m^2] · K coeffs<br/><b>→ the fidelity level sets how much of each building block to use</b>"]:::fusion
+  sum["sum_k B_k(m)·h_k(x)<br/><b>→ blend the building blocks by fidelity = the fusion</b>"]:::fusion
+  out["HF field · x scaler[m]<br/><b>→ the predicted field (rescaled)</b>"]:::output
+  X --> back --> h --> sum
+  m --> bm --> sum --> out
+  classDef lfdata fill:#dbeafe,stroke:#2563eb,color:#1e3a5f;
+  classDef hfdata fill:#fef3c7,stroke:#d97706,color:#7c2d12;
+  classDef module fill:#f1f5f9,stroke:#64748b,color:#1e293b;
+  classDef fusion fill:#dcfce7,stroke:#16a34a,stroke-width:2px,color:#14532d;
+  classDef output fill:#ede9fe,stroke:#7c3aed,color:#4c1d95;
+</pre>
+        <p class="text-xs font-semibold mt-1" style="color:#15803d">Performance payoff — #20 — clean IFC baseline; m-as-basis works but trails the transfer families.</p>
+          </div>
+          <p class="eq mt-2 p-2 rounded bg-base-300">y = scaler[m]·Σ B_k(m)·h_k(x)</p>
+          <p class="text-sm text-base-content/65">Backbone never sees m — it only sets the K mixing weights.</p>
+        </div>
+      </div>
+
+      <div class="card card-border bg-base-200">
+        <div class="card-body p-5">
+          <div class="flex items-center justify-between flex-wrap gap-2"><h3 class="card-title text-base">fno_coreg_conditioned</h3><span class="badge badge-soft">#13</span></div>
+          <p class="text-sm text-base-content/70">FiLM-via-LayerNorm: m modulates inside every block.</p>
+          <div class="diagram-panel mt-1">
+<pre class="mermaid">
+flowchart TD
+  X["cond X<br/><b>→ the equation's settings</b>"]:::lfdata
+  lift["lift<br/><b>→ widen to the working features</b>"]:::module
+  block["FNO block · SpectralConv + 1x1<br/><b>→ one FNO layer</b>"]:::module
+  film["FiLMNorm · GroupNorm then gamma(m)·z + beta(m)<br/><b>→ the fidelity level tweaks the features in every layer = the fusion</b>"]:::fusion
+  m["fidelity m<br/><b>→ the fidelity level</b>"]:::hfdata
+  mlp["FiLM MLP[m, m^2] · zero-init<br/><b>→ turn the fidelity level into those tweaks</b>"]:::fusion
+  proj["proj to 1ch<br/><b>→ shrink to one output</b>"]:::module
+  out["HF field · x scaler[m]<br/><b>→ the predicted field (rescaled)</b>"]:::output
+  X --> lift --> block --> film --> proj --> out
+  m --> mlp --> film
+  film -->|"x n blocks"| block
+  classDef lfdata fill:#dbeafe,stroke:#2563eb,color:#1e3a5f;
+  classDef hfdata fill:#fef3c7,stroke:#d97706,color:#7c2d12;
+  classDef module fill:#f1f5f9,stroke:#64748b,color:#1e293b;
+  classDef fusion fill:#dcfce7,stroke:#16a34a,stroke-width:2px,color:#14532d;
+  classDef output fill:#ede9fe,stroke:#7c3aed,color:#4c1d95;
+</pre>
+        <p class="text-xs font-semibold mt-1" style="color:#15803d">Performance payoff — #13 — FiLM-in-norm conditioning lifts it above the plain K-basis (#20).</p>
+          </div>
+          <p class="eq mt-2 p-2 rounded bg-base-300">y = scaler[m]·Proj(blocks with gamma(m),beta(m))</p>
+          <p class="text-sm text-base-content/65">No K-basis; conditioning lives in the backbone's norm layers.</p>
+        </div>
+      </div>
+
+      <div class="card card-border bg-base-200">
+        <div class="card-body p-5">
+          <div class="flex items-center justify-between flex-wrap gap-2"><h3 class="card-title text-base">fno_coreg_residual</h3><span class="badge badge-soft">#21</span></div>
+          <p class="text-sm text-base-content/70">Hybrid: MFRNP aggregator + zero-init basis residual (two fusions).</p>
+          <div class="diagram-panel mt-1">
+<pre class="mermaid">
+flowchart TD
+  X["cond X<br/><b>→ the equation's settings</b>"]:::lfdata
+  lf["3 LF FNOs · native 8,16,32<br/><b>→ one FNO for each cheap level</b>"]:::lfdata
+  dec["3 decoders to 1ch<br/><b>→ turn each level into a field</b>"]:::module
+  up["upsample to 64, concat<br/><b>→ resize the cheap fields to the fine grid and stack them</b>"]:::module
+  m["fidelity m<br/><b>→ the fidelity level</b>"]:::hfdata
+  agg["MFRNP aggregator · m as 4th channel<br/><b>→ blend the cheap fields into a first guess = fusion 1</b>"]:::fusion
+  hf["HF FNO · latent h, K<br/><b>→ fine-level features</b>"]:::module
+  basis["basis B(m) · zero-init<br/><b>→ fidelity-weighted building blocks (start at zero)</b>"]:::fusion
+  res["sum_k B_k(m)·h_k(x)<br/><b>→ a correction on top</b>"]:::module
+  add["pred = agg + residual<br/><b>→ first guess + correction = fusion 2 (starts as just the first guess)</b>"]:::fusion
+  out["HF field<br/><b>→ the predicted field</b>"]:::output
+  X --> lf --> dec --> up --> agg
+  m --> agg --> add
+  X --> hf --> res
+  m --> basis --> res --> add --> out
+  classDef lfdata fill:#dbeafe,stroke:#2563eb,color:#1e3a5f;
+  classDef hfdata fill:#fef3c7,stroke:#d97706,color:#7c2d12;
+  classDef module fill:#f1f5f9,stroke:#64748b,color:#1e293b;
+  classDef fusion fill:#dcfce7,stroke:#16a34a,stroke-width:2px,color:#14532d;
+  classDef output fill:#ede9fe,stroke:#7c3aed,color:#4c1d95;
+</pre>
+        <p class="text-xs font-semibold mt-1" style="color:#15803d">Performance payoff — #21 — hybrid; the zero-init residual keeps it stable but adds little over the aggregator.</p>
+          </div>
+          <p class="eq mt-2 p-2 rounded bg-base-300">y = agg(x,m) + Σ B_k(m)·h_k(x)</p>
+          <p class="text-sm text-base-content/65">Zero-init basis ⇒ starts as the pure MFRNP aggregator, then grows the residual.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Section 3: discrepancy ===== -->
+  <section class="mb-10">
+    <h2 class="text-2xl font-bold text-primary mb-1">3 · Discrepancy / multi-level correction</h2>
+    <p class="text-base-content/75 mb-3 max-w-3xl">Classical surrogate-correction rules, FNO-ized: <code>HF = baseline + delta</code>. Shown: <code>fno_mf_stack</code> (representative; <code>fno_additive</code>, <code>fno_autoregressive</code>, <code>fno_multilevel</code> are the same idea with different baselines — see open questions).</p>
+    <div class="card card-border bg-base-200">
+      <div class="card-body p-5">
+        <div class="flex items-center justify-between flex-wrap gap-2"><h3 class="card-title text-lg">fno_mf_stack</h3><span class="badge badge-soft">#17</span></div>
+        <div class="diagram-panel mt-1">
+<pre class="mermaid">
+flowchart TD
+  X["cond X<br/><b>→ the equation's settings</b>"]:::lfdata
+  l1["LF FNO 8x8<br/><b>→ small FNO on the 8x8 data</b>"]:::lfdata
+  l2["LF FNO 16x16<br/><b>→ small FNO on the 16x16 data</b>"]:::lfdata
+  l3["LF FNO 32x32<br/><b>→ small FNO on the 32x32 data</b>"]:::lfdata
+  up["upsample to 64, concat<br/><b>→ resize those to the fine grid and stack</b>"]:::module
+  m["fidelity m<br/><b>→ the fidelity level</b>"]:::hfdata
+  agg["MFRNP aggregator · + m channel<br/><b>→ blend them into a first guess</b>"]:::fusion
+  base["baseline · 64 x 64<br/><b>→ the first guess</b>"]:::module
+  hf["HF FNO · X + grid + baseline<br/><b>→ FNO that sees the first guess</b>"]:::module
+  delta["delta<br/><b>→ the correction it adds</b>"]:::module
+  out["HF = baseline + delta<br/><b>→ first guess + correction = the fusion</b>"]:::output
+  X --> l1 --> up
+  X --> l2 --> up
+  X --> l3 --> up
+  up --> agg
+  m --> agg --> base --> hf --> delta
+  base --> out
+  delta --> out
+  classDef lfdata fill:#dbeafe,stroke:#2563eb,color:#1e3a5f;
+  classDef hfdata fill:#fef3c7,stroke:#d97706,color:#7c2d12;
+  classDef module fill:#f1f5f9,stroke:#64748b,color:#1e293b;
+  classDef fusion fill:#dcfce7,stroke:#16a34a,stroke-width:2px,color:#14532d;
+  classDef output fill:#ede9fe,stroke:#7c3aed,color:#4c1d95;
+</pre>
+        <p class="text-xs font-semibold mt-1" style="color:#15803d">Performance payoff — #17 — residual-on-baseline lets the 5 HF samples supervise only a correction, not the whole field.</p>
+        </div>
+        <p class="text-sm text-base-content/65 mt-2">3 small per-fidelity FNOs at native resolution → upsample → MLP aggregator ("decoder-in-the-aggregation") makes an HF baseline; a 4th HF FNO conditioned on that baseline predicts only the residual delta. The 5 HF samples supervise a correction, not the whole field.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Section 4: FIRE ===== -->
+  <section class="mb-10">
+    <h2 class="text-2xl font-bold text-primary mb-1">4 · FIRE — distribution-conditioned residual</h2>
+    <p class="text-base-content/75 mb-3 max-w-3xl">The novelty: the HF correction is conditioned on the LF <b>predictive distribution</b> (not just its mean), so it can localize where LF error concentrates. 11 families share this; they differ only in how the LF distribution is produced.</p>
+    <div class="card card-border bg-base-200">
+      <div class="card-body p-5">
+        <div class="flex items-center justify-between flex-wrap gap-2"><h3 class="card-title text-lg">fno_fire_distcond <span class="text-base-content/50 text-sm font-normal">(keeper) · fno_fire_mcdropout (cheap variant)</span></h3><span class="badge badge-soft badge-success">#3 · #24</span></div>
+        <div class="diagram-panel mt-1">
+<pre class="mermaid">
+flowchart TD
+  lf["LF data · X_lf, Y_lf · abundant<br/><b>→ the plentiful cheap data</b>"]:::lfdata
+  hf["HF data · X_hf, Y_hf · scarce<br/><b>→ the few accurate samples</b>"]:::hfdata
+  lfm["LF model · E=5 FNO ensemble · OR 1 MC-dropout FNO, T=16<br/><b>→ make several cheap predictions to gauge uncertainty</b>"]:::module
+  summ["per-pixel · mu, sigma, q10, q50, q90<br/><b>→ for each pixel: average, spread, and percentiles</b>"]:::module
+  aug["aug · 5 channels<br/><b>→ those 5 uncertainty maps</b>"]:::module
+  mu["mu_LF · mean field<br/><b>→ the average cheap prediction</b>"]:::module
+  resid["residual r = Y_hf - mu_LF · on HF inputs<br/><b>→ what the correction must learn (accurate minus average)</b>"]:::module
+  delta["FNO2dAug delta · cond on X + aug<br/><b>→ correction that also sees where the cheap model is unsure = the fusion</b>"]:::fusion
+  fuse["HF = mu_LF + delta<br/><b>→ average + correction; the uncertainty shows where to fix</b>"]:::output
+  lf --> lfm --> summ
+  summ --> aug
+  summ --> mu
+  hf --> resid
+  mu --> resid
+  aug --> delta
+  resid --> delta
+  mu --> fuse
+  delta --> fuse
+  classDef lfdata fill:#dbeafe,stroke:#2563eb,color:#1e3a5f;
+  classDef hfdata fill:#fef3c7,stroke:#d97706,color:#7c2d12;
+  classDef module fill:#f1f5f9,stroke:#64748b,color:#1e293b;
+  classDef fusion fill:#dcfce7,stroke:#16a34a,stroke-width:2px,color:#14532d;
+  classDef output fill:#ede9fe,stroke:#7c3aed,color:#4c1d95;
+</pre>
+        <p class="text-xs font-semibold mt-1" style="color:#15803d">Performance payoff — #3 (the keeper) — conditioning on LF uncertainty handles heteroscedastic error that mean-only methods miss.</p>
+        </div>
+        <p class="text-sm text-base-content/65 mt-2">Two fusions: the 5 distribution fields enter the HF network's channels (<b>conditioning fusion</b>, green), then <code>HF = mu_LF + delta</code> (additive). <code>distcond</code> = ensemble disagreement, <code>mcdropout</code> = MC-dropout disagreement — identical fields &amp; decomposition, ~1/3 the params. The other 9 FIRE variants (snapshot/swag/batchens/quantile/iqn/mdn/laplace/dkl/cqr) only swap the <code>LF model</code> box.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Section 5: transformer ===== -->
+  <section class="mb-10">
+    <h2 class="text-2xl font-bold text-primary mb-1">5 · Transformer (Transolver) backbones</h2>
+    <p class="text-base-content/75 mb-4 max-w-3xl">Slice-attention instead of an FNO. Two families differ in whether there is a hard residual base.</p>
+    <div class="grid lg:grid-cols-2 gap-5">
+      <div class="card card-border bg-base-200">
+        <div class="card-body p-5">
+          <div class="flex items-center justify-between flex-wrap gap-2"><h3 class="card-title text-base">transolver_residual</h3><span class="badge badge-soft">#23</span></div>
+          <p class="text-sm text-base-content/70">Hard LF-interpolation base + attention delta.</p>
+          <div class="diagram-panel mt-1">
+<pre class="mermaid">
+flowchart TD
+  lf["LF tokens · highest-res stream<br/><b>→ the cheap data points</b>"]:::lfdata
+  hf["HF query tokens<br/><b>→ the points we want to predict</b>"]:::hfdata
+  interp["soft-NN interp · lf_interp at HF points<br/><b>→ a quick guess by copying nearby cheap values</b>"]:::module
+  he["HF encoder · + lf_interp<br/><b>→ encode the target points (plus the quick guess)</b>"]:::module
+  le["LF encoder<br/><b>→ encode the cheap data</b>"]:::module
+  self["self slice-attn on HF<br/><b>→ let target points share information</b>"]:::module
+  cross["cross slice-attn HF to LF<br/><b>→ target points pull info from the cheap data = the fusion</b>"]:::fusion
+  dm["delta MLP · zero-init<br/><b>→ the correction (starts at zero, so it begins at the quick guess)</b>"]:::module
+  out["HF = lf_interp + delta<br/><b>→ quick guess + correction</b>"]:::output
+  lf --> interp
+  hf --> interp
+  hf --> he
+  interp --> he --> self
+  lf --> le
+  he --> cross
+  le --> cross
+  self --> dm
+  cross --> dm --> out
+  interp --> out
+  classDef lfdata fill:#dbeafe,stroke:#2563eb,color:#1e3a5f;
+  classDef hfdata fill:#fef3c7,stroke:#d97706,color:#7c2d12;
+  classDef module fill:#f1f5f9,stroke:#64748b,color:#1e293b;
+  classDef fusion fill:#dcfce7,stroke:#16a34a,stroke-width:2px,color:#14532d;
+  classDef output fill:#ede9fe,stroke:#7c3aed,color:#4c1d95;
+</pre>
+        <p class="text-xs font-semibold mt-1" style="color:#15803d">Performance payoff — #23 — starts at the LF interpolation; attention only has to learn the delta.</p>
+          </div>
+          <p class="text-sm text-base-content/65">Zero-init delta ⇒ training starts exactly at the LF interpolation.</p>
+        </div>
+      </div>
+      <div class="card card-border bg-base-200">
+        <div class="card-body p-5">
+          <div class="flex items-center justify-between flex-wrap gap-2"><h3 class="card-title text-base">transolver_attention_fusion</h3><span class="badge badge-soft">#26</span></div>
+          <p class="text-sm text-base-content/70">Pure stacked cross-attention — no residual base, no gate.</p>
+          <div class="diagram-panel mt-1">
+<pre class="mermaid">
+flowchart TD
+  lf["LF tokens · highest-res stream<br/><b>→ the cheap data points</b>"]:::lfdata
+  hf["HF query tokens<br/><b>→ the points we want to predict</b>"]:::hfdata
+  he["HF encoder · hf_feat<br/><b>→ encode the target points</b>"]:::module
+  le["LF encoder · lf_feat fixed<br/><b>→ encode the cheap data (done once)</b>"]:::module
+  self["self slice-attn block i<br/><b>→ let target points share information</b>"]:::module
+  cross["cross slice-attn block i · q=hf, kv=lf<br/><b>→ target points pull from cheap data, repeated = the fusion (no quick guess)</b>"]:::fusion
+  head["head MLP · zero-init<br/><b>→ make the output (starts at zero)</b>"]:::module
+  out["HF field<br/><b>→ prediction from attention alone</b>"]:::output
+  hf --> he --> self
+  lf --> le
+  self --> cross
+  le --> cross
+  cross -->|"x N blocks"| self
+  cross --> head --> out
+  classDef lfdata fill:#dbeafe,stroke:#2563eb,color:#1e3a5f;
+  classDef hfdata fill:#fef3c7,stroke:#d97706,color:#7c2d12;
+  classDef module fill:#f1f5f9,stroke:#64748b,color:#1e293b;
+  classDef fusion fill:#dcfce7,stroke:#16a34a,stroke-width:2px,color:#14532d;
+  classDef output fill:#ede9fe,stroke:#7c3aed,color:#4c1d95;
+</pre>
+        <p class="text-xs font-semibold mt-1" style="color:#15803d">Performance payoff — #26 — no residual base; pure attention from zero is harder to fit and ranks lower than #23.</p>
+          </div>
+          <p class="text-sm text-base-content/65">LF encoded once, reused as fixed context in every cross block.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Section 6: vision ===== -->
+  <section class="mb-10">
+    <h2 class="text-2xl font-bold text-primary mb-1">6 · Vision-foundation features (honest negative)</h2>
+    <p class="text-base-content/75 mb-4 max-w-3xl">A <b>frozen DINOv2</b> sees the LF field <em>as an image</em>; its embedding conditions the HF correction. Two fusion styles; neither beat the no-DINO baseline.</p>
+    <div class="grid lg:grid-cols-2 gap-5">
+      <div class="card card-border bg-base-200">
+        <div class="card-body p-5">
+          <div class="flex items-center justify-between flex-wrap gap-2"><h3 class="card-title text-base">fno_dino_residual</h3><span class="badge badge-soft badge-warning">#16 · negative</span></div>
+          <p class="text-sm text-base-content/70">Embedding as broadcast spatial channels into FNO_delta.</p>
+          <div class="diagram-panel mt-1">
+<pre class="mermaid">
+flowchart TD
+  X["cond X<br/><b>→ the equation's settings</b>"]:::lfdata
+  fnolf["FNO_LF · predicts LF field<br/><b>→ predict the cheap field</b>"]:::module
+  lf["LF_pred field<br/><b>→ the cheap field</b>"]:::module
+  img["render as image · 224, 3ch, ImageNet-norm<br/><b>→ turn that field into a picture</b>"]:::module
+  dino["DINOv2-base · FROZEN<br/><b>→ a frozen image model reads the picture</b>"]:::frozen
+  emb["CLS embedding 768-d · precomputed<br/><b>→ its summary of the picture (computed once)</b>"]:::frozen
+  proj["embed proj 768 to 64<br/><b>→ shrink that summary</b>"]:::module
+  fuse["concat · X field + coords + embedding field<br/><b>→ the summary guides the correction = the fusion</b>"]:::fusion
+  fnod["FNO_delta · 4 blocks<br/><b>→ predict the correction</b>"]:::module
+  out["HF = LF_pred + delta<br/><b>→ cheap field + correction (the image trick did not help)</b>"]:::output
+  X --> fnolf --> lf --> img --> dino --> emb --> proj --> fuse
+  X --> fuse
+  fuse --> fnod --> out
+  lf --> out
+  classDef lfdata fill:#dbeafe,stroke:#2563eb,color:#1e3a5f;
+  classDef module fill:#f1f5f9,stroke:#64748b,color:#1e293b;
+  classDef fusion fill:#dcfce7,stroke:#16a34a,stroke-width:2px,color:#14532d;
+  classDef output fill:#ede9fe,stroke:#7c3aed,color:#4c1d95;
+  classDef frozen fill:#e5e7eb,stroke:#6b7280,color:#374151,stroke-dasharray:4 3;
+</pre>
+        <p class="text-xs font-semibold mt-1" style="color:#15803d">Performance payoff — #16 (honest negative) — frozen vision features add nothing over the raw LF the FNO already sees.</p>
+          </div>
+          <p class="text-sm text-base-content/65">Ablation partner of <code>fno_additive</code> (same rule minus DINO). Embeddings precomputed once (LF net frozen) ⇒ no per-epoch cost.</p>
+        </div>
+      </div>
+      <div class="card card-border bg-base-200">
+        <div class="card-body p-5">
+          <div class="flex items-center justify-between flex-wrap gap-2"><h3 class="card-title text-base">fno_dino_cond</h3><span class="badge badge-soft badge-warning">negative</span></div>
+          <p class="text-sm text-base-content/70">Embedding concatenated onto X in vector space, before the FNO.</p>
+          <div class="diagram-panel mt-1">
+<pre class="mermaid">
+flowchart TD
+  X["pde params x_pde<br/><b>→ the equation's settings</b>"]:::lfdata
+  fnolf["FNO_LF · predicts LF field<br/><b>→ predict the cheap field</b>"]:::module
+  lf["LF_pred field<br/><b>→ the cheap field</b>"]:::module
+  img["render as image · 224, ImageNet-norm<br/><b>→ turn that field into a picture</b>"]:::module
+  dino["DINOv2-base · FROZEN<br/><b>→ a frozen image model reads it</b>"]:::frozen
+  emb["CLS embedding 768-d<br/><b>→ its summary of the picture</b>"]:::frozen
+  proj["dino proj 768 to 32<br/><b>→ shrink the summary to 32 numbers</b>"]:::module
+  concat["concat in vector space · [x_pde, d]<br/><b>→ tack the summary onto the settings = the fusion</b>"]:::fusion
+  fnohf["FNO · broadcast cond + coords<br/><b>→ FNO on settings + summary</b>"]:::module
+  out["HF = LF_pred + field<br/><b>→ cheap field + prediction (also did not help)</b>"]:::output
+  X --> fnolf --> lf --> img --> dino --> emb --> proj --> concat
+  X --> concat --> fnohf --> out
+  lf --> out
+  classDef lfdata fill:#dbeafe,stroke:#2563eb,color:#1e3a5f;
+  classDef module fill:#f1f5f9,stroke:#64748b,color:#1e293b;
+  classDef fusion fill:#dcfce7,stroke:#16a34a,stroke-width:2px,color:#14532d;
+  classDef output fill:#ede9fe,stroke:#7c3aed,color:#4c1d95;
+  classDef frozen fill:#e5e7eb,stroke:#6b7280,color:#374151,stroke-dasharray:4 3;
+</pre>
+        <p class="text-xs font-semibold mt-1" style="color:#15803d">Performance payoff — honest negative — same null result via vector-space fusion.</p>
+          </div>
+          <p class="text-sm text-base-content/65">Simplest fusion (vector concat). Not a separate leaderboard row.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== cheat sheet ===== -->
+  <section class="mb-10">
+    <h2 class="text-2xl font-bold text-primary mb-3">Fusion-point cheat sheet</h2>
+    <div class="overflow-x-auto rounded-box border border-base-content/10 bg-base-100">
+      <table class="table table-zebra table-sm">
+        <thead><tr class="text-primary"><th>Family</th><th>Where LF+HF fuse</th><th>How m / X enters</th><th>Starts from</th><th>Rank</th></tr></thead>
+        <tbody>
+          <tr><td>mf_fno_transfer(_film)</td><td>shared weights across stages</td><td>X via concat or FiLM; m absent</td><td>LF-pretrained net</td><td>#8 / #1</td></tr>
+          <tr><td>mf_fno_pinn_transfer</td><td>shared weights + PDE-residual on LF∪HF collocation</td><td>X via FiLM; m absent</td><td>LF-pretrained net</td><td>#2</td></tr>
+          <tr><td>fno_coregionalization</td><td>B(m) outer-product over K latents</td><td>m as mixing weights</td><td>random</td><td>#20</td></tr>
+          <tr><td>fno_coreg_conditioned</td><td>FiLM-via-LayerNorm in every block</td><td>m as gamma,beta</td><td>identity (zero-init)</td><td>#13</td></tr>
+          <tr><td>fno_coreg_residual</td><td>MFRNP aggregator + basis residual</td><td>m at both fusions</td><td>pure aggregator</td><td>#21</td></tr>
+          <tr><td>fno_mf_stack</td><td>aggregator baseline + HF residual</td><td>m as aggregator channel</td><td>aggregated LF baseline</td><td>#17</td></tr>
+          <tr><td>fno_fire_distcond</td><td>LF distribution fields condition delta; HF=mu+delta</td><td>X to delta; LF dist via [mu,sigma,q*]</td><td>LF mean field</td><td>#3</td></tr>
+          <tr><td>transolver_residual</td><td>soft-NN LF interp + cross-attn delta</td><td>tokens carry coords+cond+value</td><td>LF interpolation</td><td>#23</td></tr>
+          <tr><td>transolver_attention_fusion</td><td>stacked cross-attention (no base)</td><td>HF queries attend to LF context</td><td>zero</td><td>#26</td></tr>
+          <tr><td>fno_dino_residual</td><td>frozen-DINO embedding conditions delta; HF=LF+delta</td><td>X + DINO(image of LF)</td><td>LF_pred field</td><td>#16</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ===== open questions ===== -->
+  <section class="mb-6">
+    <div role="alert" class="alert alert-warning alert-soft flex-col items-start gap-2">
+      <h2 class="font-bold text-lg">Open questions for you (annotate / reply)</h2>
+      <ol class="list-decimal ml-5 text-sm space-y-1">
+        <li><b>Coverage:</b> the 6 cluster-only families (<code>fno_additive</code>, <code>fno_autoregressive</code>, <code>fno_multilevel</code>, <code>mfrnp</code>, <code>mf_deeponet</code>, <code>d_mfd</code>) aren't here because their <code>model.py</code> isn't in this checkout. Want me to diagram them too (I'd pull the code from the cluster path)?</li>
+        <li><b>Granularity:</b> archetypes are shown via one representative each. Want every individual family expanded into its own diagram, or is the archetype + cheat sheet the right altitude?</li>
+        <li><b>Depth:</b> should the shared-backbone diagram drill into one FNO block internally (spectral truncation bands, modes cap), or keep it as the single overview?</li>
+        <li><b>Output:</b> once you're happy, want these baked into the PDF report, or kept as a standalone HTML / exported to SVG/PNG?</li>
+      </ol>
+    </div>
+  </section>
+
+  <footer class="text-xs text-base-content/40 border-t border-base-content/10 pt-3">
+    MFFP model-structure review surface · diagrams extracted from family <code>model.py</code> / <code>smoke_eval.py</code> · relationships marked green are the multi-fidelity fusion points · annotate to steer the next pass.
+  </footer>
+</div>
+</body>
+</html>

@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="corporate">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MFFP model zoo — explained from first principles</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daisyui@5.5.19/daisyui.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daisyui@5.5.19/themes.css">
+<script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.2.4/dist/index.global.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  :where(.grid, .flex) > * { min-width: 0; }
+  :where(p, h1, h2, h3, h4, li, dd, td, th, .badge, .label) { overflow-wrap: anywhere; }
+  :where(img, svg, video, canvas, iframe) { max-width: 100%; height: auto; }
+  .diagram-panel { background:#fbfbfd; border-radius:0.9rem; padding:0.6rem 0.4rem; overflow-x:auto; border:1px solid #e2e3ea; }
+  .diagram-panel pre.mermaid { background:transparent; margin:0; text-align:center; }
+  .eq { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size:0.85rem; background:#f8fafc; border:1px solid #e2e8f0; border-radius:0.5rem; padding:0.4rem 0.7rem; display:inline-block; }
+  .blocktable td:first-child { white-space:nowrap; font-weight:600; }
+  .blocktable td { vertical-align: top; font-size: 0.82rem; }
+  .blocktable th { font-size: 0.78rem; }
+  .stepnum { display:inline-flex; align-items:center; justify-content:center; width:1.35rem; height:1.35rem; border-radius:9999px; background:#1d4ed8; color:white; font-size:0.75rem; font-weight:700; margin-right:0.35rem; flex:none; }
+  .hfnote { border-left: 3px solid #d97706; background:#fffbeb; padding:0.5rem 0.8rem; border-radius:0 0.5rem 0.5rem 0; font-size:0.83rem; }
+  .auditnote { border-left: 3px solid #dc2626; background:#fef2f2; padding:0.45rem 0.8rem; border-radius:0 0.5rem 0.5rem 0; font-size:0.8rem; }
+  .anchornote { border-left: 3px solid #7c3aed; background:#f5f3ff; padding:0.5rem 0.8rem; border-radius:0 0.5rem 0.5rem 0; font-size:0.85rem; }
+  .rank-badge { font-variant-numeric: tabular-nums; }
+</style>
+<script type="module">
+  import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11.15.0/dist/mermaid.esm.min.mjs";
+  mermaid.initialize({ startOnLoad: false, theme: "neutral", securityLevel: "loose",
+                       flowchart: { htmlLabels: true, curve: "basis", padding: 8 } });
+  // Render manually with explicit unique ids: startOnLoad derives SVG ids from a ms
+  // timestamp, and same-millisecond renders collide (styles/defs then pile into one SVG).
+  const pres = document.querySelectorAll("pre.mermaid");
+  let n = 0;
+  for (const pre of pres) {
+    const src = pre.innerHTML.replaceAll("&gt;", ">").replaceAll("&lt;", "<").replaceAll("&amp;", "&");
+    try {
+      const { svg } = await mermaid.render("mmdiag" + (n++), src);
+      const holder = document.createElement("div");
+      holder.innerHTML = svg;
+      pre.replaceWith(holder.firstElementChild);
+    } catch (e) { console.error("mermaid render failed on block", n - 1, e); }
+  }
+</script>
+</head>
+<body class="bg-base-100 text-base-content">
+<div class="max-w-6xl mx-auto px-4 py-8">
+
+  <!-- ===================== header ===================== -->
+  <header class="mb-6">
+    <p class="text-sm uppercase tracking-widest text-primary/80 mb-1">MFFP · multi-fidelity field prediction · model zoo · in-depth edition</p>
+    <h1 class="text-3xl sm:text-4xl font-bold text-primary mb-2">The model zoo, explained from first principles</h1>
+    <p class="text-base-content/80 max-w-3xl">
+      This is the beginner-friendly companion to <code>model_explanations.html</code>: <b>same 30 model families, same audited
+      numbers, but nothing is assumed beyond an intro machine-learning class</b> (train/test splits, overfitting, CNNs, MSE loss).
+      Every concept specific to this project — PDEs, fields, fidelity, Fourier Neural Operators, uncertainty — is built up
+      from scratch before it is used. All specs come from the same 2026-07-02 line-by-line code read as the original page.
+    </p>
+  </header>
+
+  <!-- how to read -->
+  <div class="grid md:grid-cols-3 gap-4 mb-6">
+    <div class="card card-border bg-base-200 md:col-span-2">
+      <div class="card-body p-5">
+        <h2 class="card-title text-lg">How to read this page</h2>
+        <ul class="text-sm text-base-content/80 space-y-1 list-disc ml-4">
+          <li><b>Read sections 0–3 in order</b> — they build the vocabulary. After that, every model-family section stands alone.</li>
+          <li>Each family section opens with a violet <b>"If you know intro ML, think…"</b> box that maps the idea onto something you have already seen (ImageNet pretraining, ensembles, boosting, transformers…).</li>
+          <li>Numbered markers (③) in a diagram match the numbered rows of the table directly below it — the diagram shows <i>where</i> a block sits, its row explains <i>what it computes / why it exists / what it buys</i>.</li>
+          <li>Colors are consistent everywhere:
+              <span class="badge badge-sm" style="background:#dbeafe;color:#1e3a5f">blue</span> = low-fidelity (cheap) data,
+              <span class="badge badge-sm" style="background:#fef3c7;color:#7c2d12">amber</span> = high-fidelity (expensive) data or its parameters,
+              <span class="badge badge-sm" style="background:#dcfce7;color:#14532d;border:2px solid #16a34a"><b>green</b></span> = the fusion point — the one thing that differs across families,
+              <span class="badge badge-sm" style="background:#ede9fe;color:#4c1d95">violet</span> = the prediction.</li>
+          <li>Amber boxes preview how each family should behave on the upcoming sharp/shock-wave datasets (SURF-2026); red boxes are "fine print" from the code audit — places where the code differs from what its name suggests.</li>
+          <li>Families whose code lives only on the compute cluster (not in this git checkout) are marked <span class="badge badge-sm badge-neutral">cluster-only</span>.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="card card-border bg-base-200">
+      <div class="card-body p-5">
+        <h2 class="card-title text-lg">Table of contents</h2>
+        <ol class="text-sm text-base-content/80 space-y-1 list-decimal ml-4" start="0">
+          <li><a class="link" href="#sec-problem">The problem, in plain terms</a></li>
+          <li><a class="link" href="#sec-ml">The same problem, in ML terms</a></li>
+          <li><a class="link" href="#sec-routes">The one design axis</a></li>
+          <li><a class="link" href="#sec-backbone">The FNO backbone, from scratch</a></li>
+          <li><a class="link inline-block" href="#sec-transfer">Transfer</a> · <a class="link inline-block" href="#sec-fire">FIRE</a> · <a class="link inline-block" href="#sec-coreg">Coregionalization</a> · <a class="link inline-block" href="#sec-disc">Correction&nbsp;stacks</a> · <a class="link inline-block" href="#sec-attn">Attention</a> · <a class="link inline-block" href="#sec-dino">Vision&nbsp;features</a> · <a class="link inline-block" href="#sec-ext">External</a></li>
+          <li><a class="link inline-block" href="#sec-leaderboard">Leaderboard</a> · <a class="link inline-block" href="#sec-glossary">Glossary</a> · <a class="link inline-block" href="#sec-audit">Fine&nbsp;print</a></li>
+        </ol>
+        <p class="text-xs text-base-content/50 mt-2">Design matches the original artifact (Tailwind + DaisyUI CDN); portable — renders identically without the lavish server.</p>
+      </div>
+    </div>
+  </div>
+
+  <div role="alert" class="alert alert-soft alert-info mb-8">
+    <span class="text-sm">Annotate anything that is still unclear — click any node, table row, or sentence. Structured questions for you are at the <a class="link" href="#sec-questions">bottom</a>.</span>
+  </div>
+
+  <!-- ===================== 0. the problem ===================== -->
+  <section id="sec-problem" class="mb-10">
+    <h2 class="text-2xl font-bold mb-3">0 · The problem, in plain terms</h2>
+    <p class="text-sm text-base-content/80 max-w-4xl mb-3">
+      Engineers and scientists constantly need to know how a physical quantity is distributed over space:
+      the temperature at every point of a heated plate, the pressure at every point around a wing, the humidity at every point of the atmosphere.
+      Such a "value at every point" object is called a <b>field</b> — for us, concretely, <b>an image</b> (a 2-D grid of numbers, e.g. 128×128).
+    </p>
+    <p class="text-sm text-base-content/80 max-w-4xl mb-3">
+      Physics tells you which field is the right one through a <b>partial differential equation (PDE)</b> — an equation that constrains how the field
+      bends and flows locally (you may have seen the heat equation in a calculus class; that is exactly the kind of thing meant here).
+      You almost never solve a PDE with pen and paper. Instead, a <b>numerical solver</b> chops space into a grid and grinds out the field cell by cell.
+      And here is the economic fact the whole project rests on: <b>the finer the grid, the more accurate the field — and the much more expensive the solve</b>.
+      Halving the cell size in both directions multiplies the work by roughly 4–8×. A coarse 32×32 solve might take seconds; a fine 256×256 solve, hours.
+    </p>
+    <div class="diagram-panel mb-3">
+<pre class="mermaid">
+flowchart LR
+  P["<b>one physical scenario</b><br/>described by a handful of numbers X<br/><i>e.g. heat-source strength, boundary values</i>"]:::hf
+  LO["<b>cheap solver · low fidelity (LF)</b><br/>coarse grid, seconds per run<br/><i>blurry, sometimes puts features<br/>slightly in the wrong place</i>"]:::lf
+  HI["<b>expensive solver · high fidelity (HF)</b><br/>fine grid, hours per run<br/><i>sharp and trustworthy</i>"]:::hf
+  DL["<b>thousands of LF fields</b><br/>we can afford these"]:::lf
+  DH["<b>a handful of HF fields</b><br/>we cannot afford many"]:::hf
+  G["<b>the goal</b><br/>a neural network that maps<br/>X → the HF field directly,<br/>in milliseconds"]:::out
+  P --> LO --> DL
+  P --> HI --> DH
+  DL --> G
+  DH --> G
+  classDef lf fill:#dbeafe,stroke:#2563eb,color:#1e3a5f;
+  classDef hf fill:#fef3c7,stroke:#d97706,color:#7c2d12;
+  classDef out fill:#ede9fe,stroke:#7c3aed,color:#4c1d95;
+</pre>
+    </div>
+    <p class="text-sm text-base-content/80 max-w-4xl mb-3">
+      <b>"Fidelity" just means "how trustworthy the simulation is."</b> Low-fidelity (LF) = the cheap draft: coarse grid, loose tolerances, big timesteps.
+      High-fidelity (HF) = the expensive final: fine grid, tight tolerances. An LF field of the same scenario looks like a blurry,
+      slightly distorted version of the HF field — right about the broad strokes, wrong about fine detail, and occasionally wrong about
+      <i>where</i> a feature sits. Some datasets have a whole <b>ladder</b> of fidelities (e.g. grids of 8×8, 16×16, 32×32, then the HF grid), not just two rungs.
+    </p>
+    <p class="text-sm text-base-content/80 max-w-4xl">
+      <b>Multi-fidelity field prediction (MFFP)</b> is then: given <i>lots</i> of cheap LF fields and <i>very few</i> expensive HF fields,
+      train a model that predicts the HF field for a brand-new scenario X. The scientific question behind the whole model zoo:
+      <b>what is the best way to make the abundant cheap data compensate for the scarcity of the expensive data?</b>
+      Each of the 30 families is one answer to that question.
+    </p>
+  </section>
+
+  <!-- ===================== 1. as ML ===================== -->
+  <section id="sec-ml" class="mb-10">
+    <h2 class="text-2xl font-bold mb-3">1 · The same problem, in ML terms you already know</h2>
+    <p class="text-sm text-base-content/80 max-w-4xl mb-3">
+      Strip the physics away and this is <b>supervised regression where the output is an image</b>.
+      The table maps it onto a project you might have done in class:
+    </p>
+    <div class="overflow-x-auto mb-4">
+      <table class="table table-sm blocktable">
+        <thead><tr><th></th><th>A typical intro-ML project</th><th>This project</th></tr></thead>
+        <tbody>
+          <tr><td>Input</td><td>A feature vector (house size, rooms, …).</td><td>The <b>condition vector X</b>: ~3–10 numbers describing the scenario (PDE coefficients, boundary values, …). This is the <i>only</i> input every family is guaranteed at test time. Note that the PDE <i>equation itself is never an input</i>: each dataset is one fixed PDE family, and a separate model is trained per dataset, so the network learns that family's parameter→solution map implicitly from examples — it never "sees" the equation. The equation is used explicitly in exactly one place in the zoo: the physics loss of <code>mf_fno_pinn_transfer</code> (section 4), and only on the two Poisson datasets where it is known in closed form.</td></tr>
+          <tr><td>Output</td><td>One number (price).</td><td>An entire image — the HF field, up to 256×256 numbers. So the network is closer to an image <i>generator</i> than a scalar regressor, but it is still trained like a regressor.</td></tr>
+          <tr><td>Loss</td><td>MSE.</td><td>Also MSE (in a normalized space — see the backbone section). No GANs, no diffusion; plain regression.</td></tr>
+          <tr><td>Training data</td><td>One dataset of (input, label) pairs.</td><td><b>Two unequal pools</b>: thousands of (X, LF field) pairs and only a handful of (X, HF field) pairs. This asymmetry is the entire subject.</td></tr>
+          <tr><td>The catch</td><td>Not enough data → overfit.</td><td>Exactly that, but with an escape hatch: the LF pool is cheap, plentiful, and <i>related</i> to the target. Every model family is a different scheme for exploiting that relatedness.</td></tr>
+          <tr><td>Evaluation</td><td>Test-set MSE / accuracy.</td><td><b>Relative L2 error</b> ("rel-L2"): flatten prediction and truth into long vectors and compute ‖pred − truth‖ ⁄ ‖truth‖. A rel-L2 of 0.015 means the error is 1.5% the size of the true field — small is good. The benchmark's nRMSE is a close cousin of the same idea.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="text-sm text-base-content/80 max-w-4xl mb-3">
+      Why not just train a big network on the HF pairs and call it a day? Because with tens of examples, a network with millions of
+      parameters memorizes instead of generalizing — the classic small-data failure. And why not train on the LF pairs?
+      Because then you learn to predict the blurry draft, not the sharp answer.
+      <b>Every family below is a different way to have it both ways.</b>
+    </p>
+    <p class="text-sm text-base-content/80 max-w-4xl">
+      One benchmark detail worth knowing up front: the zoo is scored on <b>17 datasets</b> (heat flow, Poisson problems, weather fields, …),
+      and models are ranked two ways — by <b>Elo</b> (the chess rating, here computed from per-dataset pairwise wins: beating many models on many datasets
+      → high Elo, robust to one catastrophic dataset) and by <b>median rel-L2</b> (typical error size). The two can disagree, and the
+      leaderboard section explains how to read that.
+    </p>
+  </section>
+
+  <!-- ===================== 2. the one design axis ===================== -->
+  <section id="sec-routes" class="mb-10">
+    <h2 class="text-2xl font-bold mb-3">2 · The one design axis: where does the LF data go?</h2>
+    <p class="text-sm text-base-content/80 max-w-4xl mb-3">
+      Thirty families sounds like a lot, but one binary choice organizes all of them.
+      The cheap LF data can enter the model in exactly two places, and everything else is detail:
+    </p>
+    <div class="diagram-panel mb-3">
+<pre class="mermaid">
+flowchart LR
+  X["<b>condition vector X</b><br/>PDE parameters, ~3-10 numbers<br/><i>the only input every family gets at test time</i>"]:::hf
+  LF["<b>LF fields</b><br/>many cheap coarse solves<br/><i>blurry, sometimes mispositioned</i>"]:::lf
+  A["<b>Route 1 · LF as training schedule</b><br/>pretrain on LF, fine-tune on HF<br/><i>LF shapes the weights, then is thrown away</i>"]:::mod
+  B["<b>Route 2 · LF as input</b><br/>the LF field enters the forward pass<br/><i>as a baseline to correct, as extra input<br/>channels, or as attention context</i>"]:::fuse
+  Y["<b>HF field prediction</b>"]:::out
+  X --> A --> Y
+  X --> B --> Y
+  LF -. "training targets only" .-> A
+  LF == "consumed at test time" ==> B
+  classDef lf fill:#dbeafe,stroke:#2563eb,color:#1e3a5f;
+  classDef hf fill:#fef3c7,stroke:#d97706,color:#7c2d12;
+  classDef mod fill:#f1f5f9,stroke:#64748b,color:#1e293b;
+  classDef fuse fill:#dcfce7,stroke:#16a34a,stroke-width:2.5px,color:#14532d;
+  classDef out fill:#ede9fe,stroke:#7c3aed,color:#4c1d95;
+</pre>
+    </div>
+    <div class="anchornote mb-3">
+      <b>If you know intro ML, think:</b> Route 1 is <b>pretraining + fine-tuning</b> — exactly the "pretrain on ImageNet,
+      fine-tune on your small medical-imaging dataset" pattern, with LF playing ImageNet's role.
+      Route 2 is <b>feature engineering</b> — the LF field becomes part of the model's input, like adding a strong-but-imperfect
+      feature column to a tabular model.
+    </div>
+    <div class="overflow-x-auto">
+      <table class="table table-sm blocktable">
+        <thead><tr><th>Route</th><th>Families</th><th>Why it can win</th><th>Why it can lose</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>1 · schedule only</td>
+            <td class="font-mono text-xs">mf_fno_transfer(+_2m,_film), mf_fno_pinn_transfer, all fno_coreg*</td>
+            <td>Simple; the abundant LF data regularizes the weights (the network arrives at HF fine-tuning already knowing "what solutions of this PDE look like"); nothing noisy enters at test time. Currently ranks #1–#2.</td>
+            <td>At test time the model never looks at the LF field for <i>this specific scenario</i> — it must reconstruct everything from the ~3–10 numbers in X. Fine when X determines the field smoothly; costly when the field has sharp features whose exact position is hard to regress from X alone.</td>
+          </tr>
+          <tr>
+            <td>2 · LF as input</td>
+            <td class="font-mono text-xs">fno_fire_* (mean + uncertainty fields), fno_mf_stack / fno_additive-style (baseline + correction), transolver_* &amp; v9 (attention context), fno_dino_* (global embedding)</td>
+            <td>The LF field carries per-sample information X cannot: an actual (if blurry) picture of this scenario's solution. Predicting a small correction to a decent baseline is usually easier than predicting the whole field.</td>
+            <td>The model inherits LF's blur and mispositioning. Worst case: LF drew a sharp feature in the wrong place, and a "baseline + correction" model must first <i>erase</i> the wrong feature and then <i>redraw</i> it elsewhere — twice the work of just drawing it right.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ===================== 3. backbone ===================== -->
+  <section id="sec-backbone" class="mb-10">
+    <h2 class="text-2xl font-bold mb-1">3 · The FNO backbone, from scratch — read once, reused by 24 of 30 families</h2>
+    <p class="text-sm text-base-content/80 max-w-4xl mb-3">
+      Almost every family uses the same network — a <b>Fourier Neural Operator (FNO)</b> — and differs only in how it brings the LF data in.
+      So this section is the one real investment on this page. The backbone's defaults everywhere:
+      <b>64 hidden channels, 4 blocks, 12 Fourier modes per axis</b>, working grid = the HF grid capped at 256 px.
+      Understand this once and every family below reduces to "same trunk, different fusion".
+    </p>
+
+    <div class="grid md:grid-cols-2 gap-3 mb-4">
+      <div class="card card-border bg-base-200"><div class="card-body p-4 text-sm space-y-2">
+        <h3 class="font-semibold">Fourier in 90 seconds</h3>
+        <p>Any image can be written as a <b>sum of 2-D sine waves</b> of different frequencies — this decomposition is the Fourier transform,
+        and the FFT computes it fast. <b>Low frequencies</b> = broad strokes (the overall warm/cool layout of a temperature field);
+        <b>high frequencies</b> = fine detail and sharp edges.</p>
+        <p>You have met this idea before even if the name is new: <b>JPEG compression</b> keeps mostly low frequencies and throws away
+        high ones, which is why an over-compressed photo looks smooth and slightly smeared. Hold onto that image — it is exactly
+        what an FNO does to a field, and it explains both the FNO's strength (smooth fields compress beautifully into a few
+        frequencies) and its one structural weakness (sharp edges need <i>many</i> frequencies, and the FNO throws most of them away).</p>
+      </div></div>
+      <div class="card card-border bg-base-200"><div class="card-body p-4 text-sm space-y-2">
+        <h3 class="font-semibold">From CNN to FNO in three steps</h3>
+        <p><b>1.</b> A normal conv layer mixes each pixel with a small neighborhood (3×3). Information crosses the image only after many layers — slow, and resolution-dependent.</p>
+        <p><b>2.</b> Math fact (the convolution theorem): a convolution with a filter <i>as big as the whole image</i> is just a per-frequency multiplication in Fourier space. So: FFT the features, multiply each frequency by a learned weight, inverse FFT. One layer = every pixel talks to every pixel.</p>
+        <p><b>3.</b> To keep the parameter count finite, learn weights only for the lowest 12×12 frequencies and zero the rest. That single truncation is the FNO's defining trade-off. A bonus of working in frequency space: the same weights work at <i>any</i> grid resolution, which is why FNOs are called neural <b>operators</b> — they learn a map between functions, not between fixed-size pixel arrays.</p>
+      </div></div>
+    </div>
+
+    <div class="diagram-panel mb-3">
+<pre class="mermaid">
+flowchart LR
+    X2["<b>① </b><b>broadcast X</b><br/>copy the parameter vector<br/>to every pixel"]:::hf
+    C["<b>② </b><b>coordinate channels</b><br/>x,y position in [-1,1]<br/><i>tells the net where each pixel is</i>"]:::mod
+  L["<b>③ </b><b>lift · 1×1 conv</b><br/>widen to 64 channels<br/><i>room to represent features</i>"]:::mod
+    S["<b>④ </b><b>SpectralConv2d</b><br/>FFT → keep 12×12 modes → learned<br/>complex mix → inverse FFT<br/><i>global smoothing brush · block 1 of 4</i>"]:::mod
+    P["<b>⑤ </b><b>1×1 conv bypass</b><br/>per-pixel channel mix,<br/>all frequencies pass<br/><i>the only high-freq path</i>"]:::mod
+    N["<b>⑥ </b><b>GroupNorm + GELU</b><br/>normalize, then bend<br/><i>stability + nonlinearity</i>"]:::mod
+  PR["<b>⑦ </b><b>projection head</b><br/>64 → 64 → 1 channels<br/><i>read out the field</i>"]:::mod
+  SC["<b>⑧ </b><b>× scaler[m]</b><br/>undo per-fidelity<br/>max-abs normalization"]:::mod
+  Y2["field"]:::out
+  X2 --> L
+  C --> L
+  L --> S
+  L --> P
+  S --> N
+  P --> N
+  N --> PR --> SC --> Y2
+  classDef hf fill:#fef3c7,stroke:#d97706,color:#7c2d12;
+  classDef mod fill:#f1f5f9,stroke:#64748b,color:#1e293b;
+  classDef out fill:#ede9fe,stroke:#7c3aed,color:#4c1d95;
+</pre>
+    </div>
+    <div class="overflow-x-auto mb-3">
+      <table class="table table-sm blocktable">
+        <thead><tr><th>#</th><th>Block</th><th>What it computes (exactly)</th><th>Why it exists — in plain terms</th><th>Effect on accuracy</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>broadcast X</td><td><code>X.view(B,c,1,1).expand(B,c,H,W)</code> — each of X's numbers becomes a constant image (the same value at every pixel).</td><td>Conv networks eat images, but X is a plain vector. Painting each entry across a full channel is the simplest way to hand a global fact ("source strength = 3.2") to every pixel at once.</td><td>Works, but it is the <i>bluntest</i> possible conditioning. Replacing it with FiLM (section 4) is worth #8 → #1 on Elo — the single biggest cheap win found in the zoo.</td></tr>
+          <tr><td>2</td><td>coordinates</td><td>Two fixed channels: <code>linspace(-1,1)</code> in y and x — every pixel is told its own position.</td><td>FNOs, like CNNs, are naturally translation-blind: they treat a pattern the same wherever it appears. But PDE solutions care about absolute position (walls and boundaries are at fixed places!). Coordinate channels deliberately break that blindness.</td><td>Without them, fields with boundary structure are unlearnable; with them, near-zero cost.</td></tr>
+          <tr><td>3</td><td>lift</td><td><code>Conv2d(c+2 → 64, kernel 1)</code> — a per-pixel linear layer (no spatial mixing).</td><td>Widens from a handful of input channels to 64, giving later blocks room to represent many intermediate features — the same reason MLP hidden layers are wider than the input.</td><td>64 channels is a capacity-vs-overfit compromise; a parameter-matched 48-channel control (<code>_2m</code>, section 4) loses only slightly (#10 vs #8).</td></tr>
+          <tr><td>4</td><td>SpectralConv2d</td><td><code>rfft2</code> → keep the lowest 12×12 frequency block (+ mirrored rows) → multiply by learned complex weights (a 64×64 mix per mode) → <code>irfft2</code>.</td><td>The global-mixing layer from the "CNN to FNO" card: one pass lets every pixel influence every pixel, at FFT cost. Repeated 4× (4 blocks). This is what learns "the physics".</td><td>The workhorse on smooth fields — and the bottleneck on sharp ones: <b>every frequency above mode 12 is simply deleted in this path</b>. On a 64×64 grid that keeps ~37% of the representable frequency range; on 256×256, only ~9%.</td></tr>
+          <tr><td>5</td><td>1×1 bypass</td><td><code>Conv2d(64→64, kernel 1)</code>, added to the spectral output.</td><td>A side road around the frequency truncation: a per-pixel linear map passes <i>all</i> frequencies (it never mixes across space, so it cannot blur — or move — anything).</td><td>The only route for high-frequency content. It can rescale or gate sharp features pixel-by-pixel but cannot <i>move</i> or <i>create</i> them — the deep reason FNO predictions smear sharp shocks.</td></tr>
+          <tr><td>6</td><td>GroupNorm + GELU</td><td>Normalize channels in 8 groups; then a smooth ReLU-like nonlinearity.</td><td>Same job as batch-norm + ReLU in your intro class: keep activations well-scaled (the datasets span wildly different physical magnitudes) and add the nonlinearity that lets stacked blocks compose.</td><td>Stability rather than accuracy — but its per-channel scale-and-shift is the natural hook where FiLM conditioning (section 4) plugs in.</td></tr>
+          <tr><td>7</td><td>projection</td><td><code>Conv2d(64→64,1) → GELU → Conv2d(64→1,1)</code>.</td><td>Collapse the 64-channel internal representation into the single physical field the loss compares against.</td><td>Its second-to-last features double as the "last layer" that FIRE's Bayesian variants (Laplace/DKL, section 5) put a posterior over.</td></tr>
+          <tr><td>8</td><td>output scaler</td><td>Multiply by <code>scaler[m] = max|Y_train at fidelity m|</code>.</td><td>Different fidelities/datasets differ in raw magnitude by up to ~40×. Training happens on fields normalized to O(1); this block converts back to physical units. Same spirit as standardizing your targets before regression.</td><td>Without it, whichever fidelity has the biggest numbers dominates the MSE and the others collapse — a real observed failure this fixed.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="hfnote mb-2"><b>Preview — sharp datasets (applies to every FNO family):</b> blocks 4–5 are the whole story.
+      A shock wave (a near-discontinuous jump) needs high frequencies that decay only slowly (like 1/k), so deleting everything above
+      mode 12 puts a hard floor of roughly 3–10% rel-L2 on such fields <i>no matter how long you train</i>; and the 1×1 bypass can pass
+      sharp content through but cannot reposition it. Fixes on the drawing board: more modes (factorized to stay affordable), a local
+      convolution path, or a different basis — see the companion report, Part 4.</div>
+    <div class="auditnote"><b>Fine print (code audit):</b> all image resizing in the shared data loaders is bilinear with <code>antialias=False</code> —
+      LF fields upsampled to the working grid arrive pre-blurred, and very large grids (era5's 721×1440 → 128×256) are downsampled with aliasing artifacts.
+      The training loss is plain MSE in scaler-normalized space in every FNO family (the Transolver/v9 families add a rel-L2 term).</div>
+  </section>
+
+  <!-- ===================== 4. transfer ===================== -->
+  <section id="sec-transfer" class="mb-10">
+    <h2 class="text-2xl font-bold mb-1">4 · Transfer-learning FNO — the current winners (#1, #2, #8, #10)</h2>
+    <div class="anchornote mb-3">
+      <b>If you know intro ML, think:</b> pretrain on ImageNet, fine-tune on your small dataset — literally that recipe.
+      The twist that makes it work unusually well here: the "ImageNet" (the LF pool) is not just <i>similar</i> to the target task,
+      it is <i>the same physics, solved sloppily</i>. So pretraining teaches almost everything, and the scarce HF examples only fine-tune the details.
+    </div>
+    <p class="text-sm text-base-content/80 max-w-4xl mb-3">
+      Multi-fidelity lives in the <b>training schedule, not the architecture</b>: one FNO, trained twice.
+      Stage 1 fits the abundant LF fields (learning rate 1e-3, full epoch budget); stage 2 re-fits <i>all</i> weights on the scarce HF fields
+      (fresh optimizer, lower learning rate 3e-4 so the good LF solution is nudged rather than destroyed, full epoch budget).
+      The LF stage is scaffolding: it moves the weights into a region where "solutions of this PDE family" are easy to represent,
+      so the few HF samples don't have to teach the network from scratch.
+    </p>
+    <div class="diagram-panel mb-3">
+<pre class="mermaid">
+flowchart LR
+  LF3["<b>LF fields</b><br/>(bilinear-upsampled to work grid)"]:::lf
+  HF3["<b>HF fields</b><br/>(the scarce targets)"]:::hf
+  S1["<b>① </b><b>Stage 1 · pretrain</b><br/>fit FNO to LF fields, lr 1e-3<br/><i>learn 'what solutions look like' from cheap data</i>"]:::fuse
+  S2["<b>② </b><b>Stage 2 · fine-tune</b><br/>re-fit ALL weights on HF, lr 3e-4<br/><i>nudge toward the fine-grid truth</i>"]:::fuse
+  F["FNO backbone<br/>(section 3)"]:::mod
+  Y3["HF prediction<br/><i>test time: X in, field out — LF never consulted</i>"]:::out
+  LF3 -.-> S1
+  HF3 -.-> S2
+  S1 --> S2
+  S2 --> F --> Y3
+  classDef lf fill:#dbeafe,stroke:#2563eb,color:#1e3a5f;
+  classDef hf fill:#fef3c7,stroke:#d97706,color:#7c2d12;
+  classDef mod fill:#f1f5f9,stroke:#64748b,color:#1e293b;
+  classDef fuse fill:#dcfce7,stroke:#16a34a,stroke-width:2.5px,color:#14532d;
+  classDef out fill:#ede9fe,stroke:#7c3aed,color:#4c1d95;
+</pre>
+    </div>
+    <div class="overflow-x-auto mb-3">
+      <table class="table table-sm blocktable">
+        <thead><tr><th>Family (rank)</th><th>The one thing it changes</th><th>Why</th><th>What it bought</th></tr></thead>
+        <tbody>
+          <tr><td>mf_fno_transfer (#8) <span class="badge badge-xs badge-neutral">cluster-only</span></td><td>Nothing — the canonical recipe above, with X handed to the network the blunt way (broadcast as constant channels, backbone block ①). 4.74M params. The in-checkout frozen <code>mf_fno_transfer_bar</code> is this exact architecture (param counts match to the digit).</td><td>The published-baseline reference point (a Lyu 2023-style multi-fidelity FNO).</td><td>Median rel-L2 0.0151 (≈1.5% error) — already beats most of the fancier fusion schemes below. A recurring lesson in this zoo: the boring recipe is very strong.</td></tr>
+          <tr><td>mf_fno_transfer_2m (#10) <span class="badge badge-xs badge-neutral">cluster-only</span></td><td>Shrinks the network: width 64 → 48 channels (2.67M params, ~half the size).</td><td>A <b>control experiment</b>: is transfer winning because of raw capacity, or because of the pretrain/fine-tune mechanism? Good science, not a new idea.</td><td>Median rel-L2 0.0152 — statistically identical. Conclusion: the <i>mechanism</i>, not the size, does the work.</td></tr>
+          <tr><td><b>mf_fno_transfer_film (#1)</b> <span class="badge badge-xs badge-neutral">cluster-only</span></td><td>Changes only how X enters. Instead of broadcasting X as input channels, a small MLP maps X to a per-channel scale γ and shift β applied inside <i>every</i> block's normalization — a technique called <b>FiLM</b> (Feature-wise Linear Modulation). Think "batch-norm's scale and shift, but predicted from X by a side network". Zero-initialized (γ=1, β=0), so training starts as if unconditioned and the modulation grows only as needed.</td><td>When X enters only at the input, its influence must survive 4 blocks of processing to matter at the end — like whispering instructions once at the start of a relay race. FiLM re-whispers the instructions at every stage, giving the conditioning the same "reach" as the features it steers.</td><td><b>#8 → #1 on Elo with zero other changes</b> (median error ~unchanged at 0.0154 — the win is broad robustness across datasets, not a lower typical error). The zoo's cleanest lesson: <i>how</i> you condition beats <i>how much</i> architecture you add.</td></tr>
+          <tr><td>mf_fno_pinn_transfer (#2)</td><td>FiLM-transfer <b>plus a physics loss</b> during HF fine-tuning, active only on the two Poisson datasets where the governing equation ∇²u = f is known exactly. The forcing f is recovered in closed form from X (a quadratic fit, accurate to ~1e-7), and the network is penalized when its output violates the equation — checked with a 5-point finite-difference stencil (a discrete second-derivative, the numerical version of the Laplacian ∇²) at abundant LF condition vectors used as extra checkpoints ("collocation points"). The physics weight ramps 0 → 1e-3 over the second half of fine-tuning: fit the data first, then enforce the physics. Elsewhere = plain FiLM transfer.</td><td>This is the "PINN" idea (physics-informed neural network): when you <i>know</i> the equation, you can grade the network's output against it at any X, for free, without ever running a solver — a supervision signal that costs nothing and never runs out. The ramp keeps the physics term from fighting the data fit early on.</td><td>Best median error in the zoo (0.0122). Known physics adds a real but modest increment on the datasets where it applies.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card card-border bg-base-200 mb-3">
+      <div class="card-body p-4">
+        <h3 class="font-semibold text-sm mb-1">FiLM in depth — channels vs blocks, and what γ / β actually do <span class="badge badge-xs badge-info align-middle">added after your annotation</span></h3>
+        <div class="anchornote mb-2">
+          <b>If you know intro ML, think:</b> batch-norm has a learnable scale and shift per channel, fixed after training.
+          FiLM is that same pair of knobs — except a small side network <i>predicts</i> them from X, fresh for every sample.
+          (The same trick powers conditional GANs and style transfer, where the "style" vector steers the normalization.)
+        </div>
+        <div class="text-sm text-base-content/80 space-y-2">
+          <p>
+            <b>First, channels vs blocks — the two axes of the network.</b>
+            A <b>block</b> is a stage in <i>depth</i>: this FNO is 4 blocks in a row, and data flows through block 1 → 2 → 3 → 4 like stations on an assembly line, each station doing one round of "mix globally, adjust pointwise, normalize, apply nonlinearity".
+            A <b>channel</b> is a slot of <i>width</i>: between stations, the data is a stack of 64 images of shape H×W — written (batch, 64, H, W).
+            Like RGB, except the network invents its own 64 "colors": after training, one channel might carry "how boundary-layer-ish is this region", another "local curvature", and so on.
+            So the network is 64 channels wide and 4 blocks deep, and those are independent choices.
+          </p>
+          <p>
+            <b>What FiLM computes, concretely.</b>
+            At every block, a tiny MLP reads X (the ~3 PDE parameters) and outputs 128 numbers: one scale γ_c and one shift β_c <b>for each of the 64 channels</b>.
+            Right after the block's normalization, channel c's entire image is transformed as <span class="eq">z_c → γ_c(X) · z_c + β_c(X)</span> — the same γ_c and β_c at every pixel of that channel.
+            That is the meaning of "feature-wise": it modulates whole feature maps, never individual pixels.
+          </p>
+          <p>
+            <b>What γ and β do, intuitively.</b>
+            Picture a 64-track mixing desk, one track per channel.
+            γ is each track's <b>volume fader</b>: γ_c ≈ 2 means "for this PDE setting, feature c matters — turn it up"; γ_c ≈ 0 mutes it; negative flips its sign.
+            β is each track's <b>baseline trim</b>, and it matters because GELU comes right after: a positive β pushes the channel up into GELU's pass-through zone (the feature flows onward), a negative β pushes it into the dead zone (the feature is suppressed).
+            So γ sets <i>how much</i> of each learned feature to use, β sets <i>whether it clears the nonlinearity at all</i> — and since every block has its own FiLM MLP, the mix gets re-tuned four times on the way through.
+          </p>
+          <p>
+            <b>Why this wins over concat</b> (the whispers-vs-re-whispers picture from the table above, mechanically):
+            concat hands X to the network once, as 3 extra input images, and can only ever act <i>additively</i> — more input for block 1 to chew on.
+            FiLM gives X a direct <i>multiplicative</i> handle on all 64 features at all 4 depths — a shorter path from parameters to behavior, and a more expressive kind of control (steering the network vs feeding it).
+            The MLPs are <b>zero-initialized</b> (γ starts at exactly 1, β at 0), so on day one the network is precisely the unconditioned FNO and the modulation grows only as training finds it useful — the same training-wheels pattern used by every gate and correction head in the zoo.
+            Cost: ~4.3k extra parameters per block, a rounding error on 4.7M — and it moved this family from #8 to #1.
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class="hfnote mb-2"><b>Preview — sharp datasets:</b> at test time these models never see the LF field, so the ~10 numbers in X alone
+      must pin down exactly where a shock or interface sits. The 12-mode ceiling and MSE's preference for blur apply in full; expect degradation,
+      but likely still best-in-zoo among FNO families. Notably, the physics-residual loss is the zoo's <i>only</i> supervision signal that is exact
+      about position — but it is currently wired up only for the two Poisson datasets, so it is inactive on the new ones unless extended.</div>
+    <div class="auditnote"><b>Fine print (code audit):</b> the name "FiLM fine-tune" describes the conditioning architecture, not the fine-tuning scope —
+      stage 2 trains <i>all</i> parameters, not just the FiLM layers. Both in-checkout transfer families save their checkpoint only when a stage completes,
+      so a mid-run cluster preemption restarts that stage from epoch 0.</div>
+  </section>
+
+  <!-- ===================== 5. FIRE ===================== -->
+  <section id="sec-fire" class="mb-10">
+    <h2 class="text-2xl font-bold mb-1">5 · FIRE — "correct the draft, and tell the corrector where the draft is shaky" (#3–#15, #24)</h2>
+    <div class="anchornote mb-3">
+      <b>If you know intro ML, think:</b> two ideas you have seen, composed.
+      (1) <b>Boosting</b>: fit a second model to the first model's errors — here, a "residual" network predicts the correction
+      δ = HF − LF-prediction instead of the whole field.
+      (2) <b>Ensembles for uncertainty</b>: train several copies of a model with different random seeds; where their predictions agree,
+      be confident; where they disagree, don't. FIRE's twist is to compute that disagreement <i>per pixel</i>, turn it into extra input
+      images (an uncertainty map), and hand those to the correction network — so the corrector knows <i>where</i> to work hardest.
+    </div>
+    <p class="text-sm text-base-content/80 max-w-4xl mb-3">
+      This is the zoo's novel contribution (a field-data analog of the FIRE tabular method, arXiv:2601.22371). The core bet:
+      <b>where the LF model is uncertain is where the LF→HF gap is large</b>. So instead of feeding the correction network only the LF
+      model's best guess (its mean μ), feed it the LF model's whole <i>predictive distribution</i>, summarized as five per-pixel images:
+      the mean μ, the spread σ, and three quantiles (the 10th/50th/90th-percentile value each pixel might take).
+      Eleven variants share this exact pipeline and differ in <b>one block only: how the LF distribution is obtained</b> —
+      making the family a controlled ablation of uncertainty methods.
+    </p>
+    <div class="diagram-panel mb-3">
+<pre class="mermaid">
+flowchart LR
+  XLF["<b>LF data</b>"]:::lf
+  U["<b>① </b><b>LF model with uncertainty</b><br/>ensemble / dropout / quantile / Bayesian —<br/>the ONLY block that differs across 11 variants<br/><i>'how sure is the cheap model, pixel by pixel?'</i>"]:::fuse
+  AUG["<b>② </b><b>5 summary fields</b><br/>mean μ · std σ · q10 · q50 · q90<br/>(÷ LF scale, so all O(1))<br/><i>a map of where LF is trustworthy</i>"]:::mod
+  D["<b>③ </b><b>residual FNO (FNO2dAug)</b><br/>inputs: X + coords + the 5 fields<br/>predicts δ = HF − μ<br/><i>works hardest where σ says LF is shaky</i>"]:::mod
+  SUM["<b>④ </b><b>HF = μ + δ</b><br/>additive recombination"]:::fuse
+  Y4["HF prediction"]:::out
+  XLF --> U --> AUG --> D --> SUM --> Y4
+  U -- "μ (LF mean field)" --> SUM
+  classDef lf fill:#dbeafe,stroke:#2563eb,color:#1e3a5f;
+  classDef mod fill:#f1f5f9,stroke:#64748b,color:#1e293b;
+  classDef fuse fill:#dcfce7,stroke:#16a34a,stroke-width:2.5px,color:#14532d;
+  classDef out fill:#ede9fe,stroke:#7c3aed,color:#4c1d95;
+</pre>
+    </div>
+    <div class="overflow-x-auto mb-3">
+      <table class="table table-sm blocktable">
+        <thead><tr><th>#</th><th>Stage</th><th>What it computes</th><th>Why it exists — in plain terms</th><th>Effect on accuracy</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>LF uncertainty model</td><td>Trains on the abundant LF pairs (X → LF field), full epoch budget; produces a per-pixel mean and spread for any new X (mechanism varies by variant — see the next table).</td><td>A plain LF predictor gives only its best guess μ. The spread σ is the genuinely new information: a spatial map of the cheap model's self-doubt.</td><td>The choice of uncertainty mechanism moves the ranking by ~300 Elo (#3 down to #24): <i>real ensembles</i> — genuinely independent trainings — beat every cheaper shortcut.</td></tr>
+          <tr><td>2</td><td>summary fields</td><td>Empirical mean/std/quantiles over K sampled predictions (ensemble variants), or textbook Gaussian quantiles μ ∓ 1.28σ (MDN/Laplace/DKL), or directly regressed quantiles (quantile/IQN); stacked as 5 channels and divided by the LF scale so everything is O(1).</td><td>A standardized interface: every uncertainty source is reduced to the same 5-image format, so stage 1 is the only thing that varies across the 11 variants — that is what makes the comparison a clean ablation.</td><td>Variants that assume a bell curve per pixel ("Gaussian-collapse") lose multimodality: they can say "the value is X ± σ" but not "the shock is either here or there".</td></tr>
+          <tr><td>3</td><td>residual FNO</td><td>A standard section-3 backbone whose input layer takes the usual channels plus the 5 summary fields; trained on the normalized gap (HF − μ) with plain MSE, full epoch budget.</td><td>Conditioning on the 5 fields lets the correction vary its aggressiveness across space — large where σ says LF is unreliable, near-zero where LF is already right. Without them the corrector treats every pixel the same.</td><td>This conditioning is exactly what separates FIRE from plain <code>fno_additive</code> (same additive rule, no uncertainty channels): <b>#3 vs #18</b>.</td></tr>
+          <tr><td>4</td><td>recombination</td><td><code>pred = μ + δ · res_scaler</code>; the reported predictive variance is just the LF σ² (the correction has no uncertainty model of its own).</td><td>Keeping the LF mean as an anchor means the network only ever learns the (usually smaller, simpler) gap — the boosting logic.</td><td>Helps when μ is right-but-coarse; hurts when μ draws a sharp feature in the wrong place, because δ must then erase it in one spot and redraw it in another.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <h3 class="text-lg font-semibold mb-2">The 11 ways to get uncertainty, compared</h3>
+    <p class="text-sm text-base-content/80 max-w-4xl mb-2">
+      Read this as a mini-course in uncertainty quantification — each row is one standard technique from that literature,
+      dropped into the same slot and scored on the same benchmark:
+    </p>
+    <div class="overflow-x-auto mb-3">
+      <table class="table table-sm blocktable">
+        <thead><tr><th>Variant (rank)</th><th>How the LF distribution is made</th><th>Cost (train / infer)</th><th>Verdict</th></tr></thead>
+        <tbody>
+          <tr><td><b>fno_fire_distcond (#3)</b></td><td><b>Deep ensemble</b> — the gold standard: 5 completely independent FNOs, different random seeds, each fully trained; the per-pixel mean/std/quantiles are computed empirically across the 5 predictions.</td><td>6 trainings / 5 forward passes · 28.4M params</td><td><b>The keeper.</b> Independent trainings explore genuinely different solutions, so their disagreement is the most honest uncertainty signal — including at features where the members disagree about placement.</td></tr>
+          <tr><td>fno_fire_snapshot (#4)</td><td><b>Snapshot ensemble</b>: one training run whose learning rate is cycled up and down 5 times; a checkpoint is saved at each cycle's low point. The 5 snapshots act as a "free" ensemble.</td><td>1 training / 5 passes · 28.4M</td><td>~90% of the deep ensemble's quality at ~1/5 the training cost — the best value in the family.</td></tr>
+          <tr><td>fno_fire_batchens (#5)</td><td>One shared trunk with 5 independent output heads, trained jointly on the same targets; diversity comes only from the heads' random initializations.</td><td>1 training / 1 pass · +17k params</td><td>Cheapest sampling variant; the shared trunk limits how much the heads can disagree, so the uncertainty is weaker — but still useful.</td></tr>
+          <tr><td>fno_fire_mdn (#6)</td><td><b>Mixture density network</b>: the output head predicts 3 Gaussians per pixel (each with its own mean, spread, and weight) instead of one number; trained with MSE for the first 40% of epochs, then by maximizing the mixture's likelihood.</td><td>1 / 1 · +520</td><td>Can in principle express "either here or there" — but the pipeline collapses the mixture to a single (μ, σ) before conditioning, throwing away exactly that advantage.</td></tr>
+          <tr><td>fno_fire_iqn (#7)</td><td><b>Implicit quantile network</b>: the model takes an extra input τ ∈ (0,1) and learns to output the τ-th quantile of the prediction, trained with pinball loss at random τ (here τ enters as a plain constant input channel, not the paper's fancier cosine embedding); evaluated at τ = 0.1/0.5/0.9.</td><td>1 / 3 · +64</td><td>Solid mid-pack; the distribution is learned implicitly, one quantile query at a time.</td></tr>
+          <tr><td>fno_fire_quantile (#9)</td><td><b>Direct quantile regression</b>: 3 output channels trained to be the 10th/50th/90th percentiles via pinball loss (an asymmetric loss that penalizes over- and under-shooting differently — the standard trick for regressing a percentile instead of a mean); σ ≈ (q90 − q10)/2.56.</td><td>1 / 1 · +130</td><td>Direct and cheap. But the LF solver here is <i>deterministic</i> (same X → same field every time), so there is little genuine output noise for quantiles to capture.</td></tr>
+          <tr><td>fno_fire_laplace (#11)</td><td><b>Last-layer Laplace approximation</b>: treat only the final linear layer as Bayesian — fit a closed-form Gaussian posterior over its weights after training (using a curvature estimate on 20k sampled pixels), yielding a per-pixel <i>model</i> uncertainty.</td><td>1 + closed form / ~2× pass · +0</td><td>Principled and nearly free; but σ can only express what a 64-dimensional linear head can see.</td></tr>
+          <tr><td>fno_fire_swag (#12)</td><td><b>SWAG</b>: record the running mean and variance of <i>all</i> weights over the last 50% of training, treat that as a Gaussian over weight space, and sample 10 weight vectors at eval time.</td><td>1 / 10 · 9.5M</td><td>Captures the wobble of one training run around one solution — less diverse than truly independent runs, and it ranks accordingly.</td></tr>
+          <tr><td>fno_fire_cqr (#14)</td><td><b>Conformal calibration</b> on top of the snapshot ensemble: hold out 20% of the scarce HF data, measure how over/under-confident σ is on it, and rescale σ so the intervals have guaranteed coverage.</td><td>as snapshot + calibration</td><td>Buys <i>calibration</i> (honest interval widths), not accuracy — and pays 20% of the precious HF data for it (the correction network trains on the remaining 80%).</td></tr>
+          <tr><td>fno_fire_dkl (#15)</td><td>As Laplace, but the noise level is estimated by refitting the head with ridge regression (a marginal-likelihood proxy) — its sole functional difference.</td><td>1 / ~2× · 9.5M</td><td>Essentially Laplace with a different σ estimate.</td></tr>
+          <tr><td>fno_fire_mcdropout (#24)</td><td><b>MC-dropout</b>: one FNO with Dropout2d(0.1) in every block, kept <i>on</i> at test time; 16 stochastic forward passes give 16 slightly different predictions to compute stats over.</td><td>1 / 16 · 9.5M</td><td><b>The honest negative:</b> the popular cheap shortcut produces σ maps too crude to help — conditioning on <i>bad</i> uncertainty is worse than conditioning on none (plain additive at #18 outranks it).</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card card-border bg-base-200 mb-3"><div class="card-body p-4 text-sm space-y-2">
+      <h3 class="font-semibold">Why does FIRE (#3) still trail plain transfer (#1) — and were ResNets involved?</h3>
+      <p><b>No ResNets anywhere.</b> Every FIRE variant is built from the exact same section-3 FNO backbone as the transfer family —
+      the ablation holds the backbone fixed on purpose, so ranking differences come from the fusion mechanism, not the architecture.
+      The word "residual" here means <i>predicting the residual field</i> δ = HF − μ (the boosting sense: fit a model to another
+      model's leftover error), not ResNet-style skip connections. The closest thing to a skip connection in the zoo is the backbone's
+      own 1×1 bypass (block ⑤).</p>
+      <p>Given the same backbone, three things explain the gap on this benchmark:</p>
+      <ol class="list-decimal ml-4 space-y-1 text-base-content/80">
+        <li><b>Where the LF knowledge ends up.</b> Transfer bakes the thousands of LF examples into <i>every weight</i> of the final
+        network via pretraining. FIRE's correction network never gets that: it trains from scratch on only the scarce HF pairs, and
+        its LF knowledge arrives only through 5 input channels. Millions of LF-shaped parameters versus five LF-derived input images —
+        on a smooth benchmark, the pretrained weights are simply the stronger way to absorb the cheap data.</li>
+        <li><b>The anchor's flaws are inherited.</b> FIRE's prediction is μ + δ, and μ is itself an imperfect neural prediction —
+        blurred, occasionally mispositioning features. The correction δ must spend its capacity undoing μ's mistakes (through the
+        12-mode bottleneck). Transfer predicts the field directly and has no anchor to apologize for.</li>
+        <li><b>This benchmark favors route 1.</b> On these mostly-smooth datasets, X pins down the field well, so predicting directly
+        from X (transfer) loses little by ignoring the per-sample LF field — while FIRE pays LF's blur-and-noise costs regardless.</li>
+      </ol>
+      <p>Worth keeping in perspective: #3 makes FIRE the <b>best of the entire "LF as input" route</b> (section 2) — the gap to #1 is a
+      route-1-vs-route-2 story on FNO-friendly data, not a failure of the uncertainty idea. On sharp datasets, where X alone cannot pin
+      a shock's position and per-sample LF information should matter more, the report expects this comparison to tighten or flip.</p>
+    </div></div>
+    <div class="hfnote mb-2"><b>Preview — sharp datasets:</b> two structural worries. First, the anchor μ carries the LF solver's
+      mispositioned shock, and the correction δ must erase-and-redraw it through a 12-mode bottleneck. Second, FIRE's hedge — σ lighting up
+      where the shock might be — only works if ensemble members actually <i>disagree</i> there; if the coarse solver makes the <i>same</i>
+      systematic error every time (coarse shock solvers smear shocks the same way in every run), all members inherit it, and σ stays
+      quiet exactly where help is needed. The bell-curve variants (mdn/laplace/dkl) additionally cannot represent "either here or there" position ambiguity at all.</div>
+    <div class="auditnote"><b>Fine print (code audit):</b> the 9 variants that use the shared training runner ignore <code>--ckpt_dir</code> entirely —
+      no resume after a cluster preemption, a contract violation (only distcond/mcdropout checkpoint, and only at the end of a run).
+      Two names oversell: "batchens" is a multi-head ensemble, not the rank-1 BatchEnsemble of the paper; "cqr" is split-conformal σ-scaling,
+      not textbook conformalized quantile regression. The shared loop also draws a fresh random permutation every mini-batch, so samples can repeat or be skipped within an "epoch".</div>
+  </section>
+
+  <!-- ===================== 6. coregionalization ===================== -->
+  <section id="sec-coreg" class="mb-10">
+    <h2 class="text-2xl font-bold mb-1">6 · Coregionalization — one network for all fidelities, with a quality knob (#13, #19–#21)</h2>
+    <div class="anchornote mb-3">
+      <b>If you know intro ML, think:</b> <b>multi-task learning with a task-ID input</b>. One network is trained to produce the field at
+      <i>every</i> fidelity level, and an extra scalar input m ∈ [0,1] tells it which quality level you want (0 = coarsest draft, 1 = HF).
+      Training on all rungs jointly forces the network to learn what the rungs share; at test time you simply ask for m = 1.
+      (The odd name comes from the Gaussian-process literature this idea originated in; nothing more is meant by it.)
+    </div>
+    <p class="text-sm text-base-content/80 max-w-4xl mb-3">
+      IFC-style (Li 2022): the LF data enters as extra supervision at other m values — at test time only X and m=1 are consumed
+      (so like transfer, no LF field is consulted for the specific test scenario). The three in-checkout variants differ in
+      <b>where the knob m acts on the network</b> — and the result echoes the transfer family's FiLM lesson almost exactly.
+    </p>
+    <div class="diagram-panel mb-3">
+<pre class="mermaid">
+flowchart LR
+  X5["<b>X</b> + coords"]:::hf
+  M5["<b>fidelity index m</b><br/>0 = coarsest … 1 = HF<br/><i>dataset-assigned, not computed from pixels</i>"]:::hf
+  T["FNO trunk<br/>(section 3, K-channel latent out)"]:::mod
+  H["<b>① </b><b>latent fields h_k(x)</b><br/>K=20 learned 'basis fields'<br/><i>ingredients shared by all fidelities</i>"]:::mod
+  B5["<b>② </b><b>basis head B(m)</b><br/>MLP([m, m²]) → K weights<br/><i>the recipe: how much of each<br/>ingredient at fidelity m</i>"]:::fuse
+  MIX["<b>③ </b><b>y = Σ B_k(m) · h_k(x)</b><br/>weighted mix of latent fields"]:::fuse
+  SC5["× scaler[m]"]:::mod
+  Y5["field at fidelity m"]:::out
+  X5 --> T --> H --> MIX
+  M5 --> B5 --> MIX
+  MIX --> SC5 --> Y5
+  classDef hf fill:#fef3c7,stroke:#d97706,color:#7c2d12;
+  classDef mod fill:#f1f5f9,stroke:#64748b,color:#1e293b;
+  classDef fuse fill:#dcfce7,stroke:#16a34a,stroke-width:2.5px,color:#14532d;
+  classDef out fill:#ede9fe,stroke:#7c3aed,color:#4c1d95;
+</pre>
+    </div>
+    <div class="overflow-x-auto mb-3">
+      <table class="table table-sm blocktable">
+        <thead><tr><th>Family (rank)</th><th>Where m enters</th><th>Why</th><th>What happened</th></tr></thead>
+        <tbody>
+          <tr><td>fno_coregionalization (#20)</td><td>Only at the output — the diagram above. The trunk produces K=20 "ingredient" fields shared by all fidelities; a tiny MLP turns m into 20 mixing weights ("the recipe at this quality level"); the output is the weighted mix. Trunk: 128 ch, 6 blocks, 16 modes.</td><td>The clean textbook pattern: fidelities are assumed to be different low-rank combinations of shared components — interpretable, and directly inspired by the IFC paper (whose fancier neural-ODE mixing head is simplified to an MLP on [m, m²] here for the compute budget).</td><td>Mid-pack (median rel-L2 0.0538). Sharing one trunk across a fidelity ladder whose magnitudes span ~40× is a hard ask.</td></tr>
+          <tr><td>fno_coreg_conditioned (#13)</td><td>At <i>every block</i>: FiLM-on-m — the same per-channel scale/shift trick from section 4, but driven by the fidelity knob instead of X, zero-initialized as always. Trunk deliberately matched to <code>mf_fno_transfer_bar</code> (64 ch, 4 blocks, 12 modes) so the comparison isolates the conditioning mechanism alone.</td><td>Same hypothesis as the transfer family's winner: modulate at depth, not just at the ends.</td><td>Best coreg variant (#13, 0.0455) — FiLM-on-m beats the mixing head, mirroring FiLM-on-X's win. The same lesson, learned twice independently.</td></tr>
+          <tr><td>fno_coreg_residual (#21)</td><td>Twice: an m channel inside a per-pixel aggregator that fuses 4 per-fidelity FNOs' decoded fields (MFRNP-style), plus a zero-initialized mixing-head correction on the HF branch that grows only if training finds it useful.</td><td>A hybrid bet: let aggregation handle the ladder, and let a fidelity-dependent correction emerge only if needed.</td><td>Elo #21 but a strong median (0.0251) — a split verdict: good typical error, few outright per-dataset wins.</td></tr>
+          <tr><td>fno_coreg_lf_hf_transfer (#19) <span class="badge badge-xs badge-neutral">cluster-only</span></td><td>As #20, plus an explicit LF→HF two-stage training schedule bolted on.</td><td>A coregionalization × transfer cross.</td><td>0.0551 — the schedule did not rescue the shared-trunk constraint.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="hfnote mb-2"><b>Preview — sharp datasets:</b> weak on two counts. Like transfer, no LF field is consulted at test time;
+      and both modulation styles (the K-weight recipe, per-channel FiLM) are <i>global</i> — they can rescale entire latent fields but have no
+      way to say "sharpen exactly at this spot". Spatially-local correction simply has no pathway in this archetype.</div>
+    <div class="auditnote"><b>Fine print (code audit):</b> the current checkout's defaults are much larger than what was actually benchmarked
+      (fno_coregionalization ≈ 50.5M params in code vs 1.19M on the leaderboard; fno_coreg_residual ≈ 9.1M vs 2.37M) — the leaderboard reflects the smaller historical configs.
+      Also, don't confuse m with resolution: m is a dataset-assigned label (values like {0, 0.143, 0.429, 1}), and fidelity can mean solver tolerance or timestep, not just pixel count.</div>
+  </section>
+
+  <!-- ===================== 7. discrepancy / stack ===================== -->
+  <section id="sec-disc" class="mb-10">
+    <h2 class="text-2xl font-bold mb-1">7 · Discrepancy &amp; multi-level correction — the textbook recipes, FNO-ized (#17, #18, #22, #25)</h2>
+    <div class="anchornote mb-3">
+      <b>If you know intro ML, think:</b> <b>gradient boosting's core move</b> — fit a model, then fit a second model to its residual errors.
+      These four families are the classical multi-fidelity correction rules from the pre-deep-learning literature
+      (where they were built on Gaussian processes), each re-implemented with FNOs: a frozen LF predictor supplies a baseline,
+      and a second FNO learns whatever is missing.
+    </div>
+    <p class="text-sm text-base-content/80 max-w-4xl mb-3">
+      The diagram shows <code>fno_mf_stack</code>, the most elaborate of the four (and the only one with code in this checkout);
+      the other three are the same idea with simpler baselines — see the table.
+    </p>
+    <div class="diagram-panel mb-3">
+<pre class="mermaid">
+flowchart LR
+  X6["<b>X</b> + coords"]:::hf
+    F1["<b>① </b><b>SmallFNO per rung ×3</b><br/>own net at native grid 8/16/32<br/><i>each rung stays an expert at its scale</i>"]:::mod
+  UP["<b>② </b><b>bilinear upsample</b><br/>all decoded LF fields → HF grid<br/><i>(this step blurs — see fine print)</i>"]:::mod
+  AG["<b>③ </b><b>aggregator · 1×1 convs</b><br/>fuse [LF₁↑, LF₂↑, LF₃↑, m] per pixel<br/><i>learned weighted average → baseline</i>"]:::fuse
+  D6["<b>④ </b><b>HF FNO → δ</b><br/>sees X + coords + baseline channel<br/><i>fixes what the average got wrong</i>"]:::mod
+  SUM6["<b>⑤ </b><b>HF = baseline + δ</b>"]:::fuse
+  Y6["HF prediction"]:::out
+  X6 --> F1 --> UP --> AG --> SUM6
+  X6 --> D6
+  AG -- "baseline as input channel" --> D6
+  D6 --> SUM6 --> Y6
+  classDef hf fill:#fef3c7,stroke:#d97706,color:#7c2d12;
+  classDef mod fill:#f1f5f9,stroke:#64748b,color:#1e293b;
+  classDef fuse fill:#dcfce7,stroke:#16a34a,stroke-width:2.5px,color:#14532d;
+  classDef out fill:#ede9fe,stroke:#7c3aed,color:#4c1d95;
+</pre>
+    </div>
+    <div class="overflow-x-auto mb-3">
+      <table class="table table-sm blocktable">
+        <thead><tr><th>Family (rank)</th><th>Fusion rule</th><th>Why — in plain terms</th><th>What happened</th></tr></thead>
+        <tbody>
+          <tr><td>fno_additive (#18) <span class="badge badge-xs badge-neutral">cluster-only</span></td><td><code>HF = LF_pred + δ</code> — a frozen LF-predicting FNO plus a residual FNO on top.</td><td>The oldest rule in the multi-fidelity book (Kennedy–O'Hagan, 2000): assume HF = LF + a smooth discrepancy, and learn the discrepancy. Also serves as the ablation partner for FIRE (same rule, no uncertainty channels) and DINO (same rule, no embedding).</td><td>0.0285 — solid, not dominant. FIRE's uncertainty conditioning on top of this exact rule is worth #18 → #3.</td></tr>
+          <tr><td>fno_autoregressive (#22) <span class="badge badge-xs badge-neutral">cluster-only</span></td><td><code>HF = ρ·LF_pred + δ</code> with a single learned scalar gain ρ.</td><td>The classical refinement of additive: maybe HF is a <i>scaled</i> LF plus discrepancy (from the co-kriging literature). One extra parameter.</td><td>0.0263 — the learned gain adds nearly nothing over plain additive here.</td></tr>
+          <tr><td>fno_multilevel (#25) <span class="badge badge-xs badge-neutral">cluster-only</span></td><td>A telescoping cascade: <code>pred_k = pred_{k-1} + δ_k</code>, one FNO per rung of the ladder (18.96M params total).</td><td>Climb the fidelity ladder one rung at a time, correcting at each step — the shape of recursive co-kriging and multi-level Monte Carlo.</td><td>0.160 — worst of the archetype. Each rung's errors feed the next, they compound down the cascade, and the scarce HF data at the top can't undo the pile-up.</td></tr>
+          <tr><td>fno_mf_stack (#17)</td><td>The diagram above: per-rung expert FNOs → a learned per-pixel weighted average as baseline → an HF residual FNO that also <i>sees</i> the baseline as an input channel. The HF branch keeps 20 Fourier modes (most in the zoo).</td><td>Instead of trusting one LF rung, let a learned pointwise mix decide how much each rung contributes at each pixel.</td><td>0.0344 — best of the archetype. Letting the corrector <i>see</i> the baseline (rather than only add to it blindly) is the detail that helps.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="hfnote mb-2"><b>Preview — sharp datasets:</b> the most exposed archetype. "Baseline + correction" is exactly the pattern
+      the companion report's negative results target: it only works well when LF and HF are highly correlated pixel-by-pixel, and a
+      mispositioned LF shock forces the corrector to erase-and-redraw (the "residual dipole" problem). The per-pixel aggregator cannot
+      shift a feature sideways by even one pixel. <code>fno_mf_stack</code>'s 20 modes and baseline-conditioning make it the least-bad; expect all four to struggle on the shock datasets.</div>
+    <div class="auditnote"><b>Fine print (code audit):</b> <code>fno_mf_stack</code>'s code defaults (24.2M params, modes 4/8/16/20) contradict both its own
+      comment block and <code>full_config.json</code> (~2.35M, modes 4/8/12/12) — the leaderboard reflects the smaller config. Its docstring claims sin/cos positional
+      encoding while the code emits plain linear coordinates. And the Poisson datasets get special loss weights (HF 2.0 / LF 0.25) triggered by a substring match on the dataset name.</div>
+  </section>
+
+  <!-- ===================== 8. attention ===================== -->
+  <section id="sec-attn" class="mb-10">
+    <h2 class="text-2xl font-bold mb-1">8 · Attention / Transolver — the only families that read the real LF field at test time (#23, #26, #30)</h2>
+    <div class="anchornote mb-3">
+      <b>If you know intro ML, think:</b> <b>transformers</b>. Just as a ViT chops an image into patch tokens, these models turn each
+      field into a set of tokens (one per sampled point: its coordinates + values), and fidelities exchange information by
+      <b>cross-attention</b> — each HF query point gets to "look at" a compressed summary of the LF point cloud and pull in what is relevant.
+      No Fourier transform anywhere, so none of the FNO's frequency truncation — but attention over thousands of points is expensive,
+      so everything is squeezed through a small number of learned <b>slice tokens</b> (soft groupings of points, ~32 of them),
+      which is a different bottleneck in disguise. And like all transformers, they are data-hungry — a problem when HF data is the scarce thing.
+    </div>
+    <p class="text-sm text-base-content/80 max-w-4xl mb-3">
+      The diagram shows <code>transolver_residual</code>; the table covers all three.
+    </p>
+    <div class="diagram-panel mb-3">
+<pre class="mermaid">
+flowchart LR
+  LFC["<b>LF point cloud</b><br/>≤1024 points: coords + X + LF value<br/><i>real LF data, consumed at test time</i>"]:::lf
+  HFQ["<b>HF query points</b><br/>2048 coords to predict at"]:::hf
+  INT["<b>① </b><b>soft-NN interpolation</b><br/>Gaussian-weighted average of LF values<br/>at each query (γ=4, fixed)<br/><i>a fast, dumb LF guess — the baseline</i>"]:::fuse
+  SA["<b>② </b><b>self slice-attention</b><br/>HF tokens grouped into 32 learned slices,<br/>attend within/across slices<br/><i>'what does the HF field look like overall?'</i>"]:::mod
+  CA["<b>③ </b><b>cross slice-attention</b><br/>HF queries attend to 32 LF slice summaries<br/><i>'what does the LF cloud say about my region?'</i>"]:::fuse
+  DM["<b>④ </b><b>δ head (zero-init)</b><br/>MLP on [self-context, cross-context]<br/><i>starts at exactly the baseline</i>"]:::mod
+  SUM7["<b>⑤ </b><b>pred = interp + δ</b>"]:::fuse
+  Y7["HF prediction"]:::out
+  LFC --> INT --> SUM7
+  LFC --> CA
+  HFQ --> SA --> DM
+  HFQ --> INT
+  SA --> CA --> DM --> SUM7 --> Y7
+  classDef lf fill:#dbeafe,stroke:#2563eb,color:#1e3a5f;
+  classDef hf fill:#fef3c7,stroke:#d97706,color:#7c2d12;
+  classDef mod fill:#f1f5f9,stroke:#64748b,color:#1e293b;
+  classDef fuse fill:#dcfce7,stroke:#16a34a,stroke-width:2.5px,color:#14532d;
+  classDef out fill:#ede9fe,stroke:#7c3aed,color:#4c1d95;
+</pre>
+    </div>
+    <div class="overflow-x-auto mb-3">
+      <table class="table table-sm blocktable">
+        <thead><tr><th>Family (rank)</th><th>Fusion mechanism</th><th>Why</th><th>What happened</th></tr></thead>
+        <tbody>
+          <tr><td>transolver_residual (#23)</td><td>The diagram above: a fixed, non-learned LF baseline (a distance-weighted average of nearby LF values) plus an attention-computed correction δ. 0.70M params — the smallest non-baseline net in the zoo. Loss = MSE + rel-L2.</td><td>The hard-residual design isolates one question — "how much correction can slice attention learn?" — with the LF anchor guaranteed from step one.</td><td>Median rel-L2 0.116 — trails every FNO family on these smooth, grid-shaped datasets. Attention needs more training data than the benchmark budget provides.</td></tr>
+          <tr><td>transolver_attention_fusion (#26)</td><td>No baseline, no residual: 3 stacked blocks of (self-attention → cross-attention into the LF cloud), then a zero-initialized head predicts the field outright. Only the highest-resolution LF stream is used.</td><td>The stress test of "attention <i>is</i> the fusion" — can iterated cross-attention against LF context replace an explicit fusion rule entirely?</td><td>0.322 — no. Without an anchor, the scarce HF data cannot teach a transformer the full field from scratch.</td></tr>
+          <tr><td>v9_baseline (#30, frozen reference)</td><td>Per-query gated blending: each HF query gathers context from itself and from <i>every</i> LF rung (value-gated, distance-biased attention); a zero-initialized gate softmaxes across the streams; pred = prior + δ, with extra supervision on the prior and a gate-entropy bonus.</td><td>The prior in-house best, kept frozen as the every-cycle reference bar. Philosophy: softly <i>select</i> among LF sources rather than correct them.</td><td>0.210 — gating can down-weight a bad LF stream (soft rejection) but cannot fix one.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="hfnote mb-2"><b>Preview — sharp datasets: the dark horse.</b> No frequency truncation anywhere, and cross-attention can in
+      principle do the one thing no other family can: <i>re-route a mispositioned feature</i>, because a query point may attend to LF information
+      from anywhere in the domain — nothing forces spatial locality. The costs: ~32 slice tokens bottleneck fine detail, the fixed baseline
+      interpolation is even blurrier than bilinear (so δ starts in a hole), and the positional encodings resolve only ~64 distinct cells.
+      Bottom-ranked on smooth data — but worth re-testing when the sharp datasets arrive.</div>
+    <div class="auditnote"><b>Fine print (code audit):</b> on the <code>ifc_raw</code> datasets, the test split contains HF fields only — so at test time
+      these families' "LF input" is synthesized <i>by blurring the HF ground-truth answer</i> (bilinear downsampling). That is an idealized LF — a smudged copy
+      of the very field being predicted. Real LF enters only on the <code>npz_l</code> datasets; keep that in mind when reading their per-dataset numbers.</div>
+  </section>
+
+  <!-- ===================== 9. DINO ===================== -->
+  <section id="sec-dino" class="mb-10">
+    <h2 class="text-2xl font-bold mb-1">9 · Vision-foundation features — an honest negative (#16 + one unbenchmarked sibling)</h2>
+    <div class="anchornote mb-3">
+      <b>If you know intro ML, think:</b> using a frozen pretrained network as a feature extractor — like feeding images through a
+      pretrained ResNet and training a small classifier on its features. Here the pretrained network is DINOv2 (a self-supervised
+      vision transformer trained on natural images), the "image" is the LF field rendered as a picture, and the extracted feature is a
+      single 768-dimensional summary vector for the whole image (the CLS token).
+    </div>
+    <p class="text-sm text-base-content/80 max-w-4xl mb-3">
+      The hypothesis: maybe a big vision model, looking at the LF field <i>as an image</i>, notices structure (vortices, fronts) that
+      helps predict the HF field. Both variants: predict the LF field from X with one FNO → encode that prediction with frozen DINOv2
+      into one 768-d vector (computed once, offline) → condition a second, correction FNO on it.
+    </p>
+    <div class="overflow-x-auto mb-3">
+      <table class="table table-sm blocktable">
+        <thead><tr><th>Family (rank)</th><th>Where the embedding enters</th><th>Result</th></tr></thead>
+        <tbody>
+          <tr><td>fno_dino_residual (#16)</td><td>Projected to 64-d, broadcast to every pixel, concatenated as input channels at the correction FNO's first layer. <code>HF = LF_pred + δ</code> — deliberately identical to <code>fno_additive</code> except for the embedding, so the pair is a clean A/B test of "does DINO help?".</td><td>0.0259 vs additive's 0.0285 — marginal at best; recorded as an honest negative given the added machinery.</td></tr>
+          <tr><td>fno_dino_cond <span class="badge badge-xs badge-warning">in checkout, not benchmarked</span></td><td>Projected to 32-d and appended to the condition vector X before broadcasting (fusion at the very start instead).</td><td>Untested variant; same structural limits.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="hfnote mb-2"><b>Preview — sharp datasets: structurally incapable of helping.</b> One global vector summarizing the whole
+      image has zero spatial resolution — it can say "this field contains a front" but never <i>where</i> the LF field is wrong, which is the
+      question that matters. The preprocessing (min-max normalize → resize to 224² → ImageNet color statistics) also erases physical amplitude
+      and fine detail before DINO even looks. A variant using DINO's per-patch tokens with cross-attention (explicitly deferred in the code's
+      own docstring) would at least have spatial addressing.</div>
+  </section>
+
+  <!-- ===================== 10. external ===================== -->
+  <section id="sec-ext" class="mb-10">
+    <h2 class="text-2xl font-bold mb-1">10 · External SOTA wrappers (#27–#29) <span class="badge badge-sm badge-neutral align-middle">cluster-only</span></h2>
+    <p class="text-sm text-base-content/80 max-w-4xl mb-3">
+      Three published methods from other groups, wrapped faithfully (their upstream code, not re-implementations) and run through the
+      same evaluation plumbing. They are reference points, not part of the controlled ablation — their backbones differ from the FNO,
+      so differences can't be attributed to the fusion mechanism alone.
+    </p>
+    <div class="overflow-x-auto mb-3">
+      <table class="table table-sm blocktable">
+        <thead><tr><th>Family (rank)</th><th>What it is</th><th>Result on this benchmark</th></tr></thead>
+        <tbody>
+          <tr><td>mfrnp (#27)</td><td>Multi-Fidelity Residual Neural Processes (Niu et al., ICML 2024) — per-fidelity encoders + residual aggregation inside a neural-process framework (a family of models that learn distributions over functions).</td><td>0.295 — trails badly. Telling detail: the FNO-ized re-implementation of its core idea (<code>fno_mf_stack</code>, #17) does much better, suggesting the backbone rather than the idea was the limit.</td></tr>
+          <tr><td>d_mfd (#28)</td><td>Disentangled Multi-Fidelity Deep Bayesian Active Learning (Wu et al. 2023) — learns separated latent factors per fidelity; designed to <i>choose which sample to simulate next</i>.</td><td>0.430 — built for active data acquisition, not this fixed-split regression benchmark; ranks accordingly.</td></tr>
+          <tr><td>mf_deeponet (#29)</td><td>Multifidelity DeepONet (Lu et al. 2022) — the other famous neural-operator architecture (branch/trunk networks combined linearly), with LF→HF composition.</td><td>0.0839 — a decent median but few per-dataset wins; consistent with published theory that DeepONet's linear reconstruction is at a disadvantage on regular grids, exactly where FNOs thrive.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ===================== 11. leaderboard ===================== -->
+  <section id="sec-leaderboard" class="mb-10">
+    <h2 class="text-2xl font-bold mb-1">11 · The full leaderboard (30 families, 436/450 cells, 2500 epochs, seed 42)</h2>
+    <div class="card card-border bg-base-200 mb-3"><div class="card-body p-4 text-sm space-y-2">
+      <h3 class="font-semibold">How to read the two scores</h3>
+      <p><b>Elo</b> is the chess rating applied to models: every pair of models is compared on every dataset, each comparison is a
+      "game", and ratings rise with wins. It rewards <i>beating many models on many datasets</i> and is robust to one catastrophic
+      blow-up. <b>med relL2</b> is the median across datasets of the relative error — "on a typical dataset, how far off is this model,
+      as a fraction of the true field's size?" (0.0154 ≈ 1.5% off).</p>
+      <p>They can disagree, and both disagreements below are informative: a model can have excellent typical error but few outright wins
+      (fno_coreg_residual: median 0.0251 but Elo #21), or broad wins without the best typical error (the FIRE models). For the FIRE
+      families specifically, the <i>mean</i> relL2 is wrecked by a few blow-up datasets — trust Elo and the median.</p>
+    </div></div>
+    <div class="overflow-x-auto mb-3">
+      <table class="table table-xs blocktable">
+        <thead><tr><th>Rk</th><th>Model</th><th>Elo</th><th>med relL2</th><th>params</th><th>archetype</th><th>one-line mechanism</th></tr></thead>
+        <tbody class="rank-badge">
+          <tr><td>1</td><td class="font-mono">mf_fno_transfer_film</td><td>1820</td><td>0.0154</td><td>4.77M</td><td>transfer</td><td>LF-pretrain → HF-finetune, X via per-block FiLM</td></tr>
+          <tr><td>2</td><td class="font-mono">mf_fno_pinn_transfer</td><td>1799</td><td>0.0122</td><td>4.77M</td><td>transfer+physics</td><td>FiLM transfer + exact Poisson PDE-residual loss</td></tr>
+          <tr><td>3</td><td class="font-mono">fno_fire_distcond</td><td>1671</td><td>0.0264</td><td>28.4M</td><td>FIRE</td><td>μ+δ, deep-ensemble uncertainty conditioning</td></tr>
+          <tr><td>4</td><td class="font-mono">fno_fire_snapshot</td><td>1643</td><td>0.0389</td><td>28.4M</td><td>FIRE</td><td>cyclic-LR snapshot ensemble</td></tr>
+          <tr><td>5</td><td class="font-mono">fno_fire_batchens</td><td>1633</td><td>0.0407</td><td>9.50M</td><td>FIRE</td><td>shared trunk, 5 output heads</td></tr>
+          <tr><td>6</td><td class="font-mono">fno_fire_mdn</td><td>1626</td><td>0.0352</td><td>9.48M</td><td>FIRE</td><td>3-Gaussian mixture density head</td></tr>
+          <tr><td>7</td><td class="font-mono">fno_fire_iqn</td><td>1619</td><td>0.0373</td><td>9.48M</td><td>FIRE</td><td>τ-conditioned implicit quantiles</td></tr>
+          <tr><td>8</td><td class="font-mono">mf_fno_transfer</td><td>1616</td><td>0.0151</td><td>4.74M</td><td>transfer</td><td>canonical transfer, concat conditioning</td></tr>
+          <tr><td>9</td><td class="font-mono">fno_fire_quantile</td><td>1603</td><td>0.0264</td><td>9.48M</td><td>FIRE</td><td>direct pinball q10/q50/q90</td></tr>
+          <tr><td>10</td><td class="font-mono">mf_fno_transfer_2m</td><td>1595</td><td>0.0152</td><td>2.67M</td><td>transfer</td><td>parameter-matched control (48 ch)</td></tr>
+          <tr><td>11</td><td class="font-mono">fno_fire_laplace</td><td>1584</td><td>0.0169</td><td>9.48M</td><td>FIRE</td><td>last-layer Laplace posterior</td></tr>
+          <tr><td>12</td><td class="font-mono">fno_fire_swag</td><td>1567</td><td>0.0229</td><td>9.48M</td><td>FIRE</td><td>SWAG weight-space Gaussian</td></tr>
+          <tr><td>13</td><td class="font-mono">fno_coreg_conditioned</td><td>1559</td><td>0.0455</td><td>4.76M</td><td>coreg</td><td>FiLM-on-m at every block</td></tr>
+          <tr><td>14</td><td class="font-mono">fno_fire_cqr</td><td>1547</td><td>0.0462</td><td>28.4M</td><td>FIRE</td><td>snapshot + split-conformal calibration</td></tr>
+          <tr><td>15</td><td class="font-mono">fno_fire_dkl</td><td>1524</td><td>0.0170</td><td>9.48M</td><td>FIRE</td><td>deep-kernel last-layer GP</td></tr>
+          <tr><td>16</td><td class="font-mono">fno_dino_residual</td><td>1502</td><td>0.0259</td><td>9.54M</td><td>vision</td><td>additive δ + frozen DINOv2 CLS conditioning</td></tr>
+          <tr><td>17</td><td class="font-mono">fno_mf_stack</td><td>1485</td><td>0.0344</td><td>2.35M</td><td>stack</td><td>per-rung FNOs → learned aggregate → δ</td></tr>
+          <tr><td>18</td><td class="font-mono">fno_additive</td><td>1452</td><td>0.0285</td><td>9.48M</td><td>discrepancy</td><td>HF = LF_pred + δ</td></tr>
+          <tr><td>19</td><td class="font-mono">fno_coreg_lf_hf_transfer</td><td>1450</td><td>0.0551</td><td>1.19M</td><td>coreg</td><td>coreg head × transfer schedule</td></tr>
+          <tr><td>20</td><td class="font-mono">fno_coregionalization</td><td>1450</td><td>0.0538</td><td>1.19M</td><td>coreg</td><td>K-basis B(m)·h(x) head</td></tr>
+          <tr><td>21</td><td class="font-mono">fno_coreg_residual</td><td>1450</td><td>0.0251</td><td>2.37M</td><td>coreg</td><td>MFRNP aggregator + zero-init basis residual</td></tr>
+          <tr><td>22</td><td class="font-mono">fno_autoregressive</td><td>1450</td><td>0.0263</td><td>9.48M</td><td>discrepancy</td><td>HF = ρ·LF_pred + δ, learned ρ</td></tr>
+          <tr><td>23</td><td class="font-mono">transolver_residual</td><td>1392</td><td>0.116</td><td>0.70M</td><td>attention</td><td>soft-NN LF baseline + slice-attention δ</td></tr>
+          <tr><td>24</td><td class="font-mono">fno_fire_mcdropout</td><td>1368</td><td>0.0412</td><td>9.48M</td><td>FIRE</td><td>MC-dropout shortcut (honest negative)</td></tr>
+          <tr><td>25</td><td class="font-mono">fno_multilevel</td><td>1338</td><td>0.160</td><td>18.96M</td><td>discrepancy</td><td>telescoping per-rung δ cascade</td></tr>
+          <tr><td>26</td><td class="font-mono">transolver_attention_fusion</td><td>1337</td><td>0.322</td><td>2.28M</td><td>attention</td><td>iterated cross-attention, no residual</td></tr>
+          <tr><td>27</td><td class="font-mono">mfrnp</td><td>1287</td><td>0.295</td><td>2.60M</td><td>external</td><td>residual neural process (upstream code)</td></tr>
+          <tr><td>28</td><td class="font-mono">d_mfd</td><td>1260</td><td>0.430</td><td>2.52M</td><td>external</td><td>disentangled MF Bayesian active learning</td></tr>
+          <tr><td>29</td><td class="font-mono">mf_deeponet</td><td>1197</td><td>0.0839</td><td>0.54M</td><td>external</td><td>multifidelity DeepONet</td></tr>
+          <tr><td>30</td><td class="font-mono">v9_baseline</td><td>1176</td><td>0.210</td><td>0.43M</td><td>attention (ref)</td><td>frozen gated multi-stream fusion</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="grid md:grid-cols-2 gap-3 text-sm">
+      <div class="card card-border bg-base-200"><div class="card-body p-4">
+        <h3 class="font-semibold">The four takeaways the numbers support</h3>
+        <ol class="list-decimal ml-4 space-y-1 text-base-content/80">
+          <li><b>How you condition beats how much architecture you add</b> — swapping broadcast-concat for FiLM, alone, is #8 → #1.</li>
+          <li><b>Known physics adds a little more</b> — the PINN loss gives the best median error (0.0122).</li>
+          <li><b>LF uncertainty is a real signal</b> — the FIRE family clusters at #3–#15; but <i>cheap</i> uncertainty (MC-dropout, #24) is worse than no uncertainty at all (plain additive, #18).</li>
+          <li><b>Classic correction rules and external methods trail</b> on these (smooth) datasets.</li>
+        </ol>
+      </div></div>
+      <div class="card card-border bg-base-200"><div class="card-body p-4">
+        <h3 class="font-semibold">Caveat: this ranking was measured on FNO-friendly data</h3>
+        <p class="text-base-content/80">Nearly all 17 datasets have smooth fields — exactly where a 12-mode spectral method shines.
+        The companion report (<code>MF_Sharp_HighFreq_Report.pdf</code>) argues from theory, external benchmarks, and the code audit that
+        the ranking should roughly hold on the smoother upcoming dataset (Kuramoto–Sivashinsky) but <b>invert on the shock and interface
+        datasets</b> (Euler, Cahn–Hilliard), and proposes nine new families built for that regime (local convolution paths,
+        warp-then-correct registration, band-splitting, level-set heads…).</p>
+      </div></div>
+    </div>
+  </section>
+
+  <!-- ===================== 12. glossary ===================== -->
+  <section id="sec-glossary" class="mb-10">
+    <h2 class="text-2xl font-bold mb-2">12 · Glossary — every recurring term, defined once</h2>
+    <div class="grid md:grid-cols-2 gap-3">
+      <div class="card card-border bg-base-200"><div class="card-body p-4 text-sm space-y-2">
+        <h3 class="font-semibold text-base-content/60 text-xs uppercase tracking-wide">The problem</h3>
+        <p><b>Field.</b> A quantity defined at every point in space — here always stored as a 2-D image of numbers (temperature map, pressure map…).</p>
+        <p><b>PDE (partial differential equation).</b> The physics law a field must satisfy, phrased as constraints on its local slopes and curvatures. Solved numerically on grids, never by hand.</p>
+        <p><b>Fidelity / LF / HF.</b> How trustworthy a simulation is. Low fidelity = coarse grid / loose tolerances: cheap, blurry, plentiful. High fidelity = fine grid: expensive, sharp, scarce. Some datasets have a whole ladder of rungs, not just two.</p>
+        <p><b>Fidelity index m ∈ [0,1].</b> A dataset-assigned label for each rung (0 = coarsest, 1 = HF). Correlated with grid resolution but <i>not computed from it</i> — the values (e.g. {0, 0.143, 0.429, 1}) come with the dataset, and fidelity can also mean solver tolerance or timestep. Networks consume it via small MLPs on [m, m²].</p>
+        <p><b>Condition vector X.</b> The ~3–10 numbers describing one scenario (PDE coefficients, boundary values…). The only test-time input every family receives.</p>
+        <p><b>rel-L2 / nRMSE.</b> Flatten prediction and truth to vectors; error = ‖pred − truth‖ ⁄ ‖truth‖. 0.01 = "1% off". nRMSE is a normalized-RMSE cousin of the same idea; both are computed per sample and aggregated.</p>
+        <p><b>Elo.</b> The chess rating, computed from per-dataset pairwise model-vs-model wins. Robust to a single catastrophic dataset; the benchmark's primary ranking.</p>
+        <p><b>composite_nRMSE.</b> The factory's optimization target: the geometric mean over datasets of the best-model-per-dataset nRMSE (geometric so that no one dataset's scale dominates).</p>
+      </div></div>
+      <div class="card card-border bg-base-200"><div class="card-body p-4 text-sm space-y-2">
+        <h3 class="font-semibold text-base-content/60 text-xs uppercase tracking-wide">The machinery</h3>
+        <p><b>FNO / SpectralConv2d.</b> A network whose core layer works in frequency space: FFT → keep the lowest 12×12 frequency modes (16 or 20 in two families) → multiply by learned complex weights → inverse FFT. Global mixing in one layer, resolution-independent weights — and a built-in low-pass filter that caps sharpness.</p>
+        <p><b>Mode.</b> One 2-D sine-wave frequency in the Fourier decomposition. Low modes = broad strokes; high modes = edges and fine detail. "Keeping 12 modes" = keeping only the 12 lowest frequencies per axis.</p>
+        <p><b>FiLM.</b> Feature-wise Linear Modulation: a small MLP maps a conditioner (X or m) to a per-channel scale γ and shift β applied after normalization in every block — batch-norm's knobs, driven by a side network. Always zero-initialized here (γ=1, β=0) so training starts from the unconditioned network.</p>
+        <p><b>Residual / δ.</b> A correction added to a baseline: pred = baseline + δ. Learning the (smaller) gap instead of the whole field — boosting's move.</p>
+        <p><b>Ensemble / σ.</b> Several independently trained copies of a model; their per-pixel disagreement (standard deviation σ) is an uncertainty map. Quantiles q10/q50/q90 = the values a pixel lands under 10%/50%/90% of the time.</p>
+        <p><b>Zero-initialization.</b> Starting a new component at exactly zero effect, so the model begins as its simpler baseline and the component grows only if training finds it useful. Used by every FiLM, gate, and correction head in the zoo.</p>
+        <p><b>Per-fidelity scaler.</b> <code>scaler[m] = max|Y_train at m|</code>; training happens on Y/scaler, predictions are re-multiplied. Fixes ~40× magnitude gaps between rungs.</p>
+        <p><b>Working grid.</b> The HF native grid, capped at 256 px on the longest side; everything is bilinearly resampled onto it.</p>
+        <p><b>ifc_raw / npz_l.</b> The two dataset storage formats. ifc_raw test splits are HF-only — which forces LF-consuming families to synthesize test-time LF by downsampling HF (see fine print, section 8).</p>
+        <p><b>Smoke vs full.</b> Smoke = the quick per-cycle gate (200 epochs, 2 datasets, ≤30 min on one H100); full = the leaderboard run (2500 epochs × 17 datasets).</p>
+      </div></div>
+    </div>
+  </section>
+
+  <!-- ===================== 13. fine print ===================== -->
+  <section id="sec-audit" class="mb-10">
+    <h2 class="text-2xl font-bold mb-2">13 · The fine print — audit findings, and the ML lessons inside them</h2>
+    <p class="text-sm text-base-content/80 mb-3 max-w-4xl">
+      Collected from the line-by-line code read (2026-07-02). None of these invalidate the leaderboard; all of them matter for
+      interpreting it. They also happen to be a tour of classic ML-engineering pitfalls — worth reading as lessons, not just as caveats.
+    </p>
+    <div class="overflow-x-auto">
+      <table class="table table-sm blocktable">
+        <thead><tr><th>Finding</th><th>Detail</th><th>The general lesson</th></tr></thead>
+        <tbody>
+          <tr><td>Test-time input synthesized from the answer</td><td>On ifc_raw HF-only test splits, the LF-consuming families (Transolver/v9) receive "LF" made by bilinearly downsampling the HF ground truth — a blurred copy of the very field being predicted.</td><td>Always ask where each test-time input <i>comes from</i>. An input derived from the label flatters the score — a subtle cousin of data leakage.</td></tr>
+          <tr><td>Name ≠ implementation</td><td>"batchens" is a multi-head ensemble (not rank-1 BatchEnsemble); "cqr" is split-conformal σ-scaling (not textbook CQR) and spends 20% of the scarce HF data on calibration; IQN uses a constant τ channel (not the paper's cosine embedding); "FiLM fine-tune" trains all weights.</td><td>Read the code, not the paper name in the config. Ablation tables are only as honest as the mechanisms actually implemented.</td></tr>
+          <tr><td>Checkpoint-resume gaps</td><td>The 9 shared-runner FIRE families ignore <code>--ckpt_dir</code> entirely; the transfer/DINO/coreg-smoke families checkpoint only at stage end. Proper mid-run resume exists only in fno_coreg_residual, fno_mf_stack, both Transolvers, and v9.</td><td>On preemptible compute, resume logic is not plumbing — it is budget. A job that restarts from epoch 0 after every preemption may effectively never finish.</td></tr>
+          <tr><td>Config drift vs leaderboard</td><td>Current code defaults for fno_coregionalization (~50.5M params), fno_mf_stack (24.2M), fno_coreg_residual (~9.1M) far exceed the benchmarked 1.19M / 2.35M / 2.37M; fno_mf_stack's defaults contradict its own comments and full_config.json; the coreg manifest says K=10 while code uses K=20.</td><td>Reproducibility rots silently. If defaults drift after a benchmark run, re-running "the same" experiment reproduces neither the params nor necessarily the numbers.</td></tr>
+          <tr><td>Resampling without antialiasing</td><td>All resizing is bilinear with <code>antialias=False</code>; grids above 256 px (era5's 721×1440 → 128×256) are downsampled with aliasing.</td><td>Preprocessing is part of the model. A blur applied in the data loader is an error floor no architecture can dig under.</td></tr>
+          <tr><td>Loss quirks</td><td>The shared FIRE loop re-permutes every mini-batch (samples can repeat/skip within an "epoch"); coreg families compute MSE in raw units (implicitly weighting big-magnitude fidelities more); fno_mf_stack keys special Poisson loss weights on a dataset-name substring.</td><td>Small unstated training-loop choices add up to real comparability caveats between "identical" setups.</td></tr>
+          <tr><td>Missing provenance</td><td><code>results/bench_*.csv</code> (the leaderboard's declared source) and <code>references/external_sota/</code> exist only in the cluster working tree; several families lack INSPIRATION.md.</td><td>A result you can't trace to its raw artifacts is a claim, not a measurement. The leaderboard is currently reproducible only from the cluster tree.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ===================== 14. questions ===================== -->
+  <section id="sec-questions" class="mb-6">
+    <h2 class="text-2xl font-bold mb-2">14 · Questions for you</h2>
+    <div class="grid md:grid-cols-3 gap-3">
+      <div class="card card-border bg-base-200"><div class="card-body p-4">
+        <form data-lavish-question="depth-level" onsubmit="event.preventDefault(); const v=new FormData(event.currentTarget).get('q1'); if(v) window.lavish.queuePrompt('Beginner-edition level check: ' + v, {tag:'choice', text:'Level: '+v, element: event.currentTarget, data:{question:'depth-level', answer:v}});">
+          <h3 class="font-semibold text-sm mb-1">1 · Is the level right?</h3>
+          <p class="text-xs text-base-content/70 mb-2">This edition targets "intro ML class + some projects, no multi-fidelity background".</p>
+          <label class="flex gap-2 items-center text-sm"><input type="radio" name="q1" value="right level" class="radio radio-xs">about right</label>
+          <label class="flex gap-2 items-center text-sm"><input type="radio" name="q1" value="still too advanced" class="radio radio-xs">still too advanced</label>
+          <label class="flex gap-2 items-center text-sm"><input type="radio" name="q1" value="too basic in places" class="radio radio-xs">too basic in places</label>
+          <button type="submit" class="btn btn-primary btn-xs mt-2">Queue answer</button>
+        </form>
+      </div></div>
+      <div class="card card-border bg-base-200"><div class="card-body p-4">
+        <form data-lavish-question="expand-section" onsubmit="event.preventDefault(); const v=new FormData(event.currentTarget).get('q2'); if(v) window.lavish.queuePrompt('Expand further in beginner edition: ' + v, {tag:'choice', text:'Expand: '+v, element: event.currentTarget, data:{question:'expand-section', answer:v}});">
+          <h3 class="font-semibold text-sm mb-1">2 · Which part deserves even more depth?</h3>
+          <p class="text-xs text-base-content/70 mb-2">I can expand any section with worked examples or small figures.</p>
+          <label class="flex gap-2 items-center text-sm"><input type="radio" name="q2" value="Fourier/FNO backbone" class="radio radio-xs">Fourier / FNO backbone</label>
+          <label class="flex gap-2 items-center text-sm"><input type="radio" name="q2" value="FIRE uncertainty methods" class="radio radio-xs">FIRE uncertainty methods</label>
+          <label class="flex gap-2 items-center text-sm"><input type="radio" name="q2" value="evaluation (Elo, rel-L2)" class="radio radio-xs">evaluation (Elo, rel-L2)</label>
+          <button type="submit" class="btn btn-primary btn-xs mt-2">Queue answer</button>
+        </form>
+      </div></div>
+      <div class="card card-border bg-base-200"><div class="card-body p-4">
+        <form data-lavish-question="add-visuals" onsubmit="event.preventDefault(); const v=new FormData(event.currentTarget).get('q3'); if(v) window.lavish.queuePrompt('Beginner-edition visuals: ' + v, {tag:'choice', text:'Visuals: '+v, element: event.currentTarget, data:{question:'add-visuals', answer:v}});">
+          <h3 class="font-semibold text-sm mb-1">3 · Add illustrative figures?</h3>
+          <p class="text-xs text-base-content/70 mb-2">E.g. an actual LF-vs-HF field pair from the data, or a "same image with only 12 Fourier modes" demo.</p>
+          <label class="flex gap-2 items-center text-sm"><input type="radio" name="q3" value="yes, LF-vs-HF field pair" class="radio radio-xs">yes — LF vs HF example</label>
+          <label class="flex gap-2 items-center text-sm"><input type="radio" name="q3" value="yes, 12-mode truncation demo" class="radio radio-xs">yes — 12-mode truncation demo</label>
+          <label class="flex gap-2 items-center text-sm"><input type="radio" name="q3" value="no, text is enough" class="radio radio-xs">no — text is enough</label>
+          <button type="submit" class="btn btn-primary btn-xs mt-2">Queue answer</button>
+        </form>
+      </div></div>
+    </div>
+  </section>
+
+  <footer class="text-xs text-base-content/50 border-t border-base-300 pt-3 mt-8">
+    Beginner-friendly edition of <code>model_explanations.html</code> — same sources, same numbers, more explanation.
+    Sources: line-by-line read of <code>models/*/model.py</code>, <code>models/*/smoke_eval.py</code>, <code>models/_common/fire_core.py</code>, <code>fire_methods.py</code>,
+    <code>references/v9_baseline/*</code>, <code>model/README.md</code> (leaderboard), <code>eval/*.json</code>, <code>baselines/paper_baselines.json</code> — extracted 2026-07-02.
+    Companion: <code>MF_Sharp_HighFreq_Report.pdf</code> (sharp-field research &amp; proposals). Static copy of this page: <code>MFFP_Model_Explanations_Beginner.html</code> at repo root.
+    Design: Tailwind+DaisyUI+Mermaid CDN, matching the repo's existing artifacts.
+  </footer>
+
+</div>
+</body>
+</html>
