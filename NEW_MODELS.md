@@ -232,17 +232,13 @@ The deterministic-for-nRMSE idea, which reads as the memo's cleverest move, is *
 Net verdict, the same shape as B and C: **recombination, not invention**; position Candidate A as engineering/consolidation.
 
 **The load-bearing technical caveat §4 currently understates.**
-§4 motivates the blur as *aleatoric* — "the mean of all plausible sharp fields is smeared" — but that framing and the nRMSE-safety claim are in tension:
-
-- **If the blur is truly aleatoric,** the distortion–perception tradeoff (Blau & Michaeli 2018; Freirich et al., NeurIPS 2021) says the posterior **mean** — the blurry field — is very nearly the nRMSE-minimizing estimate, so a sharper refiner output would *raise* nRMSE, the opposite of the intent.
-  (The "unique minimizer" statement is exactly true only for squared L2; the scored metric is per-sample *relative*-L2, whose Bayes-optimal estimator is not strictly `E[HF | inputs]`, so read this as a strong heuristic, not a clean theorem — the direction survives regardless.)
-- **The refiner wins only in the *other* regime:** where the missing detail is **deterministic but underfit** — predictable from the LF and conditioning, yet dropped by a one-shot MSE head because low-amplitude high modes barely move the loss.
-  That is PDE-Refiner's actual mechanism, and it improves *accuracy* because the recovered content is the true signal, not a plausible hallucination.
-
-The operative rule and its consequence:
-
-- Candidate A helps only when the baseline is **not already the relative-L2-optimal estimator** (spectral bias, capacity, conditioning), and is a *liability* where the detail is genuinely aleatoric and the baseline already estimates the mean well.
-- So the refiner must target the posterior **mean**, not a sample, and **E0 (§12) must be extended to classify each dataset as deterministic-underfit vs. aleatoric in the high modes** (residual-energy spectrum vs. a conditional-variance estimate) before Candidate A is pointed at it.
+§4 motivates the blur as *aleatoric* — "the mean of all plausible sharp fields is smeared."
+Where that is literally the case, the distortion–perception tradeoff (Blau & Michaeli 2018; Freirich et al., NeurIPS 2021) says the posterior **mean** — the blurry field — is very nearly the nRMSE-minimizing estimate, so a sharper refiner output would *raise* nRMSE, the opposite of the intent.
+(The "unique minimizer" statement is exactly true only for squared L2; the scored metric is per-sample *relative*-L2, whose Bayes-optimal estimator is not strictly `E[HF | inputs]`, so read this as a strong heuristic, not a clean theorem — the direction survives regardless.)
+The refiner lowers nRMSE only in the *other* regime: where the missing high-frequency detail is **deterministic but underfit** — genuinely predictable from the LF and conditioning, yet dropped by a one-shot MSE head because low-amplitude high modes barely move the MSE loss.
+That is PDE-Refiner's actual mechanism, and it improves *accuracy* because the recovered content is the true signal, not a plausible hallucination.
+So the operative rule: Candidate A helps only when the baseline is **not already the relative-L2-optimal estimator** (spectral bias, capacity, conditioning) — and is a *liability* where the detail is genuinely aleatoric and the baseline already estimates the mean well.
+The consequence for the plan is concrete: the refiner must target the posterior **mean**, not a sample, and **E0 (§12) must be extended to classify each dataset as deterministic-underfit vs. aleatoric in the high modes** (residual-energy spectrum vs. a conditional-variance estimate) before Candidate A is pointed at it.
 
 **A premise worth auditing.**
 §4 and §5.4 assume the LF→HF residual `delta` is "near-pure high-frequency."
@@ -278,7 +274,7 @@ FNO and WNO sit on opposite ends of the Fourier–wavelet (Heisenberg) tradeoff,
 
 |           | FNO (global Fourier)                                              | WNO (localized wavelet)                                                                                                  |
 | --------- | ----------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
-| Strong at | Smooth, global, periodic/stationary content; low modes, efficient | Sharp,*local*, transient/non-stationary features; multiresolution; no low-pass truncation                              |
+| Strong at | Smooth, global, periodic/stationary content; low modes, efficient | Sharp, *local*, transient/non-stationary features; multiresolution; no low-pass truncation                              |
 | Weak at   | Sharp local detail (mode truncation discards it)                  | Global smooth/periodic structure; boundary artifacts; wavelet-family/level are finicky; weaker discretization-invariance |
 
 A *pure* WNO would likely lose on smooth datasets (heat/Poisson) even while winning on sharp ones, so replacing FNO is the wrong move.
@@ -304,18 +300,12 @@ The Fourier+wavelet prior art (§6.5) should be acknowledged there rather than c
 ### 6.3 Alternatives on the representation axis
 
 **Why not just raise the FNO mode count (the natural first objection)?**
-Because more modes raises the frequency *ceiling* but does nothing about spatial *localization* — and sharp features are a localization problem, not only a high-frequency one.
-Concretely:
-
-- **Local features are dense in *any* Fourier basis.** A shock, front, or interface is localized in space, and anything spatially localized takes many high-wavenumber global sinusoids that cancel everywhere except at the feature — no mode count avoids this.
-- **Gibbs ringing never goes away.** Near a discontinuity those sinusoids leave overshoot that more modes *narrow but never remove*.
-  A wavelet basis is localized in space *and* frequency (the Heisenberg trade-off), so it represents the same feature as a few clean fine-scale coefficients near its location.
-- **A spectral conv is global and stationary.** It applies the same filter everywhere, so no mode count buys the per-location adaptivity the §6.2 gate has (Fourier where smooth, wavelet where sharp).
-- **More modes = more weights to fit from scarce HF.** The wavelet branch reaches the same sharp content with far fewer effective degrees of freedom — decisive when HF is scarce.
-- **There is a hard grid wall.** The capped 256 working grid has a Nyquist limit (§5.4), past which "more modes" is meaningless.
-
-**The honest counter-case.**
-Where the missing energy is *global and stationary* high-frequency (spread-out, periodic — e.g. high-wavenumber homogeneous turbulence), more modes genuinely is the simpler right tool and wavelets do not help; the cheap middle ground there is F-FNO (below).
+Because more modes raises the frequency *ceiling* but does nothing about spatial *localization*, and sharp features are a localization problem, not only a high-frequency one.
+A shock, front, or interface is localized in space, and anything spatially localized is *dense* in a global Fourier basis no matter how many modes are kept — it takes many high-wavenumber global sinusoids that cancel everywhere except at the feature, and near a discontinuity they leave **Gibbs ringing** that more modes narrow but never remove.
+A wavelet basis is localized in space *and* frequency (the Heisenberg trade-off), so the same feature is a few fine-scale coefficients near its location — sparse, and without the ringing.
+Two further things no mode count can buy: a spectral conv is a **global, stationary** operator (the same filter everywhere), so it cannot adapt per-location the way the §6.2 gate does (Fourier where smooth, wavelet where sharp); and more modes means more spectral weights to fit from **scarce HF**, which the wavelet branch reaches with far fewer effective degrees of freedom.
+There is also a hard grid wall — the capped 256 working grid has a Nyquist limit (§5.4), past which "more modes" is meaningless.
+The honest counter-case: where the missing energy is *global and stationary* high-frequency (spread-out, periodic — e.g. high-wavenumber homogeneous turbulence), more modes genuinely is the simpler right tool and wavelets do not help; the cheap middle ground there is F-FNO (below).
 This is exactly why §6.2 *gates* the two branches rather than replacing FNO, and why E0 (§12) is the deciding audit: it measures whether a dataset's high-frequency residual energy lives in *localized* features (the wavelet branch wins) or *global* modes (raise modes / F-FNO).
 
 - **Multiwavelet operator (MWT, Gupta et al. 2021)** — a more principled, better-grounded multiscale cousin of WNO.
@@ -594,14 +584,14 @@ There is therefore no "must generalize everywhere" penalty against a specialized
 
 ## 11. Honest odds and where each lever wins
 
-| Family                                                                                                                            | Rough odds vs the board                                                                      | Reasoning                                                                                                                                                   |
-| --------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Refiner as head-swap of`fno_fire_distcond` (#3): beat parent, crack top ~5                                                      | ~60–70%                                                                                     | Residual headroom (0.0264) and the mechanism targets the blur directly.                                                                                     |
-| FNO↔WNO hybrid backbone (MSE/transfer setup): win the sharp datasets                                                             | Good on sharp; neutral-to-slightly-worse on smooth if ungated, bounded if gated              | Fixes representation where FNO truncates; gate limits smooth-dataset downside.                                                                              |
+| Family | Rough odds vs the board | Reasoning |
+| --- | --- | --- |
+| Refiner as head-swap of `fno_fire_distcond` (#3): beat parent, crack top ~5 | ~60–70% | Residual headroom (0.0264) and the mechanism targets the blur directly. |
+| FNO↔WNO hybrid backbone (MSE/transfer setup): win the sharp datasets | Good on sharp; neutral-to-slightly-worse on smooth if ungated, bounded if gated | Fixes representation where FNO truncates; gate limits smooth-dataset downside. |
 | Candidate C (cycle-consistent invertible-degradation): lift the sharp datasets via LF-surplus semi-supervision, composed with A/B | Promising where a genuine HF→LF degradation exists; weak where fidelities differ physically | Turns abundant LF into a constraint on the scarce-HF inverse; per-dataset applicability (§7.3), so bank it only where E0 flags real degradation structure. |
-| Candidate D (warp-then-correct): win the advective / interface / shock datasets                                                   | Good on misaligned-feature datasets; near-neutral where LF/HF are already aligned            | Fixes a*displacement* error additive correction cannot; zero-init + smoothness penalty bounds the downside to "no worse than plain correction."           |
-| Either lever: become outright#1 on *smooth* datasets (beat 0.0122–0.0154)                                                      | ~25–35%                                                                                     | Transfer champions are strong and low there, and relative-L2 under-weights high-frequency gains on smooth fields.                                           |
-| Combined refiner + hybrid (optionally wrapped by the warp): top the board via**Elo** on the high-frequency datasets         | Highest ceiling of the set                                                                   | Both bottlenecks fixed; Elo is per-dataset pairwise, so sharp-dataset wins lift rank even if smooth-dataset medians do not move.                            |
+| Candidate D (warp-then-correct): win the advective / interface / shock datasets | Good on misaligned-feature datasets; near-neutral where LF/HF are already aligned | Fixes a *displacement* error additive correction cannot; zero-init + smoothness penalty bounds the downside to "no worse than plain correction." |
+| Either lever: become outright #1 on *smooth* datasets (beat 0.0122–0.0154) | ~25–35% | Transfer champions are strong and low there, and relative-L2 under-weights high-frequency gains on smooth fields. |
+| Combined refiner + hybrid (optionally wrapped by the warp): top the board via **Elo** on the high-frequency datasets | Highest ceiling of the set | Both bottlenecks fixed; Elo is per-dataset pairwise, so sharp-dataset wins lift rank even if smooth-dataset medians do not move. |
 
 **The evaluation caveat that stays true throughout:** the smoke datasets are `ifc_heat` + `ifc_poisson`, both smooth, so a wash there is expected and does **not** indicate failure.
 Both levers must be judged on the sharp datasets in the full benchmark.
