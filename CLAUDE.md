@@ -15,6 +15,15 @@ differ almost entirely in *how* they fuse — the backbone (a Fourier Neural Ope
 roughly constant so the comparison isolates the MF mechanism. See `model/README.md` for the
 full model-zoo leaderboard and per-family TL;DRs.
 
+## Where the research writing lives
+
+All reports, proposals, plans, and raw notes are filed under `docs/` — start at `docs/README.md`,
+which indexes every document with its date and status. In short: `docs/reports/` (finished
+deliverables + their figure directories), `docs/proposals/` (model ideas under consideration),
+`docs/planning/` (autoresearch loop design), `docs/notes/` (raw question lists and idea seeds),
+`docs/external/` (papers and decks from outside this repo). None of it is read by the eval or
+factory pipeline. Only `README.md`, `CLAUDE.md`, `factory.md`, and `HOWTO.md` stay at the root.
+
 ## The one rule that governs everything: mutable vs fixed surfaces
 
 `factory.md` declares what may change. **Only `models/**` is modifiable.** Treat everything

@@ -1,6 +1,6 @@
 # The sharp-field report, explained for an intro-ML reader
 
-## A plain-language companion to `MF_Sharp_HighFreq_Report.pdf`
+## A plain-language companion to `MF_Sharp_HighFreq_Report.md`
 
 *Prepared 2026-07-02 · same audited facts and numbers as the technical report — nothing new is claimed here, everything is just explained more slowly, with analogies to things an intro machine-learning class already covers.*
 
@@ -459,6 +459,6 @@ The resemblance is only skin-deep. Elo, here, is just a way of *summarizing* whi
 
 ---
 
-Full citations (arXiv IDs, journal references) for every claim above are in the companion technical report, `MF_Sharp_HighFreq_Report.pdf` — this document deliberately omits them to stay readable, but makes no claim that isn't sourced there.
+Full citations (arXiv IDs, journal references) for every claim above are in the companion technical report, `MF_Sharp_HighFreq_Report.md` — this document deliberately omits them to stay readable, but makes no claim that isn't sourced there.
 Figures reused: `report_figs_hf/fig_hf1_spectral_wall.png`, `fig_hf2_misalignment.png`, `fig_hf3_mean_blur.png`.
-Companion pages: `MFFP_Model_Explanations_Beginner.html` (the model zoo, from scratch) and `MF_SOTA_vs_MFFP_Report.pdf` (the smooth-suite SOTA landscape).
+Companion pages: `MFFP_Model_Explanations_Beginner.html` (the model zoo, from scratch) and `MF_SOTA_vs_MFFP_Report.md` (the smooth-suite SOTA landscape).

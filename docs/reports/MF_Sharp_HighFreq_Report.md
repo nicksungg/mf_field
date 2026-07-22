@@ -2,7 +2,7 @@
 
 ## Research synthesis and model proposals for the SURF-2026 sharp-field datasets
 
-*Prepared 2026-07-02 · companion to `MF_SOTA_vs_MFFP_Report.pdf` (2026-06-27), which covers the smooth-suite SOTA landscape.*
+*Prepared 2026-07-02 · companion to `MF_SOTA_vs_MFFP_Report.md` (2026-06-27), which covers the smooth-suite SOTA landscape.*
 
 ---
 
