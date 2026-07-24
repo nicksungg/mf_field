@@ -1,0 +1,1 @@
+H1 fno_coreg_residual_poisson_loss_reweighting (cycle 003): port resolve_fidelity_weights helper from H4 (models/fno_mf_stack) into H3 (models/fno_coreg_residual); dataset-conditional MFRNP Poisson5 (2.0, 0.25) weights gated on 'poisson' substring; Heat path uniform; branch base experiment/4-fno_coreg_residual (cycle-002 H3 at composite 0.0442)

@@ -1,0 +1,110 @@
+{
+  "status": "PASS",
+  "metric": "composite_nRMSE",
+  "metric_value": 0.033726106467994385,
+  "metric_lower_is_better": true,
+  "duration_seconds": 484,
+  "command": "bash scripts/cycle_eval.sh (SLURM job 15313689 on partition mit_preemptable, L40S GPU on node2902)",
+  "branch": "bench/all-fno-families",
+  "result_path": "results/smoke_latest.json",
+  "smoke_log": "logs/smoke_15313689.out",
+  "stdout_log": ".factory/research/runs/cycle-005-baseline/stdout.log",
+
+  "per_dataset_best": {
+    "ifc_heat":    {"model": "fno_coregionalization", "nRMSE": 0.02047202286160631,  "code_hash": "9528aeef4a5a", "cache_miss": true, "cache_file": "results/raw/fno_coregionalization__ifc_heat__e200__s42__9528aeef4a5a.json"},
+    "ifc_poisson": {"model": "fno_coreg_residual",    "nRMSE": 0.05556120492732022,  "code_hash": "9be21a0f9ce9", "cache_miss": true, "cache_file": "results/raw/fno_coreg_residual__ifc_poisson__e200__s42__9be21a0f9ce9.json"}
+  },
+
+  "leaderboard": {
+    "ifc_heat": [
+      {"model": "fno_coregionalization",         "nRMSE": 0.02047202286160631},
+      {"model": "fno_coreg_residual",            "nRMSE": 0.03519119287270608},
+      {"model": "transolver_residual",           "nRMSE": 0.11430303102493142},
+      {"model": "fno_mf_stack",                  "nRMSE": 0.13010190203980990},
+      {"model": "v9_baseline",                   "nRMSE": 0.14861100148903933},
+      {"model": "transolver_attention_fusion",   "nRMSE": 0.14916345858403700}
+    ],
+    "ifc_poisson": [
+      {"model": "fno_coreg_residual",            "nRMSE": 0.05556120492732022},
+      {"model": "fno_mf_stack",                  "nRMSE": 0.08829401343513059},
+      {"model": "transolver_attention_fusion",   "nRMSE": 0.38326961773384020},
+      {"model": "fno_coregionalization",         "nRMSE": 0.77562177215382700},
+      {"model": "transolver_residual",           "nRMSE": 2.59703674289773600},
+      {"model": "v9_baseline",                   "nRMSE": 18.48951157874694200}
+    ]
+  },
+
+  "failed_families": {
+    "mf_fno_transfer_bar": {
+      "status": "FAIL",
+      "ifc_heat": {"error": "ModuleNotFoundError: No module named 'data_adapters'", "exit_code": 1, "wall_seconds": 531.7159311771393},
+      "ifc_poisson": {"error": "ModuleNotFoundError: No module named 'data_adapters'", "exit_code": 1, "wall_seconds": 125.3717942237854},
+      "root_cause": "models/mf_fno_transfer_bar/smoke_eval.py line 32 sets `REPO_ROOT = HERE.parent.parent.parent` — ONE LEVEL TOO HIGH. HERE = models/mf_fno_transfer_bar/, so .parent.parent already equals the project root (factory_mffp/) where data_adapters/ lives. .parent.parent.parent jumps to mf_field/, which has no data_adapters/. Fix: change line 32 to `REPO_ROOT = HERE.parent.parent`.",
+      "fix_target_files": ["models/mf_fno_transfer_bar/smoke_eval.py"],
+      "fix_type": "code (1 line)",
+      "implication": "The cycle-005 sbatch did NOT establish a current bar number for mf_fno_transfer_bar. The standup-quoted bar of ~0.026 composite is reconstructed from results/bench_metrics.csv (the parallel pipeline), NOT from this smoke loop. Cycle-005 hypotheses cannot honestly claim they beat the bar in-distribution until this 1-line import fix lands and a clean re-run produces a smoke-pipeline bar number."
+    }
+  },
+
+  "mf_fno_transfer_bar_paper_pipeline_score": {
+    "source": "results/bench_metrics.csv",
+    "csv_family_name": "mf_fno_transfer",
+    "ifc_heat_nRMSE": 0.012813724787998158,
+    "ifc_poisson_nRMSE": 0.058714941264928820,
+    "implied_geomean_composite": 0.02743,
+    "note": "0.026 directive number is approximate; precise bench_metrics.csv reconstruction yields ~0.0274. Either number is comparable in magnitude to our cycle-005 baseline (0.0337) and indicates closing the gap is plausible if mf_fno_transfer_bar's smoke harness can be unblocked."
+  },
+
+  "vs_paper": {
+    "ifc_heat":    {"ours_best_nRMSE": 0.02047202286160631, "paper_nRMSE": 0.074,  "ratio_ours_over_paper": 0.27664895758927455, "beats_paper": true,  "beats_paper_x": 3.62},
+    "ifc_poisson": {"ours_best_nRMSE": 0.05556120492732022, "paper_nRMSE": 0.036,  "ratio_ours_over_paper": 1.5433668035366732,  "beats_paper": false, "ratio_over_paper": 1.54},
+    "n_datasets_beating_paper": 1,
+    "n_datasets_scored": 2
+  },
+
+  "comparison_to_prior_best": {
+    "prior_best_cycle": "cycle-004-baseline",
+    "prior_best_metric_value": 0.04415401368473514,
+    "current_metric_value": 0.033726106467994385,
+    "delta": -0.010427908675150755,
+    "delta_pct": -23.6,
+    "interpretation": "cycle-005-baseline (0.0337) IMPROVES on cycle-004-baseline (0.0441) by 24%. The ifc_heat winner changed from fno_coreg_residual (0.0263 in cycle-004) to fno_coregionalization (0.0205 here) — 22% better. The ifc_poisson winner remained fno_coreg_residual but improved from 0.0742 → 0.0556 (25% better). Both per-dataset improvements indicate the in-tree families have continued to be tuned/refined since cycle-004."
+  },
+
+  "bar_to_beat": {
+    "label": "mf_fno_transfer_bar (transfer-learning MF-FNO, Lyu 2023 / GCS 2023)",
+    "approximate_composite_nRMSE": 0.0274,
+    "approximate_ifc_heat_nRMSE": 0.0128,
+    "approximate_ifc_poisson_nRMSE": 0.0587,
+    "source": "results/bench_metrics.csv (parallel pipeline) — NOT from this smoke run because the smoke harness crashed",
+    "current_gap_vs_bar": "cycle-005-baseline composite 0.0337 is ~23% above the ~0.0274 bar. The gap is dominated by ifc_heat where the bar (0.0128) is 1.6x better than our best (0.0205). On ifc_poisson we (0.0556) are already slightly better than the bar (0.0587).",
+    "implication_for_hypotheses": "Closing the gap requires improving ifc_heat specifically. Transfer-learning pretraining (LF → HF fine-tune) on top of the coregionalization or residual heads is the directive-suggested direction."
+  },
+
+  "harness_anomalies_observed_this_cycle": {
+    "anomaly_1_cycle_eval_no_gpu": {
+      "description": "cycle_eval.sh runs `eval/score.py --out RESULT` as a 'cache-only local pass' on whatever node it's invoked from. On the login node (no GPU), score.py cannot hit the cache for newly-built families and tries to run them locally, where each fno_* family training hits the per_call_timeout_seconds=1800 limit (~3h wall total for 6 fno × dataset pairs). This was observed during the evaluator agent's invocation and during a later CEO sanity test.",
+      "impact": "When the local pass runs WITHOUT a parallel SLURM job, the cache-miss path silently dominates and smoke_latest.json gets written with timeout entries for the in-tree fno_* families, producing a degraded composite_nRMSE.",
+      "affected_files_fixed_surface": ["scripts/cycle_eval.sh", "eval/score.py", "eval/smoke_config.json"],
+      "workaround_used_this_cycle": "R0 was run as an explicit sbatch (SLURM job 15313689) on partition=mit_preemptable. That job populated the cache files in results/raw/ correctly. The corrupted smoke_latest.json from the local-pass race was restored from results/history.jsonl entry [18] (ts=1780362381) before this summary.json was finalized.",
+      "operator_action_required": "Either (a) make cycle_eval.sh gate the local pass on `nvidia-smi` succeeding, (b) lower per_call_timeout_seconds in smoke_config.json from 1800 → ~60, or (c) route everything through SLURM regardless of cache state. All three live in fixed surfaces (scripts/, eval/), so a Builder cannot fix them — operator must edit."
+    },
+    "anomaly_2_smoke_latest_was_overwritten_and_restored": {
+      "what_happened": "After SLURM 15313689 wrote smoke_latest.json with metric_value=0.033726 at 21:06:21, a subsequent cycle_eval.sh test from this CEO session (running on the login node without GPU) overwrote it at 21:39:25 with metric_value=0.20930 (the timeout-laden version).",
+      "restored_from": "results/history.jsonl entry [18] (ts=1780362381 = 2026-06-01T21:06:21Z)",
+      "no_cache_pollution": "The corrupting cycle_eval.sh run did NOT write any new files to results/raw/ — the cycle-005 cache (hashes 9be21a0f9ce9, 9528aeef4a5a, 07838a82d090, a0b8f509704e, d607f8c884eb, 4a630d0e17ec) is intact and authoritative.",
+      "remediation": "smoke_latest.json now correctly reflects the SLURM-produced composite_nRMSE = 0.033726 as of cycle-005 R0 finalization."
+    }
+  },
+
+  "interpretation": "cycle-005-baseline establishes composite_nRMSE = 0.033726 as the new project-best on the 2-dataset smoke suite, a 24% improvement over cycle-004 (0.04415). The leaderboard composition changed: fno_coregionalization is now the ifc_heat winner (0.0205, 3.6x better than paper), and fno_coreg_residual remains the ifc_poisson winner with an improved 0.0556 (1.54x paper — still UNBEATEN by paper). The mf_fno_transfer_bar family is BROKEN in the smoke harness (1-line REPO_ROOT path bug) and produced no comparable smoke number this cycle; its approximate bar (~0.027) comes from the parallel bench_metrics.csv pipeline. The dominant cycle-005 work items are: (1) fix mf_fno_transfer_bar/smoke_eval.py REPO_ROOT (1 line, models/** mutable surface) so the bar appears in the smoke leaderboard and direct comparison is possible; (2) close the ifc_heat gap to the bar (0.0205 → ≤0.0128, ~1.6x improvement needed) via transfer-learning pretraining on top of the coregionalization or residual head; (3) improve ifc_poisson past the paper bar (0.0556 → ≤0.036, ~1.55x improvement needed).",
+
+  "evaluator_diagnostic_credit": "The evaluator agent ran for ~3h before timing out, but produced excellent forensic analysis covering the mf_fno_transfer_bar REPO_ROOT bug, the cycle_eval.sh no-GPU harness anomaly, and the bench_metrics.csv reconstruction of the bar number. The agent's analysis (status=FAIL, metric_value=0.20930 from the corrupted on-disk file) was corrected during R0 finalization once smoke_latest.json was restored.",
+
+  "recommended_next_actions_for_r1_failure_analyst": [
+    "Focus the failure analysis on ifc_poisson (0.0556 vs paper 0.036, 1.54x — the closest path to in-tree paper-bar parity).",
+    "Focus on ifc_heat gap to bar (0.0205 vs bar ~0.0128, 1.6x — the dominant gap to the transfer-learning bar).",
+    "Flag mf_fno_transfer_bar/smoke_eval.py REPO_ROOT as a 1-line code fix (mutable surface) that unblocks future direct-bar comparison; this is a prerequisite, not a research hypothesis.",
+    "Optionally surface anomaly_1 (cycle_eval.sh no-GPU race) as an operator-action-required item; it is NOT in mutable scope so cannot be a Builder hypothesis."
+  ]
+}

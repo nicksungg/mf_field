@@ -1,0 +1,49 @@
+{
+  "model": "fno_fire_quantile",
+  "dataset": "lid_driven_cavity_generated",
+  "splits": {
+    "test_hf": {
+      "nRMSE": 0.026515815937471432,
+      "rel_l2_mean": 0.02640539794594891,
+      "rel_l2_ci95_lo": 0.025305895888313612,
+      "rel_l2_ci95_hi": 0.027575088810610736,
+      "rel_l2_std": 0.0019623713231141336,
+      "rel_l2_per_sample": [
+        0.02459603463749403,
+        0.028482329594477874,
+        0.024406811320646864,
+        0.025573439537414092,
+        0.028591973910082034,
+        0.027469330863239574,
+        0.024818624381528924,
+        0.026009039637592143,
+        0.024507921799914057,
+        0.029598473777099534
+      ],
+      "n_samples": 10
+    }
+  },
+  "n_params": 9480900,
+  "train_seconds": 585.890522480011,
+  "eval_seconds": 0.08029985427856445,
+  "latency_ms_per_sample": 8.029985427856445,
+  "peak_mem_mb": 1260.232192,
+  "work_grid": [
+    256,
+    256
+  ],
+  "eval_protocol": "full_field_on_working_grid",
+  "device": "cuda",
+  "hf_fidelity": 4,
+  "lf_fidelity": 1,
+  "aug_channels": [
+    "mu",
+    "sigma",
+    "q10",
+    "q50",
+    "q90"
+  ],
+  "lf_gaussian_nll": 172.7500417960254,
+  "mf_mechanism": "quantile-regression distribution-conditioned residual",
+  "uncertainty_source": "quantile regression (pinball, q10/q50/q90 heads)"
+}

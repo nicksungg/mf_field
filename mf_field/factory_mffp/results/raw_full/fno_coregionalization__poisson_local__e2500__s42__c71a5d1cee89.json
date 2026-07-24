@@ -1,0 +1,19 @@
+{
+  "model": "fno_coregionalization",
+  "dataset": "poisson_local",
+  "splits": {
+    "test_hf": {
+      "nRMSE": 0.5330525760392453,
+      "n_samples": 512
+    },
+    "ood_hf": {
+      "error": "no test_l*.npz under /orcd/data/faez/001/nick/mf_field/factory_mffp/data/poisson_local/ood"
+    }
+  },
+  "n_params": 1190772,
+  "train_seconds": 1122.5657584667206,
+  "eval_seconds": 16.327472925186157,
+  "best_val_nRMSE": 0.2868302100141188,
+  "device": "cuda:0",
+  "notes": "H1: FNO+IFC coregionalization, K=10, blocks=4, modes=12, hidden=32, val_frac=0.1, grid_size=128, per-fidelity output normalization (scalers=['0.02327', '0.007032', '0.002081', '0.001018', '0.0006093'])"
+}

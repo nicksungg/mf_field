@@ -1,0 +1,9 @@
+{
+  "name": "mf_fno_modeelastic",
+  "version": "0.1.0",
+  "description": "Transfer-learning MF-FNO (pretrain LF -> fine-tune HF; Lyu 2023) with FiLM-on-X conditioning and NESTED/ORDERED Fourier-mode dropout: every training step truncates the active spectral modes to a random cutoff k~U[k_min,modes_cap] in every SpectralConv2d, forcing a nested low->high mode hierarchy so inference is fidelity-elastic. HF eval uses the full mode cap; extra.elastic_nRMSE_by_k reports the accuracy curve at several truncation levels (k=4,8,12,full). Only the runtime mode-cutoff differs from the frozen FiLM winner.",
+  "supports": ["ifc_raw", "npz_l"],
+  "smoke_entrypoint": "smoke_eval.py",
+  "frozen": false,
+  "inspired_by": ["li2020fno", "rippel2014nesteddropout", "perez2018film"]
+}

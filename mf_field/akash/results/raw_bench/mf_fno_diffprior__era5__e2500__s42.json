@@ -1,0 +1,48 @@
+{
+  "model": "mf_fno_diffprior",
+  "dataset": "era5",
+  "splits": {
+    "test_hf": {
+      "nRMSE": 0.1525027756963548,
+      "rel_l2_mean": 0.1512455976868594,
+      "rel_l2_ci95_lo": 0.13753739810412988,
+      "rel_l2_ci95_hi": 0.1675152376919938,
+      "rel_l2_std": 0.022038532359456662,
+      "rel_l2_per_sample": [
+        0.12601327075902882,
+        0.13956476877370866,
+        0.1361120922434431,
+        0.15191903834769907,
+        0.164918645231931,
+        0.19261222371919967,
+        0.14757914473300543
+      ],
+      "n_samples": 7
+    }
+  },
+  "n_params": 223889,
+  "train_seconds": 3064.983018875122,
+  "eval_seconds": 0.019694805145263672,
+  "latency_ms_per_sample": 2.8135435921805247,
+  "peak_mem_mb": 260.748288,
+  "work_grid": [
+    128,
+    256
+  ],
+  "eval_protocol": "full_field_on_working_grid",
+  "device": "cuda",
+  "hf_fidelity": 9,
+  "lf_fidelity": 1,
+  "mf_mechanism": "latent_AE_prior_on_LF_plus_conditional_latent_generation",
+  "generator": "diffusion",
+  "zdim": 64,
+  "ddim_sample_steps": 10,
+  "eval_lf_latent": "zero_placeholder_test_has_no_LF",
+  "uq_K": 4,
+  "uq_mean_std": 1.3568132239098172,
+  "ae_exported": "/orcd/data/faez/001/nick/mf_field/akash/models/mf_fno_diffprior/ae.pt",
+  "hf_grid_native": [
+    721,
+    1440
+  ]
+}

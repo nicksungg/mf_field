@@ -1,0 +1,68 @@
+{
+  "status": "PASS",
+  "metric": "composite_nRMSE",
+  "metric_value": 0.03957804013930868,
+  "duration_seconds": 81,
+  "command": "bash scripts/cycle_eval.sh",
+  "branch": "experiment/7-fno_coreg_lf_hf_transfer",
+  "parent_commit": "be36cba",
+  "per_family_per_dataset": {
+    "fno_coreg_residual": {
+      "ifc_heat": 0.026277487241491388,
+      "ifc_poisson": 0.07419190832651051
+    },
+    "mf_fno_transfer_bar": {
+      "ifc_heat": 0.033174688880908174,
+      "ifc_poisson": 0.08332612635511866
+    },
+    "fno_mf_stack": {
+      "ifc_heat": 0.09994524146606645,
+      "ifc_poisson": 0.059610770499981265
+    },
+    "transolver_residual": {
+      "ifc_heat": 0.114558886197434,
+      "ifc_poisson": 2.5923486631969164
+    },
+    "v9_baseline": {
+      "ifc_heat": 0.14883362423354865,
+      "ifc_poisson": 18.50343612114542
+    },
+    "transolver_attention_fusion": {
+      "ifc_heat": 0.1492304004494428,
+      "ifc_poisson": 0.38181221789141245
+    },
+    "fno_coregionalization": {
+      "ifc_heat": {
+        "error": "exit=1"
+      },
+      "ifc_poisson": {
+        "error": "exit=1"
+      }
+    }
+  },
+  "cache_hits": [
+    "fno_coreg_residual__ifc_heat__d1967ad6e54c",
+    "fno_coreg_residual__ifc_poisson__d1967ad6e54c",
+    "fno_mf_stack__ifc_heat__e9476d31380a",
+    "fno_mf_stack__ifc_poisson__e9476d31380a",
+    "mf_fno_transfer_bar__ifc_heat__94ae4f19ac48",
+    "mf_fno_transfer_bar__ifc_poisson__94ae4f19ac48",
+    "transolver_attention_fusion__ifc_heat__921abb6f1439",
+    "transolver_attention_fusion__ifc_poisson__921abb6f1439",
+    "transolver_residual__ifc_heat__41252fe50556",
+    "transolver_residual__ifc_poisson__41252fe50556",
+    "v9_baseline__ifc_heat__48160028a4cb",
+    "v9_baseline__ifc_poisson__48160028a4cb"
+  ],
+  "cache_misses": [
+    "fno_coregionalization__ifc_heat__4235deb6c27c",
+    "fno_coregionalization__ifc_poisson__4235deb6c27c"
+  ],
+  "fno_coregionalization_status": "crash: TypeError: FNOCoregionalization.__init__() got an unexpected keyword argument 'modes_h' \u2014 current code hash 4235deb6c27c has no cache entry; cached fresh attempt failed at line models/fno_coregionalization/smoke_eval.py:265",
+  "comparison_to_prior_best": {
+    "prior_best_metric_value": 0.029357,
+    "current_metric_value": 0.03957804013930868,
+    "delta": 0.010221040139308676,
+    "delta_pct": 34.81636454443123
+  }
+}

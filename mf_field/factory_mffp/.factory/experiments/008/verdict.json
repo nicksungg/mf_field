@@ -1,0 +1,15 @@
+{
+  "id": 8,
+  "timestamp": "2026-06-02 05:08:48.150546",
+  "hypothesis": "Port MFRNP (HF=2.0, LF=0.25) Poisson loss reweighting + bump basis K=10 to 20 + add _DATASET_RECIPES dispatch on fno_coreg_residual",
+  "change_summary": "Cleanly isolated H1 on experiment/8 branch (commit 59b741f, +30/-3 LOC vs experiment/7). MFRNP recipe portability claim DID NOT hold on this architecture: Poisson on fno_coreg_residual went 0.05556->0.05756 (+3.6% regression). The K=20 / b_hidden=128 bump unexpectedly helped Heat on fno_coreg_residual (0.03519->0.03059, -13.1%) \u2014 separable side effect. Aggregate composite measurement was contaminated by an UNRELATED operator bookkeeping issue (experiment/7's committed fno_coregionalization tree is intrinsically broken; the dirty model.py that was load-bearing for the cycle-005 baseline was wiped by Builder's git reset --hard, so cycle_eval.sh now errors on fno_coregionalization). Estimated true composite if fno_coreg were runnable: ~0.02988 (essentially flat). REVERTED.",
+  "issue_number": null,
+  "pr_number": null,
+  "score_before": null,
+  "score_after": null,
+  "delta": null,
+  "verdict": "revert",
+  "cost_usd": null,
+  "notes": "ceo:revert mode=research reason=poisson_did_not_improve_recipe_did_not_transfer_cross_architecture metric=composite_nRMSE before=0.029357 after=0.04196 estimated_true_after=0.02988 hygiene=na monotonic=fail per_family_h1_effect_fno_coreg_residual_heat=-13.1pct per_family_h1_effect_fno_coreg_residual_poisson=+3.6pct precheck=passed_score_direction_polarity_bug ceo_override=monotonic_fail score_delta=+0.0126 agents_spawned=FA,R,A,S,A,B,B archivist_spawned=true hypothesis_type=code execution_artifacts=na e2e=pass backlog_cleared=na operator_action_required=restore_dirty_fno_coregionalization_or_commit_a_consistent_experiment_7",
+  "research_citations": []
+}

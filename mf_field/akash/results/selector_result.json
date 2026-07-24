@@ -1,0 +1,390 @@
+{
+  "n_files_read": 197,
+  "n_datasets": 40,
+  "n_classes": 10,
+  "candidates": [
+    "mf_fno_transfer_film",
+    "mf_fno_allpairs",
+    "convnext_unet_film",
+    "transolver_residual",
+    "fno_fire_distcond"
+  ],
+  "features": [
+    "ndim",
+    "hf_pca_dim95",
+    "hf_spectral_slope",
+    "hf_tv_rel",
+    "hf_highfreq_ratio",
+    "lf_hf_pearson",
+    "pf_var_explained"
+  ],
+  "always_film_gm": 0.01702,
+  "always_convnext_gm": 0.01971,
+  "selector_gm": 0.02194,
+  "oracle_gm": 0.01033,
+  "headroom_captured_pct": -73.6,
+  "exact_pick_acc_pct": 20.0,
+  "rule": "if pf_var_explained <= 0.187:\n  if pf_var_explained <= 0.053:\n    => mf_fno_allpairs\n  else:\n    => transolver_residual\nelse:\n  if hf_highfreq_ratio <= 0.004:\n    => convnext_unet_film\n  else:\n    => fno_fire_distcond\n",
+  "picks": [
+    {
+      "ds": "advection_diffusion_generated",
+      "class": "advection",
+      "pred": "convnext_unet_film",
+      "true": "mf_fno_transfer_film",
+      "err": 0.00037,
+      "oracle": 0.00026,
+      "film": 0.00026
+    },
+    {
+      "ds": "burgers_generated",
+      "class": "burgers/shock",
+      "pred": "convnext_unet_film",
+      "true": "transolver_residual",
+      "err": 0.45843,
+      "oracle": 0.07481,
+      "film": 0.51846
+    },
+    {
+      "ds": "burgers_param_generated",
+      "class": "burgers/shock",
+      "pred": "convnext_unet_film",
+      "true": "transolver_residual",
+      "err": 2.44891,
+      "oracle": 0.62128,
+      "film": 2.1602
+    },
+    {
+      "ds": "sharp__euler",
+      "class": "burgers/shock",
+      "pred": "convnext_unet_film",
+      "true": "transolver_residual",
+      "err": 0.06251,
+      "oracle": 0.01492,
+      "film": 0.06256
+    },
+    {
+      "ds": "sharp__sod_1d",
+      "class": "burgers/shock",
+      "pred": "convnext_unet_film",
+      "true": "fno_fire_distcond",
+      "err": 0.50811,
+      "oracle": 0.00013,
+      "film": 0.00022
+    },
+    {
+      "ds": "sharp__burgers_1d",
+      "class": "burgers/shock",
+      "pred": "convnext_unet_film",
+      "true": "mf_fno_allpairs",
+      "err": 0.00015,
+      "oracle": 8e-05,
+      "film": 0.00011
+    },
+    {
+      "ds": "sharp__burgers_2d",
+      "class": "burgers/shock",
+      "pred": "mf_fno_transfer_film",
+      "true": "fno_fire_distcond",
+      "err": 0.00528,
+      "oracle": 0.00495,
+      "film": 0.00528
+    },
+    {
+      "ds": "sharp__kuramoto_sivashinsky_1d",
+      "class": "chaotic",
+      "pred": "mf_fno_transfer_film",
+      "true": "mf_fno_transfer_film",
+      "err": 0.40311,
+      "oracle": 0.40311,
+      "film": 0.40311
+    },
+    {
+      "ds": "sharp__kuramoto_sivashinsky_2d",
+      "class": "chaotic",
+      "pred": "mf_fno_transfer_film",
+      "true": "convnext_unet_film",
+      "err": 0.22956,
+      "oracle": 0.1777,
+      "film": 0.22956
+    },
+    {
+      "ds": "era5",
+      "class": "climate",
+      "pred": "fno_fire_distcond",
+      "true": "convnext_unet_film",
+      "err": 0.07286,
+      "oracle": 0.05125,
+      "film": 0.07231
+    },
+    {
+      "ds": "pm_test",
+      "class": "climate",
+      "pred": "fno_fire_distcond",
+      "true": "convnext_unet_film",
+      "err": 0.07286,
+      "oracle": 0.05125,
+      "film": 0.07231
+    },
+    {
+      "ds": "lid_driven_cavity_generated",
+      "class": "convection",
+      "pred": "convnext_unet_film",
+      "true": "mf_fno_allpairs",
+      "err": 0.01415,
+      "oracle": 0.00773,
+      "film": 0.02035
+    },
+    {
+      "ds": "fluid",
+      "class": "convection",
+      "pred": "convnext_unet_film",
+      "true": "mf_fno_transfer_film",
+      "err": 0.01562,
+      "oracle": 0.01534,
+      "film": 0.01534
+    },
+    {
+      "ds": "ext__rayleigh_benard_2d",
+      "class": "convection",
+      "pred": "convnext_unet_film",
+      "true": "fno_fire_distcond",
+      "err": 0.00013,
+      "oracle": 3e-05,
+      "film": 0.0001
+    },
+    {
+      "ds": "heat_generated",
+      "class": "diffusion",
+      "pred": "convnext_unet_film",
+      "true": "fno_fire_distcond",
+      "err": 0.00012,
+      "oracle": 9e-05,
+      "film": 0.00017
+    },
+    {
+      "ds": "heat_local",
+      "class": "diffusion",
+      "pred": "convnext_unet_film",
+      "true": "fno_fire_distcond",
+      "err": 9e-05,
+      "oracle": 7e-05,
+      "film": 0.00014
+    },
+    {
+      "ds": "ifc_heat",
+      "class": "diffusion",
+      "pred": "convnext_unet_film",
+      "true": "convnext_unet_film",
+      "err": 0.00722,
+      "oracle": 0.00722,
+      "film": 0.00894
+    },
+    {
+      "ds": "poisson_generated",
+      "class": "elliptic",
+      "pred": "convnext_unet_film",
+      "true": "mf_fno_transfer_film",
+      "err": 0.00041,
+      "oracle": 0.00041,
+      "film": 0.00041
+    },
+    {
+      "ds": "darcy_generated",
+      "class": "elliptic",
+      "pred": "convnext_unet_film",
+      "true": "transolver_residual",
+      "err": 0.02832,
+      "oracle": 0.01511,
+      "film": 0.03217
+    },
+    {
+      "ds": "poisson_local",
+      "class": "elliptic",
+      "pred": "convnext_unet_film",
+      "true": "convnext_unet_film",
+      "err": 0.00195,
+      "oracle": 0.00195,
+      "film": 0.00255
+    },
+    {
+      "ds": "ifc_poisson",
+      "class": "elliptic",
+      "pred": "convnext_unet_film",
+      "true": "mf_fno_transfer_film",
+      "err": 0.05555,
+      "oracle": 0.04876,
+      "film": 0.04876
+    },
+    {
+      "ds": "ext__helmholtz_2d",
+      "class": "elliptic",
+      "pred": "transolver_residual",
+      "true": "transolver_residual",
+      "err": 0.47793,
+      "oracle": 0.47793,
+      "film": 1.52568
+    },
+    {
+      "ds": "ext__eikonal_2d",
+      "class": "elliptic",
+      "pred": "convnext_unet_film",
+      "true": "convnext_unet_film",
+      "err": 0.01676,
+      "oracle": 0.01676,
+      "film": 0.02271
+    },
+    {
+      "ds": "ext__pressure_poisson_poiseuille",
+      "class": "elliptic",
+      "pred": "fno_fire_distcond",
+      "true": "mf_fno_transfer_film",
+      "err": 0.00061,
+      "oracle": 0.00048,
+      "film": 0.00048
+    },
+    {
+      "ds": "sharp__helmholtz_2d",
+      "class": "elliptic",
+      "pred": "transolver_residual",
+      "true": "mf_fno_allpairs",
+      "err": 0.9209,
+      "oracle": 0.02301,
+      "film": 0.03311
+    },
+    {
+      "ds": "sharp__porous_medium_1d",
+      "class": "porous-medium",
+      "pred": "convnext_unet_film",
+      "true": "convnext_unet_film",
+      "err": 0.00023,
+      "oracle": 0.00023,
+      "film": 0.00034
+    },
+    {
+      "ds": "sharp__porous_medium_2d",
+      "class": "porous-medium",
+      "pred": "convnext_unet_film",
+      "true": "mf_fno_allpairs",
+      "err": 0.00062,
+      "oracle": 0.00038,
+      "film": 0.00049
+    },
+    {
+      "ds": "allen_cahn_generated",
+      "class": "reaction-diffusion",
+      "pred": "fno_fire_distcond",
+      "true": "convnext_unet_film",
+      "err": 0.00584,
+      "oracle": 0.00015,
+      "film": 0.00029
+    },
+    {
+      "ds": "ext__cahn_hilliard_2d",
+      "class": "reaction-diffusion",
+      "pred": "mf_fno_transfer_film",
+      "true": "fno_fire_distcond",
+      "err": 0.11283,
+      "oracle": 0.10395,
+      "film": 0.11283
+    },
+    {
+      "ds": "sharp__cahn_hilliard",
+      "class": "reaction-diffusion",
+      "pred": "convnext_unet_film",
+      "true": "transolver_residual",
+      "err": 0.4664,
+      "oracle": 0.18001,
+      "film": 0.44063
+    },
+    {
+      "ds": "sharp__allen_cahn_1d",
+      "class": "reaction-diffusion",
+      "pred": "convnext_unet_film",
+      "true": "transolver_residual",
+      "err": 0.5835,
+      "oracle": 0.2977,
+      "film": 0.58816
+    },
+    {
+      "ds": "sharp__allen_cahn_2d",
+      "class": "reaction-diffusion",
+      "pred": "convnext_unet_film",
+      "true": "transolver_residual",
+      "err": 0.33144,
+      "oracle": 0.24458,
+      "film": 0.34115
+    },
+    {
+      "ds": "sharp__fisher_kpp_1d",
+      "class": "reaction-diffusion",
+      "pred": "mf_fno_transfer_film",
+      "true": "transolver_residual",
+      "err": 0.4442,
+      "oracle": 0.36323,
+      "film": 0.4442
+    },
+    {
+      "ds": "sharp__fisher_kpp_2d",
+      "class": "reaction-diffusion",
+      "pred": "convnext_unet_film",
+      "true": "transolver_residual",
+      "err": 0.35602,
+      "oracle": 0.24744,
+      "film": 0.31582
+    },
+    {
+      "ds": "sharp__phase_field_crystal_2d",
+      "class": "reaction-diffusion",
+      "pred": "mf_fno_transfer_film",
+      "true": "transolver_residual",
+      "err": 0.44682,
+      "oracle": 0.34877,
+      "film": 0.44682
+    },
+    {
+      "ds": "ext__wave_2d",
+      "class": "wave/dispersive",
+      "pred": "transolver_residual",
+      "true": "convnext_unet_film",
+      "err": 0.07737,
+      "oracle": 0.05178,
+      "film": 0.0662
+    },
+    {
+      "ds": "sharp__shallow_water_1d",
+      "class": "wave/dispersive",
+      "pred": "convnext_unet_film",
+      "true": "mf_fno_transfer_film",
+      "err": 0.00348,
+      "oracle": 0.00221,
+      "film": 0.00221
+    },
+    {
+      "ds": "sharp__shallow_water_2d",
+      "class": "wave/dispersive",
+      "pred": "convnext_unet_film",
+      "true": "convnext_unet_film",
+      "err": 0.00341,
+      "oracle": 0.00341,
+      "film": 0.00391
+    },
+    {
+      "ds": "sharp__nls_1d",
+      "class": "wave/dispersive",
+      "pred": "transolver_residual",
+      "true": "mf_fno_transfer_film",
+      "err": 0.35017,
+      "oracle": 0.34131,
+      "film": 0.34131
+    },
+    {
+      "ds": "sharp__sine_gordon_1d",
+      "class": "wave/dispersive",
+      "pred": "transolver_residual",
+      "true": "transolver_residual",
+      "err": 0.03407,
+      "oracle": 0.03407,
+      "film": 0.41816
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "name": "mf_fno_foundation",
+  "version": "0.1.0",
+  "description": "Cross-dataset foundation MF-FNO that generalizes the benchmark winner mf_fno_transfer_film across datasets with DIFFERENT parameter dims (cond_dim 1..16). A BPOM-style set-encoder (Nobari NITO/OAT) treats the parameter vector X as a SET of scalar tokens, token_i=MLP([value_i, positional_embed(i)]), and aggregates with a concat(min,max,mean) pool into a FIXED 64-dim embedding; the FNO backbone (common.backbone) is then FiLM-conditioned uniformly on that embedding instead of raw X, so ONE shared backbone serves every dataset (Poseidon-style joint pretrain via pretrain_all.py -> pretrained.pt). smoke_eval loads the shared backbone+BPOM if pretrained.pt exists (shape-tolerant partial load), else self-pretrains on the dataset's LF; then HF-finetunes. Same LF-pretrain -> HF-finetune transfer schedule as the winner.",
+  "supports": ["ifc_raw", "npz_l"],
+  "smoke_entrypoint": "smoke_eval.py",
+  "frozen": false,
+  "inspired_by": ["nobari2024nito", "nobari2025oat", "herde2024poseidon", "perez2018film"]
+}

@@ -1,0 +1,7 @@
+{
+  "name": "mf_fno_pinn_transfer",
+  "description": "Physics-informed transfer-learning FNO: identical to mf_fno_transfer_film (pretrain on LF, fine-tune on HF, FiLM conditioning on X — the benchmark's strongest model) PLUS a PDE-residual loss during HF fine-tuning on the Poisson datasets (poisson_generated, poisson_local), where the source f(x) of ∇²u=f is recovered EXACTLY in closed form from the condition vector (validated rel-L2 ~1e-7). The physics term enforces ∇²u_pred=f(x) on the abundant LF inputs as collocation points plus the Dirichlet u=0 boundary. All non-Poisson datasets fall back to plain FiLM-transfer, isolating the PINN contribution. Tests whether known governing physics can beat the strong pure-data transfer baseline.",
+  "supports": ["ifc_raw", "npz_l"],
+  "external": false,
+  "paper": "Raissi, Perdikaris, Karniadakis 2019, Physics-Informed Neural Networks (J. Comput. Phys.); transfer-learning MF-FNO (Lyu et al. 2023) + FiLM conditioning + PINN residual fine-tuning."
+}

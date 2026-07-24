@@ -1,0 +1,21 @@
+{
+  "model": "fno_coreg_residual",
+  "dataset": "fluid",
+  "metric_value": 0.02373741143755234,
+  "splits": {
+    "test_hf": {
+      "nRMSE": 0.02373741143755234,
+      "n_samples": 256
+    },
+    "test": {
+      "nRMSE": 0.2787848524629056,
+      "n_samples": 512
+    }
+  },
+  "n_params": 1788375,
+  "train_seconds": 1472.5642216205597,
+  "eval_seconds": 0.1589052677154541,
+  "best_val_nRMSE": 0.03665204856083041,
+  "device": "cuda",
+  "notes": "H3 hybrid via data_adapters: 2 per-fidelity FNOs (hidden=32, modes=[12, 12], blocks=3) + MFRNP decoder-in-the-aggregation (decoder_hidden=32) + continuous-m basis head (K=10, B(m)=MLP([m,m^2]) zero-init) on HF latent; per-fidelity y-scaler, val_frac=0.1, loader=npz_l, native_res=[32, 64]."
+}

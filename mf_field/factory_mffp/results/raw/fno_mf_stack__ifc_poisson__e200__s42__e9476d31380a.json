@@ -1,0 +1,18 @@
+{
+  "model": "fno_mf_stack",
+  "dataset": "ifc_poisson",
+  "metric_value": 0.059610770499981265,
+  "splits": {
+    "test": {
+      "nRMSE": 0.059610770499981265,
+      "n_samples": 128
+    }
+  },
+  "n_params": 2280325,
+  "train_seconds": 1774.807127714157,
+  "eval_seconds": 2.3182990550994873,
+  "device": "cpu",
+  "hf_fid_weight": 2.0,
+  "lf_fid_weight": 0.25,
+  "notes": "4 FNOs (hidden=32, modes=[4, 8, 12, 12], 3 blocks) + MFRNP aggregator + HF residual; per-fidelity y-scaler; per-fidelity loss weights HF=2.0 LF=0.25 (MFRNP Poisson5 gated)."
+}

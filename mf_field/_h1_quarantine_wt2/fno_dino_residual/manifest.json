@@ -1,0 +1,7 @@
+{
+  "name": "fno_dino_residual",
+  "description": "DINO-embedding-conditioned HF correction on an FNO backbone. FNO_LF predicts the low-fidelity field; a FROZEN pretrained vision foundation model (DINO, default DINOv2-base, swappable to gated DINOv3) encodes that LF field as an image into a 768-d CLS embedding; FNO_delta is conditioned on [PDE params, projected DINO embedding] (concat-broadcast) and predicts the residual HF - LF_pred (residual mode) or HF directly (direct mode). DINO embeddings are precomputed once (FNO_LF frozen) so DINO adds no per-epoch cost. Tests whether vision-foundation-model features of the LF field help MF field prediction. Ablation partner: fno_additive (same additive rule WITHOUT the DINO feature).",
+  "supports": ["ifc_raw", "npz_l"],
+  "external": false,
+  "paper": "Oquab et al. 2023, 'DINOv2: Learning Robust Visual Features without Supervision' (arXiv:2304.07193); Simeoni et al. 2025, 'DINOv3' (arXiv:2508.10104). Vision foundation model embeddings as auxiliary features for multi-fidelity field prediction."
+}

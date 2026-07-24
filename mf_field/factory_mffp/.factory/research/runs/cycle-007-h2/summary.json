@@ -1,0 +1,58 @@
+{
+  "status": "FAIL",
+  "metric": "composite_nRMSE",
+  "metric_value": 0.044469863562733095,
+  "duration_seconds": 186,
+  "command": "bash scripts/cycle_eval.sh",
+  "branch": "experiment/10-fno_coreg_residual-dataset-recipes",
+  "parent_commit": "87f65b1",
+  "baseline_metric_value": 0.039578,
+  "delta": 0.004891863562733093,
+  "delta_pct": 12.36009994119231,
+  "per_family_per_dataset": {
+    "ifc_heat": {
+      "best": {"model": "mf_fno_transfer_bar", "nRMSE": 0.033174688880908174},
+      "ranked": [
+        {"model": "mf_fno_transfer_bar", "nRMSE": 0.033174688880908174},
+        {"model": "fno_coreg_residual", "nRMSE": 0.03487293894936765},
+        {"model": "fno_mf_stack", "nRMSE": 0.09994524146606645},
+        {"model": "transolver_residual", "nRMSE": 0.114558886197434},
+        {"model": "v9_baseline", "nRMSE": 0.14883362423354865},
+        {"model": "transolver_attention_fusion", "nRMSE": 0.1492304004494428}
+      ]
+    },
+    "ifc_poisson": {
+      "best": {"model": "fno_mf_stack", "nRMSE": 0.059610770499981265},
+      "ranked": [
+        {"model": "fno_mf_stack", "nRMSE": 0.059610770499981265},
+        {"model": "fno_coreg_residual", "nRMSE": 0.06086576400250346},
+        {"model": "mf_fno_transfer_bar", "nRMSE": 0.08332612635511866},
+        {"model": "transolver_attention_fusion", "nRMSE": 0.38181221789141245},
+        {"model": "transolver_residual", "nRMSE": 2.5923486631969164},
+        {"model": "v9_baseline", "nRMSE": 18.50343612114542}
+      ]
+    },
+    "fno_coregionalization_status": "BROKEN_ON_BRANCH (constructor TypeError on `modes_h` kwarg — same as R0 baseline, not introduced by H2)"
+  },
+  "fno_coreg_residual_status": {
+    "ifc_heat_nRMSE": 0.03487293894936765,
+    "ifc_poisson_nRMSE": 0.06086576400250346,
+    "vs_baseline_heat": "0.03487 vs 0.02628 (delta=+32.70%)",
+    "vs_baseline_poisson": "0.06087 vs 0.07419 (delta=-17.96%)",
+    "vs_cycle_005_poisson_target": "0.06087 vs 0.05556 (delta=+9.55%)",
+    "poisson_kill_switch_tripped": false,
+    "heat_invariance_preserved": false,
+    "fresh_train_cache_hashes": "528438a274db (h=0.03487 @ 07:03, p=0.06087 @ 07:05); replaces prior 780ee99ed2d8 (h=0.03059, p=0.05756) — both differ from task-spec R0 (h=0.02628, p=0.07419)"
+  },
+  "target_met_composite_le_0.0274": false,
+  "poisson_leaderboard_winner": "fno_mf_stack",
+  "heat_leaderboard_winner_post_h2": "mf_fno_transfer_bar",
+  "verdict": "REVERT",
+  "verdict_reasons": [
+    "Heat invariance VIOLATED: fno_coreg_residual/ifc_heat regressed 0.02628 -> 0.03487 (+32.70%), well outside the 5% invariance band. The H2 dispatch was supposed to leave heat untouched (defaults (1.0,1.0); gate excludes 'heat' in dataset_name), so the empirical regression indicates either a subtle dispatch side-effect or significant training nondeterminism that the hypothesis did not predict.",
+    "Composite REGRESSED: 0.039578 -> 0.044470 (+12.36%). The heat regression demotes fno_coreg_residual from heat leaderboard winner (was 0.02628) to #2 (0.03487), handing the heat best to mf_fno_transfer_bar at 0.03317.",
+    "Poisson leaderboard unchanged: fno_mf_stack still wins ifc_poisson at 0.05961; fno_coreg_residual's improved 0.06087 is now #2 (was further behind in R0).",
+    "Poisson improvement under target: fno_coreg_residual/ifc_poisson 0.07419 -> 0.06087 (-17.96%) is real and material, but stops short of the cycle-005 cache target 0.05556 by +9.55%. Net of the heat regression, the change is not profitable.",
+    "Kill-switch not tripped (poisson 0.06087 << 0.089), but kill-switch was a poisson-only floor; the heat-side regression is the disqualifying failure mode."
+  ]
+}

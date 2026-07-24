@@ -1,0 +1,7 @@
+{
+  "name": "fno_fire_mcdropout",
+  "description": "Cheap single-model version of fno_fire_distcond: one LF FNO with dropout, MC-dropout-sampled (T stochastic forward passes) to produce the per-pixel LF posterior-predictive summary FIELDS (mean mu_LF, std sigma_LF, quantiles q10/q50/q90). The HF correction FNO_delta is conditioned on those fields (extra input channels) and predicts HF - mu_LF; final HF = mu_LF + delta. Replaces the 5-member deep ensemble (~28M params, 5 trainings) with one dropout LF FNO (~2 FNOs, one training). Captures epistemic uncertainty appropriate to a deterministic LF solver, avoiding the Gaussian-NLL heteroscedastic instability.",
+  "supports": ["ifc_raw", "npz_l"],
+  "external": false,
+  "paper": "Gal & Ghahramani 2016, 'Dropout as a Bayesian Approximation' (arXiv:1506.02142); distribution-conditioned residual transfer adapted from Yu, Sung & Ahmed 2026 FIRE (arXiv:2601.22371) to a single MC-dropout LF surrogate."
+}

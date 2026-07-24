@@ -1,0 +1,35 @@
+{
+  "model_type": "MFTransolver_v9",
+  "data_path": "/home/nicksung/Desktop/nicksung/mf_field_v2/data/full_dataset/poisson",
+  "dataset_name": "poisson",
+  "run_name": "poisson_full_l3_seed2",
+  "epochs": 200,
+  "batch_size": 4,
+  "lr": 0.0003,
+  "n_lf": 2048,
+  "n_hf": 4096,
+  "val_n_lf": 0,
+  "val_n_hf": 0,
+  "levels": 3,
+  "valid_ratio": 0.1,
+  "seed": 2,
+  "hf_y_std": 0.0001914789027068764,
+  "lf_levels": [
+    1,
+    2
+  ],
+  "hf_level": 3,
+  "num_lf_streams": 2,
+  "cond_dim": 5,
+  "model": {
+    "cond_dim": 5,
+    "hidden_dim": 256,
+    "n_slices": 32,
+    "num_heads": 8,
+    "encoder_layers": 3,
+    "residual_layers": 3,
+    "pos_enc_freqs": 6,
+    "rbf_gamma_init": 1.0,
+    "num_lf_streams": 2
+  }
+}

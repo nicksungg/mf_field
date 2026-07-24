@@ -1,0 +1,9 @@
+{
+  "name": "mf_fno_residfid",
+  "version": "0.1.0",
+  "description": "Transfer-learning MF-FNO (pretrain LF -> fine-tune HF; Lyu 2023) with FiLM-on-X conditioning and a PDE-residual self-supervised auxiliary loss: loss = MSE + lambda*mean(||Delta u||^2), where Delta u is a finite-difference interior-Laplacian smoothness residual (torch conv stencil) on the de-normalized prediction. This is a deliberately weak, dataset-agnostic PHYSICAL PRIOR and an explicit PLACEHOLDER for the true governing PDE operator R(u). Applied to HF (and optionally LF via --resid_on_lf). extra reports the loss weight and final residual magnitude. Only the training loss differs from the frozen FiLM winner.",
+  "supports": ["ifc_raw", "npz_l"],
+  "smoke_entrypoint": "smoke_eval.py",
+  "frozen": false,
+  "inspired_by": ["raissi2019pinn", "perez2018film"]
+}

@@ -1,0 +1,9 @@
+{
+  "name": "mf_fno_richardson",
+  "version": "0.1.0",
+  "description": "Continuous-fidelity MF-FNO with learned Richardson extrapolation. Fidelity is treated as a continuous coordinate: the winner's FiLM-on-cond FNO is conditioned on [X, f] (cond_dim = d+1) where f = (log(fid)-log(min))/(log(max)-log(min)) in [0,1]. All fidelities are pooled into ONE training set (one global max|Y| scaler, shared by eval). Headline eval queries f=1.0 (HF). A super-fidelity variant queries several f, fits a per-pixel linear Richardson trend in f, and extrapolates to f>1 toward the infinite-fidelity limit; its nRMSE-vs-HF is reported in extra.superfidelity_nRMSE.",
+  "supports": ["ifc_raw", "npz_l"],
+  "smoke_entrypoint": "smoke_eval.py",
+  "frozen": false,
+  "inspired_by": ["herde2024poseidon", "richardson1911"]
+}

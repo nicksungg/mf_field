@@ -1,0 +1,9 @@
+{
+  "name": "dg_fno",
+  "version": "0.1.0",
+  "description": "Discrepancy-gated FNO. The LF ensemble's per-pixel uncertainty fields (mu, sigma, q10/q50/q90) MODULATE the HF residual operator instead of being concatenated: Gate A spatial FiLM on every block, Gate B a spectral mode-gate that opens the delta-operator's Fourier bands where LF error is high-frequency, and Gate C a heteroscedastic gain field so HF = mu_LF + rho(x)*delta. All gates zero-init, so it starts as an X-FiLM residual model (crossing mf_fno_transfer_film's injection with fno_fire_distcond's signal). Gates selectable via DG_GATES for ablation.",
+  "supports": ["ifc_raw", "npz"],
+  "smoke_entrypoint": "smoke_eval.py",
+  "frozen": false,
+  "inspired_by": ["li2020fno", "perez2018film", "kennedy2000ohagan", "beggs2025pdecond"]
+}

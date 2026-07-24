@@ -1,0 +1,33 @@
+name,availability,source_paper,domain,n_fidelities,resolutions,dtype,license,N_train,N_test,external_repo,code_repo_status,notes
+era5,local,era5_reanalysis,era5_reanalysis_2d,9,144x192; 160x320; 192x288; 180x288; 120x180; 132x156; 80x96; 192x384; 721x1440,float64,MIT,1222,305,,,
+fluid,local,niu2024mfrnp,fluid_pde_2d,2,32x32; 64x64,float32,MIT,256,256,,,
+heat_local,local,niu2024mfrnp,heat_pde_2d,5,16x16; 32x32; 64x64; 96x96; 128x128,float64,MIT,1024,512,,,
+ifc_heat,local,li2022ifc,heat_pde_2d,4,8x8; 16x16; 32x32; 64x64,float64,MIT,100,128 (HF only),,,
+ifc_poisson,local,li2022ifc,poisson_pde_2d,4,8x8; 16x16; 32x32; 64x64,float64,MIT,100,128 (HF only),,,
+pm_test,local,era5_reanalysis,era5_reanalysis_2d,9,144x192; 160x320; 192x288; 180x288; 120x180; 132x156; 80x96; 192x384; 721x1440,float64,MIT,1222,305,,,alias_of=era5
+poisson_local,local,niu2024mfrnp,poisson_pde_2d,5,16x16; 32x32; 64x64; 96x96; 128x128,float64,MIT,64,512,,,
+advection_diffusion_generated,regenerable,kent2026noisemf,advection_diffusion_pde_2d,2,32x32; 64x64,float64,MIT,400,100,,,materialized at data/generated/
+allen_cahn_generated,regenerable,penwarden2022mfpinns,allen_cahn_pde_1d,3,64; 128; 256,float64,MIT,400,100,,,materialized at data/generated/
+burgers_generated,regenerable,li2020fno,burgers_pde_1d,3,64; 128; 256,float64,MIT,400,100,,,materialized at data/generated/
+burgers_param_generated,regenerable,li2020fno,burgers_pde_1d,3,64; 128; 256,float64,MIT,400,100,,,regenerated 400/100 via generate_all_datasets.py 2026-06-24
+darcy_generated,regenerable,tripathy2018deepuq,darcy_pde_2d,3,32x32; 64x64; 128x128,float64,MIT,400,100,,,regenerated 400/100 via generate_all_datasets.py 2026-06-24
+heat_generated,regenerable,li2022ifc,heat_pde_2d,3,16x16; 32x32; 64x64,float64,MIT,400,100,,,materialized at data/generated/
+lid_driven_cavity_generated,regenerable,ghia1982highre,navier_stokes_pde_2d,3,32x32; 64x64; 128x128,float64,MIT,400,100,,,regenerated 400/100 via generate_all_datasets.py 2026-06-24
+poisson_generated,regenerable,li2022ifc,poisson_pde_2d,3,16x16; 32x32; 64x64,float64,MIT,400,100,,,materialized at data/generated/
+mfgnn_taghizadeh_mesh,regenerable_ansys,taghizadeh2024mfgnn,mesh_pde_surrogate,2,1; 1,float64,unknown,needs ANSYS MAPDL,needs ANSYS MAPDL,https://github.com/MehdiTaghizadehUVa/MFGNN_PDE,public,user must regenerate via external repo
+ifc_burgers,regenerable_matlab,li2022ifc,burgers_pde_1d,1,1,float64,unknown,needs MATLAB,needs MATLAB,,,user must regenerate via external repo
+ifc_navierstockp,regenerable_matlab,li2022ifc,navier_stokes_pressure_2d,1,1,float64,unknown,needs MATLAB,needs MATLAB,,,user must regenerate via external repo
+ifc_topopt,regenerable_matlab,li2022ifc,topology_optimization_2d,1,1,float64,unknown,needs MATLAB,needs MATLAB,,,user must regenerate via external repo
+kent_advection_diffusion,regenerable_matlab,kent2026noisemf,advection_diffusion_pde,3,1; 1; 1,float64,unknown,needs MATLAB,needs MATLAB,https://github.com/lorenzo-tamellini/sparse-grids-matlab-kit,toolkit_only,user must regenerate via external repo
+kent_turbulent_ns,regenerable_matlab,kent2026noisemf,turbulent_navier_stokes,3,1; 1; 1,float64,unknown,needs MATLAB,needs MATLAB,https://github.com/lorenzo-tamellini/sparse-grids-matlab-kit,toolkit_only,user must regenerate via external repo
+camel_colville,unreleased,hai2025camel,analytical_benchmark,1,1,float64,unknown,not public,not public,,,"paper bibliography only, no data"
+mf_gunet_gladstone_fem,unreleased,gladstone2024mfgunet,mesh_pde_fem,2,1; 1,float64,unknown,not public,not public,,none_found,"paper bibliography only, no data"
+mfdeeponet_yang_unsteady_flow,unreleased,yang2025mfdeeponet,unsteady_flow_2d,2,1; 1,float64,unknown,not public,not public,,none_found,"paper bibliography only, no data"
+mfgp_ravi_physics,unreleased,ravi2024mfgp,mixed_physics_regression,3,1; 1; 1,float64,unknown,not public,not public,https://github.com/KislayaRavi/MuDaFuGP,partial,"paper bibliography only, no data"
+microfluidic_yang,unreleased,yang2023microfluidic,microfluidic_cfd,1,1,float64,unknown,not public,not public,,,"paper bibliography only, no data"
+naca_pressure_mf_2d,unreleased,nietocentenero2025mfae,airfoil_surface_pressure_2d,2,1; 1,float64,unknown,not public,not public,,none_found,"paper bibliography only, no data"
+rc_slab_zeng_mf,unreleased,zeng2026genmf,reinforced_concrete_slab,2,1; 1,float64,unknown,not public,not public,,none_found,"paper bibliography only, no data"
+stokes_ns_2d_songia,unreleased,songia2026mfgraphns,navier_stokes_2d,3,1; 1; 1,float64,unknown,not public,not public,,none_found,"paper bibliography only, no data"
+subsurface_jiang_durlofsky,unreleased,jiang2023subsurface,subsurface_reservoir,1,1,float64,unknown,not public,not public,,,"paper bibliography only, no data"
+transonic_wing_mf_3d,unreleased,nietocentenero2025mfae,transonic_wing_surface_pressure_3d,2,1; 1,float64,unknown,not public,not public,,none_found,"paper bibliography only, no data"
+xfoil_rans_airfoil_mf,unreleased,robledo2026activemf,airfoil_polar_2d,2,1; 1,float64,unknown,not public,not public,,none_found,"paper bibliography only, no data"

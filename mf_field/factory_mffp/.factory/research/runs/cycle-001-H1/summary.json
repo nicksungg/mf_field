@@ -1,0 +1,19 @@
+{
+  "status": "PASS",
+  "metric": "metric_value",
+  "metric_value": 0.1091949276794357,
+  "duration_seconds": 731,
+  "command": "sbatch --wait --partition=mit_preemptable eval/run_smoke.sbatch",
+  "cycle": "001-H1",
+  "family": "fno_coregionalization",
+  "baseline_metric": 1.6594979538053154,
+  "delta": -1.5503030261258797,
+  "improvement_pct": 93.42,
+  "ifc_heat_nRMSE": 0.015435215839394995,
+  "ifc_poisson_nRMSE": 0.7724888563258694,
+  "ifc_heat_v9_baseline": 0.14883362423354865,
+  "ifc_poisson_v9_baseline": 18.50343612114542,
+  "n_params": 4745940,
+  "_note": "ifc_heat result cached from a prior CPU run that completed before the Evaluator agent timed out (device=cpu, train_seconds=1358). ifc_poisson was the only cache=miss in the SLURM run and ran on GPU L40S (12 min). Composite_nRMSE measured against current paper baselines: ifc_heat 0.0154 < paper 0.074 (BEATS PAPER); ifc_poisson 0.7725 vs paper 0.036 (21x paper bar, but tractable; F1 fundamentally addressed - 24x improvement from baseline).",
+  "slurm_job_id": "13961993"
+}

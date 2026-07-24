@@ -1,0 +1,15 @@
+{
+  "id": 4,
+  "timestamp": "2026-05-15 10:16:50.090761",
+  "hypothesis": "H3 fno_coreg_residual (cycle 002): novel hybrid composing H1 continuous-m basis head with H2 MFRNP residual stack with decoder-in-the-aggregation. New family at models/fno_coreg_residual/. Branch experiment/4-fno_coreg_residual preserved on disk for human merge.",
+  "change_summary": "Cycle-002 H3 fno_coreg_residual: novel hybrid composing H1 (basis head, li2022ifc) with H2 (MFRNP residual stack with decoder-in-the-aggregation, niu2024mfrnp). 4 per-fidelity FNOs (hidden=64, modes=(4,8,12,12), 3 blocks); decoder-in-the-aggregation (decoder_hidden=32); HF head y=agg+sum_k B_k(m)*h_k(x), B(m)=MLP_B([m,m^2]), K=10, zero-init last layer; per-fidelity scaler buffer; val_frac=0.1; 9.12M params on cuda. Branch experiment/4-fno_coreg_residual (commit 0c46f43) from master. Eval composite_nRMSE=0.04420 (master 1.6595 -> 37.5x; cycle-001 H1 0.1092 -> 75% improvement; cycle-001 H2 0.1117 -> 60% improvement; cycle-002 H4 0.0772 -> 43% improvement -- NEW PROJECT BEST). Per-dataset: ifc_heat=0.0263 (BEATS paper 0.074 by 2.81x), ifc_poisson=0.0742 (misses paper 0.036 by 0.49x; -25% regression vs H4's 0.0596 -- H4's Poisson-specific HF=2/LF=0.25 loss-weighting was not ported to H3). First family to beat paper geomean=0.0516. Hypothesis hit predicted 0.04 target spot-on -- F5 INVERSE_COMPLEMENTARY_FAMILIES resolved at architectural level. CEO=KEEP intent; factory state=REVERT due to 4 known precheck infrastructure bugs (score_direction polarity for lower-is-better; scope/fixed_surfaces empty-detail; ground_truth_leakage substring-collision on contract-required tokens). Branch intact on disk for human merge.",
+  "issue_number": 0,
+  "pr_number": null,
+  "score_before": null,
+  "score_after": null,
+  "delta": null,
+  "verdict": "revert",
+  "cost_usd": null,
+  "notes": "ceo:revert mode=research reason=precheck_known_bugs ceo_intent=keep new_project_best=true metric=composite_nRMSE before=1.6595 after=0.04420 score_delta=-1.6153 ifc_heat=0.02634_BEATS_paper_0.074 ifc_poisson=0.07416_misses_paper_0.036 vs_h4_delta=-0.0330_43pct_improvement vs_paper_geomean=0.0442_lt_0.0516 paper_geomean_beaten=true precheck_failures=score_direction,scope,fixed_surfaces,ground_truth_leakage precheck_passing=anti_pattern,smoke_test hypothesis_type=code execution_artifacts=na e2e=pass backlog_cleared=na branch=experiment/4-fno_coreg_residual commit=0c46f43 agents_spawned=builder,reviewer,evaluator hygiene=na monotonic=pass duration_seconds=4844 n_params=9120697 F5_status=resolved_architecturally next_obvious_step=H3_arch_plus_H4_Poisson_loss_reweighting",
+  "research_citations": []
+}

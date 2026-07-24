@@ -1,0 +1,9 @@
+{
+  "name": "mf_fno_spectral",
+  "version": "0.1.0",
+  "description": "Spectral fidelity-decomposition MF-FNO. FNO-native multi-fidelity: a low-fidelity (coarse-grid) solution resolves only the LOW Fourier modes; the HF correction lives in the HIGH modes. Pretrain on LF with all spectral weights trainable, then FREEZE the LOW-mode band of every SpectralConv2d (cutoff = min(modes_cap, lf_native_modes), entry is low iff mode_h<cutoff_h AND mode_w<cutoff_w; gradients masked via backward hooks) and fine-tune ONLY the HIGH-mode band (plus 1x1 convs, FiLM MLPs, lift, proj) on HF. FiLM conditions on X only, identical backbone to mf_fno_transfer_film, so the comparison isolates the spectral-freezing mechanism. Smoke asserts the frozen low band is byte-for-byte unchanged after HF fine-tune.",
+  "supports": ["ifc_raw", "npz_l"],
+  "smoke_entrypoint": "smoke_eval.py",
+  "frozen": false,
+  "inspired_by": ["li2020fno", "perez2018film"]
+}

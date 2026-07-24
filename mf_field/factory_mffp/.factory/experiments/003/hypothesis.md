@@ -1,0 +1,1 @@
+H4 fno_mf_stack capacity + Poisson-loss bump: bump SMOKE_DEFAULTS to hidden=32, modes=(4,8,12,12), 3 spectral blocks; add per-fidelity loss weighting HF_weight=2 LF_weight=0.25 (Poisson-only) per MFRNP Poisson5_config.yaml. model.py untouched. Branch from experiment/2-fno_mf_stack.

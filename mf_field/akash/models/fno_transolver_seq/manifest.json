@@ -1,0 +1,9 @@
+{
+  "name": "fno_transolver_seq",
+  "version": "0.1.0",
+  "description": "Sequential (residual) FNO->Transolver hybrid: y = FNO_FiLM(X) + alpha * TransolverCorrector(X, ctx, coords). Stage 1 trains the benchmark-winning FiLM-FNO with the standard LF-pretrain -> HF-finetune transfer recipe; a K-fold out-of-fold rerun of the HF fine-tune (from the shared LF-pretrained weights) yields honest out-of-sample residual fields R = Y_hf - base_oof. Stage 2 freezes the FNO and trains a point-based Transolver (physics-slice self-attention over the query cloud + cross-slice attention onto a 1024-point context cloud, query tokens carrying the base prediction) to regress R at the working-grid coordinates; its head is zero-init so the correction starts at exactly 0. The scalar gate alpha is initialised at 0 and set by a least-squares projection plus a line search (containing 0) on a held-out split, so a useless correction reduces the hybrid EXACTLY to the FNO. Stage 3 optionally joint-fine-tunes both nets and alpha at lr 1e-4, kept only if held-out rel-L2 improves. Motivation: FNO+FiLM and Transolver have complementary per-dataset error profiles (Transolver wins 16/38 datasets despite being ~2x worse on average; the pairwise oracle is 30.6% better than the FNO alone) — the spectral operator fixes the smooth global field and the point-based attention models only where it is locally wrong. Context stream is the real LF field when the test split also carries it, else the FNO's own base prediction resampled to the LF grid; the HF target is never used to synthesise test-time context.",
+  "supports": ["ifc_raw", "npz_l"],
+  "smoke_entrypoint": "smoke_eval.py",
+  "frozen": false,
+  "inspired_by": ["li2020fno", "wu2024transolver", "perez2018film", "lyu2023mffno"]
+}

@@ -1,0 +1,53 @@
+{
+  "model": "fno_fire_cqr",
+  "dataset": "lid_driven_cavity_generated",
+  "splits": {
+    "test_hf": {
+      "nRMSE": 0.04616133022871821,
+      "rel_l2_mean": 0.046249261592372505,
+      "rel_l2_ci95_lo": 0.04427312995435476,
+      "rel_l2_ci95_hi": 0.04881981656051276,
+      "rel_l2_std": 0.003951259166604412,
+      "rel_l2_per_sample": [
+        0.04425609722435252,
+        0.04600694515882125,
+        0.04243778726411655,
+        0.04719622176155899,
+        0.046012734452386995,
+        0.04489422716220206,
+        0.04527355114279273,
+        0.04786997654627003,
+        0.04229739020560584,
+        0.05624768500561805
+      ],
+      "n_samples": 10
+    }
+  },
+  "n_params": 28441670,
+  "train_seconds": 857.9428586959839,
+  "eval_seconds": 0.3510398864746094,
+  "latency_ms_per_sample": 35.10398864746094,
+  "peak_mem_mb": 1401.982464,
+  "work_grid": [
+    256,
+    256
+  ],
+  "eval_protocol": "full_field_on_working_grid",
+  "device": "cuda",
+  "hf_fidelity": 4,
+  "lf_fidelity": 1,
+  "aug_channels": [
+    "mu",
+    "sigma",
+    "q10",
+    "q50",
+    "q90"
+  ],
+  "lf_gaussian_nll": 9.743305238919191,
+  "mf_mechanism": "conformalized distribution-conditioned residual (CQR)",
+  "uncertainty_source": "snapshot ensemble + conformal calibration (coverage-guaranteed percentiles)",
+  "cqr_target_coverage": 0.9,
+  "cqr_empirical_coverage": 0.9204574584960937,
+  "cqr_mean_interval_width": 0.8498729467391968,
+  "cqr_q_multiplier": 7.737131118774414
+}

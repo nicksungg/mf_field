@@ -1,0 +1,7 @@
+{
+  "name": "fno_autoregressive",
+  "description": "Autoregressive / multiplicative correction (survey family 2; Kennedy & O'Hagan 2000): HF(x) = rho * LF_pred(x) + delta(x), rho a LEARNED scalar. Two full-res FNOs (FNO_LF frozen) + joint fit of rho and FNO_delta on HF data. DISTINCT from fno_additive (adds the learned multiplicative rho on the LF prior) and from all coregionalization/transfer families.",
+  "supports": ["ifc_raw", "npz_l"],
+  "external": true,
+  "paper": "Kennedy & O'Hagan 2000 'Predicting the output from a complex computer code when fast approximations are available' (Biometrika); Peherstorfer et al. 2018 survey family 2 (autoregressive coupling)."
+}

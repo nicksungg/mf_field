@@ -1,0 +1,50 @@
+{
+  "model": "fno_mf_stack",
+  "dataset": "allen_cahn_generated",
+  "metric_value": 0.007448238443775622,
+  "splits": {
+    "test_hf": {
+      "nRMSE": 0.007448238443775622,
+      "n_samples": 100
+    }
+  },
+  "n_params": 235684,
+  "train_seconds": 112.37665152549744,
+  "eval_seconds": 0.24372410774230957,
+  "device": "cuda",
+  "hf_fid_weight": 1.0,
+  "lf_fid_weight": 1.0,
+  "hf_grid": [
+    1,
+    256
+  ],
+  "native_grids": [
+    [
+      1,
+      64
+    ],
+    [
+      1,
+      128
+    ],
+    [
+      1,
+      256
+    ]
+  ],
+  "modes_per_level": [
+    [
+      1,
+      12
+    ],
+    [
+      1,
+      12
+    ],
+    [
+      1,
+      12
+    ]
+  ],
+  "notes": "FNO-MF stack: 3 FNOs at grids [(1, 64), (1, 128), (1, 256)] (hidden=32, modes=[(1, 12), (1, 12), (1, 12)], 3 blocks) + MFRNP aggregator + HF residual; per-fidelity y-scaler; per-fidelity loss weights HF=1.0 LF=1.0. Geometry via data_adapters.geometry.resolve_grid (1-D as height-1 grid)."
+}

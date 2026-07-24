@@ -1,0 +1,52 @@
+{
+  "model": "dg_fno",
+  "dataset": "era5",
+  "splits": {
+    "test_hf": {
+      "nRMSE": 0.0603940618979475,
+      "rel_l2_mean": 0.059629313786226955,
+      "rel_l2_ci95_lo": 0.05245189381273818,
+      "rel_l2_ci95_hi": 0.06701420235416895,
+      "rel_l2_std": 0.010566135731460077,
+      "rel_l2_per_sample": [
+        0.047442875776096016,
+        0.06057092954835295,
+        0.04691198619861331,
+        0.05739678388377602,
+        0.0709706169927824,
+        0.07463268562077147,
+        0.05947931848319653
+      ],
+      "n_samples": 7
+    }
+  },
+  "n_params": 28494071,
+  "train_seconds": 19917.281355381012,
+  "eval_seconds": 0.08034729957580566,
+  "latency_ms_per_sample": 11.478185653686523,
+  "peak_mem_mb": 1029.172224,
+  "work_grid": [
+    128,
+    256
+  ],
+  "eval_protocol": "full_field_on_working_grid",
+  "device": "cuda",
+  "hf_fidelity": 9,
+  "lf_fidelity": 1,
+  "mf_mechanism": "DG-FNO_gated_residual_HF=muLF+rho(x)*delta(gated_aug)",
+  "ensemble_size": 5,
+  "gates": [
+    "A",
+    "B",
+    "C"
+  ],
+  "aug_channels": [
+    "mu",
+    "sigma",
+    "q10",
+    "q50",
+    "q90"
+  ],
+  "rho_mean": 0.9253221750259399,
+  "rho_err_corr": 0.4711544529704778
+}

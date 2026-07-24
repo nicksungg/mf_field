@@ -1,0 +1,49 @@
+{
+  "model": "fno_fire_snapshot",
+  "dataset": "lid_driven_cavity_generated",
+  "splits": {
+    "test_hf": {
+      "nRMSE": 0.03907373294827219,
+      "rel_l2_mean": 0.03891404860008636,
+      "rel_l2_ci95_lo": 0.03762629826275959,
+      "rel_l2_ci95_hi": 0.04028599829853788,
+      "rel_l2_std": 0.0022753407391416024,
+      "rel_l2_per_sample": [
+        0.03644987815704573,
+        0.04171751400400908,
+        0.03778836580534824,
+        0.03738121242076074,
+        0.041621144322623045,
+        0.04028744884209246,
+        0.036572855361140216,
+        0.0377544927355192,
+        0.03738659766340762,
+        0.04218097668891731
+      ],
+      "n_samples": 10
+    }
+  },
+  "n_params": 28441670,
+  "train_seconds": 583.5032119750977,
+  "eval_seconds": 0.22002434730529785,
+  "latency_ms_per_sample": 22.002434730529785,
+  "peak_mem_mb": 1453.100544,
+  "work_grid": [
+    256,
+    256
+  ],
+  "eval_protocol": "full_field_on_working_grid",
+  "device": "cuda",
+  "hf_fidelity": 4,
+  "lf_fidelity": 1,
+  "aug_channels": [
+    "mu",
+    "sigma",
+    "q10",
+    "q50",
+    "q90"
+  ],
+  "lf_gaussian_nll": 9.345287752229364,
+  "mf_mechanism": "snapshot_ensemble distribution-conditioned residual",
+  "uncertainty_source": "snapshot_ensemble (cyclic-LR, 5 snapshots, 1 training)"
+}

@@ -1,0 +1,7 @@
+{
+  "name": "fno_fire_distcond",
+  "description": "FIRE-style distribution-conditioned residual learning on an FNO backbone (field analog of Yu, Sung & Ahmed 2026, arXiv:2601.22371). A deep ENSEMBLE of E LF-FNOs supplies per-pixel posterior-predictive summary FIELDS (mean mu_LF, std sigma_LF, quantiles q10/q50/q90); the HF correction FNO_delta is conditioned on those distributional fields as extra input channels and predicts the residual HF - mu_LF. Final HF = mu_LF + delta. DISTINCT from fno_additive (mean-only, uncertainty-blind delta) by conditioning on LF predictive uncertainty -> handles spatially heteroscedastic cross-fidelity discrepancy. No pretrained foundation model: the ensemble replaces FIRE's TabPFN.",
+  "supports": ["ifc_raw", "npz_l"],
+  "external": false,
+  "paper": "Yu, Sung, Ahmed 2026, 'FIRE: Multi-fidelity Regression with Distribution-conditioned In-context Learning using Tabular Foundation Models' (arXiv:2601.22371) — distribution-conditioned residual transfer, adapted from tabular TFM surrogates to FNO field prediction via deep ensembles."
+}

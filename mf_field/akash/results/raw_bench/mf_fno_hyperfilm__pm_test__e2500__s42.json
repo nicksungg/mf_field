@@ -1,0 +1,49 @@
+{
+  "model": "mf_fno_hyperfilm",
+  "dataset": "pm_test",
+  "splits": {
+    "test_hf": {
+      "nRMSE": 0.06821445916941625,
+      "rel_l2_mean": 0.06681209468222502,
+      "rel_l2_ci95_lo": 0.05673942405153204,
+      "rel_l2_ci95_hi": 0.07709322222467363,
+      "rel_l2_std": 0.015016098418387282,
+      "rel_l2_per_sample": [
+        0.04993935460454136,
+        0.057346113315286294,
+        0.05188873259824408,
+        0.06262945960289133,
+        0.08208243156288096,
+        0.08689798999996295,
+        0.07690058109176803
+      ],
+      "n_samples": 7
+    }
+  },
+  "n_params": 4799313,
+  "train_seconds": 5617.017423629761,
+  "eval_seconds": 0.017087459564208984,
+  "latency_ms_per_sample": 2.441065652029855,
+  "peak_mem_mb": 497.68448,
+  "work_grid": [
+    128,
+    256
+  ],
+  "eval_protocol": "full_field_on_working_grid",
+  "device": "cuda",
+  "hf_fidelity": 9,
+  "lf_fidelity": 1,
+  "mf_mechanism": "transfer_LF_pretrain_HF_finetune",
+  "conditioning": "film_on_[X,deepsets_context,fidelity]",
+  "mode": "full",
+  "use_context": true,
+  "use_fidelity": true,
+  "ctx_dim": 16,
+  "summary_dim": 69,
+  "f_lf_norm": 0.0,
+  "f_hf_norm": 1.0,
+  "hf_grid_native": [
+    721,
+    1440
+  ]
+}

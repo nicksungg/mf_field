@@ -1,0 +1,40 @@
+{
+  "model": "fno_additive",
+  "dataset": "lid_driven_cavity_generated",
+  "splits": {
+    "test_hf": {
+      "nRMSE": 0.008425660086187359,
+      "rel_l2_mean": 0.008469303202488726,
+      "rel_l2_ci95_lo": 0.007951131948676915,
+      "rel_l2_ci95_hi": 0.009112225262309936,
+      "rel_l2_std": 0.0010111599286661815,
+      "rel_l2_per_sample": [
+        0.008354975212547277,
+        0.007945540716832204,
+        0.007559894292753008,
+        0.00896205454499967,
+        0.007942529184642829,
+        0.00777427835316443,
+        0.008544674866872147,
+        0.009114188272390722,
+        0.007596441699348455,
+        0.010898454881336526
+      ],
+      "n_samples": 10
+    }
+  },
+  "n_params": 9480450,
+  "train_seconds": 358.74931502342224,
+  "eval_seconds": 0.024485349655151367,
+  "latency_ms_per_sample": 2.4485349655151367,
+  "peak_mem_mb": 424.514048,
+  "work_grid": [
+    128,
+    128
+  ],
+  "eval_protocol": "full_field_on_working_grid",
+  "device": "cuda",
+  "hf_fidelity": 3,
+  "lf_fidelity": 1,
+  "mf_mechanism": "additive_discrepancy_HF=LFpred+delta"
+}

@@ -1,0 +1,41 @@
+{
+  "variant": "sine_gordon_1d",
+  "ndim": 1,
+  "source": "classical (Strang)",
+  "output_time": 5.0,
+  "ladder": [
+    [
+      128
+    ],
+    [
+      256
+    ],
+    [
+      512
+    ]
+  ],
+  "param_names": [
+    "m",
+    "ic_c0",
+    "ic_c1",
+    "ic_c2",
+    "ic_c3",
+    "ic_c4",
+    "ic_c5",
+    "ic_c6",
+    "ic_c7",
+    "ic_c8",
+    "ic_c9",
+    "ic_c10",
+    "ic_c11",
+    "ic_c12",
+    "ic_c13",
+    "ic_c14",
+    "ic_c15"
+  ],
+  "n_params": 17,
+  "ntrain": 400,
+  "ntest": 100,
+  "seed": 42,
+  "note": "IC-encoded cond (low Fourier modes) so field=f(x) is learnable; fixes rel-L2>1 bug"
+}

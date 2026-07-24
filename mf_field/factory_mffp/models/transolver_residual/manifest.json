@@ -1,0 +1,9 @@
+{
+  "name": "transolver_residual",
+  "version": "0.1.0",
+  "description": "Transolver backbone (slice-attention + cross-fidelity attention) trained as a HARD multi-fidelity residual: HF_pred = LF_interp(query) + transolver_delta(query, LF_context, condition). Unlike v9_baseline (soft gated fusion that learns the prior end-to-end) and fno_coreg_residual (FNO+coregionalization), this isolates 'how much does Transolver need to add on top of LF interpolation' which exposes the true delta-learning capacity of the slice-attention backbone.",
+  "supports": ["ifc_raw"],
+  "smoke_entrypoint": "smoke_eval.py",
+  "frozen": false,
+  "inspired_by": ["wu2024transolver", "li2022ifc", "niu2024mfrnp"]
+}

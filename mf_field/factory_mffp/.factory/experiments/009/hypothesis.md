@@ -1,0 +1,1 @@
+H1: Repair FNOCoregionalization anisotropic-modes constructor at models/fno_coregionalization/model.py — change signature from (modes: int, grid_size: int, ...) to (modes_h: int, modes_w: int, grid: tuple), propagate to inner FNOBlock ModuleList, update forward to use H, W = self.grid

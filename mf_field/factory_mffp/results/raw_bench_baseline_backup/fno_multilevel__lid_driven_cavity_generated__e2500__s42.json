@@ -1,0 +1,45 @@
+{
+  "model": "fno_multilevel",
+  "dataset": "lid_driven_cavity_generated",
+  "splits": {
+    "test_hf": {
+      "nRMSE": 0.04684019931603152,
+      "rel_l2_mean": 0.04692740411946385,
+      "rel_l2_ci95_lo": 0.04544756145811584,
+      "rel_l2_ci95_hi": 0.048746020874124295,
+      "rel_l2_std": 0.002856942294452952,
+      "rel_l2_per_sample": [
+        0.045899778247511104,
+        0.04709595934863783,
+        0.04368411003036625,
+        0.04749556852976666,
+        0.04717700769240893,
+        0.04561792301136667,
+        0.046327350191300035,
+        0.04818232551239354,
+        0.043893897487305246,
+        0.05390012114358222
+      ],
+      "n_samples": 10
+    }
+  },
+  "n_params": 8002516,
+  "train_seconds": 662.3653752803802,
+  "eval_seconds": 0.05874156951904297,
+  "latency_ms_per_sample": 5.874156951904297,
+  "peak_mem_mb": 959.902208,
+  "work_grid": [
+    256,
+    256
+  ],
+  "eval_protocol": "full_field_on_working_grid",
+  "device": "cuda",
+  "n_levels": 4,
+  "fids": [
+    1,
+    2,
+    3,
+    4
+  ],
+  "mf_mechanism": "recursive_multilevel_nonlinear_autoregressive_field_cascade"
+}

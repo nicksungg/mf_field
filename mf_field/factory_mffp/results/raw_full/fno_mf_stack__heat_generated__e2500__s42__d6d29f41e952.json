@@ -1,0 +1,29 @@
+{
+  "model": "fno_mf_stack",
+  "dataset": "heat_generated",
+  "metric_value": 0.0006366827181245473,
+  "splits": {
+    "test_hf": {
+      "nRMSE": 0.0006366827181245473,
+      "n_samples": 100
+    }
+  },
+  "n_params": 2177284,
+  "train_seconds": 2177.482681751251,
+  "eval_seconds": 0.06611752510070801,
+  "device": "cuda",
+  "hf_fid_weight": 1.0,
+  "lf_fid_weight": 1.0,
+  "hf_res": 64,
+  "native_resolutions": [
+    16,
+    32,
+    64
+  ],
+  "modes_per_level": [
+    8,
+    12,
+    12
+  ],
+  "notes": "FNO-MF stack: 3 FNOs at res [16, 32, 64] (hidden=32, modes=[8, 12, 12], 3 blocks) + MFRNP aggregator + HF residual; per-fidelity y-scaler; per-fidelity loss weights HF=1.0 LF=1.0 (MFRNP Poisson5 gated). Loaded via data_adapters.load_mf_dataset."
+}

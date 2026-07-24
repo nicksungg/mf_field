@@ -1,0 +1,64 @@
+{
+  "model": "fno_transolver_seq",
+  "dataset": "lid_driven_cavity_generated",
+  "splits": {
+    "test_hf": {
+      "nRMSE": 0.029273745341328185,
+      "rel_l2_mean": 0.02938832468345152,
+      "rel_l2_ci95_lo": 0.028324652220975452,
+      "rel_l2_ci95_hi": 0.030558138741384105,
+      "rel_l2_std": 0.001926236719965387,
+      "rel_l2_per_sample": [
+        0.028944887522544076,
+        0.028266447339586564,
+        0.02782012231235721,
+        0.03194001645382074,
+        0.028245306053295404,
+        0.02692547358598932,
+        0.029327153555487543,
+        0.032732116125333575,
+        0.02842638923554506,
+        0.0312553346505557
+      ],
+      "n_samples": 10
+    }
+  },
+  "n_params": 5469508,
+  "train_seconds": 5645.7163779735565,
+  "eval_seconds": 0.0365145206451416,
+  "latency_ms_per_sample": 3.65145206451416,
+  "peak_mem_mb": 1188.954624,
+  "work_grid": [
+    256,
+    256
+  ],
+  "eval_protocol": "full_field_on_working_grid",
+  "alpha": 0.0,
+  "base_only_rel_l2": 0.02938832468345152,
+  "stage3_joint": false,
+  "alpha_least_squares": 0.9417303800582886,
+  "base_only_rel_l2_final_fno": 0.02938832468345152,
+  "val_rel_l2_base": 0.030221927911043167,
+  "val_rel_l2_hybrid": 0.030221927911043167,
+  "correction_rms_raw_units": 0.0,
+  "residual_scaler": 30.874267578125,
+  "hf_scaler": 399.864501953125,
+  "ctx_source": "real_lf",
+  "ctx_grid": [
+    128,
+    128
+  ],
+  "ctx_fidelity": 3,
+  "n_ctx_points": 1024,
+  "n_query_points_train": 2048,
+  "n_oof_folds": 4,
+  "mf_mechanism": "sequential_residual_FNO_base_plus_transolver_correction",
+  "device": "cuda",
+  "hf_fidelity": 4,
+  "lf_fidelity": 1,
+  "hf_grid_native": [
+    256,
+    256
+  ],
+  "recipe_hash": "71fdc33000cf"
+}

@@ -1,0 +1,18 @@
+{
+  "model": "fno_mf_stack",
+  "dataset": "ifc_heat",
+  "metric_value": 0.038268899048086086,
+  "splits": {
+    "test": {
+      "nRMSE": 0.038268899048086086,
+      "n_samples": 128
+    }
+  },
+  "n_params": 24206853,
+  "train_seconds": 62.34105563163757,
+  "eval_seconds": 0.09059953689575195,
+  "device": "cuda",
+  "hf_fid_weight": 1.0,
+  "lf_fid_weight": 1.0,
+  "notes": "4 FNOs (hidden=64, modes=[4, 8, 16, 20], 4 blocks) + MFRNP aggregator + HF residual; per-fidelity y-scaler; per-fidelity loss weights HF=1.0 LF=1.0 (MFRNP Poisson5 gated)."
+}

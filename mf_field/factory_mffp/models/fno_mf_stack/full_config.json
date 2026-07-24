@@ -1,0 +1,18 @@
+{
+  "_doc": "Full-size config for non-smoke runs. The smoke harness reads SMOKE_DEFAULTS in smoke_eval.py; this is reference for orchestrators that want a stronger run. The smoke config is a scaled-down version of this file (hidden 64 -> 32) — same architecture shape (modes, blocks).",
+  "hidden": 64,
+  "agg_hidden": 64,
+  "n_blocks": 3,
+  "modes_per_level": [4, 8, 12, 12],
+  "native_resolutions": [8, 16, 32, 64],
+  "batch_size": 8,
+  "lr": 3e-4,
+  "weight_decay": 1e-5,
+  "val_frac": 0.1,
+  "epochs": 400,
+  "hf_loss_weight": 1.0,
+  "baseline_anchor_weight": 0.5,
+  "_loss_weight_doc": "Per-fidelity loss weighting (MFRNP Poisson5_config.yaml). poisson_hf_weight multiplies the m=1 (HF) loss; poisson_lf_weight multiplies the m<1 (LF) losses. Applied ONLY when dataset_name contains 'poisson'; Heat uses uniform weights (1.0, 1.0) per published pde_config.yaml.",
+  "poisson_hf_weight": 2.0,
+  "poisson_lf_weight": 0.25
+}

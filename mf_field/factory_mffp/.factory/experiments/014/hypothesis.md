@@ -1,0 +1,1 @@
+H1+H2: fno_mf_stack capacity bump on Poisson (hidden=64, agg_hidden=64, n_blocks=4, modes_per_level=(4,8,16,20)) bundled with recipe_hash portable utility (NEW models/_common/recipe_hash.py + 3-patch-site refactor across fno_mf_stack, fno_coreg_residual, fno_coregionalization smoke_eval.py — clears cycle-003 backlog)

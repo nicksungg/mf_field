@@ -1,0 +1,117 @@
+{
+  "model": "fno_mf_stack",
+  "dataset": "era5",
+  "splits": {
+    "test_hf": {
+      "nRMSE": 0.2982973339013825,
+      "rel_l2_mean": 0.2921765867121534,
+      "rel_l2_ci95_lo": 0.24662128832129035,
+      "rel_l2_ci95_hi": 0.3363750778820247,
+      "rel_l2_std": 0.06555881895824157,
+      "rel_l2_per_sample": [
+        0.19463431420834873,
+        0.24129692318741908,
+        0.2577963580639062,
+        0.29311996052778033,
+        0.321475533546399,
+        0.3667322687213677,
+        0.3701807487298528
+      ],
+      "n_samples": 7
+    }
+  },
+  "n_params": 8006698,
+  "train_seconds": 20277.476506471634,
+  "eval_seconds": 0.5075654983520508,
+  "latency_ms_per_sample": 72.50935690743583,
+  "peak_mem_mb": 628.010496,
+  "work_grid": [
+    128,
+    256
+  ],
+  "eval_protocol": "full_field_on_working_grid",
+  "device": "cuda",
+  "hf_fid_weight": 1.0,
+  "lf_fid_weight": 1.0,
+  "hf_grid": [
+    128,
+    256
+  ],
+  "native_grids": [
+    [
+      144,
+      192
+    ],
+    [
+      128,
+      256
+    ],
+    [
+      171,
+      256
+    ],
+    [
+      160,
+      256
+    ],
+    [
+      120,
+      180
+    ],
+    [
+      132,
+      156
+    ],
+    [
+      80,
+      96
+    ],
+    [
+      128,
+      256
+    ],
+    [
+      128,
+      256
+    ]
+  ],
+  "modes_per_level": [
+    [
+      12,
+      12
+    ],
+    [
+      12,
+      12
+    ],
+    [
+      12,
+      12
+    ],
+    [
+      12,
+      12
+    ],
+    [
+      12,
+      12
+    ],
+    [
+      12,
+      12
+    ],
+    [
+      12,
+      12
+    ],
+    [
+      12,
+      12
+    ],
+    [
+      12,
+      12
+    ]
+  ],
+  "notes": "FNO-MF stack: 9 FNOs at grids [(144, 192), (128, 256), (171, 256), (160, 256), (120, 180), (132, 156), (80, 96), (128, 256), (128, 256)] (hidden=32, modes=[(12, 12), (12, 12), (12, 12), (12, 12), (12, 12), (12, 12), (12, 12), (12, 12), (12, 12)], 3 blocks) + MFRNP aggregator + HF residual; per-fidelity y-scaler; per-fidelity loss weights HF=1.0 LF=1.0. Geometry via data_adapters.geometry.resolve_grid (1-D as height-1 grid); grids capped to working side <= 256 (no-op except era5/pm_test)."
+}

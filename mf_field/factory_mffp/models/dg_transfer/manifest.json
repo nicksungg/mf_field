@@ -1,0 +1,9 @@
+{
+  "name": "dg_transfer",
+  "version": "0.1.0",
+  "description": "Discrepancy-gated transfer FNO. Takes the #1 backbone (mf_fno_transfer_film: single FNO pretrained on LF then fine-tuned on HF with per-stage output scalers) UNCHANGED, and adds uncertainty modulation from a small LF ensemble: Gate A (per-pixel spatial FiLM) and Gate B (spectral mode-gate) condition every block on the LF predictive-uncertainty fields (mu, sigma, q10/q50/q90). The residual gain (Gate C of dg_fno) is dropped — this net predicts HF directly. Both gates zero-init, so at initialization it equals mf_fno_transfer_film and can only improve. Gates selectable via DG_GATES.",
+  "supports": ["ifc_raw", "npz"],
+  "smoke_entrypoint": "smoke_eval.py",
+  "frozen": false,
+  "inspired_by": ["li2020fno", "perez2018film", "lyu2023mffno"]
+}

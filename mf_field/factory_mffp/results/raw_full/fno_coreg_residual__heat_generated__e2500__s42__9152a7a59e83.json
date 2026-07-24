@@ -1,0 +1,21 @@
+{
+  "model": "fno_coreg_residual",
+  "dataset": "heat_generated",
+  "metric_value": 0.00043279355760443013,
+  "splits": {
+    "test_hf": {
+      "nRMSE": 0.00043279355760443013,
+      "n_samples": 100
+    },
+    "test": {
+      "nRMSE": 0.21950914075045697,
+      "n_samples": 300
+    }
+  },
+  "n_params": 2187384,
+  "train_seconds": 2889.280971765518,
+  "eval_seconds": 2.3996829986572266,
+  "best_val_nRMSE": 0.0006439151078155113,
+  "device": "cuda",
+  "notes": "H3 hybrid via data_adapters: 3 per-fidelity FNOs (hidden=32, modes=[8, 12, 12], blocks=3) + MFRNP decoder-in-the-aggregation (decoder_hidden=32) + continuous-m basis head (K=10, B(m)=MLP([m,m^2]) zero-init) on HF latent; per-fidelity y-scaler, val_frac=0.1, loader=npz_l, native_res=[16, 32, 64]."
+}

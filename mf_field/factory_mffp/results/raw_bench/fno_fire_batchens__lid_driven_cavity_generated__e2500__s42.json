@@ -1,0 +1,49 @@
+{
+  "model": "fno_fire_batchens",
+  "dataset": "lid_driven_cavity_generated",
+  "splits": {
+    "test_hf": {
+      "nRMSE": 0.040945961646521506,
+      "rel_l2_mean": 0.04072865861863658,
+      "rel_l2_ci95_lo": 0.03894075904671461,
+      "rel_l2_ci95_hi": 0.042632387401832846,
+      "rel_l2_std": 0.003176247489333024,
+      "rel_l2_per_sample": [
+        0.03720032622703381,
+        0.0445393829344154,
+        0.03835318535423275,
+        0.039045072985201906,
+        0.044252128684716015,
+        0.042450992943900326,
+        0.037820648940652624,
+        0.039614162605690034,
+        0.03833048856251709,
+        0.04568019694800584
+      ],
+      "n_samples": 10
+    }
+  },
+  "n_params": 9497670,
+  "train_seconds": 545.908938407898,
+  "eval_seconds": 0.14638996124267578,
+  "latency_ms_per_sample": 14.638996124267578,
+  "peak_mem_mb": 1260.898816,
+  "work_grid": [
+    256,
+    256
+  ],
+  "eval_protocol": "full_field_on_working_grid",
+  "device": "cuda",
+  "hf_fidelity": 4,
+  "lf_fidelity": 1,
+  "aug_channels": [
+    "mu",
+    "sigma",
+    "q10",
+    "q50",
+    "q90"
+  ],
+  "lf_gaussian_nll": 72.22934179482203,
+  "mf_mechanism": "multi-head ensemble distribution-conditioned residual",
+  "uncertainty_source": "batch/multi-head ensemble (shared trunk, 5 heads)"
+}

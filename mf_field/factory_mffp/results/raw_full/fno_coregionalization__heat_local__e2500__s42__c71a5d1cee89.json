@@ -1,0 +1,19 @@
+{
+  "model": "fno_coregionalization",
+  "dataset": "heat_local",
+  "splits": {
+    "test_hf": {
+      "nRMSE": 0.003509581343491436,
+      "n_samples": 512
+    },
+    "ood_hf": {
+      "error": "no test_l*.npz under /orcd/data/faez/001/nick/mf_field/factory_mffp/data/heat_local/ood"
+    }
+  },
+  "n_params": 1190708,
+  "train_seconds": 10164.838109731674,
+  "eval_seconds": 17.22307324409485,
+  "best_val_nRMSE": 0.003805193299951662,
+  "device": "cuda:0",
+  "notes": "H1: FNO+IFC coregionalization, K=10, blocks=4, modes=12, hidden=32, val_frac=0.1, grid_size=128, per-fidelity output normalization (scalers=['0.9998', '1', '1', '1', '1'])"
+}

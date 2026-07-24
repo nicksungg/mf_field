@@ -1,0 +1,7 @@
+{
+  "name": "fno_additive",
+  "description": "Additive discrepancy correction (survey family 1, Peherstorfer et al.): HF(x) = LF_pred(x) + delta(x). Two full-resolution FNOs on the shared geometry-general backbone — FNO_LF trained on abundant LF data (frozen), FNO_delta trained on the HF residual HF - LF_pred. DISTINCT from fno_mf_stack (N coarse-native FNOs + MLP aggregator) and mf_fno_transfer (one warm-started net): pure 2-fidelity additive rule, both nets at full working resolution, fixed unit LF scale.",
+  "supports": ["ifc_raw", "npz_l"],
+  "external": true,
+  "paper": "Peherstorfer, Willcox, Gunzburger 2018, 'Survey of Multifidelity Methods in Uncertainty Propagation, Inference, and Optimization' (SIAM Review) — additive discrepancy / delta-learning family."
+}

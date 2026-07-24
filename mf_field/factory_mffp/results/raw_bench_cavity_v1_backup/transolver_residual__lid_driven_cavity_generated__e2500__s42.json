@@ -1,0 +1,39 @@
+{
+  "model": "transolver_residual",
+  "dataset": "lid_driven_cavity_generated",
+  "splits": {
+    "test_hf": {
+      "nRMSE": 0.8863949134581133,
+      "rel_l2_mean": 0.8849180209238205,
+      "rel_l2_ci95_lo": 0.8776654268314998,
+      "rel_l2_ci95_hi": 0.8918695345557748,
+      "rel_l2_std": 0.012382624485003635,
+      "rel_l2_per_sample": [
+        0.8752737169555843,
+        0.8989424454570657,
+        0.8893455301811553,
+        0.8809572561139515,
+        0.897656132694856,
+        0.9005015732181033,
+        0.8763628601086956,
+        0.8731259267083893,
+        0.8918384291208651,
+        0.865176338679539
+      ],
+      "n_samples": 10
+    }
+  },
+  "n_params": 695873,
+  "train_seconds": 171.46921348571777,
+  "eval_seconds": 0.09180641174316406,
+  "latency_ms_per_sample": 9.180641174316406,
+  "peak_mem_mb": 180.895232,
+  "work_grid": [
+    128,
+    128
+  ],
+  "eval_protocol": "full_field_on_working_grid",
+  "best_val_nRMSE": 0.8568055484400752,
+  "recipe_hash": "5cd4cf93b75f",
+  "device": "cuda:0"
+}

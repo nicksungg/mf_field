@@ -1,0 +1,24 @@
+{
+  "model": "fno_coregionalization",
+  "dataset": "era5",
+  "splits": {
+    "test_hf": {
+      "nRMSE": 0.20430786325583528,
+      "n_samples": 7
+    }
+  },
+  "n_params": 1190996,
+  "train_seconds": 1280.115262746811,
+  "eval_seconds": 2.5918080806732178,
+  "best_val_nRMSE": 0.06781266368047838,
+  "device": "cuda:0",
+  "hf_grid": [
+    721,
+    1440
+  ],
+  "work_grid": [
+    128,
+    256
+  ],
+  "notes": "H1: FNO+IFC coregionalization, K=10, blocks=4, modes=(12,12), hidden=32, hf_grid=(721, 1440), work_grid=(128, 256) (cap=256), per-fidelity output normalization (scalers=['62.24', '58.34', '57.99', '61.3', '61.7', '64.62', '52.85', '62.15', '59.01']). Geometry via data_adapters.geometry.resolve_grid (1-D as height-1 grid)."
+}

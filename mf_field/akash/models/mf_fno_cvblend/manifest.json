@@ -1,0 +1,9 @@
+{
+  "name": "mf_fno_cvblend",
+  "version": "0.1.0",
+  "description": "Control-variate inference blend of two FiLM-on-X FNOs: an HF model (LF-pretrain -> HF-finetune, the winner's pipeline) and an LF-only model (correlated cheap estimator). At inference the blend p = p_hf - beta*(p_lf - E[p_lf]) reduces variance, with the optimal scalar beta* = Cov(p_hf - y, p_lf)/Var(p_lf) fit in closed form on the HF train set (E[p_lf] is the train-set mean LF prediction). extra reports beta, an HF-only vs blend nRMSE ablation, and a control-term-std UQ proxy. Both submodels are the frozen FiLM backbone.",
+  "supports": ["ifc_raw", "npz_l"],
+  "smoke_entrypoint": "smoke_eval.py",
+  "frozen": false,
+  "inspired_by": ["li2020fno", "perez2018film"]
+}

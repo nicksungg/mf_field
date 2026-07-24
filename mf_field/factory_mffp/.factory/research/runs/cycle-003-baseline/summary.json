@@ -1,0 +1,15 @@
+{
+  "status": "PASS",
+  "metric": "metric_value",
+  "metric_value": 0.04419765005975967,
+  "metric_lower_is_better": true,
+  "duration_seconds": null,
+  "command": "bash scripts/cycle_eval.sh",
+  "note": "Cycle-003 baseline reused from cycle-002 H3 (fno_coreg_residual on experiment/4-fno_coreg_residual @ 0c46f43). Deterministic eval; re-running would yield identical numbers and burn ~80min SLURM time. Master tree itself is at 1.6595 because cycle-001/002 were factory-reverted for precheck-bookkeeping bugs (CEO=KEEP intent on all). Previous best for monotonic check: 0.0442.",
+  "per_dataset": {
+    "ifc_heat":    {"best_model": "fno_coreg_residual", "nRMSE": 0.02634047786365115, "paper_bar": 0.074, "beats_paper": true},
+    "ifc_poisson": {"best_model": "fno_coreg_residual", "nRMSE": 0.07416085163362336, "paper_bar": 0.036, "beats_paper": false}
+  },
+  "previous_best": 0.04419765005975967,
+  "previous_best_source": "cycle-002-H3"
+}

@@ -1,0 +1,104 @@
+{
+  "metric": "composite_nRMSE",
+  "metric_value": 1.6594979538053154,
+  "metric_lower_is_better": true,
+  "summary": {
+    "composite_nRMSE": 1.6594979538053154,
+    "composite_nRMSE_geomean": 1.6594979538053154,
+    "composite_nRMSE_arith": 9.326134872689485,
+    "leaderboard": {
+      "ifc_heat": {
+        "best": {
+          "model": "v9_baseline",
+          "nRMSE": 0.14883362423354865
+        },
+        "ranked": [
+          {
+            "model": "v9_baseline",
+            "nRMSE": 0.14883362423354865
+          }
+        ],
+        "n_runs": 1
+      },
+      "ifc_poisson": {
+        "best": {
+          "model": "v9_baseline",
+          "nRMSE": 18.50343612114542
+        },
+        "ranked": [
+          {
+            "model": "v9_baseline",
+            "nRMSE": 18.50343612114542
+          }
+        ],
+        "n_runs": 1
+      }
+    },
+    "vs_paper": {
+      "ifc_heat": {
+        "ours_best_nRMSE": 0.14883362423354865,
+        "ours_best_model": "v9_baseline",
+        "paper_nRMSE_geomean": null,
+        "ratio_ours_over_paper": null,
+        "beats_paper": false
+      },
+      "ifc_poisson": {
+        "ours_best_nRMSE": 18.50343612114542,
+        "ours_best_model": "v9_baseline",
+        "paper_nRMSE_geomean": null,
+        "ratio_ours_over_paper": null,
+        "beats_paper": false
+      }
+    },
+    "n_datasets_beating_paper": 0,
+    "n_datasets_scored": 2
+  },
+  "runs": [
+    {
+      "model": "v9_baseline",
+      "dataset": "ifc_heat",
+      "splits": {
+        "test": {
+          "nRMSE": 0.14883362423354865,
+          "n_samples": 128
+        }
+      },
+      "n_params": 409255,
+      "train_seconds": 65.52811598777771,
+      "eval_seconds": 10.889515161514282,
+      "best_val_nRMSE": 0.052449518603274715,
+      "device": "cuda:0",
+      "_cache": "miss",
+      "wall_seconds": 785.0211644172668
+    },
+    {
+      "model": "v9_baseline",
+      "dataset": "ifc_poisson",
+      "splits": {
+        "test": {
+          "nRMSE": 18.50343612114542,
+          "n_samples": 128
+        }
+      },
+      "n_params": 409767,
+      "train_seconds": 5.048274278640747,
+      "eval_seconds": 0.4912569522857666,
+      "best_val_nRMSE": 1.3650818544593464,
+      "device": "cuda:0",
+      "_cache": "miss",
+      "wall_seconds": 17.0740704536438
+    }
+  ],
+  "results": [
+    {
+      "name": "composite_nRMSE",
+      "value": 1.6594979538053154,
+      "lower_is_better": true
+    },
+    {
+      "name": "n_datasets_scored",
+      "value": 2,
+      "lower_is_better": false
+    }
+  ]
+}

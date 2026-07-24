@@ -1,0 +1,15 @@
+{
+  "id": 9,
+  "timestamp": "2026-06-02 06:40:10.342449",
+  "hypothesis": "H1: Repair FNOCoregionalization anisotropic-modes constructor at models/fno_coregionalization/model.py",
+  "change_summary": "1-file +9/-7 LOC signature alignment to (modes_h, modes_w, grid) propagated through outer FNOCoregionalization wrapper; inner SpectralConv2d/FNOBlock unchanged. Branch preserved at experiment/9-fno_coregionalization-constructor-fix @ 1249f2d. Composite_nRMSE 0.039578 -> 0.030408 (real improvement, -23.17%). fno_coregionalization heat reproduces cycle-005 cache at 0.01551 exactly. Bar 0.0274 not crossed (still +0.0030 over).",
+  "issue_number": null,
+  "pr_number": null,
+  "score_before": null,
+  "score_after": null,
+  "delta": null,
+  "verdict": "revert",
+  "cost_usd": null,
+  "notes": "ceo:revert_bookkeeping_keep_intent mode=research metric=composite_nRMSE before=0.039578 after=0.030408 real_delta=-0.0092 real_delta_pct=-23.17 hypothesis_type=code precheck=failed precheck_failures=score_direction_polarity_bug,scope_empty_false_positive,fixed_surfaces_empty_false_positive actual_factory_guard=clean leakage=none anti_pattern=none smoke_test=pass reviewer=pass e2e=pass hygiene=na_eval_command_empty monotonic=pass branch_preserved=experiment/9-fno_coregionalization-constructor-fix follows_cycle_005_h2_precedent agents_spawned=R,FA,RES,STR,B,R,E backlog_cleared=na",
+  "research_citations": []
+}

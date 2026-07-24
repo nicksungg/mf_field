@@ -1,0 +1,51 @@
+{
+  "model": "mf_fno_foundation",
+  "dataset": "lid_driven_cavity_generated",
+  "splits": {
+    "test_hf": {
+      "nRMSE": 0.01124005700771488,
+      "rel_l2_mean": 0.011267820655778058,
+      "rel_l2_ci95_lo": 0.010973535549525832,
+      "rel_l2_ci95_hi": 0.011636443582722188,
+      "rel_l2_std": 0.0005763452524286546,
+      "rel_l2_per_sample": [
+        0.011129462880929903,
+        0.011186140945307137,
+        0.010638226730257796,
+        0.011501298242420032,
+        0.011175531311624798,
+        0.010841188458404644,
+        0.011181259208582765,
+        0.01158913014850319,
+        0.010767644840841644,
+        0.012668323790908676
+      ],
+      "n_samples": 10
+    }
+  },
+  "n_params": 4811905,
+  "train_seconds": 637.0754835605621,
+  "eval_seconds": 0.06847262382507324,
+  "latency_ms_per_sample": 6.847262382507324,
+  "peak_mem_mb": 1155.765248,
+  "work_grid": [
+    256,
+    256
+  ],
+  "eval_protocol": "full_field_on_working_grid",
+  "device": "cuda",
+  "hf_fidelity": 4,
+  "lf_fidelity": 1,
+  "mf_mechanism": "transfer_LF_pretrain_HF_finetune",
+  "conditioning": "film_on_BPOM_set_embedding",
+  "cond_dim": 1,
+  "emb_dim": 64,
+  "used_foundation_pretrain": false,
+  "foundation_datasets": [],
+  "foundation_matched_tensors": 0,
+  "foundation_skipped_tensors": 0,
+  "hf_grid_native": [
+    256,
+    256
+  ]
+}

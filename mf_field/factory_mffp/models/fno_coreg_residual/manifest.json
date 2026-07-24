@@ -1,0 +1,9 @@
+{
+  "name": "fno_coreg_residual",
+  "version": "0.1.0",
+  "description": "Novel hybrid: 4 per-fidelity FNOs + MFRNP-style decoder-in-the-aggregation (HF baseline = aggregator over upsampled decoded LFs) + continuous-m coregionalization basis-head on the HF latent (y_HF = agg + sum_k B_k(m) h_k(x), B(m)=MLP_B([m, m^2])). Per-fidelity output normalization; basis-head zero-initialised so the architecture starts as the pure aggregator and optimisation grows the residual.",
+  "supports": ["ifc_raw"],
+  "supported_datasets": ["ifc_heat", "ifc_poisson"],
+  "smoke_entrypoint": "smoke_eval.py",
+  "frozen": false
+}

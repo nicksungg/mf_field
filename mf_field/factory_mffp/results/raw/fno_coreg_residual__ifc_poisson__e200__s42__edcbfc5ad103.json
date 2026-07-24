@@ -1,0 +1,17 @@
+{
+  "model": "fno_coreg_residual",
+  "dataset": "ifc_poisson",
+  "metric_value": 0.07200016424130416,
+  "splits": {
+    "test": {
+      "nRMSE": 0.07200016424130416,
+      "n_samples": 128
+    }
+  },
+  "n_params": 9121209,
+  "train_seconds": 52.25605607032776,
+  "eval_seconds": 0.09676241874694824,
+  "best_val_nRMSE": 0.022952743767332476,
+  "device": "cuda",
+  "notes": "H3 hybrid: 4 per-fidelity FNOs (hidden=64, modes=[4, 8, 12, 12], blocks=3) + MFRNP decoder-in-the-aggregation (decoder_hidden=32) + continuous-m basis head (K=10, B(m)=MLP([m,m^2]) zero-init) on HF latent; per-fidelity y-scaler, val_frac=0.1."
+}

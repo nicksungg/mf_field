@@ -1,0 +1,7 @@
+{
+  "name": "fno_multilevel",
+  "description": "Recursive multi-level correction (survey family 3; Le Gratiet recursive co-kriging): strict telescoping cascade pred_k = pred_{k-1} + FNO_k(x), each FNO_k trained on the level-to-level residual level_k - level_{k-1}, summed bottom-up to HF. One FNO per fidelity level (hidden=48). DISTINCT from fno_mf_stack (which fuses ALL levels at once via a single MLP aggregator + one HF delta): this is a sequential level-by-level residual chain, the only family that recursively exploits the full fidelity ladder (era5=9, heat_local=5 levels). Reduces to additive on 2-fidelity datasets.",
+  "supports": ["ifc_raw", "npz_l"],
+  "external": true,
+  "paper": "Le Gratiet & Garnier 2014 'Recursive co-kriging model for design of computer experiments with multiple levels of fidelity'; Peherstorfer et al. 2018 survey family 3 (recursive/multilevel correction)."
+}

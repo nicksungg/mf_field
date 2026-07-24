@@ -1,0 +1,21 @@
+{
+  "model": "fno_coreg_residual",
+  "dataset": "lid_driven_cavity_generated",
+  "metric_value": 0.02245265919208906,
+  "splits": {
+    "test_hf": {
+      "nRMSE": 0.02245265919208906,
+      "n_samples": 10
+    },
+    "test": {
+      "nRMSE": 0.9009802522201568,
+      "n_samples": 30
+    }
+  },
+  "n_params": 2678712,
+  "train_seconds": 1069.4854736328125,
+  "eval_seconds": 0.0522923469543457,
+  "best_val_nRMSE": 0.030033540210340375,
+  "device": "cuda",
+  "notes": "H3 hybrid via data_adapters: 3 per-fidelity FNOs (hidden=32, modes=[12, 12, 12], blocks=3) + MFRNP decoder-in-the-aggregation (decoder_hidden=32) + continuous-m basis head (K=10, B(m)=MLP([m,m^2]) zero-init) on HF latent; per-fidelity y-scaler, val_frac=0.1, loader=npz_l, native_res=[32, 64, 128]."
+}

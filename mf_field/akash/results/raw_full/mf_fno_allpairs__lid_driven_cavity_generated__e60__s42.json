@@ -1,0 +1,74 @@
+{
+  "model": "mf_fno_allpairs",
+  "dataset": "lid_driven_cavity_generated",
+  "splits": {
+    "test_hf": {
+      "nRMSE": 0.4753089352542932,
+      "rel_l2_mean": 0.4777207175808683,
+      "rel_l2_ci95_lo": 0.4580760885744702,
+      "rel_l2_ci95_hi": 0.49903388771592155,
+      "rel_l2_std": 0.035101482060603366,
+      "rel_l2_per_sample": [
+        0.4892646399111589,
+        0.4455928586628545,
+        0.4509329414572793,
+        0.5037097950127064,
+        0.4454945223659627,
+        0.441581676594255,
+        0.4961961838106704,
+        0.5076870229880271,
+        0.4531323559806902,
+        0.543615179025078
+      ],
+      "n_samples": 10
+    }
+  },
+  "n_params": 4773953,
+  "train_seconds": 48.26464772224426,
+  "eval_seconds": 0.019857168197631836,
+  "latency_ms_per_sample": 1.9857168197631836,
+  "peak_mem_mb": 1193.957376,
+  "work_grid": [
+    256,
+    256
+  ],
+  "eval_protocol": "full_field_on_working_grid",
+  "device": "cuda",
+  "hf_fidelity": 4,
+  "lf_fidelity": 1,
+  "mf_mechanism": "allpairs_joint_train_then_lf2hf_finetune",
+  "conditioning": "film_on_[X,f_src,f_tgt]",
+  "n_pairs": 6,
+  "pairs": [
+    [
+      1,
+      2
+    ],
+    [
+      1,
+      3
+    ],
+    [
+      1,
+      4
+    ],
+    [
+      2,
+      3
+    ],
+    [
+      2,
+      4
+    ],
+    [
+      3,
+      4
+    ]
+  ],
+  "f_lf_norm": 0.0,
+  "f_hf_norm": 1.0,
+  "hf_grid_native": [
+    256,
+    256
+  ]
+}

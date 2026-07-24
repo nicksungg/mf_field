@@ -1,0 +1,9 @@
+{
+  "name": "mf_fno_lora",
+  "version": "0.1.0",
+  "description": "Fidelity-conditioned LoRA-adapted MF-FNO. Same FiLM-on-X FNO backbone (common.backbone) and LF-pretrain -> HF-finetune transfer schedule as the benchmark winner mf_fno_transfer_film, but HF adaptation is parameter-efficient: after full-backbone LF pretraining the backbone is FROZEN and zero-init low-rank adapters (LoRA, Hu 2022; rank r=4) are injected into every 1x1 Conv2d (block w, lift, proj) and optionally the FiLM-MLP Linears; HF-finetuning trains ONLY the adapters. Zero-init B makes the pre-finetune model identical to the LF-pretrained model (exact reduction), so finetune-vs-frozen HF nRMSE isolates the LF->HF gap. The complex spectral kernels are left un-adapted by design. extra reports adapter_params, adapter_norm (LF->HF-gap proxy), and pct_params_trained.",
+  "supports": ["ifc_raw", "npz_l"],
+  "smoke_entrypoint": "smoke_eval.py",
+  "frozen": false,
+  "inspired_by": ["hu2022lora", "lyu2023mffno", "perez2018film"]
+}

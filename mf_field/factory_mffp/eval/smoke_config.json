@@ -1,0 +1,11 @@
+{
+  "_doc": "Per-cycle smoke evaluation. Small subset of datasets, low epoch count, target wall time ≤20 min on a single H100. Used by the factory's research loop for keep/revert decisions.",
+  "datasets": [
+    { "name": "ifc_heat",     "epochs": 200, "loader": "ifc_raw" },
+    { "name": "ifc_poisson",  "epochs": 200, "loader": "ifc_raw" }
+  ],
+  "seed": 42,
+  "per_call_timeout_seconds": 1800,
+  "primary_metric": "composite_nRMSE",
+  "primary_metric_lower_is_better": true
+}

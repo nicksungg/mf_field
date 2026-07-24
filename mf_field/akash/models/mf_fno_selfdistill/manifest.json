@@ -1,0 +1,9 @@
+{
+  "name": "mf_fno_selfdistill",
+  "version": "0.1.0",
+  "description": "Transfer-learning MF-FNO (pretrain LF -> fine-tune HF; Lyu 2023) with FiLM-on-X conditioning and FIDELITY BOOTSTRAPPING. After LF pretrain, the LF-pretrained model predicts PSEUDO-HF labels on the LF inputs; HF finetune then trains on a MIX of the few real HF samples (weight 1.0) and the pseudo-HF samples (weight pseudo_weight<1.0) via per-sample weighted MSE, so scarce real HF data dominates while pseudo labels expand input-space coverage. extra reports n_real_hf, n_pseudo_hf, pseudo_weight. Only the data/schedule differs from the frozen FiLM winner.",
+  "supports": ["ifc_raw", "npz_l"],
+  "smoke_entrypoint": "smoke_eval.py",
+  "frozen": false,
+  "inspired_by": ["lee2013pseudolabel", "lyu2023mffno", "perez2018film"]
+}

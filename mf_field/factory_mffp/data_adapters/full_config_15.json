@@ -1,0 +1,22 @@
+{
+  "_doc": "15 of 17 datasets — all minus the two chin_chun (skipped per user; require image-cond architecture). Used by the all-models x all-data benchmark sweep after the data_adapters layer rewired each family's smoke_eval.py off the hardcoded ifc_raw loader.",
+  "datasets": [
+    { "name": "ifc_heat",                      "epochs": 2500, "loader": "ifc_raw" },
+    { "name": "ifc_poisson",                   "epochs": 2500, "loader": "ifc_raw" },
+    { "name": "poisson_local",                 "epochs": 2500, "loader": "npz_l5" },
+    { "name": "heat_local",                    "epochs": 2500, "loader": "npz_l5" },
+    { "name": "fluid",                         "epochs": 2500, "loader": "npz_l2" },
+    { "name": "era5",                          "epochs": 2500, "loader": "npz_l9" },
+    { "name": "pm_test",                       "epochs": 2500, "loader": "npz_l9" },
+    { "name": "advection_diffusion_generated", "epochs": 2500, "loader": "npz_l2" },
+    { "name": "allen_cahn_generated",          "epochs": 2500, "loader": "npz_l3" },
+    { "name": "burgers_generated",             "epochs": 2500, "loader": "npz_l3" },
+    { "name": "burgers_param_generated",       "epochs": 2500, "loader": "npz_l3" },
+    { "name": "darcy_generated",               "epochs": 2500, "loader": "npz_l3" },
+    { "name": "heat_generated",                "epochs": 2500, "loader": "npz_l3" },
+    { "name": "lid_driven_cavity_generated",   "epochs": 2500, "loader": "npz_l3" },
+    { "name": "poisson_generated",             "epochs": 2500, "loader": "npz_l3" }
+  ],
+  "seed": 42,
+  "per_call_timeout_seconds": 86400
+}

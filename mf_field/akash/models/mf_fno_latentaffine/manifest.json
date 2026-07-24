@@ -1,0 +1,9 @@
+{
+  "name": "mf_fno_latentaffine",
+  "version": "0.1.0",
+  "description": "Tests the hypothesis 'HF ~= LF + constant latent direction' (word2vec-style offset). A ConvAE (reusing the exported mf_fno_diffprior/ae.pt when available, else trained fresh) encodes LF and HF train fields; the LF->HF map is approximated by one constant latent shift delta = mean(z_hf)-mean(z_lf). The REAL deliverable is extra.shift_direction_consistency: bootstrapped mean pairwise cosine of the shift direction + its relative std, testing whether the affine hypothesis holds. ifc LF/HF are not sample-aligned and the test split is HF-only, so prediction uses a base(X)->z_lf regressor then +delta then decode. Still emits a valid full-field prediction + JSON.",
+  "supports": ["ifc_raw", "npz_l"],
+  "smoke_entrypoint": "smoke_eval.py",
+  "frozen": false,
+  "inspired_by": ["mikolov2013word2vec", "rombach2022ldm"]
+}

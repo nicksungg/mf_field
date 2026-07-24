@@ -1,0 +1,624 @@
+{
+  "metric": "composite_nRMSE",
+  "metric_value": 0.04196265708735855,
+  "metric_lower_is_better": true,
+  "summary": {
+    "composite_nRMSE": 0.04196265708735855,
+    "composite_nRMSE_geomean": 0.04196265708735855,
+    "composite_nRMSE_arith": 0.04407682033711334,
+    "leaderboard": {
+      "ifc_heat": {
+        "best": {
+          "model": "fno_coreg_residual",
+          "nRMSE": 0.030589733876393764
+        },
+        "ranked": [
+          {
+            "model": "fno_coreg_residual",
+            "nRMSE": 0.030589733876393764
+          },
+          {
+            "model": "mf_fno_transfer_bar",
+            "nRMSE": 0.033174688880908174
+          },
+          {
+            "model": "fno_mf_stack",
+            "nRMSE": 0.09994524146606645
+          },
+          {
+            "model": "transolver_residual",
+            "nRMSE": 0.114558886197434
+          },
+          {
+            "model": "v9_baseline",
+            "nRMSE": 0.14883362423354865
+          },
+          {
+            "model": "transolver_attention_fusion",
+            "nRMSE": 0.1492304004494428
+          }
+        ],
+        "n_runs": 7
+      },
+      "ifc_poisson": {
+        "best": {
+          "model": "fno_coreg_residual",
+          "nRMSE": 0.057563906797832916
+        },
+        "ranked": [
+          {
+            "model": "fno_coreg_residual",
+            "nRMSE": 0.057563906797832916
+          },
+          {
+            "model": "fno_mf_stack",
+            "nRMSE": 0.059610770499981265
+          },
+          {
+            "model": "mf_fno_transfer_bar",
+            "nRMSE": 0.08332612635511866
+          },
+          {
+            "model": "transolver_attention_fusion",
+            "nRMSE": 0.38181221789141245
+          },
+          {
+            "model": "transolver_residual",
+            "nRMSE": 2.5923486631969164
+          },
+          {
+            "model": "v9_baseline",
+            "nRMSE": 18.50343612114542
+          }
+        ],
+        "n_runs": 7
+      }
+    },
+    "vs_paper": {
+      "ifc_heat": {
+        "ours_best_nRMSE": 0.030589733876393764,
+        "ours_best_model": "fno_coreg_residual",
+        "paper_nRMSE_geomean": 0.07399999999999998,
+        "ratio_ours_over_paper": 0.4133747821134293,
+        "beats_paper": true
+      },
+      "ifc_poisson": {
+        "ours_best_nRMSE": 0.057563906797832916,
+        "ours_best_model": "fno_coreg_residual",
+        "paper_nRMSE_geomean": 0.03599999999999999,
+        "ratio_ours_over_paper": 1.5989974110509149,
+        "beats_paper": false
+      }
+    },
+    "n_datasets_beating_paper": 1,
+    "n_datasets_scored": 2
+  },
+  "runs": [
+    {
+      "model": "fno_coreg_residual",
+      "dataset": "ifc_heat",
+      "metric_value": 0.030589733876393764,
+      "splits": {
+        "test": {
+          "nRMSE": 0.030589733876393764,
+          "n_samples": 128
+        }
+      },
+      "n_params": 9135821,
+      "train_seconds": 68.1730899810791,
+      "eval_seconds": 0.07917451858520508,
+      "best_val_nRMSE": 0.014456050378727553,
+      "device": "cuda",
+      "notes": "H3 hybrid: 4 per-fidelity FNOs (hidden=64, modes=[4, 8, 12, 12], blocks=3) + MFRNP decoder-in-the-aggregation (decoder_hidden=32) + continuous-m basis head (K=20, B(m)=MLP([m,m^2]) zero-init) on HF latent; per-fidelity y-scaler, val_frac=0.1.",
+      "_cache": "hit"
+    },
+    {
+      "model": "fno_coreg_residual",
+      "dataset": "ifc_poisson",
+      "metric_value": 0.057563906797832916,
+      "splits": {
+        "test": {
+          "nRMSE": 0.057563906797832916,
+          "n_samples": 128
+        }
+      },
+      "n_params": 9136333,
+      "train_seconds": 69.41817116737366,
+      "eval_seconds": 0.07577681541442871,
+      "best_val_nRMSE": 0.021516871428704218,
+      "device": "cuda",
+      "notes": "H3 hybrid: 4 per-fidelity FNOs (hidden=64, modes=[4, 8, 12, 12], blocks=3) + MFRNP decoder-in-the-aggregation (decoder_hidden=32) + continuous-m basis head (K=20, B(m)=MLP([m,m^2]) zero-init) on HF latent; per-fidelity y-scaler, val_frac=0.1.",
+      "_cache": "hit"
+    },
+    {
+      "model": "fno_coregionalization",
+      "dataset": "ifc_heat",
+      "error": "exit=1",
+      "stderr_tail": "Traceback (most recent call last):\n  File \"/orcd/data/faez/001/nick/mf_field/factory_mffp/models/fno_coregionalization/smoke_eval.py\", line 518, in <module>\n    main()\n  File \"/orcd/data/faez/001/nick/mf_field/factory_mffp/models/fno_coregionalization/smoke_eval.py\", line 513, in main\n    run(args)\n  File \"/orcd/data/faez/001/nick/mf_field/factory_mffp/models/fno_coregionalization/smoke_eval.py\", line 265, in run\n    model = FNOCoregionalization(\n            ^^^^^^^^^^^^^^^^^^^^^\nTypeError: FNOCoregionalization.__init__() got an unexpected keyword argument 'modes_h'\n",
+      "wall_seconds": 3.3356873989105225
+    },
+    {
+      "model": "fno_coregionalization",
+      "dataset": "ifc_poisson",
+      "error": "exit=1",
+      "stderr_tail": "Traceback (most recent call last):\n  File \"/orcd/data/faez/001/nick/mf_field/factory_mffp/models/fno_coregionalization/smoke_eval.py\", line 518, in <module>\n    main()\n  File \"/orcd/data/faez/001/nick/mf_field/factory_mffp/models/fno_coregionalization/smoke_eval.py\", line 513, in main\n    run(args)\n  File \"/orcd/data/faez/001/nick/mf_field/factory_mffp/models/fno_coregionalization/smoke_eval.py\", line 265, in run\n    model = FNOCoregionalization(\n            ^^^^^^^^^^^^^^^^^^^^^\nTypeError: FNOCoregionalization.__init__() got an unexpected keyword argument 'modes_h'\n",
+      "wall_seconds": 1.4366295337677002
+    },
+    {
+      "model": "fno_mf_stack",
+      "dataset": "ifc_heat",
+      "metric_value": 0.09994524146606645,
+      "splits": {
+        "test": {
+          "nRMSE": 0.09994524146606645,
+          "n_samples": 128
+        }
+      },
+      "n_params": 2280069,
+      "train_seconds": 1724.38747215271,
+      "eval_seconds": 3.0804550647735596,
+      "device": "cpu",
+      "hf_fid_weight": 1.0,
+      "lf_fid_weight": 1.0,
+      "notes": "4 FNOs (hidden=32, modes=[4, 8, 12, 12], 3 blocks) + MFRNP aggregator + HF residual; per-fidelity y-scaler; per-fidelity loss weights HF=1.0 LF=1.0 (MFRNP Poisson5 gated).",
+      "_cache": "hit"
+    },
+    {
+      "model": "fno_mf_stack",
+      "dataset": "ifc_poisson",
+      "metric_value": 0.059610770499981265,
+      "splits": {
+        "test": {
+          "nRMSE": 0.059610770499981265,
+          "n_samples": 128
+        }
+      },
+      "n_params": 2280325,
+      "train_seconds": 1774.807127714157,
+      "eval_seconds": 2.3182990550994873,
+      "device": "cpu",
+      "hf_fid_weight": 2.0,
+      "lf_fid_weight": 0.25,
+      "notes": "4 FNOs (hidden=32, modes=[4, 8, 12, 12], 3 blocks) + MFRNP aggregator + HF residual; per-fidelity y-scaler; per-fidelity loss weights HF=2.0 LF=0.25 (MFRNP Poisson5 gated).",
+      "_cache": "hit"
+    },
+    {
+      "model": "mf_fno_transfer_bar",
+      "dataset": "ifc_heat",
+      "splits": {
+        "test_hf": {
+          "nRMSE": 0.033174688880908174,
+          "rel_l2_mean": 0.02611461361304657,
+          "rel_l2_ci95_lo": 0.023116199121894755,
+          "rel_l2_ci95_hi": 0.02931629933559639,
+          "rel_l2_std": 0.018171557404606308,
+          "rel_l2_per_sample": [
+            0.02451641759289867,
+            0.009925503808851628,
+            0.04957590565060758,
+            0.030898971048295067,
+            0.04747154371956725,
+            0.014158634160479487,
+            0.04217400580282906,
+            0.010573356571160366,
+            0.025062546699681394,
+            0.015548853032876215,
+            0.029208646444366004,
+            0.024109762131674286,
+            0.032035241733633014,
+            0.01572489421637513,
+            0.02429292243955232,
+            0.06504264703644344,
+            0.009246449754917143,
+            0.027576535702671153,
+            0.00281645992422038,
+            0.015495296008536993,
+            0.0037760268616804002,
+            0.015470610137105328,
+            0.016695841791378393,
+            0.04777967954996908,
+            0.011844402981960747,
+            0.05380343324438062,
+            0.029783865124296628,
+            0.010305320378119152,
+            0.01142544245414451,
+            0.04122278158200021,
+            0.03173000616325288,
+            0.05219207461613455,
+            0.01418367052496499,
+            0.010201578121365613,
+            0.007763217958116835,
+            0.014526498826360796,
+            0.041035093280879,
+            0.012499115283793178,
+            0.010922959883990549,
+            0.03698671098531474,
+            0.023680161031853955,
+            0.00570430871292812,
+            0.016879123199108736,
+            0.016609882034950736,
+            0.009590590152090944,
+            0.017600906076001007,
+            0.019029843101441648,
+            0.027046037298140584,
+            0.05262421156831126,
+            0.03408916645012316,
+            0.006660960688738365,
+            0.008240105202611297,
+            0.008896624439358257,
+            0.030094118103633796,
+            0.04257290781891895,
+            0.05594891364899138,
+            0.02589541178198765,
+            0.09806248387533158,
+            0.038218598469944014,
+            0.07896108233781492,
+            0.030847916745981765,
+            0.048340985305426847,
+            0.024119179474589404,
+            0.027120160668037033,
+            0.05410927680889923,
+            0.03598862247751433,
+            0.00667944325896878,
+            0.04756867531312377,
+            0.008506717695026925,
+            0.03050470788163953,
+            0.02569126801373124,
+            0.00856553512663242,
+            0.011459540771330696,
+            0.02344625651483158,
+            0.00871643016224051,
+            0.026403617492721354,
+            0.016969239193250454,
+            0.07744059711718533,
+            0.003928147984572902,
+            0.004012746274463036,
+            0.03708764247711162,
+            0.024689577385690366,
+            0.05931113893639387,
+            0.021755081363084273,
+            0.03295330431780859,
+            0.0288427923289725,
+            0.05172326390209741,
+            0.02058588877739475,
+            0.005678801370365491,
+            0.029666136123285752,
+            0.011045158879343072,
+            0.008272538955440764,
+            0.020901062780483315,
+            0.005220052531402192,
+            0.045406043186558324,
+            0.04732107779111422,
+            0.0043218710554470225,
+            0.0037070931492566746,
+            0.06666437872569268,
+            0.04702032812279844,
+            0.005448709305600279,
+            0.018816980661684697,
+            0.0070710915708528934,
+            0.015387462120900074,
+            0.006052205838975478,
+            0.014495335408079346,
+            0.014320503767694382,
+            0.034212450884382004,
+            0.02269845727589888,
+            0.026507839678396254,
+            0.05072912539580515,
+            0.031221452712833546,
+            0.012577588213073818,
+            0.030180002088219453,
+            0.009424713431915482,
+            0.00607198968058069,
+            0.039798904361143674,
+            0.01757674780272853,
+            0.00810354787885473,
+            0.031683060095107234,
+            0.045041398575392654,
+            0.028801312038839164,
+            0.01533572559298125,
+            0.005417703841436613,
+            0.023560251067327165,
+            0.051495180551505544,
+            0.0317630388875292,
+            0.04027710808118932
+          ],
+          "n_samples": 128
+        }
+      },
+      "n_params": 4740353,
+      "train_seconds": 10.508872509002686,
+      "eval_seconds": 0.010594367980957031,
+      "latency_ms_per_sample": 0.0827684998512268,
+      "peak_mem_mb": 198.200832,
+      "work_grid": [
+        64,
+        64
+      ],
+      "eval_protocol": "full_field_on_working_grid",
+      "device": "cuda",
+      "hf_fidelity": 64,
+      "lf_fidelity": 8,
+      "mf_mechanism": "transfer_learning_pretrain_LF_finetune_HF",
+      "hf_grid_native": [
+        64,
+        64
+      ],
+      "_cache": "hit"
+    },
+    {
+      "model": "mf_fno_transfer_bar",
+      "dataset": "ifc_poisson",
+      "splits": {
+        "test_hf": {
+          "nRMSE": 0.08332612635511866,
+          "rel_l2_mean": 0.09487195555888805,
+          "rel_l2_ci95_lo": 0.08013870096748398,
+          "rel_l2_ci95_hi": 0.11063723805571905,
+          "rel_l2_std": 0.08806897876047953,
+          "rel_l2_per_sample": [
+            0.0176815895128688,
+            0.05110820224695512,
+            0.1392419855447573,
+            0.07526362952942282,
+            0.12798073046148897,
+            0.05063760887053003,
+            0.23359608470498586,
+            0.04314333811607717,
+            0.047513792871190924,
+            0.1493686015040298,
+            0.028503213031681875,
+            0.16721683266315385,
+            0.0760343282100343,
+            0.2690909551596176,
+            0.08948634474033408,
+            0.35471097721980116,
+            0.08370048552451094,
+            0.03278504873186363,
+            0.1638794818568744,
+            0.43565322961478276,
+            0.06347701847354667,
+            0.07383821126824723,
+            0.07075313221718386,
+            0.039514419177097304,
+            0.05354457004191839,
+            0.13508903454277102,
+            0.0719903529924646,
+            0.01942988674892051,
+            0.04332221899345146,
+            0.1030280583899467,
+            0.25849088213289845,
+            0.13381954408361849,
+            0.08823055715988308,
+            0.15761964909994552,
+            0.03933040070216484,
+            0.09488197376622473,
+            0.07156630056448772,
+            0.05202411413160303,
+            0.01593375635766036,
+            0.10691322097277778,
+            0.29403709891183566,
+            0.05399863037166931,
+            0.15353022969612398,
+            0.03431436156178492,
+            0.14936585967333899,
+            0.02213058012961735,
+            0.113984691846633,
+            0.02335680133059798,
+            0.030712810347102867,
+            0.09625283207495727,
+            0.08736724460634902,
+            0.07347325908341153,
+            0.06277077605113139,
+            0.023033605049054676,
+            0.10406148803584503,
+            0.08977473070593611,
+            0.04455216180695014,
+            0.024152032752269285,
+            0.037818850766121334,
+            0.09219326535899061,
+            0.07226279656692904,
+            0.45735850559428065,
+            0.06345994816914324,
+            0.03194538411757057,
+            0.24430930677021234,
+            0.010967983394238276,
+            0.029595520651746213,
+            0.11049289430314449,
+            0.03929915888814604,
+            0.04830470442425421,
+            0.038149723982407076,
+            0.0355741642955909,
+            0.06547599215662332,
+            0.017128249990632748,
+            0.047203694860057835,
+            0.0706409903544538,
+            0.09386782122208595,
+            0.0893342922923968,
+            0.31875644244422546,
+            0.16061694121044703,
+            0.035215663563599925,
+            0.30893422063925774,
+            0.2753022667286528,
+            0.10929735468859889,
+            0.02780238627031784,
+            0.15555997617380857,
+            0.06306543387281058,
+            0.0834881666609411,
+            0.028100936225767478,
+            0.10641002099316135,
+            0.06464158756047819,
+            0.029266138612028838,
+            0.13516682131183522,
+            0.15458816365941735,
+            0.08195300573007677,
+            0.0645187328618039,
+            0.3078718099489258,
+            0.06099670287762221,
+            0.05495733307612046,
+            0.051299368375823017,
+            0.06902068978775992,
+            0.1056966677330568,
+            0.035254595194900346,
+            0.03613698118605118,
+            0.41226760229805776,
+            0.04660172345792362,
+            0.08469488264154926,
+            0.07973497105366162,
+            0.07503764386863053,
+            0.021162461602733065,
+            0.016366128419758232,
+            0.03575375241980533,
+            0.06769178619813002,
+            0.10643708171320855,
+            0.03635808264346086,
+            0.08813409104766104,
+            0.039162567033929015,
+            0.045532767610993445,
+            0.027064747829259626,
+            0.0693571295024311,
+            0.03829994396009091,
+            0.12057598772055127,
+            0.028636005670165474,
+            0.08384150925426477,
+            0.08190599955831855,
+            0.06686902538116832,
+            0.02157769942353752,
+            0.02098210971548526
+          ],
+          "n_samples": 128
+        }
+      },
+      "n_params": 4740481,
+      "train_seconds": 10.255615949630737,
+      "eval_seconds": 0.010645866394042969,
+      "latency_ms_per_sample": 0.0831708312034607,
+      "peak_mem_mb": 198.201856,
+      "work_grid": [
+        64,
+        64
+      ],
+      "eval_protocol": "full_field_on_working_grid",
+      "device": "cuda",
+      "hf_fidelity": 64,
+      "lf_fidelity": 8,
+      "mf_mechanism": "transfer_learning_pretrain_LF_finetune_HF",
+      "hf_grid_native": [
+        64,
+        64
+      ],
+      "_cache": "hit"
+    },
+    {
+      "model": "transolver_attention_fusion",
+      "dataset": "ifc_heat",
+      "splits": {
+        "test": {
+          "nRMSE": 0.1492304004494428,
+          "n_samples": 128
+        }
+      },
+      "n_params": 2278081,
+      "train_seconds": 136.3052191734314,
+      "eval_seconds": 3.4702811241149902,
+      "best_val_nRMSE": 0.034269152192643815,
+      "recipe_hash": "b391f8a25996",
+      "device": "cuda:0",
+      "_cache": "hit"
+    },
+    {
+      "model": "transolver_attention_fusion",
+      "dataset": "ifc_poisson",
+      "splits": {
+        "test": {
+          "nRMSE": 0.38181221789141245,
+          "n_samples": 128
+        }
+      },
+      "n_params": 2278849,
+      "train_seconds": 33.81840467453003,
+      "eval_seconds": 0.15944337844848633,
+      "best_val_nRMSE": 0.19702106335278485,
+      "recipe_hash": "b391f8a25996",
+      "device": "cuda:0",
+      "_cache": "hit"
+    },
+    {
+      "model": "transolver_residual",
+      "dataset": "ifc_heat",
+      "splits": {
+        "test": {
+          "nRMSE": 0.114558886197434,
+          "n_samples": 128
+        }
+      },
+      "n_params": 696641,
+      "train_seconds": 1.9073486328125e-06,
+      "eval_seconds": 120.93801593780518,
+      "best_val_nRMSE": 0.22528583745239567,
+      "recipe_hash": "5cd4cf93b75f",
+      "device": "cuda:0",
+      "_cache": "hit"
+    },
+    {
+      "model": "transolver_residual",
+      "dataset": "ifc_poisson",
+      "splits": {
+        "test": {
+          "nRMSE": 2.5923486631969164,
+          "n_samples": 128
+        }
+      },
+      "n_params": 697409,
+      "train_seconds": 2.384185791015625e-06,
+      "eval_seconds": 24.98600482940674,
+      "best_val_nRMSE": 0.49714402122636975,
+      "recipe_hash": "5cd4cf93b75f",
+      "device": "cuda:0",
+      "_cache": "hit"
+    },
+    {
+      "model": "v9_baseline",
+      "dataset": "ifc_heat",
+      "splits": {
+        "test": {
+          "nRMSE": 0.14883362423354865,
+          "n_samples": 128
+        }
+      },
+      "n_params": 409255,
+      "train_seconds": 65.52811598777771,
+      "eval_seconds": 10.889515161514282,
+      "best_val_nRMSE": 0.052449518603274715,
+      "device": "cuda:0",
+      "_cache": "hit"
+    },
+    {
+      "model": "v9_baseline",
+      "dataset": "ifc_poisson",
+      "splits": {
+        "test": {
+          "nRMSE": 18.50343612114542,
+          "n_samples": 128
+        }
+      },
+      "n_params": 409767,
+      "train_seconds": 5.048274278640747,
+      "eval_seconds": 0.4912569522857666,
+      "best_val_nRMSE": 1.3650818544593464,
+      "device": "cuda:0",
+      "_cache": "hit"
+    }
+  ],
+  "results": [
+    {
+      "name": "composite_nRMSE",
+      "value": 0.04196265708735855,
+      "lower_is_better": true
+    },
+    {
+      "name": "n_datasets_scored",
+      "value": 2,
+      "lower_is_better": false
+    }
+  ]
+}

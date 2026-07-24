@@ -1,0 +1,46 @@
+{
+  "model": "fno_fire_batchens",
+  "dataset": "pm_test",
+  "splits": {
+    "test_hf": {
+      "nRMSE": 0.07030373024688202,
+      "rel_l2_mean": 0.06995426173519785,
+      "rel_l2_ci95_lo": 0.06456384372549226,
+      "rel_l2_ci95_hi": 0.07564236421368133,
+      "rel_l2_std": 0.00812724806661149,
+      "rel_l2_per_sample": [
+        0.06098611760652844,
+        0.06713375935055046,
+        0.06057037226767618,
+        0.07613516561310417,
+        0.07740600095855854,
+        0.08071404937295769,
+        0.06673436697700949
+      ],
+      "n_samples": 7
+    }
+  },
+  "n_params": 9499078,
+  "train_seconds": 5483.465676784515,
+  "eval_seconds": 0.08816719055175781,
+  "latency_ms_per_sample": 12.595312935965401,
+  "peak_mem_mb": 595.523072,
+  "work_grid": [
+    128,
+    256
+  ],
+  "eval_protocol": "full_field_on_working_grid",
+  "device": "cuda",
+  "hf_fidelity": 9,
+  "lf_fidelity": 1,
+  "aug_channels": [
+    "mu",
+    "sigma",
+    "q10",
+    "q50",
+    "q90"
+  ],
+  "lf_gaussian_nll": 9411.222394234092,
+  "mf_mechanism": "multi-head ensemble distribution-conditioned residual",
+  "uncertainty_source": "batch/multi-head ensemble (shared trunk, 5 heads)"
+}

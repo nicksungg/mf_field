@@ -1,0 +1,44 @@
+{
+  "model": "mf_fno_transfer",
+  "dataset": "lid_driven_cavity_generated",
+  "splits": {
+    "test_hf": {
+      "nRMSE": 0.7590710994245072,
+      "rel_l2_mean": 0.7520671672404151,
+      "rel_l2_ci95_lo": 0.7219122188404864,
+      "rel_l2_ci95_hi": 0.7820434480594345,
+      "rel_l2_std": 0.05185121032245867,
+      "rel_l2_per_sample": [
+        0.7172172183047929,
+        0.8142483682564735,
+        0.7833591150092597,
+        0.6971565560185258,
+        0.8141925123068169,
+        0.8077794417197048,
+        0.7072212442213686,
+        0.6954259875243038,
+        0.7790321684714161,
+        0.7050390605714886
+      ],
+      "n_samples": 10
+    }
+  },
+  "n_params": 4740225,
+  "train_seconds": 14.441311836242676,
+  "eval_seconds": 0.050469398498535156,
+  "latency_ms_per_sample": 5.046939849853516,
+  "peak_mem_mb": 1155.189248,
+  "work_grid": [
+    256,
+    256
+  ],
+  "eval_protocol": "full_field_on_working_grid",
+  "device": "cuda",
+  "hf_fidelity": 4,
+  "lf_fidelity": 1,
+  "mf_mechanism": "transfer_learning_pretrain_LF_finetune_HF",
+  "hf_grid_native": [
+    256,
+    256
+  ]
+}

@@ -1,0 +1,1 @@
+H1: Fix REPO_ROOT off-by-one in models/mf_fno_transfer_bar/smoke_eval.py:32 — change HERE.parent.parent.parent to HERE.parent.parent. Unblocks data_adapters import so the bar appears in smoke results for in-distribution comparison.

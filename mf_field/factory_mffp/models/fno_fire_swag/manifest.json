@@ -1,0 +1,10 @@
+{
+  "name": "fno_fire_swag",
+  "description": "FIRE-family distribution-conditioned residual where the LF predictive distribution comes from SWAG (diagonal Gaussian over SGD-tail weights, 10 samples). Shares the backbone + residual pipeline (models/_common/fire_core,fire_methods) with the other fire_* families so the ablation isolates the UNCERTAINTY SOURCE. HF = mu_LF + delta(x,[mu,sigma,q10,q50,q90]).",
+  "supports": [
+    "ifc_raw",
+    "npz_l"
+  ],
+  "external": false,
+  "paper": "Maddox et al. 2019 SWAG (arXiv:1902.02476)"
+}

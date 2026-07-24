@@ -1,0 +1,2074 @@
+[
+  {
+    "dataset": "ifc_heat",
+    "layout": "ifc_raw",
+    "train_fids": [
+      8,
+      16,
+      32,
+      64
+    ],
+    "train_hf_fid": 64,
+    "train_n_hf": 5,
+    "train_cond_dim": 3,
+    "train_per_fid": {
+      "8": {
+        "n_samples": 100,
+        "cond_dim": 3,
+        "n_cells": 64,
+        "grid_shape": [
+          8,
+          8
+        ]
+      },
+      "16": {
+        "n_samples": 50,
+        "cond_dim": 3,
+        "n_cells": 256,
+        "grid_shape": [
+          16,
+          16
+        ]
+      },
+      "32": {
+        "n_samples": 20,
+        "cond_dim": 3,
+        "n_cells": 1024,
+        "grid_shape": [
+          32,
+          32
+        ]
+      },
+      "64": {
+        "n_samples": 5,
+        "cond_dim": 3,
+        "n_cells": 4096,
+        "grid_shape": [
+          64,
+          64
+        ]
+      }
+    },
+    "train_mfdataset_sample0_shapes": {
+      "cond": [
+        3
+      ],
+      "lf_fields": [
+        [
+          64
+        ],
+        [
+          256
+        ],
+        [
+          1024
+        ]
+      ],
+      "hf_field": [
+        4096
+      ]
+    },
+    "train_mfdataset_len": 5,
+    "test_fids": [
+      64
+    ],
+    "test_hf_fid": 64,
+    "test_n_hf": 128,
+    "test_cond_dim": 3,
+    "test_per_fid": {
+      "64": {
+        "n_samples": 128,
+        "cond_dim": 3,
+        "n_cells": 4096,
+        "grid_shape": [
+          64,
+          64
+        ]
+      }
+    },
+    "test_mfdataset_sample0_shapes": {
+      "cond": [
+        3
+      ],
+      "lf_fields": [],
+      "hf_field": [
+        4096
+      ]
+    },
+    "test_mfdataset_len": 128,
+    "ood_status": "no_split",
+    "status": "ok"
+  },
+  {
+    "dataset": "ifc_poisson",
+    "layout": "ifc_raw",
+    "train_fids": [
+      8,
+      16,
+      32,
+      64
+    ],
+    "train_hf_fid": 64,
+    "train_n_hf": 5,
+    "train_cond_dim": 5,
+    "train_per_fid": {
+      "8": {
+        "n_samples": 100,
+        "cond_dim": 5,
+        "n_cells": 64,
+        "grid_shape": [
+          8,
+          8
+        ]
+      },
+      "16": {
+        "n_samples": 50,
+        "cond_dim": 5,
+        "n_cells": 256,
+        "grid_shape": [
+          16,
+          16
+        ]
+      },
+      "32": {
+        "n_samples": 20,
+        "cond_dim": 5,
+        "n_cells": 1024,
+        "grid_shape": [
+          32,
+          32
+        ]
+      },
+      "64": {
+        "n_samples": 5,
+        "cond_dim": 5,
+        "n_cells": 4096,
+        "grid_shape": [
+          64,
+          64
+        ]
+      }
+    },
+    "train_mfdataset_sample0_shapes": {
+      "cond": [
+        5
+      ],
+      "lf_fields": [
+        [
+          64
+        ],
+        [
+          256
+        ],
+        [
+          1024
+        ]
+      ],
+      "hf_field": [
+        4096
+      ]
+    },
+    "train_mfdataset_len": 5,
+    "test_fids": [
+      64
+    ],
+    "test_hf_fid": 64,
+    "test_n_hf": 128,
+    "test_cond_dim": 5,
+    "test_per_fid": {
+      "64": {
+        "n_samples": 128,
+        "cond_dim": 5,
+        "n_cells": 4096,
+        "grid_shape": [
+          64,
+          64
+        ]
+      }
+    },
+    "test_mfdataset_sample0_shapes": {
+      "cond": [
+        5
+      ],
+      "lf_fields": [],
+      "hf_field": [
+        4096
+      ]
+    },
+    "test_mfdataset_len": 128,
+    "ood_status": "no_split",
+    "status": "ok"
+  },
+  {
+    "dataset": "chin_chun_isothermal",
+    "layout": "chin_chun",
+    "train_fids": [
+      128,
+      256
+    ],
+    "train_hf_fid": 256,
+    "train_n_hf": 6476,
+    "train_cond_dim": 1,
+    "train_per_fid": {
+      "128": {
+        "n_samples": 6476,
+        "cond_dim": 1,
+        "n_cells": 49152,
+        "grid_shape": null
+      },
+      "256": {
+        "n_samples": 6476,
+        "cond_dim": 1,
+        "n_cells": 196608,
+        "grid_shape": null
+      }
+    },
+    "train_mfdataset_sample0_shapes": {
+      "cond": [
+        1
+      ],
+      "lf_fields": [
+        [
+          49152
+        ]
+      ],
+      "hf_field": [
+        196608
+      ]
+    },
+    "train_mfdataset_len": 6476,
+    "test_fids": [
+      128,
+      256
+    ],
+    "test_hf_fid": 256,
+    "test_n_hf": 400,
+    "test_cond_dim": 1,
+    "test_per_fid": {
+      "128": {
+        "n_samples": 400,
+        "cond_dim": 1,
+        "n_cells": 49152,
+        "grid_shape": null
+      },
+      "256": {
+        "n_samples": 400,
+        "cond_dim": 1,
+        "n_cells": 196608,
+        "grid_shape": null
+      }
+    },
+    "test_mfdataset_sample0_shapes": {
+      "cond": [
+        1
+      ],
+      "lf_fields": [
+        [
+          49152
+        ]
+      ],
+      "hf_field": [
+        196608
+      ]
+    },
+    "test_mfdataset_len": 400,
+    "ood_status": "no_split",
+    "status": "ok"
+  },
+  {
+    "dataset": "chin_chun_potential",
+    "layout": "chin_chun",
+    "train_fids": [
+      128,
+      256
+    ],
+    "train_hf_fid": 256,
+    "train_n_hf": 6476,
+    "train_cond_dim": 1,
+    "train_per_fid": {
+      "128": {
+        "n_samples": 6476,
+        "cond_dim": 1,
+        "n_cells": 49152,
+        "grid_shape": null
+      },
+      "256": {
+        "n_samples": 6476,
+        "cond_dim": 1,
+        "n_cells": 196608,
+        "grid_shape": null
+      }
+    },
+    "train_mfdataset_sample0_shapes": {
+      "cond": [
+        1
+      ],
+      "lf_fields": [
+        [
+          49152
+        ]
+      ],
+      "hf_field": [
+        196608
+      ]
+    },
+    "train_mfdataset_len": 6476,
+    "test_fids": [
+      128,
+      256
+    ],
+    "test_hf_fid": 256,
+    "test_n_hf": 400,
+    "test_cond_dim": 1,
+    "test_per_fid": {
+      "128": {
+        "n_samples": 400,
+        "cond_dim": 1,
+        "n_cells": 49152,
+        "grid_shape": null
+      },
+      "256": {
+        "n_samples": 400,
+        "cond_dim": 1,
+        "n_cells": 196608,
+        "grid_shape": null
+      }
+    },
+    "test_mfdataset_sample0_shapes": {
+      "cond": [
+        1
+      ],
+      "lf_fields": [
+        [
+          49152
+        ]
+      ],
+      "hf_field": [
+        196608
+      ]
+    },
+    "test_mfdataset_len": 400,
+    "ood_status": "no_split",
+    "status": "ok"
+  },
+  {
+    "dataset": "poisson_local",
+    "layout": "npz_l",
+    "train_fids": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "train_hf_fid": 5,
+    "train_n_hf": 64,
+    "train_cond_dim": 5,
+    "train_per_fid": {
+      "1": {
+        "n_samples": 64,
+        "cond_dim": 5,
+        "n_cells": 256,
+        "grid_shape": [
+          16,
+          16
+        ]
+      },
+      "2": {
+        "n_samples": 64,
+        "cond_dim": 5,
+        "n_cells": 1024,
+        "grid_shape": [
+          32,
+          32
+        ]
+      },
+      "3": {
+        "n_samples": 64,
+        "cond_dim": 5,
+        "n_cells": 4096,
+        "grid_shape": [
+          64,
+          64
+        ]
+      },
+      "4": {
+        "n_samples": 64,
+        "cond_dim": 5,
+        "n_cells": 9216,
+        "grid_shape": [
+          96,
+          96
+        ]
+      },
+      "5": {
+        "n_samples": 64,
+        "cond_dim": 5,
+        "n_cells": 16384,
+        "grid_shape": [
+          128,
+          128
+        ]
+      }
+    },
+    "train_mfdataset_sample0_shapes": {
+      "cond": [
+        5
+      ],
+      "lf_fields": [
+        [
+          256
+        ],
+        [
+          1024
+        ],
+        [
+          4096
+        ],
+        [
+          9216
+        ]
+      ],
+      "hf_field": [
+        16384
+      ]
+    },
+    "train_mfdataset_len": 64,
+    "test_fids": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "test_hf_fid": 5,
+    "test_n_hf": 512,
+    "test_cond_dim": 5,
+    "test_per_fid": {
+      "1": {
+        "n_samples": 512,
+        "cond_dim": 5,
+        "n_cells": 256,
+        "grid_shape": [
+          16,
+          16
+        ]
+      },
+      "2": {
+        "n_samples": 512,
+        "cond_dim": 5,
+        "n_cells": 1024,
+        "grid_shape": [
+          32,
+          32
+        ]
+      },
+      "3": {
+        "n_samples": 512,
+        "cond_dim": 5,
+        "n_cells": 4096,
+        "grid_shape": [
+          64,
+          64
+        ]
+      },
+      "4": {
+        "n_samples": 512,
+        "cond_dim": 5,
+        "n_cells": 9216,
+        "grid_shape": [
+          96,
+          96
+        ]
+      },
+      "5": {
+        "n_samples": 512,
+        "cond_dim": 5,
+        "n_cells": 16384,
+        "grid_shape": [
+          128,
+          128
+        ]
+      }
+    },
+    "test_mfdataset_sample0_shapes": {
+      "cond": [
+        5
+      ],
+      "lf_fields": [
+        [
+          256
+        ],
+        [
+          1024
+        ],
+        [
+          4096
+        ],
+        [
+          9216
+        ]
+      ],
+      "hf_field": [
+        16384
+      ]
+    },
+    "test_mfdataset_len": 512,
+    "ood_status": "no_split",
+    "status": "ok"
+  },
+  {
+    "dataset": "heat_local",
+    "layout": "npz_l",
+    "train_fids": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "train_hf_fid": 5,
+    "train_n_hf": 1024,
+    "train_cond_dim": 3,
+    "train_per_fid": {
+      "1": {
+        "n_samples": 1024,
+        "cond_dim": 3,
+        "n_cells": 256,
+        "grid_shape": [
+          16,
+          16
+        ]
+      },
+      "2": {
+        "n_samples": 1024,
+        "cond_dim": 3,
+        "n_cells": 1024,
+        "grid_shape": [
+          32,
+          32
+        ]
+      },
+      "3": {
+        "n_samples": 1024,
+        "cond_dim": 3,
+        "n_cells": 4096,
+        "grid_shape": [
+          64,
+          64
+        ]
+      },
+      "4": {
+        "n_samples": 1024,
+        "cond_dim": 3,
+        "n_cells": 9216,
+        "grid_shape": [
+          96,
+          96
+        ]
+      },
+      "5": {
+        "n_samples": 1024,
+        "cond_dim": 3,
+        "n_cells": 16384,
+        "grid_shape": [
+          128,
+          128
+        ]
+      }
+    },
+    "train_mfdataset_sample0_shapes": {
+      "cond": [
+        3
+      ],
+      "lf_fields": [
+        [
+          256
+        ],
+        [
+          1024
+        ],
+        [
+          4096
+        ],
+        [
+          9216
+        ]
+      ],
+      "hf_field": [
+        16384
+      ]
+    },
+    "train_mfdataset_len": 1024,
+    "test_fids": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "test_hf_fid": 5,
+    "test_n_hf": 512,
+    "test_cond_dim": 3,
+    "test_per_fid": {
+      "1": {
+        "n_samples": 512,
+        "cond_dim": 3,
+        "n_cells": 256,
+        "grid_shape": [
+          16,
+          16
+        ]
+      },
+      "2": {
+        "n_samples": 512,
+        "cond_dim": 3,
+        "n_cells": 1024,
+        "grid_shape": [
+          32,
+          32
+        ]
+      },
+      "3": {
+        "n_samples": 512,
+        "cond_dim": 3,
+        "n_cells": 4096,
+        "grid_shape": [
+          64,
+          64
+        ]
+      },
+      "4": {
+        "n_samples": 512,
+        "cond_dim": 3,
+        "n_cells": 9216,
+        "grid_shape": [
+          96,
+          96
+        ]
+      },
+      "5": {
+        "n_samples": 512,
+        "cond_dim": 3,
+        "n_cells": 16384,
+        "grid_shape": [
+          128,
+          128
+        ]
+      }
+    },
+    "test_mfdataset_sample0_shapes": {
+      "cond": [
+        3
+      ],
+      "lf_fields": [
+        [
+          256
+        ],
+        [
+          1024
+        ],
+        [
+          4096
+        ],
+        [
+          9216
+        ]
+      ],
+      "hf_field": [
+        16384
+      ]
+    },
+    "test_mfdataset_len": 512,
+    "ood_status": "no_split",
+    "status": "ok"
+  },
+  {
+    "dataset": "fluid",
+    "layout": "npz_l",
+    "train_fids": [
+      1,
+      2
+    ],
+    "train_hf_fid": 2,
+    "train_n_hf": 256,
+    "train_cond_dim": 2,
+    "train_per_fid": {
+      "1": {
+        "n_samples": 256,
+        "cond_dim": 2,
+        "n_cells": 1024,
+        "grid_shape": [
+          32,
+          32
+        ]
+      },
+      "2": {
+        "n_samples": 256,
+        "cond_dim": 2,
+        "n_cells": 4096,
+        "grid_shape": [
+          64,
+          64
+        ]
+      }
+    },
+    "train_mfdataset_sample0_shapes": {
+      "cond": [
+        2
+      ],
+      "lf_fields": [
+        [
+          1024
+        ]
+      ],
+      "hf_field": [
+        4096
+      ]
+    },
+    "train_mfdataset_len": 256,
+    "test_fids": [
+      1,
+      2
+    ],
+    "test_hf_fid": 2,
+    "test_n_hf": 256,
+    "test_cond_dim": 2,
+    "test_per_fid": {
+      "1": {
+        "n_samples": 256,
+        "cond_dim": 2,
+        "n_cells": 1024,
+        "grid_shape": [
+          32,
+          32
+        ]
+      },
+      "2": {
+        "n_samples": 256,
+        "cond_dim": 2,
+        "n_cells": 4096,
+        "grid_shape": [
+          64,
+          64
+        ]
+      }
+    },
+    "test_mfdataset_sample0_shapes": {
+      "cond": [
+        2
+      ],
+      "lf_fields": [
+        [
+          1024
+        ]
+      ],
+      "hf_field": [
+        4096
+      ]
+    },
+    "test_mfdataset_len": 256,
+    "ood_status": "no_split",
+    "status": "ok"
+  },
+  {
+    "dataset": "era5",
+    "layout": "npz_l",
+    "train_fids": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+    ],
+    "train_hf_fid": 9,
+    "train_n_hf": 65,
+    "train_cond_dim": 12,
+    "train_per_fid": {
+      "1": {
+        "n_samples": 1222,
+        "cond_dim": 12,
+        "n_cells": 27648,
+        "grid_shape": null
+      },
+      "2": {
+        "n_samples": 815,
+        "cond_dim": 12,
+        "n_cells": 51200,
+        "grid_shape": null
+      },
+      "3": {
+        "n_samples": 1222,
+        "cond_dim": 12,
+        "n_cells": 55296,
+        "grid_shape": null
+      },
+      "4": {
+        "n_samples": 328,
+        "cond_dim": 12,
+        "n_cells": 51840,
+        "grid_shape": null
+      },
+      "5": {
+        "n_samples": 328,
+        "cond_dim": 12,
+        "n_cells": 21600,
+        "grid_shape": null
+      },
+      "6": {
+        "n_samples": 408,
+        "cond_dim": 12,
+        "n_cells": 20592,
+        "grid_shape": null
+      },
+      "7": {
+        "n_samples": 408,
+        "cond_dim": 12,
+        "n_cells": 7680,
+        "grid_shape": null
+      },
+      "8": {
+        "n_samples": 408,
+        "cond_dim": 12,
+        "n_cells": 73728,
+        "grid_shape": null
+      },
+      "9": {
+        "n_samples": 65,
+        "cond_dim": 12,
+        "n_cells": 1038240,
+        "grid_shape": null
+      }
+    },
+    "train_mfdataset_sample0_shapes": {
+      "cond": [
+        12
+      ],
+      "lf_fields": [
+        [
+          27648
+        ],
+        [
+          51200
+        ],
+        [
+          55296
+        ],
+        [
+          51840
+        ],
+        [
+          21600
+        ],
+        [
+          20592
+        ],
+        [
+          7680
+        ],
+        [
+          73728
+        ]
+      ],
+      "hf_field": [
+        1038240
+      ]
+    },
+    "train_mfdataset_len": 65,
+    "test_fids": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+    ],
+    "test_hf_fid": 9,
+    "test_n_hf": 7,
+    "test_cond_dim": 12,
+    "test_per_fid": {
+      "1": {
+        "n_samples": 305,
+        "cond_dim": 12,
+        "n_cells": 27648,
+        "grid_shape": null
+      },
+      "2": {
+        "n_samples": 203,
+        "cond_dim": 12,
+        "n_cells": 51200,
+        "grid_shape": null
+      },
+      "3": {
+        "n_samples": 305,
+        "cond_dim": 12,
+        "n_cells": 55296,
+        "grid_shape": null
+      },
+      "4": {
+        "n_samples": 81,
+        "cond_dim": 12,
+        "n_cells": 51840,
+        "grid_shape": null
+      },
+      "5": {
+        "n_samples": 81,
+        "cond_dim": 12,
+        "n_cells": 21600,
+        "grid_shape": null
+      },
+      "6": {
+        "n_samples": 101,
+        "cond_dim": 12,
+        "n_cells": 20592,
+        "grid_shape": null
+      },
+      "7": {
+        "n_samples": 101,
+        "cond_dim": 12,
+        "n_cells": 7680,
+        "grid_shape": null
+      },
+      "8": {
+        "n_samples": 101,
+        "cond_dim": 12,
+        "n_cells": 73728,
+        "grid_shape": null
+      },
+      "9": {
+        "n_samples": 7,
+        "cond_dim": 12,
+        "n_cells": 1038240,
+        "grid_shape": null
+      }
+    },
+    "test_mfdataset_sample0_shapes": {
+      "cond": [
+        12
+      ],
+      "lf_fields": [
+        [
+          27648
+        ],
+        [
+          51200
+        ],
+        [
+          55296
+        ],
+        [
+          51840
+        ],
+        [
+          21600
+        ],
+        [
+          20592
+        ],
+        [
+          7680
+        ],
+        [
+          73728
+        ]
+      ],
+      "hf_field": [
+        1038240
+      ]
+    },
+    "test_mfdataset_len": 7,
+    "ood_status": "no_split",
+    "status": "ok"
+  },
+  {
+    "dataset": "pm_test",
+    "layout": "npz_l",
+    "train_fids": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+    ],
+    "train_hf_fid": 9,
+    "train_n_hf": 65,
+    "train_cond_dim": 12,
+    "train_per_fid": {
+      "1": {
+        "n_samples": 1222,
+        "cond_dim": 12,
+        "n_cells": 27648,
+        "grid_shape": null
+      },
+      "2": {
+        "n_samples": 815,
+        "cond_dim": 12,
+        "n_cells": 51200,
+        "grid_shape": null
+      },
+      "3": {
+        "n_samples": 1222,
+        "cond_dim": 12,
+        "n_cells": 55296,
+        "grid_shape": null
+      },
+      "4": {
+        "n_samples": 328,
+        "cond_dim": 12,
+        "n_cells": 51840,
+        "grid_shape": null
+      },
+      "5": {
+        "n_samples": 328,
+        "cond_dim": 12,
+        "n_cells": 21600,
+        "grid_shape": null
+      },
+      "6": {
+        "n_samples": 408,
+        "cond_dim": 12,
+        "n_cells": 20592,
+        "grid_shape": null
+      },
+      "7": {
+        "n_samples": 408,
+        "cond_dim": 12,
+        "n_cells": 7680,
+        "grid_shape": null
+      },
+      "8": {
+        "n_samples": 408,
+        "cond_dim": 12,
+        "n_cells": 73728,
+        "grid_shape": null
+      },
+      "9": {
+        "n_samples": 65,
+        "cond_dim": 12,
+        "n_cells": 1038240,
+        "grid_shape": null
+      }
+    },
+    "train_mfdataset_sample0_shapes": {
+      "cond": [
+        12
+      ],
+      "lf_fields": [
+        [
+          27648
+        ],
+        [
+          51200
+        ],
+        [
+          55296
+        ],
+        [
+          51840
+        ],
+        [
+          21600
+        ],
+        [
+          20592
+        ],
+        [
+          7680
+        ],
+        [
+          73728
+        ]
+      ],
+      "hf_field": [
+        1038240
+      ]
+    },
+    "train_mfdataset_len": 65,
+    "test_fids": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+    ],
+    "test_hf_fid": 9,
+    "test_n_hf": 7,
+    "test_cond_dim": 12,
+    "test_per_fid": {
+      "1": {
+        "n_samples": 305,
+        "cond_dim": 12,
+        "n_cells": 27648,
+        "grid_shape": null
+      },
+      "2": {
+        "n_samples": 203,
+        "cond_dim": 12,
+        "n_cells": 51200,
+        "grid_shape": null
+      },
+      "3": {
+        "n_samples": 305,
+        "cond_dim": 12,
+        "n_cells": 55296,
+        "grid_shape": null
+      },
+      "4": {
+        "n_samples": 81,
+        "cond_dim": 12,
+        "n_cells": 51840,
+        "grid_shape": null
+      },
+      "5": {
+        "n_samples": 81,
+        "cond_dim": 12,
+        "n_cells": 21600,
+        "grid_shape": null
+      },
+      "6": {
+        "n_samples": 101,
+        "cond_dim": 12,
+        "n_cells": 20592,
+        "grid_shape": null
+      },
+      "7": {
+        "n_samples": 101,
+        "cond_dim": 12,
+        "n_cells": 7680,
+        "grid_shape": null
+      },
+      "8": {
+        "n_samples": 101,
+        "cond_dim": 12,
+        "n_cells": 73728,
+        "grid_shape": null
+      },
+      "9": {
+        "n_samples": 7,
+        "cond_dim": 12,
+        "n_cells": 1038240,
+        "grid_shape": null
+      }
+    },
+    "test_mfdataset_sample0_shapes": {
+      "cond": [
+        12
+      ],
+      "lf_fields": [
+        [
+          27648
+        ],
+        [
+          51200
+        ],
+        [
+          55296
+        ],
+        [
+          51840
+        ],
+        [
+          21600
+        ],
+        [
+          20592
+        ],
+        [
+          7680
+        ],
+        [
+          73728
+        ]
+      ],
+      "hf_field": [
+        1038240
+      ]
+    },
+    "test_mfdataset_len": 7,
+    "ood_status": "no_split",
+    "status": "ok"
+  },
+  {
+    "dataset": "advection_diffusion_generated",
+    "layout": "npz_l",
+    "train_fids": [
+      1,
+      2
+    ],
+    "train_hf_fid": 2,
+    "train_n_hf": 400,
+    "train_cond_dim": 2,
+    "train_per_fid": {
+      "1": {
+        "n_samples": 400,
+        "cond_dim": 2,
+        "n_cells": 1024,
+        "grid_shape": [
+          32,
+          32
+        ]
+      },
+      "2": {
+        "n_samples": 400,
+        "cond_dim": 2,
+        "n_cells": 4096,
+        "grid_shape": [
+          64,
+          64
+        ]
+      }
+    },
+    "train_mfdataset_sample0_shapes": {
+      "cond": [
+        2
+      ],
+      "lf_fields": [
+        [
+          1024
+        ]
+      ],
+      "hf_field": [
+        4096
+      ]
+    },
+    "train_mfdataset_len": 400,
+    "test_fids": [
+      1,
+      2
+    ],
+    "test_hf_fid": 2,
+    "test_n_hf": 100,
+    "test_cond_dim": 2,
+    "test_per_fid": {
+      "1": {
+        "n_samples": 100,
+        "cond_dim": 2,
+        "n_cells": 1024,
+        "grid_shape": [
+          32,
+          32
+        ]
+      },
+      "2": {
+        "n_samples": 100,
+        "cond_dim": 2,
+        "n_cells": 4096,
+        "grid_shape": [
+          64,
+          64
+        ]
+      }
+    },
+    "test_mfdataset_sample0_shapes": {
+      "cond": [
+        2
+      ],
+      "lf_fields": [
+        [
+          1024
+        ]
+      ],
+      "hf_field": [
+        4096
+      ]
+    },
+    "test_mfdataset_len": 100,
+    "ood_status": "no_split",
+    "status": "ok"
+  },
+  {
+    "dataset": "allen_cahn_generated",
+    "layout": "npz_l",
+    "train_fids": [
+      1,
+      2,
+      3
+    ],
+    "train_hf_fid": 3,
+    "train_n_hf": 400,
+    "train_cond_dim": 2,
+    "train_per_fid": {
+      "1": {
+        "n_samples": 400,
+        "cond_dim": 2,
+        "n_cells": 64,
+        "grid_shape": [
+          8,
+          8
+        ]
+      },
+      "2": {
+        "n_samples": 400,
+        "cond_dim": 2,
+        "n_cells": 128,
+        "grid_shape": null
+      },
+      "3": {
+        "n_samples": 400,
+        "cond_dim": 2,
+        "n_cells": 256,
+        "grid_shape": [
+          16,
+          16
+        ]
+      }
+    },
+    "train_mfdataset_sample0_shapes": {
+      "cond": [
+        2
+      ],
+      "lf_fields": [
+        [
+          64
+        ],
+        [
+          128
+        ]
+      ],
+      "hf_field": [
+        256
+      ]
+    },
+    "train_mfdataset_len": 400,
+    "test_fids": [
+      1,
+      2,
+      3
+    ],
+    "test_hf_fid": 3,
+    "test_n_hf": 100,
+    "test_cond_dim": 2,
+    "test_per_fid": {
+      "1": {
+        "n_samples": 100,
+        "cond_dim": 2,
+        "n_cells": 64,
+        "grid_shape": [
+          8,
+          8
+        ]
+      },
+      "2": {
+        "n_samples": 100,
+        "cond_dim": 2,
+        "n_cells": 128,
+        "grid_shape": null
+      },
+      "3": {
+        "n_samples": 100,
+        "cond_dim": 2,
+        "n_cells": 256,
+        "grid_shape": [
+          16,
+          16
+        ]
+      }
+    },
+    "test_mfdataset_sample0_shapes": {
+      "cond": [
+        2
+      ],
+      "lf_fields": [
+        [
+          64
+        ],
+        [
+          128
+        ]
+      ],
+      "hf_field": [
+        256
+      ]
+    },
+    "test_mfdataset_len": 100,
+    "ood_status": "no_split",
+    "status": "ok"
+  },
+  {
+    "dataset": "burgers_generated",
+    "layout": "npz_l",
+    "train_fids": [
+      1,
+      2,
+      3
+    ],
+    "train_hf_fid": 3,
+    "train_n_hf": 400,
+    "train_cond_dim": 8,
+    "train_per_fid": {
+      "1": {
+        "n_samples": 400,
+        "cond_dim": 8,
+        "n_cells": 64,
+        "grid_shape": [
+          8,
+          8
+        ]
+      },
+      "2": {
+        "n_samples": 400,
+        "cond_dim": 8,
+        "n_cells": 128,
+        "grid_shape": null
+      },
+      "3": {
+        "n_samples": 400,
+        "cond_dim": 8,
+        "n_cells": 256,
+        "grid_shape": [
+          16,
+          16
+        ]
+      }
+    },
+    "train_mfdataset_sample0_shapes": {
+      "cond": [
+        8
+      ],
+      "lf_fields": [
+        [
+          64
+        ],
+        [
+          128
+        ]
+      ],
+      "hf_field": [
+        256
+      ]
+    },
+    "train_mfdataset_len": 400,
+    "test_fids": [
+      1,
+      2,
+      3
+    ],
+    "test_hf_fid": 3,
+    "test_n_hf": 100,
+    "test_cond_dim": 8,
+    "test_per_fid": {
+      "1": {
+        "n_samples": 100,
+        "cond_dim": 8,
+        "n_cells": 64,
+        "grid_shape": [
+          8,
+          8
+        ]
+      },
+      "2": {
+        "n_samples": 100,
+        "cond_dim": 8,
+        "n_cells": 128,
+        "grid_shape": null
+      },
+      "3": {
+        "n_samples": 100,
+        "cond_dim": 8,
+        "n_cells": 256,
+        "grid_shape": [
+          16,
+          16
+        ]
+      }
+    },
+    "test_mfdataset_sample0_shapes": {
+      "cond": [
+        8
+      ],
+      "lf_fields": [
+        [
+          64
+        ],
+        [
+          128
+        ]
+      ],
+      "hf_field": [
+        256
+      ]
+    },
+    "test_mfdataset_len": 100,
+    "ood_status": "no_split",
+    "status": "ok"
+  },
+  {
+    "dataset": "burgers_param_generated",
+    "layout": "npz_l",
+    "train_fids": [
+      1,
+      2,
+      3
+    ],
+    "train_hf_fid": 3,
+    "train_n_hf": 320,
+    "train_cond_dim": 5,
+    "train_per_fid": {
+      "1": {
+        "n_samples": 320,
+        "cond_dim": 5,
+        "n_cells": 64,
+        "grid_shape": [
+          8,
+          8
+        ]
+      },
+      "2": {
+        "n_samples": 320,
+        "cond_dim": 5,
+        "n_cells": 128,
+        "grid_shape": null
+      },
+      "3": {
+        "n_samples": 320,
+        "cond_dim": 5,
+        "n_cells": 256,
+        "grid_shape": [
+          16,
+          16
+        ]
+      }
+    },
+    "train_mfdataset_sample0_shapes": {
+      "cond": [
+        5
+      ],
+      "lf_fields": [
+        [
+          64
+        ],
+        [
+          128
+        ]
+      ],
+      "hf_field": [
+        256
+      ]
+    },
+    "train_mfdataset_len": 320,
+    "test_fids": [
+      1,
+      2,
+      3
+    ],
+    "test_hf_fid": 3,
+    "test_n_hf": 80,
+    "test_cond_dim": 5,
+    "test_per_fid": {
+      "1": {
+        "n_samples": 80,
+        "cond_dim": 5,
+        "n_cells": 64,
+        "grid_shape": [
+          8,
+          8
+        ]
+      },
+      "2": {
+        "n_samples": 80,
+        "cond_dim": 5,
+        "n_cells": 128,
+        "grid_shape": null
+      },
+      "3": {
+        "n_samples": 80,
+        "cond_dim": 5,
+        "n_cells": 256,
+        "grid_shape": [
+          16,
+          16
+        ]
+      }
+    },
+    "test_mfdataset_sample0_shapes": {
+      "cond": [
+        5
+      ],
+      "lf_fields": [
+        [
+          64
+        ],
+        [
+          128
+        ]
+      ],
+      "hf_field": [
+        256
+      ]
+    },
+    "test_mfdataset_len": 80,
+    "ood_status": "no_split",
+    "status": "ok"
+  },
+  {
+    "dataset": "darcy_generated",
+    "layout": "npz_l",
+    "train_fids": [
+      1,
+      2,
+      3
+    ],
+    "train_hf_fid": 3,
+    "train_n_hf": 160,
+    "train_cond_dim": 16,
+    "train_per_fid": {
+      "1": {
+        "n_samples": 160,
+        "cond_dim": 16,
+        "n_cells": 1024,
+        "grid_shape": [
+          32,
+          32
+        ]
+      },
+      "2": {
+        "n_samples": 160,
+        "cond_dim": 16,
+        "n_cells": 4096,
+        "grid_shape": [
+          64,
+          64
+        ]
+      },
+      "3": {
+        "n_samples": 160,
+        "cond_dim": 16,
+        "n_cells": 16384,
+        "grid_shape": [
+          128,
+          128
+        ]
+      }
+    },
+    "train_mfdataset_sample0_shapes": {
+      "cond": [
+        16
+      ],
+      "lf_fields": [
+        [
+          1024
+        ],
+        [
+          4096
+        ]
+      ],
+      "hf_field": [
+        16384
+      ]
+    },
+    "train_mfdataset_len": 160,
+    "test_fids": [
+      1,
+      2,
+      3
+    ],
+    "test_hf_fid": 3,
+    "test_n_hf": 40,
+    "test_cond_dim": 16,
+    "test_per_fid": {
+      "1": {
+        "n_samples": 40,
+        "cond_dim": 16,
+        "n_cells": 1024,
+        "grid_shape": [
+          32,
+          32
+        ]
+      },
+      "2": {
+        "n_samples": 40,
+        "cond_dim": 16,
+        "n_cells": 4096,
+        "grid_shape": [
+          64,
+          64
+        ]
+      },
+      "3": {
+        "n_samples": 40,
+        "cond_dim": 16,
+        "n_cells": 16384,
+        "grid_shape": [
+          128,
+          128
+        ]
+      }
+    },
+    "test_mfdataset_sample0_shapes": {
+      "cond": [
+        16
+      ],
+      "lf_fields": [
+        [
+          1024
+        ],
+        [
+          4096
+        ]
+      ],
+      "hf_field": [
+        16384
+      ]
+    },
+    "test_mfdataset_len": 40,
+    "ood_status": "no_split",
+    "status": "ok"
+  },
+  {
+    "dataset": "heat_generated",
+    "layout": "npz_l",
+    "train_fids": [
+      1,
+      2,
+      3
+    ],
+    "train_hf_fid": 3,
+    "train_n_hf": 400,
+    "train_cond_dim": 3,
+    "train_per_fid": {
+      "1": {
+        "n_samples": 400,
+        "cond_dim": 3,
+        "n_cells": 256,
+        "grid_shape": [
+          16,
+          16
+        ]
+      },
+      "2": {
+        "n_samples": 400,
+        "cond_dim": 3,
+        "n_cells": 1024,
+        "grid_shape": [
+          32,
+          32
+        ]
+      },
+      "3": {
+        "n_samples": 400,
+        "cond_dim": 3,
+        "n_cells": 4096,
+        "grid_shape": [
+          64,
+          64
+        ]
+      }
+    },
+    "train_mfdataset_sample0_shapes": {
+      "cond": [
+        3
+      ],
+      "lf_fields": [
+        [
+          256
+        ],
+        [
+          1024
+        ]
+      ],
+      "hf_field": [
+        4096
+      ]
+    },
+    "train_mfdataset_len": 400,
+    "test_fids": [
+      1,
+      2,
+      3
+    ],
+    "test_hf_fid": 3,
+    "test_n_hf": 100,
+    "test_cond_dim": 3,
+    "test_per_fid": {
+      "1": {
+        "n_samples": 100,
+        "cond_dim": 3,
+        "n_cells": 256,
+        "grid_shape": [
+          16,
+          16
+        ]
+      },
+      "2": {
+        "n_samples": 100,
+        "cond_dim": 3,
+        "n_cells": 1024,
+        "grid_shape": [
+          32,
+          32
+        ]
+      },
+      "3": {
+        "n_samples": 100,
+        "cond_dim": 3,
+        "n_cells": 4096,
+        "grid_shape": [
+          64,
+          64
+        ]
+      }
+    },
+    "test_mfdataset_sample0_shapes": {
+      "cond": [
+        3
+      ],
+      "lf_fields": [
+        [
+          256
+        ],
+        [
+          1024
+        ]
+      ],
+      "hf_field": [
+        4096
+      ]
+    },
+    "test_mfdataset_len": 100,
+    "ood_status": "no_split",
+    "status": "ok"
+  },
+  {
+    "dataset": "lid_driven_cavity_generated",
+    "layout": "npz_l",
+    "train_fids": [
+      1,
+      2,
+      3
+    ],
+    "train_hf_fid": 3,
+    "train_n_hf": 40,
+    "train_cond_dim": 1,
+    "train_per_fid": {
+      "1": {
+        "n_samples": 40,
+        "cond_dim": 1,
+        "n_cells": 1024,
+        "grid_shape": [
+          32,
+          32
+        ]
+      },
+      "2": {
+        "n_samples": 40,
+        "cond_dim": 1,
+        "n_cells": 4096,
+        "grid_shape": [
+          64,
+          64
+        ]
+      },
+      "3": {
+        "n_samples": 40,
+        "cond_dim": 1,
+        "n_cells": 16384,
+        "grid_shape": [
+          128,
+          128
+        ]
+      }
+    },
+    "train_mfdataset_sample0_shapes": {
+      "cond": [
+        1
+      ],
+      "lf_fields": [
+        [
+          1024
+        ],
+        [
+          4096
+        ]
+      ],
+      "hf_field": [
+        16384
+      ]
+    },
+    "train_mfdataset_len": 40,
+    "test_fids": [
+      1,
+      2,
+      3
+    ],
+    "test_hf_fid": 3,
+    "test_n_hf": 10,
+    "test_cond_dim": 1,
+    "test_per_fid": {
+      "1": {
+        "n_samples": 10,
+        "cond_dim": 1,
+        "n_cells": 1024,
+        "grid_shape": [
+          32,
+          32
+        ]
+      },
+      "2": {
+        "n_samples": 10,
+        "cond_dim": 1,
+        "n_cells": 4096,
+        "grid_shape": [
+          64,
+          64
+        ]
+      },
+      "3": {
+        "n_samples": 10,
+        "cond_dim": 1,
+        "n_cells": 16384,
+        "grid_shape": [
+          128,
+          128
+        ]
+      }
+    },
+    "test_mfdataset_sample0_shapes": {
+      "cond": [
+        1
+      ],
+      "lf_fields": [
+        [
+          1024
+        ],
+        [
+          4096
+        ]
+      ],
+      "hf_field": [
+        16384
+      ]
+    },
+    "test_mfdataset_len": 10,
+    "ood_status": "no_split",
+    "status": "ok"
+  },
+  {
+    "dataset": "poisson_generated",
+    "layout": "npz_l",
+    "train_fids": [
+      1,
+      2,
+      3
+    ],
+    "train_hf_fid": 3,
+    "train_n_hf": 400,
+    "train_cond_dim": 5,
+    "train_per_fid": {
+      "1": {
+        "n_samples": 400,
+        "cond_dim": 5,
+        "n_cells": 256,
+        "grid_shape": [
+          16,
+          16
+        ]
+      },
+      "2": {
+        "n_samples": 400,
+        "cond_dim": 5,
+        "n_cells": 1024,
+        "grid_shape": [
+          32,
+          32
+        ]
+      },
+      "3": {
+        "n_samples": 400,
+        "cond_dim": 5,
+        "n_cells": 4096,
+        "grid_shape": [
+          64,
+          64
+        ]
+      }
+    },
+    "train_mfdataset_sample0_shapes": {
+      "cond": [
+        5
+      ],
+      "lf_fields": [
+        [
+          256
+        ],
+        [
+          1024
+        ]
+      ],
+      "hf_field": [
+        4096
+      ]
+    },
+    "train_mfdataset_len": 400,
+    "test_fids": [
+      1,
+      2,
+      3
+    ],
+    "test_hf_fid": 3,
+    "test_n_hf": 100,
+    "test_cond_dim": 5,
+    "test_per_fid": {
+      "1": {
+        "n_samples": 100,
+        "cond_dim": 5,
+        "n_cells": 256,
+        "grid_shape": [
+          16,
+          16
+        ]
+      },
+      "2": {
+        "n_samples": 100,
+        "cond_dim": 5,
+        "n_cells": 1024,
+        "grid_shape": [
+          32,
+          32
+        ]
+      },
+      "3": {
+        "n_samples": 100,
+        "cond_dim": 5,
+        "n_cells": 4096,
+        "grid_shape": [
+          64,
+          64
+        ]
+      }
+    },
+    "test_mfdataset_sample0_shapes": {
+      "cond": [
+        5
+      ],
+      "lf_fields": [
+        [
+          256
+        ],
+        [
+          1024
+        ]
+      ],
+      "hf_field": [
+        4096
+      ]
+    },
+    "test_mfdataset_len": 100,
+    "ood_status": "no_split",
+    "status": "ok"
+  }
+]

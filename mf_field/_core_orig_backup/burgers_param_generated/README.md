@@ -1,0 +1,50 @@
+# burgers_param_generated
+
+**Paper:** li2020fno  
+**Domain:** burgers_pde_1d  
+**License:** MIT  
+**Availability:** regenerable  
+**Generator:** `mffpbench.generators.burgers_param:generate`
+
+## Fidelity ladder
+
+- L1: [64, 1]
+- L2: [128, 1]
+- L3: [256, 1]
+
+## Sample counts
+
+- Train: **320**
+- Test: **80**
+- Total: 400
+
+## File layout
+
+`train_l1.npz`, `train_l2.npz`, ..., `test_l1.npz`, ... — MFRNP npz convention with keys `x` and `y`.
+
+## Load example
+
+```python
+import numpy as np
+from pathlib import Path
+
+HERE = Path("burgers_param_generated")
+# Load level 1 train
+d = np.load(HERE / "train_l1.npz")
+X, Y = d["x"], d["y"]
+print(X.shape, Y.shape)
+
+# Load every fidelity, train + test
+for lvl in [1, 2, 3]:
+    for split in ["train", "test"]:
+        path = HERE / f"{split}_l{lvl}.npz"
+        if path.exists():
+            d = np.load(path)
+            print(f"{split} L{lvl}: X={d['x'].shape}, Y={d['y'].shape}")
+```
+
+## Regenerate from scratch
+
+```bash
+uv run python -c "from mffpbench.generators.burgers_param import generate; out = generate(fidelity_levels=[64, 128, 256], n_samples=400, seed=42)"
+```

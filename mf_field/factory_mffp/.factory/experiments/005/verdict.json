@@ -1,0 +1,15 @@
+{
+  "id": 5,
+  "timestamp": "2026-05-15 13:14:50.523530",
+  "hypothesis": "H1 fno_coreg_residual_poisson_loss_reweighting (cycle 003): port resolve_fidelity_weights helper from H4 (models/fno_mf_stack) into H3 (models/fno_coreg_residual); dataset-conditional MFRNP Poisson5 (2.0, 0.25) weights gated on 'poisson' substring; Heat path uniform; branch base experiment/4-fno_coreg_residual (cycle-002 H3 at composite 0.0442)",
+  "change_summary": "Cycle-003 H1 fno_coreg_residual_poisson_loss_reweighting: ported H4's resolve_fidelity_weights helper into H3's smoke_eval.py; SMOKE_DEFAULTS poisson_hf_weight=2.0/poisson_lf_weight=0.25 (verbatim MFRNP Poisson5_config.yaml). Branch experiment/5-fno_coreg_residual_poisson_lossweight (commit a0d932b). Two SLURM runs: (1) 13973868 contaminated (poisson resumed from partial CPU pre-train; 33.31s of GPU training only); (2) 13974837 clean (poisson trained 200 epochs from scratch on cuda; train_seconds=549.15). Clean eval composite_nRMSE=0.08472 (cycle-003 entry baseline 0.04420 -> +91.7% REGRESSION). Per-dataset: ifc_heat=0.02630 (BEATS paper 0.074, unchanged from baseline \u2014 uniform weights), ifc_poisson=0.27287 (3.68x WORSE than cycle-003 entry 0.07416, 4.58x WORSE than cycle-002 H4 on simpler backbone 0.05961). Clean (0.27287) and contaminated (0.27259) results match to 0.10% relative \u2014 contamination did NOT confound the verdict. The MFRNP Poisson5 (2.0, 0.25) recipe is REFUTED as backbone-portable; it works on fno_mf_stack but catastrophically harms fno_coreg_residual's hybrid stack. CEO=REVERT (genuine model regression, NOT precheck bookkeeping). Project best remains cycle-002 H3 at 0.04420 on experiment/4-fno_coreg_residual @ 0c46f43.",
+  "issue_number": 0,
+  "pr_number": null,
+  "score_before": null,
+  "score_after": null,
+  "delta": null,
+  "verdict": "revert",
+  "cost_usd": null,
+  "notes": "ceo:revert mode=research reason=research_target_regression metric=composite_nRMSE before=0.04420 after=0.08472 score_delta=+0.04052 regression_pct=91.7 ifc_heat=0.02630_unchanged_BEATS_paper_0.074 ifc_poisson=0.27287_3.68x_regression_from_0.07416 vs_h4_poisson_0.05961_delta=+0.21326_4.58x_worse vs_paper_geomean_0.0516_ratio=1.642 vs_expected_h1_floor_0.0396_delta=+0.04512 ceo_intent=revert genuine_model_failure=true precheck_failed=true precheck_failures=scope,fixed_surfaces,ground_truth_leakage_substring_known_bugs precheck_passing=score_direction(incorrectly_under_higher_is_better_polarity),anti_pattern,smoke_test hypothesis_type=code execution_artifacts=na e2e=pass backlog_cleared=na project_best_preserved=cycle-002_H3_0.04420 hypothesis_refuted=mfrnp_poisson5_recipe_NOT_backbone_portable contamination_observed_run13973868_resolved_by_rerun13974837 clean_poisson_train_seconds=549.15 contaminated_poisson_train_seconds=33.31 clean_vs_contaminated_metric_delta=0.10pct_within_seed_noise branch=experiment/5-fno_coreg_residual_poisson_lossweight commit=a0d932b agents_spawned=failure_analyst,researcher,strategist,builder,reviewer,evaluator hygiene=na monotonic=fail",
+  "research_citations": []
+}

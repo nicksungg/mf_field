@@ -1,0 +1,37 @@
+{
+  "model": "mf_deeponet",
+  "dataset": "era5",
+  "splits": {
+    "test_hf": {
+      "nRMSE": 0.08638087392768297,
+      "rel_l2_mean": 0.08392062058617163,
+      "rel_l2_ci95_lo": 0.07144966234698472,
+      "rel_l2_ci95_hi": 0.1008909718018508,
+      "rel_l2_std": 0.022287828653355525,
+      "rel_l2_per_sample": [
+        0.06960975465545083,
+        0.07027645386824938,
+        0.06604867857023543,
+        0.07834426348623375,
+        0.1302722280851291,
+        0.09268291281486554,
+        0.08021005262303739
+      ],
+      "n_samples": 7
+    }
+  },
+  "n_params": 3607041,
+  "train_seconds": 378.3431215286255,
+  "eval_seconds": 0.001255035400390625,
+  "latency_ms_per_sample": 0.179290771484375,
+  "peak_mem_mb": 208.451584,
+  "work_grid": [
+    128,
+    256
+  ],
+  "eval_protocol": "full_field_on_working_grid",
+  "device": "cuda",
+  "hf_fidelity": 9,
+  "lf_fidelity": 1,
+  "iterations": 125000
+}

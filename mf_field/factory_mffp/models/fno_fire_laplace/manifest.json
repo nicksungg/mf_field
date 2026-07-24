@@ -1,0 +1,10 @@
+{
+  "name": "fno_fire_laplace",
+  "description": "FIRE-family distribution-conditioned residual where the LF predictive distribution comes from last-layer Laplace (Gaussian weight posterior via GGN). Shares the backbone + residual pipeline (models/_common/fire_core,fire_methods) with the other fire_* families so the ablation isolates the UNCERTAINTY SOURCE. HF = mu_LF + delta(x,[mu,sigma,q10,q50,q90]).",
+  "supports": [
+    "ifc_raw",
+    "npz_l"
+  ],
+  "external": false,
+  "paper": "MacKay 1992 / Daxberger et al. 2021 laplace-torch (arXiv:2106.14806)"
+}
