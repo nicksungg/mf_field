@@ -1,0 +1,27 @@
+{
+  "model": "fno_mf_stack",
+  "dataset": "burgers_param_generated",
+  "metric_value": 1.3037324710561178,
+  "splits": {
+    "test_hf": {
+      "nRMSE": 1.3037324710561178,
+      "n_samples": 80
+    }
+  },
+  "n_params": 501763,
+  "train_seconds": 920.9940977096558,
+  "eval_seconds": 0.02256941795349121,
+  "device": "cuda",
+  "hf_fid_weight": 1.0,
+  "lf_fid_weight": 1.0,
+  "hf_res": 16,
+  "native_resolutions": [
+    8,
+    16
+  ],
+  "modes_per_level": [
+    4,
+    8
+  ],
+  "notes": "FNO-MF stack: 2 FNOs at res [8, 16] (hidden=32, modes=[4, 8], 3 blocks) + MFRNP aggregator + HF residual; per-fidelity y-scaler; per-fidelity loss weights HF=1.0 LF=1.0 (MFRNP Poisson5 gated). Loaded via data_adapters.load_mf_dataset."
+}

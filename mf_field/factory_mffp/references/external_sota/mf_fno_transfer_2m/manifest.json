@@ -1,0 +1,7 @@
+{
+  "name": "mf_fno_transfer_2m",
+  "description": "Parameter-matched ablation of mf_fno_transfer: identical transfer-learning MF-FNO (pretrain on LF, fine-tune on HF) and identical backbone, width reduced 64->48 (GroupNorm needs width divisible by 8) giving ~2.67M params, close to the in-tree fno_coreg_residual (2.37M) / fno_mf_stack (2.35M) and slightly ABOVE them so the control is conservative (baseline is not handicapped). Isolates transfer MECHANISM from raw CAPACITY.",
+  "supports": ["ifc_raw", "npz_l"],
+  "external": true,
+  "paper": "param-matched control for Lyu et al. 2023 (arXiv:2304.06972) / GCS MF-FNO (arXiv:2308.09113)"
+}

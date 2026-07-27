@@ -1,0 +1,47 @@
+{
+  "model": "fno_coregionalization",
+  "dataset": "lid_driven_cavity_generated",
+  "splits": {
+    "test_hf": {
+      "nRMSE": 0.005449971420390348,
+      "rel_l2_mean": 0.005228161931820883,
+      "rel_l2_ci95_lo": 0.004646705241834602,
+      "rel_l2_ci95_hi": 0.0059916669138313184,
+      "rel_l2_std": 0.001160188267149356,
+      "rel_l2_per_sample": [
+        0.004365095183237181,
+        0.005722200416992279,
+        0.005052080979187408,
+        0.0044317970036630095,
+        0.008157946793410614,
+        0.0057342066648458,
+        0.004337039231735241,
+        0.004355823583010817,
+        0.005135623846218447,
+        0.004989805615908028
+      ],
+      "n_samples": 10
+    }
+  },
+  "n_params": 1190644,
+  "train_seconds": 232.47190308570862,
+  "eval_seconds": 0.10546278953552246,
+  "latency_ms_per_sample": 10.546278953552246,
+  "peak_mem_mb": 209.792512,
+  "work_grid": [
+    128,
+    128
+  ],
+  "eval_protocol": "full_field_on_working_grid",
+  "best_val_nRMSE": 0.0066115273029963345,
+  "device": "cuda:0",
+  "hf_grid": [
+    128,
+    128
+  ],
+  "modes": [
+    12,
+    12
+  ],
+  "notes": "H1: FNO+IFC coregionalization, K=10, blocks=4, modes=(12,12), hidden=32, hf_grid=(128, 128), work_grid=(128, 128) (cap=256), per-fidelity output normalization (scalers=['54.67', '107', '207']). Geometry via data_adapters.geometry.resolve_grid (1-D as height-1 grid)."
+}

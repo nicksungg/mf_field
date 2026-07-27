@@ -1,0 +1,72 @@
+{
+  "model": "fno_mf_stack",
+  "dataset": "lid_driven_cavity_generated",
+  "splits": {
+    "test_hf": {
+      "nRMSE": 0.031509310041596655,
+      "rel_l2_mean": 0.030780510547013324,
+      "rel_l2_ci95_lo": 0.02839223080216264,
+      "rel_l2_ci95_hi": 0.033257201652231616,
+      "rel_l2_std": 0.004213632505161263,
+      "rel_l2_per_sample": [
+        0.026996879119993086,
+        0.03698706881545111,
+        0.031382490487120815,
+        0.027033232048013615,
+        0.0368895296578584,
+        0.03507663076360628,
+        0.026865567479194018,
+        0.02686970681837351,
+        0.03134001729294555,
+        0.028363982987576843
+      ],
+      "n_samples": 10
+    }
+  },
+  "n_params": 2668612,
+  "train_seconds": 427.6328649520874,
+  "eval_seconds": 0.05686378479003906,
+  "latency_ms_per_sample": 5.686378479003906,
+  "peak_mem_mb": 218.476544,
+  "work_grid": [
+    128,
+    128
+  ],
+  "eval_protocol": "full_field_on_working_grid",
+  "device": "cuda",
+  "hf_fid_weight": 1.0,
+  "lf_fid_weight": 1.0,
+  "hf_grid": [
+    128,
+    128
+  ],
+  "native_grids": [
+    [
+      32,
+      32
+    ],
+    [
+      64,
+      64
+    ],
+    [
+      128,
+      128
+    ]
+  ],
+  "modes_per_level": [
+    [
+      12,
+      12
+    ],
+    [
+      12,
+      12
+    ],
+    [
+      12,
+      12
+    ]
+  ],
+  "notes": "FNO-MF stack: 3 FNOs at grids [(32, 32), (64, 64), (128, 128)] (hidden=32, modes=[(12, 12), (12, 12), (12, 12)], 3 blocks) + MFRNP aggregator + HF residual; per-fidelity y-scaler; per-fidelity loss weights HF=1.0 LF=1.0. Geometry via data_adapters.geometry.resolve_grid (1-D as height-1 grid); grids capped to working side <= 256 (no-op except era5/pm_test)."
+}

@@ -1,0 +1,61 @@
+{
+  "status": "PASS",
+  "metric": "composite_nRMSE",
+  "metric_value": 0.022161472746117312,
+  "duration_seconds": 414,
+  "command": "bash scripts/cycle_eval.sh",
+  "branch": "experiment/14-fno_mf_stack-capacity-and-recipe-hash",
+  "parent_commit": "0b6e6eb",
+  "baseline_metric_value": 0.030407732506238343,
+  "previous_best_metric_value": 0.027728854219631654,
+  "delta_vs_baseline": -0.008246259760121031,
+  "delta_pct_vs_baseline": -27.11895652998545,
+  "delta_vs_previous_best": -0.005567381473514342,
+  "delta_pct_vs_previous_best": -20.077935530321014,
+  "per_family_per_dataset": {
+    "ifc_heat": {
+      "best": {"model": "fno_coregionalization", "nRMSE": 0.012883724279424122},
+      "ranked": [
+        {"model": "fno_coregionalization", "nRMSE": 0.012883724279424122},
+        {"model": "fno_coreg_residual", "nRMSE": 0.02627268865234261},
+        {"model": "mf_fno_transfer_bar", "nRMSE": 0.033174688880908174},
+        {"model": "fno_mf_stack", "nRMSE": 0.038268899048086086},
+        {"model": "transolver_residual", "nRMSE": 0.114558886197434},
+        {"model": "v9_baseline", "nRMSE": 0.14883362423354865},
+        {"model": "transolver_attention_fusion", "nRMSE": 0.1492304004494428}
+      ],
+      "n_runs": 7
+    },
+    "ifc_poisson": {
+      "best": {"model": "fno_mf_stack", "nRMSE": 0.038120256505431285},
+      "ranked": [
+        {"model": "fno_mf_stack", "nRMSE": 0.038120256505431285},
+        {"model": "fno_coreg_residual", "nRMSE": 0.07200016424130416},
+        {"model": "mf_fno_transfer_bar", "nRMSE": 0.08332612635511866},
+        {"model": "transolver_attention_fusion", "nRMSE": 0.38181221789141245},
+        {"model": "fno_coregionalization", "nRMSE": 0.5977994727420998},
+        {"model": "transolver_residual", "nRMSE": 2.5923486631969164},
+        {"model": "v9_baseline", "nRMSE": 18.50343612114542}
+      ],
+      "n_runs": 7
+    }
+  },
+  "fno_mf_stack_status": {
+    "ifc_heat_nRMSE": 0.038268899048086086,
+    "ifc_poisson_nRMSE": 0.038120256505431285,
+    "poisson_kill_switch_threshold": 0.0594,
+    "poisson_kill_switch_tripped": false,
+    "poisson_baseline_vs_after": "0.05961 vs 0.03812 (improved -36.0%)",
+    "wall_kill_switch_threshold": 1500,
+    "wall_kill_switch_tripped": false,
+    "cache_status_heat": "miss",
+    "cache_status_poisson": "miss",
+    "recipe_hash": "acdb1c11caa7"
+  },
+  "target_met_composite_le_0_0274": true,
+  "bar_gap_closed_pct": 276.8378745943428,
+  "hypothesis": "H1+H2 fno_mf_stack capacity bump + recipe_hash portable utility",
+  "hypothesis_validated": "VALIDATED — fno_mf_stack capacity bump (hidden 32→64, modes_per_level (4,8,8,8)→(4,8,16,20), n_blocks 3→4) plus H2 recipe_hash-aware checkpoint guard delivered massive gains. fno_mf_stack ifc_poisson nRMSE 0.05961→0.03812 (-36%), ifc_heat 0.09995→0.03827 (-62%). The H2 recipe_hash guard correctly invalidated the cycle-008-era fno_mf_stack cache (cache=miss on both datasets) and forced retraining from scratch under the new capacity. fno_mf_stack now holds best on ifc_poisson (was already best at 0.0596, now 0.0381) — surpassing fno_coreg_residual which previously sat at 0.0742. Composite dropped 0.027729→0.022161 (-20.08%), driven primarily by the fno_mf_stack Poisson improvement and secondarily by fresh-cache rebuilds of fno_coregionalization/fno_coreg_residual (which got marginal additional improvements from non-deterministic retrains). Bar target 0.027429 dethroned by 19.2%, gap closed 276.8%. Wall 414s well under 1500s budget; no kill switch tripped. Poisson 0.0381 still doesn't beat paper geomean 0.036 (ratio 1.06), but heat geomean 0.0129 absolutely crushes paper 0.074 (ratio 0.17).",
+  "recommendation": "KEEP",
+  "cycle": "cycle-009-h1h2"
+}

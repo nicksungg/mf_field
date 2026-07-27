@@ -1,0 +1,51 @@
+{
+  "model": "fno_coreg_conditioned",
+  "dataset": "lid_driven_cavity_generated",
+  "splits": {
+    "test_hf": {
+      "nRMSE": 0.006817790421219114,
+      "rel_l2_mean": 0.006704113965033373,
+      "rel_l2_ci95_lo": 0.0062648958541719185,
+      "rel_l2_ci95_hi": 0.007162680750073865,
+      "rel_l2_std": 0.0007802692242974406,
+      "rel_l2_per_sample": [
+        0.005976090102648181,
+        0.007982393529984358,
+        0.0066454759438695984,
+        0.006073659362499055,
+        0.007623206461964446,
+        0.0076398957635169466,
+        0.0058091699484786,
+        0.006098398116104914,
+        0.006635302822241348,
+        0.006557547599026285
+      ],
+      "n_samples": 10
+    }
+  },
+  "n_params": 4756993,
+  "train_seconds": 1245.8886563777924,
+  "eval_seconds": 0.06743192672729492,
+  "latency_ms_per_sample": 6.743192672729492,
+  "peak_mem_mb": 1039.252992,
+  "work_grid": [
+    256,
+    256
+  ],
+  "eval_protocol": "full_field_on_working_grid",
+  "best_val_nRMSE": 0.008384054319998504,
+  "device": "cuda:0",
+  "hf_grid": [
+    256,
+    256
+  ],
+  "modes": [
+    12,
+    12
+  ],
+  "notes": "H2: single full-resolution HF FNO with FiLM-via-LayerNorm m-conditioning. Stage 1: 625 LF-only epochs (lr=0.001, fresh Adam+cosine). Stage 2: 1875 joint epochs (lr=0.0003, fresh Adam+cosine). blocks=4, modes=(12,12), hidden=64, m_feat_dim=32, hf_grid=(256, 256), work_grid=(256, 256) (cap=256), per-fidelity output normalization (scalers=['54.68', '106.9', '206.9', '399.9']). Geometry via data_adapters.geometry.resolve_grid.",
+  "h2_stage1_epochs": 625,
+  "h2_stage2_epochs": 1875,
+  "h2_pretrain_lr": 0.001,
+  "h2_finetune_lr": 0.0003
+}

@@ -1,0 +1,29 @@
+{
+  "model": "fno_mf_stack",
+  "dataset": "poisson_generated",
+  "metric_value": 0.001031924323952191,
+  "splits": {
+    "test_hf": {
+      "nRMSE": 0.001031924323952191,
+      "n_samples": 100
+    }
+  },
+  "n_params": 2177476,
+  "train_seconds": 2170.530777692795,
+  "eval_seconds": 0.06382513046264648,
+  "device": "cuda",
+  "hf_fid_weight": 2.0,
+  "lf_fid_weight": 0.25,
+  "hf_res": 64,
+  "native_resolutions": [
+    16,
+    32,
+    64
+  ],
+  "modes_per_level": [
+    8,
+    12,
+    12
+  ],
+  "notes": "FNO-MF stack: 3 FNOs at res [16, 32, 64] (hidden=32, modes=[8, 12, 12], 3 blocks) + MFRNP aggregator + HF residual; per-fidelity y-scaler; per-fidelity loss weights HF=2.0 LF=0.25 (MFRNP Poisson5 gated). Loaded via data_adapters.load_mf_dataset."
+}

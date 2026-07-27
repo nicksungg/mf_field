@@ -1,0 +1,15 @@
+{
+  "id": 3,
+  "timestamp": "2026-05-15 08:24:56.857299",
+  "hypothesis": "H4 fno_mf_stack capacity + Poisson-loss bump (cycle 002): two pre-registered MFRNP Poisson5 knobs applied to cycle-001 H2 family",
+  "change_summary": "Cycle-002 H4: SMOKE_DEFAULTS hidden 16->32, modes (4,5,5,5)->(4,8,12,12), spectral_blocks 2->3; per-fidelity loss HF=2 LF=0.25 (Poisson-only) per MFRNP Poisson5_config.yaml. model.py byte-identical to H2. Branch: experiment/3-fno_mf_stack_v2_capacity_loss (commit ddd221d). Eval composite_nRMSE=0.0772 (master baseline 1.6595, 21.5x improvement; cycle-001 H2 0.11173, 31% improvement). Per-dataset wins on both ifc_heat (0.0999, recovered) and ifc_poisson (0.0596, improved). CEO=KEEP intent; factory state=REVERT due to known precheck infrastructure bugs (score_direction polarity, scope/fixed_surfaces empty-detail, leakage substring-collision). Branch intact on disk for human merge.",
+  "issue_number": null,
+  "pr_number": null,
+  "score_before": null,
+  "score_after": null,
+  "delta": null,
+  "verdict": "revert",
+  "cost_usd": null,
+  "notes": "ceo:revert mode=research reason=precheck_known_bugs ceo_intent=keep metric=composite_nRMSE before=1.6595 after=0.077187 score_delta=-1.582 vs_cycle001_h2_delta=-0.0345 precheck_failures=score_direction,scope,fixed_surfaces,ground_truth_leakage hygiene=na monotonic=pass e2e=pass backlog_cleared=na agents_spawned=evaluator,builder,reviewer,evaluator(timed_out_after_eval),archivist hypothesis_type=code execution_artifacts=na branch=experiment/3-fno_mf_stack_v2_capacity_loss",
+  "research_citations": []
+}

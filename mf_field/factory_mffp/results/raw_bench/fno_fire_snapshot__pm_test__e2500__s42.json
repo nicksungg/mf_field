@@ -1,0 +1,46 @@
+{
+  "model": "fno_fire_snapshot",
+  "dataset": "pm_test",
+  "splits": {
+    "test_hf": {
+      "nRMSE": 0.07356110253291206,
+      "rel_l2_mean": 0.07325760825097163,
+      "rel_l2_ci95_lo": 0.06798932075633968,
+      "rel_l2_ci95_hi": 0.07856945651207108,
+      "rel_l2_std": 0.00775147371788773,
+      "rel_l2_per_sample": [
+        0.06316980023609299,
+        0.06998450377626349,
+        0.0649473444747976,
+        0.0808919117561129,
+        0.08342605910151751,
+        0.07740678811909531,
+        0.0729768502929217
+      ],
+      "n_samples": 7
+    }
+  },
+  "n_params": 28445894,
+  "train_seconds": 4131.14329457283,
+  "eval_seconds": 0.06932520866394043,
+  "latency_ms_per_sample": 9.903601237705775,
+  "peak_mem_mb": 785.902592,
+  "work_grid": [
+    128,
+    256
+  ],
+  "eval_protocol": "full_field_on_working_grid",
+  "device": "cuda",
+  "hf_fidelity": 9,
+  "lf_fidelity": 1,
+  "aug_channels": [
+    "mu",
+    "sigma",
+    "q10",
+    "q50",
+    "q90"
+  ],
+  "lf_gaussian_nll": 144.05720277447224,
+  "mf_mechanism": "snapshot_ensemble distribution-conditioned residual",
+  "uncertainty_source": "snapshot_ensemble (cyclic-LR, 5 snapshots, 1 training)"
+}

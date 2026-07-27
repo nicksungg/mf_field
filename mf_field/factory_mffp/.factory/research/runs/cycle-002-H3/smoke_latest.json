@@ -1,0 +1,148 @@
+{
+  "metric": "composite_nRMSE",
+  "metric_value": 0.04419765005975967,
+  "metric_lower_is_better": true,
+  "summary": {
+    "composite_nRMSE": 0.04419765005975967,
+    "composite_nRMSE_geomean": 0.04419765005975967,
+    "composite_nRMSE_arith": 0.05025066474863726,
+    "leaderboard": {
+      "ifc_heat": {
+        "best": {
+          "model": "fno_coreg_residual",
+          "nRMSE": 0.02634047786365115
+        },
+        "ranked": [
+          {
+            "model": "fno_coreg_residual",
+            "nRMSE": 0.02634047786365115
+          },
+          {
+            "model": "v9_baseline",
+            "nRMSE": 0.14883362423354865
+          }
+        ],
+        "n_runs": 2
+      },
+      "ifc_poisson": {
+        "best": {
+          "model": "fno_coreg_residual",
+          "nRMSE": 0.07416085163362336
+        },
+        "ranked": [
+          {
+            "model": "fno_coreg_residual",
+            "nRMSE": 0.07416085163362336
+          },
+          {
+            "model": "v9_baseline",
+            "nRMSE": 18.50343612114542
+          }
+        ],
+        "n_runs": 2
+      }
+    },
+    "vs_paper": {
+      "ifc_heat": {
+        "ours_best_nRMSE": 0.02634047786365115,
+        "ours_best_model": "fno_coreg_residual",
+        "paper_nRMSE_geomean": null,
+        "ratio_ours_over_paper": null,
+        "beats_paper": false
+      },
+      "ifc_poisson": {
+        "ours_best_nRMSE": 0.07416085163362336,
+        "ours_best_model": "fno_coreg_residual",
+        "paper_nRMSE_geomean": null,
+        "ratio_ours_over_paper": null,
+        "beats_paper": false
+      }
+    },
+    "n_datasets_beating_paper": 0,
+    "n_datasets_scored": 2
+  },
+  "runs": [
+    {
+      "model": "fno_coreg_residual",
+      "dataset": "ifc_heat",
+      "metric_value": 0.02634047786365115,
+      "splits": {
+        "test": {
+          "nRMSE": 0.02634047786365115,
+          "n_samples": 128
+        }
+      },
+      "n_params": 9120697,
+      "train_seconds": 139.73648405075073,
+      "eval_seconds": 0.08013725280761719,
+      "best_val_nRMSE": 0.01681987898152017,
+      "device": "cuda",
+      "notes": "H3 hybrid: 4 per-fidelity FNOs (hidden=64, modes=[4, 8, 12, 12], blocks=3) + MFRNP decoder-in-the-aggregation (decoder_hidden=32) + continuous-m basis head (K=10, B(m)=MLP([m,m^2]) zero-init) on HF latent; per-fidelity y-scaler, val_frac=0.1.",
+      "_cache": "miss",
+      "wall_seconds": 975.5699272155762
+    },
+    {
+      "model": "fno_coreg_residual",
+      "dataset": "ifc_poisson",
+      "metric_value": 0.07416085163362336,
+      "splits": {
+        "test": {
+          "nRMSE": 0.07416085163362336,
+          "n_samples": 128
+        }
+      },
+      "n_params": 9121209,
+      "train_seconds": 24.992297887802124,
+      "eval_seconds": 0.07242155075073242,
+      "best_val_nRMSE": 0.02298072118940675,
+      "device": "cuda",
+      "notes": "H3 hybrid: 4 per-fidelity FNOs (hidden=64, modes=[4, 8, 12, 12], blocks=3) + MFRNP decoder-in-the-aggregation (decoder_hidden=32) + continuous-m basis head (K=10, B(m)=MLP([m,m^2]) zero-init) on HF latent; per-fidelity y-scaler, val_frac=0.1.",
+      "_cache": "miss",
+      "wall_seconds": 85.288893699646
+    },
+    {
+      "model": "v9_baseline",
+      "dataset": "ifc_heat",
+      "splits": {
+        "test": {
+          "nRMSE": 0.14883362423354865,
+          "n_samples": 128
+        }
+      },
+      "n_params": 409255,
+      "train_seconds": 65.52811598777771,
+      "eval_seconds": 10.889515161514282,
+      "best_val_nRMSE": 0.052449518603274715,
+      "device": "cuda:0",
+      "_cache": "hit"
+    },
+    {
+      "model": "v9_baseline",
+      "dataset": "ifc_poisson",
+      "splits": {
+        "test": {
+          "nRMSE": 18.50343612114542,
+          "n_samples": 128
+        }
+      },
+      "n_params": 409767,
+      "train_seconds": 5.048274278640747,
+      "eval_seconds": 0.4912569522857666,
+      "best_val_nRMSE": 1.3650818544593464,
+      "device": "cuda:0",
+      "_cache": "hit"
+    }
+  ],
+  "results": [
+    {
+      "name": "composite_nRMSE",
+      "value": 0.04419765005975967,
+      "lower_is_better": true
+    },
+    {
+      "name": "n_datasets_scored",
+      "value": 2,
+      "lower_is_better": false
+    }
+  ]
+}

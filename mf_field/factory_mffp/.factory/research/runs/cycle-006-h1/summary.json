@@ -1,0 +1,89 @@
+{
+  "status": "PASS_WITH_BROKEN_BASELINE_DEPENDENCY",
+  "metric": "composite_nRMSE",
+  "metric_value": 0.04196265708735855,
+  "metric_lower_is_better": true,
+  "branch": "experiment/8-fno_coreg_residual-mfrnp-poisson-recipe",
+  "parent_commit": "59b741f",
+  "baseline_metric_value": 0.029357,
+  "delta": 0.01260565708735855,
+  "fno_coreg_residual_ifc_heat": 0.030589733876393764,
+  "fno_coreg_residual_ifc_poisson": 0.057563906797832916,
+  "fno_coregionalization_error": "TypeError: FNOCoregionalization constructor signature mismatch \u2014 experiment/7 committed state is intrinsically broken; the dirty model.py that was load-bearing for the baseline measurement was wiped by Builder git reset --hard (operator bookkeeping issue, NOT caused by H1).",
+  "leaderboard_full": {
+    "ifc_heat": {
+      "best": {
+        "model": "fno_coreg_residual",
+        "nRMSE": 0.030589733876393764
+      },
+      "ranked": [
+        {
+          "model": "fno_coreg_residual",
+          "nRMSE": 0.030589733876393764
+        },
+        {
+          "model": "mf_fno_transfer_bar",
+          "nRMSE": 0.033174688880908174
+        },
+        {
+          "model": "fno_mf_stack",
+          "nRMSE": 0.09994524146606645
+        },
+        {
+          "model": "transolver_residual",
+          "nRMSE": 0.114558886197434
+        },
+        {
+          "model": "v9_baseline",
+          "nRMSE": 0.14883362423354865
+        },
+        {
+          "model": "transolver_attention_fusion",
+          "nRMSE": 0.1492304004494428
+        }
+      ],
+      "n_runs": 7
+    },
+    "ifc_poisson": {
+      "best": {
+        "model": "fno_coreg_residual",
+        "nRMSE": 0.057563906797832916
+      },
+      "ranked": [
+        {
+          "model": "fno_coreg_residual",
+          "nRMSE": 0.057563906797832916
+        },
+        {
+          "model": "fno_mf_stack",
+          "nRMSE": 0.059610770499981265
+        },
+        {
+          "model": "mf_fno_transfer_bar",
+          "nRMSE": 0.08332612635511866
+        },
+        {
+          "model": "transolver_attention_fusion",
+          "nRMSE": 0.38181221789141245
+        },
+        {
+          "model": "transolver_residual",
+          "nRMSE": 2.5923486631969164
+        },
+        {
+          "model": "v9_baseline",
+          "nRMSE": 18.50343612114542
+        }
+      ],
+      "n_runs": 7
+    }
+  },
+  "target_met_composite_le_0.026": false,
+  "target_met_ifc_heat_le_0.013": false,
+  "estimated_composite_if_fno_coreg_were_runnable": 0.02988,
+  "estimation_note": "geomean(0.01551 baseline cached fno_coregionalization heat, 0.05756 H1 fno_coreg_residual poisson)",
+  "h1_per_family_effect": {
+    "fno_coreg_residual_ifc_heat": "0.03519 -> 0.03059 (-13.1%, IMPROVED \u2014 unexpected positive side effect of K=20 / b_hidden=128)",
+    "fno_coreg_residual_ifc_poisson": "0.05556 -> 0.05756 (+3.6%, slight regression \u2014 MFRNP recipe DID NOT transfer cleanly to this architecture)"
+  }
+}

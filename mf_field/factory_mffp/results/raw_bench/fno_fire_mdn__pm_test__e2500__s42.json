@@ -1,0 +1,46 @@
+{
+  "model": "fno_fire_mdn",
+  "dataset": "pm_test",
+  "splits": {
+    "test_hf": {
+      "nRMSE": 0.06548083810487144,
+      "rel_l2_mean": 0.06515048106923962,
+      "rel_l2_ci95_lo": 0.060276460229389366,
+      "rel_l2_ci95_hi": 0.07024783150817997,
+      "rel_l2_std": 0.007365005415443416,
+      "rel_l2_per_sample": [
+        0.058091618005456015,
+        0.06402380708168962,
+        0.05490336076922055,
+        0.06664900127908747,
+        0.06633434269936256,
+        0.07759052471803032,
+        0.06846071293183083
+      ],
+      "n_samples": 7
+    }
+  },
+  "n_params": 9482698,
+  "train_seconds": 16053.32682108879,
+  "eval_seconds": 0.02817511558532715,
+  "latency_ms_per_sample": 4.025016512189593,
+  "peak_mem_mb": 545.838592,
+  "work_grid": [
+    128,
+    256
+  ],
+  "eval_protocol": "full_field_on_working_grid",
+  "device": "cuda",
+  "hf_fidelity": 9,
+  "lf_fidelity": 1,
+  "aug_channels": [
+    "mu",
+    "sigma",
+    "q10",
+    "q50",
+    "q90"
+  ],
+  "lf_gaussian_nll": 7.077067227777262,
+  "mf_mechanism": "mixture-density distribution-conditioned residual",
+  "uncertainty_source": "mixture density network (3 Gaussians/pixel)"
+}

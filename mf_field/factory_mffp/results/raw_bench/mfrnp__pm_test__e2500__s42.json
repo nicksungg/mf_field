@@ -1,0 +1,36 @@
+{
+  "model": "mfrnp",
+  "dataset": "pm_test",
+  "splits": {
+    "test_hf": {
+      "nRMSE": 0.18889205470225864,
+      "rel_l2_mean": 0.1885982553109176,
+      "rel_l2_ci95_lo": 0.1795297258593423,
+      "rel_l2_ci95_hi": 0.1963812092290242,
+      "rel_l2_std": 0.012433204165206612,
+      "rel_l2_per_sample": [
+        0.18999381568319346,
+        0.19914819462060512,
+        0.1978802922486009,
+        0.19988602705948771,
+        0.18518398380310302,
+        0.18314708198975727,
+        0.16494839177167556
+      ],
+      "n_samples": 7
+    }
+  },
+  "n_params": 101720096,
+  "train_seconds": 23933.50678253174,
+  "eval_seconds": 0.005780458450317383,
+  "latency_ms_per_sample": 0.825779778616769,
+  "peak_mem_mb": 1918.352384,
+  "work_grid": [
+    128,
+    256
+  ],
+  "eval_protocol": "full_field_on_working_grid",
+  "device": "cuda:0",
+  "hf_fidelity": 9,
+  "levels": 9
+}

@@ -1,0 +1,51 @@
+{
+  "model": "fno_coregionalization",
+  "dataset": "lid_driven_cavity_generated",
+  "splits": {
+    "test_hf": {
+      "nRMSE": 0.04328033924224148,
+      "rel_l2_mean": 0.04301471038149833,
+      "rel_l2_ci95_lo": 0.04148157386113513,
+      "rel_l2_ci95_hi": 0.044559972230019604,
+      "rel_l2_std": 0.0026559033344831164,
+      "rel_l2_per_sample": [
+        0.03949226121873586,
+        0.04654995734262684,
+        0.04270957865038208,
+        0.040967574065636815,
+        0.046551026538436346,
+        0.045389212594966505,
+        0.03993426341211643,
+        0.04135152079726654,
+        0.0423342380180807,
+        0.044867471176735216
+      ],
+      "n_samples": 10
+    }
+  },
+  "n_params": 50471336,
+  "train_seconds": 99.29696774482727,
+  "eval_seconds": 0.05947375297546387,
+  "latency_ms_per_sample": 5.947375297546387,
+  "peak_mem_mb": 3305.780736,
+  "work_grid": [
+    256,
+    256
+  ],
+  "eval_protocol": "full_field_on_working_grid",
+  "best_val_nRMSE": 0.08841146578697191,
+  "device": "cuda:0",
+  "hf_grid": [
+    256,
+    256
+  ],
+  "modes": [
+    16,
+    16
+  ],
+  "notes": "H2: FNO+IFC coregionalization with two-stage LF\u2192HF transfer training. Stage 1: 15 LF-only epochs (lr=0.001, fresh Adam+cosine). Stage 2: 45 joint epochs (lr=0.0003, fresh Adam+cosine). K=20, blocks=6, modes=(16,16), hidden=128, hf_grid=(256, 256), work_grid=(256, 256) (cap=256), per-fidelity output normalization (scalers=['54.68', '106.9', '206.9', '399.9']). Geometry via data_adapters.geometry.resolve_grid (1-D as height-1 grid).",
+  "h2_stage1_epochs": 15,
+  "h2_stage2_epochs": 45,
+  "h2_pretrain_lr": 0.001,
+  "h2_finetune_lr": 0.0003
+}

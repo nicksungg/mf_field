@@ -1,0 +1,15 @@
+{
+  "id": 13,
+  "timestamp": "2026-06-02 15:15:42.668761",
+  "hypothesis": "H3 (cycle-008): Three-stage curriculum on fno_coreg_residual (LF pretrain \u2192 freeze LF + train HF residual \u2192 unfreeze + basis-head) with MANDATORY recipe_hash checkpoint guard. Mutable surface: models/fno_coreg_residual/smoke_eval.py ONLY. Branches from cycle-008 baseline 1249f2d (independent of H1 and H2).",
+  "change_summary": "Three-stage curriculum (S1 LF pretrain stride 0.25, S2 frozen-LF HF residual stride 0.5, S3 unfreeze all stride 0.25) + recipe_hash checkpoint guard implemented in models/fno_coreg_residual/smoke_eval.py (+401/-73 LOC). REVERTED: composite_nRMSE 0.030408 (flat vs baseline, +9.66% vs banked best 0.027729). fno_coreg_residual \u00d7 ifc_heat regressed 19\u00d7 (0.026 \u2192 0.509, universal kill-switch tripped 26\u00d7 over 0.0194 threshold). fno_coreg_residual \u00d7 ifc_poisson regressed 2.15\u00d7 (0.074 \u2192 0.159, +165% out of Builder's 0.05-0.06 predicted range). H3-specific Stage3/Stage2 ratio kill-switch did NOT trip (1.00) because damage occurred in Stages 1/2 \u2014 design flaw in kill-switch assumption. Architectural lesson: three-stage frozen-LF-HF-residual is INCOMPATIBLE with co-evolved residual-ladder designs (fno_coreg_residual, fno_coregionalization). End-to-end joint training remains correct recipe for this family. Recipe_hash checkpoint guard meta-fix WORKED correctly (stale ckpt rejected, fresh retrain). Branch experiment/13-fno_coreg_residual-three-stage @ 420a51c preserved for recipe_hash pattern reuse in cycle-009; three-stage curriculum NOT reusable.",
+  "issue_number": null,
+  "pr_number": null,
+  "score_before": null,
+  "score_after": null,
+  "delta": null,
+  "verdict": "revert",
+  "cost_usd": null,
+  "notes": "ceo:revert mode=research reason=architecture_incompatible_three_stage_on_residual_ladder metric=composite_nRMSE before=0.027729 after=0.030408 delta=+0.002679 delta_pct=+9.66 hygiene=pass monotonic=fail heat=0.509105 poisson=0.159364 universal_killswitch=tripped_26x h3_killswitch=not_tripped_design_flaw recipe_hash_guard=works_correctly hypothesis_type=code execution_artifacts=na e2e=pass backlog_cleared=recipe_hash_pattern_only agents_spawned=Builder,Reviewer,Evaluator precheck=will_run_likely_bookkeeping_overrides archivist_spawned=true",
+  "research_citations": []
+}

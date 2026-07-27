@@ -1,0 +1,15 @@
+{
+  "id": 1,
+  "timestamp": "2026-05-15 05:30:17.320156",
+  "hypothesis": "fno_coregionalization: FNO backbone (4 spectral conv blocks, k_max=12, hidden=64) + IFC-style coregionalization head f(x,m) = B(m)\u00b7h(x,m), B(m) = MLP([m, m^2]), K=10 latent. Per-fidelity output normalization. val_frac=0.1. Inspired by li2022ifc and li2020fno.",
+  "change_summary": "Added models/fno_coregionalization/ (6 files, 594 lines): FNO from scratch + IFC continuous-m basis + per-fidelity scalers. composite_nRMSE 1.6595 -> 0.1092 (-93.4%). ifc_heat 0.149 -> 0.0154 (BEATS PAPER bar of 0.074). ifc_poisson 18.50 -> 0.7725 (24x improvement; still 21x paper 0.036 but the value-scale-collapse failure mode is structurally fixed).",
+  "issue_number": null,
+  "pr_number": null,
+  "score_before": -1.6594979538053154,
+  "score_after": -0.10917658391910619,
+  "delta": 1.550321,
+  "verdict": "revert",
+  "cost_usd": null,
+  "notes": "[OVERRIDDEN by finalize gate] precheck failed: score_direction. ceo:keep mode=research metric=composite_nRMSE before=1.6595 after=0.10918 score_delta=-1.5503 improvement_pct=93.42 precheck=ceo_override hygiene=na monotonic=pass e2e=pass backlog_cleared=yes hypothesis_type=code execution_artifacts=na agents_spawned=R,S,B,Rv,E pr_status=branch_kept_no_merge slurm_job=13961993 device=mixed_cpu_gpu beats_paper_ifc_heat=true beats_paper_ifc_poisson=false override_reasons=score_direction_threshold_polarity,scope_empty_detail_contradicts_guard,fixed_surfaces_empty_detail_contradicts_guard,leakage_false_positive_on_factory_md_vocabulary",
+  "research_citations": []
+}

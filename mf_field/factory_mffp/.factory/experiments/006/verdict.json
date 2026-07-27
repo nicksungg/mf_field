@@ -1,0 +1,15 @@
+{
+  "id": 6,
+  "timestamp": "2026-06-02 03:07:47.150451",
+  "hypothesis": "H1: Fix REPO_ROOT off-by-one in models/mf_fno_transfer_bar/smoke_eval.py:32 \u2014 change HERE.parent.parent.parent to HERE.parent.parent. Unblocks data_adapters import so the bar appears in smoke results for in-distribution comparison.",
+  "change_summary": "1-line REPO_ROOT fix on smoke_eval.py + supporting model.py/manifest.json now tracked. Pre-flight smoke PASSED; mf_fno_transfer_bar appears in results/smoke_latest.json at #2 on both ifc_heat (0.0332) and ifc_poisson (0.0833), with bar geomean 0.0526. Composite unchanged at 0.033726 (delta=+1e-7, within numerical noise \u2014 bar didn't dethrone existing leaders). Precheck failed on bookkeeping: scope=pre-existing-dirty-tree (15 files modified before session, NOT caused by H1); fixed_surfaces=downstream-of-scope-empty-detail; ground_truth_leakage=substring-collision-false-positive (modify/ifc_raw/description tokens in factory.md/README.md schema fields). Smoke_test PASS; score_direction PASS; anti_pattern PASS. revert_bookkeeping_keep_intent: H1 branch experiment/6-mf_fno_transfer_bar-repo-root-fix is correct science, will serve as base for H2. Strategist's [0.025,0.030] band miss (bar smoke=0.0526 vs parallel-bench=0.0274) is a Strategist calibration error, not an H1 implementation failure \u2014 calibration finding logged for future planning.",
+  "issue_number": null,
+  "pr_number": null,
+  "score_before": null,
+  "score_after": null,
+  "delta": null,
+  "verdict": "revert",
+  "cost_usd": null,
+  "notes": "ceo:revert_bookkeeping_keep_intent mode=research metric=composite_nRMSE before=0.033726 after=0.033726 delta=+1e-7 precheck=failed failures=scope,fixed_surfaces,ground_truth_leakage failure_type=pre_existing_dirty_tree_and_substring_collision_false_positives bar_smoke_value=0.0526 bar_parallel_bench=0.0274 strategist_band_miss=true h2_branches_from_experiment_6=true hypothesis_type=code execution_artifacts=na e2e=pass backlog_cleared=yes agents_spawned=B,B(redirect),E archivist_spawned=true",
+  "research_citations": []
+}

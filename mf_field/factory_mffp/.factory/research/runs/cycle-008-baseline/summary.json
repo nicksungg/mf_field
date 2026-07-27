@@ -1,0 +1,106 @@
+{
+  "status": "PASS",
+  "metric": "composite_nRMSE",
+  "metric_value": 0.030407732506238343,
+  "duration_seconds": 5,
+  "command": "bash scripts/cycle_eval.sh",
+  "branch": "experiment/9-fno_coregionalization-constructor-fix",
+  "parent_commit": "1249f2d",
+  "baseline_metric_value": 0.030407732506238343,
+  "delta": 0.0,
+  "delta_pct": 0.0,
+  "per_family_per_dataset": {
+    "ifc_heat": {
+      "best": {
+        "model": "fno_coregionalization",
+        "nRMSE": 0.01551112640242143
+      },
+      "ranked": [
+        {
+          "model": "fno_coregionalization",
+          "nRMSE": 0.01551112640242143
+        },
+        {
+          "model": "fno_coreg_residual",
+          "nRMSE": 0.026277487241491388
+        },
+        {
+          "model": "mf_fno_transfer_bar",
+          "nRMSE": 0.033174688880908174
+        },
+        {
+          "model": "fno_mf_stack",
+          "nRMSE": 0.09994524146606645
+        },
+        {
+          "model": "transolver_residual",
+          "nRMSE": 0.114558886197434
+        },
+        {
+          "model": "v9_baseline",
+          "nRMSE": 0.14883362423354865
+        },
+        {
+          "model": "transolver_attention_fusion",
+          "nRMSE": 0.1492304004494428
+        }
+      ],
+      "n_runs": 7
+    },
+    "ifc_poisson": {
+      "best": {
+        "model": "fno_mf_stack",
+        "nRMSE": 0.059610770499981265
+      },
+      "ranked": [
+        {
+          "model": "fno_mf_stack",
+          "nRMSE": 0.059610770499981265
+        },
+        {
+          "model": "fno_coreg_residual",
+          "nRMSE": 0.07419190832651051
+        },
+        {
+          "model": "mf_fno_transfer_bar",
+          "nRMSE": 0.08332612635511866
+        },
+        {
+          "model": "transolver_attention_fusion",
+          "nRMSE": 0.38181221789141245
+        },
+        {
+          "model": "fno_coregionalization",
+          "nRMSE": 0.7501491695056993
+        },
+        {
+          "model": "transolver_residual",
+          "nRMSE": 2.5923486631969164
+        },
+        {
+          "model": "v9_baseline",
+          "nRMSE": 18.50343612114542
+        }
+      ],
+      "n_runs": 7
+    }
+  },
+  "fno_coregionalization_status": {
+    "ifc_heat_nRMSE": 0.01551112640242143,
+    "ifc_poisson_nRMSE": 0.7501491695056993,
+    "recovered_cycle_005_heat": true,
+    "vs_cycle_005_cache": "heat: 0.01551112640242143 vs cycle-005's 0.01551 (delta=+0.00007%)",
+    "cache_status_heat": "miss",
+    "cache_status_poisson": "miss",
+    "kill_switch_tripped": false,
+    "kill_switch_threshold_heat": 0.0194
+  },
+  "target_met_composite_le_0.0274": false,
+  "comparison_to_cycle_005_aspirational_best": {
+    "aspirational_best": 0.029357,
+    "current": 0.030407732506238343,
+    "delta": 0.0010507325062383437
+  },
+  "cycle": "cycle-008-baseline",
+  "origin": "banked from cycle-007 H1 (reproducible best on experiment/9-fno_coregionalization-constructor-fix @ 1249f2d)"
+}

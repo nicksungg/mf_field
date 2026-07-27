@@ -1,0 +1,9 @@
+{
+  "name": "mf_fno_incontext",
+  "version": "0.1.0",
+  "description": "In-context operator learning with NO fine-tune. A DeepSets encoder summarizes a few support pairs (X_i, Y_i) into a task context c; the FiLM FNO conditions on [X_query, c]. Trained EPISODICALLY on the abundant LF data (sample a support subset + disjoint query subset each step). At eval the HF TRAIN pairs are the support prompt and HF TEST inputs are the queries, so HF transfer happens purely in-context and the weights are never updated on HF. Backbone is the frozen FiLM FNO2d with cond_dim = X_dim + ctx_dim.",
+  "supports": ["ifc_raw", "npz_l"],
+  "smoke_entrypoint": "smoke_eval.py",
+  "frozen": false,
+  "inspired_by": ["li2020fno", "perez2018film", "zaheer2017deepsets"]
+}

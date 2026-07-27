@@ -1,0 +1,59 @@
+{
+  "model": "mf_fno_spectral",
+  "dataset": "lid_driven_cavity_generated",
+  "splits": {
+    "test_hf": {
+      "nRMSE": 0.05987255922273115,
+      "rel_l2_mean": 0.06003535983450733,
+      "rel_l2_ci95_lo": 0.058822528461130334,
+      "rel_l2_ci95_hi": 0.06130520994580496,
+      "rel_l2_std": 0.0021458623771131937,
+      "rel_l2_per_sample": [
+        0.06070314629409869,
+        0.059093307911566625,
+        0.05777771415082719,
+        0.061890698651021335,
+        0.05906551479548267,
+        0.05704333555892134,
+        0.06024929361755599,
+        0.0624337370186383,
+        0.058419120215227174,
+        0.06367773013173399
+      ],
+      "n_samples": 10
+    }
+  },
+  "n_params": 4773441,
+  "train_seconds": 550.8067655563354,
+  "eval_seconds": 0.021915435791015625,
+  "latency_ms_per_sample": 2.1915435791015625,
+  "peak_mem_mb": 1230.95808,
+  "work_grid": [
+    256,
+    256
+  ],
+  "eval_protocol": "full_field_on_working_grid",
+  "device": "cuda",
+  "hf_fidelity": 4,
+  "lf_fidelity": 1,
+  "mf_mechanism": "spectral_decomposition_freeze_low_band_finetune_high",
+  "conditioning": "film_on_X_per_block",
+  "low_cutoff": [
+    12,
+    12
+  ],
+  "modes": [
+    12,
+    12
+  ],
+  "n_frozen_complex_entries": 4718592,
+  "frozen_low_band_unchanged": true,
+  "hf_grid_native": [
+    256,
+    256
+  ],
+  "lf_grid_native": [
+    32,
+    32
+  ]
+}

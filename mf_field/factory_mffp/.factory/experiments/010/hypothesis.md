@@ -1,0 +1,1 @@
+H2: Per-dataset recipe decoupling for fno_coreg_residual at models/fno_coreg_residual/smoke_eval.py — add _DATASET_RECIPES dict (ifc_poisson: hf_weight=2.0, lf_weight=0.25) and resolve_fidelity_weights helper; mirror models/fno_mf_stack/smoke_eval.py:326-330 pattern; Heat path stays uniform

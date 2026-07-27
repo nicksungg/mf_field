@@ -1,0 +1,1 @@
+H3 (cycle-008): Three-stage curriculum on fno_coreg_residual (LF pretrain → freeze LF + train HF residual → unfreeze + basis-head) with MANDATORY recipe_hash checkpoint guard. Mutable surface: models/fno_coreg_residual/smoke_eval.py ONLY. Branches from cycle-008 baseline 1249f2d (independent of H1 and H2).

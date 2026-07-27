@@ -1,0 +1,21 @@
+## CEO Review: Researcher — cycle-010 (Mode 4)
+
+- **Verdict:** PROCEED
+- **Rationale:**
+  - All 5 research questions (O1 capacity, O2 curriculum, O3 K-basis, O4 γ(m,LF), O5 literature expansion) addressed with specific code-landing sites, citations, and quantitative expected impact.
+  - **5 new citation candidates validated** via WebSearch with arXiv IDs: `mutransferfno2025` (2506.19396), `ufnofilm2025` (2511.20543), `pirino2025` (2510.23810), `fnospectralperspective2024` (2404.07200), `mfbpinn2026` (2602.01176). One ID correction: `stresstest2025fno` is 2601.11428 (not 2501.11428). `liu2022neuralcoreg` (2109.09261) also added.
+  - **NK2 carve-out structural analysis is load-bearing and rigorous**: cites `models/fno_mf_stack/model.py:165-168` showing 4 independent SmallFNO modules with no shared weights — confirming that the NK2 anti-pattern's mechanism (shared K-basis losing joint gradient) does NOT apply to `fno_mf_stack`. Pattern match to `yang2025mfdeeponet` freeze-LF protocol is precise.
+  - **Cross-cycle pattern is quantitative**: log(nRMSE)/log(params) slope ≈ −0.39 from cycle-009. Second 2× param step (1M→2M) at same slope predicts −27% Poisson; literature saturation evidence flattens to realistic −10 to −22%. Honest about diminishing returns.
+  - All proposed hypotheses land within `models/**` mutable surface; no fixed-surface leakage.
+  - All NK1/NK2/NK3 zones explicitly checked per hypothesis.
+- **Issues found:**
+  - Minor: O3 recommendation oscillates between "DEFER TO BACKLOG" and "USE AS CYCLE-010 H3 (RESERVE)" — the Strategist should treat O3 as DEFER unless they choose to fill a 3-hypothesis budget.
+  - Minor: O4 recommendation tag appears twice ("DEFER TO BACKLOG" stated twice consecutively) — cosmetic.
+  - No calendar-time estimates. No fixed-surface suggestions.
+- **CEO Priority for Strategist:**
+  - **H1 (capacity-axis 2nd step on `fno_mf_stack`)**: conservative variant `hidden=96, modes_per_level=(4,8,16,24), n_blocks=4`. NK-clear. Highest composite-mover prior. **MUST LAND FIRST.**
+  - **H2 (LF→HF curriculum with frozen LF stage 2 on `fno_mf_stack`)**: NK2 carve-out applies because of LF/HF-independent design. MUST land as SEPARATE PR after H1 (the researcher explicitly warns against bundling — would confound attribution). Mandatory dual kill-switch (absolute Poisson/Heat ≤ 0.0594 AND inter-stage stage-2 best_val ≥ 0.90 × stage-1 best_val).
+  - **H3 (K-basis on `fno_coregionalization`)** and **O4 (new family `fno_coreg_conditioned_v2`)**: DEFER. Composite-mover prior is weak (non-leader cells).
+  - Within the `max_new=2` config budget, the Strategist should generate H1 + H2 sequenced. If they choose only H1, that is acceptable per the budget. If they propose H3 as well, they must justify exceeding the standard `max_new=2` budget.
+- **Sequencing note for Strategist:** H2 should be implemented and measured ON TOP OF H1's banked branch (if H1 keeps), NOT against the cycle-010 baseline. Each PR is measured against the previous best.
+- **Next action:** Spawn Archivist (done), then Strategist (R2).

@@ -1,0 +1,15 @@
+{
+  "id": 10,
+  "timestamp": "2026-06-02 07:09:36.772444",
+  "hypothesis": "H2: Per-dataset recipe decoupling for fno_coreg_residual",
+  "change_summary": "1-file +29/-0 LOC addition of _DATASET_RECIPES dispatch + resolve_fidelity_weights helper. Real regression: composite 0.039578 -> 0.044470 (+12.36%). Heat invariance VIOLATED (+32.7%, lost leaderboard to mf_fno_transfer_bar). Poisson improved -17.96% (0.07419->0.06087) but did not take the leaderboard from fno_mf_stack (0.05961). Branch experiment/10-fno_coreg_residual-dataset-recipes preserved at 87f65b1 for future analysis.",
+  "issue_number": null,
+  "pr_number": null,
+  "score_before": null,
+  "score_after": null,
+  "delta": null,
+  "verdict": "revert",
+  "cost_usd": null,
+  "notes": "ceo:revert mode=research metric=composite_nRMSE before=0.039578 after=0.044470 real_delta=+0.0049 real_delta_pct=+12.36 hypothesis_type=code precheck=failed_polarity_bug_says_pass_on_score_real_regression real_regression=yes heat_invariance_violated=true poisson_improved_no_leaderboard=true kill_switch_poisson=not_tripped reviewer=pass agents_spawned=R,FA,RES,STR,B,R,E e2e=pass hygiene=na_eval_command_empty monotonic=fail branch_preserved=experiment/10-fno_coreg_residual-dataset-recipes leakage_check_false_positive=ifc_poisson_dataset_name_in_factory_md backlog_cleared=na reason=real_composite_regression_heat_invariance_violated",
+  "research_citations": []
+}

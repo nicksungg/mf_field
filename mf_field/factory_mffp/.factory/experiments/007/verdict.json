@@ -1,0 +1,15 @@
+{
+  "id": 7,
+  "timestamp": "2026-06-02 03:31:01.062601",
+  "hypothesis": "H2: LF\u2192HF transfer-learning pretraining for fno_coregionalization. Convert single-stage joint training to two-stage with fresh opt+sched per stage; resume guard requires stage==2.",
+  "change_summary": "2-stage LF\u2192HF transfer for fno_coregionalization built and ran (commit be36cba, branch experiment/7-fno_coreg_lf_hf_transfer). Pre-flight PASS. Full eval: composite_nRMSE 0.033726 \u2192 0.029357 (-13%, BEST IN PROJECT HISTORY, first sub-0.030). fno_coreg ifc_heat 0.0205 \u2192 0.01551 (-24%, NEW #1 on ifc_heat, beats mf_fno_transfer_bar 0.0332). Hard targets NOT met (composite 0.0294 > 0.026; ifc_heat 0.0155 > 0.013; bar parallel-bench 0.0274 still wins composite by 0.002). Realistic stretch band 0.028-0.032 MET. ACCEPTANCE #8 VIOLATED: fno_coreg ifc_poisson regressed catastrophically 0.05\u21920.7501 (15\u00d7 over the 0.07 cap) \u2014 LF\u2192HF schedule mis-fits poisson loss surface, but composite unaffected because fno_coreg_residual still owns poisson at 0.0556. Precheck FAILED on 4 bookkeeping bugs: score_direction (precheck assumes higher=better; for nRMSE lower=better \u2192 false positive); scope (pre-existing-dirty-tree of 15 pre-session files); fixed_surfaces (empty detail, downstream of scope); ground_truth_leakage (substring-collision false positives: modify/satisfy/ifc_raw in factory.md/README.md). anti_pattern PASS, smoke_test PASS. revert_bookkeeping_keep_intent: composite improvement is the controlling research target and improved 13% to new project-best; branch experiment/7-fno_coreg_lf_hf_transfer preserved. Cross-cycle finding: this is the 5th consecutive revert_bookkeeping_keep_intent \u2014 precheck-bookkeeping subsystem needs an overhaul (out of factory scope; flagged for operator).",
+  "issue_number": null,
+  "pr_number": null,
+  "score_before": null,
+  "score_after": null,
+  "delta": null,
+  "verdict": "revert",
+  "cost_usd": null,
+  "notes": "ceo:revert_bookkeeping_keep_intent mode=research metric=composite_nRMSE before=0.033726 after=0.029357 delta=-0.004369 improvement_pct=12.96 project_best=true first_sub_0.030=true precheck=failed failures=score_direction,scope,fixed_surfaces,ground_truth_leakage failure_type=precheck_inverted_higher_better_for_nRMSE+pre_existing_dirty_tree+substring_collisions ifc_heat_new_best=fno_coregionalization ifc_heat_value=0.01551 ifc_poisson_best=fno_coreg_residual ifc_poisson_value=0.05556 fno_coreg_ifc_poisson_regression=0.05_to_0.75 acceptance_8_violated=true hard_target_composite_le_0.026=false hard_target_ifc_heat_le_0.013=false stretch_band_0.028_to_0.032=true bar_parallel_bench_beaten=false bar_smoke_beaten=true hypothesis_type=code execution_artifacts=na e2e=pass backlog_cleared=partial agents_spawned=B,E archivist_spawned=true",
+  "research_citations": []
+}

@@ -1,0 +1,41 @@
+{
+  "model": "fno_autoregressive",
+  "dataset": "lid_driven_cavity_generated",
+  "splits": {
+    "test_hf": {
+      "nRMSE": 0.008175802406582562,
+      "rel_l2_mean": 0.008224146634243113,
+      "rel_l2_ci95_lo": 0.007672819532802186,
+      "rel_l2_ci95_hi": 0.008861517914752598,
+      "rel_l2_std": 0.0010296353955499271,
+      "rel_l2_per_sample": [
+        0.008184238228617835,
+        0.007614548127780039,
+        0.007227154473296548,
+        0.008936410957489876,
+        0.007610871353599081,
+        0.007411596576860911,
+        0.008425135233536406,
+        0.009094044023945487,
+        0.007287218967462264,
+        0.010450248399842686
+      ],
+      "n_samples": 10
+    }
+  },
+  "n_params": 9480451,
+  "train_seconds": 382.1832664012909,
+  "eval_seconds": 0.1007685661315918,
+  "latency_ms_per_sample": 10.07685661315918,
+  "peak_mem_mb": 502.817792,
+  "work_grid": [
+    128,
+    128
+  ],
+  "eval_protocol": "full_field_on_working_grid",
+  "device": "cuda",
+  "hf_fidelity": 3,
+  "lf_fidelity": 1,
+  "mf_mechanism": "autoregressive_KO_HF=rho*LFpred+delta",
+  "rho": 0.9919295310974121
+}

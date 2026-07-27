@@ -1,0 +1,21 @@
+{
+  "model": "fno_coreg_residual",
+  "dataset": "era5",
+  "metric_value": 0.08574960219784893,
+  "splits": {
+    "test_hf": {
+      "nRMSE": 0.08574960219784893,
+      "n_samples": 7
+    },
+    "test": {
+      "nRMSE": 0.24721443587774117,
+      "n_samples": 1285
+    }
+  },
+  "n_params": 8024286,
+  "train_seconds": 3790.4920184612274,
+  "eval_seconds": 2.7684850692749023,
+  "best_val_nRMSE": 0.06589908578380399,
+  "device": "cuda",
+  "notes": "H3 hybrid via data_adapters: 9 per-fidelity FNOs (hidden=32, modes=[(12, 12), (12, 12), (12, 12), (12, 12), (12, 12), (12, 12), (12, 12), (12, 12), (12, 12)], blocks=3) + MFRNP decoder-in-the-aggregation (decoder_hidden=32) + continuous-m basis head (K=10, B(m)=MLP([m,m^2]) zero-init) on HF latent; per-fidelity y-scaler, val_frac=0.1, loader=npz_l, native_grids=[(144, 192), (128, 256), (171, 256), (160, 256), (120, 180), (132, 156), (80, 96), (128, 256), (128, 256)], hf_grid=(128, 256) (work cap=256). Geometry via data_adapters.geometry.resolve_grid (1-D as height-1 grid)."
+}

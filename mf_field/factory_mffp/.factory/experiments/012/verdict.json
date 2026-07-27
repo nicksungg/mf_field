@@ -1,0 +1,15 @@
+{
+  "id": 12,
+  "timestamp": "2026-06-02 14:42:10.785800",
+  "hypothesis": "H2 (cycle-008): NEW family fno_coreg_conditioned \u2014 single full-resolution HF FNO with FiLM-via-LayerNorm conditioning on m. Targets FAMILY_PDE_SPECIALIZATION_ASYMMETRY (single-family Heat+Poisson candidate). Branches from cycle-008 baseline 1249f2d (independent of H1).",
+  "change_summary": "NEW family scaffold (4 NEW files, +828 LOC under models/fno_coreg_conditioned/): model.py (FNOCoregConditioned + FiLMNorm: GroupNorm(affine=False) + MLP([m, m\u00b2]) \u2192 \u03b3, \u03b2 with zero-init \u03b3-projection), smoke_eval.py (cycle-007 H2 LF\u2192HF schedule preserved verbatim, hidden_channels=64 matching bar trunk), manifest.json, INSPIRATION.md (5 bibtex_keys). REVERTED: composite_nRMSE held flat at baseline 0.030408 (no contribution); ifc_heat 0.0171 (2nd, behind fno_coregionalization 0.0155); ifc_poisson 0.7499 (5th, ~13\u00d7 over fno_mf_stack winner 0.0596, 5-15\u00d7 outside Builder's predicted 0.05-0.15 range). Architectural hypothesis falsified: FiLM-via-LayerNorm on HF-only FNO cannot synthesize the LF\u2192HF correlation pathway that Poisson requires. Branch experiment/12-fno_coreg_conditioned-film @ 540e684 preserved for cycle-009 reference (potential revisit: FiLM-on-residual with LF features in \u03b3 inputs).",
+  "issue_number": null,
+  "pr_number": null,
+  "score_before": null,
+  "score_after": null,
+  "delta": null,
+  "verdict": "revert",
+  "cost_usd": null,
+  "notes": "ceo:revert mode=research reason=architecture_falsified_on_poisson metric=composite_nRMSE before=0.027729 after=0.030408 delta=+0.002679 delta_pct=+9.66 hygiene=pass monotonic=fail heat=0.017102 poisson=0.749915 kill_switches=clear hypothesis_type=code execution_artifacts=na e2e=pass backlog_cleared=no agents_spawned=Reviewer,Evaluator precheck=bookkeeping_overrides_3_of_4 archivist_spawned=true",
+  "research_citations": []
+}

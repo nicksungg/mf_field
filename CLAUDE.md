@@ -2,138 +2,105 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## What this project is
+## What this repo is
 
-MFFP (Multi-Fidelity Field Prediction) is an **autonomous research project** driven by the
-`remote-factory` CEO agent (config in `factory.md`). The goal: invent new multi-fidelity
-field-prediction model *families* that beat the published paper nRMSE numbers in
-`baselines/paper_baselines.json` across the 17 benchmark datasets in `data/`.
+Research monorepo for **Multi-Fidelity Field Prediction (MFFP)**: predicting a high-fidelity (HF, fine-grid) PDE solution field from cheap low-fidelity (LF, coarse-grid) fields plus a small condition vector, with few HF samples.
+It is one git repository (currently a single initial commit) holding three parallel workstreams under three top-level directories.
+Almost all heavy artifacts are git-ignored — see `.gitignore`: `*.npz *.npy *.pt *.h5 *.png *.pdf`, `data/`, `.venv/`.
+What lives in git is code, configs, sbatch scripts, CSVs, and Markdown; the actual datasets, checkpoints, and figures are regenerable and stay on the compute box.
 
-"Multi-fidelity" here means each task gives abundant cheap **low-fidelity (LF)** data and scarce
-expensive **high-fidelity (HF)** data; a model must fuse them to predict the HF field. Families
-differ almost entirely in *how* they fuse — the backbone (a Fourier Neural Operator) is held
-roughly constant so the comparison isolates the MF mechanism. See `model/README.md` for the
-full model-zoo leaderboard and per-family TL;DRs.
+The three workstreams:
 
-## Where the research writing lives
+- **`mf_field/`** — the benchmark itself: the local dataset directories, the autonomous model-invention harness (`factory_mffp/`), the v9 reference model (`stacking_v9_multistream/`), and the factory engine (`akash/`).
+- **`mf_field_eloise_data/`** — Eloise's dataset-generation work: standalone PDE generators + the `SURF_2026-main/` sub-project (sharp-field datasets, a real Python package with tests). **Has its own `CLAUDE.md` at `SURF_2026-main/CLAUDE.md` — read and obey it when working in that subtree.**
+- **`mf_field_extension_data/`** — a further set of 7 non-overlapping PDE datasets with their own solvers, generators, and verification.
 
-All reports, proposals, plans, and raw notes are filed under `docs/` — start at `docs/README.md`,
-which indexes every document with its date and status. In short: `docs/reports/` (finished
-deliverables + their figure directories), `docs/proposals/` (model ideas under consideration),
-`docs/planning/` (autoresearch loop design), `docs/notes/` (raw question lists and idea seeds),
-`docs/external/` (papers and decks from outside this repo). None of it is read by the eval or
-factory pipeline. Only `README.md`, `CLAUDE.md`, `factory.md`, and `HOWTO.md` stay at the root.
+## `factory_mffp/` — the core harness (read this first)
 
-## The one rule that governs everything: mutable vs fixed surfaces
+This is the heart of the repo.
+It is an autonomous "factory" (driven by `akash/remote-factory-main/`, the vendored `remote-factory` engine) whose CEO agent invents new MFFP model architectures, trains them on small smoke datasets, and keeps only changes that lower a composite error metric.
+The loop is Observe → Hypothesize → Build → Eval → Decide, configured entirely by `factory.md` (the research-mode spec: goal, scope, guards, eval command, hypothesis budget).
 
-`factory.md` declares what may change. **Only `models/**` is modifiable.** Treat everything
-else as read-only unless the user explicitly overrides:
+**The bar is the published paper numbers** in `baselines/paper_baselines.json`, *not* v9.
+`references/v9_baseline/` is one worked example of MF fusion in a SOTA architecture, kept frozen for side-by-side comparison only.
 
-- **Do not** modify `data/`, `baselines/`, `eval/`, `references/`, `scripts/`, `factory.md`, `README.md`.
-- **Do not** edit `baselines/paper_baselines.json` — these are fixed published reference numbers (the actual bar).
-- **Do not** delete or rename existing model families. Add new work as `models/<new_family>/`.
-- New families must be implemented **from scratch from the source paper(s)**, not copied from
-  `references/v9_baseline/` (which is one worked example, not a template).
-- Each new family needs `models/<family>/INSPIRATION.md` citing the paper(s) (bibtex keys from
-  `../papers_summary.csv`; append rows there if a cited paper is missing).
-- No external API calls or weight downloads at eval time. Smoke eval must stay **≤ ~30 min on one H100**.
+### Model Family Contract (the central convention)
 
-## The model-family contract (`eval/MODEL_CONTRACT.md`)
+Every model is a self-contained family directory `models/<family>/` that must expose:
 
-Every family at `models/<family>/` must expose exactly:
+- `manifest.json` — `{ "name", "description", "supports": ["ifc_raw", "npz"], "frozen": bool }`.
+- `smoke_eval.py` — CLI with a fixed signature (`--dataset_dir --dataset_name --epochs --out --ckpt_dir --seed`), writing a results JSON whose required keys are `model`, `dataset`, and `splits` (each split has `nRMSE`).
 
-- `manifest.json` — `{ "name", "description", "supports": ["ifc_raw"|"npz_l"...], "external": false, "paper": ... }`.
-  `"frozen": true` means the orchestrator runs it but nothing inside may be edited (`v9_baseline` is frozen).
-- `smoke_eval.py` — fixed CLI: `--dataset_dir --dataset_name --epochs --out --ckpt_dir --seed`.
-  Exit 0 on success; writes a results JSON with `model`, `dataset`, and `splits` (each split has `nRMSE`).
-- **Checkpoint resume is mandatory** — read/write `ckpt_dir/last.pt`; SLURM `mit_preemptable` jobs get
-  preempted and requeued, so without resume every preemption wastes the run.
+The full contract (signature, JSON schema, checkpoint-resume requirement) is `eval/MODEL_CONTRACT.md`.
+Checkpoint resume from `<ckpt_dir>/last.pt` is mandatory because the default SLURM partition (`mit_preemptable`) can preempt any run.
+There are ~27 families today (FNO coregionalization/residual/transfer variants, Transolver hybrids, DINO-conditioned, and the FIRE uncertainty-source families).
+The `fno_fire_*` families all share `models/_common/` (`fire_core.py`, `fire_methods.py`, `recipe_hash.py`) and differ only in how the LF predictive distribution is obtained.
 
-### Critical import convention (the main gotcha)
+### How evaluation runs
 
-`smoke_eval.py` puts its own directory **and** the repo root on `sys.path`, then does:
+`eval/score.py` discovers every `models/<family>/` (plus frozen `references/*`), runs each family × each smoke dataset via its `smoke_eval.py`, and aggregates into a leaderboard JSON at `results/smoke_latest.json`.
+Results are **cached by `(family, dataset, epochs, seed, code_hash)`** where `code_hash` is a SHA over all `.py` in the family dir — editing any `.py` under a family invalidates its cache; use `--no_cache` to force.
+The composite metric (lower is better): mean over datasets of the best model's mean nRMSE on that dataset.
+Data is loaded through `data_adapters/loaders.py`, which handles two on-disk layouts: **`ifc_raw`** (`train/fidelity_<F>/{Xs,ys}.npy`, 2-D fields) and **`npz_l*`** (`train_l<i>.npz`/`test_l<i>.npz` with keys `x`,`y`, flat fields, optional `ood/`).
 
-```python
-from model import FNO2d, FNO2dAug, param_count   # the family's OWN model.py (vendored backbone)
-from data_adapters import load_mf_dataset          # SHARED repo-root package (fixed surface)
-from data_adapters.geometry import resolve_grid
-from data_adapters.metrics import finalize_and_write
-```
+### Guards (from `factory.md` — do not violate)
 
-So `model` is **per-family** (each family vendors its own `model.py` backbone), while
-`data_adapters` is the **shared** data-loader / geometry / metrics layer that all families import
-and must not reimplement. Use `resolve_grid` for fidelity→grid mapping and `finalize_and_write`
-to emit the contract JSON (it computes per-sample relative-L2 with bootstrap CIs).
+- Only `models/**` is modifiable. **Never edit** `data/`, `baselines/`, `eval/`, `references/`, `scripts/`, or `factory.md`.
+- Never edit `baselines/paper_baselines.json` (fixed published numbers).
+- Never delete/rename existing families; add new ones only.
+- New families implement architectures **from scratch from the source paper**, not by copying `references/v9_baseline/`; each cites its source in `models/<family>/INSPIRATION.md`.
 
-> **Note on this git checkout:** only `data_adapters/npz_compat.py` and `model/README.md` are
-> tracked here. The runnable shared internals (`data_adapters/__init__.py`, `geometry.py`,
-> `metrics.py`) and the symlinked `data/` contents live in the cluster working tree at the path in
-> `scripts/env.sh` (`/orcd/data/faez/001/nick/mf_field/factory_mffp`). `smoke_eval.py` therefore
-> runs there, not from a bare clone.
+## Datasets and multi-fidelity methodology
 
-## Shared code
+`mf_field/datasets_summary.csv` is the canonical per-dataset table (paper, resolutions, N_train/N_test, license).
+Local dataset dirs live as siblings under `mf_field/` (`era5`, `pm_test`, `fluid`, `heat_local`, `ifc_heat`, `ifc_poisson`, `poisson_local`, `sharp_generated`, …); `factory_mffp/data/` symlinks to them.
+Fields are either genuine 2-D `(H, W)` (ifc_raw) or flattened `(n_cells,)` (npz); the npz generation format is `params (N,d)`, `lf (N,…)`, `hf (N,…)`, `param_names (d,)` with **aligned/nested** LF↔HF (same parameter vector, coarse vs fine grid).
 
-- `models/_common/` — shared core for the FIRE-family UQ ablation. `fire_core.py` holds the
-  geometry-general FNO backbone + the shared residual runner; `fire_methods.py` holds one class
-  per uncertainty source (snapshot / SWAG / batch-ensemble / quantile / IQN / MDN / Laplace / DKL-GP).
-  Every FIRE family produces the same per-pixel LF summary fields `[mu, sigma, q10, q50, q90]`,
-  conditions a residual FNO on them, and predicts `HF = mu_LF + delta`; families differ only in
-  *how* the LF distribution is obtained.
-- `data_adapters/npz_compat.py` — compatibility shim letting legacy `ifc_raw` loaders read newer
-  `npz_l` datasets without on-disk conversion.
+Non-negotiable methodology rules (see `SURF_2026-main/CLAUDE.md` for the full statement):
 
-## Eval / scoring flow
-
-`eval/score.py` is the orchestrator: discovers all `models/*` families (plus frozen
-`references/*`), runs each family × each smoke dataset as a subprocess, and aggregates into
-`composite_nRMSE` = **geomean over datasets of the best-model-per-dataset nRMSE** (geomean is
-scale-invariant so one bad dataset can't dominate). It also emits `vs_paper` (per-dataset
-comparison vs `baselines/paper_baselines.json`) — the optimization metric does *not* use paper
-numbers, but `vs_paper`/`n_datasets_beating_paper` tells you whether SOTA was reached.
-
-**Caching:** results are keyed by `(family, dataset, epochs, seed, code_hash)` where `code_hash`
-is a sha256 over all `*.py` in the family dir. Changing any `.py` invalidates the cached result.
-Cached results live in `results/raw/<tag>.json` (gitignored).
+- **LF is always a real coarse *consistent* solve — never downsampled or noised HF.** Downsampling injects Gibbs/aliasing artifacts and invalidates the benchmark. This is the single most important rule.
+- Fidelity levels are interpolated onto the HF grid so residuals `HF − LF` are well-defined; keep raw native-grid LF for provenance.
+- The condition vector must be *complete* (those scalars + solver + snapshot time fully determine the field) and small (≤ ~10).
+- Prefer a **metric panel**, not rel-L2 alone: rel-L2 averages over the smooth bulk and hides blur in thin sharp regions.
 
 ## Common commands
 
-Run from the project root, after `source scripts/env.sh` (sets `$MFFP_PY` = project venv python,
-loads the cluster module, etc.). Substitute `$MFFP_PY` for `python` on the cluster.
+Heavy work (generation, training, full benchmarks) runs on a SLURM GPU cluster; the factory docs assume the cluster root `/orcd/data/faez/001/nick/mf_field/` where dataset dirs are siblings of `factory_mffp/`.
+Local editing/syntax/figure work happens on the Mac.
 
 ```bash
-# Smoke-test ONE family end-to-end (this is the Builder's required pre-flight check):
+# --- Sharp-field package tests (the one place with a real test suite: 25 pytest files) ---
+cd mf_field_eloise_data/SURF_2026-main/mffp_sharp
+source ../.venv/bin/activate        # repo-root venv with numpy/scipy/h5py/skimage/matplotlib
+pytest                              # all tests
+pytest tests/test_cahn_hilliard.py # a single test file
+bash scripts/verify.sh             # solver-legitimacy verification
+
+# --- Run one model family end-to-end (contract smoke, no SLURM) ---
+cd mf_field/factory_mffp
 python models/<family>/smoke_eval.py \
     --dataset_dir data/ifc_heat --dataset_name ifc_heat \
     --epochs 2 --out /tmp/x.json --ckpt_dir /tmp/c --seed 0
 
-# Run the orchestrator on a subset, bypassing cache:
-python eval/score.py --no_cache --families <family>            # or comma-separated list
+# --- Orchestrate all families over the smoke datasets ---
+python eval/score.py --no_cache --families <family>   # confirm a new family is picked up
 
-# One factory cycle's eval (cache-first local pass, else submits eval/run_smoke.sbatch --wait):
-bash scripts/cycle_eval.sh
+# --- One autonomous factory cycle (needs the remote-factory env sourced) ---
+source mf_field/akash/remote-factory-main/activate-env.sh
+factory ceo <abs path to factory_mffp> --mode research
 
-# Full benchmark across all 17 datasets (SLURM array):
-./scripts/launch_full_benchmark.sh "v9_baseline,<family1>,<family2>"
-
-# Drive the autonomous research loop (factory CEO):
-factory ceo . --mode research                                   # one cycle
-factory tmux . --mode research --loop                           # continuous
-
-# Reporting helpers:
-python bench/status.py            # current run status
-python bench/summary_report.py    # leaderboard summary
+# --- Heavy jobs go through SLURM (examples) ---
+sbatch mf_field/factory_mffp/eval/run_smoke.sbatch          # full smoke eval
+sbatch mf_field_eloise_data/generate_sharp.sbatch          # dataset generation
 ```
 
-Smoke config (datasets, epochs, seed, per-call timeout, primary metric) lives in
-`eval/smoke_config.json`; the full 17-dataset config in `eval/full_config.json`. Per-cycle
-defaults: datasets `ifc_heat` + `ifc_poisson`, 200 epochs, seed 42, geomean `composite_nRMSE`
-(lower is better).
+Dataset generation entry points: `mf_field/generate_all_datasets.py`, the `mf_field_eloise_data/generate_*.py` + `ablation_*.json` configs, and `mf_field_extension_data/generate_datasets.py` (with `solvers.py` and `verify.py`).
 
-## Environment
+## Nested guidance to defer to
 
-- Two virtualenvs: the **factory** venv runs the `factory` CLI; the **project** `.venv`
-  (`$MFFP_PY`) has torch/numpy/pandas for model code. Both are sourced via `scripts/env.sh`.
-- SLURM partitions are selected via `MFFP_PARTITION` (default `mit_preemptable`) and
-  `MFFP_FALLBACK_PARTITION` (default `mit_normal_gpu`).
-- Gitignored runtime dirs: `results/raw/`, `results/raw_full/`, `results/smoke_latest.json`,
-  `results/history.jsonl`, `checkpoints/`, `logs/`, `.venv/`.
+Two subtrees carry their own `CLAUDE.md` that governs them and takes precedence when you are working inside them:
+
+- `mf_field_eloise_data/SURF_2026-main/CLAUDE.md` — the sharp-field dataset project: two-machine git sync discipline, the sample-round approval gate (mentor sign-off before full generation), and the LF-methodology rules.
+- `mf_field/akash/remote-factory-main/CLAUDE.md` — the `remote-factory` engine that drives the factory.
+
+`factory_mffp/HOWTO.md` is the operational runbook for the factory (setup, cycles, tmux loop, full benchmark, knobs like `MFFP_PARTITION`).

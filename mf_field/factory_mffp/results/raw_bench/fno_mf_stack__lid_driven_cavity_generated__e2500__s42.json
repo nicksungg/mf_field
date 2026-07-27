@@ -1,0 +1,18 @@
+{
+  "model": "fno_mf_stack",
+  "dataset": "lid_driven_cavity_generated",
+  "metric_value": 0.31089115713528126,
+  "splits": {
+    "test": {
+      "nRMSE": 0.31089115713528126,
+      "n_samples": 10
+    }
+  },
+  "n_params": 24206341,
+  "train_seconds": 814.5679965019226,
+  "eval_seconds": 0.09303116798400879,
+  "device": "cuda",
+  "hf_fid_weight": 1.0,
+  "lf_fid_weight": 1.0,
+  "notes": "4 FNOs (hidden=64, modes=[4, 8, 16, 20], 4 blocks) + MFRNP aggregator + HF residual; per-fidelity y-scaler; per-fidelity loss weights HF=1.0 LF=1.0 (MFRNP Poisson5 gated)."
+}

@@ -1,0 +1,9 @@
+{
+  "name": "mf_fno_ptr",
+  "version": "0.1.0",
+  "description": "FiLM-transfer winner (mf_fno_transfer_film: LF-pretrain -> HF-finetune over an FiLM-conditioned FNO) PLUS test-time PDE-residual refinement (PTR/NITO). Each de-normalized predicted field u is refined by K Adam steps on the FIELD tensor (not weights) minimizing w_res*||R(u,X,grid)||^2 + w_anchor*||u-u_pred||^2. R comes from a per-dataset residual REGISTRY (refine.py); datasets without an entry get a graceful NO-OP and the family reduces exactly to the winner. Shipped residual is a GENERIC interior-Laplacian-smoothness prior ||Lap u||^2 (documented placeholder, NOT the true operator: the IFC source parameterization from X is not recoverable in this data copy). extra reports nRMSE_pre_refine vs the post-refine headline.",
+  "supports": ["ifc_raw", "npz_l"],
+  "smoke_entrypoint": "smoke_eval.py",
+  "frozen": false,
+  "inspired_by": ["nobari2024nito", "perez2018film", "lyu2023mffno"]
+}

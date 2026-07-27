@@ -1,0 +1,24 @@
+# CEO Review: Builder Agent — Cycle-009 H1+H2 (Experiment 14)
+
+- **Verdict:** PROCEED
+- **Rationale:**
+  - **Branch + commit verified**: `experiment/14-fno_mf_stack-capacity-and-recipe-hash @ 0b6e6eb`, based on `experiment/11-fno_coregionalization-paper-capacity @ 18d83a6` (cycle-008 H1 banked best). Clean parent.
+  - **Files changed (5)**: `models/_common/__init__.py` (NEW empty), `models/_common/recipe_hash.py` (NEW 12 lines), `models/fno_mf_stack/smoke_eval.py` (+19/-5), `models/fno_coreg_residual/smoke_eval.py` (+12/-2), `models/fno_coregionalization/smoke_eval.py` (+10/-1). Total: +45/-8 lines.
+  - **Surface-constraint check (MANDATORY)**: All 5 files inside `models/**` (mutable_surfaces). NO fixed-surface modifications. PASS.
+  - **Per-file diff review**:
+    - `models/_common/recipe_hash.py` — EXACT match to research.md §O2 design (uses `Mapping[str, Any]`, `default=str`, `dict(defaults)`, `sha256[:12]`). PASS.
+    - `models/fno_mf_stack/smoke_eval.py` — all 4 H2 patch sites (A: sys.path + import; B: `rh = recipe_hash(SMOKE_DEFAULTS)`; C: resume guard chains with existing `epochs_target` AND `cond_dim` checks; D: `recipe_hash` key in saved dict). All 4 H1 SMOKE_DEFAULTS edits applied (`hidden=64, agg_hidden=64, n_blocks=4, modes_per_level=(4,8,16,20)`). Loss weights UNCHANGED (verified `poisson_hf_weight=2.0, poisson_lf_weight=0.25` not touched). Other keys UNCHANGED. PASS.
+    - `models/fno_coreg_residual/smoke_eval.py` — H2 patch sites only (SMOKE_DEFAULTS unchanged). Correct. PASS.
+    - `models/fno_coregionalization/smoke_eval.py` — H2 patch sites only, with additional chain `and sd.get("grid") == list(grid)` preserved per family-specific resume preconditions. SMOKE_DEFAULTS unchanged. PASS.
+  - **Ground-truth leakage scan on PR diff**: `risk_level=medium`, 2 findings — both `"17"` matching the diff hunk header `@@ -176,9 +178,10 @@`. **7th-consecutive false-positive substring-collision** (project docs `factory.md`/`README.md` containing "17" in unrelated context). NOT actual ground-truth leakage from `data/` or `baselines/`. OVERRIDE per standing operator practice. Flagged for cycle-009 close-out operator backlog.
+  - **Pre-Builder smoke verification (research_constraints requirement)**: Builder reports all 4 smoke runs (fno_mf_stack × heat/poisson @ 2 epochs; fno_coreg_residual × heat @ 2 epochs; fno_coregionalization × heat @ 2 epochs) completed without crash. 2-epoch nRMSE values (0.79, 0.59, 0.57, 0.115) are SANITY checks only — high values are expected at 2 epochs and confirm pipelines do not crash (NOT real evaluation numbers). The real evaluation will use the full SMOKE_DEFAULTS epoch budget via `cycle_eval.sh`.
+  - **Family recipe hashes**: `fno_mf_stack` = `acdb1c11caa7` (NEW post-bump — invalidates any stale cycle-008 cache); `fno_coreg_residual` = `1cc35377b46d` (SMOKE_DEFAULTS unchanged); `fno_coregionalization` = `5011def485a6` (SMOKE_DEFAULTS unchanged). Cache-safety contract intact.
+  - **Scope creep check**: NO model.py changes, NO data.py changes, NO new family directory (`models/_common/` is a utility package, not a family), NO loss-weight perturbation, NO curriculum/freezing. Strictly within H1+H2 scope. PASS.
+  - **`--no-github` compliance**: NO GitHub issue created, NO PR opened, NO remote push. Local branch + local commit only. PASS.
+- **Issues found:** none. The Builder followed the CEO verdict's Step 0–6 protocol exactly.
+- **Instructions for next step (Reviewer)**:
+  - Run guard check: `factory guard /orcd/data/faez/001/nick/mf_field/factory_mffp --baseline 18d83a6 --check-scope` (baseline SHA = cycle-008 H1 banked-best commit).
+  - Read the PR diff (above) and confirm the 5 files match the strategy's mutable-surface specification.
+  - Assess code quality: the `recipe_hash` helper is 12 lines including docstring; the 3-patch-site refactor is consistent across all 3 families.
+  - Verify no scope creep (no model.py touched, no data.py touched, no fixed surfaces).
+  - Print PASS or FAIL with details.

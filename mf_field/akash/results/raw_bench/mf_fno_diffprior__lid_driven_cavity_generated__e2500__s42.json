@@ -1,0 +1,51 @@
+{
+  "model": "mf_fno_diffprior",
+  "dataset": "lid_driven_cavity_generated",
+  "splits": {
+    "test_hf": {
+      "nRMSE": 0.7452568915926033,
+      "rel_l2_mean": 0.7436576073854522,
+      "rel_l2_ci95_lo": 0.7355410087656512,
+      "rel_l2_ci95_hi": 0.7518207115963935,
+      "rel_l2_std": 0.014165545514412728,
+      "rel_l2_per_sample": [
+        0.7328843672276253,
+        0.76173173002738,
+        0.7507685914130652,
+        0.7293557721633864,
+        0.7618479229213418,
+        0.7588538243573364,
+        0.7313767660041269,
+        0.7293084170667914,
+        0.7493351418297077,
+        0.7311135408437601
+      ],
+      "n_samples": 10
+    }
+  },
+  "n_params": 221073,
+  "train_seconds": 293.58252787590027,
+  "eval_seconds": 0.015752315521240234,
+  "latency_ms_per_sample": 1.5752315521240234,
+  "peak_mem_mb": 616.84992,
+  "work_grid": [
+    256,
+    256
+  ],
+  "eval_protocol": "full_field_on_working_grid",
+  "device": "cuda",
+  "hf_fidelity": 4,
+  "lf_fidelity": 1,
+  "mf_mechanism": "latent_AE_prior_on_LF_plus_conditional_latent_generation",
+  "generator": "diffusion",
+  "zdim": 64,
+  "ddim_sample_steps": 10,
+  "eval_lf_latent": "zero_placeholder_test_has_no_LF",
+  "uq_K": 4,
+  "uq_mean_std": 0.021826158022737973,
+  "ae_exported": "/orcd/data/faez/001/nick/mf_field/akash/models/mf_fno_diffprior/ae.pt",
+  "hf_grid_native": [
+    256,
+    256
+  ]
+}

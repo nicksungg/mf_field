@@ -1,0 +1,46 @@
+{
+  "model": "fno_fire_quantile",
+  "dataset": "era5",
+  "splits": {
+    "test_hf": {
+      "nRMSE": 0.06704523086157278,
+      "rel_l2_mean": 0.06657425208589388,
+      "rel_l2_ci95_lo": 0.06023440664270279,
+      "rel_l2_ci95_hi": 0.07242410497036433,
+      "rel_l2_std": 0.008964420097698284,
+      "rel_l2_per_sample": [
+        0.054885815366027386,
+        0.0635615164324766,
+        0.05483728692851332,
+        0.07260754968587883,
+        0.07485005442045864,
+        0.07582201806537525,
+        0.06945552370252715
+      ],
+      "n_samples": 7
+    }
+  },
+  "n_params": 9482308,
+  "train_seconds": 4703.1073541641235,
+  "eval_seconds": 0.03774142265319824,
+  "latency_ms_per_sample": 5.391631807599749,
+  "peak_mem_mb": 594.528768,
+  "work_grid": [
+    128,
+    256
+  ],
+  "eval_protocol": "full_field_on_working_grid",
+  "device": "cuda",
+  "hf_fidelity": 9,
+  "lf_fidelity": 1,
+  "aug_channels": [
+    "mu",
+    "sigma",
+    "q10",
+    "q50",
+    "q90"
+  ],
+  "lf_gaussian_nll": 116.92931429954334,
+  "mf_mechanism": "quantile-regression distribution-conditioned residual",
+  "uncertainty_source": "quantile regression (pinball, q10/q50/q90 heads)"
+}

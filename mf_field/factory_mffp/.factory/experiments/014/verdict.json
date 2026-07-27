@@ -1,0 +1,15 @@
+{
+  "id": 14,
+  "timestamp": "2026-06-02 16:32:50.488450",
+  "hypothesis": "H1+H2: fno_mf_stack capacity bump on Poisson (hidden=64, agg_hidden=64, n_blocks=4, modes_per_level=(4,8,16,20)) + recipe_hash portable utility (NEW models/_common/recipe_hash.py + 3-patch-site refactor across fno_mf_stack, fno_coreg_residual, fno_coregionalization smoke_eval.py)",
+  "change_summary": "cycle-009 H1+H2 bundled: composite_nRMSE 0.027729 -> 0.022161 (-20.08%), parallel-bench bar DETHRONED by 19.2% (bar=0.027429); fno_mf_stack heat 0.09995->0.03827 (-62%), poisson 0.05961->0.03812 (-36%); cycle-003 backlog cleared (recipe_hash on 3 FNO families)",
+  "issue_number": null,
+  "pr_number": null,
+  "score_before": null,
+  "score_after": null,
+  "delta": null,
+  "verdict": "revert",
+  "cost_usd": null,
+  "notes": "[OVERRIDDEN by finalize gate] precheck failed: score_direction. ceo:keep mode=research metric=composite_nRMSE before=0.027729 after=0.022161 delta=-0.005567 delta_pct=-20.08 bar=0.027429 bar_dethroned=true bar_gap_closed_pct=276.8 precheck=false_positive_8th_polarity_5th_empty_detail hypothesis_type=code execution_artifacts=na e2e=pass smoke_test=pass anti_pattern=pass leakage=pass kill_switch_tripped=false agents_spawned=R0,FA,R1.5,Strat,Build,Rev,Eval archivist_spawned=true backlog_cleared=yes branch=experiment/14-fno_mf_stack-capacity-and-recipe-hash commit=0b6e6eb new_banked_best=true bookkeeping_keep_intent_streak=8",
+  "research_citations": []
+}

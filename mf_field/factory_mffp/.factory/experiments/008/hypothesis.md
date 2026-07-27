@@ -1,0 +1,1 @@
+Port MFRNP (HF=2.0, LF=0.25) Poisson loss reweighting + bump basis K=10 to 20 + add _DATASET_RECIPES dispatch on fno_coreg_residual

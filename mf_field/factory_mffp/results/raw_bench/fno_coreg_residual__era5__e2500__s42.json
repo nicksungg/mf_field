@@ -1,0 +1,122 @@
+{
+  "model": "fno_coreg_residual",
+  "dataset": "era5",
+  "splits": {
+    "test_hf": {
+      "nRMSE": 0.09055263748242352,
+      "rel_l2_mean": 0.09044292955694531,
+      "rel_l2_ci95_lo": 0.08697977885140694,
+      "rel_l2_ci95_hi": 0.09436653166241792,
+      "rel_l2_std": 0.005429831787814594,
+      "rel_l2_per_sample": [
+        0.08607183188291062,
+        0.09323108729450727,
+        0.08372499133482719,
+        0.09407795012566834,
+        0.08831000882811435,
+        0.09949974783110369,
+        0.08818488960148571
+      ],
+      "n_samples": 7
+    }
+  },
+  "n_params": 8024286,
+  "train_seconds": 2461.757115840912,
+  "eval_seconds": 2.717590570449829,
+  "latency_ms_per_sample": 388.2272243499756,
+  "peak_mem_mb": 776.615424,
+  "work_grid": [
+    128,
+    256
+  ],
+  "eval_protocol": "full_field_on_working_grid",
+  "best_val_nRMSE": 0.06572747981957124,
+  "device": "cuda",
+  "hf_grid": [
+    128,
+    256
+  ],
+  "native_grids": [
+    [
+      144,
+      192
+    ],
+    [
+      128,
+      256
+    ],
+    [
+      171,
+      256
+    ],
+    [
+      160,
+      256
+    ],
+    [
+      120,
+      180
+    ],
+    [
+      132,
+      156
+    ],
+    [
+      80,
+      96
+    ],
+    [
+      128,
+      256
+    ],
+    [
+      128,
+      256
+    ]
+  ],
+  "modes_per_level": [
+    [
+      12,
+      12
+    ],
+    [
+      12,
+      12
+    ],
+    [
+      12,
+      12
+    ],
+    [
+      12,
+      12
+    ],
+    [
+      12,
+      12
+    ],
+    [
+      12,
+      12
+    ],
+    [
+      12,
+      12
+    ],
+    [
+      12,
+      12
+    ],
+    [
+      12,
+      12
+    ]
+  ],
+  "notes": "H3 hybrid via data_adapters: 9 per-fidelity FNOs (hidden=32, modes=[(12, 12), (12, 12), (12, 12), (12, 12), (12, 12), (12, 12), (12, 12), (12, 12), (12, 12)], blocks=3) + MFRNP decoder-in-the-aggregation (decoder_hidden=32) + continuous-m basis head (K=10, B(m)=MLP([m,m^2]) zero-init) on HF latent; per-fidelity y-scaler, val_frac=0.1, loader=npz_l, native_grids=[(144, 192), (128, 256), (171, 256), (160, 256), (120, 180), (132, 156), (80, 96), (128, 256), (128, 256)], hf_grid=(128, 256) (work cap=256). Geometry via data_adapters.geometry.resolve_grid (1-D as height-1 grid).",
+  "extra_splits": {
+    "test": {
+      "nRMSE": 0.2664168982624014,
+      "n_samples": 1285
+    }
+  }
+}

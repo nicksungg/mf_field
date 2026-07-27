@@ -1,0 +1,47 @@
+{
+  "model": "fno_fire_mcdropout",
+  "dataset": "pm_test",
+  "splits": {
+    "test_hf": {
+      "nRMSE": 0.09077267937566591,
+      "rel_l2_mean": 0.090598598048932,
+      "rel_l2_ci95_lo": 0.08583661841711945,
+      "rel_l2_ci95_hi": 0.09522082507359038,
+      "rel_l2_std": 0.006866375492414218,
+      "rel_l2_per_sample": [
+        0.08551687474248183,
+        0.09454692909951724,
+        0.08555128841570357,
+        0.09566700016954648,
+        0.09263496747977037,
+        0.09977325500356223,
+        0.08049987143194223
+      ],
+      "n_samples": 7
+    }
+  },
+  "n_params": 9482178,
+  "train_seconds": 4272.243535757065,
+  "eval_seconds": 0.20377564430236816,
+  "latency_ms_per_sample": 29.11080632890974,
+  "peak_mem_mb": 578.799104,
+  "work_grid": [
+    128,
+    256
+  ],
+  "eval_protocol": "full_field_on_working_grid",
+  "device": "cuda",
+  "hf_fidelity": 9,
+  "lf_fidelity": 1,
+  "mf_mechanism": "MCdropout_distribution_conditioned_residual_HF=muLF+delta(aug)",
+  "mc_samples": 16,
+  "dropout": 0.1,
+  "aug_channels": [
+    "mu",
+    "sigma",
+    "q10",
+    "q50",
+    "q90"
+  ],
+  "lf_mc_gaussian_nll": 47.30973535815229
+}

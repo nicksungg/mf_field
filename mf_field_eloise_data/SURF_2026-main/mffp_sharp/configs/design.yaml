@@ -1,0 +1,31 @@
+# Tiny LOCAL config for designing/iterating the one-pager figures (not for review).
+# Small n; CH+KS only (Euler needs the box). Production review uses sample.yaml on the box.
+seed: 42
+out_dir: data/design
+n_samples_per_pde: 3
+n_figures: 3
+
+ladder:
+  resolutions: [32, 64, 128]
+  hf_index: 2
+
+metrics: [rel_l2, linf, wasserstein1, interface_position, spectral_band, conservation, ssim]
+
+pdes:
+  cahn_hilliard:
+    role: interface
+    solver: numpy
+    output_time: 5.0
+    sampling:
+      eps_range: [0.012, 0.018]    # sharpest CH still resolved at 128^2 (see ch eps sweep)
+      mobility_range: [0.5, 1.5]
+      mean_composition_range: [-0.1, 0.1]
+      domain_size: 1.0
+
+  kuramoto_sivashinsky:
+    role: smooth_control
+    solver: numpy
+    output_time: 15.0            # tracking window, not chaotic-decorrelated (see explain_ks_chaos.py)
+    sampling:
+      L_range: [22.0, 36.0]
+      ic_amplitude_range: [0.05, 0.2]

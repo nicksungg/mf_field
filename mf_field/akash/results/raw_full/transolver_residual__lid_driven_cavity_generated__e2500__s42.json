@@ -1,0 +1,52 @@
+{
+  "model": "transolver_residual",
+  "dataset": "lid_driven_cavity_generated",
+  "splits": {
+    "test_hf": {
+      "nRMSE": 0.9077412581789701,
+      "rel_l2_mean": 0.9064947391210119,
+      "rel_l2_ci95_lo": 0.8995294574584984,
+      "rel_l2_ci95_hi": 0.913377527299511,
+      "rel_l2_std": 0.011997118522458695,
+      "rel_l2_per_sample": [
+        0.905848211514143,
+        0.9217068362506293,
+        0.9071643958844124,
+        0.8890317071017522,
+        0.9221121840788152,
+        0.9210289258382751,
+        0.8957355308406035,
+        0.895167651824008,
+        0.9081529178256341,
+        0.8989990300518462
+      ],
+      "n_samples": 10
+    }
+  },
+  "n_params": 695873,
+  "train_seconds": 0.0,
+  "eval_seconds": 4.728055715560913,
+  "latency_ms_per_sample": 472.8055715560913,
+  "peak_mem_mb": null,
+  "work_grid": [
+    256,
+    256
+  ],
+  "eval_protocol": "full_field_on_working_grid",
+  "reeval": "unified_HF_test_rel_l2",
+  "note": "inference-only re-eval of saved best.pt; replaces the val-based metric",
+  "device": "cpu",
+  "checkpoint": "/orcd/data/faez/001/nick/mf_field/akash/checkpoints/transolver_residual/lid_driven_cavity_generated/best.pt",
+  "hf_fidelity": 4,
+  "hf_grid_native": [
+    256,
+    256
+  ],
+  "n_lf_context_points": 1024,
+  "n_hf_query_points": 65536,
+  "family_hf_field_shape": [
+    256,
+    256
+  ],
+  "family_hf_is_benchmark_hf": true
+}

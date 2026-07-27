@@ -1,0 +1,26 @@
+{
+  "experiment": "fewshot_hf",
+  "model": "hf_only",
+  "dataset": "fluid",
+  "n_hf": 5,
+  "n_hf_available": 256,
+  "seed": 2,
+  "epochs": 2500,
+  "work_grid": [
+    64,
+    64
+  ],
+  "n_params": 4740289,
+  "train_seconds": 16.544097185134888,
+  "device": "cuda",
+  "splits": {
+    "test_hf": {
+      "nRMSE": 0.289955905133977,
+      "rel_l2_mean": 0.28089328157426335,
+      "rel_l2_ci95_lo": 0.2627545822043481,
+      "rel_l2_ci95_hi": 0.29946935421397836,
+      "rel_l2_std": 0.1505009964327034,
+      "n_samples": 256
+    }
+  }
+}

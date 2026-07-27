@@ -1,0 +1,44 @@
+{
+  "model": "fno_dino_residual",
+  "dataset": "lid_driven_cavity_generated",
+  "splits": {
+    "test_hf": {
+      "nRMSE": 0.024569375564718027,
+      "rel_l2_mean": 0.024639489904875207,
+      "rel_l2_ci95_lo": 0.023407745120493553,
+      "rel_l2_ci95_hi": 0.026035630447126038,
+      "rel_l2_std": 0.0022615211267868742,
+      "rel_l2_per_sample": [
+        0.023390314257973152,
+        0.024167848863642462,
+        0.02241196815674311,
+        0.025915755033536332,
+        0.024130060351389315,
+        0.023458884799915244,
+        0.02381018529242103,
+        0.027680887388222344,
+        0.02226817802108803,
+        0.029160816883821043
+      ],
+      "n_samples": 10
+    }
+  },
+  "n_params": 9537922,
+  "train_seconds": 571.1478979587555,
+  "eval_seconds": 0.050614118576049805,
+  "latency_ms_per_sample": 5.0614118576049805,
+  "peak_mem_mb": 1579.272192,
+  "work_grid": [
+    256,
+    256
+  ],
+  "eval_protocol": "full_field_on_working_grid",
+  "device": "cuda",
+  "hf_fidelity": 4,
+  "lf_fidelity": 1,
+  "mf_mechanism": "DINO_embedding_conditioned_residual_HF=LFpred+delta(x,DINO(LF))",
+  "dino_model": "facebook/dinov2-base",
+  "dino_dim": 768,
+  "fusion": "concat_broadcast",
+  "predict_mode": "residual"
+}

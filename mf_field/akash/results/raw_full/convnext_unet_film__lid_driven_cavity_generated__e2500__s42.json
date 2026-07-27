@@ -1,0 +1,46 @@
+{
+  "model": "convnext_unet_film",
+  "dataset": "lid_driven_cavity_generated",
+  "splits": {
+    "test_hf": {
+      "nRMSE": 0.014161118949304122,
+      "rel_l2_mean": 0.014151615515113482,
+      "rel_l2_ci95_lo": 0.013575730295932438,
+      "rel_l2_ci95_hi": 0.014816743412712014,
+      "rel_l2_std": 0.0010674067553418207,
+      "rel_l2_per_sample": [
+        0.012948981129211739,
+        0.014307009834046976,
+        0.013729669460348782,
+        0.015766590870083263,
+        0.014296163071993684,
+        0.013459332753339824,
+        0.013582126515294557,
+        0.016235972386232936,
+        0.013918609058568942,
+        0.013271700072014109
+      ],
+      "n_samples": 10
+    }
+  },
+  "n_params": 5174897,
+  "train_seconds": 1541.7821667194366,
+  "eval_seconds": 0.027764081954956055,
+  "latency_ms_per_sample": 2.7764081954956055,
+  "peak_mem_mb": 1625.05472,
+  "work_grid": [
+    256,
+    256
+  ],
+  "eval_protocol": "full_field_on_working_grid",
+  "device": "cuda",
+  "hf_fidelity": 4,
+  "lf_fidelity": 1,
+  "mf_mechanism": "transfer_learning_pretrain_LF_finetune_HF",
+  "conditioning": "film_on_X_per_block",
+  "backbone": "convnext_unet_3level",
+  "hf_grid_native": [
+    256,
+    256
+  ]
+}

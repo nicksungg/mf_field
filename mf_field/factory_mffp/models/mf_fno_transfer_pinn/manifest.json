@@ -1,0 +1,7 @@
+{
+  "name": "mf_fno_transfer_pinn",
+  "description": "Physics-informed transfer-learning FNO (FiLM conditioning). Identical to mf_fno_transfer_film (pretrain on LF, fine-tune on HF, FiLM-on-X) except the HF fine-tuning adds a scale-free PDE-operator-matching loss lambda*||L[u_pred]-L[u_hf]||^2 on datasets with a cleanly recoverable elliptic operator: Laplacian for poisson_generated/poisson_local/ifc_poisson, weighted Laplacian div(a grad u) for darcy_generated (a=exp(upsampled 4x4 X). Source-free (at HF points L[u]=-f), so no generator/analytic source needed. lambda=0 on all other datasets (== FiLM-transfer), isolating the physics term. Tests whether physics-operator supervision beats pure data-driven transfer in the scarce-HF regime.",
+  "supports": ["ifc_raw", "npz_l"],
+  "external": false,
+  "paper": "Raissi et al. 2019 PINNs (J. Comput. Phys.) + Lyu et al. 2023 transfer MF-FNO (arXiv:2304.06972). Physics-operator-matching fine-tuning on top of the transfer baseline."
+}

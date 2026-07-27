@@ -1,0 +1,45 @@
+{
+  "model": "transolver_attention_fusion",
+  "dataset": "lid_driven_cavity_generated",
+  "splits": {
+    "test_hf": {
+      "nRMSE": 0.9841171271452205,
+      "rel_l2_mean": 0.983897825838954,
+      "rel_l2_ci95_lo": 0.9828060978855383,
+      "rel_l2_ci95_hi": 0.984971485098179,
+      "rel_l2_std": 0.0018644074310428113,
+      "rel_l2_per_sample": [
+        0.9830256053447678,
+        0.9860580405646365,
+        0.9850226169319778,
+        0.9821830156230739,
+        0.9860547938188374,
+        0.9858408445046287,
+        0.9826786068588443,
+        0.9820325137567758,
+        0.9848835913524129,
+        0.9811986296335856
+      ],
+      "n_samples": 10
+    }
+  },
+  "n_params": 2277313,
+  "train_seconds": 316.3099763393402,
+  "eval_seconds": 0.4042351245880127,
+  "latency_ms_per_sample": 40.42351245880127,
+  "peak_mem_mb": 103.327232,
+  "work_grid": [
+    128,
+    128
+  ],
+  "eval_protocol": "full_field_on_working_grid",
+  "best_val_nRMSE": 0.9786771907057525,
+  "recipe_hash": "b391f8a25996",
+  "device": "cuda:0",
+  "loader": "npz_l",
+  "fids": [
+    1,
+    2,
+    3
+  ]
+}

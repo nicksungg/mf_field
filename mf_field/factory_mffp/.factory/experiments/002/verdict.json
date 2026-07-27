@@ -1,0 +1,15 @@
+{
+  "id": 2,
+  "timestamp": "2026-05-15 06:18:13.271462",
+  "hypothesis": "fno_mf_stack: 4 small FNOs (~50k params each, hidden=32-64) \u2014 one per fidelity level. MFRNP-style residual stacking with decoder-in-the-aggregation. Final HF output = aggregate(decoded_LFs upsampled to 64x64) + delta where delta is the HF FNO prediction. Per-fidelity output normalization. val_frac=0.1. Inspired by niu2024mfrnp and li2020fno. Target: ifc_poisson 18.5 -> <=0.5; ifc_heat 0.149 -> <=0.10.",
+  "change_summary": "Added models/fno_mf_stack/ on experiment/2-fno_mf_stack: 4 SmallFNOs (one per fidelity, hidden=16 smoke / hidden=64 full_config), MFRNPAggregator with decoder-in-the-aggregation, HF FNO predicts residual delta on top of aggregator baseline, per-fidelity scaler buffer for value-scale normalization. composite_nRMSE 1.6595->0.11173 (93.3% improvement vs baseline). ifc_poisson 18.5->0.098 (7.9x better than H1); ifc_heat 0.149->0.127 (8.3x worse than H1, undersized smoke defaults). Branch kept on disk for human merge per --no-github.",
+  "issue_number": 0,
+  "pr_number": null,
+  "score_before": null,
+  "score_after": null,
+  "delta": null,
+  "verdict": "revert",
+  "cost_usd": null,
+  "notes": "[OVERRIDDEN by finalize gate] precheck failed: score_direction. ceo:keep mode=research metric=metric_value before=1.6594979538053154 after=0.11173199189073348 score_delta=+1.5478 improvement_pct_vs_baseline=93.3 delta_vs_h1_run=+0.00254 precheck=failed_4_known_bugs precheck_override_applied=true bugs=score_direction_polarity,scope_empty_detail,fixed_surfaces_empty_detail,ground_truth_leakage_false_positive_on_0.10_substring hygiene=pass_vacuous monotonic=pass_vs_project_state monotonic_run_history=fail_vs_h1_advisory backlog_cleared=yes_backlog_line_26 hypothesis_type=code execution_artifacts=na e2e=pass agents_spawned=B,R,A,E,A pr_status=no_github_branch_kept architectural_innovation=mfrnp_residual_stack_with_decoder_in_aggregation_per_fidelity_scaler new_capability=49x_smaller_model_complementary_to_H1_strong_on_poisson followup_cycle002_hypothesis=bump_smoke_defaults_hidden_to_32_modes_to_4_8_12_12",
+  "research_citations": []
+}

@@ -1,0 +1,48 @@
+{
+  "model": "transolver_attention_fusion",
+  "dataset": "era5",
+  "splits": {
+    "test_hf": {
+      "nRMSE": 0.42735301492694405,
+      "rel_l2_mean": 0.42695392075095423,
+      "rel_l2_ci95_lo": 0.4124251352778669,
+      "rel_l2_ci95_hi": 0.44082736919241555,
+      "rel_l2_std": 0.020930457967107602,
+      "rel_l2_per_sample": [
+        0.4266481471037954,
+        0.4489928843571213,
+        0.44954982405488736,
+        0.4422013788362112,
+        0.4187364177761938,
+        0.40384654602380915,
+        0.3987022471046615
+      ],
+      "n_samples": 7
+    }
+  },
+  "n_params": 2281537,
+  "train_seconds": 5493.128224849701,
+  "eval_seconds": 0.2013232707977295,
+  "latency_ms_per_sample": 28.760467256818497,
+  "peak_mem_mb": 106.180608,
+  "work_grid": [
+    128,
+    256
+  ],
+  "eval_protocol": "full_field_on_working_grid",
+  "best_val_nRMSE": 0.22950270852067145,
+  "recipe_hash": "b391f8a25996",
+  "device": "cuda:0",
+  "loader": "npz_l",
+  "fids": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+  ]
+}

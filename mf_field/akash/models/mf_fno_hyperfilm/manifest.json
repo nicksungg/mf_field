@@ -1,0 +1,9 @@
+{
+  "name": "mf_fno_hyperfilm",
+  "version": "0.1.0",
+  "description": "Meta/hypernetwork-conditioned FiLM-FNO that generalizes the conditioning SOURCE of the benchmark winner mf_fno_transfer_film. Each FNO block FiLMs on [X, c, f] instead of X alone: c is a permutation-invariant DeepSets task-context computed once from the train support set of (X_i, field_summary(Y_i)) pairs and reused for every query (a task-level descriptor, MAML/CAVIA-style), and f is a normalized fidelity scalar (LF stage=0, HF stage=1). Same LF-pretrain -> HF-finetune transfer schedule and identical spectral backbone (common.backbone) as the winner. Flags use_context/use_fidelity zero c and/or f; a --null ablation reduces the model exactly to FiLM-on-X.",
+  "supports": ["ifc_raw", "npz_l"],
+  "smoke_entrypoint": "smoke_eval.py",
+  "frozen": false,
+  "inspired_by": ["perez2018film", "finn2017maml", "zintgraf2019cavia", "herde2024poseidon"]
+}

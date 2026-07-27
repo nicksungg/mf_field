@@ -1,0 +1,15 @@
+{
+  "id": 11,
+  "timestamp": "2026-06-02 08:33:25.550102",
+  "hypothesis": "H1 cycle-008: capacity bump on fno_coregionalization to paper config (K=20, hidden=128, n_blocks=6, modes_cap=16, b_hidden=128)",
+  "change_summary": "Wired models/fno_coregionalization/full_config.json paper values into SMOKE_DEFAULTS via single-file +10/-4 diff on smoke_eval.py. Composite improved -8.81% (0.030408 \u2192 0.027729); heat -16.84% (0.01551 \u2192 0.012898); poisson -20.75% on fno_coregionalization (0.7501 \u2192 0.5945, internal, still 4th). Branch experiment/11-fno_coregionalization-paper-capacity @ 18d83a6 PRESERVED as banked best \u2014 bookkeeping revert only; intent is KEEP.",
+  "issue_number": null,
+  "pr_number": null,
+  "score_before": null,
+  "score_after": null,
+  "delta": null,
+  "verdict": "revert",
+  "cost_usd": null,
+  "notes": "ceo:revert reason=revert_bookkeeping_keep_intent mode=research metric=composite_nRMSE before=0.030408 after=0.027729 delta=-0.002679 delta_pct=-8.81 precheck=failed precheck_bugs=score_direction_polarity,scope_short_sha,fixed_surfaces_short_sha,empty_detail score_direction_real=IMPROVED scope_real=CLEAN fixed_surfaces_real=CLEAN leakage=PASS smoke_test=PASS anti_pattern=PASS bar_target=0.027429 bar_gap_remaining=+0.000300_(+1.09%) heat_kill_switch_threshold=0.0194 heat_actual=0.012898_(clear) hygiene=pass monotonic=pass e2e=pass agents_spawned=FA,R,S,B,Rv,E archivist_spawned=true hypothesis_type=code execution_artifacts=na backlog_cleared=na branch_status=BANKED_BEST_PRESERVED next_baseline=0.027729 operator_action=precheck_overhaul_5th_consecutive_keep_intent_revert",
+  "research_citations": []
+}

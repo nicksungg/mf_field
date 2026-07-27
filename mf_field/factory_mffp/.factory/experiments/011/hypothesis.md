@@ -1,0 +1,1 @@
+H1 (cycle-008): Capacity bump on fno_coregionalization to paper config — wire K=10→20, b_hidden=64→128, n_blocks=4→6, hidden=32→128, modes_cap=12→16 into SMOKE_DEFAULTS only. Constructor repaired in cycle-007 H1 so no model.py edit needed. H2 LF→HF schedule retained. Expected heat 0.01551→~0.013, composite 0.030408→~0.028. Kill-switch: heat > 0.0194.

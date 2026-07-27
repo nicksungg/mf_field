@@ -1,0 +1,77 @@
+{
+  "model": "fno_coreg_residual",
+  "dataset": "lid_driven_cavity_generated",
+  "splits": {
+    "test_hf": {
+      "nRMSE": 0.020621572034769293,
+      "rel_l2_mean": 0.020316730760021162,
+      "rel_l2_ci95_lo": 0.019160365812974207,
+      "rel_l2_ci95_hi": 0.02164325945074029,
+      "rel_l2_std": 0.0021722039296510425,
+      "rel_l2_per_sample": [
+        0.0187719396951821,
+        0.02291853235958593,
+        0.019263357515484178,
+        0.018683236087349463,
+        0.023668270973165397,
+        0.023551173065307785,
+        0.01855116536798235,
+        0.018789958917932816,
+        0.018775685611046155,
+        0.020193988007175444
+      ],
+      "n_samples": 10
+    }
+  },
+  "n_params": 2678712,
+  "train_seconds": 410.62801814079285,
+  "eval_seconds": 0.08382081985473633,
+  "latency_ms_per_sample": 8.382081985473633,
+  "peak_mem_mb": 252.723712,
+  "work_grid": [
+    128,
+    128
+  ],
+  "eval_protocol": "full_field_on_working_grid",
+  "best_val_nRMSE": 0.02681235311804988,
+  "device": "cuda",
+  "hf_grid": [
+    128,
+    128
+  ],
+  "native_grids": [
+    [
+      32,
+      32
+    ],
+    [
+      64,
+      64
+    ],
+    [
+      128,
+      128
+    ]
+  ],
+  "modes_per_level": [
+    [
+      12,
+      12
+    ],
+    [
+      12,
+      12
+    ],
+    [
+      12,
+      12
+    ]
+  ],
+  "notes": "H3 hybrid via data_adapters: 3 per-fidelity FNOs (hidden=32, modes=[(12, 12), (12, 12), (12, 12)], blocks=3) + MFRNP decoder-in-the-aggregation (decoder_hidden=32) + continuous-m basis head (K=10, B(m)=MLP([m,m^2]) zero-init) on HF latent; per-fidelity y-scaler, val_frac=0.1, loader=npz_l, native_grids=[(32, 32), (64, 64), (128, 128)], hf_grid=(128, 128) (work cap=256). Geometry via data_adapters.geometry.resolve_grid (1-D as height-1 grid).",
+  "extra_splits": {
+    "test": {
+      "nRMSE": 0.9260561507647905,
+      "n_samples": 30
+    }
+  }
+}

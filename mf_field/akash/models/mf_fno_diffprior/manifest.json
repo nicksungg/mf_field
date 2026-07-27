@@ -1,0 +1,9 @@
+{
+  "name": "mf_fno_diffprior",
+  "version": "0.1.0",
+  "description": "Latent PDE prior + conditional latent generation (OAT-style). (1) A small PDE-native conv AUTOENCODER trained to reconstruct the abundant LF fields on the 256-cap working grid (learned prior over field shapes); the AE encoder/decoder are EXPORTED to ae.pt and exposed via importable encode()/decode() so a future latent-analysis family can reuse the SAME autoencoder. (2) A COMPACT conditional DDIM denoiser (tiny eps-MLP on [X, z_lf, t-embed], cosine schedule, 10-step DDIM sampling) maps [X, LF-latent] -> HF-latent; a conditional-MLP regressor is the documented fallback. (3) Decode generated z_hf -> HF field. The ifc_raw test split has only HF and is not index-aligned to the few HF-train samples, so at eval we condition on X with a zero z_lf placeholder; K=4 samples give free per-pixel uncertainty (extra.uq_mean_std).",
+  "supports": ["ifc_raw", "npz_l"],
+  "smoke_entrypoint": "smoke_eval.py",
+  "frozen": false,
+  "inspired_by": ["nobari2025oat", "rombach2022ldm", "chung2023dps", "ho2020ddpm"]
+}

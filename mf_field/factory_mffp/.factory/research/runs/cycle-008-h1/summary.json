@@ -1,0 +1,64 @@
+{
+  "status": "PASS",
+  "metric": "composite_nRMSE",
+  "metric_value": 0.027728854219631654,
+  "duration_seconds": 315,
+  "command": "bash scripts/cycle_eval.sh",
+  "branch": "experiment/11-fno_coregionalization-paper-capacity",
+  "parent_commit": "18d83a6",
+  "baseline_metric_value": 0.030407732506238343,
+  "delta": -0.002678878286606689,
+  "delta_pct": -8.80985876226417,
+  "per_family_per_dataset": {
+    "ifc_heat": {
+      "best": {
+        "model": "fno_coregionalization",
+        "nRMSE": 0.012898497199156745
+      },
+      "ranked": [
+        {"model": "fno_coregionalization", "nRMSE": 0.012898497199156745},
+        {"model": "fno_coreg_residual", "nRMSE": 0.026277487241491388},
+        {"model": "mf_fno_transfer_bar", "nRMSE": 0.033174688880908174},
+        {"model": "fno_mf_stack", "nRMSE": 0.09994524146606645},
+        {"model": "transolver_residual", "nRMSE": 0.114558886197434},
+        {"model": "v9_baseline", "nRMSE": 0.14883362423354865},
+        {"model": "transolver_attention_fusion", "nRMSE": 0.1492304004494428}
+      ],
+      "n_runs": 7
+    },
+    "ifc_poisson": {
+      "best": {
+        "model": "fno_mf_stack",
+        "nRMSE": 0.059610770499981265
+      },
+      "ranked": [
+        {"model": "fno_mf_stack", "nRMSE": 0.059610770499981265},
+        {"model": "fno_coreg_residual", "nRMSE": 0.07419190832651051},
+        {"model": "mf_fno_transfer_bar", "nRMSE": 0.08332612635511866},
+        {"model": "transolver_attention_fusion", "nRMSE": 0.38181221789141245},
+        {"model": "fno_coregionalization", "nRMSE": 0.5944766713681287},
+        {"model": "transolver_residual", "nRMSE": 2.5923486631969164},
+        {"model": "v9_baseline", "nRMSE": 18.50343612114542}
+      ],
+      "n_runs": 7
+    }
+  },
+  "fno_coregionalization_status": {
+    "ifc_heat_nRMSE": 0.012898497199156745,
+    "ifc_poisson_nRMSE": 0.5944766713681287,
+    "vs_cycle_008_baseline": "heat: 0.012898 vs 0.01551 (delta=-16.84%); poisson: 0.594477 vs 0.7501 (delta=-20.75%)",
+    "kill_switch_tripped": false,
+    "kill_switch_threshold_heat": 0.0194,
+    "wall_seconds_heat": 169.91304922103882,
+    "wall_seconds_poisson": 144.75340867042542,
+    "cache_status_heat": "miss",
+    "cache_status_poisson": "miss"
+  },
+  "target_met_composite_le_0.0274": false,
+  "bar_gap_closed_pct": 89.93,
+  "above_bar_pct": 1.09,
+  "hypothesis": "H1 paper-config capacity bump",
+  "hypothesis_validated": "largely — composite improved -8.81% (0.030408 → 0.027729), closing ~90% of the +21% bar gap; fno_coregionalization improved on both datasets (heat -16.84%, poisson -20.75%); kill switch clear; bar 0.027429 missed by +1.09%",
+  "cycle": "cycle-008-h1",
+  "parent_baseline_origin": "cycle-008-baseline @ 1249f2d (banked from cycle-007 H1)"
+}

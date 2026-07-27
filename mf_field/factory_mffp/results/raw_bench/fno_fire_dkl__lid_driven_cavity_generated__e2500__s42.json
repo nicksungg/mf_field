@@ -1,0 +1,49 @@
+{
+  "model": "fno_fire_dkl",
+  "dataset": "lid_driven_cavity_generated",
+  "splits": {
+    "test_hf": {
+      "nRMSE": 0.02554429670645509,
+      "rel_l2_mean": 0.025496161873070817,
+      "rel_l2_ci95_lo": 0.024372820366876612,
+      "rel_l2_ci95_hi": 0.026796449660693198,
+      "rel_l2_std": 0.0020753135559215567,
+      "rel_l2_per_sample": [
+        0.023673920342594683,
+        0.026909487852922992,
+        0.023472232644869417,
+        0.025189757186956124,
+        0.02689536273671655,
+        0.02563267950524613,
+        0.024087097533179013,
+        0.025649529905134517,
+        0.023390747345427006,
+        0.030060803677661705
+      ],
+      "n_samples": 10
+    }
+  },
+  "n_params": 9480770,
+  "train_seconds": 2001.3454492092133,
+  "eval_seconds": 0.11371278762817383,
+  "latency_ms_per_sample": 11.371278762817383,
+  "peak_mem_mb": 1520.032256,
+  "work_grid": [
+    256,
+    256
+  ],
+  "eval_protocol": "full_field_on_working_grid",
+  "device": "cuda",
+  "hf_fidelity": 4,
+  "lf_fidelity": 1,
+  "aug_channels": [
+    "mu",
+    "sigma",
+    "q10",
+    "q50",
+    "q90"
+  ],
+  "lf_gaussian_nll": -0.45588759416371544,
+  "mf_mechanism": "deep-kernel-GP distribution-conditioned residual",
+  "uncertainty_source": "deep kernel last-layer GP (Bayesian linear on FNO features)"
+}

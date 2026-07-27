@@ -1,0 +1,66 @@
+{
+  "model": "mf_fno_richardson",
+  "dataset": "lid_driven_cavity_generated",
+  "splits": {
+    "test_hf": {
+      "nRMSE": 0.014118710122303937,
+      "rel_l2_mean": 0.013921031313356253,
+      "rel_l2_ci95_lo": 0.013116313433059256,
+      "rel_l2_ci95_hi": 0.014710317119273238,
+      "rel_l2_std": 0.0013781826658107975,
+      "rel_l2_per_sample": [
+        0.012682991294560918,
+        0.015385179027924077,
+        0.015126661005478569,
+        0.012554382170731756,
+        0.015380218488254742,
+        0.015037241644143245,
+        0.012474574148539948,
+        0.012544435629715894,
+        0.015178005772884834,
+        0.012846623951328538
+      ],
+      "n_samples": 10
+    }
+  },
+  "n_params": 4773697,
+  "train_seconds": 1215.42848610878,
+  "eval_seconds": 0.03616452217102051,
+  "latency_ms_per_sample": 3.616452217102051,
+  "peak_mem_mb": 1155.585536,
+  "work_grid": [
+    256,
+    256
+  ],
+  "eval_protocol": "full_field_on_working_grid",
+  "device": "cuda",
+  "hf_fidelity": 4,
+  "mf_mechanism": "continuous_fidelity_film_on_X_f_pooled_train",
+  "conditioning": "film_on_[X,f]_per_block",
+  "scaler_kind": "global_max_abs_over_pooled_fields",
+  "fids": [
+    1,
+    2,
+    3,
+    4
+  ],
+  "f_by_fid": {
+    "1": 0.0,
+    "2": 0.5,
+    "3": 0.7924812503605781,
+    "4": 1.0
+  },
+  "hf_norm": 1.0,
+  "f_trend": [
+    0.6,
+    0.8,
+    1.0
+  ],
+  "f_super": 1.25,
+  "superfidelity_nRMSE": 0.3060839044301778,
+  "headline_nRMSE": 0.013921031313356244,
+  "hf_grid_native": [
+    256,
+    256
+  ]
+}

@@ -1,0 +1,98 @@
+{
+  "model": "fno_mf_stack",
+  "dataset": "pm_test",
+  "metric_value": 0.23613924202048261,
+  "splits": {
+    "test_hf": {
+      "nRMSE": 0.23613924202048261,
+      "n_samples": 311
+    }
+  },
+  "n_params": 8006698,
+  "train_seconds": 3175.3789522647858,
+  "eval_seconds": 1.0626723766326904,
+  "device": "cuda",
+  "hf_fid_weight": 1.0,
+  "lf_fid_weight": 1.0,
+  "hf_grid": [
+    128,
+    256
+  ],
+  "native_grids": [
+    [
+      144,
+      192
+    ],
+    [
+      128,
+      256
+    ],
+    [
+      171,
+      256
+    ],
+    [
+      160,
+      256
+    ],
+    [
+      120,
+      180
+    ],
+    [
+      132,
+      156
+    ],
+    [
+      80,
+      96
+    ],
+    [
+      128,
+      256
+    ],
+    [
+      128,
+      256
+    ]
+  ],
+  "modes_per_level": [
+    [
+      12,
+      12
+    ],
+    [
+      12,
+      12
+    ],
+    [
+      12,
+      12
+    ],
+    [
+      12,
+      12
+    ],
+    [
+      12,
+      12
+    ],
+    [
+      12,
+      12
+    ],
+    [
+      12,
+      12
+    ],
+    [
+      12,
+      12
+    ],
+    [
+      12,
+      12
+    ]
+  ],
+  "notes": "FNO-MF stack: 9 FNOs at grids [(144, 192), (128, 256), (171, 256), (160, 256), (120, 180), (132, 156), (80, 96), (128, 256), (128, 256)] (hidden=32, modes=[(12, 12), (12, 12), (12, 12), (12, 12), (12, 12), (12, 12), (12, 12), (12, 12), (12, 12)], 3 blocks) + MFRNP aggregator + HF residual; per-fidelity y-scaler; per-fidelity loss weights HF=1.0 LF=1.0. Geometry via data_adapters.geometry.resolve_grid (1-D as height-1 grid); grids capped to working side <= 256 (no-op except era5/pm_test)."
+}

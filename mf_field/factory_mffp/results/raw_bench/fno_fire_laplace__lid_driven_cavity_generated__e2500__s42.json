@@ -1,0 +1,49 @@
+{
+  "model": "fno_fire_laplace",
+  "dataset": "lid_driven_cavity_generated",
+  "splits": {
+    "test_hf": {
+      "nRMSE": 0.0238788427039699,
+      "rel_l2_mean": 0.02386865565579336,
+      "rel_l2_ci95_lo": 0.022921477450036008,
+      "rel_l2_ci95_hi": 0.025059419467937123,
+      "rel_l2_std": 0.001823249010407598,
+      "rel_l2_per_sample": [
+        0.022368587888227418,
+        0.024631873893743956,
+        0.02226135211199464,
+        0.023736715952198527,
+        0.02461920269115557,
+        0.023689296626842923,
+        0.02259947910965058,
+        0.024246673927140156,
+        0.02224787841317926,
+        0.02828549594380056
+      ],
+      "n_samples": 10
+    }
+  },
+  "n_params": 9480770,
+  "train_seconds": 2011.251395225525,
+  "eval_seconds": 0.11592507362365723,
+  "latency_ms_per_sample": 11.592507362365723,
+  "peak_mem_mb": 1520.032256,
+  "work_grid": [
+    256,
+    256
+  ],
+  "eval_protocol": "full_field_on_working_grid",
+  "device": "cuda",
+  "hf_fidelity": 4,
+  "lf_fidelity": 1,
+  "aug_channels": [
+    "mu",
+    "sigma",
+    "q10",
+    "q50",
+    "q90"
+  ],
+  "lf_gaussian_nll": 1.0470673381225883,
+  "mf_mechanism": "last-layer-Laplace distribution-conditioned residual",
+  "uncertainty_source": "last-layer Laplace (Gaussian weight posterior via GGN)"
+}

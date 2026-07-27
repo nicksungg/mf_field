@@ -1,0 +1,9 @@
+{
+  "name": "mf_fno_pdesymbol",
+  "version": "0.1.0",
+  "description": "Transfer-learning MF-FNO (pretrain LF -> fine-tune HF; Lyu 2023) that FiLMs on the concatenation [X, e_pde], where e_pde is a learned PDE-identity embedding (nn.Embedding) indexed by dataset_name. The spectral backbone is the frozen FiLM FNO2d (cond_dim = X_dim + embed_dim), so this is a pure conditioning-SOURCE change. Single-dataset smoke uses one PDE id (a single learned bias vector) to verify plumbing; the designed value is cross-dataset (a shared multi-PDE operator with per-PDE embeddings).",
+  "supports": ["ifc_raw", "npz_l"],
+  "smoke_entrypoint": "smoke_eval.py",
+  "frozen": false,
+  "inspired_by": ["li2020fno", "perez2018film"]
+}

@@ -1,0 +1,49 @@
+{
+  "model": "fno_fire_mdn",
+  "dataset": "lid_driven_cavity_generated",
+  "splits": {
+    "test_hf": {
+      "nRMSE": 0.03513212463635291,
+      "rel_l2_mean": 0.03521237026983358,
+      "rel_l2_ci95_lo": 0.033711872399747794,
+      "rel_l2_ci95_hi": 0.03706925779920299,
+      "rel_l2_std": 0.0029045070120672705,
+      "rel_l2_per_sample": [
+        0.03385147076245021,
+        0.03494224500996161,
+        0.03215323774655038,
+        0.036300004899770935,
+        0.03493279029570644,
+        0.03412620946107325,
+        0.03461973037416502,
+        0.03687748233930913,
+        0.03208636860983628,
+        0.04223416319951254
+      ],
+      "n_samples": 10
+    }
+  },
+  "n_params": 9481290,
+  "train_seconds": 1015.6039962768555,
+  "eval_seconds": 0.06233406066894531,
+  "latency_ms_per_sample": 6.233406066894531,
+  "peak_mem_mb": 1210.16576,
+  "work_grid": [
+    256,
+    256
+  ],
+  "eval_protocol": "full_field_on_working_grid",
+  "device": "cuda",
+  "hf_fidelity": 4,
+  "lf_fidelity": 1,
+  "aug_channels": [
+    "mu",
+    "sigma",
+    "q10",
+    "q50",
+    "q90"
+  ],
+  "lf_gaussian_nll": 1.4629518537304935,
+  "mf_mechanism": "mixture-density distribution-conditioned residual",
+  "uncertainty_source": "mixture density network (3 Gaussians/pixel)"
+}

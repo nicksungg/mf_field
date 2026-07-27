@@ -1,0 +1,24 @@
+{
+  "model": "fno_coregionalization",
+  "dataset": "burgers_generated",
+  "splits": {
+    "test_hf": {
+      "nRMSE": 0.5311739644319199,
+      "n_samples": 100
+    }
+  },
+  "n_params": 109524,
+  "train_seconds": 119.82722926139832,
+  "eval_seconds": 0.3181753158569336,
+  "best_val_nRMSE": 0.04194745526537912,
+  "device": "cuda:0",
+  "hf_grid": [
+    1,
+    256
+  ],
+  "work_grid": [
+    1,
+    256
+  ],
+  "notes": "H1: FNO+IFC coregionalization, K=10, blocks=4, modes=(1,12), hidden=32, hf_grid=(1, 256), work_grid=(1, 256) (cap=256), per-fidelity output normalization (scalers=['0.3633', '0.3637', '0.3607']). Geometry via data_adapters.geometry.resolve_grid (1-D as height-1 grid)."
+}

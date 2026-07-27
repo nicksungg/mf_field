@@ -1,0 +1,36 @@
+{
+  "model": "d_mfd",
+  "dataset": "era5",
+  "splits": {
+    "test_hf": {
+      "nRMSE": 0.4490947936609821,
+      "rel_l2_mean": 0.4490750235450402,
+      "rel_l2_ci95_lo": 0.4431956879557218,
+      "rel_l2_ci95_hi": 0.45373637946534656,
+      "rel_l2_std": 0.007991411671195476,
+      "rel_l2_per_sample": [
+        0.4479951979655953,
+        0.45593209751405833,
+        0.45345343789136566,
+        0.451806102497138,
+        0.44573616010476136,
+        0.45551786143760514,
+        0.4330843074047573
+      ],
+      "n_samples": 7
+    }
+  },
+  "n_params": 7879744,
+  "train_seconds": 9843.897362709045,
+  "eval_seconds": 0.0009839534759521484,
+  "latency_ms_per_sample": 0.14056478227887834,
+  "peak_mem_mb": 671.558656,
+  "work_grid": [
+    128,
+    256
+  ],
+  "eval_protocol": "full_field_on_working_grid",
+  "device": "cuda:0",
+  "hf_fidelity": 9,
+  "lf_fidelity": 1
+}

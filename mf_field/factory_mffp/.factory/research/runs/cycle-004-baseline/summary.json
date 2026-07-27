@@ -1,0 +1,66 @@
+{
+  "status": "PASS",
+  "metric": "composite_nRMSE",
+  "metric_value": 0.04415401368473514,
+  "metric_lower_is_better": true,
+  "per_dataset": {
+    "ifc_heat": {
+      "model": "fno_coreg_residual",
+      "nRMSE": 0.026277487241491388,
+      "best_val_nRMSE": 0.017037216215077557,
+      "train_seconds": 477.690949678421,
+      "n_params": 9120697,
+      "device": "cuda",
+      "_cache": "miss"
+    },
+    "ifc_poisson": {
+      "model": "fno_coreg_residual",
+      "nRMSE": 0.07419190832651051,
+      "best_val_nRMSE": 0.022949831037915314,
+      "train_seconds": 149.1732885837555,
+      "n_params": 9121209,
+      "device": "cuda",
+      "_cache": "miss"
+    }
+  },
+  "duration_seconds": 1630,
+  "command": "bash scripts/cycle_eval.sh",
+  "branch": "experiment/4-fno_coreg_residual",
+  "commit": "0c46f43",
+  "code_hash": "d1967ad6e54c",
+  "clean_from_scratch_baseline": true,
+  "slurm_job": 13976504,
+  "slurm_partition": "mit_preemptable",
+  "gpu": "L40S",
+  "comparison": {
+    "reported_cycle002_H3_composite": 0.04420,
+    "clean_cycle004_baseline_composite": 0.04415401368473514,
+    "delta_vs_reported": -0.00005,
+    "delta_pct": -0.1,
+    "contamination_hypothesis": "REFUTED — clean from-scratch run reproduces reported cycle-002 H3 composite to within 0.1%, indicating cycle-002 H3's reported number (0.04420) is valid project-best despite the suspect train_seconds=25.0 logged value. The contamination concern raised in cycle-003 was a non-issue for the cycle-002 H3 baseline.",
+    "paper_geomean_target": 0.0516,
+    "ifc_heat_paper_bar": 0.074,
+    "ifc_poisson_paper_bar": 0.036,
+    "ifc_heat_vs_paper": "BEATS by 2.82x (0.0263 vs 0.074)",
+    "ifc_poisson_vs_paper": "1.66x over paper (0.0742 vs 0.036) — UNBEATEN",
+    "cycle003_H1_composite": 0.08472,
+    "cycle003_H1_was_REVERTED": true,
+    "cycle002_H4_poisson_best": 0.05961
+  },
+  "training_evidence": {
+    "ifc_heat_device": "cuda",
+    "ifc_heat_train_seconds": 477.690949678421,
+    "ifc_poisson_device": "cuda",
+    "ifc_poisson_train_seconds": 149.1732885837555,
+    "ifc_heat_train_seconds_gt_200": true,
+    "ifc_poisson_train_seconds_gt_100": true,
+    "both_device_cuda": true,
+    "both_cache_miss": true,
+    "training_actually_ran_clean": true,
+    "note_on_poisson_149s": "Poisson trained for 149s vs Heat's 477s — 3.2x faster on the same model. May reflect dataset shape differences (fewer effective LF batches per epoch or smaller train split) rather than contamination. Both datasets ran cache=miss with cuda device — no resume was possible since checkpoints/fno_coreg_residual/ was emptied prior to the run. The cycle-003 H1 Poisson took 549s under the (2.0, 0.25) loss-weighting recipe; the 3.7x gap to the 149s here is consistent with the recipe changing the gradient/step compute profile, not with contamination."
+  },
+  "interpretation": "The cycle-004 BASELINE is established at composite_nRMSE = 0.04415, essentially identical to the cycle-002 H3 reported number (0.04420, delta 0.1%). The contamination concern from cycle-003's retrospective is REFUTED — cycle-002 H3 was a valid project-best. The cycle-004 bar to beat is therefore 0.04415 (or equivalently, the rounded 0.0442). Per-dataset bars: ifc_heat already beats paper by 2.82x (no upside expected from cycle-004 improvements there); ifc_poisson remains at 0.0742, 1.66x worse than paper bar 0.036 and worse than cycle-002 H4's 0.0596 on the simpler fno_mf_stack backbone. The dominant cycle-004 failure mode is ifc_poisson on the fno_coreg_residual backbone — same as cycle-003 H1 entry, but cycle-003 H1 tried a static (2.0, 0.25) recipe and was refuted. Cycle-003 close-out pre-registered two cycle-004 directions: (a) adaptive loss-weighting (GradNorm-lite, uncertainty-weighted, PCGrad); (b) gentler static asymmetry (e.g. 1.5, 0.5) tuned per backbone. A third option is architectural: per-dataset capacity / modes override or basis-head calibration probe.",
+  "smoke_latest_json": "results/smoke_latest.json",
+  "stdout_log": ".factory/research/runs/cycle-004-baseline/stdout.log",
+  "stderr_log": ".factory/research/runs/cycle-004-baseline/stderr.log"
+}

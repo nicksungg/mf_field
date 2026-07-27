@@ -1,0 +1,50 @@
+{
+  "model": "dg_transfer",
+  "dataset": "pm_test",
+  "splits": {
+    "test_hf": {
+      "nRMSE": 0.09834798052136272,
+      "rel_l2_mean": 0.09781257302486616,
+      "rel_l2_ci95_lo": 0.09045517111153183,
+      "rel_l2_ci95_hi": 0.10583189863870746,
+      "rel_l2_std": 0.011142064473724688,
+      "rel_l2_per_sample": [
+        0.08639813228561063,
+        0.08834921789158344,
+        0.08780507783845562,
+        0.09380134748990422,
+        0.10808134174942347,
+        0.11032465490110048,
+        0.1099282390179853
+      ],
+      "n_samples": 7
+    }
+  },
+  "n_params": 8346500,
+  "train_seconds": 15663.631011486053,
+  "eval_seconds": 0.08205246925354004,
+  "latency_ms_per_sample": 11.72178132193429,
+  "peak_mem_mb": 695.18336,
+  "work_grid": [
+    128,
+    256
+  ],
+  "eval_protocol": "full_field_on_working_grid",
+  "device": "cuda",
+  "hf_fidelity": 9,
+  "lf_fidelity": 1,
+  "mf_mechanism": "transfer_LFpretrain_HFfinetune + discrepancy-gated FiLM (A,B)",
+  "ensemble_size": 3,
+  "lf_hidden": 32,
+  "gates": [
+    "A",
+    "B"
+  ],
+  "aug_channels": [
+    "mu",
+    "sigma",
+    "q10",
+    "q50",
+    "q90"
+  ]
+}

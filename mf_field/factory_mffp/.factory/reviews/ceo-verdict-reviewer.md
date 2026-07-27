@@ -1,0 +1,25 @@
+# CEO Review: Reviewer Agent — Cycle-009 H1+H2 (Experiment 14)
+
+- **Verdict:** PROCEED (ratify Reviewer PASS)
+- **Rationale:**
+  - **Reviewer ran `factory guard --baseline 18d83a6 --check-scope --check-surfaces`** and correctly identified the short-SHA vs full-SHA string-equality false positive. Manually verified `git merge-base HEAD 18d83a6` returns `18d83a6190d342e0156a2c2547dcf2b2b998d782` which IS the baseline. PASS override accepted.
+  - **Every gate enumerated and passed substantively**:
+    - eval_immutable: PASS (no fixed surfaces touched)
+    - git_clean: PASS (HEAD at 0b6e6eb, +1 commit over baseline)
+    - experiment_branch: PASS (name matches `experiment/14-...`)
+    - scope: PASS (all 5 files in `models/**`)
+    - Per-file verification of all 7 sub-items on `fno_mf_stack/smoke_eval.py` PASS (including loss-weight NK3 compliance at lines 53-54, 149)
+    - All 7 Sacred Rules: PASS (substantively addressed, not rubber-stamped)
+  - **Code-review notes** are sharp and non-trivial:
+    - Sysmpath shim is benign in production (insert order after HERE prevents collision risk).
+    - The 3-patch-site refactor preserves family-specific resume preconditions via `and`-chain (vs. predicate-replacement, which would have been a subtle correctness regression).
+    - Recipe-hash invalidation is correctly identified as deliberate (acdb1c11caa7 is NEW post-bump).
+  - **Operator backlog flags raised**: (1) `factory guard` short-vs-long SHA string-equality false positive in `--baseline` rooting check (NEW this cycle); (2) leakage substring-collision continues 7th-consecutive cycle. Both flagged for cycle-009 close-out operator backlog.
+  - **Not rubber-stamped**: review is multi-paragraph, file-by-file, sub-item-numbered, and includes a stylistic divergence note (the `[recipe] hash=` print appearing on separate-line vs same-line as `[device]`) that's correctly judged not-blocking.
+- **Issues found:** none — Reviewer's PASS verdict matches CEO's pre-Reviewer assessment. Both operator-backlog flags are additive value, not blockers.
+- **Instructions for next step (Evaluator)**:
+  - Run `cycle_eval.sh` on the experiment/14 branch HEAD `0b6e6eb`.
+  - The expected behavior: `fno_mf_stack` recipe_hash changed (acdb1c11caa7 NEW) so any cycle-008-era cache MUST be invalidated. `fno_coregionalization` cache (5011def485a6) is unchanged → expect cache hit on its 2 cells. `fno_coreg_residual` cache (1cc35377b46d) unchanged → expect cache hit on its 2 cells. Other families (mf_fno_transfer_bar, transolver_residual, transolver_attention_fusion, v9_baseline) untouched → expect cache hits.
+  - Net: expect ~4-8 min wall (only `fno_mf_stack × {heat, poisson}` retrain at bumped capacity, ~2-4 min each on H100; everything else cache-hit).
+  - Compare composite against baseline 0.027729 (cycle-008 H1) and parallel-bench bar 0.027429.
+  - Report per-dataset best models and the new `fno_mf_stack` per-dataset nRMSE for the kill-switch check (`ifc_poisson > 0.0594` OR wall > 25 min → REVERT).

@@ -1,0 +1,36 @@
+{
+  "model": "transolver_residual",
+  "dataset": "era5",
+  "splits": {
+    "test_hf": {
+      "nRMSE": 0.263761424619778,
+      "rel_l2_mean": 0.2636254222970819,
+      "rel_l2_ci95_lo": 0.2585736544660143,
+      "rel_l2_ci95_hi": 0.2696646172038565,
+      "rel_l2_std": 0.00829523067502737,
+      "rel_l2_per_sample": [
+        0.27775286812998534,
+        0.2569160887921556,
+        0.26040721933128735,
+        0.2604253202611583,
+        0.2731535045900595,
+        0.25921738764659386,
+        0.25750556732833346
+      ],
+      "n_samples": 7
+    }
+  },
+  "n_params": 700097,
+  "train_seconds": 3301.4602880477905,
+  "eval_seconds": 0.08733010292053223,
+  "latency_ms_per_sample": 12.475728988647461,
+  "peak_mem_mb": 184.106496,
+  "work_grid": [
+    128,
+    256
+  ],
+  "eval_protocol": "full_field_on_working_grid",
+  "best_val_nRMSE": 0.22911870093729533,
+  "recipe_hash": "5cd4cf93b75f",
+  "device": "cuda:0"
+}

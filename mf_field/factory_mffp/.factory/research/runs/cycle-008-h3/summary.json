@@ -1,0 +1,113 @@
+{
+  "status": "PASS",
+  "metric": "composite_nRMSE",
+  "metric_value": 0.030407732506238343,
+  "duration_seconds": 71,
+  "command": "bash scripts/cycle_eval.sh",
+  "branch": "experiment/13-fno_coreg_residual-three-stage",
+  "parent_commit": "420a51c",
+  "baseline_metric_value": 0.030407732506238343,
+  "previous_best": 0.027728854219631654,
+  "delta_vs_baseline": 0.0,
+  "delta_pct_vs_baseline": 0.0,
+  "delta_vs_previous_best": 0.002678878286606689,
+  "delta_pct_vs_previous_best": 9.660977209473298,
+  "per_family_per_dataset": {
+    "ifc_heat": {
+      "best": {
+        "model": "fno_coregionalization",
+        "nRMSE": 0.01551112640242143
+      },
+      "ranked": [
+        {"model": "fno_coregionalization", "nRMSE": 0.01551112640242143},
+        {"model": "mf_fno_transfer_bar", "nRMSE": 0.033174688880908174},
+        {"model": "fno_mf_stack", "nRMSE": 0.09994524146606645},
+        {"model": "transolver_residual", "nRMSE": 0.114558886197434},
+        {"model": "v9_baseline", "nRMSE": 0.14883362423354865},
+        {"model": "transolver_attention_fusion", "nRMSE": 0.1492304004494428},
+        {"model": "fno_coreg_residual", "nRMSE": 0.509105074500434}
+      ],
+      "n_runs": 7,
+      "note": "fno_coreg_conditioned not present this run (cache fell out / not retrained); see cycle-008-h2 leaderboard for that entry"
+    },
+    "ifc_poisson": {
+      "best": {
+        "model": "fno_mf_stack",
+        "nRMSE": 0.059610770499981265
+      },
+      "ranked": [
+        {"model": "fno_mf_stack", "nRMSE": 0.059610770499981265},
+        {"model": "mf_fno_transfer_bar", "nRMSE": 0.08332612635511866},
+        {"model": "fno_coreg_residual", "nRMSE": 0.15936368490302597},
+        {"model": "transolver_attention_fusion", "nRMSE": 0.38181221789141245},
+        {"model": "fno_coregionalization", "nRMSE": 0.7501491695056993},
+        {"model": "transolver_residual", "nRMSE": 2.5923486631969164},
+        {"model": "v9_baseline", "nRMSE": 18.50343612114542}
+      ],
+      "n_runs": 7,
+      "note": "fno_coreg_conditioned not present this run"
+    }
+  },
+  "fno_coreg_residual_status": {
+    "ifc_heat_nRMSE": 0.509105074500434,
+    "ifc_poisson_nRMSE": 0.15936368490302597,
+    "ifc_heat_best_val_nRMSE": 0.042762876943228965,
+    "ifc_poisson_best_val_nRMSE": 0.022184592222261,
+    "ifc_heat_train_seconds": 21.238759517669678,
+    "ifc_poisson_train_seconds": 18.916222095489502,
+    "ifc_heat_wall_seconds": 27.1955668926239,
+    "ifc_poisson_wall_seconds": 23.516666650772095,
+    "total_wall_seconds_h3_family": 50.71223354339599,
+    "cache_status_heat": "miss",
+    "cache_status_poisson": "miss",
+    "n_params_heat": 9120697,
+    "n_params_poisson": 9121209,
+    "recipe_hash": "148a2641b07fe5da",
+    "stage_strides": [0.25, 0.5, 0.25],
+    "n_s1": 50,
+    "n_s2": 100,
+    "n_s3": 50,
+    "vs_cycle_008_baseline_heat": "0.509105 vs 0.026277 (delta=+1837.4% — catastrophic regression)",
+    "vs_cycle_008_baseline_poisson": "0.159364 vs 0.074192 (delta=+114.8% regression)",
+    "vs_cycle_008_h1_banked_heat": "0.509105 vs 0.026277 (delta=+1837.4%)",
+    "vs_cycle_008_h1_banked_poisson": "0.159364 vs 0.074192 (delta=+114.8%)",
+    "vs_cycle_005_h2_paper_recipe_poisson": "0.159364 vs 0.074192 (delta=+114.8%)"
+  },
+  "h3_kill_switch_check": {
+    "universal_heat_kill_switch": {
+      "ifc_heat_nRMSE": 0.509105074500434,
+      "threshold": 0.0194,
+      "tripped": true,
+      "ratio_over_threshold": 26.24252961342443,
+      "note": "TRIPPED HARD — 26× over universal kill-switch threshold"
+    },
+    "stage3_vs_stage2_heat_ratio": {
+      "stage2_final_hf_test_nrmse": 0.509105074500434,
+      "stage3_final_ifc_heat_nrmse": 0.509105074500434,
+      "ratio": 1.0,
+      "kill_threshold": 1.25,
+      "passed": true,
+      "note": "Stage 3 did NOT make heat worse than Stage 2 — but both stages already produced a catastrophic 0.509 on heat. Stage 3 was a no-op on heat."
+    },
+    "stage3_vs_stage2_poisson_ratio": {
+      "stage2_final_hf_test_nrmse": 0.5508162068896968,
+      "stage3_final_ifc_poisson_nrmse": 0.15936368490302597,
+      "ratio": 0.2893164302601961,
+      "note": "Stage 3 improved poisson 3.46× over Stage 2 — Stage 3 is helping on poisson but the absolute level (0.159) is still 2.15× the paper-recipe baseline (0.074)."
+    },
+    "poisson_builder_expected_range": [0.05, 0.06],
+    "poisson_in_expected_range": false,
+    "poisson_observed_vs_expected_upper": 2.656,
+    "wall_kill_switch_seconds": 1500,
+    "wall_observed_seconds": 50.71223354339599,
+    "wall_kill_switch_tripped": false
+  },
+  "hypothesis": "H3: three-stage curriculum for fno_coreg_residual (S1 LF-pretrain basis-frozen, S2 HF-residual LF+basis-frozen, S3 unfreeze-all) improves composite vs single-stage baseline",
+  "hypothesis_validated": "NO. Composite_nRMSE is identical to baseline at 0.030408 (0.00% delta), and +9.66% worse than the cycle-008-H1 banked best 0.027729. The fno_coreg_residual family itself regressed catastrophically: heat went 0.026277 → 0.509105 (+1837%), poisson 0.074192 → 0.159364 (+115%). Universal heat kill-switch TRIPPED (0.509 vs 0.0194, 26× over). The H3-specific Stage3/Stage2 heat-ratio kill-switch did NOT trip (ratio 1.0) only because Stage 2 already produced 0.509 on heat — i.e. the curriculum collapsed before Stage 3 even ran. Stage 3 did help on poisson (3.46× improvement over Stage 2 end) but the absolute level remains 2.15× the paper-recipe baseline. Composite is flat only because fno_coreg_residual is not best on either dataset, so its catastrophic regression never enters the composite reduction.",
+  "recommendation": "REVERT",
+  "recommendation_reason": "H3 makes things strictly worse than H1 banked best on the family of interest: heat regressed ~19× (0.026→0.509, tripping the universal kill-switch by a factor of 26), poisson regressed ~2.15× (0.074→0.159). Composite was unchanged purely by leaderboard accident (this family isn't best on either dataset, so it doesn't enter the geomean). The three-stage curriculum is broken for fno_coreg_residual on this branch — the heat path collapses by end of Stage 2 (stage2_final_hf_test_nrmse=0.509, identical to final). best_val_nRMSE on heat was 0.043 and on poisson 0.022, suggesting the model could fit well at some training point but the final-state evaluation is far worse — likely the eval is using the last-state model rather than best-val checkpoint, or there is severe late-stage divergence (especially in Stage 3 unfreeze-all on heat, though heat shows no Stage 3 movement so the damage is in Stage 1/2). REVERT cycle-008 H3 (commit 420a51c) and re-bank cycle-008 H1 at 0.027729 as the current best.",
+  "cycle": "cycle-008-h3",
+  "parent_baseline_origin": "cycle-008-baseline @ 1249f2d (composite 0.030408)",
+  "previous_best_origin": "cycle-008-h1 @ exp 11 banked composite 0.027729",
+  "notes": "cycle_eval.sh ran in 71 s wall. Cache hit on every family except fno_coreg_residual (recipe_hash=148a2641b07fe5da is new — guard rejected stale ckpt as expected). Both ifc_heat and ifc_poisson were retrained from scratch by the H3 three-stage recipe. Total H3 family training wall = 50.7 s on this H100 — well under the 6 min Builder projection and well under the 1500 s wall kill-switch. fno_coreg_conditioned (cycle-008-H2 family) absent from this run's leaderboard because its cache fell out and the family was not retrained — score.py only retrains families whose recipe_hash is dirty. Leaderboard heat/poisson n_runs went 8→7 vs cycle-008-h2, but composite unchanged."
+}

@@ -1,0 +1,53 @@
+{
+  "model": "dg_transfer",
+  "dataset": "lid_driven_cavity_generated",
+  "splits": {
+    "test_hf": {
+      "nRMSE": 0.04361726584257303,
+      "rel_l2_mean": 0.04354362014535224,
+      "rel_l2_ci95_lo": 0.040757430133509395,
+      "rel_l2_ci95_hi": 0.048003614876818,
+      "rel_l2_std": 0.0067549317668773095,
+      "rel_l2_per_sample": [
+        0.03987710945380837,
+        0.042385370743708246,
+        0.040198453060080346,
+        0.04295356936841499,
+        0.04232686539512565,
+        0.040646883579810035,
+        0.03983897851089666,
+        0.04442811691595135,
+        0.04050888912851212,
+        0.062271965297214626
+      ],
+      "n_samples": 10
+    }
+  },
+  "n_params": 8342628,
+  "train_seconds": 1314.0358850955963,
+  "eval_seconds": 0.19516730308532715,
+  "latency_ms_per_sample": 19.516730308532715,
+  "peak_mem_mb": 1604.363776,
+  "work_grid": [
+    256,
+    256
+  ],
+  "eval_protocol": "full_field_on_working_grid",
+  "device": "cuda",
+  "hf_fidelity": 4,
+  "lf_fidelity": 1,
+  "mf_mechanism": "transfer_LFpretrain_HFfinetune + discrepancy-gated FiLM (A,B)",
+  "ensemble_size": 3,
+  "lf_hidden": 32,
+  "gates": [
+    "A",
+    "B"
+  ],
+  "aug_channels": [
+    "mu",
+    "sigma",
+    "q10",
+    "q50",
+    "q90"
+  ]
+}

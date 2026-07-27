@@ -1,0 +1,49 @@
+{
+  "model": "fno_fire_swag",
+  "dataset": "lid_driven_cavity_generated",
+  "splits": {
+    "test_hf": {
+      "nRMSE": 0.02289061783168342,
+      "rel_l2_mean": 0.022877402813458694,
+      "rel_l2_ci95_lo": 0.02198932737059408,
+      "rel_l2_ci95_hi": 0.023969710654927593,
+      "rel_l2_std": 0.001690448779332656,
+      "rel_l2_per_sample": [
+        0.02147741261721686,
+        0.02363013790210001,
+        0.021194094431651544,
+        0.02270166218890806,
+        0.02371574901253029,
+        0.022805142850454055,
+        0.021780442944194487,
+        0.02312671980384844,
+        0.021432216388484006,
+        0.026910449995199214
+      ],
+      "n_samples": 10
+    }
+  },
+  "n_params": 9480770,
+  "train_seconds": 579.0167469978333,
+  "eval_seconds": 0.3623347282409668,
+  "latency_ms_per_sample": 36.23347282409668,
+  "peak_mem_mb": 1421.098496,
+  "work_grid": [
+    256,
+    256
+  ],
+  "eval_protocol": "full_field_on_working_grid",
+  "device": "cuda",
+  "hf_fidelity": 4,
+  "lf_fidelity": 1,
+  "aug_channels": [
+    "mu",
+    "sigma",
+    "q10",
+    "q50",
+    "q90"
+  ],
+  "lf_gaussian_nll": 4.684003208276236,
+  "mf_mechanism": "SWAG distribution-conditioned residual",
+  "uncertainty_source": "SWAG (diagonal Gaussian over SGD-tail weights, 10 samples)"
+}

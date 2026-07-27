@@ -1,0 +1,55 @@
+{
+  "model": "mf_fno_lora",
+  "dataset": "lid_driven_cavity_generated",
+  "splits": {
+    "test_hf": {
+      "nRMSE": 0.21269852651233304,
+      "rel_l2_mean": 0.21368067688879208,
+      "rel_l2_ci95_lo": 0.20543989914638822,
+      "rel_l2_ci95_hi": 0.22288458537950162,
+      "rel_l2_std": 0.014865316160004607,
+      "rel_l2_per_sample": [
+        0.21363470712122548,
+        0.202469688603755,
+        0.20037509742865453,
+        0.2271543629933967,
+        0.2025115719069845,
+        0.20003651075362672,
+        0.2179763695198745,
+        0.23002967371879332,
+        0.20141615201484683,
+        0.24120263482676313
+      ],
+      "n_samples": 10
+    }
+  },
+  "n_params": 4780637,
+  "train_seconds": 570.0132572650909,
+  "eval_seconds": 0.012177705764770508,
+  "latency_ms_per_sample": 1.2177705764770508,
+  "peak_mem_mb": 1155.517952,
+  "work_grid": [
+    256,
+    256
+  ],
+  "eval_protocol": "full_field_on_working_grid",
+  "device": "cuda",
+  "hf_fidelity": 4,
+  "lf_fidelity": 1,
+  "mf_mechanism": "transfer_LF_pretrain_HF_finetune_LoRA_adapters",
+  "conditioning": "film_on_X_per_block",
+  "rank": 4,
+  "adapt_film": true,
+  "adapter_params": 7196,
+  "adapter_norm": 11.033804971084756,
+  "backbone_params": 4773441,
+  "pct_params_trained": 0.15052387370134984,
+  "hf_nrmse_pre_finetune": 5.204069436496435,
+  "hf_nrmse_post_finetune": 0.21269852651233304,
+  "finetune_improved_hf": true,
+  "cond_dim": 1,
+  "hf_grid_native": [
+    256,
+    256
+  ]
+}

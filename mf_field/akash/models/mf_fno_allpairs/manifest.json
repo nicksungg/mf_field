@@ -1,0 +1,9 @@
+{
+  "name": "mf_fno_allpairs",
+  "version": "0.1.0",
+  "description": "All-pairs fidelity FiLM-FNO (POSEIDON all2all recast onto a fidelity ladder). ONE FNO is trained over EVERY ordered fidelity pair (src<tgt): input is the sample's condition vector X and the target is that sample's field at the tgt fidelity resampled to the common working grid, FiLM-conditioned on [X, f_src, f_tgt] (normalized fidelity scalars, cond_dim=d+2). All-pairs training amplifies the data O(L^2) and teaches the cross-fidelity trend; a short LF->HF finetune sharpens the eval query. Eval queries (f_src=lf_norm, f_tgt=hf_norm) to predict HF. Identical spectral backbone (common.backbone) as the benchmark winner.",
+  "supports": ["ifc_raw", "npz_l"],
+  "smoke_entrypoint": "smoke_eval.py",
+  "frozen": false,
+  "inspired_by": ["herde2024poseidon", "perez2018film"]
+}

@@ -1,0 +1,46 @@
+{
+  "model": "fno_fire_iqn",
+  "dataset": "pm_test",
+  "splits": {
+    "test_hf": {
+      "nRMSE": 0.0606594789650708,
+      "rel_l2_mean": 0.06019415212401038,
+      "rel_l2_ci95_lo": 0.05467258075136424,
+      "rel_l2_ci95_hi": 0.0661895779180794,
+      "rel_l2_std": 0.008461953629350523,
+      "rel_l2_per_sample": [
+        0.050098036381406995,
+        0.05661843393464465,
+        0.05030608288944621,
+        0.06453058912944669,
+        0.06286272918535973,
+        0.07367633309945769,
+        0.06326686024831067
+      ],
+      "n_samples": 7
+    }
+  },
+  "n_params": 9482242,
+  "train_seconds": 4740.560636758804,
+  "eval_seconds": 0.05195498466491699,
+  "latency_ms_per_sample": 7.4221406664167136,
+  "peak_mem_mb": 593.34912,
+  "work_grid": [
+    128,
+    256
+  ],
+  "eval_protocol": "full_field_on_working_grid",
+  "device": "cuda",
+  "hf_fidelity": 9,
+  "lf_fidelity": 1,
+  "aug_channels": [
+    "mu",
+    "sigma",
+    "q10",
+    "q50",
+    "q90"
+  ],
+  "lf_gaussian_nll": 3.7353716537213932,
+  "mf_mechanism": "implicit-quantile distribution-conditioned residual",
+  "uncertainty_source": "implicit quantile network (tau-conditioned)"
+}
