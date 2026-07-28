@@ -1,4 +1,8 @@
-"""Wire the 43-dataset benchmark into the factory harness (idempotent).
+"""Wire the 42-dataset benchmark into the factory harness (idempotent).
+
+Datasets are read from `<root>/benchmark_42/{core,ext,sharp}/<name>/`, indexed by
+`benchmark_42/MANIFEST.csv`. Root is derived from this file's location, or taken
+from $MFFP_ROOT.
 
 1. Collision-safe symlinks into factory_mffp/data/:
      core   -> <name>            (unchanged; already present, unique names)
@@ -17,28 +21,29 @@ import json
 import math
 from pathlib import Path
 
-ROOT = Path("/orcd/data/faez/001/nick")
+import os
+
+# Repo root, derived from this file's location so the script works under any
+# checkout path: <root>/mf_field/akash/eval/wire_datasets.py -> parents[3].
+# MFFP_ROOT overrides it if set.
+ROOT = Path(os.environ.get("MFFP_ROOT") or Path(__file__).resolve().parents[3])
 MF = ROOT / "mf_field"
 FACTORY = MF / "factory_mffp"
 DATA = FACTORY / "data"
-MANIFEST = ROOT / "mffp_bench_combined.csv"
+
+# All 42 datasets ship as one benchmark_42/ package, split by collection.
+BENCH = ROOT / "benchmark_42"
+MANIFEST = BENCH / "MANIFEST.csv"
 
 
 def real_dir(coll, name):
-    if coll == "core":
-        c = DATA / name
-        return c if c.exists() else (MF / name if (MF / name).exists() else None)
-    if coll == "ext":
-        b = ROOT / "mf_field_extension_data/data_400_100"
-        for c in (b / f"{name}_generated", b / name):
-            if c.exists():
-                return c
-    else:
-        b = MF / "sharp_generated"
-        for c in (b / f"{name}_generated", b / name, b / f"{name.replace('_2d','')}_generated"):
-            if c.exists():
-                return c
-    return None
+    """benchmark_42/<collection>/<dataset>/, or None if absent.
+
+    ext and sharp both contain helmholtz_2d and kuramoto_sivashinsky_1d as
+    different datasets, so the collection directory is what disambiguates them.
+    """
+    c = BENCH / coll / name
+    return c if c.is_dir() else None
 
 
 def safe_name(coll, name):
@@ -60,6 +65,8 @@ def main():
     extra = {}
     names = []
     missing = []
+    relinked = []
+    conflicts = []
     for r in rows:
         coll, name = r["collection"], r["dataset"]
         d = real_dir(coll, name)
@@ -68,8 +75,22 @@ def main():
         sn = safe_name(coll, name)
         names.append(sn)
         link = DATA / sn
-        if not link.exists():
-            link.symlink_to(d)
+        # Relative target, so the checked-in symlinks stay valid in any checkout
+        # (they are tracked in git; absolute paths would pin them to one machine).
+        rel = Path(os.path.relpath(d, DATA))
+        # Repoint existing symlinks: a link left over from an earlier layout may
+        # be stale or dangling, and Path.exists() follows the link, so a broken
+        # one reads as absent and symlink_to() would then raise FileExistsError.
+        if link.is_symlink():
+            if link.readlink() != rel:
+                link.unlink()
+                link.symlink_to(rel)
+                relinked.append(sn)
+        elif link.exists():
+            # a real directory, not a link -- never clobber it
+            conflicts.append(sn)
+        else:
+            link.symlink_to(rel)
         # extra grids for ext/sharp (core already in KNOWN_GRIDS / square-safe)
         if coll != "core" and (d / "meta.json").exists():
             extra[sn] = grids_from_meta(d)
@@ -112,7 +133,15 @@ _load_extra_grids()
     # 5) dataset list
     (MF / "akash/eval/bench_datasets.txt").write_text("\n".join(names) + "\n")
 
-    print(f"\nwired {len(names)} datasets ({len(extra)} ext/sharp grid entries). missing: {missing or 'none'}")
+    print(f"\nwired {len(names)} datasets ({len(extra)} ext/sharp grid entries)")
+    print(f"  root      : {ROOT}")
+    print(f"  datasets  : {BENCH}")
+    if relinked:
+        print(f"  repointed : {len(relinked)} stale symlink(s) -> {', '.join(relinked[:6])}"
+              + (" ..." if len(relinked) > 6 else ""))
+    if conflicts:
+        print(f"  SKIPPED   : {len(conflicts)} real dir(s) in data/, not replaced: {', '.join(conflicts)}")
+    print(f"  missing   : {missing or 'none'}")
     print("dataset list -> akash/eval/bench_datasets.txt")
 
 
