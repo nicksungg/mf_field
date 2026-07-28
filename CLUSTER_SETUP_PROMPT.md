@@ -99,20 +99,22 @@ Never flatten the collections into one namespace.
 
 ## Step 5 — Wire the datasets into the factory
 
-`mf_field/akash/eval/wire_datasets.py` is the wiring script — read it first.
-It creates collision-safe symlinks in `factory_mffp/data/`: `<name>` for core, `ext__<name>`, `sharp__<name>`.
+Run the wiring script:
 
-Its `real_dir()` resolves dataset directories from hardcoded roots that **do not match this layout** — it must be pointed at `$MFFP_ROOT/benchmark_42/{core,ext,sharp}/<name>`.
-Either update `real_dir()`, or create the symlinks directly:
+    cd "$MFFP_ROOT"
+    python mf_field/akash/eval/wire_datasets.py
 
-    cd "$MFFP_ROOT/mf_field/factory_mffp/data"
-    for d in "$MFFP_ROOT"/benchmark_42/core/*/;  do ln -sfn "$d" "$(basename "$d")"; done
-    for d in "$MFFP_ROOT"/benchmark_42/ext/*/;   do ln -sfn "$d" "ext__$(basename "$d")"; done
-    for d in "$MFFP_ROOT"/benchmark_42/sharp/*/; do ln -sfn "$d" "sharp__$(basename "$d")"; done
+It reads `benchmark_42/MANIFEST.csv`, creates collision-safe relative symlinks in `factory_mffp/data/` (`<name>` for core, `ext__<name>`, `sharp__<name>`), writes `factory_mffp/data_adapters/known_grids_extra.json`, and regenerates `akash/eval/bench_datasets.txt`.
+It derives the repo root from its own location, so no path editing is needed; `$MFFP_ROOT` overrides it if you want to be explicit.
+It is idempotent and repoints stale symlinks, so it is safe to re-run.
 
-`factory.md` guards forbid editing `data/`, `baselines/`, `eval/`, `references/`, `scripts/`, and `factory.md` itself.
-Adding symlinks under `data/` changes what the harness sees — **confirm with the repo owner before doing this on a shared checkout**, and report it either way.
-Of the files involved, only `mf_field/akash/eval/wire_datasets.py` sits outside the guarded set.
+Expect `wired 42 datasets (27 ext/sharp grid entries)` and `missing: none`.
+If it reports anything under `SKIPPED`, a real directory is sitting where a symlink belongs — stop and report rather than deleting it.
+
+**`factory_mffp/data/` is a guarded directory** under `factory.md` (alongside `baselines/`, `eval/`, `references/`, `scripts/`).
+Creating these symlinks is exactly what this script exists to do, but it does modify a guarded path — **confirm with the repo owner before running it on a shared checkout**, and report that you ran it either way.
+
+Note `data/` will contain **44** entries, not 42: `chin_chun_isothermal` and `chin_chun_potential` are pre-existing dangling symlinks, absent from the roster and from `benchmark_42/` but still listed in `loaders.py`. Leave them alone and mention them in your report.
 
 ## Step 6 — Know which datasets are degraded before you trust any score
 
@@ -158,7 +160,7 @@ Run these and paste the real output. Do not report success on a check you did no
     print({k:d[k].shape for k in d.files})"
     # expect {'x': (400, 3), 'y': (400, 9216)}
 
-    ls "$MFFP_ROOT/mf_field/factory_mffp/data" | wc -l      # 42 after step 5
+    ls "$MFFP_ROOT/mf_field/factory_mffp/data" | wc -l      # 44 after step 5 (42 + 2 chin_chun)
 
 Then run the contract smoke from HOWTO.md §1 against one dataset and report the resulting nRMSE.
 
@@ -171,6 +173,6 @@ Finally summarise: dataset counts per collection, whether the symlink wiring was
 
 Three things most likely to bite, in order:
 
-1. **`wire_datasets.py` needs its paths updated** to `benchmark_42/{core,ext,sharp}/` before the wiring step will work.
+1. **`factory_mffp/data/` is guarded**, and the wiring step writes 42 symlinks into it. The script is the intended mechanism, but it is still a guarded path — worth clearing with the repo owner before it runs on a shared checkout.
 2. **The `score.py` / `compute_elo_full.py` inconsistency.** The leaderboard filters degenerate datasets; the factory's own objective does not. That is a real question about what the autoresearch loop is optimizing, and `score.py` sits inside the guarded set, so it needs the repo owner.
 3. **The nested-layout path shift**, which makes every path in `HOWTO.md` wrong by one level.
