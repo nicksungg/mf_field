@@ -73,3 +73,74 @@ truth; `state/orchestrator_flow.md` is the narrative. Check
 
 Stop the crons; running SLURM jobs are safe to leave (checkpoint-resume is
 contractual). To resume, re-run §2–§3.
+
+## 6. Eloise — round1 launch checklist (round5b checklist, adapted)
+
+**0. Research environment** (standing prerequisites): repo venv works
+(`source .venv/bin/activate`; torch 2.6), `benchmark_42/` data landed (7.0 GB,
+42 datasets), and the §0 gate table above — G1/G2 recorded PASS in
+`state/gates.md`; G3 = SLURM batch 0; G4 = the `s5_tuning-B1` dry-run card.
+No kkanbu profile to install — round 1 has no oracle (ADR 0001).
+
+**1. Update the repo** (round lives on the working branch, not main):
+
+```bash
+cd /resnick/groups/Hippo/ezeng/mf_field
+git checkout mffp-trunk-eloise && git pull origin mffp-trunk-eloise
+ls mffp_autoresearch/round1/program.md    # verify
+```
+
+**2. Install the round1 subagents** (wraps the copy + verify; backs up the
+quadruped set once, avoids the `_shared/_shared` nesting trap by per-file copy):
+
+```bash
+bash mffp_autoresearch/round1/install_agents.sh
+# manual verify (silent = synced):
+for f in mffp_autoresearch/round1/subagents/*.md; do diff -q "$f" ~/.claude/agents/$(basename "$f"); done
+diff -rq mffp_autoresearch/round1/subagents/_shared ~/.claude/agents/_shared
+```
+
+**3. Outputs repo** — `mffp_autoresearch_outputs/round1/` (git-ignored by the
+main repo, its own git repo on branch `round1`; keeps result JSONs + SLURM
+logs, excludes checkpoints). Already initialized. To sync it off-cluster,
+create an empty GitHub repo and:
+
+```bash
+cd mffp_autoresearch_outputs/round1
+git remote add origin <your-outputs-repo-url> && git push -u origin round1
+```
+
+**4. Launch & kick off**: orchestrator kickoff prompt in §2 above, crons in
+§3. For the 30-min auto-sync, run in a fresh session with the loop skill:
+
+```
+/loop 30m
+Commit-and-push pass for the MFFP Round 1 autoresearch run. You do NOT run
+experiments, dispatch subagents, or read the spec — only commit and push. Do
+exactly this once, then stop (the loop re-runs you on the interval):
+
+Two repos, handled INDEPENDENTLY (a failure in one must never stop the other;
+never force-push):
+
+A) Spec/loop repo — /resnick/groups/Hippo/ezeng/mf_field (branch
+   `mffp-trunk-eloise`): stage ONLY the round folder —
+   `git add mffp_autoresearch/round1` (experiment cards, state/, index.md,
+   brainstormer/, websearches/, tools/; its .gitignore excludes worktrees and
+   eval caches). Never stage anything outside `mffp_autoresearch/round1/`.
+
+B) Outputs repo — /resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1
+   (branch `round1`): stage everything — `git add -A` (its .gitignore handles
+   excludes). If it has no remote, commit locally and report `no remote`.
+
+For EACH repo:
+  - if nothing is staged → skip it (no empty commits);
+  - else commit with message: `round1: auto-sync <UTC>` where
+    <UTC> = `date -u +%Y-%m-%dT%H:%M:%SZ`;
+  - push to its branch; if rejected (remote advanced), `git pull --rebase`
+    then push again;
+  - if a rebase hits a conflict you can't safely auto-resolve, leave that
+    repo's changes uncommitted, report it, and move on.
+
+End with a one-line status per repo: `committed <sha>` / `nothing to commit` /
+`blocked: <reason>`.
+```
