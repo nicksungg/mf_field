@@ -328,3 +328,38 @@
   updated with 65958902/65960289, added a "G3 close to completion" flag,
   timestamps refreshed; no structural/status changes to streams).
 ## RUN END 2026-07-29T06:19:02Z
+
+## RUN START 2026-07-29T06:35:26Z
+- Single in-flight check: last run START 2026-07-29T06:18:09Z has matching
+  RUN END 2026-07-29T06:19:02Z (~16 min ago, closed) — no double-walk risk,
+  proceeding.
+- no changes: cards walked 0 (`experiment_cards/` still only `SCHEMA.md` +
+  `.gitkeep`; no B*.json cards exist). All 5 streams still `current_batch=1`,
+  `current_stage=websearch_done_awaiting_G3_brainstormer`. G1/G2 still PASS
+  (state/gates.md unchanged).
+- G3 array job 65956106 unchanged at 31/36 COMPLETED, 0 RUNNING, 5 PENDING
+  (tasks 31-35), 0 FAILED — identical counts to the prior walk (0 new
+  completions since 06:19). Confirmed via `squeue -j 65956106 -a -r` (all
+  5 remaining tasks `PD (Priority)`, 0:00 elapsed — never started, not
+  vanished) cross-checked against `sacct -j 65956106 -P` (no records for
+  tasks 31-35, consistent with never-started). `gpu` partition shows 238
+  PENDING jobs cluster-wide (informational only, down from ~253 last
+  walk) — consistent with slow fairshare drain, not a stall.
+- Non-r1 queue: confirmed empty of new activity; historical CANCELLED jobs
+  `65958902`/`65958904`/`65960289` unchanged, out of round scope.
+- Timing ledger: 0 new COMPLETED-task entries since last walk (still 2
+  top-level keys / same entry count as before — validated `json.load`
+  succeeds, parseable).
+- Abandonment check: no cards exist, no abandonment possible; no
+  `state/streams/*.json` files exist or created this walk.
+- state/anchors/, state/noise_floor.json: still absent (only `.gitkeep`)
+  — G3 not complete (5/36 tasks remain, all pending).
+- Transcript inbox: `state/transcripts/` directory does not exist —
+  nothing to archive.
+- No card files touched (`git status --short experiment_cards/` clean,
+  confirmed before and after this walk).
+- index.md: regenerated (fresh timestamp; G3 flag reworded to clarify the
+  5 remaining tasks are fairshare-queued rather than running, since 0 are
+  currently RUNNING this walk vs 7 running two walks ago; queue-depth note
+  updated 253->238; all other counts/structure unchanged).
+## RUN END 2026-07-29T06:37:40Z

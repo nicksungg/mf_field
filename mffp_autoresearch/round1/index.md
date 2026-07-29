@@ -1,4 +1,4 @@
-# MFFP Autoresearch Round 1 — Dashboard (updated 2026-07-29T06:18:09Z)
+# MFFP Autoresearch Round 1 — Dashboard (updated 2026-07-29T06:35:26Z)
 
 ## Gate status
 | Gate | What | Status |
@@ -30,8 +30,10 @@ certification) before any brainstormer proposes a slot.
 |---|---|---|---|---|
 | 65956106_[31-35] (r1-batch0) | — (remaining G3 array tasks: 31-32 cahn\_hilliard seeds1-2, 33-35 ifc\_poisson seeds0-2, all × mf\_fno\_pinn\_transfer) | PENDING | 0:00 | Priority |
 
-No jobs currently RUNNING (tasks 24-30, the allen_cahn/fisher_kpp/cahn_hilliard-seed0
-group, all COMPLETED since the prior walk — 7 new completions, 0 FAILED). No
+No jobs currently RUNNING — no change since the prior walk (31/36 COMPLETED,
+0 FAILED, tasks 31-35 still queued behind cluster fairshare). The `gpu`
+partition currently shows 238 PENDING jobs cluster-wide (was ~253 last
+walk), consistent with the queue slowly draining rather than a stall. No
 `r1-{stream}-B{N}-s{seed}` jobs exist yet (no cards submitted). No unrelated
 non-r1 jobs remain in the user's queue this walk (sacct shows `65958902`,
 `65958904`, `65960289` — all plain `bash`, all `CANCELLED by 28156`,
@@ -48,14 +50,16 @@ walks).
 - **G3 not yet certified**: no stream may pass its brainstormer gate until
   `state/anchors/*.json` and `state/noise_floor.json` exist. All 5 streams
   correctly parked at `websearch_done_awaiting_G3_brainstormer`.
-- **G3 close to completion**: 31/36 array tasks COMPLETED, 0 FAILED
-  throughout; only the tail 5 tasks (cahn_hilliard seeds1-2 +
-  ifc_poisson x3, all mf_fno_pinn_transfer) remain, currently PENDING on
-  cluster concurrency (not stalled — sacct confirms no non-r1 jobs
-  competing for the user's slots). Given the ifc_poisson family-0 prior
-  (~0.8-1.0 min/task) and cahn_hilliard family-0 prior (~44 min/task),
-  expect G3 completion within the next 1-2 maintainer/orchestrator
-  pulses once slots free up.
+- **G3 stalled behind cluster fairshare, not broken**: 31/36 array tasks
+  COMPLETED, 0 FAILED throughout; only the tail 5 tasks (cahn_hilliard
+  seeds1-2 + ifc_poisson x3, all mf_fno_pinn_transfer) remain, PENDING
+  with reason `Priority` for at least the last 3 maintainer walks (~06:18,
+  ~05:56 checkpoints unchanged at 31/36) — this is deep GPU-partition
+  queue congestion (238 pending jobs partition-wide), not a stuck/vanished
+  job; confirmed via `squeue -j 65956106 -a -r` (tasks 31-35 all `PD
+  (Priority)`, 0:00 elapsed) cross-checked against `sacct -j 65956106`
+  (no entries for 31-35, i.e. never started — consistent, not a vanished
+  job).
 - **Prior batch-0 attempt (job 65955389) FAILED wholesale**: 14/14 launched
   array tasks fast-failed (~4-6s each) on node `hpc-93-36` (INFRA: CUDA
   busy). Diagnosed and fixed same day — `hpc-93-36` excluded via

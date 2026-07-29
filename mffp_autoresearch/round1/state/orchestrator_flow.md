@@ -30,3 +30,6 @@
 - 2026-07-29T06:03:56Z pulse: no-op. batch0: 25/36 done, 6-7 in flight, 0 failed. G3 pending.
 - 2026-07-29T06:14:06Z pulse: no-op. batch0: 30/36 done, last tasks in flight, 0 failed. G3 aggregation next pulse (or on monitor fire).
 - 2026-07-29T06:24:03Z pulse: no-op. batch0: 31/36 done, final 5 tasks queued (Priority), 0 failed. G3 aggregation fires when they clear.
+- 2026-07-29T06:34:06Z pulse: no-op. batch0: 31/36; final 5 tasks pending behind a deep gpu queue (253 pending jobs partition-wide), 0 failed. Waiting on fairshare.
+- 2026-07-29T06:43:58Z pulse: no-op. batch0: 34/36 done, last 2 (cahn_hilliard tail) running, 0 failed. G3 aggregation imminent.
+- 2026-07-29T06:53:56Z pulse: no-op. batch0: 34/36, last 2 running, 0 failed.
