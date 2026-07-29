@@ -27,3 +27,6 @@
 - 2026-07-29T05:34:02Z pulse: no-op. batch0: 24/36 done, 7 running (tasks 24-30), 5 queued (31-35 = pinn fisher/cahn/ifc tail), 0 failed. G3 close — expect completion within ~2 pulses.
 - 2026-07-29T05:43:55Z pulse: no-op. batch0: 24/36 done, 7 running + 5 queued (256^2 tail), 0 failed. G3 pending.
 - 2026-07-29T05:54:01Z pulse: no-op. batch0: 24/36 done; tasks 24-30 at 24-37 min (256^2, ~45 min expected), 5 queued, 0 failed. G3 likely next pulse.
+- 2026-07-29T06:03:56Z pulse: no-op. batch0: 25/36 done, 6-7 in flight, 0 failed. G3 pending.
+- 2026-07-29T06:14:06Z pulse: no-op. batch0: 30/36 done, last tasks in flight, 0 failed. G3 aggregation next pulse (or on monitor fire).
+- 2026-07-29T06:24:03Z pulse: no-op. batch0: 31/36 done, final 5 tasks queued (Priority), 0 failed. G3 aggregation fires when they clear.
