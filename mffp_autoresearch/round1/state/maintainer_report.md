@@ -1200,3 +1200,126 @@
   s4 stall-watch finding, G5 resolution, new ADR 0012, and the live
   cross-stream findings feeding the two brainstormers).
 ## RUN END 2026-07-29T17:44:03Z
+
+## RUN START 2026-07-29T17:56:54Z
+- `s4_hybrid_routing-B1`: `built` -> **`reviewed_suggest`** (code-reviewer returned SUCCESS
+  17:55:06Z). Verdict SUGGEST: 3.1-3.4/3.6/3.7 PASS (byte-diff-verified two-edit
+  contract; exact-FNO-collapse on helmholtz and the ifc_poisson number
+  reproduction both independently re-derived by the reviewer, not taken on
+  the builder's word); 3.5 SLURM SUGGEST with 5 non-blocking findings
+  (job-name interpolation caveat for direct sbatch calls; a walltime-default
+  trap on ad-hoc per-dataset resubmits; the 04h/02h walltime deviation
+  accepted and now better-justified via an h100 ledger comparison the
+  builder hadn't cited; wasted gres on the cache-only aggregate job; tight
+  guard-job time margin). Card is now SLURM-submission-eligible per
+  G4/ADR 0006; no jobs submitted yet. `state/s4_hybrid_routing/
+  current_stage.txt` still reads `review_running` (one-pulse lag behind the
+  card, not corrected here — read-only).
+- `s3_warp`: brainstormer (SUCCESS 17:42Z) -> starter (SUCCESS 17:47Z) ->
+  card now exists at `experiment_cards/s3_warp/batch_1/B1.json`, status
+  `drafted` -> builder dispatched, **currently running** with live
+  filesystem activity confirmed (`models_r1/s3_warp_oracle/smoke_eval.py`
+  written 8s before this walk's scan; no stall). No SLURM job yet
+  (diagnostic, epochs 0; job follows build+review). No anchor file for
+  s3_warp yet (expected, pre-analysis).
+- `s6_local`: brainstormer (SUCCESS 17:50Z) -> starter (SUCCESS 17:54Z) ->
+  card now exists at `experiment_cards/s6_local/batch_1/B1.json`, status
+  `drafted` -> builder dispatched (too recent, ~6 min, to assess liveness
+  this walk). No SLURM job yet, no anchor file yet.
+- `s7_loss`: brainstormer (SUCCESS 17:53Z) -> starter (SUCCESS 17:58Z) ->
+  card now exists at `experiment_cards/s7_loss/batch_1/B1.json`, status
+  `drafted` -> builder dispatched at the walk boundary (too recent to
+  assess liveness). No SLURM job yet, no anchor file yet.
+- No new `r1-{stream}-B{N}-s{seed}` SLURM activity: `squeue`/`sacct` checked
+  fresh this walk, only the four already-ledgered COMPLETED jobs
+  (65988184/65988185, 65991280, 65991328) and the unrelated interactive
+  job 65984594 (RUNNING, out of round scope). Timing ledger unchanged (40
+  entries, re-validated valid JSON) — no upserts needed.
+- Abandonment check: no stream has 3 consecutive skip/blocked batches;
+  `state/streams/` directory still does not exist — correct, no
+  abandonment file written. `s3_testtime`'s operator retirement remains
+  explicitly excluded from this trigger (ADR 0010).
+- Transcript inbox: `state/transcripts/` still does not exist — nothing to
+  archive this walk.
+- Anchors: `state/anchors/*.json` unchanged (same 5 files, same
+  certified_utc 2026-07-29T14:28:45Z) — rendered verbatim into index.md, no
+  recomputation. No anchor files exist yet for s3_warp/s6_local/s7_loss
+  (expected, pre-analysis stage).
+- Derived-doc freshness check (README.md, out of maintainer write scope):
+  `README.md` / `tools/render_readme.py` exist at the round root, last
+  rendered 2026-07-29T17:58:04Z — after this walk's snapshot of the s4
+  review return, and its per-card sections (parsed from card JSON) already
+  reflect `s4_hybrid_routing-B1` as review PASS-with-suggestions correctly.
+  Its stage table (sourced from `state/{stream}/current_stage.txt`)
+  inherits the same one-pulse lag noted above for s4. No action needed;
+  flagged for orchestrator awareness only.
+- No card files modified by this walk (`git status --short
+  experiment_cards/` clean — maintainer only read cards this walk).
+- index.md: regenerated (fresh timestamp; Streams table updated for all
+  four deltas above — s4 review verdict, and s3_warp/s6_local/s7_loss
+  gaining cards and builders; Completed cards section updated to list the
+  three newly-drafted cards as mid-build; Flags rewritten around the s4
+  review completion, the three new cards, and the README freshness check).
+## RUN END 2026-07-29T18:00:47Z
+
+## RUN START 2026-07-29T18:17:57Z
+- Single in-flight check: last run's `RUN START 2026-07-29T17:56:54Z` /
+  `RUN END 2026-07-29T18:00:47Z` both present, run completed >17 min before
+  this start — proceeding (not a double-walk).
+- `s4_hybrid_routing-B1`: seed-0 SLURM chain submitted and now live, matching
+  the orchestrator's note verbatim — 8 jobs: `65996887` (helmholtz)
+  COMPLETED (15m28s, h100), `65996889` (pfc) COMPLETED (15m28s, h100),
+  `65996893` (allen_cahn) RUNNING (~2m40s, hpc-33-19), `65996895`
+  (fisher_kpp) RUNNING (~2m40s, hpc-33-22), `65996897` (cahn_hilliard)
+  PENDING (Priority), `65996898` (ifc_poisson) PENDING (Priority),
+  `65996899` (guard) PENDING (Priority), `65996900` (panel aggregate,
+  afterok) PENDING (Dependency). Confirmed by both `squeue` and `sacct`
+  (COMPLETED/RUNNING rows agree; PENDING jobs correctly absent from
+  sacct's start-time-gated query). `state/s4_hybrid_routing/
+  current_stage.txt` now reads `seed0_running (jobs 65996887-65996900: 6
+  datasets + guard + aggregate)` — the prior walk's one-pulse `review_running`
+  lag is resolved. Card status unchanged (`reviewed_suggest`); job_ids field
+  already carries all 8 IDs (orchestrator wrote this, not the maintainer).
+  Per-dataset result JSONs exist for the two COMPLETED arms: helmholtz
+  alpha=0.0 (exact FNO-collapse, skill 19.862), pfc alpha=0.251 (non-zero
+  gate, skill 3.282) — raw readouts recorded for the initial-analyzer, no
+  interpretation attempted here.
+- Timing ledger upsert: added 2 new COMPLETED-job entries for
+  `65996887` (s4_hybrid_routing, helmholtz, 200ep, h100, 15.47 min,
+  family fno_transolver_seq) and `65996889` (s4_hybrid_routing, pfc, 200ep,
+  h100, 15.47 min, same family). Ledger now 42 entries (was 40), re-validated
+  as parseable JSON after write.
+- `s1_poisson-B1` / `s2_beyond_copy-B1` / `s5_tuning-B1`: mechanism-analyzer
+  turn 2 confirmed live on all three — fresh scratchpad artifacts this
+  window (`turn2_out/turn2_results.json` on s1; `turn2_lf_ladder.png` /
+  `turn2_stdout.txt` / `reanalysis_turn_2_results.md` on s2;
+  `turn2_band_relerr.png` / `turn2_fitgap.json` / `turn2_summary.json` on
+  s5). Card `reanalysis_progress` field advanced: s2 `null`→`"turn_2"`, s5
+  `"turn_1"`→`"turn_2"` (both external edits, not made by the maintainer —
+  confirmed via `git diff`, cards otherwise untouched). `6_analysis` still
+  null on all three; no verdict to report yet.
+- `s3_warp` / `s6_local` / `s7_loss`: all three builders still active, card
+  status unchanged (`drafted`) on all three. `s6_local` freshest write 33s
+  old, `s7_loss` ~3.3 min old — clearly live. `s3_warp` freshest write ~8
+  min old (scripts + smoke_eval.py already written, no writes since) —
+  plausibly a smoke-test subprocess in progress rather than a stall; not
+  flagged as stalled this walk, but worth a liveness re-check next walk if
+  still quiet.
+- No abandonment trigger: no stream has 3 consecutive skip/blocked batches;
+  `state/streams/` directory still does not exist.
+- Transcript inbox: `state/transcripts/` still does not exist — nothing to
+  archive this walk.
+- Anchors: `state/anchors/*.json` unchanged (same 5 files, same
+  certified_utc 2026-07-29T14:28:45Z) — rendered verbatim into index.md, no
+  recomputation. No anchor files exist yet for s3_warp/s6_local/s7_loss
+  (expected, pre-analysis stage).
+- No card files modified by this walk (`git status --short
+  experiment_cards/` shows pre-existing external edits to s2/s4/s5 from
+  other agents this window — unrelated to the maintainer, which only read
+  cards this walk).
+- index.md: regenerated (fresh timestamp; Streams table updated for the s4
+  SLURM-chain launch, the s1/s2/s5 turn-2 mechanism-analyzer activity, and
+  reconfirmed liveness on s3_warp/s6_local/s7_loss builders; Running/pending
+  jobs table now lists the full 8-job s4 chain; Flags rewritten around the
+  s4 launch, the timing-ledger upsert, and the turn-2 activity).
+## RUN END 2026-07-29T18:22:14Z

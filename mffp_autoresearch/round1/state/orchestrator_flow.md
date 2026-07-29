@@ -720,3 +720,44 @@ pulse: no-op. All 7 streams have agents in flight (s1/s2/s5 mechanism, s3_warp
 + s6 builders, s4 reviewer, s7 starter). No r1 SLURM jobs. Next SLURM
 submissions queue up on: s4 review PASS (6 per-dataset jobs + aggregate),
 s3_warp build+review (1 diagnostic job), s6/s7 builds (screen jobs first).
+
+## Starter return — s7_loss-B1 — 2026-07-29T17:58Z
+
+SUCCESS / drafted (17/17, no TBDs). Card at experiment_cards/s7_loss/batch_1/
+B1.json (promotion rule incl. no-post-hoc-switching clause in 3_description;
+citation-count ambiguity resolved 6-of-9 and recorded in handoff). Stage →
+builder_running; dispatching builder.
+
+## Review verdict + submit — s4_hybrid_routing-B1 — 2026-07-29T17:59Z
+
+Code-reviewer: SUGGEST / submit-as-is (6/6; two-edit constraint verified at
+byte level — 3 hunks incl. entailed import; INSPIRATION.md ruled required-and-
+number-neutral; training-artifacts-in-eval/results ruled correct card
+compliance). Reviewer S2 trap noted for any manual resubmit: per-dataset
+walltimes live in submit.sh only — 01_train_eval.sh defaults 02:00:00, so
+heavy sharp datasets need --time=04:00:00 on direct resubmission. TIMEOUT =
+budget event, not ALGO (last.pt written post-stages; fixing it would be the
+forbidden third edit). Analyzer trap recorded: per-dataset JSONs carry a
+1-dataset panel_geomean_skill — authoritative panel number is
+result_panel_s0.json ONLY. Submitted: 6 dataset jobs (65996887-65996898,
+02:00/04:00 ledger-derived) + guard 65996899 + aggregate 65996900 (afterok).
+Stage → seed0_running; card job_ids updated.
+
+## Pulse — 2026-07-29T18:04Z
+
+pulse: no-op. s4 seed-0 chain live: 2/6 dataset jobs RUNNING (helmholtz, pfc,
+~4 min in), 4 + guard + aggregate PENDING (normal H100 queue rotation). Three
+builders (s3_warp/s6/s7) and three mechanism analyzers in flight. Nothing
+failed; nothing unblocked.
+
+## Pulse — 2026-07-29T18:14Z
+
+pulse: no-op. s4: helmholtz+pfc RUNNING 14 min, 4 datasets + guard + agg
+queued. Builders s3_warp/s6/s7 and mechanism analyzers s1/s2/s5 in flight.
+No failures.
+
+## Pulse — 2026-07-29T18:24Z
+
+pulse: no-op. s4 chain: helmholtz+pfc COMPLETED (15.5 min each), allen_cahn+
+fisher_kpp RUNNING 8 min, cahn_hilliard+ifc_poisson+guard+agg queued. Three
+builders + three mechanism analyzers in flight. No failures.
