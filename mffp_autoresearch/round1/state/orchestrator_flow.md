@@ -21,3 +21,6 @@
 - 2026-07-29T04:33:59Z pulse: no-op. batch0: 11/36 done (256^2 tasks ~45-50 min each), 4 running, 21 queued, 0 failed. G3 pending.
 - 2026-07-29T04:43:57Z pulse: no-op. batch0: 14/36 done, 3 running, 19 queued, 0 failed. Family 1 (mf_fno_pinn_transfer) tasks up next. G3 pending.
 - 2026-07-29T04:54:13Z pulse: no-op. batch0: 14/36 done (incl. fast ifc_poisson tasks 15-16), cahn_hilliard seeds 12-14 running ~24 min, 19 queued (Priority), 0 failed. G3 pending.
+- 2026-07-29T05:03:55Z pulse: no-op. batch0: 14/36 done, 4 running, 0 failed. G3 pending; streams unchanged.
+- 2026-07-29T05:14:05Z pulse: no-op. batch0: 16/36 done, cahn_hilliard seeds ~44 min (near done), 0 failed. Remaining 20 tasks = mf_fno_pinn_transfer family. G3 pending.
+- 2026-07-29T05:23:55Z pulse: no-op. batch0: 21/36 done, 6 running, 9 queued, 0 failed. pinn_transfer family moving fast. G3 pending.

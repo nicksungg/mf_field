@@ -151,3 +151,52 @@
   for tasks 12-14, pending-task description, non-r1 job note, and
   timestamps refreshed; no structural/status changes to streams).
 ## RUN END 2026-07-29T04:56:52Z
+
+## RUN START 2026-07-29T05:15:35Z
+- Single in-flight check: last run START 2026-07-29T04:55:08Z has matching
+  RUN END 2026-07-29T04:56:52Z (~19 min ago, closed) — no double-walk risk,
+  proceeding.
+- Cards walked: 0 (`experiment_cards/` still only `SCHEMA.md`; no B*.json
+  cards exist yet). All 5 streams still `current_batch=1`,
+  `current_stage=websearch_done_awaiting_G3_brainstormer` — no change.
+  `state/streams/*.json` still absent (no stream card history yet, so no
+  abandonment is possible).
+- G1/G2: still PASS (per state/gates.md, unchanged).
+- G3 array job 65956106 progressed since last walk: 19/36 COMPLETED (was
+  16/36 per prior orchestrator pulse) — family 0 (`mf_fno_transfer_film`,
+  tasks 0-17, all 6 datasets x 3 seeds) is now fully COMPLETED (task 17 =
+  ifc_poisson seed2, 0.98 min, finished since last walk); family 1
+  (`mf_fno_pinn_transfer`) has begun: task 18 (ext__helmholtz_2d seed0)
+  COMPLETED in 7.58 min, matching the family-0 helmholtz_2d timing prior.
+  Tasks 19-20 (helmholtz_2d seeds 1-2) RUNNING, ~1 min elapsed (confirmed
+  via `sacct -P` with full un-truncated JobID column — squeue's default
+  `%.10i` format truncates array task suffixes to a misleading single
+  digit, e.g. showed job "65956106_1"/"_2" when the true running tasks
+  were "_19"/"_20"; cross-checked against sacct before trusting squeue).
+  0 FAILED throughout this job. Tasks 21-35 PENDING (cluster concurrency
+  cap). No stall — per-dataset timing pattern holds, well within the 6h
+  sbatch time budget.
+- Non-r1 wholesale-FAILED job `65955389` (prior batch-0 attempt, bad GPU
+  node hpc-93-36) re-confirmed via sacct but already documented in prior
+  walks and in commit f8256b4 — not a new delta, no fresh flag raised.
+- Timing ledger: upserted 5 new COMPLETED-task entries (job IDs
+  65956106_12/_13/_14: sharp__cahn_hilliard seeds 0/1/2, ~44.35 min each;
+  65956106_17: ifc_poisson seed2, 0.98 min; 65956106_18:
+  mf_fno_pinn_transfer x ext__helmholtz_2d seed0, 7.58 min; gpu_type p100,
+  200 epochs). `timing_ledger.json` now has 19 entries total (was 14);
+  validated as parseable JSON after upsert.
+- Abandonment check: no stream has any skipped/blocked batches (no cards
+  exist yet) — no abandonment; no `state/streams/*.json` files created
+  (nothing to record).
+- state/anchors/, state/noise_floor.json: still absent — G3 not complete
+  (17/36 tasks remain: 2 running + 15 pending).
+- Transcript inbox: `state/transcripts/inbox/` still does not exist —
+  nothing to archive.
+- Non-r1 out-of-scope job note: `65958904` (plain `bash`) still PENDING in
+  queue — out of scope for this round, noted only for index.md accuracy.
+- No card files touched (`git status --short experiment_cards/` clean,
+  confirmed before and after this walk).
+- index.md: regenerated (batch0 progress counts 19/36, running-jobs table
+  for tasks 19-20 and the corrected pending-task dataset breakdown, and
+  timestamps refreshed; no structural/status changes to streams).
+## RUN END 2026-07-29T05:17:45Z

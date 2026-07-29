@@ -1,11 +1,11 @@
-# MFFP Autoresearch Round 1 — Dashboard (updated 2026-07-29T04:55:48Z)
+# MFFP Autoresearch Round 1 — Dashboard (updated 2026-07-29T05:15:35Z)
 
 ## Gate status
 | Gate | What | Status |
 |---|---|---|
 | G1 | eval-layer smoke + assertion drill | PASS (2026-07-28) |
 | G2 | copy-LF baselines | PASS (2026-07-28) |
-| G3 | batch 0: anchors + noise floor (3 seeds) | **PENDING** — array job `65956106` (r1-batch0) 14/36 COMPLETED, 3 RUNNING, 19 PENDING, 0 FAILED. First attempt `65955389` FAILED all 14 launched tasks (INFRA: bad GPU node `hpc-93-36`, now excluded) |
+| G3 | batch 0: anchors + noise floor (3 seeds) | **PENDING** — array job `65956106` (r1-batch0) 19/36 COMPLETED, 2 RUNNING, 15 PENDING, 0 FAILED. First attempt `65955389` FAILED all 14 launched tasks (INFRA: bad GPU node `hpc-93-36`, now excluded) |
 | G4 | dry-run card s5\_tuning-B1 | PENDING (gated on G3) |
 
 No card in `state/anchors/*.json` exists yet — every "Anchor" cell below is
@@ -28,10 +28,9 @@ certification) before any brainstormer proposes a slot.
 ## Running / pending jobs
 | Job | Card | State | Elapsed | Node/Reason |
 |---|---|---|---|---|
-| 65956106_12 (r1-batch0) | — (G3 array, task 12: mf_fno_transfer_film × sharp__cahn_hilliard × seed0) | RUNNING | ~26 min | hpc-26-17 |
-| 65956106_13 (r1-batch0) | — (task 13: sharp__cahn_hilliard × seed1) | RUNNING | ~25 min | hpc-25-17 |
-| 65956106_14 (r1-batch0) | — (task 14: sharp__cahn_hilliard × seed2) | RUNNING | ~25 min | hpc-26-21 |
-| 65956106_[17-35] (r1-batch0) | — (remaining G3 array tasks: 17 = ifc_poisson seed2, 18-35 = mf_fno_pinn_transfer × all 6 datasets × 3 seeds) | PENDING | 0:00 | Priority |
+| 65956106_19 (r1-batch0) | — (G3 array, task 19: mf_fno_pinn_transfer × ext\_\_helmholtz\_2d × seed1) | RUNNING | ~1 min | (started 22:14:44) |
+| 65956106_20 (r1-batch0) | — (task 20: mf_fno_pinn_transfer × ext\_\_helmholtz\_2d × seed2) | RUNNING | ~1 min | (started 22:14:44) |
+| 65956106_[21-35] (r1-batch0) | — (remaining G3 array tasks: 21-23 phase\_field\_crystal\_2d, 24-26 allen\_cahn\_2d, 27-29 fisher\_kpp\_2d, 30-32 cahn\_hilliard, 33-35 ifc\_poisson, all × mf\_fno\_pinn\_transfer × 3 seeds) | PENDING | 0:00 | Priority |
 
 No `r1-{stream}-B{N}-s{seed}` jobs exist yet (no cards submitted). One
 unrelated non-r1 job in the user's queue (`65958904`, plain `bash`,
@@ -52,12 +51,12 @@ elapsed on 2026-07-28T21:49 — no longer in queue, no action needed.)
   array tasks fast-failed (~4-6s each) on node `hpc-93-36` (INFRA: CUDA
   busy). Diagnosed and fixed same day — `hpc-93-36` excluded via
   `--exclude` in `eval/run_batch0.sbatch`, resubmitted as `65956106`,
-  currently healthy (14/36 COMPLETED, 0 FAILED so far; 256^2 sharp-field
-  tasks run ~44 min/task vs ~7-12 min for helmholtz_2d/phase_field_crystal_2d,
-  and ifc_poisson runs ~47s/task — not a stall, well within the 6h sbatch
-  time budget). At current pace, remaining 22 tasks (3 running + 19
-  pending) should clear well inside the time budget once cluster
-  concurrency admits the pending ones.
+  currently healthy (19/36 COMPLETED, 0 FAILED so far; family 0
+  `mf_fno_transfer_film` — all 18 tasks — now fully COMPLETED; family 1
+  `mf_fno_pinn_transfer` underway, task 18/36 done in 7.58 min matching
+  the helmholtz_2d prior, tasks 19-20 running ~1 min in). At current pace,
+  remaining 17 tasks (2 running + 15 pending) should clear well inside the
+  6h sbatch time budget once cluster concurrency admits the pending ones.
 - **reopen candidates**: none (no cards exist).
 - **blocked.md**: does not exist — no blocked entries.
 - **abandoned streams**: none.
