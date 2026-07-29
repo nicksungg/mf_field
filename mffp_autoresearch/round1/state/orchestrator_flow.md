@@ -15,3 +15,6 @@
 - LESSON (all agents): subagent Write tool refuses .md report files; s2/s4/s5 used shell heredoc; s1 returned inline. Future dispatch prompts must include: "write report files via bash heredoc (cat > file <<'EOF'), not the Write tool."
 - NEXT: all brainstormers gated on G3 noise floor (batch0 job 65956106).
 - 2026-07-29T03:54:11Z pulse: no-op. batch0 healthy: 6 COMPLETED (JSONs verified on disk), 5 RUNNING, 25 pending, 0 failed; ~8-12 min/task. All streams at websearch_done_awaiting_G3_brainstormer. Nothing unblocked.
+- 2026-07-29T04:03:58Z pulse: no-op. batch0: 6 done / 6 running / 24 queued (cluster-limited concurrency), 0 failed. Streams unchanged, G3 pending.
+- 2026-07-29T04:14:04Z pulse: no-op. batch0: 6 done, 6 running (tasks 6-11, 20-33 min elapsed — the 256^2 sharp datasets are slower than helmholtz/PFC, within budget), 24 queued, 0 failed. G3 pending; streams unchanged.
+- 2026-07-29T04:24:06Z pulse: no-op. batch0 unchanged: 6 done, tasks 6-11 running 30-43 min (256^2 sharp sets; within 3h budget), 24 queued, 0 failed. G3 pending.
