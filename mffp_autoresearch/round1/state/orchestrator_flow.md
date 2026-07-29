@@ -1093,3 +1093,107 @@ Second 529 on the s4-B1 mechanism analyzer right after resume — the overload
 wave is ongoing. Backing off: will re-resume at the next pulse (~10 min)
 rather than hammering the API. No state lost (its scratchpad persists;
 resumes replay from transcript).
+
+## 529 — s7 builder re-failed post-resume — 2026-07-29T19:58Z
+
+Overload wave persists. Backoff queue for next pulse re-resume: s4-B1
+mechanism, s7-B1 builder. s1-B2 and s2-B2 builders' resumes have not
+re-failed so far. SLURM-side work unaffected (s3_warp diagnostic RUNNING).
+
+## 529 — s6 initial-analyzer down too — 2026-07-29T19:58Z
+
+The s6-B1 initial-analyzer (heightened-scrutiny brief) also hit the 529 wave.
+Backoff queue for next-pulse re-resume now: s4-B1 mechanism, s7-B1 builder,
+s6-B1 initial-analyzer. No work lost anywhere (transcripts + scratchpads
+persist; SLURM unaffected).
+
+## 529 wave handling summary — 2026-07-29T20:00Z
+
+Re-resumed s4 mechanism, s7 builder, s6 analyzer, s1-B2 builder (2nd resume).
+s5-B2 brainstormer dispatched (its websearcher completed through the wave —
+API intermittently healthy). Maintainer walk also died on 529: NOT resumed —
+its walk is idempotent and the next cron dispatch (~20 min) covers it.
+
+## 529 — s4 mechanism third failure — 2026-07-29T20:02Z
+
+s4-B1 mechanism analyzer hit its third 529. Deferring its next resume to the
+next orchestrator pulse (proper backoff) rather than immediate retry. Other
+resumed agents have not re-failed since.
+
+## 529 — s7 + s6 analyzers also re-failed — 2026-07-29T20:03Z
+
+Wave still active. Full backoff engaged: NO further immediate resumes.
+Deferred-resume queue for the next orchestrator pulse: s4-B1 mechanism,
+s7-B1 builder, s6-B1 initial-analyzer, s1-B2 builder (+ s2-B2 builder if its
+current resume also dies). All state persists; SLURM unaffected; the round
+loses only wall-time, not work.
+
+## 529 — s5-B2 brainstormer also caught — 2026-07-29T20:03Z
+
+Added to the deferred-resume queue. Queue at next pulse: s4-B1 mechanism,
+s6-B1 analyzer, s7-B1 builder, s1-B2 builder, s5-B2 brainstormer (+s2-B2
+builder if its resume died too). Holding all resumes until the pulse.
+
+## Pulse — s3_warp job failure (designed abort) + coordinated resume — 2026-07-29T20:04Z
+
+Job 66001846 FAILED 29s: M9 hard-abort on sharp__phase_field_crystal_2d —
+gradient-normal EPE 0.3928 > 0.25 tol (error-reduction gate passed; helmholtz
+completed and wrote output first). THE TRIPWIRE WORKED: optimiser inadequacy
+on pfc's crystalline structure cannot masquerade as "no warp regime".
+Classification ALGO (attempt 1/5): fitter needs pfc-appropriate settings
+(multi-scale / more iterations at 128²). Dispatching experiment-debugger.
+Also resuming the six 529-deferred agents (s4 mech, s6 analyzer, s7 builder,
+s1-B2 builder, s2-B2 builder, s5-B2 brainstormer).
+
+## 529 — s4 mechanism re-failed (4th) — 2026-07-29T20:08Z
+
+Wave ongoing. s4 mechanism back to the deferred queue; will resume at the
+next pulse. Watching whether the other five resumes survive.
+
+## 529 — s3_warp debugger caught too — 2026-07-29T20:08Z
+
+The freshly dispatched s3_warp debugger also died on 529. Deferred queue for
+next pulse: s4 mechanism, s3_warp debugger. Remaining four resumes (s6
+analyzer, s7/s1-B2/s2-B2 builders, s5-B2 brainstormer) not yet re-failed.
+
+## 529 — s6 analyzer re-failed — 2026-07-29T20:08Z
+
+Deferred queue: s4 mechanism, s3_warp debugger, s6 analyzer. Holding all
+until next pulse. The wave has now persisted ~30 min; if it continues past
+the next pulse, resumes go to every-other-pulse cadence.
+
+## 529 — full agentic pause — 2026-07-29T20:08Z
+
+All seven in-flight agents are now down on the sustained overload wave:
+s4-B1 mechanism, s3_warp-B1 debugger, s6-B1 analyzer, s7-B1 builder,
+s1-B2 builder, s2-B2 builder, s5-B2 brainstormer. NEW POLICY: at the next
+pulse, resume ONE canary (s7 builder — closest to completion); resume the
+rest only after the canary survives. All transcripts/scratchpads persist;
+all card/state data is committed and pushed; no SLURM jobs pending (s3_warp
+resubmit waits on its debugger). The round loses wall-time only.
+
+## Pulse — canary resume — 2026-07-29T20:14Z
+
+Canary launched: s7-B1 builder (closest to done). If it completes or survives
+to next pulse, resume the remaining six (s4 mech, s3_warp debugger, s6
+analyzer, s1-B2/s2-B2 builders, s5-B2 brainstormer). No r1 SLURM jobs
+(correct). Everything else unchanged.
+
+## 529 — canary died — 2026-07-29T20:17Z
+
+s7 canary failed immediately. Wave still active (~45+ min now). Holding ALL
+resumes; next canary attempt at the next pulse. The maintainer dispatch
+(second canary) is still out — its fate is additional signal.
+
+## 529 — second canary (maintainer) also died — 2026-07-29T20:18Z
+
+Both canaries down. Full hold continues. Next single-canary attempt at the
+next pulse. Note for Eloise if she returns first: the outage is entirely
+platform-side (status.claude.com); the round's data, cards, and SLURM
+artifacts are all safe and pushed; recovery is one pulse of resumes away
+whenever the API stabilizes.
+
+## Pulse — canary retry — 2026-07-29T20:24Z
+
+Wave hold continues. Single canary re-launched (s7 builder). All other state
+unchanged; no r1 SLURM jobs (s3_warp resubmit gated on its queued debugger).
