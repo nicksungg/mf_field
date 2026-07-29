@@ -1,0 +1,43 @@
+# Data — generated datasets stay out of git (large; live on the box / a data store).
+# EXCEPTION: the small sample-round review artifacts (one-pager figures + JSON summaries)
+# ARE tracked so they sync to both machines for review (see CLAUDE.md). Large *.h5 stay out.
+mffp_sharp/data/*
+!mffp_sharp/data/sample/
+mffp_sharp/data/sample/*
+!mffp_sharp/data/sample/figures/
+!mffp_sharp/data/sample/sample_summary.json
+!mffp_sharp/data/sample/screen_report.json
+mffp_sharp/data/sample/figures/*
+!mffp_sharp/data/sample/figures/*.png
+# any other top-level data/ stays fully ignored (root-anchored so it does not
+# re-exclude mffp_sharp/data/ above); large binary data ignored everywhere.
+/data/
+*.h5
+*.hdf5
+*.npz
+
+# Large source asset (in repo dir but not code)
+*.pptx
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+.env
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
+
+# Claude
+.claude/
+
+# Meeting notes — personal scratch, not tracked
+MEETING-*.md
+meetings/
