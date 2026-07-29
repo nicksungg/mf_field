@@ -817,3 +817,10 @@ Design steals available: S1 gradient matching key; per-patch LOCA-style
 retrieval. ADR-0009 bonus: all published hybrid correctors need the PDE
 residual at test time — the retrieval route is the compliant one. Stage →
 brainstormer_running; dispatching (ADR 0007 applies).
+
+## Pulse — 2026-07-29T18:54Z
+
+pulse: no-op. s4: 4/6 datasets COMPLETED (allen_cahn 31.3 min, fisher_kpp
+28.9 min), cahn_hilliard RUNNING 7 min, ifc_poisson+guard+agg queued. Agents:
+s2-B2 brainstormer, s3_warp/s6/s7 builders, s1/s5 mechanism analyzers.
+No failures.
