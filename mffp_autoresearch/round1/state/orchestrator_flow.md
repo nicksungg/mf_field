@@ -761,3 +761,59 @@ No failures.
 pulse: no-op. s4 chain: helmholtz+pfc COMPLETED (15.5 min each), allen_cahn+
 fisher_kpp RUNNING 8 min, cahn_hilliard+ifc_poisson+guard+agg queued. Three
 builders + three mechanism analyzers in flight. No failures.
+
+## s2-B1 COMPLETE (first card of the round) — 2026-07-29T18:32Z
+
+Mechanism register done (12/12; 2 tools promoted: lf_conditioned_headroom.py,
+lf_at_inference_audit.py; tools/index.md created). VERDICT: the copy-LF gap is
+an INPUT gap, not a fusion-mechanism gap. Headline: a ZERO-PARAMETER rule
+(copy-LF + mean of 5 nearest train residuals keyed on a 16x16 LF-field
+signature) reaches panel geomean skill 0.7886 — BELOW the copy-LF bar — vs
+champion 9.64 (12.2x). Same machinery keyed on X: 1.54 (the query key alone is
+a 2x swing). Class structure: A residual-learnable (pfc 0.562 / cahn_hilliard
+0.625 / helmholtz 0.785 unclaimable) vs B residual-unlearnable (allen_cahn,
+fisher_kpp — copy-LF unbeatable, no-op optimal). F14: 0/27 factory families
+read test LF at inference (static audit, file:line). R_low is the LF-blindness
+law (champion Pearson -0.885 vs band-0 coherence); the LF-keyed corrector
+breaks it. pfc is BIMODAL (53% constant / 44% crystalline), not heavy-tailed.
+s8_data: second independent DO-NOT-OPEN (fisher_kpp deficit is not
+X-enrichable; LF doesn't predict its residual either).
+
+B2 prescription (from part 7): LEVER card — LF field as input channel to
+FiLM-FNO predicting hf-lf; target below-1.0 on Class A / no-worse on Class B;
+falsification anchored on the 0.79 training-free floor (a trained operator
+that can't match a 5-NN lookup has a representation defect). Batch → 2, stage
+→ websearch_running; dispatching s2-B2 websearcher.
+
+## Pulse — 2026-07-29T18:34Z
+
+pulse: no-op. s4: 2 COMPLETED, allen_cahn+fisher_kpp RUNNING 18.5 min, rest
+queued. s2-B2 websearcher, 3 builders, s1/s5 mechanism analyzers in flight.
+No failures.
+
+## Pulse — 2026-07-29T18:44Z
+
+pulse: no-op. s4: allen_cahn+fisher_kpp RUNNING 28.5 min (near the champion-
+family's ~15.5-min pace ceiling — Transolver corrector stage is the extra
+cost; walltime headroom ample), rest queued. s3_warp builder handoff freshly
+written (11:21 local) — finishing commit/return, not stalled. s6/s7 builders,
+s2-B2 websearcher, s1/s5 mechanism analyzers in flight.
+
+## Websearch return — s2_beyond_copy-B2 — 2026-07-29T18:46Z
+
+SUCCESS (5 its, 9/9). Verdicts: (i) LF-as-input-channel residual FNO
+PREEMPTED — it is the literature's BASELINE (MFFM's FNO-residual baseline;
+LRC-FNO concat-coarse+residual-closure; MF-DeepONet residual+input-aug).
+Surviving framing: the zoo lacks the literature-standard control (F14 0/27) —
+B2 supplies it; setting novelty only (real coarse solves, sharp-2D
+phase-field, Class A/B partition). (ii) zero-param LF-keyed residual transfer
+= analog-MOS relative (AtmoSwing S1 criterion, LOCA constructed analogs,
+DeltaPhi retrieval+residual) — open as a REQUIRED FLOOR composition. (iii)
+hybrid trained+retrieved residual with copy-LF-recoverable parameterization —
+open but thin (NNTNNR/DeltaPhi nearest). CORRECTION recorded: batch-1
+overclaimed — MFFM's "Bilinear" baseline IS copy-LF under another name; the
+surviving gap is that no source REQUIRES beating it nor reports a Class-B.
+Design steals available: S1 gradient matching key; per-patch LOCA-style
+retrieval. ADR-0009 bonus: all published hybrid correctors need the PDE
+residual at test time — the retrieval route is the compliant one. Stage →
+brainstormer_running; dispatching (ADR 0007 applies).

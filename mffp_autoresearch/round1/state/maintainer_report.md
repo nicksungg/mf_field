@@ -1323,3 +1323,129 @@
   jobs table now lists the full 8-job s4 chain; Flags rewritten around the
   s4 launch, the timing-ledger upsert, and the turn-2 activity).
 ## RUN END 2026-07-29T18:22:14Z
+
+## RUN START 2026-07-29T18:40:20Z
+- Single in-flight check: last run's `RUN START 2026-07-29T18:17:57Z` /
+  `RUN END 2026-07-29T18:22:14Z` both present, run completed ~18 min before
+  this start — proceeding (not a double-walk).
+- **`s2_beyond_copy-B1` reached `status: complete`** — the first completed
+  card of the round. Confirmed populated: `6_analysis` (15 findings, F1-F14,
+  3 probe turns, every number traced to
+  `worktrees/s2_beyond_copy/B1/scratchpad/reanalysis_turn_{1,2,3}_results.{md,json}`)
+  and `7_gap_and_future` (`open_question`, `next_direction` naming s2-B2 as a
+  LEVER card — LF-input residual family, not another diagnostic —
+  `cross_stream_notes` flagging F14 as round-wide: 0 of 27 factory families
+  read the test split's LF field at inference, so every stream training one
+  of those families is comparing an X-only regressor against an LF-using
+  copy-LF baseline). `5_actual_result.falsification_verdict = "falsified"`;
+  `panel_geomean_skill.mean = 9.6240` (the scored quantity is a training-free
+  1-NN-in-X lookup, `_what` field says so explicitly — not a model; 9.6x
+  worse than the copy-LF bar of 1.0, per `vs_anchor`). `reopen_candidate`
+  still `false`. Single `review_notes` entry (`reviewed_suggest`, attempt 1)
+  — no second review round needed to reach `complete`.
+- **Two tools promoted** to `tools/` from this card's turns: `tools/
+  lf_conditioned_headroom.py` (turn 2 — LF-conditioned training-free
+  headroom ladder, classifies datasets Class A/residual-learnable vs Class B/
+  residual-unlearnable) and `tools/lf_at_inference_audit.py` (turn 3 — static
+  audit of whether a family reads the test-split LF field at inference; ran
+  over all 27 factory families, 0/27 read it — this is F14 above).
+  `tools/index.md` now carries 5 entries (was 3 pre-existing:
+  `ladder_level_diagnostic.py`, `field_error_decomposition.py` from
+  s1_poisson-B1, plus `render_readme.py` infra) with full measures/invoke/
+  verified/provenance sections for both new tools; `git status --short
+  tools/` shows only `tools/index.md` as untracked (the two `.py` files are
+  already committed) — consistent with a promotion that happened this
+  window, nothing for the maintainer to do (tools/ is not a maintainer-write
+  surface; observed only).
+- **`s2_beyond_copy` stream advanced to batch 2**: `state/s2_beyond_copy/
+  current_batch.txt` now reads `2` (was `1`); `current_stage.txt` reads
+  `websearch_running`. `websearches/s2_beyond_copy/batch_2/
+  summary_so_far.md` exists (websearcher live, per the orchestrator's note)
+  alongside the complete 5-iteration batch-1 report. No `experiment_cards/
+  s2_beyond_copy/batch_2/` card yet (expected — websearch precedes
+  brainstorm/starter).
+- `s4_hybrid_routing-B1` SLURM chain: unchanged in composition from last
+  walk (still 8 jobs, still 2 COMPLETED / 2 RUNNING / 4 PENDING), reconfirmed
+  live via both `squeue` and `sacct` — `65996893` (allen_cahn) and `65996895`
+  (fisher_kpp) both RUNNING, elapsed now ~21m49s (was ~2m40s at last walk,
+  consistent with the ~18 min gap between walks; both now past the two
+  COMPLETED siblings' 15m28s walltime — dataset-specific, not flagged as
+  stalled, still node-resident per squeue `hpc-33-19`/`hpc-33-22`).
+  `65996897`/`65996898`/`65996899` still PENDING (Priority), `65996900`
+  still PENDING (Dependency). No new COMPLETED r1- jobs this window (sacct
+  cross-checked against the full COMPLETED r1- job list going back 2 days —
+  the only COMPLETED r1- IDs are the 36 batch-0 array tasks +
+  65988184/65988185/65991280/65991328/65996887/65996889, all already in the
+  ledger); timing ledger unchanged at 42 entries, re-validated as parseable
+  JSON (no upsert needed this walk).
+- **`s1_poisson-B1` and `s5_tuning-B1` mechanism-analyzer progressed to
+  TURN 3** filesystem activity: `s1_poisson` has fresh `scratchpad/
+  turn3_out/*` (grid logs + per-arm JSON results for seed 1, e.g.
+  `two_level__shared__j30__f200__h16b2m8__s1.json`, nRMSE 0.1511, skill
+  4.197 vs paper bar), freshest write 28s before this scan. `s5_tuning` has
+  `scratchpad/reanalysis_turn_3.py`, `reanalysis_turn_3b.py`, and
+  `turn3_sharp_sharp__{allen_cahn,phase_field_crystal}_2d.json`, freshest
+  write ~10 min before this scan. Both cards' `reanalysis_progress` field
+  still reads `"turn_2"` (external field — not updated by the maintainer;
+  expected to flip once turn 3 registers, following the pattern
+  `s2_beyond_copy-B1` already completed with its 3-turn cycle). `6_analysis`
+  still null on both — no verdict yet.
+- **Builder handoffs written on all three drafted-card streams** since last
+  walk (`s3_warp`, `s6_local`, `s7_loss`) — build work substantively done,
+  card status still `drafted` and `build_notes` still empty on all three
+  (that update is the builder's/orchestrator's to make, not observed as
+  complete on the card yet):
+  - `s3_warp-B1`: `notes/handoff_experiment_builder.md` written 18:21:52Z,
+    describing `models_r1/s3_warp_oracle/` (`warp_core.py`, `smoke_eval.py`,
+    a byte-for-byte `s2_forensics.py` copy from s2-B1, sha256-verified) and
+    two flagged deviations in M9 (EPE gates on gradient-normal component
+    only — aperture problem; the "<5% of unwarped" gate is unattainable by
+    construction after two bilinear resamples, replaced with `max(5% of
+    unwarped, 1.5× exact-planted-phi)`) for the reviewer to rule on. **No
+    filesystem writes in this worktree since the handoff (~18.5 min quiet at
+    scan time)** — plausibly just awaiting the next orchestrator dispatch
+    (review), but this is now quieter for longer than one walk-interval;
+    flagging for a stall re-check next walk if still silent with no card
+    update.
+  - `s6_local-B1`: handoff written 18:32:29Z (`models_r1/
+    s6_local_lf_corrector/`, staged Delta/gate training to avoid a
+    dead-init trap, identity-preservation assertions vs `copylf_baselines`);
+    worktree still actively writing after the handoff
+    (`scratchpad/aux_smoke.{sh,log}` fresher than the handoff, up to the
+    scan time itself) — live, not stalled.
+  - `s7_loss-B1`: handoff written 18:27:09Z (`models_r1/
+    mf_fno_transfer_film_s7loss/`, the single behavioral delta is the loss
+    function substitution in `_train`, `00_screen.sh` running the ADR 0007
+    multi-arm screen); worktree still active after the handoff
+    (`scratchpad/arm_A-def_ifc_poisson.json` at 18:34:28Z, ~7 min after the
+    handoff) — screening arms in progress, live.
+- No abandonment trigger: no stream has 3 consecutive skip/blocked batches;
+  `state/streams/` directory still does not exist.
+- Transcript inbox: `state/transcripts/` still does not exist — nothing to
+  archive this walk.
+- Anchors: `state/anchors/*.json` unchanged (same 5 files, same
+  certified_utc 2026-07-29T14:28:45Z) — rendered verbatim into index.md, no
+  recomputation. Still no anchor files for `s3_warp`/`s6_local`/`s7_loss`
+  (expected, pre-analysis stage).
+- ADRs unchanged this walk: `docs/adr/0001`-`0012`, no new ADR since 0012
+  (s7_loss stream).
+- Gates unchanged: G1-G5 all carried-over PASS, no new gate activity this
+  window.
+- `s5_tuning-B1` card `job_ids` stale vs SLURM reality (carried over,
+  unchanged, read-only observation): still lists `65988184` as `"(seed0,
+  RUNNING)"` (it is long since COMPLETED) and still omits `65989241` (the
+  completed genuine anchor-recert retrain). No card edit made by the
+  maintainer.
+- No card files modified by this walk (`git status --short
+  experiment_cards/` shows only the pre-existing external edit to
+  `s2_beyond_copy/batch_1/B1.json` — the status/6/7 population by the
+  mechanism-analyzer/reviewer this window, unrelated to the maintainer,
+  which only read cards this walk).
+- index.md: regenerated (fresh timestamp; Streams table updated for the
+  s2_beyond_copy completion + batch-2 advance, s4's reconfirmed live chain,
+  the s1/s5 turn-3 activity, and the three builder handoffs; Completed cards
+  section now has its first real row — `s2_beyond_copy-B1`, diagnostic,
+  panel geomean skill 9.624 (1-NN lookup, not a model), falsified, two tools
+  promoted; Flags rewritten around the completion, the tool promotions, the
+  batch-2 advance, and the s3_warp quiet-since-handoff watch item).
+## RUN END 2026-07-29T18:48:03Z
