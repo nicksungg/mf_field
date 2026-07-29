@@ -1,0 +1,30 @@
+# MFFP Autoresearch Round 1 — the whole config surface (Layer-A externalization).
+# All paths are relative to the repo root; agents absolutify at runtime via
+# `git rev-parse --show-toplevel` (see subagents/_shared/universal_context.md).
+round: round1
+paths:
+  round_root: mffp_autoresearch/round1
+  outputs_root: mffp_autoresearch_outputs/round1
+  venv: .venv
+  factory_root: mf_field/factory_mffp
+  data_root: mf_field/factory_mffp/data
+  eval_dir: mffp_autoresearch/round1/eval
+panel:
+  - ext__helmholtz_2d
+  - sharp__phase_field_crystal_2d
+  - sharp__allen_cahn_2d
+  - sharp__fisher_kpp_2d
+  - sharp__cahn_hilliard
+  - ifc_poisson
+guard_set: [heat_local, fluid, sharp__sod_1d]
+streams:
+  - {name: s1_poisson,        class: gap,    question: "why is ifc_poisson above the paper bar (0.036), and what closes it?"}
+  - {name: s2_beyond_copy,    class: gap,    question: "why does every fusion mechanism lose to copy-LF on the five sharp-2D panel datasets?"}
+  - {name: s3_testtime,       class: lever,  question: "how far does test-time refinement go when the governing residual is real?"}
+  - {name: s4_hybrid_routing, class: lever,  question: "can MF compositions of hybrid operators capture the +30.6% FNO<->Transolver oracle?"}
+  - {name: s5_tuning,         class: tuning, question: "how much of the gap is knobs, not architecture?"}
+seed_protocol: {seeds: [0, 1, 2], cratered_skill_factor: 1.5}
+tiers: {contract_epochs: 2, smoke_epochs: 200, full_epochs: 2500}
+caps: {slurm_algo_attempts: 5, review_fail_attempts: 3, consecutive_skips_for_stream_abandonment: 3}
+crons: {orchestrator_pulse_min: 10, maintainer_min: 20}
+sbatch: {partition: gpu, gres: "gpu:p100:1", account: null}
