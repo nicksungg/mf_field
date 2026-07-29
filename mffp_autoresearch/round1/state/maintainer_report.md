@@ -442,3 +442,57 @@
   transition already happened two walks ago; all other counts/structure
   unchanged).
 ## RUN END 2026-07-29T07:17:05Z
+
+## RUN START 2026-07-29T14:29:50Z
+- Single in-flight check: last run START 2026-07-29T07:16:39Z has matching
+  RUN END 2026-07-29T07:17:05Z (~7.2h ago, closed) — no double-walk risk,
+  proceeding.
+- **G3 now PASS** (major delta this walk): array job 65956106's final 2
+  tasks (65956106_31/_32: mf_fno_pinn_transfer x sharp__cahn_hilliard
+  seeds1-2, ~44 min each, nodes hpc-24-32/hpc-25-17) COMPLETED — 36/36
+  COMPLETED, 0 FAILED overall. `state/anchors/{s1_poisson,s2_beyond_copy,
+  s3_testtime,s4_hybrid_routing,s5_tuning}.json` and
+  `state/noise_floor.json` now exist, certified 2026-07-29T14:28:45Z (per
+  `state/gates.md`'s new G3 PASS entry). Champion `mf_fno_transfer_film`,
+  panel geomean skill 6.703 [6.219, 7.102] @ 200-epoch smoke tier.
+  Noise-floor alert: ext__helmholtz_2d seed spread 9.695 (diverging seed) —
+  unfalsifiable at smoke tier there per gates.md note; other 5 floors tight
+  (0.24-1.63).
+- All 5 streams advanced: `state/{stream}/current_stage.txt` now reads
+  `brainstormer_running` (was `websearch_done_awaiting_G3_brainstormer`)
+  for s1_poisson, s2_beyond_copy, s3_testtime, s4_hybrid_routing,
+  s5_tuning; `current_batch.txt` still 1 for all. Consistent with
+  orchestrator_flow.md's "Dispatching ALL 5 brainstormers (batch 1)" entry
+  at 2026-07-29T14:29:11Z.
+- No card files exist yet (`experiment_cards/` still only `SCHEMA.md` +
+  `.gitkeep`) — expected, brainstormers haven't produced starter output
+  yet this cycle.
+- SLURM view: `squeue -u $USER` shows only one unrelated `bash` job
+  (65984594, RUNNING, ~2:30 elapsed) — not r1-scoped, out of round. No
+  `r1-{stream}-B{N}-s{seed}` jobs exist (no cards submitted yet). `sacct`
+  confirms full 65956106 array 36/36 COMPLETED, 0 FAILED. Non-r1 queue:
+  historical CANCELLED jobs 65958902/65958904/65960289 and the prior
+  batch-0 wholesale INFRA failure 65955389 (14/14 FAILED, bad node
+  hpc-93-36) unchanged, out of round scope.
+- Timing ledger: upserted the 2 final G3 array tasks (65956106_31 seed1
+  44.35min, 65956106_32 seed2 44.32min, mf_fno_pinn_transfer x
+  sharp__cahn_hilliard, p100, 200 epochs) — inferred family/dataset by
+  positional match against the array's known task-mapping pattern (task30
+  = pinn_transfer/cahn_hilliard seed0, tasks33-35 = pinn_transfer/
+  ifc_poisson seeds0-2, confirming tasks31-32 = cahn_hilliard seeds1-2).
+  `timing_ledger.json` now has 36/36 entries (was 34); validated
+  `json.load` succeeds, parseable.
+- Abandonment check: no cards exist, no abandonment possible; no
+  `state/streams/*.json` files exist or created this walk.
+- Transcript inbox: `state/transcripts/` directory still does not exist —
+  nothing to archive.
+- No card files touched (`git status --short experiment_cards/` clean,
+  confirmed before and after this walk; `git diff --stat` empty).
+- index.md: regenerated (G3 row flipped PENDING->PASS with certification
+  detail; all 5 stream rows updated with real anchors rendered from
+  state/anchors/*.json, status websearch_done_awaiting_G3_brainstormer ->
+  brainstormer_running; running-jobs table cleared to empty — the 2
+  tail G3 tasks completed and no stream jobs exist yet; new noise-floor
+  alert paragraph added; flags section rewritten around the G3 PASS and
+  brainstormer-dispatch deltas).
+## RUN END 2026-07-29T14:33:00Z
