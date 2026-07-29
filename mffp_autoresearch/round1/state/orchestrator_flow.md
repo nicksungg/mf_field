@@ -1500,3 +1500,96 @@ pulse: no-op. s3_warp debugger iterating (verify1 FAILED 35s, verify2 queued —
 metric-reconciliation in progress; its debug_notes own the ALGO accounting).
 Three main jobs still PENDING on H100. Agents: s2-B2/s5-B2 builders, s6-B2
 brainstormer, s4 mechanism.
+
+## Pulse — 2026-07-29T23:04Z
+
+pulse: no-op. Four jobs PENDING on H100 (queue congestion continues); all
+agents in flight (s2-B2/s5-B2 builders, s6-B2 brainstormer, s4 mechanism
+turn 3, s3_warp debugger awaiting verify2).
+
+## Brainstormer return — s6_local-B2 — 2026-07-29T23:10Z
+
+SUCCESS / slot_filled (10/10). Control-and-repair sweep (ADR 0007 reconciled
+as sweep — 4/5 arms are controls): b1_replica / circ_repair (data-driven
+periodicity switch, ADR-0009-safe) / lsi_ctrl (closed-form, ZERO trained
+params, scored) / trust_head_circ (out-of-fold ridge, physics-free features,
+paired via corrector_state_sha256) / pointwise_ctrl_circ. Pixel-gate arm
+DROPPED with justification (oracle ceiling below every floor; F2 already ran
+achievable version). PRE-REGISTERED HONESTY: C2 expectation is that the
+neural corrector is REFUTED vs the zero-parameter filter on 3 of 4 (lsi_ctrl
+predicted geomean 0.1972 < B1's 0.2346 — the round's best number may have
+zero trained parameters). Two new measurements: defect target is boundary-
+UNIFORM (F10's concentration = model handicap, not target structure); and
+copylf_prediction's zoom(mode=nearest) gives copy-LF itself a ~4x wrap seam
+that zero padding forbids the corrector from seeing across. Cross-stream
+boundary with s2-B2 stated. Stage → starter_running; dispatching.
+
+## Pulse — 2026-07-29T23:14Z
+
+pulse: no-op. Queue congestion persists (4 r1 jobs PENDING incl. debugger's
+verify3). Agents: s2-B2/s5-B2 builders, s6-B2 starter, s4 mechanism turn 3,
+s3_warp debugger. All healthy; no failures.
+
+## Starter return — s6_local-B2 — 2026-07-29T23:15Z
+
+SUCCESS / drafted (14/14, no TBDs; recipe json-equality-verified; C1-C3
+transcribed with the pre-registered C2 refutation expectation intact). Card
+at experiment_cards/s6_local/batch_2/B2.json (45 env knobs, 5 arms). Stage →
+builder_running; dispatching builder.
+
+## s4-B1 COMPLETE — ALL FIVE ORIGINAL B1s DONE — 2026-07-29T23:21Z
+
+Mechanism register 12/12; 2 tools promoted (correction_anatomy.py,
+routing_headroom.py). VERDICT: the corrector's pfc "win" is a LOSSY
+RE-DERIVATION OF COPY-LF (cos(corr, copylf-base) 0.834; cos(corr, hf-copylf)
+0.023; one-scalar blend toward copy-LF matches it) — not fidelity-gap
+modelling. Gate internally inconsistent (val split inside the memorised
+training set: base 0.0083 val vs 0.50 test on CH = 58x); the CH veto was
+WRONG (vetoed alpha_ls=1.10 is test-optimal: skill 5.56→3.16, -2.40 vs 0.553
+floor, 4.3x — a legitimate per-dataset claim since alpha_ls used no test
+data). Three alpha=0 modes (collapsed/orthogonal/vetoed-but-good). CAUSAL
+proof of LF consumption: permuting LF↔sample pairing inverts the pfc gain
+(-70% → +47%). fisher_kpp reconciled with s2 Class B (corrects the FNO's
+error toward copy-LF; hf-lf stays unlearnable). ROUTING (D2) REFUSED by
+headroom: per-pixel alpha LOSES honestly-fitted; per-sample oracle <=5.3% —
+all under floors. Licensed for B2: gate-split repair (keep shrinkage) +
+dense LF input. C5 deferred (gated on stage 1 < skill 1.0). Cross-stream:
+s5 gets two unpriced champion pathologies (CH 58x memorisation; helmholtz
+UNDERFIT in-sample 4.57); s2's F14 doesn't cover akash/models. Batch → 2,
+websearch_running; dispatching websearcher.
+
+## Builder return — s2_beyond_copy-B2 — 2026-07-29T23:22Z
+
+SUCCESS / built (10/10). Commit 5bf0e86. Identity EXACT 0.0 (LF_up IS
+copylf_prediction in float64; zero-init head); floor reproduction max delta
+4.1e-4 (49x inside 0.02 tol), hard-stop on divergence; mid-stage SIGKILL
+resume proven; --env trap defended empirically (second flag → HardStop exit
+1); KRF TBD resolved as metadata. FREE OBSERVATION: the two new retrieval
+keys BEAT the F6 floor on 4/5 (s1grad helmholtz 0.5915 vs 0.7851!; pfc 0.5198
+vs 0.5620; patch cahn_hilliard 0.5928) — the trained arm's real bar is lower
+than F6. Blend-w bias toward 0 recorded openly. Stage → review_running;
+dispatching reviewer + the promised DINO-key operator measurement (non-card,
+scratchpad, read-only on the rig).
+
+## Pulse — 2026-07-29T23:24Z
+
+pulse: no-op. Four jobs PENDING (H100 congestion, several hours now — short
+jobs, will clear in a burst). Agents: s2-B2 reviewer, s4-B2 websearcher,
+s5-B2/s6-B2 builders, s3_warp debugger, DINO-key operator measurement.
+
+## Debugger return — s3_warp-B1 attempt 1 — 2026-07-29T23:27Z
+
+SUCCESS / fixed_and_relaunched (ALGO 1/5, 7/7). ROOT CAUSE: ill-posed M9
+statistic — unweighted EPE over pfc's FLAT matrix (|grad| 2.1e-8; displacement
+unobservable there) + gating the lossy fit direction (8-22% intrinsic resample
+floor). Multi-scale hypothesis MEASURED-AND-REFUTED (1200 iters / lr 0.05 /
+4-level pyramid all bit-identical 0.39). FIX: register in the exactly-
+attainable direction (LITERAL 5% clause back in force — operator amendment
+slack now inert), evidence-weighted EPE (same mask, same 0.25 tol), runtime
+broken-optimizer control (must-fail verified: lr/200 fails on all five),
+float64 reported-field fix for a second latent cross-hardware abort (2.5e-9
+p100 vs 2.8e-11 h100 against 1e-9 tol — fixed at the source, tolerance
+untouched). All 5 datasets pass the literal clause; rung-0 seam 0.0; stale
+pre-fix artifacts quarantined. Commit b72f243; relaunched job 66011595.
+Stage → seed0_running. Dispatching focused reviewer ruling on the two M9
+statistic changes per the debugger's request.

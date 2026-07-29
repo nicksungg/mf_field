@@ -18,6 +18,8 @@ tool: name, what it measures, invocation, provenance card.
 | `regen_preds_from_ckpt.py` | recovers a control arm's `preds_test.npz` from a checkpoint that shipped without one (eval-only resume), with a mandatory seam check | s5_tuning-B1 turn 1 |
 | `defect_correction_learnability.py` | training-free: is `hf - interp(lf)` a fixed (mostly linear, compact-stencil) operator of the LF field on this dataset? predicts whether an LF-consuming additive corrector has headroom, and what a ZERO-parameter closed-form filter already gets | s6_local-B1 turn 3 |
 | `trust_gate_headroom.py` | value ceiling of a trust gate at per-pixel vs per-sample granularity, for any `base + correction` model scored against copy-LF | s6_local-B1 turn 1 |
+| `correction_anatomy.py` | what a `base + alpha*correction` branch actually adds: a re-derivation of copy-LF, real fidelity-gap information, or nothing | s4_hybrid_routing-B1 turn 2 |
+| `routing_headroom.py` | ceiling of a per-sample / per-pixel gate over one scalar `alpha`, for a base that is NOT copy-LF (complements `trust_gate_headroom.py`) | s4_hybrid_routing-B1 turn 3 |
 | `render_readme.py` | regenerates `round1/README.md` from the experiment cards (housekeeping, not a probe) | round infrastructure |
 
 ---
@@ -409,3 +411,122 @@ function with no trained parameters beats the round's best 200-epoch model by
 the network. And **do not build a field-valued trust gate without measuring its
 ceiling first**: on these datasets an oracle per-pixel gate is worth <= 4.1 % and is
 negative on one dataset, while an oracle per-sample scalar is worth up to 50.7 %.
+
+---
+
+## `correction_anatomy.py`
+
+**Measures.** For any model written `pred = base + alpha*correction` (residual
+hybrid, test-time corrector, boosting stage, two-expert mixture), WHICH of three
+things the correction is:
+
+| block | question answered |
+|---|---|
+| `cosine_correction_vs` | per-sample cosine of the correction with `hf-base` (its trained target), `copylf-base` ("re-derive the coarse solve"), `hf-copylf` (the fidelity gap) |
+| `correction_in_span_lfdir_gapdir` | per-sample least squares of the correction on span{`copylf-base`, `hf-copylf`}: coefficient on each direction, `R^2` of the 2-D fit, and `effective_fraction_toward_copylf` = `alpha * c0` |
+| `nrmse_base_plus_a_times_lfdir` | the TRIVIAL reference the correction must beat: `base + a*(copylf-base)` for `a` in 0.25/0.5/0.75/1 (`a=1` IS copy-LF) |
+| `nrmse_all` / `skill_all` | copy-LF, base, gated hybrid, plus `L5` (kNN-in-LF residual) and `L3` (kNN-in-X residual) computed with `lf_conditioned_headroom.py`'s own functions, so the rungs are comparable to `s2_beyond_copy-B1` |
+| `mean_rel_l2_<regime>` | the same predictors split into spatially-CONSTANT vs PATTERNED test samples (s2-B1 F1's bimodality; degenerate on unimodal datasets) |
+
+**Read it as.** `cosine(corr, copylf-base) >= cosine(corr, hf-base)` together with
+`cosine(corr, hf-copylf) ~ 0` -> the branch is **re-deriving the coarse solve it
+already receives**. Its ceiling is skill 1.0, so tuning it cannot clear the
+copy-LF bar, and `nrmse_base_plus_a_times_lfdir` will often show a one-scalar
+blend already matching it — the lever is to feed the LF field to the network more
+directly, not to grow the corrector. A materially non-zero
+`coef_hf_minus_copylf_median` is the case worth scaling: that component carries
+information copy-LF does not have. Both cosines ~0 with a tiny
+`corr_rms_over_residual_rms` -> the branch collapsed and any gate value it reports
+is uninformative.
+
+**Invoke.**
+```bash
+source "$PROJECT_ROOT/.venv/bin/activate"
+python tools/correction_anatomy.py --dataset sharp__phase_field_crystal_2d \
+    --npz <run>/fields.npz --base_key base_te --corr_key corr_te \
+    --corr_scale 2.8695719242095947 --alpha 0.25085851550102234 \
+    --out anatomy.json [--sig 16] [--k 5]
+```
+Seconds; pure numpy. `--npz` holds two `(N, n_cells_hf)` arrays on the HF grid
+(base prediction, RAW correction); `--corr_scale` un-scales families that store
+the correction in scaler units (`fno_transolver_seq`'s `scaler_r`); `--alpha` is
+the gate actually applied. Fewer rows than the test split is fine — the first N
+test samples are used. Datasets whose test split ships no LF (`ifc_poisson`) raise.
+
+**Verified.** Run 2026-07-29 from `round1/` on the s4-B1 pfc checkpoint replay
+(`cache_sharp__phase_field_crystal_2d_s0.npz`, `corr_scale` 2.8695719242095947,
+`alpha` 0.25085851550102234): `cosine(copylf-base)` 0.8342 / 0.9512,
+`cosine(hf-copylf)` 0.0232 / 0.0381, span coefficients 3.1576 / 0.0749,
+`R^2` median 0.9060, `effective_fraction_toward_copylf` 0.7921, blend curve
+0.319056 / 0.215512 / 0.114384 / 0.040545 — identical to the source probe;
+hybrid skill 3.1049959 vs the probe's 3.1049908 (1.6e-6, float32 cache).
+
+**Provenance.** `worktrees/s4_hybrid_routing/B1/scratchpad/correction_anatomy.py`;
+card `experiment_cards/s4_hybrid_routing/batch_1/B1.json` part 6, findings F6-F9.
+
+---
+
+## `routing_headroom.py`
+
+**Measures.** The value ceiling of replacing the scalar `alpha` in
+`pred = base + alpha*correction` with something richer, for an **arbitrary base**:
+
+| rung | gate |
+|---|---|
+| `G0_alpha0` | `alpha = 0` (base only) |
+| `G1_alpha_applied` | the scalar the model actually applied |
+| `G2_alpha_global_oracle` | the global ORACLE scalar (fitted on this test set) |
+| `G3_alpha_per_sample_oracle` | per-sample ORACLE scalars — the sample-level routing ceiling |
+| `G4_alpha_field_splithalf` | per-PIXEL alpha field fitted on one half of the test split and scored on the other, both directions — a leak-free spatial-routing estimate that needs no extra val predictions |
+| `G5_alpha_field_insample` | the same pixel field fitted in-sample — the spatial-routing upper bound |
+
+plus `gains_pct_vs_G2`, `per_sample_alpha_oracle_stats` (incl. `cv`) and
+`alpha_field_stats`.
+
+**Relationship to `trust_gate_headroom.py`** (s6_local-B1): that tool answers the
+same granularity question but requires the base to BE copy-LF (`pred = copylf +
+correction`). Use this one when the base is a trained model (e.g. an FNO) and
+when you also want the scalar rungs `G1` vs `G2` — the gap between the gate a
+family fitted and the best single scalar — which is where a mis-specified gate
+objective shows up.
+
+**Read it as.** Compare `gains_pct_vs_G2` with the dataset's
+`min_claimable_effect` (`state/noise_floor.json`; 10 % relative on the round-1
+sharp panel). All rungs inside the floor -> a routing/gating card is NOT licensed:
+one scalar is all the gate structure the artifact supports and the lever is what
+the correction CONTAINS, not how it is mixed in. `G4` worse than `G2` (positive
+gain) -> a pixel-wise gate cannot even be estimated at this `N_test`, so treat
+`G5` as fantasy. A large `G1 - G2` is a gate-calibration defect, not a routing
+opportunity.
+
+**Invoke.**
+```bash
+source "$PROJECT_ROOT/.venv/bin/activate"
+python tools/routing_headroom.py --dataset sharp__cahn_hilliard \
+    --npz <run>/fields.npz --base_key base_te --corr_key corr_te \
+    --corr_scale 2.207066297531128 --alpha 0.0 --out routing.json
+```
+Seconds; pure numpy.
+
+**Verified.** Run 2026-07-29 from `round1/` on the s4-B1 cahn_hilliard checkpoint
+replay: `G2` 0.2846013948347478, `G3` −5.3347 %, `G4` **+3.5446 %**, `G5`
+−0.9463 %, per-sample oracle-alpha `cv` 0.6278 — identical to the source probe.
+
+**Provenance.** `worktrees/s4_hybrid_routing/B1/scratchpad/routing_headroom.py`;
+card `experiment_cards/s4_hybrid_routing/batch_1/B1.json` part 6, finding F11.
+
+---
+
+## Standing warning `correction_anatomy` + `routing_headroom` encode
+
+**Before building a router, price the router; before scaling a corrector, ask what
+the corrector contains.** On `fno_transolver_seq` (s4-B1) an ORACLE per-sample
+gate is worth ≤ 5.3 % and an honestly-fitted per-pixel gate is *worse* than one
+global scalar on 2 of 3 datasets — under every sharp dataset's 10 % floor — while
+the correction it was gating is collinear with `copylf − base` (cosine 0.54–0.83)
+and orthogonal to `hf − copylf` (cosine ≤ 0.02), i.e. the whole branch was
+re-deriving the coarse solve the model already receives. **And check that any
+held-out split used to fit a gate is out-of-sample for the BASE, not only for the
+new component**: the s4-B1 base scored 0.0083 in-sample vs 0.5007 on test
+(58× memorisation) on `sharp__cahn_hilliard`, which forced the gate to veto a
+correction worth 43 % of the test error and 4.3× the dataset's noise floor.

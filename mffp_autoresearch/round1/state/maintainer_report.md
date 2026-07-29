@@ -2101,3 +2101,148 @@
   the above, including the still-open guard200 dependency and the still-
   open pfc EPE-gate question).
 ## RUN END 2026-07-29T22:47:12Z
+## RUN START 2026-07-29T22:59:00Z
+- `s3_warp-B1` debugger's `verify1` (`66010795`) **FAILED at 35s**: a
+  targeted `score_panel.py --no_cache` rerun on pfc+helmholtz with
+  M9-selftest/M0-seam diagnostics hit `warp_core.WarpHardStop` — the
+  rung-0 ladder nRMSE (0.04478044967257278) disagreed with the M0 seam
+  computation (0.04478044719481978), a ~2.5e-8 relative mismatch tripping
+  a tight-tolerance internal self-consistency gate (not a real accuracy
+  miss). The debugger immediately dispatched a follow-up job, `verify2`
+  (`66011195`), identical script but requesting `h100` instead of `p100`
+  — testing whether the mismatch is GPU-kernel floating-point
+  non-determinism rather than a logic bug. `verify2` is now PENDING
+  (H100 congestion). Uncommitted local diffs remain in
+  `models_r1/s3_warp_oracle/{smoke_eval.py,warp_core.py}` (297/16 lines
+  vs the committed build) — still mid-iteration, no fix committed. The
+  previously-flagged pfc EPE-gate concern (`EPEn unweighted` ≈0.39 vs
+  0.25 tol) remains unresolved on the evidence; metric-reconciliation
+  work is ongoing, not concluded — flagged for the orchestrator/debugger
+  to reconcile once `verify2` returns.
+- `s6_local` batch 2 advanced past the websearch stage this walk:
+  `websearches/s6_local/batch_2/report.md` written (all 5 iterations
+  complete), `state/s6_local/current_stage.txt` now `brainstormer_running`
+  (was `websearch_running`). Brainstormer output not yet on disk (in
+  flight, no files yet). No batch-2 card exists (pre-card, expected).
+- `s4_hybrid_routing-B1` mechanism analyzer produced fresh output this
+  walk: `scratchpad/log_turn23.txt` (~50s old at scan time), containing an
+  allen_cahn replay + alpha-sweep gate analysis (`test_optimal_alpha=1.0`,
+  `test_optimal_nrmse=0.244`) and an in-progress cahn_hilliard `ctx_cf`
+  variant run. `reanalysis_progress` still `turn_2`, `6_analysis` still
+  null this walk — turn 2→3 work actively underway, not concluded (this
+  stream was reported as having "no fresher artifacts" last walk; it does
+  now).
+- `s2_beyond_copy-B2` builder: still live and progressing — new
+  scratchpad artifacts since last walk (`cov_e0_sharp__allen_cahn_2d.json`,
+  `cov_ckpt_e0_sharp__allen_cahn_2d/last.pt`, `cov_rest.log`, freshest
+  ~5 min old at scan time). No `built` transition yet.
+- `s5_tuning-B2` builder: also still live and progressing — new
+  scratchpad artifacts since last walk (`drill_crossarm/` outputs,
+  `smoke_revin.{sh,out}`, `smoke/logs/fluid__A3_revin_lf.log`,
+  `smoke/results/.../scaler_revin_lf/last.pt`, freshest ~2 min old at
+  scan time). No `built` transition yet.
+- `s1_poisson-B2` (`66008912`) and `s7_loss-B1` (`66009306`): both still
+  PENDING on H100, unchanged since last walk.
+- `guard200` (`66005834`, s6_local-B1 200-epoch guard set): still
+  PENDING on H100, unchanged since last walk — still the outstanding
+  dependency before s6_local-B1's provisional claim language can be
+  finalized (`guard_flags: MISSING_200EP_GUARD` unchanged).
+- Timing ledger: no new COMPLETED r1- jobs since last walk (`verify1`
+  FAILED — not eligible; `verify2` still PENDING — no elapsed time yet).
+  Ledger unchanged at 53 entries; re-validated as parseable JSON, no
+  write needed this walk.
+- No abandonment trigger: no stream has 3 consecutive skip/blocked
+  batches; no stream has reached 3 batches yet. `state/streams/`
+  directory still does not exist.
+- Transcript inbox: `state/transcripts/` still does not exist — nothing
+  to archive this walk.
+- Anchors: `state/anchors/*.json` unchanged (same 5 files, same
+  certified_utc 2026-07-29T14:28:45Z) — rendered verbatim into index.md,
+  no recomputation.
+- ADRs unchanged this walk: `docs/adr/0001`-`0012`, no new ADR since
+  0012 (s7_loss stream).
+- Gates unchanged: G1-G5 all carried-over PASS, no new gate activity
+  this window (`state/gates.md` mtime unchanged).
+- No card files modified by the maintainer this walk. `git status
+  --short experiment_cards/` is clean at scan time (no external edits
+  detected this window, unlike last walk's s6_local registration write).
+- index.md: regenerated (fresh timestamp; Streams table updated for
+  s3_warp's verify1-FAILED/verify2-dispatched cycle, s4_hybrid_routing's
+  fresh turn 2→3 activity, and s6_local's batch-2 brainstormer advance;
+  Running/pending jobs table swaps `66010795`→`66011195` and notes all
+  4 PENDING jobs now request H100; Flags rewritten around all of the
+  above).
+## RUN END 2026-07-29T23:03:40Z
+## RUN START 2026-07-29T23:19:00Z
+- `s6_local` batch 2: brainstormer returned this walk (`brainstormer/s6_local/batch_2/{iteration_1,report}.md`,
+  written ~16:06-16:09 local) — a control-and-repair sweep on the B1 defect-correction
+  substrate (5 arms: `b1_replica`, `circ_repair` PRIMARY C1/C2, `lsi_ctrl` zero-param
+  closed-form floor, `trust_head_circ` PRIMARY C3 out-of-fold per-sample head,
+  `pointwise_ctrl_circ`), with a pre-registered expectation that C2 (LSI vs neural) is
+  **refuted 1-of-4** (fisher_kpp only), plus two new read-only measurements (defect
+  target `R` is boundary-uniform, 12-cell band density ratio 1.024-1.045; and
+  `copylf_prediction`'s own `zoom(mode="nearest")` carries a 4x wrap seam). The
+  experiment-starter drafted `s6_local-B2` (new card, `status: drafted`, `created_utc`
+  2026-07-29T23:14:43Z, `job_ids: []`). `state/s6_local/current_stage.txt` advanced
+  `brainstormer_running` → `builder_running` (23:15:45Z). No build artifacts on disk
+  yet (builder just started, no fresh scratchpad under
+  `worktrees/s6_local/B2/mf_field/factory_mffp/models_r1/s6_local_repair` — dir does
+  not exist yet).
+- `s3_warp-B1` debugger: `verify2` (`66011195`) resolved as **CANCELLED+** this walk
+  (was PENDING at last scan; the p100→h100 GPU-numeric-mismatch test did not run to
+  completion/produce a result). The debugger dispatched **`verify3`** (`66011522`,
+  PENDING) instead — same `score_panel.py --no_cache` replay on
+  `sharp__phase_field_crystal_2d,ext__helmholtz_2d` (pfc, the previously-aborting
+  dataset, tested first) but back on **p100** this time. `smoke_eval.py`'s uncommitted
+  diff grew from 297 to 304 lines vs the committed build (warp_core.py unchanged at
+  16 lines) — active mid-iteration fix, still uncommitted. `state/s3_warp/current_stage.txt`
+  still reads ALGO attempt 1/5 (cap not tripped, orchestrator/debugger-only concern).
+  The pfc EPE-gate concern (`EPEn unweighted` ≈0.39 vs 0.25 tol) remains unresolved on
+  the evidence — flagged again for reconciliation once `verify3` returns. Card `job_ids`
+  still stale (only lists the original `66001846`), unchanged, not a maintainer edit.
+- `s4_hybrid_routing-B1` mechanism analyzer: advanced from `reanalysis_progress: turn_2`
+  to **`turn_3`** this walk. `6_analysis` is now populated (was null last walk) with 13
+  findings (F1-F13) citing `scratchpad/reanalysis_turn_{1,2,3}_results.md` and their
+  JSON sidecars. Headline new turn-3 finding (F13): the candidate fix "drop the line
+  search, use alpha_ls" is refuted — alpha_ls is test-optimal on cahn_hilliard (1.1027)
+  and fisher_kpp (0.9877) but catastrophic on pfc (0.9944 → nRMSE 1.066448 vs shipped
+  0.125893, an 8.47x regression, skill 3.28 vs ~27.8). `7_gap_and_future` still null —
+  turn-3 write-up actively in flight at scan time, not concluded.
+- `s2_beyond_copy-B2` builder: still live and progressing — new scratchpad artifacts
+  since last walk (`cov_ckpt_e0_sharp__cahn_hilliard/last.pt`, `cov_ckpt_ladderfb/last.pt`,
+  `cov_e0_sharp__cahn_hilliard.json`, `cov_ladderfallback_helm.json`, `cov_rest.log`,
+  freshest ~2 min old at scan time). No `built` transition yet.
+- `s5_tuning-B2` builder: still live and progressing — new scratchpad artifacts since
+  last walk (`smoke/results/fluid__A0_maxabs/...` full run incl. `last.pt`/
+  `preds_test.npz`/`fluid_e2_s0.json`, `smoke/results/fluid__BASEfactory/...`, freshest
+  <1 min old at scan time). No `built` transition yet.
+- `s1_poisson-B2` (`66008912`) and `s7_loss-B1` (`66009306`): both still PENDING on
+  H100, unchanged since last walk.
+- `guard200` (`66005834`, s6_local-B1 200-epoch guard set): still PENDING on H100,
+  unchanged since last walk — still the outstanding dependency before s6_local-B1's
+  provisional claim language can be finalized (`guard_flags: MISSING_200EP_GUARD`
+  unchanged).
+- Timing ledger: no new COMPLETED r1- jobs since last walk (`verify1` FAILED and
+  `verify2` CANCELLED+, neither eligible; `verify3` still PENDING — no elapsed time
+  yet). Ledger unchanged at 53 entries; re-validated as parseable JSON, no write
+  needed this walk.
+- No abandonment trigger: no stream has 3 consecutive skip/blocked batches; no stream
+  has reached 3 batches yet. `state/streams/` directory still does not exist.
+- Transcript inbox: `state/transcripts/` still does not exist — nothing to archive
+  this walk.
+- Anchors: `state/anchors/*.json` unchanged (same 5 files, same certified_utc
+  2026-07-29T14:28:45Z) — rendered verbatim into index.md, no recomputation.
+- ADRs unchanged this walk: `docs/adr/0001`-`0012`, no new ADR since 0012 (s7_loss
+  stream).
+- Gates unchanged: G1-G5 all carried-over PASS, no new gate activity this window
+  (`state/gates.md` mtime unchanged).
+- No card files modified by the maintainer this walk. `git status --short
+  experiment_cards/` shows only other agents' writes this walk (`s4_hybrid_routing/
+  batch_1/B1.json` by the mechanism analyzer; the new `s6_local/batch_2/` card by the
+  starter) — none by the maintainer, which only reads cards.
+- index.md: regenerated (fresh timestamp; Streams table updated for s3_warp's
+  verify2-CANCELLED/verify3-dispatched cycle, s4_hybrid_routing's turn-3 completion,
+  and s6_local's new batch-2 card + builder start; Running/pending jobs table swaps
+  `66011195`→`66011522` and notes the new p100/H100 split; Completed/Flags rewritten
+  around all of the above).
+## RUN END 2026-07-29T23:23:00Z

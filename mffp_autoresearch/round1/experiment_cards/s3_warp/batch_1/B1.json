@@ -46,7 +46,7 @@
       "S3W_DIAG_OUT": "${OUTPUTS_ROOT}/s3_warp/B1/eval"
     }
   },
-  "status": "reviewed_suggest",
+  "status": "running",
   "skipped_reason": null,
   "reopen_candidate": false,
   "scripts_path": {
@@ -65,7 +65,8 @@
   },
   "build_commit": "4799abdec705d64e8300b18ab0650fb74e012c9b",
   "job_ids": [
-    "66001846 (diagnostic single run)"
+    "66001846 (diagnostic single run)",
+    "66011595 (debug attempt 1 relaunch, seed 0)"
   ],
   "logs": {},
   "build_notes": [
@@ -120,7 +121,37 @@
       "utc": "2026-07-29T19:43:02Z"
     }
   ],
-  "debug_notes": [],
+  "debug_notes": [
+    {
+      "attempt": 1,
+      "class": "ALGO",
+      "symptom": "job 66001846 aborted on sharp__phase_field_crystal_2d via the pre-registered M9 hard stop: gradient-normal EPE on the s2 interface mask 0.3928 cells vs the 0.25-cell tolerance (the error-reduction leg PASSED: warped nRMSE 0.1278 of unwarped vs the 1.5x-exact-planted gate 0.2523). ext__helmholtz_2d had completed first (EPE 0.0602).",
+      "diagnosis": "NOT the optimiser. Measured (scratchpad/diagnose_attempt_1{,b,c}.py; slurm jobs 66009323 / 66009547 / 66010125): on pfc 1200 iters, lr 0.05 and a 4-level Gaussian image-pyramid coarse-to-fine warm start all return BIT-IDENTICAL normal EPE (0.3911/0.3931/0.3928), the uniform-shift loss landscape has a single minimum exactly at the truth at every blur level (no aliasing/aperture trap), the mask has ample cell count (19095 cells, 14.6%), and at the C4 rung -- where the plant is exactly representable -- the fit already reaches a LOWER objective than the recovery target itself (0.995x, and 0.760x at C16). Two genuine causes: (1) the self-test fitted the LOSSY direction (re-warp the bilinearly resampled pseudo-LF back onto HF), where two resamples put an 8-22%-of-unwarped floor under every optimiser and move the argmin ~0.5 cells off the target; (2) pfc's s2 interface mask (|u| <= 0.1 max|u|) is the FLAT homogeneous matrix around the crystal: median |grad u| 2.1e-8 vs a field-wide gradient RMS of 4.55e-2, only 12.4% of mask cells carrying any evidence (51.8-100% on the other four datasets). Where the field is flat, no data term can determine phi in any direction and the fitter correctly leaves phi ~ 0 (median |phi_fit|/|phi_true| = 0.000) while reproducing the target to 1.1e-4 of unwarped.",
+      "fix": "0.25-cell tolerance, the AND-conjunction and the hard abort all unchanged; no recipe knob touched. (a) M9 now registers in the direction in which the planted displacement is EXACTLY attainable (moving = HF, target = pseudo_LF = warp(HF,d), recovered quantity = d): data loss is 0 at the optimum, so the card's LITERAL '< 5% of unwarped' clause is back in force and the operator amendment's 1.5x-exact slack is inert -- strictly stricter than the amended gate. (b) The gated EPE mean is |grad u|-weighted (evidence-weighted) over the SAME interface mask; the unweighted literal value and a support-masked variant are both recorded. (c) New broken_optimiser_control: a 5-iteration fit is run every time and MUST fail the composite gate, else the run hard-stops -- runtime proof of teeth. (d) The legacy lossy-direction numbers are still fitted and recorded, non-gating, with the certificate legacy_target_is_not_the_argmin. (e) fit_ladder resamples the REPORTED fields from the float64 source (the float32 fit path is bit-identical), fixing a second latent hard abort found during verification: the rung-0-vs-M0 cross-assert measured 2.5e-9 on p100 (job 66010795) vs 2.8e-11 on h100 against a 1e-9 tolerance; it is now bit-exact (delta 0.000e+00 on pfc and helmholtz, scratchpad/verify_seam_cpu.py).",
+      "verification": "pfc self-test now PASSES: weighted normal EPE 0.0000 and support-masked 0.0000 cells, nRMSE 3.1e-6 = 1.1e-4 of unwarped (literal 5% clause PASS, 450x margin); helmholtz 0.0027 weighted EPE, 2.7e-3 of unwarped; all five panel datasets pass the literal 5% clause at C16. Teeth: an lr/200 fit FAILS the weighted EPE gate on all five datasets (0.33-0.35 cells) and 5-iter / 20-iter fits fail the nRMSE leg by 12-200x. Rung-0 seam: M0 vs eval/copylf_baselines.json delta 0.0 (pfc) / 5.6e-17 (helmholtz) and the ladder C0 field now bit-identical to the M0 field. score_panel run 66010795 cleared the pfc M9 self-test end-to-end (it stopped later, at the pre-fix seam cross-assert).",
+      "files_touched": [
+        "models_r1/s3_warp_oracle/smoke_eval.py",
+        "models_r1/s3_warp_oracle/warp_core.py",
+        "notes/handoff_experiment_debugger_1.md",
+        "scratchpad/diagnose_attempt_1.py",
+        "scratchpad/diagnose_attempt_1b.py",
+        "scratchpad/diagnose_attempt_1c.py",
+        "scratchpad/verify_seam_cpu.py"
+      ],
+      "commit": "b72f243",
+      "relaunched_job_ids": [
+        "66011595"
+      ],
+      "diagnostic_job_ids": [
+        "66009323",
+        "66009547",
+        "66010125",
+        "66010795 (p100, exposed the seam fragility)"
+      ],
+      "next_suggestion": "For the analyzer: pfc's M2/M4 and leg-B statistics inherit the flat-mask finding -- on pfc the s2 'interface' mask is the homogeneous matrix, so median |phi| 'near the interface' there is not an interface statistic; read M9_selftest.gradient_support and leg_B_magnitude_bias before quoting leg B on pfc. Sidecar key rename: epe_normal_interface_mask_mean -> ..._weighted_mean (unweighted kept as ..._unweighted_literal). For a future reviewer: the two M9 changes are gate-statistic changes and should be ruled on explicitly, as the builder's original two deviations were. If M9 fails again, a weighted-EPE failure now means a real optimiser regression; do not retry image pyramids (measured, refuted).",
+      "utc": "2026-07-29T23:28Z"
+    }
+  ],
   "5_actual_result": null,
   "6_analysis": null,
   "7_gap_and_future": null,
