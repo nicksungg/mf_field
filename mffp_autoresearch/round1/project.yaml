@@ -20,9 +20,11 @@ guard_set: [heat_local, fluid, sharp__sod_1d]
 streams:
   - {name: s1_poisson,        class: gap,    question: "why is ifc_poisson above the paper bar (0.036), and what closes it?"}
   - {name: s2_beyond_copy,    class: gap,    question: "why does every fusion mechanism lose to copy-LF on the five sharp-2D panel datasets?"}
-  - {name: s3_testtime,       class: lever,  question: "how far does test-time refinement go when the governing residual is real?"}
+  - {name: s3_warp,           class: lever,  question: "does geometric alignment (warp-then-correct) beat additive correction on sharp-interface MF fusion?"}  # ADR 0010
   - {name: s4_hybrid_routing, class: lever,  question: "can MF compositions of hybrid operators capture the +30.6% FNO<->Transolver oracle?"}
   - {name: s5_tuning,         class: tuning, question: "how much of the gap is knobs, not architecture?"}
+  - {name: s6_local,          class: lever,  question: "does adding a local representation (CNN/ConvNeXt branch) to the FNO fix sharp-2D fusion, per hypothesis H2?"}  # ADR 0011
+  - {name: s7_loss,           class: lever,  question: "does an interface-aware training objective (scored on unchanged rel-L2) fix sharp-2D fusion where architecture does not?"}  # ADR 0012
 seed_protocol: {seeds: [0], end_of_round_confirm: {top_k: 3, seeds: [1, 2]}, cratered_skill_factor: 1.5}  # ADR 0004
 tiers: {contract_epochs: 2, smoke_epochs: 200, full_epochs: 2500}
 caps: {slurm_algo_attempts: 5, review_fail_attempts: 3, consecutive_skips_for_stream_abandonment: 3}

@@ -8,11 +8,11 @@
   "worktree_path": "mffp_autoresearch/round1/worktrees/s1_poisson/B1",
   "source_iteration": "brainstormer/s1_poisson/batch_1/iteration_1.md",
   "reopened_from": null,
-  "1_id_category": "s1_poisson-B1 — category: mf_composition / ladder-data-fusion (gap stream)",
-  "2_motivation": "The batch-1 seed direction (§12.1: \"all-pairs fidelity training … `mf_field/akash/models/mf_fno_allpairs`\") is scored by the websearcher as **`preempted-but-MF-composition-open`**, open only as \"**Not found published**: (i) **all ordered pairs** (not just adjacent) as a data-amplification augmentation, (ii) with a **single shared** network rather than one net per level, (iii) at **N_hf = 5** on the `li2022ifc` Poisson ladder.\" Reading that family against the data shows it *cannot be tested on this ladder as built*: `ifc_poisson`'s four fidelity levels are **not sample-aligned** (verified: `np.allclose(X8[:5], X64)` → `False`, max |diff| 0.581; same for every other pair), while `build_pairs` pairs `cond_by_fid[s][:n]` with `field_by_fid[t][:n]` and the finetune stage pairs LF conditions with HF fields. Every cross-fidelity row and the whole finetune stage therefore associate parameters with fields from *different* samples — which is exactly what its 0.4657 nRMSE on `ifc_poisson` (vs the champion's 0.0488) and 0.1457 on `ifc_heat` in `akash/results/bench_full_metrics.csv` predict, on precisely the two non-aligned datasets, while it wins the aligned npz datasets. This card fixes the correspondence and makes the pair set the measured variable, following the websearcher's directive \"**Design the pair set as the actual variable.**\"",
-  "3_description": "family `mf_fno_ladder` in the worktree, vendored from `akash/models/mf_fno_allpairs` + `akash/common/backbone.py` (SMOKE hyperparameters identical to the anchor family: hidden 64, blocks 4, modes_cap 12, batch 16, lr_pretrain 1e-3, lr_finetune 3e-4, wd 1e-5, clip 1.0). Rows `(cond = [X, f_src, f_tgt]) → Y@(64,64)`, with `f = (log fid − log 8)/(log 64 − log 8)`. **Correction**: cross-pair rows take the condition vector from the **target** fidelity's own sample list (a no-op on aligned datasets, a fix on the ifc ladder), and **self pairs (f,f) are included** so the 100/50/20/5 ladder rows all enter training. Stage 1: joint training on the arm's row set, 200 epochs. Stage 2 (identical in every arm): HF finetune on the 5 rows `(X^{(64)}, f_src=0, f_tgt=1) → Y^{(64)}`, 200 epochs. Eval query `(X_test, f_src=0, f_tgt=1)`.\nFour arms via `MFFP_LADDER_MODE`:\n\n| arm | levels | tags | rows | role |\n|---|---|---|---|---|\n| `two_level` | {8,64} | self ×2 + (8,64) | 110 | information-content control ≈ the champion |\n| `adjacent` | all 4 | self ×4 + (8,16),(16,32),(32,64) | 250 | published cascade structure |\n| `allpairs` | all 4 | self ×4 + all 6 ordered (s<t) | 280 | **primary** — the open composition |\n| `legacy_pairing` | all 4 | same rows, cross rows source-indexed | 280 | isolates the correspondence defect |\n\nTwo build traps recorded for the builder/reviewer: (1) `score_panel._run_one` derives `out_json`/`ckpt_dir` from `(family_dir.name, dataset, epochs, seed)` only — the arm is invisible, and the base resume logic would silently reload another arm's `last.pt`; the checkpoint key **must** include the arm and the job script **must** export a per-arm `ROUND1_EVAL_RESULTS`. (2) The family must be *vendored*, not imported from `akash/**` via `parents[2]`, both because akash is a guarded read-only surface and because `code_hash` would not see the imported code. The result JSON `extra` also records (score-neutrally) the per-pair `max |X^{(s)}[:n] − X^{(t)}[:n]|` alignment measurement and the per-arm row counts.",
-  "4_expected_result": "metric = `ifc_poisson` test nRMSE → skill vs paper bar 0.036 (ADR 0002), mean over seeds {0,1,2}. Anchor = **1.5656 [1.4562, 1.6961]** (nRMSE ≈ 0.0564). Predictions: `allpairs` **skill 1.15–1.40 (nRMSE 0.041–0.050)**, point estimate ≈1.28 → Δ ≈ **−0.29 skill vs anchor**, just above the **0.2399** floor; `adjacent` within the floor of `allpairs`; `two_level` ≈ anchor (1.4–1.7); `legacy_pairing` **≥ 3.0 skill (nRMSE ≥ 0.108)**, ≈6× the floor away from the anchor. Mechanism: the 32² level's 20 samples are the only supervision besides the 5 HF samples covering spectral modes 4–12 (an 8² field lifted to 64² carries content only to mode ≈4; the FNO represents 12), and the 16² level adds 50 more rows. Stated plainly: the anchor comparison is *marginal* against the floor at this tier; the robust part of the card is the three internal contrasts (same code, same seeds, same hyperparameters). Wall-clock: batch 0 ran `ifc_poisson` @200 epochs in 0.78–0.98 min, so 4 arms ≈ 15 min/seed → `--time=01:00:00` is ample.",
-  "expected_falsification": "Falsified if the full-ladder all-ordered-pairs arm fails to beat the two-level arm on `ifc_poisson` by more than the certified noise floor — mean skill over seeds {0,1,2} improving by ≤ 0.240 skill units (≤ 0.00864 nRMSE) — which would mean the intermediate fidelities (16², 32²) carry no usable information for HF reconstruction at N_hf = 5 beyond what the 8²→64² transfer already exploits.",
+  "1_id_category": "s1_poisson-B1 \u2014 category: mf_composition / ladder-data-fusion (gap stream)",
+  "2_motivation": "The batch-1 seed direction (\u00a712.1: \"all-pairs fidelity training \u2026 `mf_field/akash/models/mf_fno_allpairs`\") is scored by the websearcher as **`preempted-but-MF-composition-open`**, open only as \"**Not found published**: (i) **all ordered pairs** (not just adjacent) as a data-amplification augmentation, (ii) with a **single shared** network rather than one net per level, (iii) at **N_hf = 5** on the `li2022ifc` Poisson ladder.\" Reading that family against the data shows it *cannot be tested on this ladder as built*: `ifc_poisson`'s four fidelity levels are **not sample-aligned** (verified: `np.allclose(X8[:5], X64)` \u2192 `False`, max |diff| 0.581; same for every other pair), while `build_pairs` pairs `cond_by_fid[s][:n]` with `field_by_fid[t][:n]` and the finetune stage pairs LF conditions with HF fields. Every cross-fidelity row and the whole finetune stage therefore associate parameters with fields from *different* samples \u2014 which is exactly what its 0.4657 nRMSE on `ifc_poisson` (vs the champion's 0.0488) and 0.1457 on `ifc_heat` in `akash/results/bench_full_metrics.csv` predict, on precisely the two non-aligned datasets, while it wins the aligned npz datasets. This card fixes the correspondence and makes the pair set the measured variable, following the websearcher's directive \"**Design the pair set as the actual variable.**\"",
+  "3_description": "family `mf_fno_ladder` in the worktree, vendored from `akash/models/mf_fno_allpairs` + `akash/common/backbone.py` (SMOKE hyperparameters identical to the anchor family: hidden 64, blocks 4, modes_cap 12, batch 16, lr_pretrain 1e-3, lr_finetune 3e-4, wd 1e-5, clip 1.0). Rows `(cond = [X, f_src, f_tgt]) \u2192 Y@(64,64)`, with `f = (log fid \u2212 log 8)/(log 64 \u2212 log 8)`. **Correction**: cross-pair rows take the condition vector from the **target** fidelity's own sample list (a no-op on aligned datasets, a fix on the ifc ladder), and **self pairs (f,f) are included** so the 100/50/20/5 ladder rows all enter training. Stage 1: joint training on the arm's row set, 200 epochs. Stage 2 (identical in every arm): HF finetune on the 5 rows `(X^{(64)}, f_src=0, f_tgt=1) \u2192 Y^{(64)}`, 200 epochs. Eval query `(X_test, f_src=0, f_tgt=1)`.\nFour arms via `MFFP_LADDER_MODE`:\n\n| arm | levels | tags | rows | role |\n|---|---|---|---|---|\n| `two_level` | {8,64} | self \u00d72 + (8,64) | 110 | information-content control \u2248 the champion |\n| `adjacent` | all 4 | self \u00d74 + (8,16),(16,32),(32,64) | 250 | published cascade structure |\n| `allpairs` | all 4 | self \u00d74 + all 6 ordered (s<t) | 280 | **primary** \u2014 the open composition |\n| `legacy_pairing` | all 4 | same rows, cross rows source-indexed | 280 | isolates the correspondence defect |\n\nTwo build traps recorded for the builder/reviewer: (1) `score_panel._run_one` derives `out_json`/`ckpt_dir` from `(family_dir.name, dataset, epochs, seed)` only \u2014 the arm is invisible, and the base resume logic would silently reload another arm's `last.pt`; the checkpoint key **must** include the arm and the job script **must** export a per-arm `ROUND1_EVAL_RESULTS`. (2) The family must be *vendored*, not imported from `akash/**` via `parents[2]`, both because akash is a guarded read-only surface and because `code_hash` would not see the imported code. The result JSON `extra` also records (score-neutrally) the per-pair `max |X^{(s)}[:n] \u2212 X^{(t)}[:n]|` alignment measurement and the per-arm row counts.",
+  "4_expected_result": "metric = `ifc_poisson` test nRMSE \u2192 skill vs paper bar 0.036 (ADR 0002), mean over seeds {0,1,2}. Anchor = **1.5656 [1.4562, 1.6961]** (nRMSE \u2248 0.0564). Predictions: `allpairs` **skill 1.15\u20131.40 (nRMSE 0.041\u20130.050)**, point estimate \u22481.28 \u2192 \u0394 \u2248 **\u22120.29 skill vs anchor**, just above the **0.2399** floor; `adjacent` within the floor of `allpairs`; `two_level` \u2248 anchor (1.4\u20131.7); `legacy_pairing` **\u2265 3.0 skill (nRMSE \u2265 0.108)**, \u22486\u00d7 the floor away from the anchor. Mechanism: the 32\u00b2 level's 20 samples are the only supervision besides the 5 HF samples covering spectral modes 4\u201312 (an 8\u00b2 field lifted to 64\u00b2 carries content only to mode \u22484; the FNO represents 12), and the 16\u00b2 level adds 50 more rows. Stated plainly: the anchor comparison is *marginal* against the floor at this tier; the robust part of the card is the three internal contrasts (same code, same seeds, same hyperparameters). Wall-clock: batch 0 ran `ifc_poisson` @200 epochs in 0.78\u20130.98 min, so 4 arms \u2248 15 min/seed \u2192 `--time=01:00:00` is ample.",
+  "expected_falsification": "Falsified if the full-ladder all-ordered-pairs arm fails to beat the two-level arm on `ifc_poisson` by more than the certified noise floor \u2014 mean skill over seeds {0,1,2} improving by \u2264 0.240 skill units (\u2264 0.00864 nRMSE) \u2014 which would mean the intermediate fidelities (16\u00b2, 32\u00b2) carry no usable information for HF reconstruction at N_hf = 5 beyond what the 8\u00b2\u219264\u00b2 transfer already exploits.",
   "anchor_reference": null,
   "prior_art": {
     "verdict": "preempted-pivoted",
@@ -24,7 +24,7 @@
       "progressive ladder at tiny HF: https://arxiv.org/pdf/2510.13762 (fetched)",
       "all2all = **time** pairs only: https://nips.cc/virtual/2024/poster/95731 (snippet)"
     ],
-    "verdict_quote": "**D1.** All-ordered-pairs fidelity training — ONE FiLM-FNO over every (f_src<f_tgt) pair of the nested 100/50/20/5 ladder, queried (LF→HF) at eval (`akash/models/mf_fno_allpairs`) | **preempted-but-MF-composition-open** | fidelity-as-input: https://www.emergentmind.com/topics/multi-fidelity-gaussian-process-surrogate-modeling (snippet); continuous-fidelity conditioning: https://arxiv.org/abs/2207.00678 (fetched); adjacent-pair nested cascade: https://arxiv.org/html/2605.16118v1 (fetched); joint all-levels training: https://arxiv.org/html/2402.02031v1 (snippet); progressive ladder at tiny HF: https://arxiv.org/pdf/2510.13762 (fetched); all2all = **time** pairs only: https://nips.cc/virtual/2024/poster/95731 (snippet) | Conditioning on fidelity, joint multi-level training, and adjacent-level cascades are all published. **Not found published**: (i) **all ordered pairs** (not just adjacent) as a data-amplification augmentation, (ii) with a **single shared** network rather than one net per level, (iii) at **N_hf = 5** on the `li2022ifc` Poisson ladder. Two independent searches (turn 3, turn 4) returned explicit negatives on (i)+(ii). [quoted verbatim from websearches/s1_poisson/batch_1/report.md; brainstormer directs the card verdict be recorded as `preempted-pivoted`, the schema's nearest enum value to the websearcher's `preempted-but-MF-composition-open`]"
+    "verdict_quote": "**D1.** All-ordered-pairs fidelity training \u2014 ONE FiLM-FNO over every (f_src<f_tgt) pair of the nested 100/50/20/5 ladder, queried (LF\u2192HF) at eval (`akash/models/mf_fno_allpairs`) | **preempted-but-MF-composition-open** | fidelity-as-input: https://www.emergentmind.com/topics/multi-fidelity-gaussian-process-surrogate-modeling (snippet); continuous-fidelity conditioning: https://arxiv.org/abs/2207.00678 (fetched); adjacent-pair nested cascade: https://arxiv.org/html/2605.16118v1 (fetched); joint all-levels training: https://arxiv.org/html/2402.02031v1 (snippet); progressive ladder at tiny HF: https://arxiv.org/pdf/2510.13762 (fetched); all2all = **time** pairs only: https://nips.cc/virtual/2024/poster/95731 (snippet) | Conditioning on fidelity, joint multi-level training, and adjacent-level cascades are all published. **Not found published**: (i) **all ordered pairs** (not just adjacent) as a data-amplification augmentation, (ii) with a **single shared** network rather than one net per level, (iii) at **N_hf = 5** on the `li2022ifc` Poisson ladder. Two independent searches (turn 3, turn 4) returned explicit negatives on (i)+(ii). [quoted verbatim from websearches/s1_poisson/batch_1/report.md; brainstormer directs the card verdict be recorded as `preempted-pivoted`, the schema's nearest enum value to the websearcher's `preempted-but-MF-composition-open`]"
   },
   "recipe": {
     "base_family": "mf_fno_allpairs",
@@ -47,10 +47,10 @@
       ],
       "_primary_arm": "allpairs",
       "_sweep": "one SLURM job per seed runs 4 score_panel.py calls, each with --env MFFP_LADDER_MODE=<arm> and its own --out result_ifc_poisson_<arm>_s<seed>.json; export ROUND1_EVAL_RESULTS=<outputs>/eval/results_<arm> per arm so per-arm result JSONs and ckpt dirs cannot collide",
-      "_source": "vendored from mf_field/akash/models/mf_fno_allpairs (model.py sha256 984d4e5e…, smoke_eval.py sha256 611729bc…) + mf_field/akash/common/backbone.py (sha256 f56fa802…) at commit 967562e2; akash itself is never edited"
+      "_source": "vendored from mf_field/akash/models/mf_fno_allpairs (model.py sha256 984d4e5e\u2026, smoke_eval.py sha256 611729bc\u2026) + mf_field/akash/common/backbone.py (sha256 f56fa802\u2026) at commit 967562e2; akash itself is never edited"
     }
   },
-  "status": "built",
+  "status": "analyzing",
   "skipped_reason": null,
   "reopen_candidate": false,
   "scripts_path": {
@@ -64,19 +64,223 @@
     "slurm": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s1_poisson/B1/slurm/"
   },
   "build_commit": "d070f86",
-  "job_ids": [],
+  "job_ids": [
+    "65991280 (seed0, 4 arms serial)"
+  ],
   "logs": {},
   "build_notes": [
     "Built family models_r1/mf_fno_ladder in the worktree, VENDORED from mf_field/akash/models/mf_fno_allpairs @967562e per recipe._source: backbone.py is a byte-identical copy of akash/common/backbone.py (sha256 f56fa8029fad2ffb503d1cd5905359ea34f2ed1b1853e26ac22428a64c02f2ec, verified against the recipe prefix); model.py/smoke_eval.py adapted from the base family's model.py (984d4e5e...) and smoke_eval.py (611729bc...); the SMOKE dict + _cap_grid/_modes/_to_grid helpers are lifted from akash/common/mffp.py (09510d25...) into smoke_eval.py so score_panel.code_hash sees every line. Nothing under mf_field/akash/** was edited; load_mf_dataset / resolve_grid / finalize_and_write are still imported read-only from factory_root/data_adapters.",
     "Card part-3 correction implemented in smoke_eval.build_rows: cross-pair rows take the condition vector from the TARGET fidelity's own sample list; self pairs (f,f) are included; the HF finetune uses X^(64) with tags (f_src=0, f_tgt=1), i.e. the eval-query form. Row counts verified offline against the card table on ifc_poisson (N=100/50/20/5 at fid 8/16/32/64): two_level 105 self + 5 cross = 110; adjacent 175 + 75 = 250; allpairs 175 + 105 = 280; legacy_pairing 280. Corrected cross blocks are bit-equal to the target fidelity's own conds; allpairs vs legacy_pairing differ in exactly the 105 cross rows and share identical targets. Measured per-pair max|X^(s)[:n]-X^(t)[:n]| = {8->16: 0.7394, 8->32: 0.7095, 8->64: 0.5809, 16->32: 0.7016, 16->64: 0.7145, 32->64: 0.6819}, i.e. NOT index-aligned, confirming the card's premise; the numbers are recorded score-neutrally in every result JSON under `rows.cond_alignment_max_abs_diff`.",
     "CONTRACT SMOKE (mandatory), all four arms, login node CPU, through the round eval layer. Command (per arm): `export ROUND1_EVAL_RESULTS=<wt>/scratchpad/smoke/results_<arm>; python ${ROUND_ROOT}/eval/score_panel.py --family_dir <wt>/models_r1/mf_fno_ladder --datasets ifc_poisson --epochs 2 --seed 0 --env MFFP_LADDER_MODE=<arm> --out <wt>/scratchpad/contract_smoke_<arm>.json --no_cache`. All exited 0 with finite nRMSE (split test_hf, metric_source per_sample_mean): two_level 0.378663 (skill 10.5184, code_hash 8bbc456b), adjacent 0.387538 (10.7650, 2621746d), allpairs 0.365419 (10.1505, f82a6f57), legacy_pairing 0.365150 (10.1430, ff744b97). Distinct code_hash per arm confirms MFFP_LADDER_MODE enters the eval cache key. These 2-epoch numbers are plumbing evidence only, not science. Artifacts committed at <wt>/scratchpad/evidence/contract_smoke_<arm>.json.",
-    "BUILD TRAP 1 (arm-invisible ckpt paths) closed two ways and tested. (a) The family writes <ckpt_dir>/mode_<MFFP_LADDER_MODE>/last.pt and stores ladder_mode in the ckpt meta; (b) scripts/01_train_eval.sh exports a per-arm ROUND1_EVAL_RESULTS=<outputs>/eval/results_<arm> (recipe._sweep verbatim). Tests: (i) finished-ckpt resume — re-running allpairs at 2 ep with --no_cache reproduced nRMSE 0.36541855303669557 exactly with train_seconds 1.4e-06 (training skipped); (ii) cross-arm isolation — running two_level with ROUND1_EVAL_RESULTS pointed at the allpairs tree trained fresh (train_seconds 81.8) and returned 0.378663124272829, bit-identical to its standalone run, i.e. no contamination; (iii) mid-stage resume — a run killed by SIGTERM during the joint stage left {stage: joint, epoch: 1, ladder_mode: adjacent, epochs_target: 4} with opt/sched/gen state, and the re-run printed '[resume] mid-run checkpoint: mode=adjacent stage=joint epoch=1/4' then finished (nRMSE 0.256066); (iv) guard — an adjacent-mode ckpt planted under mode_allpairs is refused ('checkpoint config mismatch ... got adjacent, want allpairs; training fresh'), and MFFP_LADDER_MODE=bogus exits with an explicit error instead of defaulting.",
+    "BUILD TRAP 1 (arm-invisible ckpt paths) closed two ways and tested. (a) The family writes <ckpt_dir>/mode_<MFFP_LADDER_MODE>/last.pt and stores ladder_mode in the ckpt meta; (b) scripts/01_train_eval.sh exports a per-arm ROUND1_EVAL_RESULTS=<outputs>/eval/results_<arm> (recipe._sweep verbatim). Tests: (i) finished-ckpt resume \u2014 re-running allpairs at 2 ep with --no_cache reproduced nRMSE 0.36541855303669557 exactly with train_seconds 1.4e-06 (training skipped); (ii) cross-arm isolation \u2014 running two_level with ROUND1_EVAL_RESULTS pointed at the allpairs tree trained fresh (train_seconds 81.8) and returned 0.378663124272829, bit-identical to its standalone run, i.e. no contamination; (iii) mid-stage resume \u2014 a run killed by SIGTERM during the joint stage left {stage: joint, epoch: 1, ladder_mode: adjacent, epochs_target: 4} with opt/sched/gen state, and the re-run printed '[resume] mid-run checkpoint: mode=adjacent stage=joint epoch=1/4' then finished (nRMSE 0.256066); (iv) guard \u2014 an adjacent-mode ckpt planted under mode_allpairs is refused ('checkpoint config mismatch ... got adjacent, want allpairs; training fresh'), and MFFP_LADDER_MODE=bogus exits with an explicit error instead of defaulting.",
     "SLURM scripts at <wt>/scripts/: 01_train_eval.sh (SEED=$1; loops the 4 arms serially, one score_panel.py call each, --env MFFP_LADDER_MODE=<arm>, --out result_ifc_poisson_<arm>_s$SEED.json), submit.sh (seed 0 only, ADR 0004), submit_seeds_2_3.sh (seeds 1+2 for the end-of-round confirmation). Headers per ADR 0005: partition gpu, --gres=gpu:h100:1, --time=02:00:00, --requeue, --exclude=hpc-93-36, --mem=32G, --cpus-per-task=4, job name r1-s1_poisson-B1-s<seed> (set by the submit wrappers), logs under <outputs>/s1_poisson/B1/slurm/. --time justified by state/timing_ledger.json: ifc_poisson @200 ep = 0.78-0.98 min/run on p100 for mf_fno_transfer_film, so 4 arms with a larger row set still fit far inside 2 h. All three scripts pass `bash -n`; every path is absolute. The loop body was dry-run end-to-end at epochs=2 with OUT_DIR redirected to scratchpad and produced exactly the four expected result_ifc_poisson_<arm>_s0.json files. NOT submitted (orchestrator submits).",
-    "Hyperparameter provenance: every value is from the recipe or the vendored anchor-identical SMOKE dict (hidden 64, n_blocks 4, modes_cap 12, batch 16, lr_pretrain 1e-3, lr_finetune 3e-4, weight_decay 1e-5, grad_clip 1.0). ONE deliberate deviation from the base family, mandated by card part 3: the HF finetune runs the full --epochs (200), where akash's mf_fno_allpairs used epochs//2 — card text 'Stage 2 ... 200 epochs' wins. Two score-neutral builder choices, neither a model hyperparameter: CKPT_SAVES_PER_STAGE=5 (preemption granularity; saving consumes no RNG and changes no tensor op) and a preds_test.npz dump beside last.pt for the mechanism-analyzer. No TBDs."
+    "Hyperparameter provenance: every value is from the recipe or the vendored anchor-identical SMOKE dict (hidden 64, n_blocks 4, modes_cap 12, batch 16, lr_pretrain 1e-3, lr_finetune 3e-4, weight_decay 1e-5, grad_clip 1.0). ONE deliberate deviation from the base family, mandated by card part 3: the HF finetune runs the full --epochs (200), where akash's mf_fno_allpairs used epochs//2 \u2014 card text 'Stage 2 ... 200 epochs' wins. Two score-neutral builder choices, neither a model hyperparameter: CKPT_SAVES_PER_STAGE=5 (preemption granularity; saving consumes no RNG and changes no tensor op) and a preds_test.npz dump beside last.pt for the mechanism-analyzer. No TBDs."
   ],
-  "review_notes": [],
+  "review_notes": [
+    {
+      "attempt": 1,
+      "verdict": "SUGGEST",
+      "findings": [
+        "Q1 card-implementation alignment PASS: every part-3 item traces to code (correction smoke_eval.py:213-234, self pairs :200-210, fnorm :142-149 giving f(8)=0.000/f(64)=1.000, stage-1 joint :421-428, arm-invariant HF finetune :340-348+:433-435, eval query :350-356, alignment+row-count provenance :186-193/:238-250/:485). Reviewer re-ran build_rows offline on the real ifc_poisson split: 110/250/280/280 rows exactly as the card table, cross_pairs allpairs=[[8,16],[8,32],[8,64],[16,32],[16,64],[32,64]], adjacent=[[8,16],[16,32],[32,64]], two_level=[[8,64]]; measured alignment {8->16 0.7394, 8->32 0.7095, 8->64 0.5809, 16->32 0.7016, 16->64 0.7145, 32->64 0.6819} matches build_notes to 4dp. On a synthetic index-aligned ladder corrected==legacy byte-for-byte, so the fix is a provable no-op on aligned datasets. legacy_pairing reproduces the base cross-row construction faithfully (cond=Xsrc[:n], n=min(|X^s|,|Y^t|), == akash mf_fno_allpairs/smoke_eval.py:62-67) and is NOT quietly fixed; it differs from allpairs in exactly 105 cross rows with bit-identical targets.",
+        "Q2 recipe fidelity PASS: family_dir/datasets/epochs/seed/--env all verbatim in 01_train_eval.sh:47-49,62-68; recipe.env._sweep's per-arm ROUND1_EVAL_RESULTS implemented verbatim at :59; --out name matches output_paths.eval. Hyperparameter audit found zero silent choices: every constant is in part 3 (:97-98), byte-inherited from the base (AdamW, CosineAnnealingLR T_max=epochs eta_min=1e-6, WORK_CAP=256 -- matching base :79-86 and akash/common/mffp.py:39-41), or declared in build_notes[6] (CKPT_SAVES_PER_STAGE=5, preds_test.npz).",
+        "Q3 \u00a75 immutable compliance PASS: diff touches no round1/eval, project.yaml, program.md, ADR, subagent prompt, factory_root/{eval,baselines,references,scripts,data}, factory.md, or mf_field/akash/**; sha256sum of akash/common/backbone.py still f56fa802..., guarded tree untouched. No data regeneration. All scoring routed through score_panel.py (evidence JSONs carry nrmse_def_hash d3d0ade9..., metric_source per_sample_mean, split test_hf); no hand-rolled metric or direct smoke_eval.py number in the card. seeds {0,1,2}, epochs 200 = smoke tier. No pre-falsified lever re-proposed.",
+        "Q4 contract compliance PASS: manifest.json + 6-arg smoke_eval.py CLI (:490-497) + INSPIRATION.md citing the card's prior_art set. Checkpoint resume IMPLEMENTED with finished/mid-joint/mid-finetune branches restoring opt/sched/generator and start_ep (:379-419, :286-291) and atomic os.replace save (:257-262); the arm is keyed both by the mode_<arm>/ subdir and a ladder_mode meta guard. Seeding uses --seed for numpy/torch/cuda (:317-319). MODEL_CONTRACT.md mandates 'check ckpt_dir for an existing checkpoint'; last.pt at top level is the RECOMMENDED pattern only, and card part 3 orders the arm into the key -- deviation licensed.",
+        "Q5 SLURM correctness SUGGEST: `bash -n` run by the reviewer -- OK 01_train_eval.sh / OK submit.sh / OK submit_seeds_2_3.sh. Partition gpu + typed gres gpu:h100:1 + --time=02:00:00 per project.yaml/ADR 0005 (ledger analog ifc_poisson@200ep = 0.78-0.98 min on p100, so 4 arms fit with wide margin); --requeue and --exclude=hpc-93-36 have precedent (state/gates.md:38). --output/--error absolute under ${OUTPUTS_ROOT}/s1_poisson/B1/slurm/, and both submit wrappers mkdir -p that dir before sbatch. 01_train_eval.sh takes SEED=\"${1:?...}\"; submit.sh = seed 0 only (ADR 0004); submit_seeds_2_3.sh parked for the end-of-round pass. S1 (non-blocking): the in-file `#SBATCH --job-name=r1-s1_poisson-B1` (:26) omits -s{seed}; only the --job-name overrides at submit.sh:9 / submit_seeds_2_3.sh:17 conform to r1-{stream}-B{N}-s{seed} -- never sbatch 01_train_eval.sh directly.",
+        "Q6 smoke-test evidence PASS: build_notes[2] cites the contract-tier score_panel.py command per arm and all four result files exist and are committed at scratchpad/evidence/contract_smoke_{two_level,adjacent,allpairs,legacy_pairing}.json, each finite (0.378663/0.387538/0.365419/0.365150) with a DISTINCT code_hash (8bbc456b/2621746d/f82a6f57/ff744b97) -- direct proof MFFP_LADDER_MODE enters the cache key per score_panel.py:70-71,184. Four drill artifacts spot-checked, not re-run; they corroborate build_notes[3] (cross-arm run under the results_allpairs tree wrote .../mode_two_level/last.pt with rows.n_rows_total=110; mid-stage resume artifact carries ladder_mode=adjacent, 250 rows).",
+        "Q7 blast radius PASS: 18 files, +1557/-0, all under models_r1/ (5), scripts/ (3), notes/ (2), scratchpad/evidence/ (8). No substrate contamination; worktree git status clean, HEAD == build_commit d070f86.",
+        "S2 (non-blocking, mechanism): stage-1 scaler = max|Y_all| is IDENTICAL across all four arms (0.077146, computed on the real data) so it is not an arm confound -- but per-fidelity max|Y| spans 42x (0.0773/0.0237/0.0069/0.00184 at fid 8/16/32/64, stage-2 scaler_hf=0.001836), so the joint stage's MSE is amplitude-dominated by the 8^2 rows. An allpairs ~= two_level null should be read against that weighting before it is read as 'the intermediate fidelities carry no information'.",
+        "S3 (non-blocking): minibatch generator is torch.Generator().manual_seed(0) (:284), seed-independent and byte-inherited from base :86 -- seeds 1-2 vary only via init/CUDA nondeterminism, so end-of-round CIs will be optimistically narrow.",
+        "S4 (non-blocking, scope of the control): legacy_pairing keeps the corrected HF finetune and the added self pairs (card part 3: 'Stage 2 identical in every arm'), so its delta vs allpairs isolates the cross-row correspondence only. Do NOT report it as the base family's 0.4657. Cratered rule applies to the primary arm allpairs (recipe.env._primary_arm); legacy_pairing cratering is the predicted result.",
+        "S5 (cosmetic): 01_train_eval.sh:52 creates $OUT_DIR/training, which stays empty -- output_paths.training actually resolves under $OUT_DIR/eval/results_<arm>/mf_fno_ladder/."
+      ],
+      "utc": "2026-07-29T17:20:00Z"
+    }
+  ],
   "debug_notes": [],
-  "5_actual_result": null,
+  "5_actual_result": {
+    "protocol": "provisional-single-seed (ADR 0004). Seed 0 only, 200-epoch smoke tier, one SLURM job (65991280, H100, hpc-33-16) running all four MFFP_LADDER_MODE arms serially. NO confidence interval is computed for this card; every value below is a single-seed point estimate and every effect claim carries the label provisional-single-seed. Skill is nRMSE / paper_bar 0.036 (ADR 0002) -> LOWER IS BETTER. All numbers parsed from score_panel.py result JSONs; nothing recomputed by hand.",
+    "seeds_available": [
+      0
+    ],
+    "metric_provenance": {
+      "result_json_dir": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s1_poisson/B1/eval/",
+      "files": [
+        "result_ifc_poisson_two_level_s0.json",
+        "result_ifc_poisson_adjacent_s0.json",
+        "result_ifc_poisson_allpairs_s0.json",
+        "result_ifc_poisson_legacy_pairing_s0.json"
+      ],
+      "nrmse_def_hash": "d3d0ade9191c13bacc40702f3eb26ad290e01641cacee22a1d2233b74c035850",
+      "nrmse_def_hash_consistent_across_arms": true,
+      "metric_source": "per_sample_mean",
+      "split": "test_hf",
+      "reference_type": "paper_bar",
+      "n_test_samples": 128,
+      "cached": false,
+      "code_hash_per_arm": {
+        "two_level": "8bbc456b75852c315913a492235a5492225c502963945db995e3febd24112ec8",
+        "adjacent": "2621746d0d98391aaa137e31d111344d490de83d34d6fdcfbe419ceeafe763f7",
+        "allpairs": "f82a6f578265799bc1277982d83cf8805781ec769f9285cfd939ea595221a31e",
+        "legacy_pairing": "ff744b97febce160ba9b5e92e15178906cce5f0e401feb9c5add34cc3d70080a"
+      },
+      "code_hash_distinct_per_arm": true
+    },
+    "per_arm": {
+      "two_level": {
+        "role": "information-content control",
+        "n_rows": 110,
+        "nRMSE": 0.1027102654357149,
+        "skill": 2.853062928769859,
+        "train_seconds": 34.38833689689636
+      },
+      "adjacent": {
+        "role": "published cascade structure",
+        "n_rows": 250,
+        "nRMSE": 0.21798343082761915,
+        "skill": 6.055095300767198,
+        "train_seconds": 68.82011318206787
+      },
+      "allpairs": {
+        "role": "PRIMARY - the open composition",
+        "n_rows": 280,
+        "nRMSE": 0.2092751397138843,
+        "skill": 5.813198325385676,
+        "train_seconds": 72.72054672241211
+      },
+      "legacy_pairing": {
+        "role": "negative control - cross-row correspondence defect",
+        "n_rows": 280,
+        "nRMSE": 0.30102747459820656,
+        "skill": 8.361874294394628,
+        "train_seconds": 70.45810794830322
+      }
+    },
+    "arm_ranking_best_to_worst": [
+      "two_level (2.853)",
+      "allpairs (5.813)",
+      "adjacent (6.055)",
+      "legacy_pairing (8.362)"
+    ],
+    "per_dataset": {
+      "ifc_poisson": {
+        "_arm": "allpairs (primary; recipe.env._primary_arm) - see per_arm for the other three",
+        "per_seed_nrmse": [
+          0.2092751397138843
+        ],
+        "per_seed_skill": [
+          5.813198325385676
+        ],
+        "mean_skill": 5.813198325385676,
+        "ci95": null
+      }
+    },
+    "panel_geomean_skill": {
+      "_note": "this card's panel is the single dataset ifc_poisson (recipe.datasets), not the round's 6-dataset panel; value is the primary arm allpairs",
+      "per_seed": [
+        5.813198325385676
+      ],
+      "mean": 5.813198325385676,
+      "ci95": null,
+      "per_arm": {
+        "two_level": 2.853062928769859,
+        "adjacent": 6.055095300767198,
+        "allpairs": 5.813198325385676,
+        "legacy_pairing": 8.361874294394628
+      }
+    },
+    "noise_floor_used": {
+      "dataset": "ifc_poisson",
+      "min_claimable_effect": 0.23990756041925798,
+      "source": "state/noise_floor.json (batch-0 certified, 3-seed, mf_fno_transfer_film)"
+    },
+    "contrasts": [
+      {
+        "id": "C1",
+        "name": "allpairs vs legacy_pairing (does the correspondence fix matter?)",
+        "delta_skill": 2.548675969008952,
+        "direction": "allpairs BETTER (lower skill) by 2.5487",
+        "multiple_of_floor": 10.62,
+        "clears_floor": true,
+        "reading": "The cross-row correspondence fix is a large, unambiguous win at the floor's scale. Per reviewer note S4, legacy_pairing here keeps the corrected HF finetune and the added self pairs, so this delta isolates the CROSS-ROW CORRESPONDENCE ONLY; it must not be reported as the base family's 0.4657 in akash/results/bench_full_metrics.csv."
+      },
+      {
+        "id": "C2a",
+        "name": "allpairs vs two_level (does more ladder help once correspondence is fixed?)",
+        "delta_skill": -2.960135396615817,
+        "direction": "allpairs WORSE (higher skill) by 2.9601 - OPPOSITE to the card's prediction",
+        "multiple_of_floor": 12.34,
+        "clears_floor": true,
+        "clears_floor_as": "refutation, not confirmation",
+        "reading": "two_level (110 rows, {8,64} only) is the best arm of the four. Adding the 16^2/32^2 levels to the joint stage did not merely fail to help, it roughly DOUBLED test rel-L2 (0.1027 -> 0.2093). Descriptive within-seed check on the 128 per-sample rel_l2 values from the family JSONs: two_level beats allpairs on 125/128 test samples (allpairs better on only 3), median paired diff +0.0673, and the allpairs/two_level mean-error ratio is 2.02 / 1.97 / 1.92 / 2.10 across quartiles of two_level's own error magnitude - i.e. a near-UNIFORM ~2x multiplicative degradation, not a tail or outlier effect."
+      },
+      {
+        "id": "C2b",
+        "name": "allpairs vs adjacent (all ordered pairs vs the published adjacent cascade)",
+        "delta_skill": 0.241896975381522,
+        "direction": "allpairs better by 0.2419",
+        "multiple_of_floor": 1.008,
+        "clears_floor": "marginal",
+        "reading": "Exceeds the 0.23991 floor by 0.00199 skill units (0.8%). At single seed with no CI this is NOT a resolvable effect - treat as at-the-floor / noise-compatible. The three extra pair types (8->32, 8->64, 16->64) buy nothing measurable once both arms carry all four levels."
+      },
+      {
+        "id": "C3",
+        "name": "adjacent vs two_level (auxiliary: does the published cascade help?)",
+        "delta_skill": -3.202032371997339,
+        "direction": "adjacent WORSE by 3.2020",
+        "multiple_of_floor": 13.35,
+        "clears_floor": true,
+        "reading": "The degradation tracks the presence of the intermediate levels in the joint stage, not the pair-set richness: both four-level arms (adjacent 6.055, allpairs 5.813) sit ~2x worse than the two-level arm, and they differ from each other only at the floor."
+      }
+    ],
+    "amplitude_domination_caveat": {
+      "applies_to": [
+        "C2a",
+        "C2b",
+        "C3"
+      ],
+      "source": "code-reviewer note S2 (state/s1_poisson/review_B1.md), measured on the real data before launch",
+      "statement": "Per-fidelity max|Y| = 0.0773 / 0.0237 / 0.0069 / 0.00184 at fid 8/16/32/64 (42x spread); the stage-1 scaler max|Y_all| = 0.077146 is IDENTICAL across all four arms (so it is not an arm confound), but the joint stage's MSE is amplitude-dominated by the 8^2 rows and stage 2 renormalizes by scaler_hf = 0.001836. Consequence for interpretation: the C2a/C3 result is NOT licensed to be read as 'the 16^2/32^2 levels carry no usable information for HF reconstruction'. What is measured is that adding those levels TO THIS JOINT-STAGE LOSS, under this amplitude weighting and this shared-scaler normalization, degrades the HF query by ~2x. Whether the intermediate fidelities are uninformative or merely down-weighted into irrelevance (and their rows acting as a distractor/capacity tax on a single shared net) is not separated by this card. This is the first thing part 6 should test.",
+      "additional_caveat_S3": "The minibatch generator is torch.Generator().manual_seed(0), seed-independent (reviewer S3), so any future seeds 1-2 vary only via init/CUDA nondeterminism and their CI will be optimistically narrow."
+    },
+    "vs_anchor": {
+      "anchor_source": "state/anchors/s1_poisson.json (mf_fno_transfer_film, batch 0, 3-seed certified)",
+      "anchor_value": 1.5656334312786022,
+      "anchor_ci95": [
+        1.4561616605002385,
+        1.6960692209194965
+      ],
+      "arm_compared": "allpairs (primary)",
+      "delta": 4.247564894107074,
+      "direction": "allpairs WORSE than anchor by 4.2476 skill units",
+      "beyond_ci": true,
+      "beyond_noise_floor": true,
+      "delta_all_arms": {
+        "two_level": 1.2874294974912568,
+        "adjacent": 4.489461869488596,
+        "allpairs": 4.247564894107074,
+        "legacy_pairing": 6.796240863116026
+      },
+      "note": "All four arms are worse than the anchor, the best (two_level, 2.853) by 1.287 skill units = 5.4x the floor. This is CONTEXT, not the card's experiment: this family is not the champion and the card's own hypothesis is the three internal contrasts (same code, same seed, same hyperparameters). The card predicted allpairs at skill 1.15-1.40 (nRMSE 0.041-0.050); the measurement is 5.813 (nRMSE 0.2093), ~4.5x the predicted skill and outside the prediction interval by a factor of >4."
+    },
+    "cratered_verdict": "cratered",
+    "cratered_basis": "Cratered rule applied to the PRIMARY arm allpairs only (recipe.env._primary_arm; reviewer S4). Threshold = cratered_skill_factor 1.5 x anchor 1.5656334 = 2.3484501. allpairs = 5.8131983 > 2.3484501 (2.48x the threshold) => CRATERED. Independently, the falsification clause fired decisively (see falsification_verdict). No crash occurred - the job exited 0 on all four arms. legacy_pairing (8.3619) is also above the threshold, which is the PREDICTED and BY-DESIGN result for the negative control and is not a cratering event. adjacent (6.0551) and two_level (2.8531) also exceed 1.5x anchor, but the rule is scoped to the primary arm. Under ADR 0004 there is no proceed_to_seeds_1_2 branch: seeds 1-2 run only in the end-of-round top-3 confirmation, for which this card is not a candidate.",
+    "falsification_verdict": "falsified",
+    "falsification_basis": "Clause quoted verbatim: 'Falsified if the full-ladder all-ordered-pairs arm fails to beat the two-level arm on ifc_poisson by more than the certified noise floor - mean skill over seeds {0,1,2} improving by <= 0.240 skill units (<= 0.00864 nRMSE) - which would mean the intermediate fidelities (16^2, 32^2) carry no usable information for HF reconstruction at N_hf = 5 beyond what the 8^2->64^2 transfer already exploits.' Deciding numbers (seed 0, 200 ep): allpairs skill 5.813198 (nRMSE 0.209275) vs two_level skill 2.853063 (nRMSE 0.102710). The improvement is -2.960135 skill units (-0.106565 nRMSE), i.e. allpairs is WORSE, so it does not merely fail to improve by more than 0.240 - it regresses by 12.3x the floor. FALSIFIED. Two honesty qualifiers: (i) provisional-single-seed - the clause is written on the mean over seeds {0,1,2} and only seed 0 was run per ADR 0004, so this is a seed-0 point estimate; the magnitude (12.3x the certified 3-seed floor, plus 125/128 per-sample paired wins for two_level) makes a seed-driven reversal implausible but not formally excluded; (ii) the clause's stated MEANING ('the intermediate fidelities carry no usable information') is NOT established - see amplitude_domination_caveat. The measurement falsifies the card's prediction; the mechanistic gloss in the clause is over-claimed by the caveat and must be re-tested in part 6.",
+    "secondary_findings": [
+      "The card's own C1 contrast is CONFIRMED and is the card's positive result: the correspondence fix is worth 2.5487 skill units (10.6x the floor) at fixed row count (280 rows, bit-identical targets, 105 differing cross rows) - the non-alignment of ifc_poisson's fidelity levels documented in card part 2 is a real and large training defect.",
+      "Best arm overall is two_level (skill 2.853, nRMSE 0.1027) - still 1.287 skill units worse than the batch-0 anchor mf_fno_transfer_film (1.5656), so nothing in this card displaces the champion.",
+      "The two four-level arms (adjacent 6.055, allpairs 5.813) differ only at the floor, while both are ~2x worse than two_level: the controlling variable is LEVEL SET, not PAIR SET."
+    ],
+    "guard_flags": [],
+    "guard_set_note": "Guard set NOT run: the guard-set trigger is a claimed panel win over the anchor, and every arm here is worse than the anchor (best arm two_level +1.287 skill units). No regression check is owed.",
+    "anomalies": [],
+    "anomalies_note": "None. Job 65991280 exited 0; slurm .err is 0 bytes; the .out shows all four arms starting and completing in order with finite nRMSE; no NaN, no requeue/preemption/resume event, no OOM (peak_mem 398.7 MB). All four result JSONs report cached=false (fresh compute, no stale-cache contamination) and four DISTINCT code_hash values (build trap 1 confirmed closed in production, not just in the contract smoke). nrmse_def_hash is identical across all four arms.",
+    "wall_clock_per_seed_min": [
+      4.45
+    ],
+    "wall_clock_note": "Job 65991280 wall clock 10:04:17 -> 10:08:44 PDT = 267 s = 4.45 min for all four arms on one H100 (--time=02:00:00 requested; 3.7% used). Per-arm elapsed from the .out timestamps: two_level 40 s, adjacent 74 s, allpairs 77 s, legacy_pairing 76 s. Per-arm train_seconds from the family JSONs: 34.39 / 68.82 / 72.72 / 70.46. For the maintainer's timing ledger: mf_fno_ladder on ifc_poisson @200 ep, H100, is 0.57-1.21 min per arm - well under the brainstormer's ~15 min/seed estimate in card part 4.",
+    "analysis_utc": "2026-07-29T17:35:00Z"
+  },
   "6_analysis": null,
   "7_gap_and_future": null,
   "reanalysis_progress": null

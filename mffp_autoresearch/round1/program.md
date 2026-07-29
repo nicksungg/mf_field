@@ -115,18 +115,22 @@ round (ADR 0001). Its guarded surfaces are read-only inputs (§5).
 
 ## 4. Structure
 
-### 4.1 The 5-stream layout (no phases)
+### 4.1 The stream layout (no phases)
 
-Round 1 has **5 streams**, all running **in parallel from t=0**, no phases, no
-cross-stream barrier. ~3–4 batches per stream planned (≈ 15–20 experiments).
+Round 1 launched with 5 streams, all running **in parallel from t=0**, no
+phases, no cross-stream barrier; ~3–4 batches per stream planned. Operator
+changes on 2026-07-29: `s3_testtime` retired and replaced by `s3_warp`
+(ADR 0010); `s6_local` added (ADR 0011) and `s7_loss` added (ADR 0012) — now **7 streams**.
 
 | Stream | Class | Question it owns |
 |---|---|---|
 | `s1_poisson` | gap | why is `ifc_poisson` above the paper bar, and what closes it? |
 | `s2_beyond_copy` | gap | why does every fusion mechanism lose to copy-LF on the five sharp-2D panel datasets? |
-| `s3_testtime` | lever | how far does test-time refinement go when the governing residual is real? |
+| `s3_warp` | lever | does geometric alignment (warp-then-correct) beat additive correction on sharp-interface MF fusion? (ADR 0010) |
 | `s4_hybrid_routing` | lever | can MF compositions of hybrid operators capture the +30.6% FNO↔Transolver oracle? |
 | `s5_tuning` | tuning | how much of the gap is knobs, not architecture? |
+| `s6_local` | lever | does adding a local representation (CNN/ConvNeXt branch) to the FNO fix sharp-2D fusion (H2)? (ADR 0011) |
+| `s7_loss` | lever | does an interface-aware training objective (scored on unchanged rel-L2) fix sharp-2D fusion where architecture does not? (ADR 0012) |
 
 Streams own research **questions**, not model families: each batch proposes
 whatever model, mechanism, or **diagnostic** serves the question.
@@ -391,29 +395,37 @@ every proposal carries a complete `recipe` block.
   data defect, the honest output is a dataset bug report to the mentor, not a
   model (spec §12).
 
-### 12.3 `s3_testtime` (lever)
+### 12.3 `s3_warp` (lever) — REPLACED STREAM, see ADR 0010
 
+*(`s3_testtime` was retired by operator direction 2026-07-29 before any SLURM
+run; its B1 card is `retired_by_operator`. Rationale: ADR 0009 — methods must
+not assume known physics at test time — plus the stream's own findings: a true
+residual exists on 1/6 panel datasets, and where it exists the dataset is
+two-FFT-solvable without a model.)*
+
+- **Question**: does geometric alignment (warp-then-correct) beat additive
+  correction on sharp-interface MF fusion?
 - **Anchor**: champion's certified panel geomean (batch 0).
-- Quantified priors — **CORRECTED, see ADR 0003** (the earlier −21% claim was
-  a FINDINGS.md misread; refuted in-repo by the batch-1 websearch):
-  `mf_fno_ptr`'s refinement is a registry NO-OP outside ifc_heat/ifc_poisson;
-  where it ran (`ifc_poisson`) it bought −1.5%, inside the CI, at 163×
-  inference latency. The lever has never been shown to help — this stream's
-  batch 1 is closer to a first real test than a scale-up.
-- A true governing residual is computable for only **one** panel dataset:
-  `ext__helmholtz_2d` (steady; `x = [k, source_x, source_y]` fully determines
-  `f`; `Δu + k²u = f` exact). The phase-field snapshots lack ∂ₜu; ifc_poisson's
-  source decode is not shipped. Cards must scope accordingly (Helmholtz-exact
-  refinement, or equilibrium/free-energy projection for the phase-field sets).
-- Known threat (fetched, arXiv:2606.27354): residual minimization can be an
-  unreliable proxy for reconstruction accuracy in ill-conditioned systems —
-  Helmholtz is the canonical indefinite case; designs should include a
-  residual-vs-error check so a null is informative.
-- Second lever: IRNO-style frozen-base iterative refinement
-  (`docs/reports/MF_Leaderboard_Beaters_2026_Report.md` proposal N1,
-  arXiv:2605.24041, ~50× high-frequency band-error reduction claimed) — unbuilt.
-- Test-time changes must still respect the contract CLI (refinement runs
-  inside `smoke_eval.py`) and report wall-clock in build notes.
+- **Mechanism prior** (docs/proposals/NEW_MODELS.md Candidate D, un-ingested
+  at round start; its own scan found the mechanism NOT prior-art-preempted —
+  batch-1 websearch must re-verify): coarse LF solves *displace* sharp
+  interfaces, and rel-L2 punishes displacement doubly (the model pays at both
+  the true and the predicted interface). Additive correctors must synthesize
+  the interface; a smooth displacement field that warps LF into alignment
+  (then a small correction net on the warped LF) moves it instead.
+- **Physics-agnostic by construction** (ADR 0009): works from fields alone;
+  no governing equations at train or test time.
+- Known threats to verify in batch-1 websearch: optical-flow /
+  deformable-registration warping is heavily published in video SR and
+  medical imaging — the novelty question is its use for multi-fidelity PDE
+  fusion; warping cannot create or destroy topology (phase-field coarsening
+  changes component counts between LF and HF — designs must state how the
+  correction stage handles topology mismatch, or scope to datasets where
+  topology is preserved).
+- Synergy: s2_beyond_copy-B1's M4 interface-distance stratification will
+  quantify how much of the champion's excess error sits at interfaces — read
+  it before designing batch 2 here.
+- Contract CLI unchanged; warp estimation runs inside `smoke_eval.py`.
 
 ### 12.4 `s4_hybrid_routing` (lever)
 
@@ -488,3 +500,37 @@ Eloise runs this round. The mentor owns `mf_field/akash/` and the guarded
 factory surfaces; anything requiring changes there (dataset bug reports,
 `score.py` fixes, full-benchmark promotion) is a written recommendation, not
 an action.
+
+### 12.6 `s6_local` (lever) — ADDED STREAM, see ADR 0011
+
+- **Question**: does adding a local representation (CNN/ConvNeXt branch,
+  local kernels) to the FNO fix sharp-2D fusion (hypothesis H2)?
+- **Anchor**: champion's certified panel geomean (batch 0).
+- **Motivating result**: s5-B1 (H1 test): modes_cap 12→32 improved geomean
+  0.507 < 0.884 floor (provisional-single-seed) — spectral capacity alone is
+  not the claimable lever.
+- **Priors to interrogate, not assume**: the mentor's FNO→CNN two-stage
+  hybrid attempt performed poorly (docs/reports/MF_FNO_CNN_Hybrid_Report.md
+  — batch-1 websearcher MUST read and the brainstormer MUST state the failure
+  mode); `convnext_unet_film` is rank-2 overall in the zoo but loses to
+  `mf_fno_transfer_film` on the panel (bench check 2026-07-29) — capacity is
+  not the question, composition is.
+- ADR 0009 applies (no physics at test time). ADR 0007 applies at the
+  brainstormer (propose 3-5 hybrid compositions, screen at contract tier).
+- Contract CLI unchanged; hybrids live inside the family dir.
+
+### 12.7 `s7_loss` (lever) — ADDED STREAM, see ADR 0012
+
+- **Question**: does an interface-aware training objective (scored on the
+  unchanged rel-L2 metric) fix sharp-2D fusion where architecture does not?
+- **Anchor**: champion's certified panel geomean (batch 0).
+- **Backlog ingested**: F14-F18 (docs/proposals/MODEL_TWEAKS*.md) —
+  loss/metric mismatch; rel-L2's blindness to thin sharp regions is the
+  repo's own documented metric caveat.
+- **Hard rule**: §2.1 is immutable — scoring never changes; only the training
+  objective does. Physics-agnostic losses only (ADR 0009): weights from the
+  field's own gradients/level sets.
+- **Pre-registered risk**: interface upweighting can lose on rel-L2 by
+  trading bulk accuracy; cards must state this trade-off in
+  expected_falsification.
+- ADR 0007 applies (propose 3-5 loss designs, screen at contract tier).

@@ -866,3 +866,217 @@
   for the recert failure, stale job_ids, ADR 0005/0006/0007, and the
   5-cards-in-flight note).
 ## RUN END 2026-07-29T16:39:10Z
+## RUN START 2026-07-29T16:59:38Z
+- Single in-flight check: last run's `RUN START 2026-07-29T16:37:49Z` /
+  `RUN END 2026-07-29T16:39:10Z` pair is closed (18 START = 18 END in the
+  file); proceeding.
+- Cards walked: 5 (all 5 streams' batch_1/B1.json; no other batches exist
+  yet in any stream). Statuses vs last walk: `s1_poisson-B1` `drafted` ->
+  **`built`**; `s2_beyond_copy-B1` `drafted` -> **`built`**;
+  `s3_testtime-B1` unchanged `drafted`; `s4_hybrid_routing-B1` unchanged
+  `drafted`; `s5_tuning-B1` unchanged `reviewed_suggest` (card status field;
+  its SLURM-tracked stage advanced, see below).
+- s1_poisson-B1: builder returned SUCCESS/built (13/13, no TBDs) at 16:54Z,
+  commit `d070f86`; 4-arm ladder family (`two_level`/`adjacent`/`allpairs`/
+  `legacy_pairing`) contract-verified with distinct code_hash per arm and
+  four resume drills (finished/mid-stage-SIGTERM/cross-arm-isolation/
+  foreign-mode-refusal) all passing. Stage -> `review_running`,
+  code-reviewer dispatched (not yet returned). No jobs submitted yet
+  (correct — awaits review).
+- s2_beyond_copy-B1: builder returned SUCCESS/built (10/10) at 16:52Z,
+  two commits `f38d8dbad...` (build) + `ba487126a...` (ADR 0008 pinn-strip
+  amendment, applied mid-build per operator instruction "delete pinn from
+  current cards"). Card carries a new `operator_amendments[0]` entry
+  (ADR 0008). Seam checks green: copy-LF delta 0.0 exact vs
+  `eval/copylf_baselines.json` on all 5 datasets, `_train` tripwire never
+  fired, LF-blindness M1 confirmed (only the [16,3] condition vector enters
+  the net at eval). Stage -> `review_running`, code-reviewer dispatched.
+- s3_testtime-B1 / s4_hybrid_routing-B1: unchanged, still `drafted`/
+  `builder_running`; worktree mtimes ~28 min and ~31 min old respectively
+  as of this walk — no stall signal (both builders have been in flight
+  since ~16:20-16:24Z per the prior walk).
+- SLURM view: `squeue -u $USER` now shows only `65989241` (r1-recert-h100,
+  RUNNING, ~14 min, hpc-33-16) and the pre-existing unrelated `bash` job
+  `65984594` (~2:32:06 elapsed) — `65988184` has dropped from squeue.
+  `sacct` (2-day window) confirms `65988184` (r1-s5_tuning-B1-s0) COMPLETED
+  in 36m37s on hpc-33-16 (gpu partition), consistent with the ledger's
+  existing h100 identification of that node. `65989097` (recert attempt 2)
+  COMPLETED in 29s but the orchestrator's own pulse log
+  (`state/orchestrator_flow.md`) diagnosed it as a checkpoint-resume false
+  positive — it skipped straight to eval on existing batch-0 checkpoints
+  rather than genuinely retraining — and relaunched with a fresh
+  `ROUND1_EVAL_RESULTS` as `65989241`, confirmed by its own log to be past
+  the 29s resume signature (currently RUNNING, genuinely training).
+- s5_tuning-B1 seed 0 (`65988184`) COMPLETED: read
+  `.../s5_tuning/B1/eval/result_panel_s0.json` — `panel_geomean_skill =
+  6.195848329238065` on all 6 panel datasets (helmholtz 8.9568, ifc_poisson
+  1.3190, allen_cahn 16.3933, cahn_hilliard 5.6253, fisher_kpp 4.4654, pfc
+  11.6292), vs certified anchor 6.703016 [6.219, 7.102] -> Delta approx
+  -0.507, inside the panel-geomean noise floor of 0.884 skill units — not a
+  falsifying result on the geomean alone at 1 seed (ADR 0004: seed 0 only
+  in-round, seeds 1-2 reserved for end-of-round top-3 confirmation, so no
+  3-seed mean exists yet to test the card's actual falsification clause).
+  Per-dataset, only `ifc_poisson` moved outside its own floor (1.3190 vs
+  anchor 1.566, delta -0.247 > floor 0.240) but in the "worse" direction the
+  card predicted (cap-32 = full spectrum from N_hf=5); helmholtz sits inside
+  the noise-floor alert band and carries no interpretable claim per the
+  card's own text.
+- Timing ledger: upserted 1 new COMPLETED r1- job (`65988184`, s5_tuning
+  batch 1 seed 0, family `mf_fno_transfer_film_modes`, datasets = full
+  6-dataset panel, epochs 200, gpu_type h100, elapsed_min 36.62) -> 37 ->
+  38 entries; re-validated as parseable JSON after upsert. Recert jobs
+  (`65988185/86/97`, `65989241`) are `r1-recert-h100` infra jobs with no
+  `{stream}-B{N}-s{seed}` card mapping and are intentionally excluded from
+  the per-card ledger, per the maintainer-role's stream-job matching rule.
+- Abandonment check: all 5 cards exist and are `built`/`drafted`/
+  `reviewed_suggest` (none `skipped`/`blocked`); no stream has 3 consecutive
+  skip/blocked batches. `state/streams/` directory still does not exist —
+  correct, no abandonment condition met.
+- Transcript inbox: `state/transcripts/` still does not exist — nothing to
+  archive this walk.
+- Anchors: all 5 `state/anchors/*.json` unchanged (still certified
+  2026-07-29T14:28:45Z, same values, mtime unchanged) — rendered verbatim
+  into index.md, no recomputation. (The H100 anchor-recert retrain
+  `65989241` has not yet returned; no anchor value has changed and none
+  will be changed by the maintainer even if it does — orchestrator/mentor
+  territory.)
+- New ADR since last walk: `docs/adr/0008-ignore-pinn.md` — `mf_fno_pinn_transfer`
+  retired from the round by direct operator instruction; excluded from
+  future cards, leaderboard, and top-3 eligibility; `s2_beyond_copy-B1`
+  amended accordingly (its only in-flight pinn reference).
+- No card files modified by this walk (`git status --short
+  experiment_cards/` clean before and after; unrelated working-tree changes
+  outside `experiment_cards/` — `state/orchestrator_flow.md` — not written
+  by this walk).
+- index.md: regenerated (fresh timestamp; G4 row updated to reflect seed 0
+  COMPLETED; all 5 stream rows updated with built/review_running or
+  seed0-completed detail; running-jobs table split into currently-running
+  (`65989241`, `65984594`) vs recently-completed this walk; new Flags
+  entries for the recert saga resolution, s1/s2 review-stage moves, and
+  ADR 0008).
+## RUN END 2026-07-29T17:03:12Z
+## RUN START 2026-07-29T17:23:12Z
+- Single in-flight check: last run's `RUN START 2026-07-29T16:59:38Z` /
+  `RUN END 2026-07-29T17:03:12Z` pair is closed (19 START = 19 END in the
+  file before this entry); proceeding.
+- Cards walked: 5 (all existing batch_1/B1.json across s1_poisson,
+  s2_beyond_copy, s3_testtime, s4_hybrid_routing, s5_tuning). No cards yet
+  for the two new streams `s3_warp` / `s6_local` (both still pre-card,
+  websearcher stage).
+- **Stream replacement — ADR 0010 (2026-07-29T17:15Z)**: Eloise (operator):
+  "remove s3 and replace." `s3_testtime-B1` -> `retired_by_operator`
+  (builder stopped mid-build, no GPU spent, no SLURM ever submitted; locked
+  fields preserved for audit; ADR 0010 text is explicit this is NOT a
+  skip/abandonment). New lever stream `s3_warp` (warp-then-correct
+  registration fusion, NEW_MODELS.md Candidate D, physics-agnostic per ADR
+  0009) started at batch 1; `state/s3_warp/` created (stage
+  `websearch_running`); `websearches/s3_warp/batch_1/` already has 3
+  iterations + a running `summary_so_far.md` (re-verifying non-preemption
+  for MF PDE fusion specifically, per ADR 0010's mandate). No card/anchor
+  file yet for `s3_warp` — expected at this stage.
+- **New stream s6_local — ADR 0011 (2026-07-29T17:20Z)**: Eloise proposed
+  additional streams; orchestrator scoped `s6_local` (FNO x
+  local-representation hybrids, direct H2 test — live because s5-B1's H1
+  result only improved geomean by 0.507, below the 0.884 floor) to fill the
+  approved 4-6 stream envelope. `state/s6_local/` created (stage
+  `websearch_running`) only ~2 min before this walk — no websearch output
+  yet. FNO-Transolver variants explicitly routed to s4 batch 2 instead (not
+  a new stream).
+- s1_poisson-B1: `built`(review_running) -> **`reviewed_suggest`**.
+  Code-reviewer verdict SUGGEST/submit-as-is landed 17:04Z per
+  `state/orchestrator_flow.md` (row-count/alignment corrections
+  independently re-proven offline: 110/250/280/280, aligned-ladder no-op
+  demonstrated byte-equal, legacy_pairing faithfully defective). Seed 0
+  submitted -> job `65991280`, COMPLETED 4m28s (4 arms serial, ifc_poisson,
+  200ep, H100). Per-arm skills (orchestrator glance, not yet a verdict):
+  two_level 2.853 / adjacent 6.055 / allpairs 5.813 / legacy_pairing 8.362 —
+  correspondence fix clearly helps allpairs over legacy_pairing, but
+  two_level dominating allpairs is the headline pattern flagged for the
+  initial-analyzer (dispatched; `5_actual_result`/`6_analysis` still null on
+  the card as of this walk).
+- s2_beyond_copy-B1: `built`(review_running) -> **`reviewed_suggest`**.
+  Code-reviewer verdict SUGGEST/submit-as-is landed 17:04Z (independently
+  re-hashed all 15 frozen batch-0 last.pt files unchanged; copy-LF seam
+  delta exactly 0.0; pinn strip verified structural; applied reviewer
+  suggestion S1 exporting `ROUND1_EVAL_RESULTS` at submit time). Diagnostic
+  run submitted -> job `65991328`, COMPLETED 46s (0ep, 5-dataset panel excl.
+  ifc_poisson, H100). `panel_geomean_skill = 9.624022290381275` — this is a
+  1-NN-in-X lookup table per the card's own design, not a model; reviewer's
+  own suggestion S3 flags it for exclusion from any future leaderboard/top-3
+  tool. `5_actual_result`/`6_analysis` still null (initial-analyzer
+  dispatched).
+- s3_testtime-B1: `drafted`(builder_running) -> **`retired_by_operator`**
+  (see ADR 0010 above). `job_ids` empty (confirms no SLURM was ever spent on
+  this card).
+- s4_hybrid_routing-B1: unchanged, still `drafted`/`builder_running`.
+  Worktree created ~16:20Z (mtime epoch 1785341996); file-level inspection
+  shows real progress through ~16:44Z (family `models_r1/fno_transolver_seq`
+  written, all four scripts `01_train_eval.sh`.. `03_aggregate_panel.sh`
+  written, `notes/handoff_experiment_starter.md` present) but nothing newer
+  as of this walk (~49 min stale, ~63 min since worktree creation, worktree
+  git status still shows the whole tree as untracked/uncommitted — no
+  build_commit yet). No debug_notes, no error in `scratchpad/contract_smoke.log`
+  (empty) — not flagging as a stall yet, but duration is growing; noted for
+  the orchestrator's next pulse.
+- s5_tuning-B1: card fields unchanged this walk (`reviewed_suggest`, same
+  `job_ids` list, still stale — does not list `65989241`). Per
+  `state/orchestrator_flow.md`, initial-analyzer was dispatched ~17:16Z;
+  `5_actual_result`/`6_analysis` still null on the card as of this walk (in
+  flight, not yet returned).
+- SLURM view: `squeue -u $USER` now shows only the pre-existing unrelated
+  `bash` job `65984594` (~2:53 h elapsed) — `65989241` (anchor recert
+  retrain) has dropped from squeue. `sacct` confirms `65989241` COMPLETED in
+  32m08s (09:45:33-10:17:41 local). Result
+  `.../recert/h100_champion_seed0_retrain.json`: `panel_geomean_skill =
+  7.117102398598575`, family `mf_fno_transfer_film`, 200ep — this lands just
+  **above** the certified anchor's own upper CI bound (6.7030 [6.2185,
+  **7.1022**]), by ~0.015. The earlier checkpoint-resume false-positive
+  snapshot (`65989097` -> `h100_champion_seed0.json`) reads `7.103418373062505`,
+  also just above the CI edge — both real-H100 numbers cluster ~7.10-7.12.
+  This is the ADR 0005 H100-carry-over comparison the orchestrator/mentor
+  were waiting on; `state/anchors/*.json` are unchanged (same mtime, same
+  values) — no recomputation performed by the maintainer, flagged for
+  orchestrator/mentor action only.
+- Timing ledger: upserted 2 new COMPLETED r1- jobs — `65991280` (s1_poisson
+  B1 seed 0, family `mf_fno_ladder`, dataset `ifc_poisson`, epochs 200,
+  gpu_type h100, elapsed_min 4.47) and `65991328` (s2_beyond_copy B1 seed 0,
+  family `s2_copylf_forensics`, datasets = the 5-dataset diagnostic panel
+  excl. ifc_poisson, epochs 0, gpu_type h100, elapsed_min 0.77) -> 38 -> 40
+  entries; re-validated as parseable JSON after upsert. `65989241`
+  (`r1-recert-h100`) again excluded from the per-card ledger (infra job, no
+  `{stream}-B{N}-s{seed}` mapping), consistent with prior walks.
+- Abandonment check: all 5 existing cards are `reviewed_suggest` (x3),
+  `retired_by_operator` (x1), or `drafted` (x1) — none `skipped`/`blocked`;
+  no stream has 3 consecutive skip/blocked batches. `s3_testtime`'s
+  operator-directed retirement is explicitly excluded from the
+  skip/abandonment trigger by ADR 0010's own text, so no
+  `state/streams/s3_testtime.json` abandonment file was written.
+  `state/streams/` directory still does not exist — correct.
+- Transcript inbox: `state/transcripts/` still does not exist — nothing to
+  archive this walk.
+- Anchors: all 5 existing `state/anchors/*.json` files unchanged (still
+  certified 2026-07-29T14:28:45Z, same values/mtimes) — rendered verbatim
+  into index.md. No anchor file exists yet for `s3_warp` or `s6_local`
+  (both pre-card, expected). `state/anchors/s3_testtime.json` is now
+  vestigial for the retired stream but left untouched (not the maintainer's
+  call to delete; still referenced by the retired card's `anchor_reference`
+  field for audit).
+- New ADRs since last walk: `docs/adr/0009-unknown-physics-constraint.md`
+  (models must not assume known PDE at test time), `0010-s3-replacement.md`
+  (s3_testtime -> s3_warp, see above), `0011-s6-local-stream.md` (new
+  stream, see above).
+- No card files modified by this walk (`git status --short
+  experiment_cards/` shows `s1_poisson`, `s2_beyond_copy`, `s3_testtime`
+  B1.json as modified, but those changes were made by the reviewer/builder/
+  operator-amendment agents prior to this walk starting, not by the
+  maintainer — this walk only read cards).
+- index.md: regenerated (fresh timestamp; Streams table restructured to 6
+  rows reflecting the s3_testtime->s3_warp replacement and new s6_local
+  stream; s1/s2 rows updated to reviewed_suggest + completed seed-0 results;
+  s3 row shows the retirement/replacement inline; s4 row flags growing
+  builder duration without declaring a stall; s5 row notes the dispatched
+  initial-analyzer; running-jobs table cleared of all four completed jobs
+  this window with a new recently-completed row for each; Flags section
+  rewritten with the stream-replacement, new-stream, and anchor-recert-vs-CI
+  items).
+## RUN END 2026-07-29T17:26:40Z

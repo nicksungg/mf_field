@@ -394,3 +394,146 @@ conds; row counts 110/250/280/280 match card; measured non-alignment recorded
 score-neutrally (8→64 max diff 0.5809). Deviations recorded (full 200-ep
 finetune per card; ckpt subdir per-arm; 02:00:00 per ADR 0005). Stage →
 review_running; dispatching code-reviewer.
+
+## s5-B1 seed 0 COMPLETE — 2026-07-29T17:01Z
+
+Job 65988184 COMPLETED (maintainer walk): panel geomean skill 6.1958 vs anchor
+6.703 [6.219, 7.102]. Improvement 0.507 < card threshold 0.884 (provisional-
+single-seed; ADR 0004 — no seeds 1-2). Verdict belongs to the initial-
+analyzer; dispatching it now. Stage → initial_analysis_running. Guard-set
+result already on disk (guard_contract_s0.json). Recert retrain still RUNNING
+(will serve as same-hardware cap-12 control for part-5 context).
+
+## Review verdict + submit — s1_poisson-B1 — 2026-07-29T17:04Z
+
+Code-reviewer: SUGGEST / submit-as-is (6/6; correction independently re-proven
+offline: row counts 110/250/280/280 reproduced, aligned-ladder no-op
+demonstrated byte-equal, legacy_pairing faithfully defective, backbone sha
+identical to akash original). Analyzer notes recorded in review_B1.md: S2
+amplitude-domination caveat (per-fid max|Y| spans 42x — read allpairs≈
+two_level null against it), S3 seeds vary via init only, S4 legacy isolates
+cross-row correspondence only. Submitted seed 0 via submit.sh → job 65991280
+(H100). Stage → seed0_running; card job_ids updated.
+
+## Pulse + review verdict + submit — s2_beyond_copy-B1 — 2026-07-29T17:04Z
+
+Pulse state: s1 seed0 PENDING (65991280); s3/s4 builders in flight; s5 initial
+analyzer in flight; recert retrain RUNNING 19 min.
+
+s2 code-reviewer: SUGGEST / submit-as-is (6/6; independently re-hashed all 15
+frozen batch-0 last.pt — sha/size/mtime unchanged after two reload passes;
+copy-LF seam delta exactly 0.0; pinn strip structural; 1e-3 tolerance
+deviation accepted with 500x failure-mode margin). Applied S1 at submit time:
+exported ROUND1_EVAL_RESULTS=outputs/s2_beyond_copy/B1/eval/results (sbatch
+--export=ALL default propagates; script does not override). S3 noted:
+s2_copylf_forensics is a lookup, excluded from leaderboard. Submitted seed 0
+→ job 65991328. Stage → seed0_running; card job_ids updated.
+
+## ADR 0009 — unknown-physics constraint — 2026-07-29T17:13Z
+
+Eloise (mentor guidance): models must not assume known PDE at test time
+(weather = canonical case). s3-B1 diagnostic completes as designed (exempt:
+measurement, and its outcome evidences the ADR). s3 batch 2 re-scopes to
+physics-agnostic test-time levers or retires cleanly. Batch-2 brainstormer
+dispatches will cite ADR 0009 for ALL streams (no physics-embedded model
+candidates anywhere).
+
+## Stream replacement — s3_testtime → s3_warp — 2026-07-29T17:15Z
+
+Eloise: remove s3, replace. Builder stopped (no GPU spent, no SLURM ever
+submitted). Card retired_by_operator (audit trail kept; not a skip). ADR 0010;
+project.yaml + program.md §12.3 rewritten. New stream s3_warp (lever):
+warp-then-correct registration fusion (NEW_MODELS.md Candidate D — only
+un-preempted backlog candidate; physics-agnostic per ADR 0009; targets the
+interface-displacement failure mode; topology-mismatch threat flagged).
+Dispatching s3_warp batch-1 websearcher now (prior-art re-verification
+mandatory).
+
+## Pulse — s1 + s2 seed-0 COMPLETE — 2026-07-29T17:16Z
+
+s1 job 65991280 COMPLETED 4m28s (4 arms x 200 ep, H100). Raw arm skills on
+ifc_poisson (orchestrator glance; verdicts belong to analyzer): two_level
+2.853 / adjacent 6.055 / allpairs 5.813 / legacy_pairing 8.362. Correspondence
+fix clearly helps (allpairs vs legacy), but two_level dominating allpairs is
+the headline pattern to analyze (reviewer's amplitude-domination caveat S2
+applies). s2 job 65991328 COMPLETED 46s; result_beyond_copy5_s0.json + 5
+per-dataset diagnostics JSONs present. Dispatching both initial-analyzers +
+maintainer. s4 builder + s3_warp websearcher + s5 analyzer + recert (30 min)
+still in flight.
+
+## New stream s6_local — ADR 0011 — 2026-07-29T17:20Z
+
+Eloise proposed additional streams. Added s6_local (lever, H2 test: FNO x
+local-representation hybrids), filling the approved 4-6 envelope. FNO-
+Transolver variants routed to s4 batch 2 instead (question ownership).
+Motivation: s5-B1's H1 result (modes 12->32 = +0.507 < 0.884 floor) makes H2
+the live hypothesis. Constraints: diagnose mentor's failed FNO-CNN attempt
+first; convnext panel record says composition not capacity. Dispatching
+batch-1 websearcher. program.md §12.6 to be appended by operator next edit
+(conventions mirror ADR 0011).
+
+## Initial analysis — s1_poisson-B1 — 2026-07-29T17:21Z
+
+analyzed_single_seed. VERDICT: cratered (allpairs 5.813 > 2.35 = 1.5x anchor)
++ FALSIFIED per clause (allpairs must beat two_level by >0.240; measured
+-2.960). But C1 CLEARS 10.6x floor: correspondence fix is real (+2.549 skill
+at fixed rows, legacy 8.362 → allpairs 5.813). C3: controlling variable is
+the LEVEL SET not the pair set (two_level 2.853 dominates, wins 125/128
+samples, uniform 2x degradation). C2b adjacent≈allpairs noise-compatible.
+Amplitude-domination caveat unresolved (42x max|Y| spread, shared scaler) —
+top part-6 probe. No anomalies; 4.45 min total H100. Stage →
+mechanism_analysis_running; dispatching mechanism-analyzer.
+
+## New stream s7_loss (ADR 0012) + scouting search — 2026-07-29T17:25Z
+
+Eloise asked for further streams from proposals/reports/deep-search. Added
+s7_loss (interface-aware training objectives; F14-F18 backlog; metric
+unchanged, objective changes; envelope now 7 by her direction). DEFERRED
+s8_data (cross-dataset pretraining / N_hf leverage) pending s2-B1 part 5 (its
+fisher_kpp NN-floor finding is the conditioning evidence). Dispatching
+s7_loss batch-1 websearcher + one stream-level scouting websearcher
+(websearches/_scouting/).
+
+## ADR 0005 carry-over PASS + s2-B1 initial analysis — 2026-07-29T17:26Z
+
+Anchor carry-over: PASS (geomean delta 0.0137 << 0.884; all per-dataset deltas
+inside floors). Hardware confound closed.
+
+s2-B1 verdict (diagnostic, deterministic): H1 FALSIFIED (legs A+C fire, B+D
+don't). Headlines: (1) M1 5/5x3/3 — champion NEVER sees LF at test time
+(category error confirmed); (2) fisher_kpp = information deficit (X-only
+family collapses to ~4.1-4.2; champion-best lookup delta 0.070 = 6x below
+floor; nn_over_random 0.937 at cond_dim 2) — STRONG evidence for deferred
+s8_data; (3) pfc: knn10 8.466 BEATS champion 11.511 by 3.045 (above 1.151
+floor) — a training-free lookup beats the trained champion; (4) allen_cahn +
+cahn_hilliard are TRAINING-WINS (unanticipated); (5) M3: excess error in the
+LOWEST spectral band 5/5 (not high-k — D3 dead; s6_local brainstormer must
+confront this: H2's high-k story is challenged); (6) M4: pfc error NOT
+interface-concentrated (mid-distance peak — s3_warp brainstormer must
+confront this); (7) M5a: helmholtz amplitude share 0.865 (6.202 → 0.839
+rescaled!) — normalization is the helmholtz story (s5/s7 lead); (8) M5b:
+pairing sound — §12.2 data-defect branch CLOSED. Stage →
+mechanism_analysis_running; dispatching mechanism-analyzer (top probe: pfc
+NN-distance stratification, heavy-tailed LOO residual 23x median/mean gap).
+
+## Websearch return — s3_warp-B1 — 2026-07-29T17:27Z
+
+SUCCESS (5 iterations, 9/9). Verdicts: D1 mf_warp_correct preempted-but-MF-
+composition-open (Flowers 2603.04430 owns the warp primitive but no MF
+correction; MetaRegNet owns warp+appearance; Khamlich 2603.04232 owns OT-for-
+MF on Allen-Cahn 128->512 but classical/no-warp-of-LF) — claimable novelty
+NARROW: neural cross-fidelity field-level warp at N_hf 5-25. D2 warp-oracle
+diagnostic cheapest defensible card and GATES D1. NEW_MODELS §8.4 literal
+claim survives; surrounding "documented gap" claim does not. Design-changing:
+(1) LF error regime question (position vs interfacial-thickness — warp fixes
+only the former); (2) warp-off control required (champion is LF-blind, so any
+D1 win could be mere use-LF-at-test-time). Stage → brainstormer_running;
+dispatching with s2-B1 cross-findings (M4 pfc error NOT interface-peaked; M3
+low-band concentration) which the design must confront.
+
+## Pulse — 2026-07-29T17:28Z
+
+pulse: no-op (all 7 streams have an agent in flight: s1/s2 mechanism analysis,
+s3_warp brainstormer, s4 builder (pinged), s5 initial analyzer, s6/s7
+websearchers; plus scouting websearcher). No r1 SLURM jobs; nothing queued or
+failed. All advancement happens on agent returns.

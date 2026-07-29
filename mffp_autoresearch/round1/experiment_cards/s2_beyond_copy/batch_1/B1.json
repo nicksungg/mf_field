@@ -49,7 +49,7 @@
       "S2B1_DIAG_OUT": "mffp_autoresearch_outputs/round1/s2_beyond_copy/B1/eval"
     }
   },
-  "status": "built",
+  "status": "analyzing",
   "skipped_reason": null,
   "reopen_candidate": false,
   "scripts_path": {
@@ -65,7 +65,9 @@
     "sidecars": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s2_beyond_copy/B1/eval/diagnostics_<dataset>.json"
   },
   "build_commit": "ba487126aef5fdf449b69e619ddee9a69d60220d",
-  "job_ids": [],
+  "job_ids": [
+    "65991328 (diagnostic single run, ROUND1_EVAL_RESULTS redirected per review S1)"
+  ],
   "logs": {},
   "build_notes": [
     "Built the diagnostic contract family at models_r1/s2_copylf_forensics/ (manifest.json, smoke_eval.py, base_reload.py, forensics.py, INSPIRATION.md) on branch round1/exp-s2_beyond_copy-B1. TWO commits: f38d8dbadfaf268d0dcbe433d7ba8f5b153bc149 (the build) and ba487126aef5fdf449b69e619ddee9a69d60220d (operator amendment ADR 0008: mf_fno_pinn_transfer removed from the round, so the pinn path was STRIPPED from the code - _train_pinn tripwire, PINN_POISSON check, checkpoint 'pinn' provenance key, manifest text, INSPIRATION text and the script --env value - rather than gated behind the env knob). build_commit above is the final commit; the tree is clean at it. The base family mf_fno_transfer_film is a READ-ONLY input at base_commit 967562e (mf_field/factory_mffp/models/, never edited); the family imports its smoke_eval module and monkeypatches the imported module object at runtime only. Nothing is trained.",
@@ -76,9 +78,1937 @@
     "Hyperparameter provenance: all 8 S2B1_* knobs are taken verbatim from the amended recipe.env and are REQUIRED at runtime (a missing knob is a hard stop, never a default); datasets, epochs 0 and seed 0 likewise from the recipe. Builder choices the card did not specify, all recorded in the sidecar so the analyzer can re-derive them: (a) M4's '4 strata' are the pooled quartiles of the distance transform over the test split, and the realized area share per stratum is reported explicitly rather than assumed; (b) M3's '4 dyadic radial bands' have edges k_nyq/2^(B-1-b) with the outermost band left open so the bands partition the half-plane and the energy shares sum to 1; (c) the random-pair and index-shuffle controls use np.random.default_rng(seed) with a forced derangement. No other numeric constant was invented. Note for the analyzer: the scored test_hf split is a training-free 1-NN-in-X lookup table, NOT a model (report note 1).",
     "SLURM: scripts/01_train_eval.sh (SEED=$1) + scripts/submit.sh; both pass `bash -n`; all paths absolute. Per ADR 0005 and the orchestrator's direction: partition gpu, --gres=gpu:h100:1, --time=00:45:00 (the card estimated 30-60 min for all five datasets and state/timing_ledger.json has no inference-only analog; the helmholtz smoke took 3m17s on a CPU login node), --exclude=hpc-93-36, --requeue, job-name r1-s2_beyond_copy-B1-s0, logs under <outputs_root>/s2_beyond_copy/B1/slurm/, result at <outputs_root>/s2_beyond_copy/B1/eval/result_beyond_copy5_s0.json plus five diagnostics_<dataset>.json sidecars. NO submit_seeds_2_3.sh: this is a diagnostic card (program.md §4.3) - one run, no seeds 1-2; the three batch-0 seeds are consumed on the model side via S2B1_CKPT_SEEDS. The run passes --no_cache deliberately: the scored value is cacheable but the sidecars are written by smoke_eval.py itself, so a cache hit would silently skip the entire measurement. Preemption-safe: nothing trains, and each dataset re-emits from its own <ckpt_dir>/last.pt marker on requeue. NOT submitted (orchestrator submits, G4b)."
   ],
-  "review_notes": [],
+  "review_notes": [
+    {
+      "attempt": 1,
+      "verdict": "reviewed_suggest",
+      "findings": [
+        "3.1 card-implementation alignment PASS: every part-3 item traces to code (M1 forward-hook audit, M2 ladder with knn1 as the scored test_hf split and all others under ref_*, M3 4 dyadic bands with R_b/H_b/coherence, M4 tau=0.1 distance transform in 4 strata, M5a rescale + M5b pairing control, per-dataset sidecar with nrmse_def_hash, 3 seam checks); ifc_poisson excluded; builder choices declared in build_notes and re-derivable from the sidecar.",
+        "3.2 recipe fidelity PASS: programmatic compare of the script --env block against the AMENDED recipe.env matched on all 8 S2B1_* keys (MATCH: True), including S2B1_BASE_FAMILIES=mf_fno_transfer_film; --datasets verbatim, --epochs 0, seed 0; every knob REQUIRED at runtime (hard stop, never a default).",
+        "3.3 section-5 immutables PASS with one suggestion: no edits to round1/eval/, project.yaml, program.md, ADRs, prompts, or guarded factory surfaces; the base family is monkeypatched in-process only and untouched on disk; scoring routed through score_panel.py and the single eval/nrmse.py definition; no data regeneration; no pre-falsified lever. SUGGESTION S1: the run does not export ROUND1_EVAL_RESULTS, so score_panel will create round1/eval/results/s2_copylf_forensics/ inside the frozen eval layer (precedent is mixed: s1-B1/s5-B1 redirect, s4-B1 does not), hence SUGGEST not FAIL.",
+        "3.4 contract compliance PASS: manifest.json, exact 6-arg CLI, INSPIRATION.md citing all 6 prior_art URLs plus the verbatim quotable_gap, and checkpoint-resume from <ckpt_dir>/last.pt implemented at smoke_eval.py:130-147 (guarded on complete/dataset/epochs_target/nrmse_def_hash/sidecar) and written at :390-394; diagnostic findings JSON written under outputs_root via S2B1_DIAG_OUT.",
+        "3.5 SLURM correctness PASS: bash -n run on both scripts (OK/OK) plus py_compile on all 4 family modules (OK); partition gpu and gres gpu:h100:1 match project.yaml; typed gres; job-name r1-s2_beyond_copy-B1-s0; absolute --output/--error under OUTPUTS_ROOT/s2_beyond_copy/B1/slurm/; --time 00:45:00, --exclude=hpc-93-36, --requeue; 01_train_eval.sh takes SEED=$1; submit.sh is seed 0 only; NO submit_seeds_2_3.sh is CORRECT for a diagnostic (program.md 4.3) and scripts_path.seeds_2_3 is null consistently. Walltime independently supported: measured M2-M5 kernels at 256^2 = ~42 s CPU/dataset and confirmed all five native grids (96/128/256/256/256) are <= WORK_CAP so the target==y_test hard stop holds.",
+        "3.6 smoke evidence PASS: build_notes[1] cites the full score_panel.py command at the card's tier, re-run after the ADR 0008 amendment; scratchpad/contract_smoke.json (exit 0, test_hf nRMSE 1.3113524474983618, skill 3.9804, metric_source per_sample_mean), scratchpad/contract_smoke_diagnostics_ext__helmholtz_2d.json (M1-M5 sidecar, seam abs_delta 0.0, lf_at_inference false x3, n_forward_calls_train 0) and scratchpad/smoke_run.log (3m17.165s) all present; login-node artifacts confirmed cleaned from eval/results, eval/cache and the outputs root.",
+        "3.7 blast radius PASS: git diff round1-substrate..ba487126 --stat = 12 files / 1886 insertions / 0 deletions, confined to models_r1/ (5), scripts/ (2), notes/ (2), scratchpad/ (3); git status clean at build_commit.",
+        "FOCUS 1 diagnostic integrity CONFIRMED: the raising _train stub fires before the base family's torch.save, so a failed resume can neither retrain nor overwrite a champion; an independent forward-hook asserts zero training-mode passes; copy-LF seam recomputed 0.3294501260438018 vs baselines 0.3294501260438018, abs delta exactly 0.0 at the literal 1e-9 (with a _nrmse_def_hash precondition); the scored test_hf split is knn1, the training-free 1-NN-in-X lookup, with a hard stop if S2B1_KNN_K ever loses the 1.",
+        "FOCUS 2 pinn strip COMPLETE and structural, not env-gated: _train_pinn, PINN_POISSON, the ckpt 'pinn' provenance key, manifest/INSPIRATION/docstring text and the --env value are all removed and replaced by a stricter single-family interlock (hasattr _train or hard stop); no dead code path; remaining 'pinn' grep hits are pre-existing substrate docs untouched by this diff.",
+        "FOCUS 3 deviation ACCEPTED: replacing the card's literal <=1e-9 checkpoint-repro tolerance with abort-at-1e-3-relative plus a recorded repro_exact_1e9 boolean preserves the interlock's purpose (checkpoint/data identity) - observed cross-hardware float32 noise is 4.6e-7..8.7e-6 relative while the guarded failure modes move the number by O(1) (a helmholtz seed swap is ~50%, 500x above the threshold) - and the criterion remains reportable in the sidecar; the achievable literal 1e-9 was correctly kept on the copy-LF seam. HAND-OFF S2: repro_exact_1e9 will be false everywhere by design; the analyzer must read rel_delta vs abort_rtol=1e-3, not that boolean.",
+        "FOCUS 4 frozen-checkpoint safety VERIFIED INDEPENDENTLY: all 15 batch-0 last.pt files under eval/results/mf_fno_transfer_film/ re-hashed - sha256, size and mtime unchanged from build_notes after two full smoke reloads; containing directory mtimes unchanged; no _forensics_unused.json anywhere (the family also hard-fails if one appears). The 09:41 PDT rewrite of the s0 batch-0 RESULT JSONs is the operator's H100 re-certification (checkpoint bytes unchanged) and moves the repro delta down, not up.",
+        "SUGGESTION S3 (maintainer): the scored number this card produces is a 1-NN-in-X lookup table, not a model (helmholtz smoke skill 3.98); manifest carries \"diagnostic\": true and the split carries a predictor_note, but no leaderboard tool reads either yet (round1/tools/ is empty), so s2_copylf_forensics must be excluded from the provisional leaderboard and top-3 eligibility."
+      ],
+      "review_file": "mffp_autoresearch/round1/state/s2_beyond_copy/review_B1.md",
+      "handoff": "mffp_autoresearch/round1/worktrees/s2_beyond_copy/B1/notes/handoff_code_reviewer.md",
+      "reviewed_commit": "ba487126aef5fdf449b69e619ddee9a69d60220d",
+      "utc": "2026-07-29T17:40Z"
+    }
+  ],
   "debug_notes": [],
-  "5_actual_result": null,
+  "5_actual_result": {
+    "measurement_class": "DIAGNOSTIC - measurements, not training. No seeds, no CI, deterministic. epochs=0, seed=0, single SLURM run 65991328. The batch-0 champion mf_fno_transfer_film is RELOADED (all 3 batch-0 seeds) and never retrained; mf_fno_pinn_transfer dropped per ADR 0008 / operator_amendments.",
+    "do_not_promote": "The scored test_hf split of family s2_copylf_forensics is a training-free 1-NN-in-X LOOKUP TABLE, not a model (reviewer S3). It MUST NOT enter any leaderboard, anchor, or top-3 eligibility. No anchor file was written by this analysis.",
+    "seeds_available": [
+      0
+    ],
+    "result_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s2_beyond_copy/B1/eval/result_beyond_copy5_s0.json",
+    "sidecars": [
+      "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s2_beyond_copy/B1/eval/diagnostics_ext__helmholtz_2d.json",
+      "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s2_beyond_copy/B1/eval/diagnostics_sharp__allen_cahn_2d.json",
+      "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s2_beyond_copy/B1/eval/diagnostics_sharp__cahn_hilliard.json",
+      "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s2_beyond_copy/B1/eval/diagnostics_sharp__fisher_kpp_2d.json",
+      "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s2_beyond_copy/B1/eval/diagnostics_sharp__phase_field_crystal_2d.json"
+    ],
+    "nrmse_def_hash": "d3d0ade9191c13bacc40702f3eb26ad290e01641cacee22a1d2233b74c035850",
+    "nrmse_def_hash_consistent": true,
+    "skill_convention": "skill = nRMSE(predictor) / nRMSE(copy-LF); copy-LF == 1.0; LOWER IS BETTER; skill > 1 means WORSE than copy-LF (program.md 12.2). Every predictor measured here, including both lookups and the champion, is worse than copy-LF on all five datasets.",
+    "per_dataset": {
+      "ext__helmholtz_2d": {
+        "_scored_split_note": "per_seed_* below carry the SINGLE deterministic scored measurement (the training-free 1-NN-in-X lookup on test_hf), not a model and not a seed ensemble; ci95 is null by construction (diagnostic, no seeds).",
+        "per_seed_nrmse": [
+          1.3113524475
+        ],
+        "per_seed_skill": [
+          3.9804278215
+        ],
+        "mean_skill": 3.9804278215,
+        "ci95": null,
+        "reference_type": "copylf",
+        "cached": false,
+        "metric_source": "per_sample_mean",
+        "grid": [
+          96,
+          96
+        ],
+        "cond_dim": 3,
+        "n_train_hf": 400,
+        "n_test_hf": 100,
+        "copylf_reference_nrmse": 0.329450126,
+        "M1_lf_blindness": {
+          "lf_at_inference": {
+            "mf_fno_transfer_film_s0": false,
+            "mf_fno_transfer_film_s1": false,
+            "mf_fno_transfer_film_s2": false
+          },
+          "n_field_shaped_inputs_at_eval": {
+            "mf_fno_transfer_film_s0": 0,
+            "mf_fno_transfer_film_s1": 0,
+            "mf_fno_transfer_film_s2": 0
+          },
+          "only_input_shape_at_eval": [
+            [
+              16,
+              3
+            ]
+          ],
+          "n_forward_calls_train": {
+            "mf_fno_transfer_film_s0": 0,
+            "mf_fno_transfer_film_s1": 0,
+            "mf_fno_transfer_film_s2": 0
+          },
+          "readout": "champion is LF-BLIND at inference: the only tensor entering the network is the [batch, cond_dim] condition vector; zero field-shaped inputs, zero training-mode forwards."
+        },
+        "M2_x_sufficiency_ladder": {
+          "nrmse": {
+            "copylf": 0.329450126,
+            "knn1": 1.3113524475,
+            "knn10": 6.0926631905,
+            "knn3": 1.3140956297,
+            "knn5": 2.7842020354,
+            "meanfield": 4.3690726946,
+            "model_mf_fno_transfer_film_s0": 6.2023286517,
+            "model_mf_fno_transfer_film_s1": 3.0103263202,
+            "model_mf_fno_transfer_film_s2": 4.4450873637
+          },
+          "skill": {
+            "copylf": 1.0,
+            "knn1": 3.9804278215,
+            "knn10": 18.4934310504,
+            "knn3": 3.9887543692,
+            "knn5": 8.4510577333,
+            "meanfield": 13.261712014,
+            "model_mf_fno_transfer_film_s0": 18.8263052929,
+            "model_mf_fno_transfer_film_s1": 9.1374265244,
+            "model_mf_fno_transfer_film_s2": 13.4924439614
+          },
+          "best_training_free_x_only": {
+            "predictor": "knn1",
+            "skill": 3.980428
+          },
+          "best_knn_only": {
+            "predictor": "knn1",
+            "skill": 3.980428
+          },
+          "knn1_scored_skill": 3.9804278215,
+          "champion_batch0_per_seed_skill": [
+            18.8263052929,
+            9.1374265244,
+            13.4924439614
+          ],
+          "champion_batch0_mean_skill": 13.818725,
+          "anchor_certified_best_skill": 13.81729,
+          "delta_knn1_minus_champion_mean": -9.838297,
+          "delta_bestXonly_minus_anchor": -9.836862,
+          "noise_floor_min_claimable_effect": 9.694961,
+          "train_degeneracy": {
+            "mean_field_mean": 4.211854,
+            "mean_field_median": 4.024676,
+            "n_train": 400,
+            "nn_in_X_mean": 1.576854,
+            "nn_in_X_median": 0.550956,
+            "nn_over_random": 0.419308,
+            "random_pair_mean": 7.087618,
+            "random_pair_median": 1.313966
+          }
+        },
+        "M3_spectral_bands": {
+          "edges_wavenumber": [
+            0.0,
+            6.0,
+            12.0,
+            24.0,
+            48.0
+          ],
+          "k_nyquist": 48.0,
+          "hf_energy_share_by_band": [
+            0.999619,
+            0.000341,
+            3.6e-05,
+            4e-06
+          ],
+          "lf_hf_coherence_by_band": [
+            0.875322,
+            0.633648,
+            0.113472,
+            0.007739
+          ],
+          "R_low_champion_per_seed": [
+            8.629208,
+            1.229948,
+            1.944753
+          ],
+          "R_low_gt_1_all_seeds": true,
+          "R_b_champion_per_seed": {
+            "model_mf_fno_transfer_film_s0": [
+              8.629208,
+              10.892522,
+              1.994727,
+              2.890874
+            ],
+            "model_mf_fno_transfer_film_s1": [
+              1.229948,
+              12.066356,
+              10.080627,
+              14.528716
+            ],
+            "model_mf_fno_transfer_film_s2": [
+              1.944753,
+              65.077776,
+              6.237263,
+              9.852377
+            ]
+          },
+          "R_b_knn1": [
+            2.148805,
+            2.937651,
+            0.392748,
+            0.139746
+          ],
+          "R_b_knn10": [
+            8.151578,
+            10.567687,
+            1.329386,
+            0.29109
+          ],
+          "err_energy_share_by_band_champion_s0": [
+            0.999591,
+            0.000333,
+            5e-05,
+            2.7e-05
+          ],
+          "transfer_H_by_band_champion_s0": [
+            0.284175,
+            -0.192193,
+            0.007353,
+            -0.028275
+          ]
+        },
+        "M4_interface_strata": {
+          "tau": 0.1,
+          "strata_rule": "pooled quartiles of the distance transform over the test split",
+          "n_samples_using_gradient_fallback": 0,
+          "distance_quantile_edges_cells": [
+            1.0,
+            5.3852,
+            11.1803
+          ],
+          "area_share_by_stratum": [
+            0.283387,
+            0.220924,
+            0.247193,
+            0.248496
+          ],
+          "hf_energy_share_by_stratum": [
+            0.004183,
+            0.020653,
+            0.080919,
+            0.894246
+          ],
+          "err_mass_over_area_share": {
+            "copylf": [
+              0.070023,
+              0.248231,
+              0.716925,
+              3.0105
+            ],
+            "knn1": [
+              0.01892,
+              0.116639,
+              0.406914,
+              3.494154
+            ],
+            "knn10": [
+              0.196955,
+              0.327053,
+              0.521061,
+              2.990506
+            ],
+            "knn3": [
+              0.016698,
+              0.099572,
+              0.344438,
+              3.574009
+            ],
+            "knn5": [
+              0.014613,
+              0.081862,
+              0.280832,
+              3.655404
+            ],
+            "meanfield": [
+              0.052722,
+              0.148412,
+              0.367419,
+              3.466647
+            ],
+            "model_mf_fno_transfer_film_s0": [
+              0.064456,
+              0.093027,
+              0.231767,
+              3.637446
+            ],
+            "model_mf_fno_transfer_film_s1": [
+              0.166561,
+              0.157081,
+              0.372474,
+              3.324088
+            ],
+            "model_mf_fno_transfer_film_s2": [
+              0.287516,
+              0.270114,
+              0.468381,
+              2.990254
+            ]
+          }
+        },
+        "M5a_amplitude_pattern": {
+          "copylf": {
+            "nrmse_raw": 0.32945013,
+            "nrmse_optimal_rescale": 0.10189777,
+            "amplitude_share_of_error": 0.690703,
+            "alpha_mean": 1.050868,
+            "alpha_std": 0.67388
+          },
+          "knn1": {
+            "nrmse_raw": 1.31135245,
+            "nrmse_optimal_rescale": 0.3480987,
+            "amplitude_share_of_error": 0.73455,
+            "alpha_mean": -0.022401,
+            "alpha_std": 5.10861
+          },
+          "knn10": {
+            "nrmse_raw": 6.09266319,
+            "nrmse_optimal_rescale": 0.55830445,
+            "amplitude_share_of_error": 0.908364,
+            "alpha_mean": -0.816607,
+            "alpha_std": 16.002892
+          },
+          "knn3": {
+            "nrmse_raw": 1.31409563,
+            "nrmse_optimal_rescale": 0.43269726,
+            "amplitude_share_of_error": 0.670726,
+            "alpha_mean": 0.423855,
+            "alpha_std": 6.278031
+          },
+          "knn5": {
+            "nrmse_raw": 2.78420204,
+            "nrmse_optimal_rescale": 0.4872356,
+            "amplitude_share_of_error": 0.825,
+            "alpha_mean": 0.409658,
+            "alpha_std": 7.13119
+          },
+          "meanfield": {
+            "nrmse_raw": 4.36907269,
+            "nrmse_optimal_rescale": 0.77402877,
+            "amplitude_share_of_error": 0.822839,
+            "alpha_mean": -0.246686,
+            "alpha_std": 3.547785
+          },
+          "model_mf_fno_transfer_film_s0": {
+            "nrmse_raw": 6.20232865,
+            "nrmse_optimal_rescale": 0.83869618,
+            "amplitude_share_of_error": 0.864777,
+            "alpha_mean": 0.074819,
+            "alpha_std": 0.879627
+          },
+          "model_mf_fno_transfer_film_s1": {
+            "nrmse_raw": 3.01032632,
+            "nrmse_optimal_rescale": 0.89864362,
+            "amplitude_share_of_error": 0.70148,
+            "alpha_mean": 0.098291,
+            "alpha_std": 0.588503
+          },
+          "model_mf_fno_transfer_film_s2": {
+            "nrmse_raw": 4.44508736,
+            "nrmse_optimal_rescale": 0.92623214,
+            "amplitude_share_of_error": 0.791628,
+            "alpha_mean": 0.10821,
+            "alpha_std": 0.751679
+          }
+        },
+        "M5b_pairing_control": {
+          "aligned_over_shift1": 0.076903,
+          "aligned_over_shuffle": 0.083118,
+          "aligned_rel_resid_mean": 0.32945,
+          "index_shift1_rel_resid_mean": 4.283953,
+          "random_shuffle_rel_resid_mean": 3.963667
+        },
+        "seam_checks": {
+          "copylf_vs_baselines": {
+            "abs_delta": 0.0,
+            "baseline": 0.3294501260438018,
+            "passed": true,
+            "recomputed": 0.3294501260438018,
+            "tol": 1e-09
+          },
+          "checkpoint_reproduction": {
+            "mf_fno_transfer_film_s0": {
+              "rel_delta": 0.0,
+              "abs_delta": 0.0,
+              "abort_rtol": 0.001,
+              "repro_exact_1e9": true
+            },
+            "mf_fno_transfer_film_s1": {
+              "rel_delta": 0.0006868314338762435,
+              "abs_delta": 0.002066167634035221,
+              "abort_rtol": 0.001,
+              "repro_exact_1e9": false
+            },
+            "mf_fno_transfer_film_s2": {
+              "rel_delta": 0.00015958330051868926,
+              "abs_delta": 0.0007094749329459304,
+              "abort_rtol": 0.001,
+              "repro_exact_1e9": false
+            }
+          }
+        },
+        "wall_seconds": 2.89
+      },
+      "sharp__allen_cahn_2d": {
+        "_scored_split_note": "per_seed_* below carry the SINGLE deterministic scored measurement (the training-free 1-NN-in-X lookup on test_hf), not a model and not a seed ensemble; ci95 is null by construction (diagnostic, no seeds).",
+        "per_seed_nrmse": [
+          0.4793749432
+        ],
+        "per_seed_skill": [
+          29.6794024142
+        ],
+        "mean_skill": 29.6794024142,
+        "ci95": null,
+        "reference_type": "copylf",
+        "cached": false,
+        "metric_source": "per_sample_mean",
+        "grid": [
+          256,
+          256
+        ],
+        "cond_dim": 3,
+        "n_train_hf": 400,
+        "n_test_hf": 100,
+        "copylf_reference_nrmse": 0.0161517721,
+        "M1_lf_blindness": {
+          "lf_at_inference": {
+            "mf_fno_transfer_film_s0": false,
+            "mf_fno_transfer_film_s1": false,
+            "mf_fno_transfer_film_s2": false
+          },
+          "n_field_shaped_inputs_at_eval": {
+            "mf_fno_transfer_film_s0": 0,
+            "mf_fno_transfer_film_s1": 0,
+            "mf_fno_transfer_film_s2": 0
+          },
+          "only_input_shape_at_eval": [
+            [
+              16,
+              3
+            ]
+          ],
+          "n_forward_calls_train": {
+            "mf_fno_transfer_film_s0": 0,
+            "mf_fno_transfer_film_s1": 0,
+            "mf_fno_transfer_film_s2": 0
+          },
+          "readout": "champion is LF-BLIND at inference: the only tensor entering the network is the [batch, cond_dim] condition vector; zero field-shaped inputs, zero training-mode forwards."
+        },
+        "M2_x_sufficiency_ladder": {
+          "nrmse": {
+            "copylf": 0.0161517721,
+            "knn1": 0.4793749432,
+            "knn10": 0.3605914886,
+            "knn3": 0.374382569,
+            "knn5": 0.3404146943,
+            "meanfield": 1.0008432411,
+            "model_mf_fno_transfer_film_s0": 0.2638429773,
+            "model_mf_fno_transfer_film_s1": 0.2637079367,
+            "model_mf_fno_transfer_film_s2": 0.2639379069
+          },
+          "skill": {
+            "copylf": 1.0,
+            "knn1": 29.6794024142,
+            "knn10": 22.3251966972,
+            "knn3": 23.1790398719,
+            "knn5": 21.0759966552,
+            "meanfield": 61.9649185463,
+            "model_mf_fno_transfer_film_s0": 16.3352340532,
+            "model_mf_fno_transfer_film_s1": 16.3268733282,
+            "model_mf_fno_transfer_film_s2": 16.3411114024
+          },
+          "best_training_free_x_only": {
+            "predictor": "knn5",
+            "skill": 21.075997
+          },
+          "best_knn_only": {
+            "predictor": "knn5",
+            "skill": 21.075997
+          },
+          "knn1_scored_skill": 29.6794024142,
+          "champion_batch0_per_seed_skill": [
+            16.3352340532,
+            16.3268733282,
+            16.3411114024
+          ],
+          "champion_batch0_mean_skill": 16.334406,
+          "anchor_certified_best_skill": 16.334071,
+          "delta_knn1_minus_champion_mean": 13.344996,
+          "delta_bestXonly_minus_anchor": 4.741926,
+          "noise_floor_min_claimable_effect": 1.633407,
+          "train_degeneracy": {
+            "mean_field_mean": 1.002327,
+            "mean_field_median": 1.000119,
+            "n_train": 400,
+            "nn_in_X_mean": 0.485962,
+            "nn_in_X_median": 0.291901,
+            "nn_over_random": 0.200856,
+            "random_pair_mean": 1.989919,
+            "random_pair_median": 1.453285
+          }
+        },
+        "M3_spectral_bands": {
+          "edges_wavenumber": [
+            0.0,
+            16.0,
+            32.0,
+            64.0,
+            128.0
+          ],
+          "k_nyquist": 128.0,
+          "hf_energy_share_by_band": [
+            0.999866,
+            0.000134,
+            0.0,
+            0.0
+          ],
+          "lf_hf_coherence_by_band": [
+            0.999907,
+            0.967943,
+            0.116668,
+            1e-06
+          ],
+          "R_low_champion_per_seed": [
+            209.072769,
+            209.555016,
+            209.381658
+          ],
+          "R_low_gt_1_all_seeds": true,
+          "R_b_champion_per_seed": {
+            "model_mf_fno_transfer_film_s0": [
+              209.072769,
+              19.309731,
+              1.624451,
+              1.761875
+            ],
+            "model_mf_fno_transfer_film_s1": [
+              209.555016,
+              19.288694,
+              0.785122,
+              0.845909
+            ],
+            "model_mf_fno_transfer_film_s2": [
+              209.381658,
+              19.283665,
+              0.809862,
+              1.317785
+            ]
+          },
+          "R_b_knn1": [
+            674.179394,
+            40.350284,
+            0.219434,
+            0.0
+          ],
+          "R_b_knn10": [
+            470.782306,
+            21.019651,
+            0.076821,
+            0.0
+          ],
+          "err_energy_share_by_band_champion_s0": [
+            0.993128,
+            0.006799,
+            1e-05,
+            6.3e-05
+          ],
+          "transfer_H_by_band_champion_s0": [
+            0.98135,
+            -0.000122,
+            0.000661,
+            41.128959
+          ]
+        },
+        "M4_interface_strata": {
+          "tau": 0.1,
+          "strata_rule": "pooled quartiles of the distance transform over the test split",
+          "n_samples_using_gradient_fallback": 70,
+          "distance_quantile_edges_cells": [
+            4.2426,
+            11.0454,
+            22.0227
+          ],
+          "area_share_by_stratum": [
+            0.254531,
+            0.247516,
+            0.248857,
+            0.249096
+          ],
+          "hf_energy_share_by_stratum": [
+            0.255511,
+            0.276423,
+            0.280949,
+            0.187117
+          ],
+          "err_mass_over_area_share": {
+            "copylf": [
+              2.049119,
+              0.814298,
+              0.559699,
+              0.552391
+            ],
+            "knn1": [
+              1.133786,
+              1.110977,
+              0.898256,
+              0.854667
+            ],
+            "knn10": [
+              1.065731,
+              1.1169,
+              0.954919,
+              0.861714
+            ],
+            "knn3": [
+              1.138919,
+              1.112739,
+              0.909318,
+              0.83662
+            ],
+            "knn5": [
+              1.132054,
+              1.112561,
+              0.88722,
+              0.865889
+            ],
+            "meanfield": [
+              1.003211,
+              1.116185,
+              1.128722,
+              0.752672
+            ],
+            "model_mf_fno_transfer_film_s0": [
+              1.228314,
+              1.297215,
+              0.766391,
+              0.70476
+            ],
+            "model_mf_fno_transfer_film_s1": [
+              1.229213,
+              1.297546,
+              0.766041,
+              0.703861
+            ],
+            "model_mf_fno_transfer_film_s2": [
+              1.2318,
+              1.296697,
+              0.765891,
+              0.702212
+            ]
+          }
+        },
+        "M5a_amplitude_pattern": {
+          "copylf": {
+            "nrmse_raw": 0.01615177,
+            "nrmse_optimal_rescale": 0.01615098,
+            "amplitude_share_of_error": 4.9e-05,
+            "alpha_mean": 1.000134,
+            "alpha_std": 0.000297
+          },
+          "knn1": {
+            "nrmse_raw": 0.47937494,
+            "nrmse_optimal_rescale": 0.33669916,
+            "amplitude_share_of_error": 0.297629,
+            "alpha_mean": 0.90084,
+            "alpha_std": 0.378171
+          },
+          "knn10": {
+            "nrmse_raw": 0.36059149,
+            "nrmse_optimal_rescale": 0.27150668,
+            "amplitude_share_of_error": 0.247052,
+            "alpha_mean": 1.002544,
+            "alpha_std": 0.421873
+          },
+          "knn3": {
+            "nrmse_raw": 0.37438257,
+            "nrmse_optimal_rescale": 0.29527276,
+            "amplitude_share_of_error": 0.211307,
+            "alpha_mean": 0.940725,
+            "alpha_std": 0.302065
+          },
+          "knn5": {
+            "nrmse_raw": 0.34041469,
+            "nrmse_optimal_rescale": 0.28576534,
+            "amplitude_share_of_error": 0.160538,
+            "alpha_mean": 0.935136,
+            "alpha_std": 0.405621
+          },
+          "meanfield": {
+            "nrmse_raw": 1.00084324,
+            "nrmse_optimal_rescale": 0.8418175,
+            "amplitude_share_of_error": 0.158892,
+            "alpha_mean": -1.642113,
+            "alpha_std": 70.750859
+          },
+          "model_mf_fno_transfer_film_s0": {
+            "nrmse_raw": 0.26384298,
+            "nrmse_optimal_rescale": 0.26145847,
+            "amplitude_share_of_error": 0.009038,
+            "alpha_mean": 0.97491,
+            "alpha_std": 0.155465
+          },
+          "model_mf_fno_transfer_film_s1": {
+            "nrmse_raw": 0.26370794,
+            "nrmse_optimal_rescale": 0.26172497,
+            "amplitude_share_of_error": 0.00752,
+            "alpha_mean": 0.972387,
+            "alpha_std": 0.156936
+          },
+          "model_mf_fno_transfer_film_s2": {
+            "nrmse_raw": 0.26393791,
+            "nrmse_optimal_rescale": 0.26174161,
+            "amplitude_share_of_error": 0.008321,
+            "alpha_mean": 0.968256,
+            "alpha_std": 0.167056
+          }
+        },
+        "M5b_pairing_control": {
+          "aligned_over_shift1": 0.008028,
+          "aligned_over_shuffle": 0.006888,
+          "aligned_rel_resid_mean": 0.016152,
+          "index_shift1_rel_resid_mean": 2.011903,
+          "random_shuffle_rel_resid_mean": 2.345024
+        },
+        "seam_checks": {
+          "copylf_vs_baselines": {
+            "abs_delta": 0.0,
+            "baseline": 0.016151772077279084,
+            "passed": true,
+            "recomputed": 0.016151772077279084,
+            "tol": 1e-09
+          },
+          "checkpoint_reproduction": {
+            "mf_fno_transfer_film_s0": {
+              "rel_delta": 0.0,
+              "abs_delta": 0.0,
+              "abort_rtol": 0.001,
+              "repro_exact_1e9": true
+            },
+            "mf_fno_transfer_film_s1": {
+              "rel_delta": 9.589636970001137e-06,
+              "abs_delta": 2.528839128712601e-06,
+              "abort_rtol": 0.001,
+              "repro_exact_1e9": false
+            },
+            "mf_fno_transfer_film_s2": {
+              "rel_delta": 1.494757828814417e-05,
+              "abs_delta": 3.945173555230941e-06,
+              "abort_rtol": 0.001,
+              "repro_exact_1e9": false
+            }
+          }
+        },
+        "wall_seconds": 7.91
+      },
+      "sharp__cahn_hilliard": {
+        "_scored_split_note": "per_seed_* below carry the SINGLE deterministic scored measurement (the training-free 1-NN-in-X lookup on test_hf), not a model and not a seed ensemble; ci95 is null by construction (diagnostic, no seeds).",
+        "per_seed_nrmse": [
+          0.9690069812
+        ],
+        "per_seed_skill": [
+          11.0541533262
+        ],
+        "mean_skill": 11.0541533262,
+        "ci95": null,
+        "reference_type": "copylf",
+        "cached": false,
+        "metric_source": "per_sample_mean",
+        "grid": [
+          256,
+          256
+        ],
+        "cond_dim": 19,
+        "n_train_hf": 400,
+        "n_test_hf": 100,
+        "copylf_reference_nrmse": 0.087659991,
+        "M1_lf_blindness": {
+          "lf_at_inference": {
+            "mf_fno_transfer_film_s0": false,
+            "mf_fno_transfer_film_s1": false,
+            "mf_fno_transfer_film_s2": false
+          },
+          "n_field_shaped_inputs_at_eval": {
+            "mf_fno_transfer_film_s0": 0,
+            "mf_fno_transfer_film_s1": 0,
+            "mf_fno_transfer_film_s2": 0
+          },
+          "only_input_shape_at_eval": [
+            [
+              16,
+              19
+            ]
+          ],
+          "n_forward_calls_train": {
+            "mf_fno_transfer_film_s0": 0,
+            "mf_fno_transfer_film_s1": 0,
+            "mf_fno_transfer_film_s2": 0
+          },
+          "readout": "champion is LF-BLIND at inference: the only tensor entering the network is the [batch, cond_dim] condition vector; zero field-shaped inputs, zero training-mode forwards."
+        },
+        "M2_x_sufficiency_ladder": {
+          "nrmse": {
+            "copylf": 0.087659991,
+            "knn1": 0.9690069812,
+            "knn10": 0.7587498334,
+            "knn3": 0.7773559188,
+            "knn5": 0.7522382608,
+            "meanfield": 1.0019774903,
+            "model_mf_fno_transfer_film_s0": 0.4876312929,
+            "model_mf_fno_transfer_film_s1": 0.4921985417,
+            "model_mf_fno_transfer_film_s2": 0.4753817171
+          },
+          "skill": {
+            "copylf": 1.0,
+            "knn1": 11.0541533262,
+            "knn10": 8.6556001733,
+            "knn3": 8.8678530515,
+            "knn5": 8.5813180239,
+            "meanfield": 11.4302714243,
+            "model_mf_fno_transfer_film_s0": 5.5627577335,
+            "model_mf_fno_transfer_film_s1": 5.6148595966,
+            "model_mf_fno_transfer_film_s2": 5.423018091
+          },
+          "best_training_free_x_only": {
+            "predictor": "knn5",
+            "skill": 8.581318
+          },
+          "best_knn_only": {
+            "predictor": "knn5",
+            "skill": 8.581318
+          },
+          "knn1_scored_skill": 11.0541533262,
+          "champion_batch0_per_seed_skill": [
+            5.5627577335,
+            5.6148595966,
+            5.423018091
+          ],
+          "champion_batch0_mean_skill": 5.533545,
+          "anchor_certified_best_skill": 5.533466,
+          "delta_knn1_minus_champion_mean": 5.520608,
+          "delta_bestXonly_minus_anchor": 3.047852,
+          "noise_floor_min_claimable_effect": 0.553347,
+          "train_degeneracy": {
+            "mean_field_mean": 1.001555,
+            "mean_field_median": 1.001389,
+            "n_train": 400,
+            "nn_in_X_mean": 0.997788,
+            "nn_in_X_median": 1.215484,
+            "nn_over_random": 0.864791,
+            "random_pair_mean": 1.347261,
+            "random_pair_median": 1.405522
+          }
+        },
+        "M3_spectral_bands": {
+          "edges_wavenumber": [
+            0.0,
+            16.0,
+            32.0,
+            64.0,
+            128.0
+          ],
+          "k_nyquist": 128.0,
+          "hf_energy_share_by_band": [
+            0.999351,
+            0.000647,
+            2e-06,
+            0.0
+          ],
+          "lf_hf_coherence_by_band": [
+            0.960681,
+            0.895888,
+            0.421449,
+            1e-06
+          ],
+          "R_low_champion_per_seed": [
+            11.182598,
+            11.815484,
+            11.79937
+          ],
+          "R_low_gt_1_all_seeds": true,
+          "R_b_champion_per_seed": {
+            "model_mf_fno_transfer_film_s0": [
+              11.182598,
+              7.123892,
+              5.10649,
+              1.505625
+            ],
+            "model_mf_fno_transfer_film_s1": [
+              11.815484,
+              7.64543,
+              5.412283,
+              1.64408
+            ],
+            "model_mf_fno_transfer_film_s2": [
+              11.79937,
+              7.122674,
+              5.379605,
+              1.948754
+            ]
+          },
+          "R_b_knn1": [
+            28.344735,
+            10.230933,
+            1.658562,
+            6e-06
+          ],
+          "R_b_knn10": [
+            15.349822,
+            5.42149,
+            0.921612,
+            3e-06
+          ],
+          "err_energy_share_by_band_champion_s0": [
+            0.997947,
+            0.001991,
+            2.9e-05,
+            3.2e-05
+          ],
+          "transfer_H_by_band_champion_s0": [
+            0.670404,
+            0.283727,
+            0.057981,
+            0.164596
+          ]
+        },
+        "M4_interface_strata": {
+          "tau": 0.1,
+          "strata_rule": "pooled quartiles of the distance transform over the test split",
+          "n_samples_using_gradient_fallback": 0,
+          "distance_quantile_edges_cells": [
+            6.4031,
+            13.0,
+            19.799
+          ],
+          "area_share_by_stratum": [
+            0.26142,
+            0.239474,
+            0.260453,
+            0.238653
+          ],
+          "hf_energy_share_by_stratum": [
+            0.109183,
+            0.267111,
+            0.323729,
+            0.299978
+          ],
+          "err_mass_over_area_share": {
+            "copylf": [
+              0.74989,
+              0.561634,
+              0.589252,
+              2.16211
+            ],
+            "knn1": [
+              0.927955,
+              0.975424,
+              0.788816,
+              1.334053
+            ],
+            "knn10": [
+              0.573859,
+              1.036249,
+              0.904053,
+              1.53513
+            ],
+            "knn3": [
+              0.695117,
+              0.984794,
+              0.808146,
+              1.558604
+            ],
+            "knn5": [
+              0.612748,
+              0.988987,
+              0.844839,
+              1.604578
+            ],
+            "meanfield": [
+              0.417682,
+              1.114423,
+              1.245278,
+              1.255369
+            ],
+            "model_mf_fno_transfer_film_s0": [
+              0.613072,
+              0.678076,
+              0.605663,
+              2.177227
+            ],
+            "model_mf_fno_transfer_film_s1": [
+              0.572909,
+              0.644894,
+              0.614092,
+              2.245319
+            ],
+            "model_mf_fno_transfer_film_s2": [
+              0.542689,
+              0.647957,
+              0.614278,
+              2.275145
+            ]
+          }
+        },
+        "M5a_amplitude_pattern": {
+          "copylf": {
+            "nrmse_raw": 0.08765999,
+            "nrmse_optimal_rescale": 0.0818227,
+            "amplitude_share_of_error": 0.06659,
+            "alpha_mean": 0.981814,
+            "alpha_std": 0.122228
+          },
+          "knn1": {
+            "nrmse_raw": 0.96900698,
+            "nrmse_optimal_rescale": 0.74962789,
+            "amplitude_share_of_error": 0.226396,
+            "alpha_mean": 0.418907,
+            "alpha_std": 0.421937
+          },
+          "knn10": {
+            "nrmse_raw": 0.75874983,
+            "nrmse_optimal_rescale": 0.67133615,
+            "amplitude_share_of_error": 0.115208,
+            "alpha_mean": 1.250323,
+            "alpha_std": 0.880279
+          },
+          "knn3": {
+            "nrmse_raw": 0.77735592,
+            "nrmse_optimal_rescale": 0.69802828,
+            "amplitude_share_of_error": 0.102048,
+            "alpha_mean": 0.776994,
+            "alpha_std": 0.661417
+          },
+          "knn5": {
+            "nrmse_raw": 0.75223826,
+            "nrmse_optimal_rescale": 0.67962163,
+            "amplitude_share_of_error": 0.096534,
+            "alpha_mean": 0.932717,
+            "alpha_std": 0.730772
+          },
+          "meanfield": {
+            "nrmse_raw": 1.00197749,
+            "nrmse_optimal_rescale": 0.92157719,
+            "amplitude_share_of_error": 0.080242,
+            "alpha_mean": -0.606326,
+            "alpha_std": 8.931351
+          },
+          "model_mf_fno_transfer_film_s0": {
+            "nrmse_raw": 0.48763129,
+            "nrmse_optimal_rescale": 0.42590524,
+            "amplitude_share_of_error": 0.126583,
+            "alpha_mean": 0.779793,
+            "alpha_std": 0.4354
+          },
+          "model_mf_fno_transfer_film_s1": {
+            "nrmse_raw": 0.49219854,
+            "nrmse_optimal_rescale": 0.41917009,
+            "amplitude_share_of_error": 0.148372,
+            "alpha_mean": 0.759754,
+            "alpha_std": 0.460674
+          },
+          "model_mf_fno_transfer_film_s2": {
+            "nrmse_raw": 0.47538172,
+            "nrmse_optimal_rescale": 0.40365581,
+            "amplitude_share_of_error": 0.150881,
+            "alpha_mean": 0.758865,
+            "alpha_std": 0.447965
+          }
+        },
+        "M5b_pairing_control": {
+          "aligned_over_shift1": 0.064669,
+          "aligned_over_shuffle": 0.064208,
+          "aligned_rel_resid_mean": 0.08766,
+          "index_shift1_rel_resid_mean": 1.355514,
+          "random_shuffle_rel_resid_mean": 1.365258
+        },
+        "seam_checks": {
+          "copylf_vs_baselines": {
+            "abs_delta": 0.0,
+            "baseline": 0.08765999100758841,
+            "passed": true,
+            "recomputed": 0.08765999100758841,
+            "tol": 1e-09
+          },
+          "checkpoint_reproduction": {
+            "mf_fno_transfer_film_s0": {
+              "rel_delta": 0.0,
+              "abs_delta": 0.0,
+              "abort_rtol": 0.001,
+              "repro_exact_1e9": true
+            },
+            "mf_fno_transfer_film_s1": {
+              "rel_delta": 7.2179374744311586e-06,
+              "abs_delta": 3.552632656667054e-06,
+              "abort_rtol": 0.001,
+              "repro_exact_1e9": false
+            },
+            "mf_fno_transfer_film_s2": {
+              "rel_delta": 5.01739822874498e-06,
+              "abs_delta": 2.3851674179620197e-06,
+              "abort_rtol": 0.001,
+              "repro_exact_1e9": false
+            }
+          }
+        },
+        "wall_seconds": 7.81
+      },
+      "sharp__fisher_kpp_2d": {
+        "_scored_split_note": "per_seed_* below carry the SINGLE deterministic scored measurement (the training-free 1-NN-in-X lookup on test_hf), not a model and not a seed ensemble; ci95 is null by construction (diagnostic, no seeds).",
+        "per_seed_nrmse": [
+          0.350440845
+        ],
+        "per_seed_skill": [
+          5.5952098752
+        ],
+        "mean_skill": 5.5952098752,
+        "ci95": null,
+        "reference_type": "copylf",
+        "cached": false,
+        "metric_source": "per_sample_mean",
+        "grid": [
+          256,
+          256
+        ],
+        "cond_dim": 2,
+        "n_train_hf": 400,
+        "n_test_hf": 100,
+        "copylf_reference_nrmse": 0.0626322967,
+        "M1_lf_blindness": {
+          "lf_at_inference": {
+            "mf_fno_transfer_film_s0": false,
+            "mf_fno_transfer_film_s1": false,
+            "mf_fno_transfer_film_s2": false
+          },
+          "n_field_shaped_inputs_at_eval": {
+            "mf_fno_transfer_film_s0": 0,
+            "mf_fno_transfer_film_s1": 0,
+            "mf_fno_transfer_film_s2": 0
+          },
+          "only_input_shape_at_eval": [
+            [
+              16,
+              2
+            ]
+          ],
+          "n_forward_calls_train": {
+            "mf_fno_transfer_film_s0": 0,
+            "mf_fno_transfer_film_s1": 0,
+            "mf_fno_transfer_film_s2": 0
+          },
+          "readout": "champion is LF-BLIND at inference: the only tensor entering the network is the [batch, cond_dim] condition vector; zero field-shaped inputs, zero training-mode forwards."
+        },
+        "M2_x_sufficiency_ladder": {
+          "nrmse": {
+            "copylf": 0.0626322967,
+            "knn1": 0.350440845,
+            "knn10": 0.2601235269,
+            "knn3": 0.2862987181,
+            "knn5": 0.2717960782,
+            "meanfield": 0.2572462703,
+            "model_mf_fno_transfer_film_s0": 0.2649035195,
+            "model_mf_fno_transfer_film_s1": 0.2588552985,
+            "model_mf_fno_transfer_film_s2": 0.26144349
+          },
+          "skill": {
+            "copylf": 1.0,
+            "knn1": 5.5952098752,
+            "knn10": 4.1531851881,
+            "knn3": 4.5711036185,
+            "knn5": 4.339551518,
+            "meanfield": 4.1072463222,
+            "model_mf_fno_transfer_film_s0": 4.2295035226,
+            "model_mf_fno_transfer_film_s1": 4.132936394,
+            "model_mf_fno_transfer_film_s2": 4.1742599866
+          },
+          "best_training_free_x_only": {
+            "predictor": "meanfield",
+            "skill": 4.107246
+          },
+          "best_knn_only": {
+            "predictor": "knn10",
+            "skill": 4.153185
+          },
+          "knn1_scored_skill": 5.5952098752,
+          "champion_batch0_per_seed_skill": [
+            4.2295035226,
+            4.132936394,
+            4.1742599866
+          ],
+          "champion_batch0_mean_skill": 4.1789,
+          "anchor_certified_best_skill": 4.177355,
+          "delta_knn1_minus_champion_mean": 1.41631,
+          "delta_bestXonly_minus_anchor": -0.070109,
+          "noise_floor_min_claimable_effect": 0.417735,
+          "train_degeneracy": {
+            "mean_field_mean": 0.254901,
+            "mean_field_median": 0.245237,
+            "n_train": 400,
+            "nn_in_X_mean": 0.347225,
+            "nn_in_X_median": 0.335907,
+            "nn_over_random": 0.936894,
+            "random_pair_mean": 0.362053,
+            "random_pair_median": 0.358533
+          }
+        },
+        "M3_spectral_bands": {
+          "edges_wavenumber": [
+            0.0,
+            16.0,
+            32.0,
+            64.0,
+            128.0
+          ],
+          "k_nyquist": 128.0,
+          "hf_energy_share_by_band": [
+            0.961155,
+            0.033618,
+            0.005216,
+            1.1e-05
+          ],
+          "lf_hf_coherence_by_band": [
+            0.999554,
+            0.948078,
+            0.891106,
+            0.023129
+          ],
+          "R_low_champion_per_seed": [
+            65.889727,
+            62.389508,
+            63.744656
+          ],
+          "R_low_gt_1_all_seeds": true,
+          "R_b_champion_per_seed": {
+            "model_mf_fno_transfer_film_s0": [
+              65.889727,
+              12.922861,
+              5.56388,
+              8.061158
+            ],
+            "model_mf_fno_transfer_film_s1": [
+              62.389508,
+              12.48945,
+              5.417938,
+              4.199144
+            ],
+            "model_mf_fno_transfer_film_s2": [
+              63.744656,
+              12.699999,
+              5.517732,
+              3.967555
+            ]
+          },
+          "R_b_knn1": [
+            113.054156,
+            23.535062,
+            10.165027,
+            0.284188
+          ],
+          "R_b_knn10": [
+            62.901045,
+            12.870473,
+            5.62014,
+            0.157602
+          ],
+          "err_energy_share_by_band_champion_s0": [
+            0.39793,
+            0.515073,
+            0.078833,
+            0.008164
+          ],
+          "transfer_H_by_band_champion_s0": [
+            0.974172,
+            0.000567,
+            -0.000272,
+            0.00253
+          ]
+        },
+        "M4_interface_strata": {
+          "tau": 0.1,
+          "strata_rule": "pooled quartiles of the distance transform over the test split",
+          "n_samples_using_gradient_fallback": 61,
+          "distance_quantile_edges_cells": [
+            2.2361,
+            5.0,
+            12.083
+          ],
+          "area_share_by_stratum": [
+            0.275407,
+            0.233279,
+            0.241388,
+            0.249927
+          ],
+          "hf_energy_share_by_stratum": [
+            0.235637,
+            0.246958,
+            0.263927,
+            0.253478
+          ],
+          "err_mass_over_area_share": {
+            "copylf": [
+              1.034269,
+              0.637218,
+              0.90869,
+              1.389043
+            ],
+            "knn1": [
+              0.95387,
+              0.800963,
+              0.961296,
+              1.273993
+            ],
+            "knn10": [
+              1.099687,
+              0.765082,
+              0.862585,
+              1.24214
+            ],
+            "knn3": [
+              1.047625,
+              0.774943,
+              0.898422,
+              1.255692
+            ],
+            "knn5": [
+              1.073285,
+              0.769008,
+              0.880147,
+              1.250607
+            ],
+            "meanfield": [
+              1.104774,
+              0.802192,
+              0.860278,
+              1.204125
+            ],
+            "model_mf_fno_transfer_film_s0": [
+              1.113565,
+              0.777491,
+              0.846049,
+              1.231235
+            ],
+            "model_mf_fno_transfer_film_s1": [
+              1.130471,
+              0.776004,
+              0.841216,
+              1.218662
+            ],
+            "model_mf_fno_transfer_film_s2": [
+              1.126475,
+              0.779777,
+              0.84206,
+              1.218728
+            ]
+          }
+        },
+        "M5a_amplitude_pattern": {
+          "copylf": {
+            "nrmse_raw": 0.0626323,
+            "nrmse_optimal_rescale": 0.06253441,
+            "amplitude_share_of_error": 0.001563,
+            "alpha_mean": 1.003454,
+            "alpha_std": 0.00191
+          },
+          "knn1": {
+            "nrmse_raw": 0.35044084,
+            "nrmse_optimal_rescale": 0.34407653,
+            "amplitude_share_of_error": 0.018161,
+            "alpha_mean": 0.936036,
+            "alpha_std": 0.031044
+          },
+          "knn10": {
+            "nrmse_raw": 0.26012353,
+            "nrmse_optimal_rescale": 0.259936,
+            "amplitude_share_of_error": 0.000721,
+            "alpha_mean": 0.994136,
+            "alpha_std": 0.008607
+          },
+          "knn3": {
+            "nrmse_raw": 0.28629872,
+            "nrmse_optimal_rescale": 0.28525226,
+            "amplitude_share_of_error": 0.003655,
+            "alpha_mean": 0.977192,
+            "alpha_std": 0.013902
+          },
+          "knn5": {
+            "nrmse_raw": 0.27179608,
+            "nrmse_optimal_rescale": 0.27136323,
+            "amplitude_share_of_error": 0.001593,
+            "alpha_mean": 0.986941,
+            "alpha_std": 0.010365
+          },
+          "meanfield": {
+            "nrmse_raw": 0.25724627,
+            "nrmse_optimal_rescale": 0.24807058,
+            "amplitude_share_of_error": 0.035669,
+            "alpha_mean": 1.001772,
+            "alpha_std": 0.068253
+          },
+          "model_mf_fno_transfer_film_s0": {
+            "nrmse_raw": 0.26490352,
+            "nrmse_optimal_rescale": 0.26437718,
+            "amplitude_share_of_error": 0.001987,
+            "alpha_mean": 0.990158,
+            "alpha_std": 0.015813
+          },
+          "model_mf_fno_transfer_film_s1": {
+            "nrmse_raw": 0.2588553,
+            "nrmse_optimal_rescale": 0.25852495,
+            "amplitude_share_of_error": 0.001276,
+            "alpha_mean": 0.993886,
+            "alpha_std": 0.012717
+          },
+          "model_mf_fno_transfer_film_s2": {
+            "nrmse_raw": 0.26144349,
+            "nrmse_optimal_rescale": 0.26103912,
+            "amplitude_share_of_error": 0.001547,
+            "alpha_mean": 0.992609,
+            "alpha_std": 0.01399
+          }
+        },
+        "M5b_pairing_control": {
+          "aligned_over_shift1": 0.175918,
+          "aligned_over_shuffle": 0.176454,
+          "aligned_rel_resid_mean": 0.062632,
+          "index_shift1_rel_resid_mean": 0.356031,
+          "random_shuffle_rel_resid_mean": 0.354949
+        },
+        "seam_checks": {
+          "copylf_vs_baselines": {
+            "abs_delta": 0.0,
+            "baseline": 0.06263229669603956,
+            "passed": true,
+            "recomputed": 0.06263229669603956,
+            "tol": 1e-09
+          },
+          "checkpoint_reproduction": {
+            "mf_fno_transfer_film_s0": {
+              "rel_delta": 0.0,
+              "abs_delta": 0.0,
+              "abort_rtol": 0.001,
+              "repro_exact_1e9": true
+            },
+            "mf_fno_transfer_film_s1": {
+              "rel_delta": 0.00013297349384534986,
+              "abs_delta": 3.4425471110877126e-05,
+              "abort_rtol": 0.001,
+              "repro_exact_1e9": false
+            },
+            "mf_fno_transfer_film_s2": {
+              "rel_delta": 0.00022926846677346553,
+              "abs_delta": 5.992700871948475e-05,
+              "abort_rtol": 0.001,
+              "repro_exact_1e9": false
+            }
+          }
+        },
+        "wall_seconds": 8.16
+      },
+      "sharp__phase_field_crystal_2d": {
+        "_scored_split_note": "per_seed_* below carry the SINGLE deterministic scored measurement (the training-free 1-NN-in-X lookup on test_hf), not a model and not a seed ensemble; ci95 is null by construction (diagnostic, no seeds).",
+        "per_seed_nrmse": [
+          0.5059932884
+        ],
+        "per_seed_skill": [
+          11.2994246395
+        ],
+        "mean_skill": 11.2994246395,
+        "ci95": null,
+        "reference_type": "copylf",
+        "cached": false,
+        "metric_source": "per_sample_mean",
+        "grid": [
+          128,
+          128
+        ],
+        "cond_dim": 2,
+        "n_train_hf": 400,
+        "n_test_hf": 100,
+        "copylf_reference_nrmse": 0.0447804472,
+        "M1_lf_blindness": {
+          "lf_at_inference": {
+            "mf_fno_transfer_film_s0": false,
+            "mf_fno_transfer_film_s1": false,
+            "mf_fno_transfer_film_s2": false
+          },
+          "n_field_shaped_inputs_at_eval": {
+            "mf_fno_transfer_film_s0": 0,
+            "mf_fno_transfer_film_s1": 0,
+            "mf_fno_transfer_film_s2": 0
+          },
+          "only_input_shape_at_eval": [
+            [
+              16,
+              2
+            ]
+          ],
+          "n_forward_calls_train": {
+            "mf_fno_transfer_film_s0": 0,
+            "mf_fno_transfer_film_s1": 0,
+            "mf_fno_transfer_film_s2": 0
+          },
+          "readout": "champion is LF-BLIND at inference: the only tensor entering the network is the [batch, cond_dim] condition vector; zero field-shaped inputs, zero training-mode forwards."
+        },
+        "M2_x_sufficiency_ladder": {
+          "nrmse": {
+            "copylf": 0.0447804472,
+            "knn1": 0.5059932884,
+            "knn10": 0.3790903968,
+            "knn3": 0.4145296522,
+            "knn5": 0.3951925251,
+            "meanfield": 0.4414573153,
+            "model_mf_fno_transfer_film_s0": 0.5147759393,
+            "model_mf_fno_transfer_film_s1": 0.5138663657,
+            "model_mf_fno_transfer_film_s2": 0.5177371798
+          },
+          "skill": {
+            "copylf": 1.0,
+            "knn1": 11.2994246395,
+            "knn10": 8.4655339678,
+            "knn3": 9.2569341783,
+            "knn5": 8.825113412,
+            "meanfield": 9.8582605339,
+            "model_mf_fno_transfer_film_s0": 11.4955515528,
+            "model_mf_fno_transfer_film_s1": 11.4752397062,
+            "model_mf_fno_transfer_film_s2": 11.5616795326
+          },
+          "best_training_free_x_only": {
+            "predictor": "knn10",
+            "skill": 8.465534
+          },
+          "best_knn_only": {
+            "predictor": "knn10",
+            "skill": 8.465534
+          },
+          "knn1_scored_skill": 11.2994246395,
+          "champion_batch0_per_seed_skill": [
+            11.4955515528,
+            11.4752397062,
+            11.5616795326
+          ],
+          "champion_batch0_mean_skill": 11.510824,
+          "anchor_certified_best_skill": 11.511001,
+          "delta_knn1_minus_champion_mean": -0.211399,
+          "delta_bestXonly_minus_anchor": -3.045467,
+          "noise_floor_min_claimable_effect": 1.1511,
+          "train_degeneracy": {
+            "mean_field_mean": 0.408418,
+            "mean_field_median": 0.232477,
+            "n_train": 400,
+            "nn_in_X_mean": 0.439397,
+            "nn_in_X_median": 0.018896,
+            "nn_over_random": 0.023375,
+            "random_pair_mean": 0.695076,
+            "random_pair_median": 0.808396
+          }
+        },
+        "M3_spectral_bands": {
+          "edges_wavenumber": [
+            0.0,
+            8.0,
+            16.0,
+            32.0,
+            64.0
+          ],
+          "k_nyquist": 64.0,
+          "hf_energy_share_by_band": [
+            0.999804,
+            0.000196,
+            0.0,
+            0.0
+          ],
+          "lf_hf_coherence_by_band": [
+            0.99484,
+            0.962689,
+            0.000527,
+            1e-06
+          ],
+          "R_low_champion_per_seed": [
+            124.016704,
+            124.570809,
+            129.101737
+          ],
+          "R_low_gt_1_all_seeds": true,
+          "R_b_champion_per_seed": {
+            "model_mf_fno_transfer_film_s0": [
+              124.016704,
+              2557.095918,
+              842.796986,
+              23.437256
+            ],
+            "model_mf_fno_transfer_film_s1": [
+              124.570809,
+              2534.252976,
+              846.24928,
+              23.579322
+            ],
+            "model_mf_fno_transfer_film_s2": [
+              129.101737,
+              2236.191501,
+              688.028855,
+              18.583194
+            ]
+          },
+          "R_b_knn1": [
+            126.013293,
+            36.77567,
+            0.001628,
+            0.0
+          ],
+          "R_b_knn10": [
+            68.91624,
+            19.327437,
+            0.000884,
+            0.0
+          ],
+          "err_energy_share_by_band_champion_s0": [
+            0.946283,
+            0.036599,
+            0.014779,
+            0.002339
+          ],
+          "transfer_H_by_band_champion_s0": [
+            0.624475,
+            -0.085693,
+            9.263501,
+            -373.942513
+          ]
+        },
+        "M4_interface_strata": {
+          "tau": 0.1,
+          "strata_rule": "pooled quartiles of the distance transform over the test split",
+          "n_samples_using_gradient_fallback": 56,
+          "distance_quantile_edges_cells": [
+            1.0,
+            3.1623,
+            6.4031
+          ],
+          "area_share_by_stratum": [
+            0.281807,
+            0.223701,
+            0.249588,
+            0.244904
+          ],
+          "hf_energy_share_by_stratum": [
+            0.171962,
+            0.16515,
+            0.381784,
+            0.281105
+          ],
+          "err_mass_over_area_share": {
+            "copylf": [
+              1.275924,
+              1.810964,
+              0.840247,
+              0.104556
+            ],
+            "knn1": [
+              0.509332,
+              1.149715,
+              1.777873,
+              0.635101
+            ],
+            "knn10": [
+              0.409308,
+              1.120484,
+              1.945637,
+              0.605925
+            ],
+            "knn3": [
+              0.452676,
+              1.136783,
+              1.876142,
+              0.611958
+            ],
+            "knn5": [
+              0.430245,
+              1.127366,
+              1.910497,
+              0.611359
+            ],
+            "meanfield": [
+              0.514751,
+              1.211448,
+              1.828167,
+              0.521221
+            ],
+            "model_mf_fno_transfer_film_s0": [
+              0.530452,
+              1.173948,
+              1.781524,
+              0.584943
+            ],
+            "model_mf_fno_transfer_film_s1": [
+              0.520207,
+              1.167391,
+              1.792006,
+              0.592038
+            ],
+            "model_mf_fno_transfer_film_s2": [
+              0.532007,
+              1.176186,
+              1.785605,
+              0.57695
+            ]
+          }
+        },
+        "M5a_amplitude_pattern": {
+          "copylf": {
+            "nrmse_raw": 0.04478045,
+            "nrmse_optimal_rescale": 0.04458003,
+            "amplitude_share_of_error": 0.004475,
+            "alpha_mean": 1.00426,
+            "alpha_std": 0.004988
+          },
+          "knn1": {
+            "nrmse_raw": 0.50599329,
+            "nrmse_optimal_rescale": 0.40548312,
+            "amplitude_share_of_error": 0.198639,
+            "alpha_mean": 0.720422,
+            "alpha_std": 0.343135
+          },
+          "knn10": {
+            "nrmse_raw": 0.3790904,
+            "nrmse_optimal_rescale": 0.37104443,
+            "amplitude_share_of_error": 0.021224,
+            "alpha_mean": 0.923817,
+            "alpha_std": 0.126249
+          },
+          "knn3": {
+            "nrmse_raw": 0.41452965,
+            "nrmse_optimal_rescale": 0.38823227,
+            "amplitude_share_of_error": 0.063439,
+            "alpha_mean": 0.83668,
+            "alpha_std": 0.223236
+          },
+          "knn5": {
+            "nrmse_raw": 0.39519253,
+            "nrmse_optimal_rescale": 0.38040654,
+            "amplitude_share_of_error": 0.037415,
+            "alpha_mean": 0.880686,
+            "alpha_std": 0.176752
+          },
+          "meanfield": {
+            "nrmse_raw": 0.44145732,
+            "nrmse_optimal_rescale": 0.36725572,
+            "amplitude_share_of_error": 0.168083,
+            "alpha_mean": 0.991934,
+            "alpha_std": 0.195316
+          },
+          "model_mf_fno_transfer_film_s0": {
+            "nrmse_raw": 0.51477594,
+            "nrmse_optimal_rescale": 0.42020563,
+            "amplitude_share_of_error": 0.183712,
+            "alpha_mean": 0.732326,
+            "alpha_std": 0.335475
+          },
+          "model_mf_fno_transfer_film_s1": {
+            "nrmse_raw": 0.51386637,
+            "nrmse_optimal_rescale": 0.41449974,
+            "amplitude_share_of_error": 0.193371,
+            "alpha_mean": 0.727926,
+            "alpha_std": 0.341253
+          },
+          "model_mf_fno_transfer_film_s2": {
+            "nrmse_raw": 0.51773718,
+            "nrmse_optimal_rescale": 0.41854921,
+            "amplitude_share_of_error": 0.19158,
+            "alpha_mean": 0.732498,
+            "alpha_std": 0.339488
+          }
+        },
+        "M5b_pairing_control": {
+          "aligned_over_shift1": 0.061289,
+          "aligned_over_shuffle": 0.059634,
+          "aligned_rel_resid_mean": 0.04478,
+          "index_shift1_rel_resid_mean": 0.73064,
+          "random_shuffle_rel_resid_mean": 0.750917
+        },
+        "seam_checks": {
+          "copylf_vs_baselines": {
+            "abs_delta": 0.0,
+            "baseline": 0.04478044719481978,
+            "passed": true,
+            "recomputed": 0.04478044719481978,
+            "tol": 1e-09
+          },
+          "checkpoint_reproduction": {
+            "mf_fno_transfer_film_s0": {
+              "rel_delta": 0.0,
+              "abs_delta": 0.0,
+              "abort_rtol": 0.001,
+              "repro_exact_1e9": true
+            },
+            "mf_fno_transfer_film_s1": {
+              "rel_delta": 0.00018595691245162102,
+              "abs_delta": 9.55747755705394e-05,
+              "abort_rtol": 0.001,
+              "repro_exact_1e9": false
+            },
+            "mf_fno_transfer_film_s2": {
+              "rel_delta": 0.0001438418497296282,
+              "abs_delta": 7.446156292612027e-05,
+              "abort_rtol": 0.001,
+              "repro_exact_1e9": false
+            }
+          }
+        },
+        "wall_seconds": 3.51
+      }
+    },
+    "panel_geomean_skill": {
+      "_what": "geomean over the five datasets of the scored 1-NN-in-X LOOKUP (not a model)",
+      "per_seed": [
+        9.6240222904
+      ],
+      "mean": 9.6240222904,
+      "ci95": null,
+      "champion_panel_geomean_per_batch0_seed": [
+        9.638289,
+        8.314139,
+        8.958653
+      ]
+    },
+    "vs_anchor": {
+      "anchor_file": "state/anchors/s2_beyond_copy.json",
+      "anchor_type": "copylf_bar",
+      "anchor_value": 1.0,
+      "delta": 8.624022,
+      "beyond_ci": false,
+      "beyond_noise_floor": false,
+      "_note": "n/a in the usual sense - this card proposes no model. The 1-NN lookup panel geomean 9.624 is 9.6x WORSE than the copy-LF bar (1.0); it is a measurement readout, not a candidate. Per-dataset comparisons against anchor.certified_best_skills live in per_dataset[*].M2_x_sufficiency_ladder.",
+      "anchor_updated": false
+    },
+    "cratered_verdict": "n/a",
+    "falsification_verdict": "falsified",
+    "falsification_detail": {
+      "clause_verbatim": "H1 (\"the copy-LF gap is a conditioning-sufficiency dichotomy, not one localized model defect\") is falsified if `|skill(best training-free X-only predictor) − skill(certified best family)| > 2.0` skill units on `sharp__allen_cahn_2d` (floor 1.6334) or `> 1.0` on `sharp__fisher_kpp_2d` (floor 0.4177), or if the pfc excess `skill(certified 11.511) − skill(1-NN-in-X) < 5.0` skill units (floor 1.1511), or if the low-band ratio `R_low ≤ 1.0` on ≥3 of the four low-floor datasets across all three batch-0 seeds — the last outcome relocating the failure to high-k spectral localization and licensing the band-split (D3) direction for batch 2.",
+      "hypothesis": "H1 - the copy-LF gap is a conditioning-sufficiency dichotomy, not one localized model defect.",
+      "legs": {
+        "A_allen_cahn_gt_2.0": {
+          "quantity": "|skill(best training-free X-only predictor) - skill(certified best family)| on sharp__allen_cahn_2d",
+          "best_training_free_x_only": {
+            "predictor": "knn5",
+            "skill": 21.075997
+          },
+          "certified_best_family_skill": 16.334071,
+          "value": 4.741926,
+          "threshold": 2.0,
+          "noise_floor": 1.633407,
+          "fires": true,
+          "resolvable_vs_floor": true,
+          "direction": "FIRES. The CHAMPION IS BETTER than every training-free X-only predictor by 4.742 skill units (16.334 vs knn5 21.076) - opposite to the card's predicted near-tie; training buys real, resolvable value here."
+        },
+        "B_fisher_kpp_gt_1.0": {
+          "quantity": "|skill(best training-free X-only predictor) - skill(certified best family)| on sharp__fisher_kpp_2d",
+          "best_training_free_x_only": {
+            "predictor": "meanfield",
+            "skill": 4.107246
+          },
+          "best_knn_only": {
+            "predictor": "knn10",
+            "skill": 4.153185
+          },
+          "certified_best_family_skill": 4.177355,
+          "value": 0.070109,
+          "value_knn_only_reading": 0.02417,
+          "threshold": 1.0,
+          "noise_floor": 0.417735,
+          "fires": false,
+          "resolvable_vs_floor": false,
+          "direction": "DOES NOT FIRE - CONFIRMS H1 on this dataset. Gap 0.070 (0.024 on the kNN-only reading) is 6x BELOW the 0.418 noise floor: the 200-epoch champion (4.179) is statistically indistinguishable from the constant mean field (4.107) and from 10-NN (4.153). Robust to either reading of 'best training-free X-only predictor'."
+        },
+        "C_pfc_excess_lt_5.0": {
+          "quantity": "skill(certified 11.511) - skill(1-NN-in-X) on sharp__phase_field_crystal_2d",
+          "certified": 11.511001,
+          "knn1": 11.299425,
+          "value": 0.211577,
+          "threshold": 5.0,
+          "noise_floor": 1.1511,
+          "fires": true,
+          "resolvable_vs_floor": false,
+          "direction": "FIRES decisively (0.212 vs threshold 5.0; and the 0.212 gap is itself BELOW the 1.151 floor). The card predicted the lookup would beat copy-LF (skill 0.42) and beat the champion 27x; measured, the lookup is 11.299 - 11.3x WORSE than copy-LF and indistinguishable from the champion 11.511. Separately (not part of the clause): the best training-free X-only predictor knn10 = 8.466 BEATS the champion by 3.045 skill units, well above the 1.151 floor - a training-free lookup outperforms the 200-epoch champion on pfc."
+        },
+        "D_R_low_le_1_on_ge_3_of_4": {
+          "quantity": "low-band ratio R_low = ||e_band0(model)||^2 / ||e_band0(copy-LF)||^2 <= 1.0 on >=3 of the four low-floor datasets across all three batch-0 seeds",
+          "R_low_per_dataset_per_seed": {
+            "sharp__allen_cahn_2d": [
+              209.0728,
+              209.555,
+              209.3817
+            ],
+            "sharp__cahn_hilliard": [
+              11.1826,
+              11.8155,
+              11.7994
+            ],
+            "sharp__fisher_kpp_2d": [
+              65.8897,
+              62.3895,
+              63.7447
+            ],
+            "sharp__phase_field_crystal_2d": [
+              124.0167,
+              124.5708,
+              129.1017
+            ]
+          },
+          "n_datasets_with_R_low_le_1_all_seeds": 0,
+          "threshold_n": 3,
+          "fires": false,
+          "direction": "DOES NOT FIRE - R_low > 1 on 4/4 low-floor datasets x 3/3 seeds (range 11.18 - 209.56), and also on helmholtz (1.23 - 8.63), i.e. 5/5. The excess over copy-LF is present in the LOWEST band. The failure is NOT high-k spectral localization; the band-split direction D3 is NOT licensed by this diagnostic."
+        }
+      },
+      "verdict": "FALSIFIED - H1 as pre-registered fires on legs A (allen_cahn, 4.742 > 2.0) and C (pfc excess 0.212 < 5.0). Legs B (fisher_kpp, 0.070 <= 1.0 and below its 0.418 floor) and D (R_low > 1 on 5/5 datasets x 3 seeds) do NOT fire. Leg A is resolvable against its floor (4.742 > 1.633); leg C fires precisely because the champion-vs-lookup gap (0.212) is below the 1.151 floor, so the >=5.0 excess the clause required is absent.",
+      "what_survives": "The dichotomy is real but its per-dataset assignment was wrong. CONFIRMED: fisher_kpp is at the X-only information floor (leg B). REFUTED: allen_cahn is NOT information-bounded (the champion beats every lookup by 4.74); pfc is not a 27x representation failure but a ~1.0-1.4x one (champion ~= knn1; knn10 beats the champion by 3.05). Also refuted on the spatial and spectral axes: no high-k localization (leg D / M3) and no interface localization of the champion excess on pfc (M4)."
+    },
+    "measurement_summary": {
+      "M1_lf_blindness": "lf_at_inference = FALSE for mf_fno_transfer_film on 5/5 datasets x 3/3 batch-0 seeds; n_field_shaped_inputs_at_eval = 0 everywhere; the only tensor entering the network at eval is the [16, cond_dim] condition vector (cond_dim 3 helmholtz / 3 allen_cahn / 19 cahn_hilliard / 2 fisher_kpp / 2 pfc). n_forward_calls_train = 0 (tripwire never fired). CONFIRMED as predicted: 'the model destroys the LF information it was handed' is a category error for this champion - it is never handed the LF field at test time. Consequence: every entry in this card's ladder is an X-only predictor, and copy-LF is the only LF-using entry.",
+      "M2_x_sufficiency": "Full ladder on all 5 datasets (knn1/3/5/10, meanfield, copy-LF, champion x3 seeds). NO predictor beats copy-LF anywhere (min skill over the entire table = 3.980, helmholtz knn1). Three regimes: (a) INFORMATION-BOUNDED - fisher_kpp: champion 4.179, meanfield 4.107, knn10 4.153, knn5 4.340, knn3 4.571, knn1 5.595; the whole X-only family collapses onto ~4.1-4.2 and the champion sits AT that floor (gap to best lookup 0.070, below the 0.418 floor). (b) TRAINING-BUYS-NOTHING - pfc: champion 11.511 vs knn1 11.299 (gap 0.212, below the 1.151 floor) and vs knn10 8.466 (lookup BEATS champion by 3.045, above floor). (c) TRAINING-WINS - allen_cahn: champion 16.334 vs best lookup knn5 21.076 (champion better by 4.742); cahn_hilliard: champion 5.533 vs best lookup knn5 8.581 (champion better by 3.048). (d) helmholtz (report-only, no numeric claim, floor 9.695): knn1 3.980 vs champion 13.819 - lookup appears 9.837 better, only marginally above the 9.695 floor, and the champion's own seed spread is 9.14-18.83; NOT a claim.",
+      "M2_train_degeneracy": "nn_over_random (train-split LOO NN-in-X residual / random-pair residual; 1.0 = X carries no information): fisher_kpp 0.937 (cond_dim 2 - X nearly uninformative, consistent with the NN floor), cahn_hilliard 0.865 (cond_dim 19), helmholtz 0.419, allen_cahn 0.201, pfc 0.023 (X highly informative in-sample). pfc's NN-in-X residual distribution is uniquely heavy-tailed: train LOO median 0.0189 vs mean 0.4394 (23x).",
+      "M3_spectral": "R_low > 1 for the champion on 5/5 datasets x 3/3 seeds (helmholtz 1.23-8.63, cahn_hilliard 11.18-11.82, fisher_kpp 62.39-65.89, pfc 124.02-129.10, allen_cahn 209.07-209.56). The predicted 'R_low > 1 on >=4 of 5' is CONFIRMED at 5/5. Error energy is also concentrated in band 0 (share 0.39-0.9996 by dataset), so the excess is a LOW-band, not a high-k, phenomenon. Secondary readout: in mid/high bands the champion is worse than BOTH copy-LF and the lookups, where the lookups are actually better than copy-LF - pfc bands 1/2/3 R_b = 2557 / 843 / 23.4 (champion s0) vs 36.8 / 0.002 / 0.0 (knn1); fisher_kpp band 3 R_b = 3.97-8.06 (champion) vs 0.284 (knn1); allen_cahn bands 2/3 R_b = 0.79-1.76 (champion) vs 0.219 / 0.0 (knn1). The champion injects spurious high-k energy that a lookup does not.",
+      "M4_interface": "Error-mass share / stratum-area share for the champion (4 pooled-quartile distance strata, tau=0.1, near->far): fisher_kpp [1.11, 0.78, 0.85, 1.23] - near-flat, mildly bimodal; allen_cahn [1.23, 1.30, 0.77, 0.70] - mild interface tilt, far weaker than copy-LF's [2.05, 0.81, 0.56, 0.55]; cahn_hilliard [0.61, 0.68, 0.61, 2.18] - FAR-field concentrated; pfc [0.53, 1.17, 1.78, 0.58] - peaked in the third (mid-distance) stratum, NOT at the interface, and essentially identical to knn1 [0.51, 1.15, 1.78, 0.64] and knn10 [0.41, 1.12, 1.95, 0.61]; helmholtz [0.06-0.29, 0.09-0.27, 0.23-0.47, 2.99-3.64] - far-field, where 89% of HF energy also lives. VERDICT: the predicted 'error-mass ~ area share on the information-limited datasets' HOLDS for fisher_kpp; the predicted 'interface-concentrated on pfc' is FALSIFIED (pfc's excess is mid-distance and shape-identical to the lookups'). The champion's spatial error is nowhere interface-localized beyond ~1.3x area share. The |u| < tau*max|u| interface rule fell back to top-decile |grad u| on 70/100 (allen_cahn), 61/100 (fisher_kpp), 56/100 (pfc), 0/100 (helmholtz, cahn_hilliard) samples.",
+      "M5a_amplitude": "helmholtz CONFIRMED as an amplitude/normalization divergence: champion nRMSE 6.202 raw -> 0.839 under a per-sample optimal scalar rescale (amplitude_share_of_error 0.865); copy-LF 0.329 -> 0.102 (0.691); knn1 1.311 -> 0.348 (0.735); champion alpha_mean 0.075-0.108 with alpha_std 0.59-0.88 - the right pattern at ~10x the wrong, sample-dependent amplitude. Elsewhere amplitude is a minor term: champion amplitude_share_of_error = 0.008-0.009 (allen_cahn), 0.001-0.002 (fisher_kpp), 0.127-0.151 (cahn_hilliard), 0.184-0.193 (pfc); alpha_mean 0.97-0.99 except cahn_hilliard 0.76-0.78 and pfc 0.73 (systematic amplitude under-prediction on those two).",
+      "M5b_pairing": "NO dataset defect of the LF<->HF pairing kind. aligned / index-shifted residual = 0.077 (helmholtz), 0.008 (allen_cahn), 0.065 (cahn_hilliard), 0.176 (fisher_kpp), 0.061 (pfc); aligned / random-shuffled within 0.002 of each. The aligned residual is 5.7x-145x smaller than a mispaired one on every dataset - the LF/HF alignment is sound and program.md 12.2's data-defect branch is CLOSED."
+    },
+    "guard_flags": [],
+    "guard_set_note": "Not run, not applicable: this card claims no panel win (the scored value is a lookup table; panel geomean 9.624 vs the copy-LF bar 1.0). No leaderboard, anchor or top-3 consequence.",
+    "anomalies": [
+      "PREDICTION SLIP (pfc, headline): part 4 predicted 1-NN-in-X skill ~0.42 on pfc ('a training-free lookup beating copy-LF'). Measured: 11.299. The 0.42 traces to iteration_1.md line 67, which used the TRAIN-split leave-one-out NN-in-X residual MEDIAN (0.019 raw rel-resid; this run's train_degeneracy nn_in_X_median = 0.0189, an exact match) as if it were a skill ratio - without dividing by copy-LF nRMSE 0.04478 and without correcting median->mean. The correctly converted train-side estimate is 0.4394/0.04478 = 9.81, close to the measured knn10 = 8.47. pfc's heavy right tail (NN-in-X median 0.0189 vs mean 0.4394, 23x) is the substantive reason the hand-probe did not transfer.",
+      "PREDICTION MISS (allen_cahn): predicted 1-NN skill ~18, measured 29.679; the predicted near-tie between champion and lookup is inverted (champion better by 4.74).",
+      "PREDICTION MISS (others): cahn_hilliard predicted ~14, measured 11.054; helmholtz predicted ~1.7, measured 3.980; fisher_kpp predicted ~5.4, measured 5.595 (the only accurate prediction).",
+      "repro_exact_1e9 = false on 10 of 15 checkpoint reproductions. EXPECTED AND DECLARED (build_notes[3], reviewer S2, ADR 0005 p100->h100 float32): the operative field is rel_delta vs abort_rtol = 1e-3. Measured rel_delta max = 6.868e-4 (helmholtz s1); all others <= 2.293e-4; 5 of 15 are exactly 0.0 (the s0 checkpoints, whose batch-0 result JSONs were re-certified on H100). All 15 within tolerance, no abort. NOT a seam failure.",
+      "Copy-LF seam kept literal at <=1e-9 and passed with abs_delta EXACTLY 0.0 on all 5 datasets against eval/copylf_baselines.json.",
+      "Training tripwire never fired; n_forward_calls_train = 0 on all 15 reloads; the 15 frozen batch-0 ckpt dirs under round1/eval/results/mf_fno_transfer_film/ still carry their pre-run mtimes (2026-07-28 20:43-22:15 PDT) after the H100 job - verified by the analyzer.",
+      "Reviewer suggestion S1 was honoured at submit time: ROUND1_EVAL_RESULTS was redirected to the outputs root (round1/eval/results/ received no s2_copylf_forensics tree; the family's scratch results live at <outputs>/s2_beyond_copy/B1/eval/results/s2_copylf_forensics/).",
+      "SLURM job 65991328 COMPLETED in 46 s on hpc-33-16 (H100), MaxRSS 2.29 GB, .err file EMPTY, no NaNs, no preemption/requeue, no cache hits (all five datasets cached=false). Per-dataset in-family wall: helmholtz 2.9 s, pfc 3.5 s, cahn_hilliard 7.8 s, allen_cahn 7.9 s, fisher_kpp 8.2 s. Far under the 45-min reservation - timing-ledger note for the maintainer: an inference-only reload+forensics card over 5 datasets x 3 checkpoints costs <1 min on H100."
+    ],
+    "wall_clock_per_seed_min": [
+      0.77
+    ],
+    "analyzed_utc": "2026-07-29T18:15Z"
+  },
   "6_analysis": null,
   "7_gap_and_future": null,
   "reanalysis_progress": null,
