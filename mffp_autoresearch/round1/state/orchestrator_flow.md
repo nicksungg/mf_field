@@ -168,3 +168,20 @@ contract gate.
 pulse: no-op. s1-s4 hold at brainstormer_done_awaiting_G4 (correct per gate);
 s5_tuning builder agent still in flight; no r1-* SLURM jobs. Next action fires
 on the builder's return (→ code-reviewer → seed-0 submit → G4).
+
+## Pulse — 2026-07-29T15:04Z
+
+pulse: no-op. s1-s4 hold at brainstormer_done_awaiting_G4; s5_tuning builder
+agent still in flight (maintainer confirmed it actively writing the family
+files); no r1-* SLURM jobs. Awaiting builder return → code-reviewer.
+
+## Pulse — 2026-07-29T15:14Z
+
+pulse: no-op. Unchanged: s1-s4 await G4; s5_tuning builder still in flight;
+no r1-* SLURM jobs.
+
+## Pulse — 2026-07-29T15:23Z
+
+pulse: no-op. s1-s4 await G4; s5_tuning builder still in flight (maintainer:
+family dir + all 3 launch scripts written, card mechanics fields not yet
+committed — builder in final verification/commit phase). No r1-* SLURM jobs.
