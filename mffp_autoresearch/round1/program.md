@@ -386,13 +386,21 @@ every proposal carries a complete `recipe` block.
 ### 12.3 `s3_testtime` (lever)
 
 - **Anchor**: champion's certified panel geomean (batch 0).
-- Quantified priors: `mf_fno_ptr` achieved **−21%** on era5/pm_test with a
-  *placeholder Laplacian* residual (FINDINGS.md: "implement true governing
-  residuals" was the explicit recommendation, never done). The panel datasets
-  have known PDEs (`meta.json` records e.g. `Δu + k²u = f` for helmholtz).
-- Batch-1 seed direction: true governing-equation residuals for the panel
-  PDEs, as test-time refinement on a frozen strong base (champion or
-  per-dataset best).
+- Quantified priors — **CORRECTED, see ADR 0003** (the earlier −21% claim was
+  a FINDINGS.md misread; refuted in-repo by the batch-1 websearch):
+  `mf_fno_ptr`'s refinement is a registry NO-OP outside ifc_heat/ifc_poisson;
+  where it ran (`ifc_poisson`) it bought −1.5%, inside the CI, at 163×
+  inference latency. The lever has never been shown to help — this stream's
+  batch 1 is closer to a first real test than a scale-up.
+- A true governing residual is computable for only **one** panel dataset:
+  `ext__helmholtz_2d` (steady; `x = [k, source_x, source_y]` fully determines
+  `f`; `Δu + k²u = f` exact). The phase-field snapshots lack ∂ₜu; ifc_poisson's
+  source decode is not shipped. Cards must scope accordingly (Helmholtz-exact
+  refinement, or equilibrium/free-energy projection for the phase-field sets).
+- Known threat (fetched, arXiv:2606.27354): residual minimization can be an
+  unreliable proxy for reconstruction accuracy in ill-conditioned systems —
+  Helmholtz is the canonical indefinite case; designs should include a
+  residual-vs-error check so a null is informative.
 - Second lever: IRNO-style frozen-base iterative refinement
   (`docs/reports/MF_Leaderboard_Beaters_2026_Report.md` proposal N1,
   arXiv:2605.24041, ~50× high-frequency band-error reduction claimed) — unbuilt.

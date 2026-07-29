@@ -5,3 +5,12 @@
 - Dispatched batch-1 websearchers for s1_poisson, s2_beyond_copy, s3_testtime, s4_hybrid_routing (background).
 - s5_tuning-B1: websearch complete; brainstormer gated on state/noise_floor.json (G3), then full G4 chain.
 - Gate discipline: no stream past brainstormer until G3; only s5_tuning-B1 builds/submits before G4 PASS.
+- 2026-07-29T03:43:59Z pulse: no-op. batch0: 3 COMPLETED / 18 RUNNING / rest pending, 0 failed. s1-s4 websearchers still running (no reports yet); s5 gated on G3 noise floor. Nothing unblocked.
+
+## WEBSEARCH PHASE COMPLETE (all 5 streams, batch 1)
+- s1_poisson: PARTIAL (agent couldn't Write .md — orchestrator persisted all 7 files verbatim). Verdict: all-ordered-pairs = preempted-but-MF-composition-open; D2/D3 preempted. Key: pair-set contrast (adjacent vs all-ordered vs LF->HF-only) is the falsifiable design; 0.036/0.018 method attribution UNRESOLVED — cards must not assert it.
+- s2_beyond_copy: SUCCESS. All metrics for the diagnostic are published (band error, H(k), coherence, interface stratification, PFI) — but copy-LF-as-baseline is genuinely absent from MF operator learning (the round's framing is the novelty). Diagnostic card should include LF-permutation probe + same-parameter pairing sanity check.
+- s3_testtime: SUCCESS. REFUTED program.md §12.3's -21% prior in-repo (mf_fno_ptr no-op outside ifc_*; -1.5% inside CI at 163x latency where it ran). True residual computable only for helmholtz_2d. Operator corrected §12.3 via ADR 0003. D4 (equilibrium projection, test-time) weakly novel.
+- s4_hybrid_routing: SUCCESS. D1 (score fno_transolver_seq) = measurement, zero novelty claims; D2 LF-conditioned routing open (no published router reads LF/LF-HF disagreement); D3 adjacent to pre-falsified mf_fno_spectral — flagged.
+- LESSON (all agents): subagent Write tool refuses .md report files; s2/s4/s5 used shell heredoc; s1 returned inline. Future dispatch prompts must include: "write report files via bash heredoc (cat > file <<'EOF'), not the Write tool."
+- NEXT: all brainstormers gated on G3 noise floor (batch0 job 65956106).
