@@ -1,0 +1,65 @@
+{
+  "id": "s5_tuning-B2",
+  "stream": "s5_tuning",
+  "batch": 2,
+  "category": "tuning_target_scaler",
+  "card_type": "model",
+  "created_utc": "2026-07-29T22:13:10Z",
+  "worktree_path": "mffp_autoresearch/round1/worktrees/s5_tuning/B2",
+  "source_iteration": "brainstormer/s5_tuning/batch_2/iteration_1.md",
+  "reopened_from": null,
+  "1_id_category": "s5_tuning-B2 / tuning_target_scaler",
+  "2_motivation": "measure the champion's OUTPUT-TARGET SCALER — the knob\ns5-B1 part 7 named (\"*the leading candidate is the NORMALIZATION knob, not\nanother capacity knob*\") — claiming no novelty, with the verdict placed on the\ndatasets whose noise floor permits one. The batch-2 prior-art verdict licenses\nexactly this: row (ii) `preempted` — \"*Nothing novel — defensible ONLY as a\nmeasurement. Open as measurement: no fetched source quantifies\nrobust-vs-max-abs **target** scaling in a **multi-fidelity few-shot**\noperator-learning regime; the nearest MF paper does not state its\nnormalization at all (https://arxiv.org/html/2511.01830). Territory: **K**,\nunambiguously (two scalars, `smoke_eval.py:136-137`).*\" Row (i)\n`preempted-but-MF-composition-open` supplies the per-sample arm's legality\nruling; row (iii) supplies the stage-consistency control arm. Value framing\n(given s6-B1's LF-consuming geomean 0.2346): clean attribution of the\namplitude/level channel on the LF-blind champion, plus one env-switchable\nscaler block that transfers to any later family.",
+  "3_description": "worktree family `models_r1/mf_fno_transfer_film_scaler`\n= a copy of `mf_field/factory_mffp/models/mf_fno_transfer_film` at\n`967562e`, with s5-B1's three plumbing deltas (REPO_ROOT fix, knob provenance\nin result-JSON `extra`, periodic `last.pt` + config-match resume gate) and ONE\nbehavioural change: the target-scaler block (base `smoke_eval.py:210-211`, and\nthe denormalization at `:293`) becomes env-switchable via\n`MFFP_TARGET_SCALER`, default `maxabs` == the anchor path. Network, `F.mse_loss`,\noptimizer, schedule, batch size, epochs and `modes_cap` (held at 12) untouched;\nno learnable affine anywhere; the HF **test** field never enters any scaler.\n\n| arm | knob value | definition (both stages, denormalized with the same constants) | design-time measured leverage | rank |\n|---|---|---|---|---|\n| A0 | `maxabs` | `s_stage = max(|Y_stage_train|)` (base family) | control + default-equivalence proof | never promoted |\n| A1 | `p995` | `s_stage = pct(|Y_stage_train|, 99.5)`, **no clipping** | `max/p99.5` = 46.5 helm, 1.63 poisson, 1.05-1.26 sharp | 2 |\n| A2 | `zscore` | `mu, sd = mean/std(Y_stage_train)` (= `UnitGaussianNormalizer` at C=1); `pred = f(x)*sd_hf + mu_hf` | `|mean|/sd` = 3.75 fisher_kpp, 1.43 poisson, 1.32 pfc | **1 — default promotion** |\n| A3 | `revin_lf` | per-sample `s_i = max(|LF_i|)`, both stages, `pred_i = f(x_i)*s_i`; `maxabs` fallback + `scaler_fallback: true` where the split ships no LF (ifc_poisson) | 3929x -> 1.74x residual on helm; CV <= 0.0099 on sharp (no-op); unavailable on poisson | 3 |\n| A4 | `shared` | `s = max(|Y_lf_train|)` for BOTH stages (stage-consistency control) | 42.1x poisson, 4.3x helm, <= 1.5% sharp | 4 |\n\n**Screen (ADR 0007)**: one contract-tier job — 2 epochs, seed 0, all five arms\nx the full panel on H100 (minutes; B1's 200-epoch panel was 36.6 min). Screen\nnumbers live in `build_notes` only, never in parts 5-7.\n**Fixed promotion rule (pre-registered; order from the design-time\nmeasurements, NOT from screen scores)**: promote the highest-ranked arm that is\nnot *broken*, broken := crash / non-finite metric / contract-tier panel geomean\n> 3x arm A0's on the same run. Order A2 -> A1 -> A3 -> A4; A0 never promoted;\nclose calls never reorder. Promoted identity written into the card before submit.\n**Also at contract tier**: (a) `maxabs` default-equivalence vs the untouched\nfactory family on `ext__helmholtz_2d,ifc_poisson`; (b) `--datasets guard` with\nthe promoted env; (c) `scripts/precheck_scale_ratio.py` reproducing the\nRevIN conditional-shift pre-check into `notes/precheck_scale_ratio.json`.\n**Free reporting adds**: every panel number alongside\n`tools/dc_pattern_split.py`'s constant-field oracle, citing The Well\n(https://arxiv.org/html/2412.00568); `preds_test.npz` dumped as in B1.\n**Pre-registered dual basis** (B1's `not_resolvable` came from an unfixed\nbasis): PRIMARY = certified anchor 6.703 + per-dataset 3-seed means; SECONDARY\ncross-check that cannot flip the verdict = s5-B1's H100 same-hardware cap-12\nseed-0 control (geomean 7.1171).\n**Builder note (verified)**: `score_panel.py:238` uses `--env nargs=\"*\"` with\nno `append`, so a second `--env` REPLACES the first — both knobs in ONE\ninvocation: `--env MFFP_TARGET_SCALER=<arm> MFFP_MODES_CAP=12`.",
+  "4_expected_result": "(arm A2, seed 0, provisional-single-seed, PRIMARY basis):\n`sharp__fisher_kpp_2d` improves by **>= 0.418** skill (4.177 -> <= 3.759;\npooled `|mean|/sd` = 3.75, `max/sd` = 6.00 — the largest affine change on the\npanel); `ifc_poisson` improves by **>= 0.240** (1.566 -> <= 1.326;\n`|mean|/sd` = 1.43 and `max|Y|` over N_hf = 5 is the noisiest available\nscaler); `sharp__phase_field_crystal_2d` a plausible but unpredicted mover\n(floor 1.151); `sharp__allen_cahn_2d` and `sharp__cahn_hilliard`\n**pre-registered NULL** (`|mean|/sd` = 0.005 / 0.0002 -> scale-only change);\n`ext__helmholtz_2d` likely moves a lot (`max/sd` = 39.5) but is **reported\nqualitatively only** (floor 9.695). Panel geomean expected -0.3 to -0.9,\nprobably helmholtz-dominated; a geomean gain that vanishes in the\nleave-helmholtz-out decomposition (anchor LHO 5.842) is recorded as a tail\nartefact, not a win (s5-B1 precedent). **vs the noise floor**: both predicted\nmovers are stated AT their certified floors (0.418, 0.240) and every other\ndataset is a null against its own floor; honest prior ~40% that a claimable\nper-dataset improvement lands, with the pre-registered null the single most\nlikely outcome — which retires the normalization branch of B1 part 7\nround-wide. Pre-registered RevIN items: no learnable affine (\"not beneficial\nin practice\"), and the conditional-shift caveat already measured (HF/LF ratio\nCV 0.0017-0.0099 on the four sharp sets, so arm A3 cannot work there).",
+  "expected_falsification": "if the promoted arm's seed-0 200-epoch panel run\nmoves NO non-helmholtz panel dataset beyond its own `min_claimable_effect` in\neither direction (`ifc_poisson` 0.240, `sharp__fisher_kpp_2d` 0.418,\n`sharp__cahn_hilliard` 0.553, `sharp__phase_field_crystal_2d` 1.151,\n`sharp__allen_cahn_2d` 1.633) AND the leave-helmholtz-out panel geomean moves\nby less than 0.884 vs the anchor's 5.842, then the champion's output-target\nscaler is NOT a lever on the panel gap — the amplitude/level channel found in\ns5-B1 is confined to `ext__helmholtz_2d` where the round permits no numeric\nclaim, and normalization is retired round-wide as an explanation for the\nsharp-2D DC-predictor collapse.",
+  "anchor_reference": "s5_tuning-B1",
+  "prior_art": {
+    "verdict": "preempted",
+    "citations": [
+      "https://scikit-learn.org/stable/auto_examples/preprocessing/plot_all_scaling.html",
+      "https://raw.githubusercontent.com/neuraloperator/neuraloperator/main/neuralop/data/transforms/normalizers.py",
+      "https://arxiv.org/html/2511.01830",
+      "https://arxiv.org/html/2603.11869",
+      "https://seharanul17.github.io/RevIN/",
+      "https://arxiv.org/html/2310.02994v2",
+      "https://arxiv.org/abs/2605.26732",
+      "https://arxiv.org/abs/1603.04779",
+      "https://arxiv.org/html/2412.00568"
+    ],
+    "verdict_quote": "see Motivation above — row (ii) `preempted`\n(\"*Nothing novel — defensible ONLY as a measurement ... Territory: **K**,\nunambiguously (two scalars, `smoke_eval.py:136-137`)*\",\nhttps://scikit-learn.org/stable/auto_examples/preprocessing/plot_all_scaling.html ,\nhttps://raw.githubusercontent.com/neuraloperator/neuraloperator/main/neuralop/data/transforms/normalizers.py ,\nhttps://arxiv.org/html/2511.01830); row (i)\n`preempted-but-MF-composition-open` (\"*K only if the scale comes from an\ninference-available statistic with zero new parameters*\",\nhttps://arxiv.org/html/2603.11869 , https://seharanul17.github.io/RevIN/ ,\nhttps://arxiv.org/html/2310.02994v2 , https://arxiv.org/abs/2605.26732);\nrow (iii) `novel`-narrow-with-unfavourable-prior (\"*expect a null-or-negative\nsign ... Value is as a **control arm***\", https://arxiv.org/abs/1603.04779);\nbonus row `preempted` for the constant-field-oracle line\n(https://arxiv.org/html/2412.00568). No novelty is claimed by this card.",
+    "excluded_operator_suggestion": {
+      "report_location": "report.md section `## Operator suggestion — ruled EXCLUDED (recorded, not silently dropped)` (a separate top-level section, NOT inside the report's Prior-art bullet); transcribed here verbatim so the record is not lost.",
+      "text": "The training-free per-sample scale predictor from X (TabPFN in-context\nregression, or the kNN degraded form) is excluded from the s5 knob pool for\nthree reasons, all in `iteration_1.md`:\n(1) **Territory** — an auxiliary regressor fitted on the train split and\ninserted into the forward path is a second predictor composed with the network\n(APEX's construction, which the websearcher found the literature frames as\narchitecture); the verdict's zero-parameter clause covers statistics of the\nsample's own inference-available data, not the fitting algorithm of an auxiliary\nmodel, and TabPFN would import a pretrained transformer's learned weights.\ns6/s4 territory, and 12.5's \"no new paradigms\" independently excludes it.\n(2) **Dominated where it matters** — measured leave-one-out kNN-in-X on\n`ext__helmholtz_2d`: logRMSE 0.875, pred/true p95/p5 = 14.2 (~2.4x typical\nmultiplicative error) vs **1.74** for the free LF-field statistic (8x looser),\non the one dataset with amplitude headroom.\n(3) **No headroom where it is uniquely usable** — `ifc_poisson` is the only\npanel dataset where X reaches and LF does not (test ships `fidelity_64` only),\nand there the raw per-sample scale spread is 3.2x with B1 turn 2 measuring\nalpha ~ 0.996.\n**Handed to s6/s4** with those numbers: any APEX-like amplitude-anchor\ncomposition should read the **LF field**, not X; the kNN form needs no new\ndependency and can be screened for free."
+    }
+  },
+  "recipe": {
+    "base_family": "mf_fno_transfer_film",
+    "base_commit": "967562e2a4e3493515edab36b0fcb23655fce71f",
+    "family_dir": "models_r1/mf_fno_transfer_film_scaler",
+    "datasets": "panel",
+    "epochs": 200,
+    "seeds": [
+      0
+    ],
+    "env": {
+      "MFFP_TARGET_SCALER": "zscore",
+      "MFFP_MODES_CAP": "12"
+    }
+  },
+  "status": "drafted",
+  "skipped_reason": null,
+  "reopen_candidate": false,
+  "scripts_path": {},
+  "output_paths": {},
+  "build_commit": null,
+  "job_ids": [],
+  "logs": {},
+  "build_notes": [],
+  "review_notes": [],
+  "debug_notes": [],
+  "5_actual_result": null,
+  "6_analysis": null,
+  "7_gap_and_future": null,
+  "reanalysis_progress": null
+}

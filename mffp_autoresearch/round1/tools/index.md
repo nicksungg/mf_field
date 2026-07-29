@@ -16,6 +16,8 @@ tool: name, what it measures, invocation, provenance card.
 | `lf_at_inference_audit.py` | whether a model family actually consumes the LF field at inference, or only during training | s2_beyond_copy-B1 turn 3 |
 | `dc_pattern_split.py` | whether a prediction's score is a real field prediction or only the DC (spatial-mean) level; constant-field oracle + demeaned pattern error | s5_tuning-B1 turn 3 |
 | `regen_preds_from_ckpt.py` | recovers a control arm's `preds_test.npz` from a checkpoint that shipped without one (eval-only resume), with a mandatory seam check | s5_tuning-B1 turn 1 |
+| `defect_correction_learnability.py` | training-free: is `hf - interp(lf)` a fixed (mostly linear, compact-stencil) operator of the LF field on this dataset? predicts whether an LF-consuming additive corrector has headroom, and what a ZERO-parameter closed-form filter already gets | s6_local-B1 turn 3 |
+| `trust_gate_headroom.py` | value ceiling of a trust gate at per-pixel vs per-sample granularity, for any `base + correction` model scored against copy-LF | s6_local-B1 turn 1 |
 | `render_readme.py` | regenerates `round1/README.md` from the experiment cards (housekeeping, not a probe) | round infrastructure |
 
 ---
@@ -304,3 +306,106 @@ because 63–98 % of those fields' energy is in the DC term. Symptom triple:
 are not neutral — they are mildly **negative**, because the added degrees of freedom
 are filled with uncorrelated energy (s5-B1: cap 32 injected 1.7–18.9× more top-band
 energy than cap 12 on all four sharp datasets, and all four scores got worse).
+
+---
+
+## `defect_correction_learnability.py`
+
+**Measures.** Training-free, model-free: fits ONE ridge-regularised per-frequency
+transfer function `T(k)` from the interpolated LF field to the residual
+`R = HF - interp(LF)` on the HF-train split (20 % held out), then reports
+
+| key | meaning |
+|---|---|
+| `skill_LSI` / `nrmse_LSI_defect_correction` | score of `LF + T*LF` on the TEST split through `eval/nrmse.py` — a **zero-trained-parameter baseline any learned corrector must beat** |
+| `rho_val_heldout` (load-bearing) / `rho_fit_in_sample` / `generalization_gap_rho` | is the defect a *stable* functional of LF, or only memorised? |
+| `heldout_trust_switch_alpha` | the s6 stage-3 protocol (line search including 0, MIN_GAIN 1e-3) on the closed-form arm; `0` = "a no-harm gate should switch the corrector off here" |
+| `stencil.frac_energy_within_12_cells`, `radius_50pct_energy` | compactness of the fitted operator's impulse response — is defect correction LOCAL? |
+| `band_mean_abs_T` | the defect's amplitude law by radial band (round band convention) |
+| `predicted_verdict` | STRONG (`rho_val > 0.9`) / MODERATE / WEAK / NO headroom |
+
+**Read it as.** `rho_val > 0.9` -> a nested-ladder defect corrector will win big and
+most of the win is a **linear filter**: check `skill_LSI` before attributing anything
+to an architecture. `rho_fit` high with `rho_val <= 0` -> the coarse solve is not in
+its asymptotic regime (sample-dependent phase/dispersion error); a held-out trust
+switch is mandatory and a corrector will shut itself off (this is exactly what
+happened on `ext__helmholtz_2d`). Low `frac_energy_within_12_cells` -> the optimal
+operator is not local and a small convolutional receptive field is mis-sized.
+Datasets whose test split ships no LF (`ifc_poisson`) return an `error` field.
+
+**Invoke.**
+```bash
+source "$PROJECT_ROOT/.venv/bin/activate"
+python tools/defect_correction_learnability.py --datasets PANEL --out defect.json
+python tools/defect_correction_learnability.py --datasets GUARD --out guard.json
+python tools/defect_correction_learnability.py \
+    --datasets sharp__cahn_hilliard --out d.json [--ridge 1e-6] [--n_train 320] [--n_test 100]
+```
+Pure numpy + FFT on the login node; seconds to ~2 min per dataset. Leave `--n_test`
+at its default (whole split) if you want `identity_matches_frozen_baseline` to be
+exact — truncating the test split will not match `eval/copylf_baselines.json`
+(`heat_local` has 512 test samples, `fluid` 256).
+
+**Verified.** Run 2026-07-29 from `round1/` on
+`sharp__phase_field_crystal_2d,ext__helmholtz_2d`: pfc `skill_LSI` **0.013883**,
+`rho_val` 0.999777, switch 1.0, 94.0 % of stencil energy within 12 cells;
+helmholtz `skill_LSI` 7.095513, `rho_val` **-43.8785**, switch **0.0** — identical
+to the source probe, and `identity_matches_frozen_baseline` true on both.
+Held-out `rho` across the five LF-bearing panel datasets ranks the s6 card's
+observed `contribution_d` with **Spearman 1.000**.
+
+**Provenance.** `worktrees/s6_local/B1/scratchpad/reanalysis_turn_3.py`;
+card `experiment_cards/s6_local/batch_1/B1.json` part 6, findings F6-F9, F14-F16.
+
+---
+
+## `trust_gate_headroom.py`
+
+**Measures.** For any model whose prediction can be written `copy-LF + correction`,
+the **value ceiling of a trust gate at three granularities**: ungated (`g == 1`),
+best-possible shared per-pixel map (oracle, fitted on test), best-possible
+per-sample scalar (oracle), and — if you can supply the model's corrections on a
+held-out TRAIN slice via `--val_pred/--val_idx_npz` — the ACHIEVABLE per-pixel gate.
+Plus `pixel_gate_ceiling_frac`, `per_sample_gate_ceiling_frac`,
+`corr_absC_gradbase` (is the correction interface-concentrated?) and a
+`granularity_verdict`.
+
+**Read it as.** Both ceilings < ~5 % -> a trust gate cannot pay for itself, and a
+gate that sits at 1 (or at 0) is reporting the truth rather than failing to train.
+Per-sample ceiling >> pixel ceiling -> build a per-SAMPLE trust head, not a
+field-valued gate. A *negative* oracle pixel ceiling means one shared pixel map
+cannot describe the dataset's sample-to-sample spread at all
+(`sharp__cahn_hilliard`: +17 % worse).
+
+**Invoke.**
+```bash
+source "$PROJECT_ROOT/.venv/bin/activate"
+python tools/trust_gate_headroom.py --dataset sharp__phase_field_crystal_2d \
+    --pred_npz <run>/preds_test.npz [--pred_key pred | --corr_key corr] \
+    [--val_pred <run>/val_corr.npz --val_idx_npz <run>/val_idx.npz] \
+    [--n_samples 100] --out gate_headroom.json
+```
+Seconds; pure numpy. Needs a 2-D `(N, n_cells)` array on the dataset's TEST split.
+
+**Verified.** Run 2026-07-29 from `round1/` on the s6-B1 pfc correction
+(`alpha*Delta`, regenerated from the shipped checkpoint): ungated 0.00135270 and
+oracle per-sample 0.00104408 reproduce the source probe exactly; oracle per-pixel
+0.00128311 vs the probe's 0.00128989 (0.5 %, the cached correction is stored
+float32). `pixel_gate_ceiling_frac` 0.0514 vs `per_sample_gate_ceiling_frac`
+0.2281 -> verdict "PER-SAMPLE trust only", `base_matches_frozen_baseline` true.
+
+**Provenance.** `worktrees/s6_local/B1/scratchpad/reanalysis_turn_1.py`;
+card `experiment_cards/s6_local/batch_1/B1.json` part 6, findings F1-F3.
+
+---
+
+## Standing warning these two tools encode
+
+**On a nested factor-2 ladder, report `skill_LSI` before claiming that an
+architecture caused a copy-LF win.** On `sharp__phase_field_crystal_2d`,
+`sharp__allen_cahn_2d` and `sharp__cahn_hilliard` a single least-squares transfer
+function with no trained parameters beats the round's best 200-epoch model by
+2.19x / 1.56x / 1.07x; only `sharp__fisher_kpp_2d` (a local nonlinearity) is won by
+the network. And **do not build a field-valued trust gate without measuring its
+ceiling first**: on these datasets an oracle per-pixel gate is worth <= 4.1 % and is
+negative on one dataset, while an oracle per-sample scalar is worth up to 50.7 %.

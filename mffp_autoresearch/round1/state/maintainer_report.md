@@ -1765,3 +1765,233 @@
   live r1- job (`66001535`) instead of zero; Flags rewritten around these
   five deltas).
 ## RUN END 2026-07-29T19:41:00Z
+
+## RUN START 2026-07-29T21:50:00Z
+- **Major context: ~1h45m platform-side API-529 outage (2026-07-29T20:04Z-
+  21:48Z), fully recovered by scan time.** Fully documented turn-by-turn in
+  `state/orchestrator_flow.md`. At its worst, all 7 in-flight agents (s4
+  mechanism, s3_warp debugger, s6 analyzer, s7 builder, s1-B2 builder, s2-B2
+  builder, s5-B2 brainstormer) were down simultaneously. Orchestrator held
+  all resumes, tried single-canary resumes, then a strict one-per-pulse
+  serialized queue (s6 analyzer head-of-queue, since it gated the round's
+  best result's verdict), and released the full queue once a solo resume
+  survived a full pulse interval. No SLURM job, card field, or committed
+  artifact was lost — every stream has an agent back in flight as of this
+  scan. Read-only observation; no maintainer action needed.
+- `s6_local-B1`: **the round's best result, and it just passed heightened-
+  scrutiny initial analysis.** 200-epoch seed-0 run (job `66001535`)
+  COMPLETED this walk (17m57s) with panel geomean skill **0.234572** — 28.6x
+  better than the champion anchor (6.703), 5.98 anchor-CI95-widths below the
+  anchor's lower bound. Initial analyzer ran all 6 mandatory heightened-
+  scrutiny checks: identity floor bit-exact at both init and the TRAINED
+  endpoint (helmholtz's own held-out line search chose alpha=0 and
+  reproduced the frozen copy-LF baseline bit-for-bit — the strongest
+  available seam check); leakage ruled out (train-only fits/normalizers,
+  two clean tripwires); target-copying, near-duplication, and trivial-
+  pointwise-recalibration all explicitly ruled out; s2-B1's Class-A/Class-B
+  floors resolved (not contradicted — s2 pre-registered its floor as a
+  lower bound, and the estimator class differs: ~2.1e7 local patch examples
+  vs ~400 whole-field lookups). Verdict `confirmed`, strong form 4/4 (2
+  needed). Guard-set check found `MISSING_200EP_GUARD` (only contract-tier
+  guard existed) → **200-epoch guard job `66005834` submitted this walk**,
+  currently PENDING — no panel-win claim should be finalized before it
+  returns. Two honest caveats carried forward: the `local_pixel_gate`
+  variant's namesake pixel gate is a near no-op (trust lives in scalar
+  alpha, not per-pixel — mechanism-analyzer's job to resolve); result
+  overshoots pre-registration 3-10x with an INVERTED per-dataset ordering
+  (pfc, not helmholtz, is the largest mover). Mechanism analyzer dispatched,
+  survived a queue-head retry cycle during the outage, and is now well
+  underway: turn 1 complete (pixel gate worth <=0.63% of trained error
+  everywhere; achievable per-pixel val-fit gate gives no headroom; a
+  per-sample scalar oracle gate reaches -22.8% on pfc — trust signal is
+  sample-level, not pixel-level), turn 2 in progress (lsi-feature probes
+  done on helmholtz+pfc, allen_cahn running at scan time), turn 3 staged.
+  `reanalysis_progress` field still reads `turn_1` (by design, only bumps
+  on turn completion). **This is the deltas the orchestrator most needs to
+  see: the headline result cleared scrutiny, but the guard200 job and
+  mechanism analysis are still open before any claim is finalized.**
+- `s3_warp-B1`: reviewer returned `reviewed_suggest` (SUBMIT AS-IS, 7/7
+  review questions PASS, both declared M9 deviations independently
+  re-verified by the reviewer itself and ruled FAITHFUL-TO-INTENT, 6
+  carry-forwards, no FAIL). Operator amendment applied per carry-forward
+  F-5: the card's literal "<5% of unwarped" M9 threshold is provably
+  unsatisfiable (the card's own pseudo-LF construction imposes a
+  double-bilinear-resample floor of 10.5-18.3% of unwarped) — replaced with
+  `max(5% x unwarped, 1.5 x exact-planted-phi)`, same hard-abort semantics.
+  Diagnostic job `66001846` then submitted and **FAILED in 29s — a designed
+  abort, not a bug**: helmholtz completed and wrote output, then pfc's
+  crystalline structure produced gradient-normal EPE 0.3928 > the 0.25-cell
+  tolerance, hard-aborting exactly as the M9 tripwire is supposed to (an
+  optimiser inadequacy on pfc cannot silently masquerade as "no warp
+  regime"). Classified ALGO 1/5 (fitter needs pfc-appropriate settings —
+  multi-scale / more iterations at 128²); debugger dispatched, survived the
+  outage, and is actively producing output right now
+  (`scratchpad/diagnose_attempt_1.py`, 0 min before scan).
+- `s1_poisson-B2`: builder returned SUCCESS (10/10, commit `21fdcda`,
+  survived a mid-outage retry). Vendoring sha256 pins verified pre-edit; B1
+  reproduced bit-for-bit (15 digits, both control cells); all 5 arms (2x2
+  `MFFP_LADDER_SCALER {shared,per_level}` x `{two_level,allpairs}` + a 5th
+  `shared_reweight`) have distinct `code_hash`; resume drill passed incl. a
+  cross-scaler checkpoint-refusal check. **Found a new round-wide build
+  trap**: `eval/score_panel.py --env` is `nargs=*` without `append` —
+  passing multiple `--env` flags silently keeps only the last one (the
+  builder's own first smoke silently ran the wrong arm before it was
+  caught); workaround is a single `--env` invocation plus per-arm
+  no-default assertions, not an eval-layer edit (which would invalidate
+  every cache). This is worth flagging to every future multi-knob card's
+  builder/reviewer. Card status → `built`, stage → `review_running`;
+  reviewer resumed 1 min before this scan, no output yet.
+- `s7_loss-B1`: builder returned SUCCESS (10/10, commit `990f889`) — this
+  was itself the outage's single successful canary resume, surviving on
+  its first post-hold attempt. Default-equivalence confirmed BITWISE (17
+  digits, both datasets, matching s5-B1's independent factory numbers); all
+  6 loss-shape/gain arms distinct at 2 epochs; the A2ctl beta=1-equals-A0
+  Parseval-identity claim holds to 1.16e-8 through two full float32
+  training stages; mid-pretrain SIGKILL resume reproduced bit-identical;
+  screen dry-run exercised all 5 promotion branches plus the divergence-FAIL
+  path. One accepted deviation: per-arm checkpoint subdirectories (closes
+  the exact ckpt-collision trap s1 hit — a shared `last.pt` would have made
+  every arm silently report arm A's numbers). Card status → `built`, stage
+  → `review_running`; reviewer resumed 1 min before this scan (also
+  survived the outage window), no output yet.
+- `s2_beyond_copy-B2`: builder resumed post-outage and is actively live
+  (`scratchpad/dbg_direct.log` ~2 min before scan) — no `built` transition
+  yet this walk, in progress, not stalled.
+- `s4_hybrid_routing-B1`: mechanism analyzer survived a rough patch of the
+  outage (re-failed 4x before landing, per `orchestrator_flow.md`) and is
+  now live and progressing: `gate_replay_<ds>.json` probes complete for
+  cahn_hilliard, helmholtz, phase_field_crystal, fisher_kpp (allen_cahn's
+  cache/replay in progress, `log_gate_replay.txt` ~2 min before scan).
+  `6_analysis` still null — no findings to report yet, live not stalled.
+- `s5_tuning-B2`: no card drafted yet. Its websearcher completed
+  pre-outage (`websearches/s5_tuning/batch_2/report.md`); brainstormer
+  resumed after the outage (was serialized-queue slot 5) and is in flight —
+  nothing new to show at this scan.
+- SLURM view: `squeue` shows exactly one live r1- job, `66005834`
+  (s6_local-B1 200-epoch guard set, PENDING, priority). `66001535`
+  (previously RUNNING) is now COMPLETED. `66001846` (s3_warp-B1) FAILED by
+  design as documented above. `sacct` confirms no unexpected
+  vanishing/FAILED jobs beyond the designed abort.
+- Timing ledger: upserted 1 new entry this walk (50 total, was 49) —
+  `s6_local` / `s6_local_lf_corrector` seed-0 200-epoch promoted-variant
+  run, job `66001535`, 17.95 min on h100. Re-validated as parseable JSON
+  after write. Job `66005834` (PENDING) not upserted — only COMPLETED jobs
+  are ledgered.
+- No abandonment trigger: no stream has 3 consecutive skip/blocked
+  batches; no stream has even reached 3 batches yet. `state/streams/`
+  directory still does not exist.
+- Transcript inbox: `state/transcripts/` still does not exist — nothing to
+  archive this walk.
+- Anchors: `state/anchors/*.json` unchanged (same 5 files, same
+  certified_utc 2026-07-29T14:28:45Z) — rendered verbatim into index.md, no
+  recomputation. Still no anchor files for `s3_warp`/`s6_local`/`s7_loss`
+  (expected, pre-analysis stage).
+- ADRs unchanged this walk: `docs/adr/0001`-`0012`, no new ADR since 0012
+  (s7_loss stream).
+- Gates unchanged: G1-G5 all carried-over PASS, no new gate activity this
+  window (`state/gates.md` mtime unchanged).
+- No card files modified by the maintainer this walk (`git status --short
+  mffp_autoresearch/round1/experiment_cards/` clean of any changes at all,
+  external or otherwise — the only round1-tree diffs this walk are
+  `state/orchestrator_flow.md` and `state/s5_tuning/current_stage.txt`,
+  both external orchestrator writes, unrelated to the maintainer, which
+  only read cards this walk).
+- index.md: regenerated (fresh timestamp; new "Major context" section added
+  for the outage; Streams table updated for s1_poisson-B2/s7_loss-B1
+  builder completions + reviewer dispatch, s3_warp's review + operator
+  amendment + designed-abort + debugger dispatch, s4's mechanism-analyzer
+  progress, s5's brainstormer resume, and s6's headline scrutiny-pass +
+  guard200 dispatch + mechanism turn-1 findings; Running/pending jobs table
+  now shows one PENDING r1- job (`66005834`) instead of one RUNNING;
+  Completed cards note rewritten to flag s6_local-B1 as the round's
+  headline result pending guard200 + mechanism analysis; Flags rewritten
+  around all of the above).
+## RUN END 2026-07-29T21:58:30Z
+## RUN START 2026-07-29T22:21:49Z
+- SLURM view: `squeue` shows 3 live r1- jobs, all PENDING on H100 (evening
+  congestion, `(Priority)` reason): `66005834` (s6_local-B1-guard200),
+  `66008912` (s1_poisson-B2-s0, 5-arm serial), `66009306` (s7_loss-B1-screen).
+  A 4th job seen at dispatch, `66009547` (s3_warp-B1-dbg1b), COMPLETED
+  mid-walk (00:01:39, exit 0) — no longer pending. `sacct` confirms all
+  states; no unexpected vanishing/FAILED jobs.
+- `s1_poisson-B2`: `built` -> **`reviewed_suggest`** (reviewer verdict
+  SUGGEST, all 4 review questions PASS, no FAIL findings). Seed-0 job
+  `66008912` (5 arms serial: 2x2 factorial + shared_reweight) submitted,
+  PENDING on H100.
+- `s7_loss-B1`: `built` -> **`reviewed_pass`** (reviewer verdict PASS on
+  the ADR-0007 screen: A-def equivalence + 5-arm panel + guard). Screen job
+  `66009306` submitted, PENDING on H100.
+- `s5_tuning-B2`: card **drafted** this walk (`s5_tuning-B2 /
+  tuning_target_scaler`, family `mf_fno_transfer_film_scaler`, measuring
+  the OUTPUT-TARGET SCALER knob flagged in s5-B1 part 7).
+  `anchor_reference` = `s5_tuning-B1`, correctly following the batch>=2
+  policy (own-B1, not the round champion anchor). No `job_ids` yet — builder
+  is live in worktree (`scratchpad/contract_smoke.log` <2 min old at scan
+  time), not yet a SLURM submission.
+- `s3_warp-B1` debugger (ALGO attempt 1, M9 hard-abort on pfc): quick
+  validation job `dbg1` (`66009323`) COMPLETED cleanly (00:02:34, p100,
+  3 datasets: pfc/helmholtz/allen_cahn) — upserted into the timing ledger.
+  Full 5-dataset job `dbg1b` (`66009547`) then ran to completion during
+  this walk (00:01:39, p100, exit 0) — SLURM-level COMPLETED, i.e. no hard
+  M9 abort this time. However, its printed diagnostics still show the
+  `pfc` fitter failing the normalEPE gate at every coarsening level (C4
+  0.391, C8 0.394, C16 0.393, vs 0.25 tol) — essentially unchanged from the
+  original abort — while helmholtz/allen_cahn/fisher_kpp/cahn_hilliard show
+  mixed PASS/FAIL. Flagging for the debugger/orchestrator: attempt-1's
+  candidate fix does not appear to have resolved the pfc gate failure on
+  this evidence; job completing without a hard-abort does not by itself
+  mean the fix worked (this script prints PASS/FAIL diagnostically rather
+  than sys.exiting).
+- `s6_local-B1` guard200 (`66005834`): still PENDING, unchanged since last
+  walk (H100 congestion).
+- `s4_hybrid_routing-B1`: unchanged, `analyzing`/`mechanism_analysis_running`,
+  `6_analysis` still null.
+- `s6_local-B1` mechanism analyzer: `reanalysis_progress` advanced
+  `turn_1` -> **`turn_2`** (`reanalysis_turn_2_results.md` written). Turn 2
+  supports M6 (win is mostly a single closed-form linear shift-invariant
+  filter on 3/4 winning datasets — the 72k ConvNeXt is 1.07-2.19x *worse*
+  than the closed-form filter on pfc/allen_cahn/cahn_hilliard), M7 (the
+  right headroom predictor is a held-out operator-fit rho, not the
+  pre-registration's statistical band-coherence), and M8 (zero-padded
+  boundary band dominates residual error on periodic datasets — flagged as
+  the highest-value batch-2 change). Turn 3 is live at scan time
+  (`turn3_defect_learnability.json` + `turn3_guard.log` written within the
+  last few seconds of this scan) — not yet reflected in
+  `reanalysis_progress`.
+- `s2_beyond_copy-B2` builder: still live (`contract_smoke.log` <2 min old
+  at scan time), no `built` transition yet this walk.
+- Timing ledger: upserted 1 new entry this walk (51 total, was 50) —
+  `s3_warp` / `s3_warp_oracle` seed-0 diagnostic-validation job `dbg1`
+  (`66009323`), 2.57 min on p100, datasets
+  [sharp__phase_field_crystal_2d, ext__helmholtz_2d, sharp__allen_cahn_2d].
+  Re-validated as parseable JSON after write (51 entries). `dbg1b`
+  (`66009547`, COMPLETED mid-walk) not yet upserted — will be picked up
+  next walk (kept this walk's ledger write to a single clean upsert
+  matched against the pre-walk job list).
+- No abandonment trigger: no stream has 3 consecutive skip/blocked
+  batches; no stream has reached 3 batches yet. `state/streams/` directory
+  still does not exist.
+- Transcript inbox: `state/transcripts/` still does not exist — nothing to
+  archive this walk.
+- Anchors: `state/anchors/*.json` unchanged (same 5 files, same
+  certified_utc 2026-07-29T14:28:45Z) — rendered verbatim into index.md, no
+  recomputation. Still no anchor files for `s3_warp`/`s6_local`/`s7_loss`
+  (expected, pre-analysis stage).
+- ADRs unchanged this walk: `docs/adr/0001`-`0012`, no new ADR since 0012
+  (s7_loss stream).
+- Gates unchanged: G1-G5 all carried-over PASS, no new gate activity this
+  window (`state/gates.md` mtime unchanged).
+- No card files modified by the maintainer this walk (`git status --short
+  experiment_cards/` shows external edits only —
+  `s1_poisson/batch_2/B2.json`, `s6_local/batch_1/B1.json`,
+  `s7_loss/batch_1/B1.json` modified, plus new untracked
+  `s5_tuning/batch_2/` — all from reviewer/analyzer/brainstormer/builder
+  agents, not the maintainer, which only read cards this walk).
+- index.md: regenerated (fresh timestamp; Streams table updated for
+  s1_poisson-B2 and s7_loss-B1 review verdicts + seed/screen job
+  submissions, s5_tuning-B2 card draft + anchor_reference correctness
+  note, s3_warp's dbg1/dbg1b debugger cycle including the still-open pfc
+  gate-failure flag, and s6_local's mechanism-analyzer turn-2 findings +
+  live turn-3; Running/pending jobs table now shows 3 PENDING r1- jobs
+  instead of 1; Flags rewritten around all of the above).
+## RUN END 2026-07-29T22:26:03Z

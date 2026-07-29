@@ -77,7 +77,7 @@ whichever mechanism the readouts favor.
 
 ## Eloise idea sweep (2026-07-29 evening): DINO / tabular FMs / diffusion
 
-- **DINO(LF field) as retrieval key**: seed for s2-B3 — one extra key arm in
+- **DINO(LF field) as retrieval key**: s2-B3 pre-registration to be informed by an IMMEDIATE non-card operator measurement on the B2 rig (pulled forward 2026-07-29 late); one extra key arm in
   the retrieval-floor screen (vs block-mean/S1/per-patch keys). Rationale:
   X is insufficient exactly where the LF field is informative (pfc
   realization identity); zoo already has DINO-conditioned families (check

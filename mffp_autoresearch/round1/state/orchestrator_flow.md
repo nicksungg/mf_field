@@ -1349,3 +1349,88 @@ failure mode). Recorded in operator notes; no new streams.
 
 The maintainer dispatched at the recovery pulse has not yet returned (no
 completion notification); single-in-flight honored, skipping this cycle.
+
+## Operator acceleration — TabPFN/DINO pulled forward — 2026-07-29T21:58Z
+
+Eloise challenged the batch-3 placement. Adjudication: arm-sized ideas stay
+inside owning streams (no new streams — agent throughput is the binding
+resource, and question-ownership keeps evidence clean), but both pull
+forward: TabPFN scale-from-X arm proposed to the MID-DESIGN s5-B2
+brainstormer (with an honest-ranking + territory-ruling instruction — it may
+legitimately exclude it); DINO retrieval key to be run as a NON-CARD operator
+measurement on s2-B2's pluggable-key rig as soon as its build lands (minutes;
+informs the s2-B3 pre-registration). Operator note updated accordingly.
+
+## s1-B2 review + submit — 2026-07-29T22:00Z
+
+Reviewer: SUGGEST / submit (6/6; sha pins, bit-for-bit B1 reproduction, and
+the --env trap all independently re-verified; card numerics proven
+data-derived). ANALYZER CAVEAT S1 recorded: level_scaler[64] == scaler_hf, so
+per_level ALSO removes a 42x stage-1/stage-2 unit discontinuity that shared
+and shared_reweight keep — the 5th arm does not cleanly isolate the two
+channels, and the card's "shared_reweight ≈ shared confirms B1 part 6" rule
+is unsound as written; use extra.normalization.ftgt_output_rms_sweep as the
+discriminator (F1/F2 clauses unaffected). Submitted seed 0 → job 66008912 (~6 min
+of H100 for all 5 arms). Stage → seed0_running.
+
+## s7-B1 review PASS + screen submit — 2026-07-29T22:02Z
+
+Code-reviewer: reviewed_PASS (first outright PASS of the round; every claim
+re-derived: shape+gain==rel² 2.1e-14 across 5 grids, band(β=1)==rel 3.6e-15,
+amp(λ=1) bit-identical, A-def 17-digit equality, all 5 promotion branches +
+DIVERGED + BLOCKED paths reproduced on synthetic dirs). Advisories recorded
+for my screen-read step: do NOT submit main run on gate-1 DIVERGED; validity
+gate fails OPEN if A-def panel missing (check it); screen omits --no_cache so
+~10 builder cache entries will serve (immaterial, coarse filter); a non-A1a
+promotion = logged amendment + re-review of the 01_train_eval.sh env edit.
+Screen submitted: job 66009306. Stage → screen_running.
+
+## Pulse — 2026-07-29T22:04Z
+
+pulse: no-op. Debugger's relaunch VISIBLE on cluster: r1-s3_warp-B1-dbg1
+(66009323) RUNNING — fix committed and resubmitted (agent's formal return
+pending). Three jobs queued (s1-B2 factorial, s6 guard200, s7 screen). Agents:
+s2-B2 builder, s5-B2 brainstormer, s4+s6 mechanism analyzers in flight.
+
+## Brainstormer return — s5_tuning-B2 — 2026-07-29T22:10Z
+
+SUCCESS / slot_filled (13/13). tuning_target_scaler: 5 arms (maxabs control /
+p995 / ZSCORE promoted / revin_lf / shared-AdaBN-contrary), one contract
+screen, promotion by design-time-measured rank (not screen scores). Design-
+time measurements that reordered the search's ranking: per-sample scaling =
+measured NO-OP on sharp sets (CV 0.0017-0.0099; RevIN conditional-shift
+caveat fired pre-GPU); ifc_poisson test has no LF (revin fallback); stage
+re-anchoring hypothesis retired arithmetically for sharp (scaler ratio
+0.985-1.0); the missing CENTRING term is the leverage axis (|mean|/sd 3.75
+fisher_kpp). TabPFN operator suggestion EXCLUDED with numbers (territory =
+architecture; dominated 8x by free LF statistic; no headroom where uniquely
+usable) — handed to s6/s4: amplitude anchors should read LF, not X. Dual
+comparison basis pre-registered to prevent B1's not_resolvable. Stage →
+starter_running; dispatching starter.
+
+## Pulse — 2026-07-29T22:14Z
+
+pulse: no-op. s3_warp debug chain progressing on-cluster: dbg1 COMPLETED
+(2m34s — likely a self-test validation job) and dbg1b now queued (full run).
+Four r1 jobs PENDING on H100 slots (evening congestion): s6 guard200, s1-B2
+factorial, s7 screen, s3_warp dbg1b. Agents: s2-B2 builder, s5-B2 starter,
+s4+s6 mechanism analyzers in flight.
+
+## Starter return — s5_tuning-B2 — 2026-07-29T22:14Z
+
+SUCCESS / drafted (17/17, no TBDs). Card at experiment_cards/s5_tuning/
+batch_2/B2.json. Starter correctly overrode my dispatch note: anchor_reference
+= "s5_tuning-B1" per the report + batch>=2 policy (my prompt said null —
+report wins, as designed). TabPFN exclusion preserved verbatim with auditable
+placement. Stage → builder_running; dispatching builder.
+
+## Pulse + s3_warp steer — 2026-07-29T22:25Z
+
+Maintainer catch: dbg1b validation shows pfc normal-EPE 0.39-0.44 at ALL
+coarsening levels (multi-scale did not crack it); script prints rather than
+aborts so COMPLETED != fixed. Debugger iterating (dbg1c queued). Steered it:
+gate untouchable; if dbg1c fails too, the honest resolution is a measurement-
+scope finding (run 4 passing datasets, mark pfc oracle-unmeasurable with
+evidence, note that periodic textures need a different fitter class) rather
+than endless forcing or gate-weakening. Other streams unchanged; 3 jobs still
+PENDING on H100 congestion.
