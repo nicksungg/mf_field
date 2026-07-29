@@ -2246,3 +2246,125 @@
   `66011195`→`66011522` and notes the new p100/H100 split; Completed/Flags rewritten
   around all of the above).
 ## RUN END 2026-07-29T23:23:00Z
+
+## RUN START 2026-07-29T23:36:00Z
+- `s4_hybrid_routing-B1`: mechanism registered this walk — `status` `analyzing` ->
+  **`complete`**, `reanalysis_progress` `turn_3` -> **`registered`**. `6_analysis`
+  and `7_gap_and_future` both now populated. Falsification verdict:
+  **CONFIRMED (NOT FALSIFIED)** — panel geomean skill 5.664889 (single seed) vs
+  anchor 6.703 [6.219, 7.102]; both conjuncts of the falsification clause are
+  false (`alpha > 0` on 2/4 sharp datasets, not >=4/5 needed; pfc and fisher_kpp
+  each beat the anchor by more than `min_claimable_effect` at seed 0). Mechanism
+  postmortem: the corrector's win is a **lossy re-derivation of copy-LF**
+  (correction cosine 0.54-0.83 with `copylf - base`, <=0.02 with the true fidelity
+  gap `hf - copylf`) — structural ceiling skill 1.0, attained 3.10-4.20; capacity
+  (1024-pt context vs dense LF) vs wrong-target (`hf - base_oof` vs `hf - copylf`)
+  are left as the two licensed batch-2 directions. Spatially-resolved routing —
+  the stream's founding premise — is **REFUSED**: priced at <=5.33% (often
+  negative) against every noise floor by this card's own new
+  `tools/routing_headroom.py`, independently corroborated by s6_local's
+  `trust_gate_headroom.py` from the opposite base. **2 tools promoted**:
+  `tools/correction_anatomy.py`, `tools/routing_headroom.py`. Card moved into
+  the dashboard's Completed cards table this walk. Batch 2 already advanced:
+  websearcher returned (5 iterations + report.md, `preempted-but-MF-composition-
+  open`, explicit "do not resurrect routing" instruction), brainstormer now
+  running (`state/s4_hybrid_routing/current_stage.txt` = `brainstormer_running`,
+  `current_batch.txt` = `2`).
+- `s3_warp-B1`: debugger's ALGO attempt 1 concluded this walk (debug_notes[0],
+  utc 2026-07-29T23:28Z), and a focused post-debug reviewer ruling (review_notes
+  attempt 2, `reviewed_suggest`, utc 2026-07-30T00:05Z per the review agent's own
+  clock) independently verified it. Root cause: the M9 self-test's
+  gradient-normal EPE statistic was ill-posed on `sharp__phase_field_crystal_2d`'s
+  flat interface mask (median \|grad u\| 2.1e-8 — the unweighted statistic was
+  projecting onto numerical noise, not signal, confirmed by three diagnostic
+  jobs `66009323`/`66009547`/`66010125` all returning bit-identical EPE across
+  lr, iteration count, and pyramid-warm-start variations), compounded by an
+  unattainable literal nRMSE threshold (the self-test's own pseudo-LF
+  construction imposes a double-bilinear-resample floor no optimiser can beat).
+  Fix at commit `b72f243`: (a) M9 now fits in the exactly-attainable direction
+  (moving=HF, target=pseudo-LF=warp(HF,d)), restoring the card's literal "<5% of
+  unwarped" clause in full force; (b) EPE is now \|grad u\|-evidence-weighted on
+  the unchanged interface mask (a legitimate statistic correction, not
+  gate-softening — verified: weighted vs unweighted agree to <=2e-4 wherever the
+  mask has real gradient support). Both changes independently ruled
+  faithful-to-intent by the reviewer (re-derived the exact-planted-phi floor
+  values outside the family and reproduced them to all committed digits). All
+  five panel datasets now pass the fixed M9 self-test with 3.7x-1600x margin.
+  Pipeline relaunched as job `66011595` (PENDING); `verify2` (`66011195`) and
+  `verify3` (`66011522`) — the debugger's earlier CPU-side probes — both
+  resolved **CANCELLED+** this walk, superseded by the fixed relaunch. Card
+  `status` remains `running` (correct per the reviewer's own note — job
+  `66011595` is live) and `job_ids` was updated by the debugger itself to include
+  `66011595` (no maintainer edit). One mandatory carry-forward for the future
+  analyzer (P-4, review attempt 2): the EPE leg alone is weak on its own — a
+  wired-in 5-iteration broken-optimiser control passes the weighted-EPE leg on
+  5/5 datasets — so the gate's real teeth come from the AND-composite with the
+  nRMSE leg (10-200x margin against every sabotage variant tested); report it
+  that way, not as "EPE alone proves a correct fit."
+- `s2_beyond_copy-B2`: builder and code-reviewer both concluded this walk. Card
+  `status` `built` (already recorded pre-scan-window build, commit `5bf0e86`,
+  new family `models_r1/s2_lf_residual_control`) -> **`reviewed_suggest`**
+  (attempt 1, utc 2026-07-30T00:20Z per the reviewer's clock; F1-F4
+  SUGGEST/NOTE findings, no FAIL; green-light conditions: submit the screen job
+  first, then promote `lf_resid_fno` regardless of the screen's mechanical
+  recommendation unless an actual crash/NaN fires, since a healthy rank-1 arm at
+  ratio >1.5x the hybrid can spuriously crater ALL three learned arms under
+  the card's literal wording). Per those conditions the screen job
+  `66011965` (`r1-s2_beyond_copy-B2-screen`) was dispatched and is now PENDING
+  (Priority) on H100. `state/s2_beyond_copy/current_stage.txt` now reads
+  `screen_running (job 66011965)`.
+- `s5_tuning-B2`: builder concluded this walk. Card `status` `drafted` ->
+  **`built`** (commit `a55c788`, family `models_r1/mf_fno_transfer_film_scaler`,
+  the champion's per-stage target scaler made env-switchable across
+  `{maxabs,p995,zscore,revin_lf,shared}`, primary/promoted arm pre-registered as
+  `zscore`). `build_notes` records the default-equivalence proof
+  (`maxabs`/env-unset identical to the untouched factory family to the last
+  digit on ifc_poisson and fluid), a resume drill with cross-arm checkpoint
+  rejection, and the round-wide `--env` single-flag trap defended via
+  `check_knob_provenance.py`. Code review is now in flight
+  (`state/s5_tuning/current_stage.txt` = `review_running`; `review_notes` still
+  empty at scan time — no verdict yet). `job_ids` still empty (no SLURM job
+  submitted for this card yet).
+- `s6_local-B2`: no delta this walk — still `drafted`, builder still in
+  progress (`builder_running`, unchanged since it was born last walk at
+  ~23:14-23:15Z). `s6_local-B1`'s `guard_flags: MISSING_200EP_GUARD` unchanged,
+  job `66005834` still PENDING.
+- `s1_poisson-B2` (`66008912`) and `s7_loss-B1` (`66009306`): both still
+  PENDING on H100, unchanged since last walk.
+- New non-card artifact noted for completeness:
+  `docs/operator_notes/2026-07-30-dino-key-measurement.md` — an
+  operator-authorized, explicitly `NON-REPORTABLE`/`ref_*`-only measurement of a
+  DINOv2-embedding retrieval key against the s2 zero-parameter copy-LF+kNN rule
+  (same B1/B2 rule, only the retrieval key changed; seam checks against
+  `copylf_baselines.json` and batch-1 F6 both reproduce exactly). Not a card, not
+  leaderboard-eligible; recorded here only because it landed in `docs/` and is
+  new since last walk. No maintainer action required.
+- Timing ledger: no new COMPLETED r1- jobs since last walk (the two new SLURM
+  jobs this walk, `66011595` and `66011965`, are both freshly PENDING with no
+  elapsed time). Ledger unchanged at 53 entries; re-validated as parseable JSON,
+  no write needed this walk.
+- No abandonment trigger: no stream has 3 consecutive skip/blocked batches; no
+  stream has reached 3 batches yet (`s4_hybrid_routing` just opened batch 2).
+  `state/streams/` directory still does not exist.
+- Transcript inbox: `state/transcripts/` still does not exist — nothing to
+  archive this walk.
+- Anchors: `state/anchors/*.json` unchanged (same 5 files, same certified_utc
+  2026-07-29T14:28:45Z) — rendered verbatim into index.md, no recomputation.
+- ADRs unchanged this walk: `docs/adr/0001`-`0012`, no new ADR since 0012
+  (s7_loss stream).
+- Gates unchanged: G1-G5 all carried-over PASS, no new gate activity this
+  window (`state/gates.md` mtime unchanged).
+- No card files modified by the maintainer this walk. `git status --short
+  experiment_cards/` shows only other agents' writes this walk
+  (`s2_beyond_copy/batch_2/B2.json` by the builder+reviewer,
+  `s3_warp/batch_1/B1.json` by the debugger+reviewer,
+  `s5_tuning/batch_2/B2.json` by the builder) — none by the maintainer, which
+  only reads cards.
+- index.md: regenerated (fresh timestamp; Streams table updated for
+  s2_beyond_copy's built->reviewed_suggest transition + new screen job,
+  s3_warp's debug-conclude/relaunch cycle, s4_hybrid_routing's mechanism
+  registration + move to Completed cards + batch-2 start, and s5_tuning's
+  built transition; Running/pending jobs table swaps `66011522`
+  (cancelled)->`66011595` and adds `66011965`; Completed/Flags rewritten around
+  all of the above).
+## RUN END 2026-07-29T23:41:02Z

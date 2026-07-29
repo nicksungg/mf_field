@@ -258,3 +258,200 @@ resubmission rather than a restart from zero. Not a finding; a watch item.
 - [x] `bash -n` actually run on both scripts (`OK scripts/01_train_eval.sh`, `OK scripts/submit.sh`)
 - [x] Deviation (b)'s unattainability claim independently reproduced, not accepted on prose
 - [x] No code or script modified by this review
+
+---
+
+# Post-debug ruling — s3_warp-B1, debug attempt 1 (commit `b72f243`)
+
+**Scope**: focused ruling on the two M9 gate-statistic changes + three spot-checks.
+Not a re-review of the build (attempt-1 SUGGEST above stands).
+**Reviewer**: code-reviewer, 2026-07-29. **Diff reviewed**: `4799abd..b72f243`
+(`models_r1/s3_warp_oracle/{smoke_eval.py,warp_core.py}` + notes/scratchpad).
+**Overall verdict: SUGGEST — do NOT scancel job 66011595.** Neither change is a
+FAIL. One record correction is mandatory before the analyzer quotes M9.
+
+| # | Change | Verdict |
+|---|--------|---------|
+| 1 | M9 registers in the exactly-attainable direction | **PASS** (faithful *and* stricter) |
+| 2 | Evidence-weighted (\|grad u\|) EPE mean | **SUGGEST** (legitimate correction; the claimed *runtime* teeth do not cover the EPE leg) |
+| 3 | float64 reported field in `fit_ladder` | **PASS** (fit path verified bit-identical) |
+| 4 | No locked-field edits | **PASS** (3 removed lines, all mechanics) |
+| 5 | Stale-artifact quarantine | **PASS** (complete; one structural caveat) |
+
+## 1. Fit direction — PASS (faithful, and stricter on both legs)
+
+More literal than the code it replaces, not less. The card says "*apply a known
+smooth random displacement to HF to synthesise a pseudo-LF … the fitter must
+**recover it***". `smoke_eval.py:311` now measures `endpoint_error(phi_fit, d_np)`
+— against `d` **itself**, the card's noun. The legacy code measured against the
+fixed-point inverse `phi(x) = -d(x+phi(x))`, i.e. against a quantity the card
+never names. On the nRMSE leg the threshold tightens from
+`max(0.05·unwarped, 1.5·exact)` ≈ **0.15–0.27 of unwarped** to the card's literal
+**0.05**, because the exact-`d` floor is now 0 by construction
+(`gt_field = warp(hf64, d, base64)` is bit-identical to the synthesis, so
+`gt_nrmse ≡ 0` and the amendment's slack term is provably inert). Verified in
+evidence, not prose — job **66010125** (`dbg1c`) covers **all five** panel
+datasets in the new direction with a faithful independent replica of the
+implemented statistic (`diagnose_attempt_1c.py:110–112` computes
+`(g[iface]*en[iface]).sum()/g[iface].sum()` over the same `dist==0.0` mask, same
+`np.gradient`, same planted seed `0+90210`, same `d_np` target):
+
+```
+fitter (400 it, lr 0.02), new direction, literal 5% clause:
+  pfc          nRMSE 3.12e-06 = 0.00011 unw  PASS   weighted EPE 0.0000
+  helmholtz    nRMSE 1.31e-04 = 0.00274 unw  PASS   weighted EPE 0.0027
+  allen_cahn   nRMSE 1.50e-05 = 0.00136 unw  PASS   weighted EPE 0.0003
+  fisher_kpp   nRMSE 1.56e-06 = 0.00003 unw  PASS   weighted EPE 0.0000
+  cahn_hilliard nRMSE 5.42e-04 = 0.01366 unw PASS   weighted EPE 0.0014
+```
+Margin 3.7×–1600× under the literal clause, versus 2× under the amended gate
+pre-debug. Corroborated end-to-end: job **66010795** cleared pfc's M9 self-test
+and aborted only later, at the (then-unfixed) seam assert. The legacy lossy
+direction is still fitted and recorded non-gating with the
+`legacy_target_is_not_the_argmin` certificate, so diagnostic coverage is not lost.
+
+Carry-forwards (analyzer, non-blocking):
+- **P-1.** M9 now exercises `moving = HF (sharp), target = pseudo-LF (attainable)`,
+  whereas production fits `moving = LF (blurred), target = HF (unattainable)`.
+  M9 therefore certifies the optimiser machinery **and identifiability**, not the
+  conditioning of the production fit. Say so; do not over-claim.
+- **P-2.** `unwarped` flipped argument order (`smoke_eval.py:335`,
+  `nrmse(hf_flat, lf_np)`), so the ratio's denominator is now `‖pseudo_LF‖`, not
+  `‖HF‖`. Direction-consistent and correct, but `nrmse_fraction_of_unwarped` is
+  **not** comparable to the pre-debug field of the same name.
+- **P-3.** The 2026-07-29T19:55Z operator amendment is now inert by construction.
+  The record would read cleanest with a one-line operator addendum saying the fix
+  restored the literal clause. Locked field; not touched.
+
+## 2. Evidence weighting — SUGGEST (legitimate correction of an ill-posed statistic; but the *runtime* control does not give the EPE leg teeth)
+
+**The correction is legitimate, and I am not ruling it a softening.**
+Three independent reasons:
+
+(a) *The statistic it replaces is genuinely undefined on pfc.* `warp_core.py:337`
+normalises the normal by `gn + 1e-12`; on pfc's s2 mask the median `|grad u|` is
+**2.1e-8** against a field-wide gradient RMS of **4.55e-2** — six orders of
+magnitude. `n` there is the direction of numerical noise, so `|e·n|` is a
+projection of an arbitrary vector onto an arbitrary direction. The fitter
+reproduces the target to **1.1e-4 of unwarped** while the unweighted mask mean
+sits at **0.3913**. An unweighted gate would abort a fitter that solved the
+problem to five digits: the exact inverse of M9's stated purpose.
+
+(b) *It is a no-op where the mask has support.* Support share of the interface
+mask: allen_cahn 99.1%, fisher_kpp 100.0%, cahn_hilliard 100.0%. On those three
+the weighted and unweighted values agree to ≤2e-4 (0.0003/0.0005, 0.0000/0.0000,
+0.0014/0.0014). The change only bites on pfc (12.4%) and helmholtz (51.8%) —
+i.e. exactly where the statistic is ill-posed. That is a targeted repair, not a
+global loosening.
+
+(c) *It is the physically correct unit.* A normal error `e` at gradient `g`
+perturbs the field by `g·e`; `Σg·e/Σg` is the mean field perturbation per unit
+gradient, scale-invariant in `u`, and is the statistic that couples to the nRMSE
+leg. Mask, tolerance (0.25) and the hard `WarpHardStop` are untouched, and the
+unweighted literal plus a support-masked variant are both recorded.
+
+**However, the "runtime proof of teeth" claim does not survive checking, and this
+is the reason for SUGGEST rather than PASS.** The implemented control is
+`SELFTEST_SABOTAGE_ITERS = 5` (`smoke_eval.py:73`, fitted at `:355–360`). Job
+66010125 measured that exact configuration on all five datasets:
+
+```
+[sab 5it] weighted EPE / nRMSE-of-unwarped   (gate: EPE < 0.25 AND nRMSE < 0.05)
+  pfc           0.2276  PASSES EPE leg   |  0.60014  fails nRMSE leg
+  helmholtz     0.2107  PASSES EPE leg   |  0.56725  fails nRMSE leg
+  allen_cahn    0.2043  PASSES EPE leg   |  0.61819  fails nRMSE leg
+  fisher_kpp    0.2123  PASSES EPE leg   |  0.62341  fails nRMSE leg
+  cahn_hilliard 0.1760  PASSES EPE leg   |  0.52593  fails nRMSE leg
+```
+
+So on **5/5 datasets the wired-in control fails only the nRMSE leg**. The
+0.33–0.35 figures quoted in the handoff and in `debug_notes[0].verification`
+belong to a **different, unimplemented** sabotage (`sab lr1e-4`, i.e. lr/200),
+which does fail the weighted EPE leg on all five. The runtime assert
+(`sab_passes` at `:368–370`) tests the *composite* conjunction, so it is
+satisfied by the nRMSE leg alone and certifies nothing about the EPE leg.
+
+Why this is still not a FAIL: the gate is an **AND**, so a weak leg cannot let a
+broken fitter through — total strictness is bounded below by the nRMSE leg, which
+is now the literal 5% clause with a 10–20× violation by every sabotage variant
+and a 3.7–1600× margin for the real fitter. The composite is *stronger* than
+pre-debug. Note also that the EPE leg's weakness is largely **inherited, not
+introduced**: `SELFTEST_AMPLITUDE = 2.0` is a *peak* displacement whose mean
+normal projection over the mask is only ~0.2 cells, so the *unweighted* 5-iter
+control already passed 0.25 on 3/5 datasets (0.1927, 0.2094, 0.1766). Weighting
+flips 2 more (pfc 0.4195→0.2276, helmholtz 0.2886→0.2107).
+
+Required actions (do not block the running job):
+- **P-4 (mandatory, analyzer).** State that M9's operative teeth are the **nRMSE
+  leg**; do not report "the 0.25-cell EPE gate certified the fit". Read
+  `M9_selftest.broken_optimiser_control.epe_normal_interface_mask_weighted_mean`
+  per dataset from the sidecar and record that it is < 0.25 (the control does not
+  exercise that leg). Cite job 66010125.
+- **P-5 (record accuracy).** `debug_notes[0].verification` and the handoff
+  attribute the 0.33–0.35 teeth evidence to the implemented control. It belongs
+  to the lr/200 variant. The analyzer should correct this when quoting M9.
+- **P-6 (future warp card, one line).** Make the control the lr/200 fit
+  (`sab_cfg["lr"] = cfg["lr"] / 200`) instead of / in addition to `iters = 5`, or
+  raise `SELFTEST_AMPLITUDE` so the planted signal exceeds the tolerance in the
+  gating statistic. Not worth a rebuild now.
+
+## 3. float64 reported field — PASS (fit path verified untouched)
+
+The bug was real and load-bearing, not cosmetic: job 66010795 aborted with
+`rung-0 nRMSE from the ladder (0.04478044967257278) disagrees with the M0 seam
+computation (0.04478044719481978)` — |Δ| = 2.48e-9 against a 1e-9 tolerance, on a
+p100. The fix (`smoke_eval.py:184–186`) inverts the cast order only:
+
+```python
+lf64 = torch.as_tensor(lf_np[start:stop], dtype=torch.float64, device=device).view(...)
+lf32 = lf64.float()                      # was: lf32 = as_tensor(..., float32); lf64 = lf32.double()
+```
+
+Fit path **is** bit-identical: `lf64.float()` and `as_tensor(lf_np, dtype=float32)`
+are the same single IEEE round-to-nearest of the same source value for a float32
+or float64 `lf_np` (float32 → float64 → float32 round-trips exactly). `grep`
+confirms the optimiser sees only `lf32` (`:196 wc.objective(lf32, …)`,
+`:204 wc.fit(lf32, …)`); `lf64` is consumed at exactly one site, `:220`, the
+reported field. `hf32`/`hf_sq` unchanged. `py_compile` clean on both files.
+
+## 4. Locked fields — PASS
+
+Card diff since the review contains exactly three removed lines:
+`"status": "reviewed_suggest"`, the single-element `job_ids` line, and
+`"debug_notes": []`. Additions are `status: running`, one `job_ids` entry, one
+`debug_notes` entry. All mechanics; every locked field, `recipe`, `build_notes`,
+`review_notes` and `operator_amendments` byte-identical. No recipe knob touched
+(`01_train_eval.sh` unchanged; `bash -n` clean on both scripts).
+
+## 5. Stale-artifact quarantine — PASS, with a structural caveat
+
+`.../outputs/round1/s3_warp/B1/eval/results/` is **empty**; every pre-fix
+artifact sits under `eval/stale_pre_debug1/` (helmholtz `last.pt` + sidecar +
+`_e0_s0.json`, and an empty pfc ckpt dir). `find -name last.pt | grep -v
+stale_pre_debug1` → none. `score_panel` rebuilds
+`_results_dir()/s3_warp_oracle/ckpt_<ds>_e0_s0` (`score_panel.py:85–88`) inside
+the emptied tree, always invokes `smoke_eval.py`, and the job passes `--no_cache`
+so the 155-entry shared cache is not read (its key covers the code hash anyway).
+Nothing pre-fix can short-circuit resume.
+
+- **P-7 (structural, future cards).** The resume guard (`smoke_eval.py:641–645`)
+  keys on dataset + epochs + `nrmse_def_hash` + `env` + sidecar existence but
+  **not** on a code hash. After any code change, correctness of a relaunch
+  depends entirely on the manual quarantine done here. Add `code_hash` to the
+  `last.pt` marker in a future family.
+- **P-8 (informational).** `warp_core.normal_tangential_error` now returns a
+  5-tuple; the committed `scratchpad/diagnose_attempt_1{,b,c}.py` unpack 4 and
+  will raise on re-run at `b72f243`. They ran against the pre-change module and
+  compute the weighted statistic independently — which is *better* evidence, but
+  the analyzer should not expect them to re-execute as committed.
+
+## Checklist
+
+- [x] `bash -n` re-run on both scripts (`OK scripts/01_train_eval.sh`, `OK scripts/submit.sh`); `py_compile` OK on both changed modules
+- [x] Teeth claim independently checked against the raw log of job 66010125, not accepted on prose — and found to be misattributed (P-5)
+- [x] Exact-direction claim (floor 0, literal 5% restored) verified on all five datasets
+- [x] Fit-path bit-identity of the float64 change verified by grep + cast analysis
+- [x] Quarantine verified by `find`; `eval/results/` empty
+- [x] Locked fields verified via removed-line audit of the card diff
+- [x] No code, script or locked field modified by this review
+- [x] Card `status` left at `running` (job 66011595 is live; a `reviewed_*` value would corrupt the run-state machine). Ruling recorded here and appended to `review_notes[]`.

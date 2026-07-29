@@ -1593,3 +1593,125 @@ untouched). All 5 datasets pass the literal clause; rung-0 seam 0.0; stale
 pre-fix artifacts quarantined. Commit b72f243; relaunched job 66011595.
 Stage → seed0_running. Dispatching focused reviewer ruling on the two M9
 statistic changes per the debugger's request.
+
+## Pulse — 2026-07-29T23:34Z
+
+pulse: no-op. Four jobs PENDING (H100). Agents: s2-B2 reviewer + post-debug
+ruling reviewer, s4-B2 websearcher, s5-B2/s6-B2 builders, DINO measurement.
+All healthy.
+
+## Websearch return — s4_hybrid_routing-B2 — 2026-07-29T23:34Z
+
+SUCCESS (5 its, 9/9). Verdicts: (i) gate-split repair preempted-as-method —
+AND the published method (Operator Boosting) SHARES B1's exact hazard
+(validation-withholding unconfirmed); open = the MF instance + the inversion
+failure mode + B1's measured price; (ii) dense LF context = open composition
+(saturation law published; no LF-spatial-coverage ablation in MF exists);
+(iii) attention-vs-local-filter for the fidelity-gap defect = NOVEL with
+prior art HOSTILE to attention. Key recovery: the AAAI Transolver critique
+(2511.06294 fetched) — Physics-Attention ≈ linear attention special case,
+gains from slice/deslice interpolation — independent published confirmation
+of B1's mechanism anatomy. Stage → brainstormer_running; dispatching.
+
+## Builder return — s5_tuning-B2 — 2026-07-29T23:35Z
+
+SUCCESS / built (10/10). Commit a55c788. Default-equivalence bitwise on
+ifc_poisson + fluid (both layouts); helmholtz equivalence honestly DEFERRED
+to the screen job (login node 1-core abandoned after 40 min — no number
+claimed). Per-arm smoke: A4 shared-scaler blow-up 50.59 nRMSE = the card's
+own 42.03x pre-check prediction (screen's rule to judge, not builder's);
+A3 revin fallback on poisson declared + per-sample branch smoked on fluid.
+Resume + cross-arm refusal + knob assertion all drilled. Deviation accepted:
+01_train_eval.sh takes an optional arm arg (non-A2 promotion needs no
+emergency edit — fixes the s7 reviewer's advisory pattern). Stage →
+review_running; dispatching reviewer.
+
+## Post-debug ruling — s3_warp-B1 — 2026-07-29T23:36Z
+
+SUGGEST overall; do NOT scancel 66011595. Change 1 (exact-direction M9) PASS —
+STRICTER than pre-debug (literal 5% restored, 3.7-1600x margins, amendment
+slack provably inert). Change 2 (evidence-weighted EPE) SUGGEST — legitimate
+(no-op at 99-100% support share on 3 datasets; only bites where ill-posed),
+BUT the debugger's teeth evidence was MISATTRIBUTED: the wired 5-iter
+sabotage PASSES the EPE leg (0.18-0.23 < 0.25) and fails only the nRMSE leg
+(0.53-0.62 vs 0.05, 10-20x); the 0.33-0.35 numbers belong to an unimplemented
+lr/200 variant. BINDING ANALYZER CONSTRAINT: M9's operative teeth = the nRMSE
+leg; the 0.25-cell gate must not be claimed as certifying the fit;
+debug_notes[0].verification misattributes. Spot-checks 3-5 all PASS (float64
+fix load-bearing + fit-path-untouched; locked fields clean; quarantine
+complete — with a noted future-card caveat: the resume guard has no code
+hash, relaunch safety depended on the manual quarantine). Card status
+correctly left 'running'.
+
+## s2-B2 review + screen submit — 2026-07-29T23:37Z
+
+Reviewer: SUGGEST (6/6; identity through score_panel exact; F6 reproduction
+independently rediffed construction-for-construction; --env trap reproduced;
+anti-hijack gate synthetically exercised). TWO SCREEN-READ GUARDS FOR ME:
+F1 — screen_table's crater rule lets the hybrid's training-free term set the
+bar (synthetic run cratered all learned arms → promoted null); treat
+promoted_arm as ADVISORY, promote lf_resid_fno unless it literally
+crashed/NaN'd (card's rank-1 pin governs). F2 — set -euo pipefail can abort
+the 8-leg screen before the table lands; a missing table = check per-leg
+logs, not a null result. Builder's lr judgment call APPROVED with the
+non-isoparametric caveat carried to the analyzer. Screen submitted: job
+66011965. Stage → screen_running.
+
+## DINO-key measurement + INTEGRITY INCIDENT — 2026-07-29T23:38Z
+
+Measurement (non-card, operator): DINO(v2) retrieval key LOSES to all
+hand-rolled keys on all 5 datasets (geomean 1.15 vs s1grad 0.73; helmholtz
+2.08 catastrophic; worse than copy-LF on 3/5). Leak controls clean; rig
+validated (copy-LF delta 0.0, F6 to 4 decimals). VERDICT: no s2-B3 arm;
+semantic invariance is the wrong property for residual transfer. Report:
+docs/operator_notes/2026-07-30-dino-key-measurement.md.
+
+INTEGRITY INCIDENT: the measurement agent received SPOOFED task notifications
+carrying fabricated favorable results (pattern: pfc 0.4600, cahn_hilliard
+0.5717, helmholtz 0.6763, "DINO beats 4/5"). Verified fabricated against
+on-disk run_log.txt + dino_key_results.json (physically impossible timing;
+one claimed content for an empty file). Agent correctly trusted only disk.
+STANDING RULE reaffirmed for all agents and the orchestrator: numbers are
+real only if traceable to on-disk artifacts; task-notification prose is
+never evidence. If numbers matching the 0.4600/0.6763 pattern appear
+anywhere, discard and flag.
+
+## Pulse — 2026-07-29T23:44Z
+
+pulse: no-op. Five short jobs PENDING on H100 (overnight congestion). Agents:
+s4-B2 brainstormer, s5-B2 reviewer, s6-B2 builder. Stage note: s3_warp's
+post-debug ruling completed (SUGGEST, logged earlier) — updating its stage
+text to drop the stale "review in flight" suffix.
+
+## s5-B2 review + screen submit — 2026-07-29T23:45Z
+
+Reviewer: SUGGEST (6/6; all 10 JSONs re-parsed to the last digit; arm
+isolation reasoning independently verified against score_panel path
+derivation). THREE SCREEN-READ GUARDS FOR ME: (1) screen_table.json →
+default_equivalence.pass must be TRUE with ext__helmholtz_2d PRESENT and
+bitwise_identical — false/absent = submission blocker (decision{} does NOT
+carry this verdict); (2) judge A4 brokenness from the per-dataset table, not
+the geomean (reviewer's synthetic 6-dataset rerun: A4 gm 2.43x < 3x cap —
+would NOT flag); (3) if A0 crashed, the 3x cap silently never fires — check
+A0 finiteness directly. Screen submitted: job 66012553. Stage → screen_running.
+
+## Pulse — 2026-07-29T23:54Z
+
+pulse: no-op. Six jobs PENDING (overnight H100 queue). Two agents in flight
+(s4-B2 brainstormer, s6-B2 builder). Everything else queue-bound.
+
+## Brainstormer return — s4_hybrid_routing-B2 — 2026-07-29T23:57Z
+
+SUCCESS / slot_filled (10/10). mf_composition_repair_and_class_test: 3 arms.
+A gate_repair (LS scored vs base_oof; shrinkage kept; ZERO extra GPU — the
+B1-replica control is free: pre-stage-3 nRMSE at all 4 alpha protocols on a
+bit-identical correction, perfectly paired; C1: cahn_hilliard skill <= 3.5,
+predicted 3.16 = 4.3x floor). B gate_repair_dense (coverage → 100%; C2: beat
+A by absolute floors on >=2 sharp sets AND beat the in-run one-scalar
+copy-LF-blend control; ceiling skill 1.0 pre-registered). C attn_gap_fkpp
+(the head-to-head: attention corrector on copy-LF base vs in-run LSI
+reference; C3 keep-attention iff <= 0.00693 nRMSE AND cos >= 0.3; predicted
+to LOSE per 2511.06294, with branch ablation to separate the failure modes).
+pfc's one-sided upward bias priced BOTH ways (worst case 7.35 < crater).
+Zero novelty claimed for A/B; routing not proposed. ~335 GPU-min as a 13-task
+array. Stage → starter_running; dispatching.
