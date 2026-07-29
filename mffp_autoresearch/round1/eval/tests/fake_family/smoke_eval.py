@@ -22,11 +22,21 @@ def main():
     os.makedirs(args.ckpt_dir, exist_ok=True)
     value = float(os.environ.get("FAKE_NRMSE", "0.5"))
     mode = os.environ.get("FAKE_BREAK", "")
+    shape = os.environ.get("FAKE_MODE", "")
+
+    if shape == "factory_style":
+        # mimic data_adapters.metrics.finalize_and_write output
+        splits = {"test_hf": {"nRMSE": 0.9, "rel_l2_mean": 0.3,
+                              "rel_l2_per_sample": [0.2, 0.4], "n_samples": 2}}
+    elif shape == "ood_only":
+        splits = {"ood_l4": {"nRMSE": value}}
+    else:
+        splits = {"test": {"nRMSE": value}}
 
     result = {
         "model": "fake_family",
         "dataset": args.dataset_name,
-        "splits": {"test": {"nRMSE": value}},
+        "splits": splits,
     }
     if mode == "missing_key":
         del result["splits"]["test"]["nRMSE"]

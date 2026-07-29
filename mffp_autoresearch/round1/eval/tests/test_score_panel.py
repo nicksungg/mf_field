@@ -74,3 +74,29 @@ def test_contract_violations_raise(isolated_dirs, mode):
 def test_unknown_dataset_raises(isolated_dirs):
     with pytest.raises(ScoreContractError):
         score_family(FAKE, ["not_a_dataset"], epochs=2, seed=0)
+
+
+def test_test_hf_split_with_per_sample_array_preferred(isolated_dirs):
+    # Factory families (via data_adapters.metrics.finalize_and_write) emit
+    # splits.test_hf with BOTH an aggregate ratio-of-sums nRMSE and the
+    # per-sample rel-L2 array. The round's definition is the per-sample MEAN,
+    # so the array must win over the aggregate.
+    res = score_family(FAKE, DS2[:1], epochs=2, seed=0,
+                       env={"FAKE_MODE": "factory_style"})
+    entry = res["per_dataset"][DS2[0]]
+    assert entry["nRMSE"] == pytest.approx(0.3)  # mean([0.2, 0.4]), NOT 0.9
+    assert entry["metric_source"] == "per_sample_mean"
+    assert entry["split"] == "test_hf"
+
+
+def test_plain_test_split_falls_back_to_reported_nrmse(isolated_dirs):
+    res = score_family(FAKE, DS2[:1], epochs=2, seed=0)
+    entry = res["per_dataset"][DS2[0]]
+    assert entry["metric_source"] == "reported_nRMSE"
+    assert entry["split"] == "test"
+
+
+def test_no_test_split_raises(isolated_dirs):
+    with pytest.raises(ScoreContractError):
+        score_family(FAKE, DS2[:1], epochs=2, seed=0,
+                     env={"FAKE_MODE": "ood_only"})

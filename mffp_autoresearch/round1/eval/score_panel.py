@@ -115,16 +115,55 @@ def _run_one(family_dir: Path, dataset: str, epochs: int, seed: int, env: dict) 
         raise ScoreContractError(
             f"result JSON reports dataset {result.get('dataset')!r}, requested {dataset!r}"
         )
-    try:
-        value = result["splits"]["test"]["nRMSE"]
-    except (KeyError, TypeError):
+    return _extract_test_metric(result, dataset)
+
+
+def _extract_test_metric(result: dict, dataset: str) -> tuple:
+    """Return (value, split_name, metric_source) for the primary TEST split.
+
+    The factory contract allows any split names (test_hf, test_l4, ...). We
+    select the test split by preference and — the round's ONE definition —
+    prefer the per-sample rel-L2 array (mean of per-sample ratios) over the
+    backward-compat aggregate ratio-of-sums `nRMSE`.
+    """
+    splits = result.get("splits")
+    if not isinstance(splits, dict) or not splits:
+        raise ScoreContractError(f"result JSON has no splits for {dataset}")
+    test_keys = [k for k in splits if k == "test" or k.startswith("test_")]
+    if not test_keys:
         raise ScoreContractError(
-            f"result JSON missing splits.test.nRMSE for {dataset}: keys={list(result)}"
+            f"no test split in result JSON for {dataset}: splits={sorted(splits)}"
         )
-    value = float(value)
+    for preferred in ("test_hf", "test"):
+        if preferred in test_keys:
+            split = preferred
+            break
+    else:
+        if len(test_keys) > 1:
+            raise ScoreContractError(
+                f"ambiguous test splits for {dataset}: {sorted(test_keys)}"
+            )
+        split = test_keys[0]
+    entry = splits[split]
+
+    per_sample = entry.get("rel_l2_per_sample")
+    if per_sample:
+        vals = [float(x) for x in per_sample]
+        if not all(math.isfinite(v) for v in vals):
+            raise ScoreContractError(f"non-finite per-sample rel-L2 for {dataset}")
+        return sum(vals) / len(vals), split, "per_sample_mean"
+    if "rel_l2_mean" in entry:
+        value, source = float(entry["rel_l2_mean"]), "rel_l2_mean"
+    elif "nRMSE" in entry:
+        value, source = float(entry["nRMSE"]), "reported_nRMSE"
+    else:
+        raise ScoreContractError(
+            f"test split {split!r} for {dataset} has neither rel_l2_per_sample, "
+            f"rel_l2_mean, nor nRMSE: keys={sorted(entry)}"
+        )
     if not math.isfinite(value):
-        raise ScoreContractError(f"non-finite test nRMSE for {dataset}: {value}")
-    return value
+        raise ScoreContractError(f"non-finite test metric for {dataset}: {value}")
+    return value, split, source
 
 
 def score_family(family_dir, datasets, epochs: int, seed: int, env: dict = None,
@@ -151,12 +190,16 @@ def score_family(family_dir, datasets, epochs: int, seed: int, env: dict = None,
                 raise ScoreContractError(
                     f"cache entry for {ds} was computed under a different nRMSE definition"
                 )
-            value, cached = entry["nRMSE"], True
+            value, split, source, cached = (
+                entry["nRMSE"], entry["split"], entry["metric_source"], True
+            )
         else:
-            value, cached = _run_one(family_dir, ds, epochs, seed, env or {}), False
+            value, split, source = _run_one(family_dir, ds, epochs, seed, env or {})
+            cached = False
             with open(cache_file, "w") as f:
                 json.dump(
-                    {"nRMSE": value, "dataset": ds, "epochs": epochs, "seed": seed,
+                    {"nRMSE": value, "split": split, "metric_source": source,
+                     "dataset": ds, "epochs": epochs, "seed": seed,
                      "family": family_dir.name, "nrmse_def_hash": NRMSE_DEF_HASH,
                      "env": env or {}},
                     f,
@@ -166,6 +209,8 @@ def score_family(family_dir, datasets, epochs: int, seed: int, env: dict = None,
             "nRMSE": value,
             "skill": value / ref,
             "reference_type": baselines[ds]["reference_type"],
+            "split": split,
+            "metric_source": source,
             "cached": cached,
         }
 
