@@ -314,3 +314,83 @@ s4 builder_running, s5 seed0_running.
 Codified for batch >= 2 model cards with design freedom (diagnostics and
 pre-directed slots exempt). Batch-2 brainstormer dispatches will cite it.
 Batch 1 unaffected (cards locked, builds in flight).
+
+## Pulse — 2026-07-29T16:34Z
+
+pulse: no-op. Four builders in flight (s1-s4); s5 seed 0 RUNNING 15 min on
+hpc-33-16 (score_panel caches per dataset as it finishes; panel JSON lands at
+end); recert 65988186 still PENDING. G4 PASS recorded last pulse; next
+advances fire on builder returns (→ reviewers → seed-0 submits).
+
+## ADR 0004 clarification — 2026-07-29T16:37Z
+
+Eloise confirmed: top-3 selection fires once at round end (after ~3-4 batches/
+stream, all streams terminal or operator call), over the cumulative provisional
+leaderboard. Appended to ADR 0004.
+
+## Maintainer catch + fixes + ADR 0008 — 2026-07-29T16:40Z
+
+Maintainer flagged recert job 65988186 FAILED 1s: my run_recert_h100.sbatch
+sourced nonexistent venv (SURF_2026-main path); fixed to $PROJECT_ROOT/.venv
+(matches run_batch0.sbatch) and resubmitted as 65989097. INFRA, orchestrator-
+owned, no debugger needed, no ALGO count. s5-B1 card job_ids mechanics field
+backfilled (was []). Seed 0 progressing: 3/6 panel datasets written at ~19 min.
+
+ADR 0008: Eloise directed pinn (mf_fno_pinn_transfer) retired — no future
+cards on it, excluded from leaderboard/top-3; batch-0 data retained (anchors
+unaffected — all best-family skills were transfer_film's); s2-B1's locked
+forensics card proceeds (measures pinn checkpoints as evidence, doesn't build
+on them).
+
+## Operator amendment — pinn removed from s2-B1 — 2026-07-29T16:43Z
+
+Eloise: "delete pinn from current cards". Only s2_beyond_copy-B1 referenced
+pinn. Card amended (operator_amendments entry, ADR 0008 updated):
+S2B1_BASE_FAMILIES = mf_fno_transfer_film only. Messaging the in-flight s2
+builder to drop the pinn measurement path.
+
+## Pulse + recert correction — 2026-07-29T16:45Z
+
+Pulse: s1-s4 builders in flight; s5 seed 0 RUNNING 26 min (healthy).
+
+Recert 65989097 "COMPLETED 29s" investigated: NOT a training run — smoke_eval
+checkpoint-resume found the finished batch-0 checkpoints under the default
+results root and skipped to eval. What it DID establish: H100 inference on
+p100 weights reproduces batch-0 metrics to ~6 digits (helmholtz 6.2023287 vs
+6.2022660; geomean 7.1034 vs 7.102) — inference-path drift negligible vs
+floors. For the actual training-dynamics check, run_recert_h100.sbatch now
+exports a fresh ROUND1_EVAL_RESULTS (training_h100/) and writes
+h100_champion_seed0_retrain.json; resubmitted as job 65989241. ADR 0005 anchor
+carry-over verdict waits on the retrain comparison.
+
+## Builder return — s2_beyond_copy-B1 — 2026-07-29T16:52Z
+
+SUCCESS / built (10/10). Commits f38d8db (build) + ba48712 (ADR 0008 pinn
+strip, smoke re-run after). Seam evidence: copy-LF delta 0.0 exact vs
+baselines (all 5 datasets); _train tripwire armed, never fired; LF-blindness
+M1 confirmed at contract tier (only the [16,3] condition vector enters the
+net); checkpoint repro rel deltas 4.6e-7..8.7e-6. Deviation accepted:
+card's 1e-9 checkpoint-repro tolerance is physically unachievable cross-
+hardware (p100-trained weights, h100 eval, float32 kernels ~1e-6 rel);
+implemented as abort >1e-3 rel + recorded repro_exact_1e9 boolean — interlock
+purpose (checkpoint/data identity) preserved. No seeds_2_3 script (diagnostic,
+§4.3). Stage → review_running; dispatching code-reviewer.
+
+## Pulse — 2026-07-29T16:54Z
+
+pulse: no-op. s2 in code review; s1/s3/s4 builders in flight; s5 seed 0
+RUNNING 35 min (panel JSON lands at completion); recert retrain RUNNING 8 min
+(genuinely training this time — past the 29s resume signature). All agents/
+jobs healthy; nothing unblocked.
+
+## Builder return — s1_poisson-B1 — 2026-07-29T16:54Z
+
+SUCCESS / built (13/13). Commit d070f86. Four arms verified at contract tier
+(distinct code_hash per arm = env knob in cache key); resume drills: finished
+(train_seconds 1.4e-6), mid-stage SIGTERM (stage/epoch restored), cross-arm
+isolation (bit-identical vs standalone), foreign-mode ckpt refused, bogus mode
+errors. Correspondence fix verified: cross blocks bit-equal to target-fidelity
+conds; row counts 110/250/280/280 match card; measured non-alignment recorded
+score-neutrally (8→64 max diff 0.5809). Deviations recorded (full 200-ep
+finetune per card; ckpt subdir per-arm; 02:00:00 per ADR 0005). Stage →
+review_running; dispatching code-reviewer.

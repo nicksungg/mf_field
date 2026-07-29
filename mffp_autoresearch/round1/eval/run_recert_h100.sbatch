@@ -18,8 +18,13 @@ set -euo pipefail
 PROJECT_ROOT=/resnick/groups/Hippo/ezeng/mf_field
 ROUND_ROOT="$PROJECT_ROOT/mffp_autoresearch/round1"
 OUT_ROOT="$PROJECT_ROOT/mffp_autoresearch_outputs/round1/recert"
-source "$PROJECT_ROOT/mf_field_eloise_data/SURF_2026-main/.venv/bin/activate"
+source "$PROJECT_ROOT/.venv/bin/activate"
+# Fresh results root so batch-0 checkpoints are NOT resumed — forces a true
+# H100 retrain (the first attempt resumed finished p100 checkpoints and only
+# validated the inference path; see orchestrator_flow 2026-07-29).
+export ROUND1_EVAL_RESULTS="$OUT_ROOT/training_h100"
+mkdir -p "$ROUND1_EVAL_RESULTS"
 python "$ROUND_ROOT/eval/score_panel.py" \
   --family_dir "$PROJECT_ROOT/mf_field/factory_mffp/models/mf_fno_transfer_film" \
   --datasets panel --epochs 200 --seed 0 --no_cache \
-  --out "$OUT_ROOT/h100_champion_seed0.json"
+  --out "$OUT_ROOT/h100_champion_seed0_retrain.json"

@@ -795,3 +795,74 @@
   new ADR 0004 ledger entry; running-jobs elapsed for 65984594 refreshed to
   ~1:48:04; otherwise unchanged from last walk).
 ## RUN END 2026-07-29T16:17:10Z
+
+## RUN START 2026-07-29T16:37:49Z
+- G4 fully PASSed since last walk: G4a (build-path) and G4b (submit-path,
+  per ADR 0006) both recorded PASS in `state/gates.md`. G4b evidence: guard
+  job `65988185` COMPLETED in 46s with a valid seam-checked `score_panel`
+  JSON at the analyzer-visible path (`.../s5_tuning/B1/eval/
+  guard_contract_s0.json`); seed-0 panel job `65988184` RUNNING on H100.
+- All four s1-s4 streams advanced `brainstormer_done_awaiting_G4` ->
+  `drafted`/`builder_running`: starters for s3_testtime (16:21Z),
+  s1_poisson (16:22Z), s2_beyond_copy (16:22Z), s4_hybrid_routing (16:24Z)
+  all returned SUCCESS/drafted (13-14/13-14, no TBDs); builders dispatched
+  for all four and are in flight (~13-18 min elapsed as of this walk, no
+  stall signal). First time the round has 5 cards in flight simultaneously.
+- s5_tuning-B1: code-reviewer returned `reviewed_suggest` (submit-as-is; 5
+  PASS, 2 non-blocking SUGGEST: job-name nit covered by submit path, TIMEOUT
+  should be treated as INFRA not an ALGO attempt) at 16:18Z. Card `status`
+  `built` -> `reviewed_suggest`. Seed 0 (job 65988184), guard-set contract
+  (job 65988185) and a new H100 anchor-recertification job (65988186, via
+  new `eval/run_recert_h100.sbatch`) submitted 16:18Z on H100 per ADR 0005.
+  `state/s5_tuning/current_stage.txt`: `review_running` -> `seed0_running
+  (job 65988184; guard 65988185; recert 65988186)`. Card `job_ids` field
+  still `[]` despite the submissions — flagged in index.md as a stale-field
+  observation, no card edit made (read-only).
+- **New failure needing a debugger dispatch**: job `65988186` (`r1-recert-
+  h100`) FAILED in 1s (`sacct` ExitCode 1:0). `.err`:
+  `/resnick/groups/Hippo/ezeng/mf_field/mf_field_eloise_data/SURF_2026-main/
+  .venv/bin/activate: No such file or directory` — `eval/
+  run_recert_h100.sbatch` sources the wrong venv path; the sibling scripts
+  `01_train_eval.sh`/`02_guard_contract.sh` (and `project.yaml`
+  `paths.venv: .venv`) correctly use `$PROJECT_ROOT/.venv/bin/activate`,
+  which exists. This is a genuine one-line script bug, not a transient SLURM
+  issue. `orchestrator_flow.md`'s most recent pulse (16:34Z) still describes
+  this job as "PENDING" — the orchestrator has not yet observed the
+  failure; surfacing here for the next pulse/debugger dispatch.
+- Three new operator decisions recorded since last walk: ADR 0005 (H100
+  switch, 2026-07-29T16:17Z, `--gres=gpu:h100:1 --time=02:00:00` CLI
+  overrides, 200 epochs kept), ADR 0006 (G4 submit-verified split into
+  G4a/G4b, 2026-07-29T16:17Z), ADR 0007 (propose-many/screen-cheap/
+  promote-few for batch >= 2 model cards, 2026-07-29T16:25Z; batch 1
+  unaffected). None touch card mechanics directly.
+- SLURM view: `squeue -u $USER` shows `65988184` (r1-s5_tuning-B1-s0,
+  RUNNING, ~19 min, hpc-33-16) plus the pre-existing unrelated `bash` job
+  `65984594` (~2:08:06 elapsed). `sacct` (2-day window) confirms
+  `65988185` COMPLETED (46s) and `65988186` FAILED (1s, exit 1) — both
+  already dropped from `squeue` as expected for finished jobs. No
+  `r1-{stream}-B{N}-s{seed}` jobs yet for s1-s4 (not yet at submit stage).
+- Timing ledger: upserted 1 new COMPLETED r1- job (`65988185`, s5_tuning
+  batch 1 seed 0, family `mf_fno_transfer_film_modes`, datasets
+  [fluid, heat_local, sharp__sod_1d], epochs 2, gpu_type h100, elapsed_min
+  0.77) -> 36 -> 37 entries; re-validated as parseable JSON after upsert.
+  Job `65988184` (RUNNING) and `65988186` (FAILED) intentionally not
+  upserted per spec (COMPLETED only).
+- Abandonment check: all 5 cards exist and are `drafted`/`reviewed_suggest`
+  (none `skipped`/`blocked`); no stream has 3 consecutive skip/blocked
+  batches. `state/streams/` directory still does not exist — correct, no
+  abandonment condition met.
+- Transcript inbox: `state/transcripts/` still does not exist — nothing to
+  archive this walk.
+- Anchors: all 5 `state/anchors/*.json` unchanged (still certified
+  2026-07-29T14:28:45Z, same values as last walk) — rendered verbatim into
+  index.md, no recomputation.
+- No card files modified by this walk (`git status --short
+  experiment_cards/` clean before and after; only unrelated
+  `state/orchestrator_flow.md` shows as modified in the working tree, not
+  written by this walk).
+- index.md: regenerated (fresh timestamp; gate table G4 -> PASS, all 5
+  stream rows updated with drafted/builder_running or seed0_running detail,
+  new running-jobs table with all three s5 job outcomes, new Flags entries
+  for the recert failure, stale job_ids, ADR 0005/0006/0007, and the
+  5-cards-in-flight note).
+## RUN END 2026-07-29T16:39:10Z

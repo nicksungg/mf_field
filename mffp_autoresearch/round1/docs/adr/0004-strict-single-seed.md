@@ -38,3 +38,11 @@ and human-approved. Diagnostics were always single-run and are unaffected.
   (locked); execution is governed by this ADR — the orchestrator submits
   seed 0 only. Applies to s5_tuning-B1 (already built) and all later cards.
 - Anchors from batch 0 keep their 3-seed CIs (already certified).
+
+## Clarification (2026-07-29, Eloise): when "end of round" happens
+
+Top-3 selection happens ONCE, when the round ends — i.e. after the planned
+~3-4 batches per stream, when every stream is terminal (final batch complete,
+or stream abandoned) or the operator calls the round. The provisional
+leaderboard is the cumulative best-per-model panel geomean over ALL batches'
+seed-0 runs; no per-batch or mid-round top-3 confirmation passes.

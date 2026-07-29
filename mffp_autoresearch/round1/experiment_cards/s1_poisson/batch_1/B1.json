@@ -50,15 +50,30 @@
       "_source": "vendored from mf_field/akash/models/mf_fno_allpairs (model.py sha256 984d4e5e…, smoke_eval.py sha256 611729bc…) + mf_field/akash/common/backbone.py (sha256 f56fa802…) at commit 967562e2; akash itself is never edited"
     }
   },
-  "status": "drafted",
+  "status": "built",
   "skipped_reason": null,
   "reopen_candidate": false,
-  "scripts_path": {},
-  "output_paths": {},
-  "build_commit": null,
+  "scripts_path": {
+    "submit": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round1/worktrees/s1_poisson/B1/scripts/submit.sh",
+    "seeds_2_3": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round1/worktrees/s1_poisson/B1/scripts/submit_seeds_2_3.sh",
+    "train_eval": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round1/worktrees/s1_poisson/B1/scripts/01_train_eval.sh"
+  },
+  "output_paths": {
+    "training": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s1_poisson/B1/eval/results_<arm>/mf_fno_ladder/  (per-arm ROUND1_EVAL_RESULTS: score_panel per-run JSON + ckpt_ifc_poisson_e200_s<seed>/mode_<arm>/last.pt + preds_test.npz)",
+    "eval": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s1_poisson/B1/eval/result_ifc_poisson_<arm>_s<seed>.json  (arms: two_level, adjacent, allpairs, legacy_pairing)",
+    "slurm": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s1_poisson/B1/slurm/"
+  },
+  "build_commit": "d070f86",
   "job_ids": [],
   "logs": {},
-  "build_notes": [],
+  "build_notes": [
+    "Built family models_r1/mf_fno_ladder in the worktree, VENDORED from mf_field/akash/models/mf_fno_allpairs @967562e per recipe._source: backbone.py is a byte-identical copy of akash/common/backbone.py (sha256 f56fa8029fad2ffb503d1cd5905359ea34f2ed1b1853e26ac22428a64c02f2ec, verified against the recipe prefix); model.py/smoke_eval.py adapted from the base family's model.py (984d4e5e...) and smoke_eval.py (611729bc...); the SMOKE dict + _cap_grid/_modes/_to_grid helpers are lifted from akash/common/mffp.py (09510d25...) into smoke_eval.py so score_panel.code_hash sees every line. Nothing under mf_field/akash/** was edited; load_mf_dataset / resolve_grid / finalize_and_write are still imported read-only from factory_root/data_adapters.",
+    "Card part-3 correction implemented in smoke_eval.build_rows: cross-pair rows take the condition vector from the TARGET fidelity's own sample list; self pairs (f,f) are included; the HF finetune uses X^(64) with tags (f_src=0, f_tgt=1), i.e. the eval-query form. Row counts verified offline against the card table on ifc_poisson (N=100/50/20/5 at fid 8/16/32/64): two_level 105 self + 5 cross = 110; adjacent 175 + 75 = 250; allpairs 175 + 105 = 280; legacy_pairing 280. Corrected cross blocks are bit-equal to the target fidelity's own conds; allpairs vs legacy_pairing differ in exactly the 105 cross rows and share identical targets. Measured per-pair max|X^(s)[:n]-X^(t)[:n]| = {8->16: 0.7394, 8->32: 0.7095, 8->64: 0.5809, 16->32: 0.7016, 16->64: 0.7145, 32->64: 0.6819}, i.e. NOT index-aligned, confirming the card's premise; the numbers are recorded score-neutrally in every result JSON under `rows.cond_alignment_max_abs_diff`.",
+    "CONTRACT SMOKE (mandatory), all four arms, login node CPU, through the round eval layer. Command (per arm): `export ROUND1_EVAL_RESULTS=<wt>/scratchpad/smoke/results_<arm>; python ${ROUND_ROOT}/eval/score_panel.py --family_dir <wt>/models_r1/mf_fno_ladder --datasets ifc_poisson --epochs 2 --seed 0 --env MFFP_LADDER_MODE=<arm> --out <wt>/scratchpad/contract_smoke_<arm>.json --no_cache`. All exited 0 with finite nRMSE (split test_hf, metric_source per_sample_mean): two_level 0.378663 (skill 10.5184, code_hash 8bbc456b), adjacent 0.387538 (10.7650, 2621746d), allpairs 0.365419 (10.1505, f82a6f57), legacy_pairing 0.365150 (10.1430, ff744b97). Distinct code_hash per arm confirms MFFP_LADDER_MODE enters the eval cache key. These 2-epoch numbers are plumbing evidence only, not science. Artifacts committed at <wt>/scratchpad/evidence/contract_smoke_<arm>.json.",
+    "BUILD TRAP 1 (arm-invisible ckpt paths) closed two ways and tested. (a) The family writes <ckpt_dir>/mode_<MFFP_LADDER_MODE>/last.pt and stores ladder_mode in the ckpt meta; (b) scripts/01_train_eval.sh exports a per-arm ROUND1_EVAL_RESULTS=<outputs>/eval/results_<arm> (recipe._sweep verbatim). Tests: (i) finished-ckpt resume — re-running allpairs at 2 ep with --no_cache reproduced nRMSE 0.36541855303669557 exactly with train_seconds 1.4e-06 (training skipped); (ii) cross-arm isolation — running two_level with ROUND1_EVAL_RESULTS pointed at the allpairs tree trained fresh (train_seconds 81.8) and returned 0.378663124272829, bit-identical to its standalone run, i.e. no contamination; (iii) mid-stage resume — a run killed by SIGTERM during the joint stage left {stage: joint, epoch: 1, ladder_mode: adjacent, epochs_target: 4} with opt/sched/gen state, and the re-run printed '[resume] mid-run checkpoint: mode=adjacent stage=joint epoch=1/4' then finished (nRMSE 0.256066); (iv) guard — an adjacent-mode ckpt planted under mode_allpairs is refused ('checkpoint config mismatch ... got adjacent, want allpairs; training fresh'), and MFFP_LADDER_MODE=bogus exits with an explicit error instead of defaulting.",
+    "SLURM scripts at <wt>/scripts/: 01_train_eval.sh (SEED=$1; loops the 4 arms serially, one score_panel.py call each, --env MFFP_LADDER_MODE=<arm>, --out result_ifc_poisson_<arm>_s$SEED.json), submit.sh (seed 0 only, ADR 0004), submit_seeds_2_3.sh (seeds 1+2 for the end-of-round confirmation). Headers per ADR 0005: partition gpu, --gres=gpu:h100:1, --time=02:00:00, --requeue, --exclude=hpc-93-36, --mem=32G, --cpus-per-task=4, job name r1-s1_poisson-B1-s<seed> (set by the submit wrappers), logs under <outputs>/s1_poisson/B1/slurm/. --time justified by state/timing_ledger.json: ifc_poisson @200 ep = 0.78-0.98 min/run on p100 for mf_fno_transfer_film, so 4 arms with a larger row set still fit far inside 2 h. All three scripts pass `bash -n`; every path is absolute. The loop body was dry-run end-to-end at epochs=2 with OUT_DIR redirected to scratchpad and produced exactly the four expected result_ifc_poisson_<arm>_s0.json files. NOT submitted (orchestrator submits).",
+    "Hyperparameter provenance: every value is from the recipe or the vendored anchor-identical SMOKE dict (hidden 64, n_blocks 4, modes_cap 12, batch 16, lr_pretrain 1e-3, lr_finetune 3e-4, weight_decay 1e-5, grad_clip 1.0). ONE deliberate deviation from the base family, mandated by card part 3: the HF finetune runs the full --epochs (200), where akash's mf_fno_allpairs used epochs//2 — card text 'Stage 2 ... 200 epochs' wins. Two score-neutral builder choices, neither a model hyperparameter: CKPT_SAVES_PER_STAGE=5 (preemption granularity; saving consumes no RNG and changes no tensor op) and a preds_test.npz dump beside last.pt for the mechanism-analyzer. No TBDs."
+  ],
   "review_notes": [],
   "debug_notes": [],
   "5_actual_result": null,
