@@ -74,3 +74,21 @@ confound. Evidence basis: s4 paired control (all gains corrector-side),
 s5 mechanism (backbone = DC+noise on 5/6 sharp sets; keep it for
 ifc_poisson/X-path, don't invest in its capacity). Owner: s4 or s6 per
 whichever mechanism the readouts favor.
+
+## Eloise idea sweep (2026-07-29 evening): DINO / tabular FMs / diffusion
+
+- **DINO(LF field) as retrieval key**: seed for s2-B3 — one extra key arm in
+  the retrieval-floor screen (vs block-mean/S1/per-patch keys). Rationale:
+  X is insufficient exactly where the LF field is informative (pfc
+  realization identity); zoo already has DINO-conditioned families (check
+  their bench rows first). Websearcher must check DINO-for-PDE-retrieval
+  prior art.
+- **TabPFN-style in-context per-sample scale prediction from X**: seed for
+  s5-B3 — training-free scalar head for the amplitude channel (helmholtz 3%
+  of samples = 50% of error; 408x norm spread). Territory question (knob vs
+  architecture) to the websearcher; no gradient training = arguably s5-legal.
+- **Diffusion (incl. low-data variants): NOT revived** — pre-falsified lever
+  (§5) + this round's evidence (spurious high-k is a measured failure mode;
+  winning methods are deterministic/data-light). Re-arguable only if batch-3
+  plateaus and residual distributions become the question; must address the
+  pre-falsification explicitly.

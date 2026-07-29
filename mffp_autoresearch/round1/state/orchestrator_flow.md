@@ -1324,3 +1324,28 @@ invalidate every cache). 2-ep glance (non-reportable): primary
 allpairs__per_level 7.83 vs 10.15-11.37 others. Stage → review_running;
 reviewer dispatched. Releasing remaining queue: s2-B2 builder, s5-B2
 brainstormer, s3_warp debugger, s7 reviewer. Maintainer dispatched.
+
+## Pulse — 2026-07-29T21:50Z
+
+pulse: stage-file correction only (s5: websearch_running → brainstormer_
+running — the B2 websearcher completed pre-outage; brainstormer resumed).
+All 7 streams have agents in flight: s1-B2 + s7 reviewers, s2-B2 builder,
+s3_warp debugger, s4 + s6 mechanism analyzers, s5-B2 brainstormer. Guard200
+(66005834) PENDING in queue. Nothing else actionable.
+
+## Pulse — 2026-07-29T21:54Z
+
+pulse: no-op. All 7 streams have agents in flight; guard200 still PENDING
+(H100 queue). Nothing failed since the recovery.
+
+## Operator idea sweep — DINO/TabPFN/diffusion — 2026-07-29T21:55Z
+
+Eloise proposed three directions. Adjudicated against round evidence:
+DINO(LF) retrieval key → s2-B3 seed; TabPFN in-context scale-from-X → s5-B3
+seed; diffusion → declined (pre-falsified §5 + measured spurious-high-k
+failure mode). Recorded in operator notes; no new streams.
+
+## Maintainer dispatch skipped — prior walk still in flight — 2026-07-29T21:55Z
+
+The maintainer dispatched at the recovery pulse has not yet returned (no
+completion notification); single-in-flight honored, skipping this cycle.
