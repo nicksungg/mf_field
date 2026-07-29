@@ -14,3 +14,4 @@
 - s4_hybrid_routing: SUCCESS. D1 (score fno_transolver_seq) = measurement, zero novelty claims; D2 LF-conditioned routing open (no published router reads LF/LF-HF disagreement); D3 adjacent to pre-falsified mf_fno_spectral — flagged.
 - LESSON (all agents): subagent Write tool refuses .md report files; s2/s4/s5 used shell heredoc; s1 returned inline. Future dispatch prompts must include: "write report files via bash heredoc (cat > file <<'EOF'), not the Write tool."
 - NEXT: all brainstormers gated on G3 noise floor (batch0 job 65956106).
+- 2026-07-29T03:54:11Z pulse: no-op. batch0 healthy: 6 COMPLETED (JSONs verified on disk), 5 RUNNING, 25 pending, 0 failed; ~8-12 min/task. All streams at websearch_done_awaiting_G3_brainstormer. Nothing unblocked.
