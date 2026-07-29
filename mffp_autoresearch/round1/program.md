@@ -98,7 +98,7 @@ analyzer interprets; no auto-reject).
 | tier | epochs | when |
 |---|---|---|
 | contract | 2 | plumbing check before any SLURM submit |
-| smoke | 200 | ALL in-round experiments (seed 0, then seeds 1–2) |
+| smoke | 200 | ALL in-round experiments (seed 0 only — ADR 0004) |
 | full | 2500 | champions only, post-round, human-approved |
 
 ---
@@ -140,7 +140,7 @@ chain. Card id `{stream}-B{N}`. Batch N+1 starts when batch N is terminal
 
 ### 4.3 Card types
 
-- `model` — trains something; full 1+2 seed protocol (§4.4).
+- `model` — trains something; single-seed in-round protocol (§4.4, ADR 0004).
 - `diagnostic` — a **measurement**, no training: single run, no seeds 2–3, its
   `expected_falsification` clause states what the measurement will show and
   what result would falsify the motivating hypothesis. Diagnostics are
@@ -148,22 +148,30 @@ chain. Card id `{stream}-B{N}`. Batch N+1 starts when batch N is terminal
   `docs/planning/META_AUTORESEARCH.md`). `s2_beyond_copy` batch 1 is a
   diagnostic by design (§12.2).
 
-### 4.4 Multi-seed protocol (1+2)
+### 4.4 Seed protocol (single-seed in-round; top-3 confirmation at end — ADR 0004)
 
-Seeds fixed at **{0, 1, 2}**.
+**Amended 2026-07-29 by operator direction (Eloise): strict 1-seed.**
+Original 1+2 protocol preserved in ADR 0004 for the record.
 
-1. **Seed 0 (debug)**: builder writes parameterized scripts; code-reviewer
-   gates; orchestrator submits seed 0 only.
-2. **Seeds 1–2**: launched only if seed 0 succeeded AND is not **cratered**:
-   - training crashed (NaN, divergence, unrecoverable OOM), OR
-   - panel geomean skill worse than `cratered_skill_factor` (1.5) × the
-     stream's anchor skill, OR
-   - the card's falsification clause already fired decisively.
-3. After all 3 seeds: initial-analyzer reports mean ± CI (§2.3).
+1. **Seed 0 (the only in-round seed)**: builder writes parameterized scripts
+   (still parameterized by seed — confirmation reuses them); code-reviewer
+   gates; orchestrator submits seed 0 only. Seeds 1–2 are NOT launched
+   in-round regardless of outcome.
+2. Every in-round numeric result is recorded as **provisional
+   (single-seed)**: initial-analyzer reports the seed-0 point estimate with
+   no CI, and every claim of an effect must carry the label
+   `provisional-single-seed` in card part 5. Batch-N+1 designs conditioning
+   on such results must treat any effect smaller than the certified
+   `min_claimable_effect` (batch-0 3-seed floor, `state/noise_floor.json`)
+   as noise-compatible.
+3. **End-of-round confirmation**: the top 3 models on the provisional
+   leaderboard run seeds 1–2 at smoke tier (reusing `submit_seeds_2_3.sh`);
+   only then are mean ± CI claims made. Full-tier (2500-epoch) champion runs
+   remain 3-seed and human-approved.
+4. The **cratered** definition (crash / geomean worse than 1.5× anchor /
+   falsification fired) is retained as a seed-0 verdict category.
 
-No single-seed claim is reportable (diagnostics excepted — they measure, not
-train). Protocol overrides analyzer editorial: only a cratered seed 0 or a
-decisively falsified hypothesis may skip seeds 1–2.
+Diagnostics are unaffected (they measure, not train; single run as before).
 
 ### 4.5 Anchors
 

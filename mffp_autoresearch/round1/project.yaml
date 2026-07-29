@@ -23,8 +23,8 @@ streams:
   - {name: s3_testtime,       class: lever,  question: "how far does test-time refinement go when the governing residual is real?"}
   - {name: s4_hybrid_routing, class: lever,  question: "can MF compositions of hybrid operators capture the +30.6% FNO<->Transolver oracle?"}
   - {name: s5_tuning,         class: tuning, question: "how much of the gap is knobs, not architecture?"}
-seed_protocol: {seeds: [0, 1, 2], cratered_skill_factor: 1.5}
+seed_protocol: {seeds: [0], end_of_round_confirm: {top_k: 3, seeds: [1, 2]}, cratered_skill_factor: 1.5}  # ADR 0004
 tiers: {contract_epochs: 2, smoke_epochs: 200, full_epochs: 2500}
 caps: {slurm_algo_attempts: 5, review_fail_attempts: 3, consecutive_skips_for_stream_abandonment: 3}
 crons: {orchestrator_pulse_min: 10, maintainer_min: 20}
-sbatch: {partition: gpu, gres: "gpu:p100:1", account: null}
+sbatch: {partition: gpu, gres: "gpu:h100:1", account: null, time_default: "02:00:00"}  # ADR 0005

@@ -48,3 +48,24 @@
   Brainstormers must treat helmholtz claims as unfalsifiable at smoke tier
   unless the design addresses the instability itself; the other five floors
   are tight (0.24-1.63).
+
+## G4 — split per ADR 0006 (2026-07-29)
+
+- **G4a (build-path): PASS** — starter/builder/code-review mechanics validated
+  end-to-end on s5_tuning-B1 (card transcribed verbatim, build commit ad29239
+  with bit-identical default-equivalence + mid-stage resume + exact knob audit,
+  reviewer verdict SUGGEST/submit-as-is). s1-s4 starters+builders unblocked.
+- **G4b (submit-path): PENDING** — recorded when s5-B1 seed 0 (job 65988184,
+  H100 per ADR 0005) is RUNNING and score_panel has written its first valid
+  per-dataset result. s1-s4 SLURM submits gate on G4b.
+
+## G4b + G4 overall: **PASS** (2026-07-29)
+
+- Guard-contract job 65988185 (s5-B1 build, H100) COMPLETED in 46 s with a
+  valid seam-checked score_panel JSON (guard_contract_s0.json: code_hash,
+  nrmse_def_hash, metric_source per_sample_mean, split test_hf, env knob
+  recorded) at the analyzer-visible path. Seed-0 panel job 65988184 RUNNING on
+  hpc-33-16. Submit path validated end-to-end: sbatch → H100 → venv → family
+  on GPU → score_panel → correct output layout. With G4a (build path) this
+  completes G4. s1-s4 SLURM submissions unblocked (submit on each
+  reviewed_pass/suggest).

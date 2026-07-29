@@ -203,3 +203,114 @@ resume proofs) minutes old in the worktree scratchpad. No r1-* SLURM jobs.
 
 pulse: no-op. Unchanged: s1-s4 await G4; s5_tuning builder in flight (progress
 confirmed by maintainer 15:37Z walk); no r1-* SLURM jobs.
+
+## Operator decision — ADR 0004 strict single-seed — 2026-07-29T16:05Z
+
+Eloise directed (AskUserQuestion): strict 1-seed in-round; seeds 1-2 only for
+the end-of-round top-3 confirmation. Applied: project.yaml seed_protocol,
+program.md §2.4/§4.3/§4.4, docs/adr/0004-strict-single-seed.md. Card recipes'
+locked seeds fields untouched; execution governed by ADR. s5_tuning-B1 will
+submit seed 0 only; initial-analyzer reports provisional-single-seed.
+
+## Pulse — 2026-07-29T16:06Z
+
+s1-s4 await G4; no r1-* SLURM jobs. s5_tuning ANOMALY handled: builder handoff
+filed ~45 min ago (all 3 proofs pass) but no build commit on the branch (HEAD
+still 967562e) and card mechanics empty — agent still running with nothing
+external to wait on. Sent the builder a status-check message: finalize (atomic
+commit + card mechanics + return) or report what verification is still running;
+also notified it of ADR 0004 (no deliverable change). Will dispatch
+code-reviewer on its return.
+
+## Builder return — s5_tuning-B1 — 2026-07-29T16:10Z
+
+SUCCESS / built (14/14). Build commit ad29239 on round1/exp-s5_tuning-B1,
+worktree clean. Proofs: default-equivalence identical to last digit (helmholtz
+22.613192981264614, ifc_poisson 0.4900025652737081, both = untouched factory
+family); mid-stage resume bit-identical; knob audit n_params 4,773,953 →
+33,609,793 (Δ = 2·4·64²·(32²−12²) exact), JSON carries modes_cap 32 +
+provenance. Deviations accepted (all evidence-backed): job name
+r1-s5_tuning-B1-s{seed} (maintainer regex), outputs <outputs_root>/s5_tuning/
+B1/eval/result_panel_s{seed}.json (analyzer glob + §10), ROUND1_EVAL_RESULTS
+export for ckpt/preds relocation. OPEN: guard-set contract run ships as
+02_guard_contract.sh (GPU) — to fire alongside seed 0; required by §2.3 before
+any panel-win claim. Stage → review_running; dispatching code-reviewer.
+
+## Pulse — 2026-07-29T16:13Z
+
+pulse: no-op. s1-s4 await G4; s5_tuning code-reviewer in flight (dispatched
+16:0x-ish, no review file yet); no r1-* SLURM jobs. On reviewer
+PASS/SUGGEST: submit seed 0 via scripts/submit.sh + fire 02_guard_contract.sh.
+
+## Operator decisions — ADR 0005 (H100) + ADR 0006 (G4 submit-verified) — 2026-07-29T16:17Z
+
+Eloise: switch to H100 keeping 200 epochs (rejected 30-min wall cap; anchor
+re-cert run fires alongside s5 seed 0). Eloise questioned s1-s4 serialization;
+G4 split into G4a (build-path, already evidenced — starters/builders unblocked
+NOW) and G4b (submit-path — s1-s4 SLURM submits wait until s5-B1 seed 0 is
+running + writing valid output). Dispatching all four s1-s4 starters in
+parallel; stages → starter_running. s5-B1 submit will use --gres=gpu:h100:1
+--time=02:00:00 CLI overrides.
+
+## Review verdict + submissions — s5_tuning-B1 — 2026-07-29T16:18Z
+
+Code-reviewer: SUGGEST / submit-as-is (review_B1.md; 7 questions: 5 PASS, 2
+SUGGEST — S1 job-name nit covered by submit path, S2 TIMEOUT→treat as INFRA,
+S3 guard-set run to fire alongside). SUBMITTED on H100 (ADR 0005 CLI
+overrides): seed 0 = job 65988184 (--gres=gpu:h100:1 --time=02:00:00), guard
+contract = job 65988185, anchor re-cert (champion, --no_cache, H100) = job
+65988186 via new eval/run_recert_h100.sbatch. Stage → seed0_running. G4a PASS
+recorded (ADR 0006); G4b pending on first valid seed-0 output. Dispatching
+s1-s4 starters (G4a unblock).
+
+## Starter return — s3_testtime-B1 — 2026-07-29T16:21Z
+
+SUCCESS / drafted (14/14, no TBDs). Card at experiment_cards/s3_testtime/
+batch_1/B1.json (diagnostic: epochs 0, seed 0, family_dir models_r1/
+hh_residual_anatomy, dataset ext__helmholtz_2d, six HHDIAG_* env knobs).
+Handoff flags M0 as HARD-STOP build gate + read-only last.pt dependency under
+round1/eval/results/mf_fno_transfer_film/. Stage → builder_running; dispatching
+experiment-builder (G4a: builds allowed; submission waits on G4b).
+
+## Starter return — s1_poisson-B1 — 2026-07-29T16:22Z
+
+SUCCESS / drafted (13/13, no TBDs). Card at experiment_cards/s1_poisson/
+batch_1/B1.json (model: base mf_fno_allpairs, family_dir models_r1/
+mf_fno_ladder, ifc_poisson, 200 ep, MFFP_LADDER_MODE arms sweep). Handoff
+records ADR 0004/0005 execution overrides vs card text. Build traps in part 3:
+per-arm ckpt key + per-arm ROUND1_EVAL_RESULTS (path collision), vendored
+family (no akash imports). Stage → builder_running; dispatching builder.
+
+## Starter return — s2_beyond_copy-B1 — 2026-07-29T16:22Z
+
+SUCCESS / drafted (13/13, no TBDs). Card at experiment_cards/s2_beyond_copy/
+batch_1/B1.json (diagnostic: epochs 0, seed 0, family_dir models_r1/
+s2_copylf_forensics, 8 S2B1_* env knobs). Starter flagged: prior_art.verdict
+is the literal non-enum string "preempted-but-MF-composition-open" (verbatim >
+normalize; reviewer should not read as error). Report §Notes lines 166-192
+load-bearing for build: batch-0 last.pt sha256+mtime to build_notes, hard-stop-
+never-retrain on missing/mismatched checkpoint, scored test_hf = training-free
+1-NN-in-X (part 5 must say so). Stage → builder_running; dispatching builder.
+
+## Pulse — G4 PASS + s4 starter return — 2026-07-29T16:24Z
+
+G4b evidence: guard job 65988185 COMPLETED 46 s (valid seam-checked JSON,
+geomean skill 4.88 at 2 ep incl. guard datasets); seed-0 job 65988184 RUNNING
+on hpc-33-16; recert 65988186 pending. G4 recorded PASS — s1-s4 submissions
+unblocked, will fire per-stream on review PASS/SUGGEST.
+
+s4_hybrid_routing-B1 starter: SUCCESS / drafted (14/14, no TBDs; parts
+extracted programmatically byte-verbatim). Stage → builder_running;
+dispatching builder. Card mandates EXACTLY two mechanical edits (third =
+reviewer FAIL); open risk: 256² GPU memory (n_query 2048 / n_ctx 1024 /
+corr_batch 4) unobserved beyond ifc_poisson contract run — H100 80GB makes
+this much less likely to bite than the p100 16GB the report assumed.
+
+Streams: s1 builder_running, s2 builder_running, s3 builder_running,
+s4 builder_running, s5 seed0_running.
+
+## ADR 0007 — propose-many/screen-cheap/promote-few — 2026-07-29T16:25Z
+
+Codified for batch >= 2 model cards with design freedom (diagnostics and
+pre-directed slots exempt). Batch-2 brainstormer dispatches will cite it.
+Batch 1 unaffected (cards locked, builds in flight).

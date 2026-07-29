@@ -1,4 +1,4 @@
-# MFFP Autoresearch Round 1 — Dashboard (updated 2026-07-29T15:55:05Z)
+# MFFP Autoresearch Round 1 — Dashboard (updated 2026-07-29T16:19:00Z)
 
 ## Gate status
 | Gate | What | Status |
@@ -6,7 +6,7 @@
 | G1 | eval-layer smoke + assertion drill | PASS (2026-07-28) |
 | G2 | copy-LF baselines | PASS (2026-07-28) |
 | G3 | batch 0: anchors + noise floor (3 seeds) | **PASS (2026-07-29)** — array job `65956106` (r1-batch0) 36/36 COMPLETED, 0 FAILED. `state/anchors/*.json` (5 files) + `state/noise_floor.json` certified 2026-07-29T14:28:45Z. Champion `mf_fno_transfer_film`, panel geomean skill 6.703 [6.219, 7.102] @ 200-epoch smoke tier |
-| G4 | dry-run card s5\_tuning-B1 | PENDING — card drafted (2026-07-29T14:45:51Z). Builder's worktree deliverables and contract-tier verification suite are now complete: `models_r1/mf_fno_transfer_film_modes/` (manifest/model/smoke_eval/INSPIRATION), `scripts/{submit.sh, submit_seeds_2_3.sh, 01_train_eval.sh, 02_guard_contract.sh}` all present, and `notes/handoff_experiment_builder.md` was filed (~14 min ago) reporting: default env reproduces the untouched factory family bit-for-bit (helmholtz 22.613192981264614, ifc_poisson 0.4900025652737081), checkpoint-resume from a genuinely interrupted `last.pt` reproduces the same number, and `MFFP_MODES_CAP=32` fires correctly (n_params 4,774,465 → 33,610,305, `modes [32,32]`). Card JSON itself is still unchanged (`status: drafted`, `job_ids: []`, `scripts_path: {}`, `output_paths: {}`, `build_commit: null`) — the builder's handoff is filed but the card mechanics have not yet been written/committed, and no `r1-s5_tuning-B1-s*` job has been submitted to SLURM. Next expected step: code-reviewer, then seed-0 submit |
+| G4 | dry-run card s5\_tuning-B1 | PENDING — card `built` (build_commit `ad29239`, 2026-07-29T16:10Z). Builder's contract-tier verification suite complete: default env reproduces the untouched factory family bit-for-bit (helmholtz 22.613192981264614, ifc_poisson 0.4900025652737081), checkpoint-resume from a genuinely-interrupted `last.pt` reproduces the same number, and `MFFP_MODES_CAP=32` fires correctly (n_params 4,774,465 → 33,610,305, `modes [32,32]`). `scripts_path`/`output_paths`/`build_commit` now populated in the card JSON. Stage advanced `builder_running` → `review_running`; code-reviewer dispatched (2026-07-29T16:10Z), still in flight as of this walk (no review file, `review_notes: []`). `job_ids` still `[]` — seed 0 not yet submitted, pending reviewer PASS/SUGGEST. Open item: guard-set contract check (`scripts/02_guard_contract.sh`) still needs to fire before any panel-win claim (program.md §2.3) |
 
 ## Streams
 | Stream | Anchor (skill) | Current batch | Card | Status | Jobs | Last change |
@@ -15,14 +15,17 @@
 | s2_beyond_copy | copylf_bar = 1.0; certified best skills per dataset: helmholtz 13.82, pfc 11.51, allen_cahn 16.33, fisher_kpp 4.18, cahn_hilliard 5.53 | 1 | none yet | brainstormer_done_awaiting_G4 | — | Holding for G4; unchanged this walk |
 | s3_testtime | champion_panel_geomean = 6.703 [6.219, 7.102], family mf_fno_transfer_film | 1 | none yet | brainstormer_done_awaiting_G4 | — | Holding for G4; DIAGNOSTIC card + benchmark-integrity flag from prior walks still open, unchanged |
 | s4_hybrid_routing | champion_panel_geomean = 6.703 [6.219, 7.102], family mf_fno_transfer_film | 1 | none yet | brainstormer_done_awaiting_G4 | — | Holding for G4; `mf_composition_measurement` proposal unchanged this walk |
-| s5_tuning | champion_panel_geomean = 6.703 [6.219, 7.102], family mf_fno_transfer_film | 1 | **s5_tuning-B1** (`tuning_spectral_bandwidth`, status `drafted`) | builder_running (per `current_stage.txt`) — but builder's own handoff note indicates its work is functionally done | — | `notes/handoff_experiment_builder.md` filed ~14 min ago (builder's verification proofs all pass); `scripts/02_guard_contract.sh` newly written ~13 min ago (the guard-set contract-tier check, ships as an sbatch script since cap-32 spectral weights couldn't finish on the 1-CPU login node); card JSON not yet updated with `job_ids`/`scripts_path`/`output_paths`/`build_commit`; no SLURM submission observed yet |
+| s5_tuning | champion_panel_geomean = 6.703 [6.219, 7.102], family mf_fno_transfer_film | 1 | **s5_tuning-B1** (`tuning_spectral_bandwidth`, status `built`) | review_running (per `current_stage.txt`) — code-reviewer dispatched 16:10Z, no return yet | — | Card advanced `drafted`→`built` (build_commit `ad29239`) since last walk; `scripts_path`/`output_paths` populated; stage `builder_running`→`review_running`; ADR 0004 (strict single-seed) now governs execution — only seed 0 will be submitted in-round |
 
-**Delta this walk**: the s5_tuning builder appears to have completed its
-contracted work (handoff filed, all verification proofs green, guard-contract
-sbatch script written) but `current_stage.txt` still reads `builder_running`
-and the card JSON is still in its pre-build (`drafted`) state — this is a
-hand-off-not-yet-consumed gap worth the orchestrator's attention on its next
-pulse (flagged below, not acted on — maintainer is read-only for cards).
+**Delta this walk**: the s5_tuning builder's handoff (observed in-progress
+last walk) has now formally landed in the card JSON (`built`, build_commit,
+scripts/output paths, 5 build_notes) and the flow advanced the stage to
+`review_running`, dispatching the code-reviewer — which has not yet
+returned. Separately, a new operator decision (ADR 0004, strict single-seed)
+was recorded: in-round experiments now submit seed 0 only, with seeds 1-2
+reserved for an end-of-round top-3 confirmation pass; this does not touch
+any card's locked `recipe.seeds` field, so no maintainer read-only
+violation.
 
 **Noise-floor alert** (from `state/noise_floor.json`, certified 2026-07-29):
 `ext__helmholtz_2d` seed spread = 9.695 skill units (a diverging seed at
@@ -39,41 +42,47 @@ flagged for mentor attention, out of maintainer scope to act on.
 |---|---|---|---|---|
 
 No `r1-{stream}-B{N}-s{seed}` jobs in `squeue`/`sacct` — `s5_tuning-B1`
-has not been submitted (card `job_ids` still empty). `scripts/submit.sh` and
-the newly-added `scripts/02_guard_contract.sh` exist and are ready to fire
-but have not been invoked. One unrelated `bash` job (`65984594`, RUNNING,
-~1:28:16 elapsed) is an interactive session, out of round scope. Historical
-CANCELLED jobs `65958902`/`65958904`/`65960289` and the prior batch-0 INFRA
-failure `65955389` (14/14 FAILED, bad node `hpc-93-36`, fixed and
-resubmitted as `65956106`) are unchanged, out of scope. G3's array
-`65956106` remains 36/36 COMPLETED, 0 FAILED (no new r1- completions this
-walk — nothing new to upsert into the timing ledger).
+has not been submitted (card `job_ids` still empty; awaiting code-reviewer
+PASS/SUGGEST). `scripts/submit.sh` and `scripts/02_guard_contract.sh` exist
+and are ready to fire but have not been invoked. One unrelated `bash` job
+(`65984594`, RUNNING, ~1:48:04 elapsed) is an interactive session, out of
+round scope. Historical CANCELLED jobs `65958902`/`65958904`/`65960289` and
+the prior batch-0 INFRA failure `65955389` (14/14 FAILED, bad node
+`hpc-93-36`, fixed and resubmitted as `65956106`) are unchanged, out of
+scope. G3's array `65956106` remains 36/36 COMPLETED, 0 FAILED (no new
+r1- completions this walk — nothing new to upsert into the timing ledger).
 
 ## Completed cards
 | Card | Type | Panel geomean skill (±CI) | Falsification verdict | Tools promoted |
 |---|---|---|---|---|
-| _none — no cards have completed the full 3-seed panel run yet; `s5_tuning-B1` is the only card drafted so far, builder work appears complete but not yet submitted_ | | | | |
+| _none — no cards have completed the full panel run yet; `s5_tuning-B1` is built and in code-review, not yet submitted to SLURM_ | | | | |
 
 ## Flags
-- **G4 still PENDING — builder handoff filed but card/stage not yet advanced**:
+- **G4 still PENDING — card built, in code review, not yet submitted**:
   `s5_tuning-B1` (modes_cap 12→32 env-knob on champion `mf_fno_transfer_film`,
-  panel @200ep, seeds {0,1,2}) drafted 2026-07-29T14:45:51Z. As of this walk,
-  `notes/handoff_experiment_builder.md` is filed (~14 min old) reporting all
-  three required proofs pass (default-equivalence bit-for-bit, checkpoint-
-  resume reproduces the same number, cap-32 fires with correct param count),
-  and a guard-contract sbatch script (`02_guard_contract.sh`) was written
-  (~13 min old) for the required guard-set check ahead of any panel-win claim.
-  However `state/s5_tuning/current_stage.txt` still reads `builder_running`
-  and the card JSON is unchanged (`status: drafted`, `job_ids: []`,
-  `scripts_path: {}`, `output_paths: {}`, `build_commit: null`) — the
-  builder's return has not yet been consumed by the flow (no code-reviewer
-  pass recorded, no seed-0 submission). Worth the orchestrator's attention on
-  its next pulse. Falsification threshold: 3-seed mean panel geomean skill
-  must drop ≤5.819 (0.884 below the 6.703 anchor) AND no stable dataset
-  improve beyond its certified `min_claimable_effect`, or F22 (modes_cap
-  bottleneck) is falsified. Prior-art verdict: preempted-pivoted — licensed
-  only as a measurement (iFNO/AFNO/MG-TFNO already cover the mode-count
-  question), not a novelty claim.
+  panel @200ep) advanced `drafted`→`built` this walk (build_commit `ad29239`,
+  2026-07-29T16:10Z), all three contract-tier proofs pass (default-
+  equivalence bit-for-bit, checkpoint-resume reproduces the same number,
+  cap-32 fires with correct param count). Stage `builder_running`→
+  `review_running`; code-reviewer dispatched 16:10Z, still in flight as of
+  this walk (no review file, `review_notes: []`). Next expected: reviewer
+  PASS/SUGGEST → seed-0 submit via `scripts/submit.sh` + fire
+  `scripts/02_guard_contract.sh` (required by §2.3 before any panel-win
+  claim). Falsification threshold: 3-seed-anchor-referenced mean panel
+  geomean skill must drop ≤5.819 (0.884 below the 6.703 anchor) AND no
+  stable dataset improve beyond its certified `min_claimable_effect`, or F22
+  (modes_cap bottleneck) is falsified — note per ADR 0004 the in-round run
+  itself is now single-seed (provisional-single-seed label), with the 3-seed
+  anchor CI still the comparison basis. Prior-art verdict: preempted-pivoted
+  — licensed only as a measurement (iFNO/AFNO/MG-TFNO already cover the
+  mode-count question), not a novelty claim.
+- **ADR 0004 — strict single-seed (new this walk)**: operator-directed
+  (2026-07-29T16:05Z) change from the 1+2 seed protocol to seed-0-only
+  in-round execution, with seeds 1-2 reserved for an end-of-round top-3
+  confirmation pass; `project.yaml`/`program.md` edited by the orchestrator
+  session with the ADR as trail (per the ADR 0003 precedent). Cards' locked
+  `recipe.seeds: [0,1,2]` fields are untouched — execution governed by the
+  ADR. Applies to `s5_tuning-B1` and all later cards.
 - **All 4 non-s5 streams (s1-s4) hold at `brainstormer_done_awaiting_G4`**:
   correct per gate discipline — orchestrator-owned, maintainer observes only.
 - **s3_testtime benchmark-integrity flag** (for mentor, not actionable by
@@ -90,7 +99,7 @@ walk — nothing new to upsert into the timing ledger).
   candidate seeds in `docs/operator_notes/2026-07-29-proposals-backlog.md`
   (warp/registration fusion, residual-spectrum FFT diagnostic, pinn_transfer
   attribution, structural constraints). Not yet cited by any certified card.
-- **reopen candidates**: none (only 1 card exists, status `drafted`,
+- **reopen candidates**: none (only 1 card exists, status `built`,
   `reopen_candidate: false`).
 - **blocked.md**: does not exist — no blocked entries.
 - **abandoned streams**: none; `state/streams/` directory still does not

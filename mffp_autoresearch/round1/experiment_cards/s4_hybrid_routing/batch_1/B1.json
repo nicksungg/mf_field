@@ -1,0 +1,60 @@
+{
+  "id": "s4_hybrid_routing-B1",
+  "stream": "s4_hybrid_routing",
+  "batch": 1,
+  "category": "mf_composition_measurement",
+  "card_type": "model",
+  "created_utc": "2026-07-29T16:20:24Z",
+  "worktree_path": "mffp_autoresearch/round1/worktrees/s4_hybrid_routing/B1",
+  "source_iteration": "brainstormer/s4_hybrid_routing/batch_1/iteration_1.md",
+  "reopened_from": null,
+  "1_id_category": "s4_hybrid_routing-B1 / mf_composition_measurement",
+  "2_motivation": "Panel-benchmark the built-but-unbenchmarked\n`mf_field/akash/models/fno_transolver_seq` (FNO-FiLM base + zero-init,\nalpha-gated Transolver corrector trained on out-of-fold LF→HF residuals),\nreading the **per-dataset gate `alpha`** as the measurement. The websearcher's\nprior-art verdict for this direction (D1) is\n`preempted-but-MF-composition-open`, and its instruction is verbatim:\n*\"**D1 is a measurement card — it should claim no novelty at all**, only that\nit measures whether the +30.6% oracle survives against copy-LF on sharp 2-D\"*;\nwhat it lists as still open is *\"out-of-fold LF->HF residual targets under\nN_hf scarcity; the *real LF field* as corrector context; the least-squares +\nline-search `alpha` that makes the hybrid collapse **exactly** to the FNO when\nthe correction is useless.\"* program.md §12.4:\n*\"`mf_field/akash/models/fno_transolver_seq` (sequential FNO→Transolver\nresidual hybrid) is BUILT but unbenchmarked — batch 1 should start by scoring\nit on the panel (cheap, mostly evaluation).\"* The reason it earns GPU time\nrather than being a formality: the certified champion `mf_fno_transfer_film`\nis `FNO2d(cond_dim, ...)` and **never consumes the LF field at test time**\n(verified in its `smoke_eval.py` lines 106–170 — LF appears only as\npretraining targets), while the copy-LF reference *is* the LF field and has\nskill 1.0 against the champion's 4.18–16.33 on the sharp sets. This artifact\nis the round's first model whose prediction path cross-attends to the **real\ntest-time LF field** (all five npz_l panel datasets ship test LF), so the card\nmeasures how much of that discarded 4–16× information a gated point-based\ncorrector recovers — informative whether it wins or loses (program.md §1).",
+  "3_description": "1. `models_r1/fno_transolver_seq/` = verbatim copy of the three files from\n   `mf_field/akash/models/fno_transolver_seq/` at `967562e`\n   (`git diff --stat round1-substrate -- <those paths>` is empty).\n2. Exactly **two** mechanical edits (a third should draw a code-reviewer FAIL —\n   the artifact under measurement must stay the built family):\n   (a) replace `AKASH = Path(__file__).resolve().parents[2]` with an upward\n   search from `__file__` for the first ancestor containing\n   `mf_field/akash/common/mffp.py`, raising `RuntimeError` if absent (the\n   worktree is a full checkout, so it resolves; `parents[2]` would point at\n   the worktree root once the family sits under `models_r1/`);\n   (b) make the existing `--ctx_source` default\n   `os.environ.get(\"MFFP_CTX_SOURCE\", \"auto\")` so the knob is recipe-recorded\n   (program.md §5.5) — a no-op at the declared value.\n3. Run only through `round1/eval/score_panel.py --datasets panel --epochs 200\n   --seed {0,1,2} --env MFFP_CTX_SOURCE=auto`; do **not** set\n   `ROUND1_EVAL_RESULTS` (batch 0's `eval/run_batch0.sbatch` did not).\n4. SLURM: one array task per (dataset, seed), `--time 08:00:00` for\n   `sharp__allen_cahn_2d` / `sharp__fisher_kpp_2d` / `sharp__cahn_hilliard`\n   (batch-0 champion 44.4 min × ≈5.25 epoch-equivalents: LF-pretrain +\n   HF-finetune + 4 out-of-fold folds + corrector + epochs/4 joint stage),\n   `--time 03:00:00` for the other three. Resume from `<ckpt_dir>/last.pt` is\n   already implemented (lines 300–315 / 425–431).\n5. Guard set at contract tier in the seed-0 script\n   (`--datasets guard --epochs 2 --seed 0`), per program.md §2.3.\n6. Measurement extraction requires **no new code** — `finalize_and_write`\n   already emits, per run: `alpha`, `alpha_least_squares`, `base_only_rel_l2`\n   (the *paired within-run control*: the champion recipe on the identical\n   seed/split), `base_only_rel_l2_final_fno`, `val_rel_l2_base`,\n   `val_rel_l2_hybrid`, `stage3_joint`, `correction_rms_raw_units`,\n   `ctx_source`, `ctx_fidelity`, `latency_ms_per_sample`, `peak_mem_mb`\n   (`smoke_eval.py` lines 474–500). The analyzer tabulates these per\n   (dataset, seed) alongside the scored skills.",
+  "4_expected_result": "- *Free sanity gate*: `base_only_rel_l2` reproduces the batch-0 anchor\n  per-dataset skills within each dataset's `min_claimable_effect` (the\n  stage-1 recipe is the byte-identical `SMOKE` dict + `WORK_CAP = 256`);\n  a larger gap means broken plumbing, not science.\n- *Primary*: `alpha > 0` on **≥ 3 of the 5** sharp-2-D panel datasets.\n- *Score*: panel geomean skill moves from the anchor **6.703 [6.219, 7.102]**\n  to **4.5–6.0** (−10% to −33%), with ≥ 1 sharp dataset improving by more than\n  its noise floor — `sharp__allen_cahn_2d` needs ≥ **1.633** skill units off\n  16.334, `sharp__phase_field_crystal_2d` ≥ **1.151** off 11.511,\n  `sharp__fisher_kpp_2d` ≥ **0.418** off 4.177, `sharp__cahn_hilliard`\n  ≥ **0.553** off 5.533 (each floor = 10% relative). Directional evidence: a\n  2-epoch contract-tier run I executed on `ifc_poisson` gave\n  `rel_l2=0.438569` vs `base_only=0.490003` (−10.5%) with `alpha=1.5001`, on\n  the *weaker* context path.\n- *Not claimed*: skill < 1 anywhere (needs 4–16×; criterion 2 stays open);\n  nothing on `ext__helmholtz_2d` (floor **9.695** ≈ 70% relative — recorded,\n  never claimed); `ifc_poisson` (floor **0.240** on mean skill 1.566) is a\n  watch item.\n- Cratered threshold: 1.5 × 6.703 = **10.05** panel geomean skill at seed 0.",
+  "expected_falsification": "If the fitted gate `alpha` is 0 on ≥ 4 of the 5\nsharp-2-D panel datasets at seed 0 (the least-squares + line-search-containing-0\ngate rejecting the correction on its own held-out split) **and** no sharp-2-D\ndataset's 3-seed mean skill beats the batch-0 anchor by at least its\n`min_claimable_effect` (allen_cahn 1.633, pfc 1.151, fisher_kpp 0.418,\ncahn_hilliard 0.553 skill units), then the +30.6% FNO↔Transolver pairwise\noracle does not transfer to sharp-2-D multi-fidelity fusion and routing\nbetween these two experts is not this stream's lever.",
+  "anchor_reference": null,
+  "prior_art": {
+    "verdict": "preempted-but-MF-composition-open",
+    "citations": [
+      "https://arxiv.org/html/2602.11197",
+      "https://arxiv.org/abs/2311.12902"
+    ],
+    "verdict_quote": "**D1** — panel-benchmark the built `fno_transolver_seq` (FNO-FiLM base +\nzero-init alpha-gated Transolver corrector on out-of-fold LF->HF residuals)\n| `preempted-but-MF-composition-open` | https://arxiv.org/html/2602.11197\n(FNO smooth background + ViT high-contrast corrector);\nhttps://arxiv.org/abs/2311.12902 (hierarchical FNO + conv-residual +\nattention, frequency-complementary, sequential, no MF) | Neither source is\nmulti-fidelity. Open: out-of-fold LF->HF residual targets under N_hf\nscarcity; the *real LF field* as corrector context; the least-squares +\nline-search `alpha` that makes the hybrid collapse **exactly** to the FNO\nwhen the correction is useless. **D1 is a measurement card — it should claim\nno novelty at all**, only that it measures whether the +30.6% oracle\nsurvives against copy-LF on sharp 2-D.",
+    "citation_labels": [
+      "https://arxiv.org/html/2602.11197 (FNO smooth background + ViT high-contrast corrector)",
+      "https://arxiv.org/abs/2311.12902 (hierarchical FNO + conv-residual + attention, frequency-complementary, sequential, no MF)"
+    ],
+    "source": "websearches/s4_hybrid_routing/batch_1/report.md (D1 row)"
+  },
+  "recipe": {
+    "base_family": "fno_transolver_seq",
+    "base_commit": "967562e2a4e3493515edab36b0fcb23655fce71f",
+    "family_dir": "models_r1/fno_transolver_seq",
+    "datasets": "panel",
+    "epochs": 200,
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "env": {
+      "MFFP_CTX_SOURCE": "auto"
+    }
+  },
+  "status": "drafted",
+  "skipped_reason": null,
+  "reopen_candidate": false,
+  "scripts_path": {},
+  "output_paths": {},
+  "build_commit": null,
+  "job_ids": [],
+  "logs": {},
+  "build_notes": [],
+  "review_notes": [],
+  "debug_notes": [],
+  "5_actual_result": null,
+  "6_analysis": null,
+  "7_gap_and_future": null,
+  "reanalysis_progress": null
+}

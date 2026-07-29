@@ -1,0 +1,63 @@
+{
+  "id": "s3_testtime-B1",
+  "stream": "s3_testtime",
+  "batch": 1,
+  "category": "residual-lever-feasibility-diagnostic",
+  "card_type": "diagnostic",
+  "created_utc": "2026-07-29T16:20:07Z",
+  "worktree_path": "mffp_autoresearch/round1/worktrees/s3_testtime/B1",
+  "source_iteration": "brainstormer/s3_testtime/batch_1/iteration_1.md",
+  "reopened_from": null,
+
+  "1_id_category": "s3_testtime-B1 — residual-lever-feasibility-diagnostic",
+  "2_motivation": "The websearcher's D1 row reads **\"preempted-but-MF-composition-open (cite)\"**, and the open seam it names is *\"**field-space** vs weight-space optimization; doing it **from an MF prediction at N_hf = 5**; and scoring against **copy-LF** rather than against the base model — nobody in this literature uses that bar\"*, under the fetched **standing threat** that residual minimization *\"can be an unreliable proxy for reconstruction accuracy in ill-conditioned systems\"* (ENS, arXiv:2606.27354). program.md §12.3 (post-ADR-0003) adds that the lever *\"has never been shown to help here — this stream's batch 1 is closer to a first real test than a scale-up.\"* Rather than spend ~7.7 GPU-hours (3 seeds × 6 panel datasets, `state/timing_ledger.json`) building the MF composition on an untested premise, this card measures — in ~10 GPU-minutes, with **no training** — whether the exact governing residual can carry any **non-solver** information about an MF prediction on `ext__helmholtz_2d`, the only panel dataset where a true governing residual exists at all (§12.3, 1 of 6).",
+  "3_description": "family `models_r1/hh_residual_anatomy`, `epochs 0`. It rebuilds the certified champion from the three frozen batch-0 checkpoints (`eval/results/mf_fno_transfer_film/ckpt_ext__helmholtz_2d_e200_s{0,1,2}/last.pt`; `FNO2d(cond_dim=3, hidden=64, n_blocks=4, modes=(12,12), grid=(96,96))`, `scaler_hf` recomputed exactly as the champion's `smoke_eval.py` does) and measures on the 100 HF test samples:\n**M0 build gate** — `‖A u_hf − f‖/‖f‖ ≤ 1e-9` with `A = Δ_h + k²I`, `h = 1/97`, Dirichlet-0, `f = exp(-((x−sx)²+(y−sy)²)/(2·0.04²))` transcribed from `mf_field_extension_data/solvers.py`; DST-I identity `idst(Λ·dst(u)) == Au` to 1e-10; reconstructed base rel-L2 matching the batch-0 record [6.202266, 3.008260, 4.445797] to 1e-3 relative, else HARD-STOP.\n**M1 vacuity** — rel-L2 + wall-clock of the exact spectral solve `idst(dst(f)/Λ)` vs the network forward pass.\n**M2 1-dof ladder** — α* = ⟨Au,f⟩/‖Au‖² and α_oracle, their correlation and resulting skill, for base(×3 seeds) / copy-LF / zero / 12-mode-low-passed truth.\n**M3 budgeted descent** — K ∈ {0,10,50,200,1000} Adam steps on `‖M⊙(Au − f)‖²` from base / copy-LF / zero init, with `M` = ones and with the PIC-Flow source/stencil mask (3σ around `(sx,sy)`); rel-L2, residual, initialisation-divergence, wall-clock.\n**M4 anatomy** — DST-bucketed error energy (base vs copy-LF) by |λ| decile; per-sample cos(pred, truth) vs distance-to-resonance; the 408× ‖u‖ spread vs the champion's single global scaler 7.383.\n**M5** — M2/M3 headlines across seeds 0,1,2.\n**M6 (secondary, D4 pre-test)** — discrete free energy from `meta.json` parameters on `sharp__allen_cahn_2d`, `sharp__cahn_hilliard`, `sharp__phase_field_crystal_2d`, evaluated on truth / copy-LF / champion / truth+noise; Spearman(|ΔF|, rel-L2).\nThe **contract-scored** prediction is the M2 base 1-dof residual projection; everything else lives in the result JSON's `extra` block. Wall-clock per arm is reported (§12.3).",
+  "4_expected_result": "the hypothesis **holds**. Scored metric: `ext__helmholtz_2d` skill 13.817 → **3.035** (all three seeds land exactly on the zero field; the 9.695 seed spread collapses to ~0 **by annihilation**, not by stabilisation). That is a 10.78-skill-unit move, which clears the 9.695 noise floor yet is *degenerate* — the zero-predictor bar in the falsification clause exists to expose precisely that. The exact DST solve is expected at rel-L2 ~1e-13, **zero** initialisation dependence, and per-sample wall-clock below the network's forward pass — i.e. unbounded refinement here is a re-solve, not a model. The M3 budgeted arms are the genuinely open part; expectation is monotone interpolation from \"still the base\" to \"collapsed to zero\", with copy-LF-init never beaten by base-init. Panel framing: a *non-degenerate* configuration reaching skill 3.035 would move the stream anchor 6.703 → 6.703·(3.035/13.817)^(1/6) = **5.21**, a 1.50 drop against a panel-geomean seed spread of 0.883, so the bar is meaningful at panel level too. M6 is a genuine coin-flip and either answer decides batch 2.",
+  "expected_falsification": "Falsified if some exact-residual test-time configuration whose output is initialisation-dependent (base-init vs zero-init outputs differing by ≥ 10% relative L2, i.e. demonstrably not a re-solve) reduces the certified champion's `ext__helmholtz_2d` mean skill from 13.817 to below **3.035** — the trivial zero-field predictor — an improvement of > 10.78 skill units that exceeds the batch-0 noise floor of 9.695 (`state/noise_floor.json`).",
+  "anchor_reference": null,
+  "prior_art": {
+    "verdict": "preempted-but-MF-composition-open (cite)",
+    "verdict_quote_verbatim": "**D1** — exact governing residual (`du + k^2u = f`, source located by `x`) descended on the **output field** with an anchor, from a multi-fidelity prediction; `ext__helmholtz_2d` is the only panel dataset where this is computable | **preempted-but-MF-composition-open (cite)** *(with an honesty caveat: the preempting source could not be fetched)* | ENS https://arxiv.org/abs/2606.27354 (fetched); PIC-Flow https://arxiv.org/abs/2605.06929 (search-returned; does NOT preempt — training-time); PE-PINN https://arxiv.org/html/2603.02231 (fetched); PINO https://arxiv.org/pdf/2111.03794 (**search-summary only, 3 fetch attempts failed**) | Mechanism = PINO instance-wise test-time optimization + anchor loss (presumed prior art). Open: **field-space** vs weight-space optimization; doing it **from an MF prediction at N_hf = 5**; and scoring against **copy-LF** rather than against the base model — nobody in this literature uses that bar. **Standing threat (fetched)**: residual minimization \"can be an unreliable proxy for reconstruction accuracy in ill-conditioned systems\"; Helmholtz is the canonical indefinite operator with a singular point source. **Mandatory mitigation**: PIC-Flow-style masking of the source/stencil-error pixels.",
+    "citations": [
+      "ENS https://arxiv.org/abs/2606.27354 (fetched)",
+      "PIC-Flow https://arxiv.org/abs/2605.06929 (search-returned; does NOT preempt — training-time)",
+      "PE-PINN https://arxiv.org/html/2603.02231 (fetched)",
+      "PINO https://arxiv.org/pdf/2111.03794 (search-summary only, 3 fetch attempts failed)"
+    ],
+    "source": "websearches/s3_testtime/batch_1/report.md, D1 row",
+    "secondary_row_quote": "Also quoted, D4 row (drives M6): **\"novel\"** *(by absence of evidence — weak)*."
+  },
+  "recipe": {
+    "base_family": "mf_fno_transfer_film",
+    "base_commit": "967562e2a4e3493515edab36b0fcb23655fce71f",
+    "family_dir": "models_r1/hh_residual_anatomy",
+    "datasets": "ext__helmholtz_2d",
+    "epochs": 0,
+    "seeds": [0],
+    "env": {
+      "HHDIAG_BASE_CKPT_DIR": "mffp_autoresearch/round1/eval/results/mf_fno_transfer_film",
+      "HHDIAG_BASE_SEEDS": "0,1,2",
+      "HHDIAG_GD_STEPS": "0,10,50,200,1000",
+      "HHDIAG_GD_LR": "1e-3",
+      "HHDIAG_SRC_MASK_SIGMA": "3.0",
+      "HHDIAG_ENERGY_PROBE": "sharp__allen_cahn_2d,sharp__cahn_hilliard,sharp__phase_field_crystal_2d"
+    }
+  },
+
+  "status": "drafted",
+  "skipped_reason": null,
+  "reopen_candidate": false,
+  "scripts_path": {},
+  "output_paths": {},
+  "build_commit": null,
+  "job_ids": [],
+  "logs": {},
+  "build_notes": [],
+  "review_notes": [],
+  "debug_notes": [],
+
+  "5_actual_result": null,
+  "6_analysis": null,
+  "7_gap_and_future": null,
+  "reanalysis_progress": null
+}

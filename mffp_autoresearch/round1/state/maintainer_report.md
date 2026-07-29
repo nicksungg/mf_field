@@ -662,3 +662,136 @@
   elapsed for 65984594 refreshed to ~1:10:09; flags section otherwise
   unchanged from last walk).
 ## RUN END 2026-07-29T15:38:20Z
+
+## RUN START 2026-07-29T15:55:05Z
+- Single in-flight check: last run START 2026-07-29T15:37:08Z has matching
+  RUN END 2026-07-29T15:38:20Z (~17 min ago, closed) — no double-walk risk,
+  proceeding.
+- Card walk: 1 card total (`experiment_cards/s5_tuning/batch_1/B1.json`,
+  `s5_tuning-B1`, `card_type: model`, `status: drafted`, `job_ids: []`,
+  `reopen_candidate: false`, `scripts_path: {}`, `output_paths: {}`,
+  `build_commit: null`). No other streams have cards yet. Card JSON file
+  itself unchanged since prior walk (mtime unchanged at 14:46:44Z, ~69 min
+  old) — still `drafted`, no build fields populated in the JSON.
+- **New delta this walk**: the s5_tuning builder's worktree now shows its
+  work functionally complete even though the card JSON/`current_stage.txt`
+  haven't caught up. `worktrees/s5_tuning/B1/notes/handoff_experiment_
+  builder.md` was filed ~14 min before this walk (via filesystem-relative
+  epoch delta, not lexical HH:MM) reporting all three required contract-tier
+  proofs pass: (1) default env reproduces the untouched factory family
+  bit-for-bit (helmholtz 22.613192981264614, ifc_poisson
+  0.4900025652737081), (2) resume from a genuinely-interrupted mid-finetune
+  `last.pt` reproduces the same helmholtz number, (3) `MFFP_MODES_CAP=32`
+  fires correctly (n_params 4,774,465 -> 33,610,305, `modes [32,32]`).
+  `worktrees/s5_tuning/B1/scripts/02_guard_contract.sh` was also newly
+  written (~13 min before this walk) — an sbatch script for the card's
+  §3.6 item 6(c) guard-set check (`--datasets guard --epochs 2 --seed 0`),
+  shipped as a job because cap-32 spectral weights couldn't finish on the
+  1-CPU login node. `state/s5_tuning/current_stage.txt` still reads
+  `builder_running` and the card JSON is still pre-build (no `job_ids`/
+  `scripts_path`/`output_paths`/`build_commit`) — the builder's return has
+  not yet been consumed by the flow (no code-reviewer pass recorded, no
+  seed-0 submission). Flagged in index.md for the orchestrator's attention;
+  not acted on (maintainer is read-only for cards/stage files).
+- Stage deltas since last walk: s1_poisson/s2_beyond_copy/s3_testtime/
+  s4_hybrid_routing all unchanged at `brainstormer_done_awaiting_G4`.
+  s5_tuning unchanged at `builder_running` per `current_stage.txt` (see
+  delta above for the underlying worktree progress that outpaces this
+  label).
+- `orchestrator_flow.md` confirms: pulses at 14:54Z, 15:04Z, 15:14Z, 15:23Z,
+  15:33Z, 15:43Z, 15:53Z all logged `no-op` — s1-s4 correctly holding for
+  G4, s5 builder still marked in flight per the flow's own view, no r1-*
+  SLURM jobs. The 15:53Z pulse note ("builder in flight — progress confirmed
+  by maintainer's 15:37Z walk") predates the handoff filing (15:37Z walk
+  saw scratchpad smoke-check files, not yet the handoff note) — the next
+  pulse (~16:03Z) should see the handoff via this maintainer walk.
+- SLURM view: `squeue -u $USER` shows only the pre-existing unrelated
+  `bash` job 65984594 (RUNNING, ~1:28:16 elapsed) — not r1-scoped. No
+  `r1-{stream}-B{N}-s{seed}` jobs in queue or in `sacct` (2-day window,
+  grep `^r1-` on JobID column empty) — consistent with `s5_tuning-B1` not
+  yet submitted even though `scripts/submit.sh` and the new
+  `scripts/02_guard_contract.sh` are ready to fire. `sacct` confirms G3's
+  array `65956106` unchanged at 36/36 COMPLETED, 0 FAILED. Non-r1
+  historical entries (CANCELLED 65958902/65958904/65960289, batch-0 INFRA
+  failure 65955389) unchanged, out of scope.
+- Timing ledger: no new COMPLETED r1- jobs this walk -> no upsert needed;
+  re-validated `timing_ledger.json` as parseable JSON (`_note` + `entries`
+  top-level keys, 36 entries, unchanged from last walk).
+- Abandonment check: only 1 card exists (status `drafted`, not skipped/
+  blocked); no stream has 3 consecutive skip/blocked batches.
+  `state/streams/` directory still does not exist — correct, no
+  abandonment condition met.
+- Transcript inbox: `state/transcripts/` still does not exist — nothing to
+  archive this walk.
+- Anchors: all 5 `state/anchors/*.json` unchanged (still certified
+  2026-07-29T14:28:45Z, same values as last walk) — rendered verbatim into
+  index.md, no recomputation.
+- No card files modified by this walk (`git status --short
+  experiment_cards/` clean before and after).
+- index.md: regenerated (fresh timestamp; G4 row and s5_tuning stream row
+  updated to describe the builder's completed handoff and the new
+  02_guard_contract.sh script, with an explicit note that the card
+  mechanics/stage label haven't caught up to the builder's actual progress;
+  running-jobs elapsed for 65984594 refreshed to ~1:28:16; flags section
+  updated with the new G4 delta, otherwise unchanged from last walk).
+## RUN END 2026-07-29T15:57:40Z
+## RUN START 2026-07-29T16:15:58Z
+- Card `s5_tuning-B1` advanced: `status` `drafted` -> `built`, `build_commit`
+  `ad29239cc776b38825fe5ebe06f2bff7c8a74712` on branch `round1/exp-s5_tuning-B1`;
+  `scripts_path` (`01_train_eval.sh`, `submit.sh`, `submit_seeds_2_3.sh`,
+  `02_guard_contract.sh`, `family_dir`) and `output_paths` (training/eval/
+  slurm/contract_smoke + `eval_result_pattern`) now populated; 5 `build_notes`
+  entries recorded (default-equivalence proof, checkpoint-resume drill,
+  knob-fired audit, open guard-contract item, SLURM/job-naming notes) —
+  matches the builder's earlier-observed handoff note content, now formally
+  landed in the card JSON. `job_ids` still `[]` (seed 0 not yet submitted);
+  `review_notes` still `[]` (code-reviewer dispatched but has not returned).
+- `state/s5_tuning/current_stage.txt`: `builder_running` -> `review_running`
+  (matches `orchestrator_flow.md`'s 16:10Z "Builder return" entry: SUCCESS,
+  14/14, stage -> review_running, code-reviewer dispatched). The 16:13Z pulse
+  confirms code-reviewer still in flight with no review file yet as of this
+  walk (`worktrees/s5_tuning/B1` has no new files beyond
+  `notes/handoff_experiment_builder.md` and
+  `scratchpad/CONTRACT_SMOKE_EVIDENCE.md`, both pre-dating last walk).
+- New operator decision: ADR 0004 "strict single-seed" (2026-07-29T16:05Z,
+  `docs/adr/0004-strict-single-seed.md`) — Eloise directed 1-seed in-round
+  execution via AskUserQuestion; `project.yaml` seed_protocol and
+  `program.md` §2.4/§4.3/§4.4 edited accordingly. Cards' locked
+  `recipe.seeds: [0,1,2]` fields are untouched (per ADR, execution is
+  governed by the ADR, not a card edit) — applies to `s5_tuning-B1`: only
+  seed 0 will be submitted in-round; seeds 1-2 deferred to an end-of-round
+  top-3 confirmation pass. Not a card-file change (no card mechanics
+  touched), so no maintainer read-only violation.
+- Stage deltas since last walk: s1_poisson/s2_beyond_copy/s3_testtime/
+  s4_hybrid_routing all unchanged at `brainstormer_done_awaiting_G4`.
+- `orchestrator_flow.md` confirms: since the 15:57Z walk, one pulse
+  (16:06Z, s5_tuning anomaly handling — builder handoff filed but no build
+  commit yet observed at that time, status-check message sent), then the
+  ADR 0004 entry (16:05Z timestamp precedes but is logged after in file
+  order), then "Builder return" (16:10Z, SUCCESS, dispatching
+  code-reviewer), then a 16:13Z no-op pulse (code-reviewer in flight).
+  All consistent with the card-JSON delta above.
+- SLURM view: `squeue -u $USER` still shows only the pre-existing unrelated
+  `bash` job 65984594 (RUNNING, ~1:48:04 elapsed) — not r1-scoped. No
+  `r1-{stream}-B{N}-s{seed}` jobs in queue or `sacct` (2-day window, grep
+  `^r1-` on JobID column still empty) — consistent with seed 0 not yet
+  submitted (code-reviewer has not yet returned PASS/SUGGEST).
+- Timing ledger: no new COMPLETED r1- jobs this walk -> no upsert needed;
+  re-validated `timing_ledger.json` as parseable JSON (`_note` + `entries`
+  top-level keys, 36 entries, unchanged from last walk).
+- Abandonment check: only 1 card exists (status `built`, not skipped/
+  blocked); no stream has 3 consecutive skip/blocked batches.
+  `state/streams/` directory still does not exist — correct, no
+  abandonment condition met.
+- Transcript inbox: `state/transcripts/` still does not exist — nothing to
+  archive this walk.
+- Anchors: all 5 `state/anchors/*.json` unchanged (still certified
+  2026-07-29T14:28:45Z, same values as last walk) — rendered verbatim into
+  index.md, no recomputation.
+- No card files modified by this walk (`git status --short
+  experiment_cards/` clean before and after).
+- index.md: regenerated (fresh timestamp; G4 row, s5_tuning stream row, and
+  flags updated to reflect `built` status/`review_running` stage and the
+  new ADR 0004 ledger entry; running-jobs elapsed for 65984594 refreshed to
+  ~1:48:04; otherwise unchanged from last walk).
+## RUN END 2026-07-29T16:17:10Z

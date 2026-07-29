@@ -1,0 +1,68 @@
+{
+  "id": "s1_poisson-B1",
+  "stream": "s1_poisson",
+  "batch": 1,
+  "category": "mf_composition / ladder-data-fusion",
+  "card_type": "model",
+  "created_utc": "2026-07-29T16:19:13Z",
+  "worktree_path": "mffp_autoresearch/round1/worktrees/s1_poisson/B1",
+  "source_iteration": "brainstormer/s1_poisson/batch_1/iteration_1.md",
+  "reopened_from": null,
+  "1_id_category": "s1_poisson-B1 — category: mf_composition / ladder-data-fusion (gap stream)",
+  "2_motivation": "The batch-1 seed direction (§12.1: \"all-pairs fidelity training … `mf_field/akash/models/mf_fno_allpairs`\") is scored by the websearcher as **`preempted-but-MF-composition-open`**, open only as \"**Not found published**: (i) **all ordered pairs** (not just adjacent) as a data-amplification augmentation, (ii) with a **single shared** network rather than one net per level, (iii) at **N_hf = 5** on the `li2022ifc` Poisson ladder.\" Reading that family against the data shows it *cannot be tested on this ladder as built*: `ifc_poisson`'s four fidelity levels are **not sample-aligned** (verified: `np.allclose(X8[:5], X64)` → `False`, max |diff| 0.581; same for every other pair), while `build_pairs` pairs `cond_by_fid[s][:n]` with `field_by_fid[t][:n]` and the finetune stage pairs LF conditions with HF fields. Every cross-fidelity row and the whole finetune stage therefore associate parameters with fields from *different* samples — which is exactly what its 0.4657 nRMSE on `ifc_poisson` (vs the champion's 0.0488) and 0.1457 on `ifc_heat` in `akash/results/bench_full_metrics.csv` predict, on precisely the two non-aligned datasets, while it wins the aligned npz datasets. This card fixes the correspondence and makes the pair set the measured variable, following the websearcher's directive \"**Design the pair set as the actual variable.**\"",
+  "3_description": "family `mf_fno_ladder` in the worktree, vendored from `akash/models/mf_fno_allpairs` + `akash/common/backbone.py` (SMOKE hyperparameters identical to the anchor family: hidden 64, blocks 4, modes_cap 12, batch 16, lr_pretrain 1e-3, lr_finetune 3e-4, wd 1e-5, clip 1.0). Rows `(cond = [X, f_src, f_tgt]) → Y@(64,64)`, with `f = (log fid − log 8)/(log 64 − log 8)`. **Correction**: cross-pair rows take the condition vector from the **target** fidelity's own sample list (a no-op on aligned datasets, a fix on the ifc ladder), and **self pairs (f,f) are included** so the 100/50/20/5 ladder rows all enter training. Stage 1: joint training on the arm's row set, 200 epochs. Stage 2 (identical in every arm): HF finetune on the 5 rows `(X^{(64)}, f_src=0, f_tgt=1) → Y^{(64)}`, 200 epochs. Eval query `(X_test, f_src=0, f_tgt=1)`.\nFour arms via `MFFP_LADDER_MODE`:\n\n| arm | levels | tags | rows | role |\n|---|---|---|---|---|\n| `two_level` | {8,64} | self ×2 + (8,64) | 110 | information-content control ≈ the champion |\n| `adjacent` | all 4 | self ×4 + (8,16),(16,32),(32,64) | 250 | published cascade structure |\n| `allpairs` | all 4 | self ×4 + all 6 ordered (s<t) | 280 | **primary** — the open composition |\n| `legacy_pairing` | all 4 | same rows, cross rows source-indexed | 280 | isolates the correspondence defect |\n\nTwo build traps recorded for the builder/reviewer: (1) `score_panel._run_one` derives `out_json`/`ckpt_dir` from `(family_dir.name, dataset, epochs, seed)` only — the arm is invisible, and the base resume logic would silently reload another arm's `last.pt`; the checkpoint key **must** include the arm and the job script **must** export a per-arm `ROUND1_EVAL_RESULTS`. (2) The family must be *vendored*, not imported from `akash/**` via `parents[2]`, both because akash is a guarded read-only surface and because `code_hash` would not see the imported code. The result JSON `extra` also records (score-neutrally) the per-pair `max |X^{(s)}[:n] − X^{(t)}[:n]|` alignment measurement and the per-arm row counts.",
+  "4_expected_result": "metric = `ifc_poisson` test nRMSE → skill vs paper bar 0.036 (ADR 0002), mean over seeds {0,1,2}. Anchor = **1.5656 [1.4562, 1.6961]** (nRMSE ≈ 0.0564). Predictions: `allpairs` **skill 1.15–1.40 (nRMSE 0.041–0.050)**, point estimate ≈1.28 → Δ ≈ **−0.29 skill vs anchor**, just above the **0.2399** floor; `adjacent` within the floor of `allpairs`; `two_level` ≈ anchor (1.4–1.7); `legacy_pairing` **≥ 3.0 skill (nRMSE ≥ 0.108)**, ≈6× the floor away from the anchor. Mechanism: the 32² level's 20 samples are the only supervision besides the 5 HF samples covering spectral modes 4–12 (an 8² field lifted to 64² carries content only to mode ≈4; the FNO represents 12), and the 16² level adds 50 more rows. Stated plainly: the anchor comparison is *marginal* against the floor at this tier; the robust part of the card is the three internal contrasts (same code, same seeds, same hyperparameters). Wall-clock: batch 0 ran `ifc_poisson` @200 epochs in 0.78–0.98 min, so 4 arms ≈ 15 min/seed → `--time=01:00:00` is ample.",
+  "expected_falsification": "Falsified if the full-ladder all-ordered-pairs arm fails to beat the two-level arm on `ifc_poisson` by more than the certified noise floor — mean skill over seeds {0,1,2} improving by ≤ 0.240 skill units (≤ 0.00864 nRMSE) — which would mean the intermediate fidelities (16², 32²) carry no usable information for HF reconstruction at N_hf = 5 beyond what the 8²→64² transfer already exploits.",
+  "anchor_reference": null,
+  "prior_art": {
+    "verdict": "preempted-pivoted",
+    "citations": [
+      "fidelity-as-input: https://www.emergentmind.com/topics/multi-fidelity-gaussian-process-surrogate-modeling (snippet)",
+      "continuous-fidelity conditioning: https://arxiv.org/abs/2207.00678 (fetched)",
+      "adjacent-pair nested cascade: https://arxiv.org/html/2605.16118v1 (fetched)",
+      "joint all-levels training: https://arxiv.org/html/2402.02031v1 (snippet)",
+      "progressive ladder at tiny HF: https://arxiv.org/pdf/2510.13762 (fetched)",
+      "all2all = **time** pairs only: https://nips.cc/virtual/2024/poster/95731 (snippet)"
+    ],
+    "verdict_quote": "**D1.** All-ordered-pairs fidelity training — ONE FiLM-FNO over every (f_src<f_tgt) pair of the nested 100/50/20/5 ladder, queried (LF→HF) at eval (`akash/models/mf_fno_allpairs`) | **preempted-but-MF-composition-open** | fidelity-as-input: https://www.emergentmind.com/topics/multi-fidelity-gaussian-process-surrogate-modeling (snippet); continuous-fidelity conditioning: https://arxiv.org/abs/2207.00678 (fetched); adjacent-pair nested cascade: https://arxiv.org/html/2605.16118v1 (fetched); joint all-levels training: https://arxiv.org/html/2402.02031v1 (snippet); progressive ladder at tiny HF: https://arxiv.org/pdf/2510.13762 (fetched); all2all = **time** pairs only: https://nips.cc/virtual/2024/poster/95731 (snippet) | Conditioning on fidelity, joint multi-level training, and adjacent-level cascades are all published. **Not found published**: (i) **all ordered pairs** (not just adjacent) as a data-amplification augmentation, (ii) with a **single shared** network rather than one net per level, (iii) at **N_hf = 5** on the `li2022ifc` Poisson ladder. Two independent searches (turn 3, turn 4) returned explicit negatives on (i)+(ii). [quoted verbatim from websearches/s1_poisson/batch_1/report.md; brainstormer directs the card verdict be recorded as `preempted-pivoted`, the schema's nearest enum value to the websearcher's `preempted-but-MF-composition-open`]"
+  },
+  "recipe": {
+    "base_family": "mf_fno_allpairs",
+    "base_commit": "967562e2a4e3493515edab36b0fcb23655fce71f",
+    "family_dir": "models_r1/mf_fno_ladder",
+    "datasets": "ifc_poisson",
+    "epochs": 200,
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "env": {
+      "MFFP_LADDER_MODE": "allpairs",
+      "_arms": [
+        "two_level",
+        "adjacent",
+        "allpairs",
+        "legacy_pairing"
+      ],
+      "_primary_arm": "allpairs",
+      "_sweep": "one SLURM job per seed runs 4 score_panel.py calls, each with --env MFFP_LADDER_MODE=<arm> and its own --out result_ifc_poisson_<arm>_s<seed>.json; export ROUND1_EVAL_RESULTS=<outputs>/eval/results_<arm> per arm so per-arm result JSONs and ckpt dirs cannot collide",
+      "_source": "vendored from mf_field/akash/models/mf_fno_allpairs (model.py sha256 984d4e5e…, smoke_eval.py sha256 611729bc…) + mf_field/akash/common/backbone.py (sha256 f56fa802…) at commit 967562e2; akash itself is never edited"
+    }
+  },
+  "status": "drafted",
+  "skipped_reason": null,
+  "reopen_candidate": false,
+  "scripts_path": {},
+  "output_paths": {},
+  "build_commit": null,
+  "job_ids": [],
+  "logs": {},
+  "build_notes": [],
+  "review_notes": [],
+  "debug_notes": [],
+  "5_actual_result": null,
+  "6_analysis": null,
+  "7_gap_and_future": null,
+  "reanalysis_progress": null
+}
