@@ -86,3 +86,109 @@ runtime forward-hook audit (M1) recorded in card part 5.
 
 **Provenance.** `worktrees/s2_beyond_copy/B1/scratchpad/reanalysis_turn_3.py`;
 card `experiment_cards/s2_beyond_copy/batch_1/B1.json` part 6, finding F14.
+
+---
+
+## `ladder_level_diagnostic.py`
+
+**Measures.** Everything about a multi-fidelity dataset's *ladder* that a model
+design should know before it is written:
+
+| block | question answered |
+|---|---|
+| `amplitude_law` | per-level N / grid / `max\|Y\|` / `RMS\|Y\|`, consecutive RMS ratios, total spread, and the scalar a naive pooled trainer would use as a shared scaler |
+| `index_alignment` | `max\|X^(s)[:n] − X^(t)[:n]\|` per pair; `0` ⟺ the fidelity sample lists are index-aligned and naive cross-level row construction is safe |
+| `condition_coverage` | per-level condition box + scaled nearest-neighbour distance from the HF-train and TEST conditions to each level's cloud |
+| `cross_level_consistency` | nearest-condition-matched, upsampled source vs target field: rel-L2 raw, rel-L2 after ONE optimal global gain, that gain, and Pearson r — does a level carry the HF *shape*? |
+| `matched_level_predictor_on_test` | training-free skill floor: nearest-condition sample at level `f`, upsampled, × one gain calibrated on the HF **train** samples only; plus zero- and HF-train-mean-predictor baselines |
+
+**Read it as.** `index_aligned: false` → any family that pairs
+`cond_by_fid[s][:n]` with `field_by_fid[t][:n]` is training on mismatched
+(parameters, field) rows. Large `max_over_min_rms` with clean consecutive
+ratios → a discretization scale law, i.e. a **removable nuisance**: pooling
+those levels under one target scaler makes the network learn the gain law along
+the fidelity axis. High `cross_level_consistency.pearson_r_mean` with low
+`rel_l2_after_optimal_gain` → the coarse levels *do* carry the HF shape, so a
+null on "extra levels don't help" is a normalization result, not an information
+result. `matched_level_predictor_on_test` is the honest floor any trained model
+must clear.
+
+**Invoke.**
+```bash
+source "$PROJECT_ROOT/.venv/bin/activate"
+python tools/ladder_level_diagnostic.py --dataset ifc_poisson \
+    [--split train] [--test_split test] [--paper_bar 0.036] [--out diag.json]
+```
+Read-only, pure numpy/torch-interpolate; seconds to ~2 min per dataset.
+
+**Verified.** Run 2026-07-29 on two different on-disk layouts.
+`ifc_poisson` (ifc_raw, 4 levels) → `index_aligned: false`, RMS spread
+**75.69×**, consecutive ratios 4.379 / 4.196 / 4.120, cross-level Pearson r
+0.941–0.989, matched-8²-level test nRMSE **0.24828**.
+`sharp__allen_cahn_2d` (npz_l, 3 levels) → `index_aligned: true`, RMS spread
+**1.00×**, cross-level r 0.980–0.998. The contrast is the point: the
+shared-scaler trap below exists on the first dataset and not on the second.
+
+**Provenance.** `worktrees/s1_poisson/B1/scratchpad/reanalysis_turn_1.py`;
+card `experiment_cards/s1_poisson/batch_1/B1.json` part 6, turn-1 findings.
+
+---
+
+## `field_error_decomposition.py`
+
+**Measures.** Whether an nRMSE gap is *amplitude* or *structure*, from any
+saved `(pred, target)` pair:
+
+| key | meaning |
+|---|---|
+| `frac_sq_error_from_gain` | share of squared error explained by a per-sample scalar gain error |
+| `nRMSE_after_per_sample_gain` | the STRUCTURE-only error (each sample rescaled by its own oracle gain) |
+| `nRMSE_after_global_gain` | one oracle scalar for the whole set — separates constant bias from per-sample spread |
+| `var_ratio_pred_over_target` | across-sample variance retained; `≪ 1` = collapsed toward the mean field |
+| `nRMSE_centered` | nRMSE of the mean-removed fields |
+| `band_rel_err[]`, `target_energy_share[]` | radial-band relative error, and where the target's energy actually is |
+| `pearson_r_mean/min` | per-sample shape agreement |
+
+Pass several files to get a comparison block against the first label.
+
+**Read it as.** `frac_sq_error_from_gain` high and
+`nRMSE_after_per_sample_gain` ratio ≈ 1 between two models → they learned the
+same function up to per-sample scale and the gap is **calibration**, not
+architecture. Low `var_ratio_pred_over_target` → the model is regressing toward
+the mean field, i.e. it lost the condition dependence. Compare `band_rel_err`
+against `target_energy_share` before believing any high-frequency story.
+
+**Invoke.**
+```bash
+source "$PROJECT_ROOT/.venv/bin/activate"
+python tools/field_error_decomposition.py \
+    --pred_npz <a.npz> [<b.npz> ...] [--labels a b] \
+    [--pred_key pred --target_key target] [--grid 64 64] [--bands 6] [--out d.json]
+```
+Seconds. The npz must hold 2-D `(N, n_cells)` arrays — the layout families
+write to `preds_test.npz`. If a family does not dump predictions, add a
+score-neutral `np.savez` beside its checkpoint (pattern:
+`worktrees/s1_poisson/B1/models_r1/mf_fno_ladder/smoke_eval.py:462`); it costs
+nothing and it is the only way this probe can be run after the fact.
+
+**Verified.** Run 2026-07-29 on `s1_poisson-B1`'s shipped predictions:
+reproduced the card's `two_level` 0.102710 and `allpairs` 0.209275 exactly,
+`nrmse_def_hash d3d0ade9…` matching the card's, and showed the **2.0375×**
+nRMSE ratio shrinking to a **1.1306×** structure-only ratio.
+
+**Provenance.** `worktrees/s1_poisson/B1/scratchpad/reanalysis_turn_2.py`;
+card `experiment_cards/s1_poisson/batch_1/B1.json` part 6, turn-2 findings.
+
+---
+
+## Standing warning `ladder_level_diagnostic` + `field_error_decomposition` encode
+
+**Never pool fidelity levels under one target scaler without checking the
+amplitude spread first.** On `ifc_poisson` the levels differ by a `~h²`
+discretization law spanning 42–76×; a shared `max|Y_all|` normalizer turns that
+law into a nuisance gain the network must learn along the fidelity axis, which
+captures the amplitude degree of freedom that should have encoded the condition
+dependence. Symptom triple: right shape (Pearson r ≈ 0.97), collapsed
+conditional variance (≈ 0.44 of target), ~75 % of squared error removable by a
+per-sample gain. Run `ladder_level_diagnostic.py` first; run
+`field_error_decomposition.py` before blaming the architecture.

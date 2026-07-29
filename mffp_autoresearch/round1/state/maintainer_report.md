@@ -1449,3 +1449,204 @@
   promoted; Flags rewritten around the completion, the tool promotions, the
   batch-2 advance, and the s3_warp quiet-since-handoff watch item).
 ## RUN END 2026-07-29T18:48:03Z
+
+## RUN START 2026-07-29T18:59:07Z
+- `s4_hybrid_routing-B1`: two more dataset arms COMPLETED this walk —
+  `65996893` (allen_cahn, 31m17s) and `65996895` (fisher_kpp, 28m53s); next
+  arm `65996897` (cahn_hilliard) now RUNNING on hpc-33-19 (~11m17s at scan
+  time). Chain now 4/6 dataset arms COMPLETED, 1 RUNNING, 1 + guard +
+  aggregate PENDING. Both new completions upserted into
+  `state/timing_ledger.json` (`fno_transolver_seq`, 200ep, h100,
+  `sharp__allen_cahn_2d` 31.28 min / `sharp__fisher_kpp_2d` 28.88 min) —
+  ledger now 44 entries, re-validated as parseable JSON.
+- `s2_beyond_copy`: B2 websearcher returned this walk
+  (`websearches/s2_beyond_copy/batch_2/report.md` filed). Three prior-art
+  verdicts: (i) LF-as-input-channel residual family `preempted (cite)`
+  (LRC-FNO, MFFM, Multifidelity DeepONet) — to be framed only as the missing
+  literature-standard control (per batch-1 F14: 0/27 factory families read
+  the test LF field), not a novel architecture; (ii) zero-parameter
+  LF-keyed residual transfer (analog-MOS/downscaling ancestry)
+  `preempted-but-MF-composition-open`; (iii) trained-residual + retrieved-
+  residual hybrid blend `preempted-but-MF-composition-open` (the only
+  arguable mechanism claim). **Explicitly corrects a batch-1 prior-art
+  overclaim**: batch 1's cell said no MF paper baselines against the
+  interpolated LF field, but MFFM's Bilinear no-learning baseline is copy-LF
+  under another name — the surviving open gap is narrower (no fetched
+  source requires beating that baseline; none reports a Class-B-like
+  failure case). `state/s2_beyond_copy/current_stage.txt` →
+  `brainstormer_running`; B2 brainstormer now in flight, no output files
+  yet, no B2 card.
+- `s3_warp-B1`: last walk's stall watch is resolved — the builder is
+  confirmed actively running right now (a live background process
+  py-compiling all of `s3_warp_oracle/*.py` plus a gram-matrix-vs-
+  `s2_forensics` NN-index agreement check was observed executing in the
+  worktree at scan time; `warp_core.py`/`smoke_eval.py` mtimes are
+  essentially the scan instant). `current_stage.txt` = `builder_running`.
+  No new handoff or card update yet, but not quiet/stalled — no debugger
+  flag needed.
+- `s1_poisson-B1`: mechanism-analyzer wrote a full `6_analysis` this walk
+  (previously null) — protocol, findings, interpretation,
+  falsification_postmortem, surprises all populated. Mechanism: the ladder
+  arms fail by amplitude-channel capture (stage-1 normalization by the
+  coarsest level's scalar makes the fidelity-gain law capture the model's
+  amplitude degree of freedom; more joint-stage levels widens the gain law
+  and increases capture, matching the observed arm ranking). The
+  falsification clause's *prediction* ("allpairs beats two_level by >0.240
+  skill") correctly failed, but its stated *mechanism* ("intermediate
+  fidelities carry no usable HF information at N_hf=5") is explicitly shown
+  FALSE (16^2/32^2 levels carry HF shape at Pearson r>=0.94). Card
+  `reanalysis_progress` advanced `turn_2` -> `turn_3`. `7_gap_and_future`
+  and the top-level `falsification_verdict` are still null, card `status`
+  still `analyzing` — not yet a completed card; watch for completion next
+  walk.
+- `s6_local-B1` / `s7_loss-B1`: both builders remain visibly active this
+  walk (fresh scratchpad artifacts — `s6_local` gate-variant diagnostic/
+  result JSONs for `lf_frozen_adapter`/`local_band_gate`/`local_pixel_gate`/
+  `local_scalar_gate`/`pointwise_ctrl`; `s7_loss` new `arm_A1a`/`arm_A1b`
+  ifc_poisson screen results). No handoff update, no build_notes yet on
+  either — live, not stalled.
+- `s5_tuning-B1`: no filesystem activity this walk window (carried over
+  unchanged from last walk's turn-3 artifacts). `6_analysis` still null,
+  `reanalysis_progress` still `turn_2` on the card. Card `job_ids` still
+  stale (lists `65988184` as RUNNING, omits `65989241`) — carried over,
+  read-only observation, unchanged.
+- No abandonment trigger: no stream has 3 consecutive skip/blocked batches;
+  `state/streams/` directory still does not exist.
+- Transcript inbox: `state/transcripts/` still does not exist — nothing to
+  archive this walk.
+- Anchors: `state/anchors/*.json` unchanged (same 5 files, same
+  certified_utc 2026-07-29T14:28:45Z) — rendered verbatim into index.md, no
+  recomputation. Still no anchor files for `s3_warp`/`s6_local`/`s7_loss`
+  (expected, pre-analysis stage).
+- ADRs unchanged this walk: `docs/adr/0001`-`0012`, no new ADR since 0012
+  (s7_loss stream).
+- Gates unchanged: G1-G5 all carried-over PASS, no new gate activity this
+  window (`state/gates.md` mtime unchanged).
+- No card files modified by this walk (`git status --short
+  experiment_cards/` shows only the pre-existing external edit to
+  `s1_poisson/batch_1/B1.json` — the `6_analysis`/`reanalysis_progress`
+  population by the mechanism-analyzer this window, unrelated to the
+  maintainer, which only read cards this walk).
+- index.md: regenerated (fresh timestamp; Streams table updated for
+  s4_hybrid_routing's two new completions + cahn_hilliard now running,
+  s2_beyond_copy's B2 websearcher return + prior-art correction +
+  brainstormer-in-flight, s3_warp's stall-watch resolution, and
+  s1_poisson's new `6_analysis` write-up; Running/pending jobs table
+  refreshed; Flags rewritten around these five deltas).
+## RUN END 2026-07-29T18:59:41Z
+
+## RUN START 2026-07-29T19:15:06Z
+- `s1_poisson-B1` reached `status: complete` this walk (was `analyzing` last
+  walk, with `6_analysis` populated but `7_gap_and_future` still null).
+  `7_gap_and_future` now populated (open_question, a fully-specified B2
+  design — `MFFP_LADDER_SCALER {shared,per_level}` x `{two_level,allpairs}`
+  factorial with two separate falsification clauses so the prediction/
+  mechanism conflation cannot recur, plus 3 reference lines: anchor 1.5656,
+  training-free matched-level floor 0.24828, HF-train-mean 0.40343);
+  top-level `falsification_verdict = "falsified"`; `promoted_tools`:
+  `ladder_level_diagnostic.py`, `field_error_decomposition.py`. This is the
+  round's second completed card (after `s2_beyond_copy-B1`). Stream already
+  advanced to **batch 2**: B2 websearch returned (5 its, 8/8 — normalization
+  scheme is literature-silent/preempted-but-open, h^p-aware scaling
+  preempted, factorial design novel-at-design-level, level-matched lookup
+  floor novel-for-elliptic); stage -> `brainstormer_running`, dispatched
+  19:11Z, confirmed in flight at scan time (no B2 worktree/card yet, as
+  expected pre-starter).
+- `s2_beyond_copy-B2`: card drafted this walk (starter return 19:05Z, 12/12;
+  26 env knobs; anti-hijack rule + floor-reproduction requirement in part 3;
+  batch-1 prior-art overclaim correction folded into
+  `prior_art.verdict_rows`; one non-blocking TBD — the KRF citation URL the
+  brainstormer elided). Stage -> `builder_running`; builder confirmed
+  actively running at scan time (`models_r1/s2_lf_residual_control/
+  retrieval.py`/`model.py`/pycache mtimes ~2-3 min before scan).
+- `s6_local-B1`: builder returned SUCCESS this walk (16/16, commit
+  `3abc0e30d56446148f5322787fbfd1d5f384cc82`), card `status` `drafted` ->
+  `built`. IDENTITY EXACT 0.0 on all 5 gate variants (LF_up built by
+  importing `panel_data.copylf_prediction` read-only, kernel-difference risk
+  eliminated by construction; runtime hard-asserts > 1e-9). Contract smoke
+  skill ~1.0 at 2 epochs (gate safely collapses to 0). Checkpoint resume
+  bit-identical. Screen dry-run tested both the happy path (promoted
+  `lf_frozen_adapter` by rho margin) and an injected-violation path (exit 2
+  NO-HARM VIOLATION). AGMF-Net prior-art re-fetch resolved indirectly (still
+  HTTP 403 direct; retrieved via web search instead; verdict unchanged —
+  scalar-QoI MoE for BO, no identity guarantee). Key build insight: a
+  double-zero-init corrector+gate is a dead init under a joint loss (zero
+  gradient to both modules) -> staged training is required, do not simplify.
+  Watch item for the reviewer/debugger: torch-default zero padding on the
+  periodic phase-field datasets. Stage -> `review_running`, dispatched
+  19:12Z; reviewer confirmed actively running at scan time
+  (`SMOKE_EVIDENCE.md` ~11 min before scan; `model.py`/`smoke_eval.py`/
+  `local_corrector.py` pycache ~4-5 min before scan — re-executing the
+  family's contract smoke byte-for-byte, same verification pattern as the
+  s4 reviewer used).
+- `s4_hybrid_routing-B1`: the entire seed-0 chain (6 dataset arms + guard +
+  panel aggregate) completed DURING this walk. At walk start, 4/6 dataset
+  arms were COMPLETED and cahn_hilliard (`65996897`) was RUNNING per last
+  walk's report; by scan time, `65996897` (cahn_hilliard, 30m44s),
+  `65996898` (ifc_poisson, 1m06s), `65996899` (guard, 1m25s, panel_geomean
+  1.612 on fluid/heat_local/sharp__sod_1d, no crash/NaN) and `65996900`
+  (panel aggregate, 3s, cache-hit as designed) all show COMPLETED in
+  `sacct`. `result_panel_s0.json`: panel_geomean_skill = 5.6649 (seed-0,
+  single-seed provisional; below the batch-0 anchor CI floor of 6.219).
+  Per-dataset skill: helmholtz 19.86, allen_cahn 16.32, cahn_hilliard 5.56,
+  fisher_kpp 3.61, pfc 3.28, ifc_poisson 1.55. **The orchestrator's own
+  pulse log (`orchestrator_flow.md`) last updated at 19:14Z, before any of
+  these four final completions (cahn_hilliard finished ~19:18Z local-
+  adjusted) — the card's `status` (`reviewed_suggest`) and
+  `current_stage.txt` (`seed0_running`) are now stale relative to SLURM
+  reality; flagging for the orchestrator to pick this up and advance the
+  stage at its next pulse.** No card edit made by the maintainer (read-only).
+  4 new completed jobs upserted into `state/timing_ledger.json`.
+- Timing ledger: upserted 4 new entries this walk (48 total, was 44) — all
+  `s4_hybrid_routing` / `fno_transolver_seq` / h100: `sharp__cahn_hilliard`
+  200ep 30.73 min (`65996897`), `ifc_poisson` 200ep 1.1 min (`65996898`),
+  guard-set (`heat_local`,`fluid`,`sharp__sod_1d`) 2ep 1.42 min
+  (`65996899`), panel-aggregate cache-hit 200ep 0.05 min (`65996900`).
+  Re-validated as parseable JSON after write.
+- `s5_tuning-B1`: mechanism-analyzer resumed filesystem activity this walk
+  after last walk's flat window — new scratchpad artifacts
+  `reanalysis_turn_3b.py` (~21 min before scan), `regen_cap12_lean.py`, and
+  a fresh `cap12_infer/ckpt_sharp__cahn_hilliard/preds_test.npz` (~1.5 min
+  before scan — very live at scan time). `6_analysis` still null,
+  `reanalysis_progress` still `turn_2` on the card (not yet updated to
+  reflect the new turn-3b work). Card `job_ids` still stale (lists
+  `65988184` as RUNNING, omits `65989241`) — carried over unchanged,
+  read-only observation.
+- `s3_warp-B1`: builder remains active but less freshly than last walk's
+  scan-instant observation — freshest artifacts (`contract_smoke.log`,
+  `warp_core.py`/`smoke_eval.py` pycache) are ~22-25 min before this scan.
+  Matches the orchestrator's own pulse characterization ("the grid_sample
+  optimizer rig is the biggest diagnostic build of the round" — a long
+  build by design). No handoff/card update yet; not flagged as stalled, but
+  worth a closer look next walk if it remains this quiet.
+- `s7_loss-B1`: builder still active — three new screen-arm result files
+  since last walk (`arm_A0_ifc_poisson.json`, `arm_A2b_ifc_poisson.json`,
+  `arm_A2ctl_ifc_poisson.json`), freshest ~9 min before scan. No handoff
+  update, no build_notes yet — live, not stalled.
+- No abandonment trigger: no stream has 3 consecutive skip/blocked batches;
+  no stream has even reached 3 batches yet. `state/streams/` directory
+  still does not exist.
+- Transcript inbox: `state/transcripts/` still does not exist — nothing to
+  archive this walk.
+- Anchors: `state/anchors/*.json` unchanged (same 5 files, same
+  certified_utc 2026-07-29T14:28:45Z) — rendered verbatim into index.md, no
+  recomputation. Still no anchor files for `s3_warp`/`s6_local`/`s7_loss`
+  (expected, pre-analysis stage).
+- ADRs unchanged this walk: `docs/adr/0001`-`0012`, no new ADR since 0012
+  (s7_loss stream).
+- Gates unchanged: G1-G5 all carried-over PASS, no new gate activity this
+  window (`state/gates.md` mtime unchanged).
+- No card files modified by the maintainer this walk (`git status --short
+  experiment_cards/` shows only pre-existing external edits:
+  `s1_poisson/batch_1/B1.json` (completion write), `s6_local/batch_1/
+  B1.json` (builder's write), and a new untracked `s2_beyond_copy/batch_2/`
+  directory (starter's card draft) — all external, unrelated to the
+  maintainer, which only read cards this walk).
+- index.md: regenerated (fresh timestamp; Streams table updated for
+  s1_poisson's card completion + batch-2 advance, s2_beyond_copy's B2 card
+  draft + builder-in-flight, s6_local's builder SUCCESS + reviewer-in-
+  flight, s4_hybrid_routing's full seed-0 chain completion, and s5_tuning's
+  resumed activity; Running/pending jobs table now empty of live SLURM
+  r1- jobs; Completed cards table gains s1_poisson-B1; Flags rewritten
+  around these six deltas).
+## RUN END 2026-07-29T19:26:00Z

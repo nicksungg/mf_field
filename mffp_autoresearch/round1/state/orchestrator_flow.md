@@ -824,3 +824,133 @@ pulse: no-op. s4: 4/6 datasets COMPLETED (allen_cahn 31.3 min, fisher_kpp
 28.9 min), cahn_hilliard RUNNING 7 min, ifc_poisson+guard+agg queued. Agents:
 s2-B2 brainstormer, s3_warp/s6/s7 builders, s1/s5 mechanism analyzers.
 No failures.
+
+## s1-B1 COMPLETE — 2026-07-29T18:59Z
+
+Mechanism register done (12/12; 2 tools promoted: ladder_level_diagnostic.py,
+field_error_decomposition.py; index appended concurrently-safe). VERDICT:
+amplitude-channel capture — "intermediate fidelities uninformative" is FALSE;
+a single shared stage-1 scaler converted real information into a 42x nuisance
+gain law. Data-level: the 4 levels differ by a clean ~h² scale law (RMS ratios
+4.38/4.20/4.12, 75.7x end-to-end) but agree in SHAPE (r 0.94-0.99 after one
+gain); intermediates add 70 param points CLOSER to test than the 5 HF points.
+Model-level: 74.7% of allpairs' squared error is per-sample GAIN error;
+per-sample oracle gain collapses the gap 2.04x → 1.13x; damage in the lowest
+band (99.78% of energy). Ablation: per-level normalization → allpairs 0.2143
+→ 0.0874, making the full ladder 1.69x BETTER than two_level — SIGN REVERSAL
+of B1's central contrast. Step-budget competitor dead. Also: 3 of 4 arms lose
+to a training-free matched-level floor (0.2483).
+
+CONVERGENT ROUND THEME now three-ways confirmed: amplitude/gain/normalization
+is the dominant error channel (s1 74.7% gain error; s2/s3 helmholtz 86.5%
+amplitude share; s7's whole design). B2 prescription: normalization x pair-set
+factorial (MFFP_LADDER_SCALER {shared,per_level} x {two_level,allpairs}), TWO
+separate falsification clauses so the conflation that made B1's clause
+unfalsifiable-as-worded cannot recur; carry 3 reference lines (anchor 1.5656,
+training-free floor 0.2483, HF-mean 0.4034). Batch → 2, stage →
+websearch_running; dispatching websearcher.
+
+## Brainstormer return — s2_beyond_copy-B2 — 2026-07-29T19:02Z
+
+SUCCESS / slot_filled (12/12). MODEL card: literature-standard LF-residual
+control vs the training-free retrieval floor (benchmark-floor discipline).
+4 trained arms (lf_resid_fno pinned rank 1, zero-init head so y==LF_up at
+init; ladder-pretrain; multichannel; hybrid retr+resid w-init-0) + 5 floor
+constructions as ref_* (block-mean required to reproduce F6 within 0.02 else
+data-path divergence flag; S1-gradient and per-patch keys as steals).
+ANTI-HIJACK promotion rule: hybrid promotable only if it beats the retrieval
+floor by 0.05 on >=2 Class-A datasets (2-epoch screens structurally favor
+training-free terms). Falsification: promoted arm <=0.512 pfc / <=0.555
+cahn_hilliard, no worse than 1.05 on Class B, substrate-sanity leg vs
+champion; helmholtz report-only. Expected geomean ~0.713 vs floor 0.7886.
+Prior-art cell carries the B1 overclaim correction. Stage → starter_running;
+dispatching starter.
+
+## Pulse — 2026-07-29T19:04Z
+
+pulse: no-op. s4: cahn_hilliard RUNNING 16.5 min (5th of 6), ifc_poisson+
+guard+agg queued. Agents: s1-B2 websearcher, s2-B2 starter, s3_warp/s6/s7
+builders, s5 mechanism analyzer. No failures.
+
+## Starter return — s2_beyond_copy-B2 — 2026-07-29T19:05Z
+
+SUCCESS / drafted (12/12; one TBD: the KRF citation URL the brainstormer
+elided — non-blocking). Card at experiment_cards/s2_beyond_copy/batch_2/
+B2.json (26 env knobs; anti-hijack rule + floor-reproduction requirement in
+part 3 + recipe.env; overclaim correction in prior_art.verdict_rows). Stage →
+builder_running; dispatching builder.
+
+## Websearch return — s1_poisson-B2 — 2026-07-29T19:11Z
+
+SUCCESS (5 its, 8/8). Verdicts: (i) per-level target normalization pooled
+into one shared fidelity-conditioned operator = preempted-but-MF-composition-
+open — and the literature is SILENT (four fetched MF papers + SMT docs state
+no scheme at all; one says "we will skip units"); (ii) h^p-aware scaling
+preempted (Gauss-Richardson Extrapolation encodes b(x)=x^r and ESTIMATES r —
+do NOT hard-code h²); (iii) the factorial design novel at design level (weak
+claim, internal-validity value); (iv) level-matched lookup floor novel-for-
+elliptic (report, don't claim; McGreivy&Hakim's 79% weak-baseline stat
+licenses reporting); (v) all-pairs sharper motivation (recursive MF cascades
+have no backward information flow). Stage → brainstormer_running;
+dispatching.
+
+## Builder return — s6_local-B1 — 2026-07-29T19:12Z
+
+SUCCESS / built (16/16). Commit 3abc0e3. IDENTITY EXACT 0.0 on all 5 variants
+(LF_up built by importing panel_data.copylf_prediction read-only — kernel-
+difference risk eliminated by construction; runtime hard-asserts above 1e-9).
+Contract smoke skill 0.99999999999999... at 2 ep (gate safely collapsed to 0);
+all 5 variants end-to-end on sod_1d (0.85-0.99); resume bit-identical; screen
+dry-run tested BOTH paths (happy → promoted lf_frozen_adapter by rho margin;
+injected violation → exit 2 NO-HARM VIOLATION). AGMF-Net resolved indirectly:
+scalar-QoI MoE for BO, no identity guarantee — verdict stands. Key build
+insight recorded: double-zero-init is a DEAD INIT under joint loss (zero
+gradient both modules) → staged training (Δ vs residual, then gate, then
+held-out alpha with 0 in candidate set) — do not simplify. Watch item:
+torch-default zero padding on periodic phase-field datasets. Stage →
+review_running; dispatching code-reviewer. After PASS: orchestrator runs
+00_screen.sh, records promotion in build_notes, then submit.sh <variant>.
+
+## Pulse — 2026-07-29T19:14Z
+
+pulse: no-op. s4: cahn_hilliard RUNNING 26.5 min, ifc_poisson+guard+agg
+queued. Agents: s1-B2 brainstormer, s2-B2 builder, s3_warp builder (long
+build — the grid_sample optimizer rig is the biggest diagnostic build of the
+round), s5 mechanism (longest-running analyzer; its two probe targets are
+compute-heavy band decompositions), s6 reviewer, s7 builder. No failures.
+
+## s4-B1 seed-0 chain COMPLETE — 2026-07-29T19:24Z
+
+All 8 jobs COMPLETED (cahn_hilliard 30.7 min; ifc_poisson 1.1 min; guard 1.4
+min; aggregate 3 s). Orchestrator glance (verdict belongs to analyzer):
+panel geomean 5.6649 vs anchor 6.703 → improvement 1.038 > 0.884 floor
+(FIRST geomean-floor-clearing model result of the round, provisional-single-
+seed). Per-dataset: pfc 3.282 (champion 11.51 — massive, >> 1.151 floor),
+fisher_kpp 3.614 (4.18, > 0.418 floor), cahn_hilliard 5.563 (~5.53),
+allen_cahn 16.317 (~16.33), helmholtz 19.86 (no claims), ifc_poisson 1.545
+(1.566, < 0.240 floor). The LF-consuming Transolver corrector engaged
+somewhere — alpha gates per dataset are the mechanism readout. Stage →
+initial_analysis_running; dispatching initial-analyzer.
+
+## s6 review verdict + screen submit; s1-B2 design — 2026-07-29T19:25Z
+
+s6-B1 reviewer: SUGGEST / proceed (6/6; identity structurally exact — G≡0
+path IS the scored reference; screen gate re-executed independently, exits
+0/2/3 verified; staged training ruled inside mandate with correct dead-init
+math). Carry-forwards recorded: ZERO-PADDING confound on periodic datasets
+(18% of pixels at 256², 34% at 128²) — cannot touch the no-harm floor but CAN
+depress contribution_d on allen_cahn/cahn_hilliard/pfc; if contribution_d <
+0.04 there, the analyzer MUST name padding as a live alternative explanation.
+lf_frozen_adapter, if promoted, needs the mf_fno_spectral differentiation
+stated in parts 5-7. alpha=0 at 2 ep = safe fallthrough, not ALGO. Screen job
+submitted: 66001190. Stage → screen_running.
+
+s1-B2 brainstormer: SUCCESS / slot_filled (13/13). 2x2 factorial + 5th
+mechanism-disentangler arm (shared_reweight: equalizes loss contribution
+WITHOUT removing the gain law — separates per_level's two effects; in no
+clause). Two clauses: F1 normalization (predicted 14.4x floor) and F2
+composition (predictions DISAGREE qualitatively — the reason to run).
+ADR 0007 reconciled as sweep-pattern (arms are factor levels, not
+candidates; all reported; ~6 min total). Vendoring pinned to B1 commit
+d070f86 + sha256 pins. Cratered forewarning recorded (threshold 0.0845,
+point prediction 0.085). Stage → starter_running; dispatching starter.
