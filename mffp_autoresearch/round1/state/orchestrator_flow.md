@@ -537,3 +537,121 @@ pulse: no-op (all 7 streams have an agent in flight: s1/s2 mechanism analysis,
 s3_warp brainstormer, s4 builder (pinged), s5 initial analyzer, s6/s7
 websearchers; plus scouting websearcher). No r1 SLURM jobs; nothing queued or
 failed. All advancement happens on agent returns.
+
+## Initial analysis — s5_tuning-B1 — 2026-07-29T17:31Z
+
+analyzed_single_seed: geomean 6.1958 vs anchor 6.703 (Δ -0.507 < 0.884 floor)
+→ improved-but-below-threshold; not_cratered; falsification NOT_RESOLVABLE
+(conjunction: A decisively unmet; B flips with anchor basis — ifc_poisson
+-0.247 clears 0.240 vs 3-seed mean but not vs paired seed-0/H100 retrain).
+Entire panel movement is helmholtz (leave-one-out Δ -0.086). Direction
+surprise: ifc_poisson IMPROVED at cap 32 (= full Nyquist there) where card
+predicted worse. Knob audit PASS; guard informational (heat_local 47.9x flag
+is tier artifact); 36.6 min/seed H100. Stage → mechanism_analysis_running;
+top probes: helmholtz per-band error vs seed instability; ifc_poisson full-
+Nyquist at N_hf=5.
+
+## Pulse — 2026-07-29T17:34Z
+
+Six streams have agents in flight (s1/s2/s5 mechanism, s3_warp brainstormer,
+s6/s7 websearch + scout); no r1 SLURM jobs. s4 WATCH: builder's last worktree
+write 09:31 local (63 min ago); no reply to the 17:10Z ping — consistent with
+one long-running CPU contract smoke on the contended login node (Transolver
+corrector at 256² took >900 s even standalone). DEADLINE SET: if no builder
+response or file write by the next pulse, stop the agent and dispatch a fresh
+builder instructed to VERIFY AND FINISH from the on-disk progress (family +
+5 scripts committed to worktree), not rebuild.
+
+## Websearch return — s6_local-B1 — 2026-07-29T17:34Z
+
+SUCCESS (5 iterations, 9/9). Verdicts: D1 parallel-local-path PREEMPTED
+(NO-LIDK ICML'24 is exactly it, -34-72%); D2 fidelity-asymmetric capacity
+(LF trains spectral backbone; only HF-trained module = small zero-init LOCAL
+adapter) preempted-but-MF-composition-OPEN with a published OPPOSING
+prediction (F-Adapter: scarce capacity belongs in LOW bands) — genuinely
+falsifiable; D3 local corrector consuming REAL test-time LF with no-harm-to-
+copy-LF floor — OPEN composition (boundary: s2 owns identity-to-LF fusion;
+s6 owns corrector-is-local). Anti-direction rejected in-repo (convnext 3.6 vs
+champ 1.5 on helmholtz). Mentor-failure diagnosis: hybrid NEVER RUN — "went
+poorly" = prior-art preemption; known-bad recipe = free-form CNN refiner
+finetuned on 5 HF samples; KEY correction: refiner should CONSUME the given
+LF (real test-time input) — dodges exposure bias for free. Bonus: SpecB-FNO
+independently predicts s5-B1's negative H1 result. Stage →
+brainstormer_running; dispatching (ADR 0007 propose-many applies; must
+confront s2's low-band + spurious-high-k findings).
+
+## Operator correction — mentor's hybrid WAS trained — 2026-07-29T17:37Z
+
+Eloise: FNO-CNN hybrid and iFNO were trained by the mentor; code likely never
+pushed to GitHub. s6 websearcher's "never run" diagnosis (from in-repo
+absence) corrected in program.md §13.2; s6 brainstormer messaged mid-flight
+(design must not premise on never-tried; results unavailable; literature
+known-bad recipe stands, weakly corroborated by mentor's "not going well").
+User-side item: Eloise may ask mentor to push that code/results — would
+upgrade s6 priors.
+
+## README + s7 websearch return — 2026-07-29T17:40Z
+
+Eloise asked for a readable card summary: added tools/render_readme.py →
+round1/README.md (generated; re-render on card changes; orchestrator runs it
+at pulses after part-5/6/7 updates).
+
+s7_loss-B1 websearch: SUCCESS (5 its, 9/9). Verdicts: C-REL preempted
+(control arm only); C-AMP amplitude/shape decomposition open-for-MF (Eigen'14
+owns scale-invariant depth loss; PDE analogue absent) — top rank; C-BAND
+low-k weighting open via REGIME INVERSION (published band losses all ADD
+high-k; our failure is low-band + spurious high-k) — rank 2; C-LFANCHOR
+likely degenerate (champion LF-blind → collapses into C-BAND); C-STRUCT
+preempted AND contraindicated by M3/M4. Design-changing: do NOT propose
+scale-INVARIANT loss (rel-L2 scores amplitude — self-defeating); two-term
+shape+gain objective instead; helmholtz supports no numeric claim despite
+motivating C-AMP — falsification must live on the other 4 sharp datasets or
+geomean; 7 unverified leads quarantined must-not-cite. Stage →
+brainstormer_running; dispatching (ADR 0007 propose-many applies).
+
+## Scouting return + adjudication — 2026-07-29T17:41Z
+
+Scout SUCCESS (9/9, 31 URLs verified). Rank 1 C1 trust-gated fallback fusion
+overlaps s6-B1's D3 (identity-init correction on real LF) → NO 8th stream;
+merged into s6 design space via mid-flight message. s8_data question CLOSED:
+DO NOT OPEN (C3 preempted 4x; champion already LF-pretrains; fragments to
+s5/s1). C2/C5/C6/C0 parked as batch-2 seeds (operator note updated). FACT
+CORRECTION from scout: sharp datasets have n_train_hf=400 (only ifc_poisson
+is 5) — my earlier "N_hf=5-25" framing in dispatch briefs was wrong for 5/6
+datasets; corrected in operator note + s6 brainstormer message.
+
+## Brainstormer return — s3_warp-B1 — 2026-07-29T17:42Z
+
+SUCCESS / slot_filled (12/12). DIAGNOSTIC: training-free per-sample ORACLE
+WARP of copy-LF onto HF over a control-grid DOF ladder (C=0/4/8/16/32/full;
+rung 0 = copy-LF = structural warp-off control + <=1e-9 seam check), measuring
+removable-error ceiling + displacement/amplitude/thickness split + topology
+mismatch + retrieval-transfer learnability bracket, 5 beyond-copy datasets,
+epochs 0 seed 0. Design highlights: D2-gates-D1 verified independently; M4
+correctly re-read (champion error is X-only regression error — the
+load-bearing rows are copy-LF's own, which ARE interface-tilted on allen_cahn
+and NOT amplitude-dominated on sharp sets); free-form warp rejected (fake
+100% ceiling) — learnable rung C=16 pre-declared; synthetic self-test hard
+abort; do_not_promote pre-registered; ifc_poisson excluded (no LF in test
+split, ADR 0002); floor problem STATED (copy-LF-referenced effects cannot
+clear allen_cahn/pfc min_claimable — same structural property as success
+criterion 2). Threshold skill_oracle <= 0.44 clears ch/fkpp floors outright.
+Constraint for batch 2: any D1 model card carries architecture-level warp-off
+control. Stage → starter_running; dispatching starter.
+
+(Also messaged s6 brainstormer: scout C1 merge + gaming-risk framing + the
+n_train_hf=400 fact correction.)
+
+## Pulse — 2026-07-29T17:44Z
+
+pulse: no-op (all 7 streams have agents in flight). s4 STALL WATCH LIFTED:
+fresh scratchpad writes (contract_smoke_ifc_poisson.json/.log +
+contract_resume log) — builder is in its verification phase as hypothesized;
+the long silence was CPU-bound contract training on the contended login node.
+No r1 SLURM jobs. Next actions all fire on agent returns.
+
+## Starter return — s3_warp-B1 — 2026-07-29T17:47Z
+
+SUCCESS / drafted (17/17, no TBDs). Card at experiment_cards/s3_warp/batch_1/
+B1.json with do_not_promote + batch-2 warp-off-control constraint carried as
+pre-registered flags in part 4. Stage → builder_running; dispatching builder.

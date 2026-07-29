@@ -1080,3 +1080,123 @@
   rewritten with the stream-replacement, new-stream, and anchor-recert-vs-CI
   items).
 ## RUN END 2026-07-29T17:26:40Z
+
+## RUN START 2026-07-29T17:41:22Z
+- SLURM view: `squeue -u $USER` shows only the pre-existing unrelated `bash`
+  job `65984594` (~3:14 h elapsed); `sacct` (2-day window) shows **no**
+  `r1-*` jobs COMPLETED/FAILED/RUNNING since the last walk — all activity
+  this window is agentic (mechanism-analyzers, brainstormers, websearchers),
+  no new SLURM submissions. Confirmed by re-checking a second time a few
+  minutes apart (no change).
+- Timing ledger: no upsert needed this walk (no new COMPLETED r1- jobs in
+  sacct) — re-validated existing `state/timing_ledger.json` as parseable
+  JSON, still 40 entries, unchanged content.
+- Card walk (5 existing cards, all read-only):
+  - `s1_poisson-B1`: `reviewed_suggest` -> **`analyzing`** (stage
+    `mechanism_analysis_running`). Initial analysis (orchestrator note
+    17:21Z, card `5_actual_result` written ~17:31Z): FALSIFIED per clause
+    (allpairs must beat two_level by >0.240, measured -2.960; allpairs 5.813
+    > 1.5x-anchor threshold 2.35, "cratered"), but C1 clears its own 10.6x
+    floor (row-correspondence fix real, legacy_pairing 8.362 -> allpairs
+    5.813). C3: controlling variable is the level set not the pair set
+    (two_level 2.853 dominates, wins 125/128 samples). `6_analysis` still
+    null; mechanism-analyzer dispatched.
+  - `s2_beyond_copy-B1`: `reviewed_suggest` -> **`analyzing`** (stage
+    `mechanism_analysis_running`). Initial analysis (17:26Z): H1 FALSIFIED
+    (legs A+C fire, B+D don't). Cross-cutting findings: champion never sees
+    LF at test time (category error confirmed); fisher_kpp is an
+    information deficit (supports deferred s8_data); pfc knn10 (8.466)
+    beats trained champion (11.511) by 3.045; allen_cahn/cahn_hilliard are
+    unanticipated training-wins; **M3 (excess error in LOWEST spectral
+    band, not high-k) dispatched to challenge s6_local's H2 premise; M4
+    (pfc error NOT interface-concentrated) dispatched to challenge
+    s3_warp's interface premise** — both brainstormers now running with
+    these cross-checks live. `6_analysis` still null.
+  - `s3_testtime-B1`: unchanged, `retired_by_operator` (terminal, audit
+    trail preserved, ADR 0010 excludes it from skip/abandonment).
+  - `s4_hybrid_routing-B1`: unchanged card fields, still `drafted`/
+    `builder_running`. **Stall-watch update**: the orchestrator's 17:34Z
+    pulse set a kill/redispatch deadline citing no worktree write since
+    09:31 local (63 min) and no reply to a 17:10Z ping. This walk's
+    filesystem scan found a NEW file, `worktrees/s4_hybrid_routing/B1/
+    scratchpad/contract_smoke_ifc_poisson.log`, created 10:34:32 local
+    (17:34:32Z) — 0 bytes / actively open, ~82s old at scan time (verified
+    twice, no further growth) — landing at/just after the deadline pulse
+    timestamp. Flagged for the orchestrator: this is evidence the builder
+    is alive (consistent with its own "long CPU contract smoke on the
+    contended login node" theory) and the deadline trigger may already be
+    moot — re-verify worktree state before stopping the agent.
+  - `s5_tuning-B1`: `reviewed_suggest` -> **`analyzing`** (stage
+    `mechanism_analysis_running`). Initial analysis (17:31Z): geomean
+    6.1958 vs anchor 6.7030, delta -0.507, inside the 0.884 noise floor ->
+    improved-but-below-threshold, falsification NOT_RESOLVABLE (leg A
+    unmet; leg B flips with anchor basis). Entire panel movement traces to
+    helmholtz (LOO delta -0.086); ifc_poisson improved at modes-cap 32 (=
+    full Nyquist there), opposite the card's prediction. Knob-fired audit
+    PASS. `6_analysis` still null; `job_ids` still does not list `65989241`
+    (carried-over stale-field observation, not corrected here, read-only).
+- G5 / ADR 0005 H100 carry-over comparison: **RESOLVED PASS** this walk
+  (orchestrator note 17:26Z) — geomean delta 0.0137 << 0.884 floor, all
+  per-dataset deltas inside their own floors, hardware confound closed.
+  This was flagged by the prior maintainer walk as pending orchestrator/
+  mentor action; now closed. `state/anchors/*.json` remain unchanged (same
+  5 files, same certified_utc 2026-07-29T14:28:45Z, same values) —
+  rendered verbatim into index.md, no recomputation performed.
+- New ADR since last walk: `docs/adr/0012-s7-loss-stream.md` — new lever
+  stream `s7_loss` (interface-aware/gradient-domain/sharp-region-weighted
+  training objectives, architecture fixed at champion, round metric
+  unchanged); envelope now 7 streams (up from 6) by Eloise's direction.
+  `s8_data` (cross-dataset pretraining) explicitly deferred pending s2-B1
+  part 5 evidence, which landed this same walk window (fisher_kpp
+  information-deficit finding) — orchestrator may revisit next pulse.
+- New stream state: `s7_loss` has no card yet (pre-card, `websearch_running`
+  per `state/s7_loss/current_stage.txt`); its batch-1 websearcher has 4/5
+  iterations written, no `report.md` yet (in flight). A separate,
+  non-stream-bound scouting websearcher is also running in
+  `websearches/_scouting/2026-07-29_stream_gap_mining/` (4 iterations +
+  `summary_so_far.md`), surveying gaps the 7 streams don't cover
+  (foundation pretraining fairness, uncertainty-weighted fusion,
+  retrieval-augmented hybrids, meta-learning/in-context, other 2024-2026
+  MF themes).
+- `s3_warp` (replacement for retired `s3_testtime`): websearch returned
+  SUCCESS 17:27Z (narrow claimable novelty: neural cross-fidelity
+  field-level warp at N_hf 5-25; D2 warp-oracle diagnostic gates D1;
+  warp-off control required since champion is LF-blind). Brainstormer now
+  running (`state/s3_warp/current_stage.txt` = `brainstormer_running`);
+  `brainstormer/s3_warp/batch_1/iteration_1.md` + `summary_so_far.md`
+  written ~17:37-17:39Z this walk window. Still no card, no anchor file
+  (expected, pre-card stage).
+- `s6_local`: websearch returned SUCCESS 17:34Z (D1 preempted by NO-LIDK
+  ICML'24; D2 fidelity-asymmetric capacity preempted-but-open with an
+  opposing published prediction from F-Adapter; D3 open, boundary with
+  s2). Brainstormer dispatched, now running. **Operator correction at
+  17:37Z**: Eloise corrected the websearcher's "mentor's hybrid never run"
+  diagnosis — the mentor's FNO-CNN hybrid and iFNO were in fact trained
+  (code likely unpushed to GitHub); `program.md` §13.2 corrected, s6
+  brainstormer messaged mid-flight not to premise its design on
+  "never tried." Still no card, no anchor file (expected, pre-card stage).
+- Abandonment check: all 5 existing cards are `analyzing` (x3, was
+  `reviewed_suggest`), `retired_by_operator` (x1), or `drafted` (x1) — none
+  `skipped`/`blocked`; no stream has 3 consecutive skip/blocked batches.
+  `s3_testtime`'s operator-directed retirement remains explicitly excluded
+  from the skip/abandonment trigger per ADR 0010. `state/streams/`
+  directory still does not exist — correct, no abandonment file written.
+- Transcript inbox: `state/transcripts/` still does not exist — nothing to
+  archive this walk.
+- No card files modified by this walk (`git status --short
+  experiment_cards/` shows only `s1_poisson` and `s5_tuning` B1.json as
+  modified, both by the initial-analyzer/reviewer agents prior to this
+  walk starting — `s2_beyond_copy`'s change was already auto-synced in a
+  prior commit; this walk only read cards, no card edit made).
+- index.md: regenerated (fresh timestamp; new Gate G5 row added for the
+  resolved H100 carry-over PASS; Streams table now covers all 7 streams
+  including new `s7_loss` row plus a scouting-websearcher callout; s1/s2/s5
+  rows updated to `analyzing` with their initial-analysis findings and
+  cross-stream dispatches to s3_warp/s6_local; s3_warp row updated from
+  websearch-stage to brainstormer-running; s4 row rewritten around the
+  stall-watch/fresh-file-write finding; s6_local row updated with the
+  websearch return + operator correction; running-jobs table cleared of
+  all r1- entries (none new/pending); Flags section rewritten around the
+  s4 stall-watch finding, G5 resolution, new ADR 0012, and the live
+  cross-stream findings feeding the two brainstormers).
+## RUN END 2026-07-29T17:44:03Z

@@ -42,15 +42,35 @@
       "MFFP_CTX_SOURCE": "auto"
     }
   },
-  "status": "drafted",
+  "status": "built",
   "skipped_reason": null,
   "reopen_candidate": false,
-  "scripts_path": {},
-  "output_paths": {},
-  "build_commit": null,
+  "scripts_path": {
+    "train_eval": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round1/worktrees/s4_hybrid_routing/B1/scripts/01_train_eval.sh",
+    "guard_contract": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round1/worktrees/s4_hybrid_routing/B1/scripts/02_guard_contract.sh",
+    "aggregate_panel": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round1/worktrees/s4_hybrid_routing/B1/scripts/03_aggregate_panel.sh",
+    "submit": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round1/worktrees/s4_hybrid_routing/B1/scripts/submit.sh",
+    "seeds_2_3": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round1/worktrees/s4_hybrid_routing/B1/scripts/submit_seeds_2_3.sh"
+  },
+  "output_paths": {
+    "eval": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s4_hybrid_routing/B1/eval",
+    "slurm": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s4_hybrid_routing/B1/slurm",
+    "training": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round1/eval/results/fno_transolver_seq"
+  },
+  "build_commit": "4691d1fbaaa4dc9e0e6fbaf3bf607afef203404c",
   "job_ids": [],
   "logs": {},
-  "build_notes": [],
+  "build_notes": [
+    "Family vendored verbatim from mf_field/akash/models/fno_transolver_seq @967562e2a4e3493515edab36b0fcb23655fce71f into models_r1/fno_transolver_seq. model.py and manifest.json are byte-identical to the base (diff -q clean). smoke_eval.py carries EXACTLY the two mechanical edits card part 3 item 2 permits: (a) `AKASH = Path(__file__).resolve().parents[2]` replaced by `_find_akash()`, an upward search from __file__ for the first ancestor containing mf_field/akash/common/mffp.py, raising RuntimeError if absent; (b) `--ctx_source` default is now os.environ.get('MFFP_CTX_SOURCE', 'auto') (a no-op at the recipe value), which required adding `import os`. No third edit. INSPIRATION.md was added as a NEW documentation-only file (factory convention + this subagent's contract); it is .md, and score_panel.py::code_hash hashes .py only, so it cannot change any number.",
+    "CONTRACT SMOKE 1 (the specified panel dataset): `python round1/eval/score_panel.py --family_dir <worktree>/models_r1/fno_transolver_seq --datasets ext__helmholtz_2d --epochs 2 --seed 0 --out <worktree>/scratchpad/contract_smoke.json --no_cache --env MFFP_CTX_SOURCE=auto` -> exit 0, test_hf rel_l2_mean (per_sample_mean) = 22.613192981264614, skill 68.639 vs copylf. Untrained-at-2-epochs as expected. Readouts present: alpha = 0.0, alpha_least_squares = 0.8390567, base_only_rel_l2 = 22.613192981264618, stage3_joint = false, ctx_source = 'real_lf', ctx_fidelity = 1, ctx_grid [24,24], work_grid [96,96]. This exercises the real-test-time-LF context branch (5 of 6 panel datasets). alpha = 0 confirms the gate collapses the hybrid exactly to the FNO when the correction is useless.",
+    "CONTRACT SMOKE 2 (second panel dataset, other context branch): same command with --datasets ifc_poisson -> exit 0, test_hf rel_l2_mean = 0.4385686116373455 (skill 12.182 vs the paper_bar reference), base_only_rel_l2 = 0.4900025652737079 (-10.5%), alpha = 1.500100016593933, alpha_least_squares = 1.5, stage3_joint = true, ctx_source = 'fno_base'. This reproduces the brainstormer's cited directional 2-epoch numbers (0.438569 / 0.490003 / alpha 1.5001) exactly, i.e. the relocation edits changed nothing. Evidence: <worktree>/scratchpad/contract_smoke_ifc_poisson.json and round1/eval/results/fno_transolver_seq/ifc_poisson_e2_s0.json.",
+    "CHECKPOINT RESUME verified (immutable 8): rerunning the ifc_poisson contract command with --no_cache after last.pt existed gave train_seconds 258.574 -> 0.852 with bit-identical outputs (rel_l2_mean 0.43856861163734573, alpha 1.500100016593933, base_only 0.4900025652737079); resume block at smoke_eval.py lines 321-337, checkpoint write at line 448. Evidence: <worktree>/scratchpad/contract_resume_ifc_poisson.json.",
+    "MEASUREMENT PLUMBING (card part 3 item 6): no new code. finalize_and_write already emits alpha, alpha_least_squares, base_only_rel_l2, base_only_rel_l2_final_fno, val_rel_l2_base, val_rel_l2_hybrid, stage3_joint, correction_rms_raw_units, ctx_source, ctx_fidelity, latency_ms_per_sample, peak_mem_mb into the family result JSON. Because card part 3 item 3 forbids setting ROUND1_EVAL_RESULTS, those per-(dataset,seed) JSONs and the last.pt checkpoints land in the eval layer's default results dir, round1/eval/results/fno_transolver_seq/ (recorded as output_paths.training) rather than under outputs_root; only the scored aggregate (nRMSE + copy-LF skill) goes to outputs_root/eval/.",
+    "SLURM shape: one job per (panel dataset, seed) per card part 3 item 4, because the panel does not fit one walltime. Headers per ADR 0005 (partition gpu, --gres=gpu:h100:1, --time=02:00:00 default, --requeue, --exclude=hpc-93-36), job name r1-s4_hybrid_routing-B1-s{seed} set at submit time. Walltimes are ledger-derived (slurm_rules section 4), NOT the card's p100 text: batch-0 champion 200-epoch p100 analogs (helmholtz 7.7, pfc 12.35, allen_cahn 44.4, fisher_kpp 44.35, cahn_hilliard 44.35, ifc_poisson 0.9 min) x the card's 5.25 stage-equivalents give p100 upper bounds 40/65/233/233/233/5 min; the h100 speedup for this workload is unmeasured, so the three heavy sharp datasets get --time=04:00:00 (p100-equivalent + headroom) and the rest keep the ADR default 02:00:00. Risk noted for the debugger: this family writes last.pt only after training completes, so a TIMEOUT requeue restarts that dataset from scratch.",
+    "scripts/03_aggregate_panel.sh is a cache-only recombination (submitted afterok on the six dataset jobs) that reruns the card's canonical `--datasets panel --epochs 200 --seed S --env MFFP_CTX_SOURCE=auto` command; identical (code_hash, env, epochs, seed) means every dataset is a score-cache hit and no smoke_eval.py is invoked, so it produces result_panel_s{seed}.json with the panel geomean skill without any retraining. Its short --time=00:20:00 makes a cache miss fail loudly rather than silently retrain. scripts/02_guard_contract.sh covers card part 3 item 5 (guard set, --epochs 2 --seed 0, same env). All five scripts pass `bash -n`; every path is absolute.",
+    "ADR 0004 (strict single seed) governs execution over the locked recipe.seeds [0,1,2]: submit.sh fires seed 0 only; submit_seeds_2_3.sh ships unused for the end-of-round top-3 confirmation. No SLURM job was submitted by the builder.",
+    "OPEN RISK, unresolved by design: the 256^2 GPU-memory question (n_query=2048 / n_ctx=1024 / corr_batch=4 on allen_cahn / fisher_kpp / cahn_hilliard, HF grid 256^2 = work grid) is SLURM-VERIFIED-ONLY. Both contract smokes ran on the CPU login node, where peak_mem_mb is null. Analytic worst case is the eval path (_corr_full_field, eval_batch=1, full 65536 query points x 1024 context): the cdist + softmax weight matrices are ~2 x 65536 x 1024 x 4 B ~ 0.5 GB with autograd off, and the attention logits are 6 x 65536 x 32 floats ~ 50 MB, so ~1-2 GB on an 80 GB H100 -- unlikely to bite, but it has not been measured. Watch peak_mem_mb in the first sharp-2D result JSON."
+  ],
   "review_notes": [],
   "debug_notes": [],
   "5_actual_result": null,

@@ -1,4 +1,4 @@
-# MFFP Autoresearch Round 1 — Dashboard (updated 2026-07-29T17:23:12Z)
+# MFFP Autoresearch Round 1 — Dashboard (updated 2026-07-29T17:41:22Z)
 
 ## Gate status
 | Gate | What | Status |
@@ -7,102 +7,46 @@
 | G2 | copy-LF baselines | PASS (2026-07-28) |
 | G3 | batch 0: anchors + noise floor (3 seeds) | **PASS (2026-07-29)** — array job `65956106` (r1-batch0) 36/36 COMPLETED, 0 FAILED. `state/anchors/*.json` (5 files) + `state/noise_floor.json` certified 2026-07-29T14:28:45Z. Champion `mf_fno_transfer_film`, panel geomean skill 6.703 [6.219, 7.102] @ 200-epoch smoke tier |
 | G4 | dry-run card s5\_tuning-B1 (split G4a/G4b per ADR 0006) | **PASS (2026-07-29)** — G4a (build-path) PASS, G4b (submit-path) PASS. s1-s4 SLURM submissions unblocked (fire on each reviewed_pass/suggest) |
+| G5 | H100 hardware carry-over comparison (ADR 0005) | **PASS (2026-07-29T17:26Z)** — genuine H100 retrain `65989241` vs the p100-certified anchor: geomean delta 0.0137, well inside the 0.884 noise floor; all per-dataset deltas inside their own floors too. Hardware confound closed — anchors (`state/anchors/*.json`) stand as certified, no recomputation |
 
 ## Streams
 | Stream | Anchor (skill) | Current batch | Card | Status | Jobs | Last change |
 |---|---|---|---|---|---|---|
-| s1_poisson | best_skill_on_dataset (ifc_poisson) = 1.566 [1.456, 1.696], family mf_fno_transfer_film | 1 | **s1_poisson-B1** (`mf_composition / ladder-data-fusion`, `models_r1/mf_fno_ladder`, MFFP_LADDER_MODE 4-arm sweep, ifc_poisson, 200ep) | `reviewed_suggest` (verdict SUGGEST/submit-as-is) | seed 0 = **65991280 COMPLETED** (4m28s, H100, 4 arms serial) | Reviewer verdict SUGGEST landed 17:04Z; seed 0 submitted and **completed** 17:16Z. Raw per-arm skills (orchestrator glance, not yet a verdict): two_level 2.853 / adjacent 6.055 / allpairs 5.813 / legacy_pairing 8.362 — correspondence fix clearly helps (allpairs > legacy_pairing) but two_level > allpairs is the headline pattern for the initial-analyzer (now dispatched; `5_actual_result` still null) |
-| s2_beyond_copy | copylf_bar = 1.0; certified best skills per dataset: helmholtz 13.82, pfc 11.51, allen_cahn 16.33, fisher_kpp 4.18, cahn_hilliard 5.53 | 1 | **s2_beyond_copy-B1** (`diagnostic / copy-LF excess-error forensics`, `models_r1/s2_copylf_forensics`, 0ep diagnostic) | `reviewed_suggest` (verdict SUGGEST/submit-as-is) | seed 0 = **65991328 COMPLETED** (46s, H100, diagnostic) | Reviewer verdict SUGGEST landed 17:04Z; diagnostic run submitted and **completed** 17:16Z — `panel_geomean_skill 9.624` (lookup-table diagnostic per reviewer S3, **excluded from leaderboard/top-3 eligibility**, not a model). Initial-analyzer dispatched; `5_actual_result` still null |
-| ~~s3_testtime~~ → **s3_warp** | s3_testtime (legacy anchor, retired) champion_panel_geomean = 6.703 [6.219, 7.102]; **s3_warp: no anchor file yet** (pre-card, websearch stage) | 1 | s3_testtime-B1 **`retired_by_operator`** (ADR 0010, audit trail kept) → s3_warp has no card yet | `websearch_running` | — | **Stream replaced this walk's window**: ADR 0010 (17:15Z) — Eloise: "remove s3 and replace." `s3_testtime-B1`'s builder was stopped mid-build (no GPU spent, no SLURM ever submitted); card status → `retired_by_operator`, explicitly **not** an abandonment/skip. New lever stream `s3_warp` (warp-then-correct registration fusion, NEW_MODELS.md Candidate D, physics-agnostic per ADR 0009) started fresh at batch 1; websearcher in flight — `websearches/s3_warp/batch_1/` has 3 iterations + a running `summary_so_far.md` (prior-art re-verification for MF PDE fusion specifically, per ADR 0010) |
-| s4_hybrid_routing | champion_panel_geomean = 6.703 [6.219, 7.102], family mf_fno_transfer_film | 1 | **s4_hybrid_routing-B1** (`mf_composition_measurement`, base `fno_transolver_seq`, panel, 200ep) | `drafted`, stage `builder_running` | — (not yet submitted) | Unchanged this walk — builder still in flight. Worktree created ~16:20Z; family files, scripts, and a contract-smoke log were actively written through ~16:44Z (models_r1/fno_transolver_seq/*, scripts/01-03*.sh), but nothing newer as of this walk (~49 min since last file write, ~63 min since worktree creation) — no explicit stall signal yet (no error in logs, no debug_notes), but duration is growing; worth an orchestrator glance next pulse |
-| s5_tuning | champion_panel_geomean = 6.703 [6.219, 7.102], family mf_fno_transfer_film | 1 | **s5_tuning-B1** (`tuning_spectral_bandwidth`) | `reviewed_suggest`, stage `initial_analysis_running` | seed 0 = **65988184 COMPLETED** (36m37s, H100) — `panel_geomean_skill 6.1958` vs anchor 6.7030 [6.219, 7.102], Δ≈−0.507, inside the 0.884 noise floor, not falsifying at 1 seed (ADR 0004) | Unchanged card fields this walk; initial-analyzer dispatched ~17:16Z, `5_actual_result`/`6_analysis` still null (in flight). Card's `job_ids` still does not list the completed anchor-recert job `65989241` — read-only observation, not corrected here |
-| s6_local *(new)* | **no anchor file yet** (pre-card, websearch stage) | 1 | no card yet | `websearch_running` | — | **New stream this walk**: ADR 0011 (17:20Z) — Eloise proposed additional streams; orchestrator scoped `s6_local` (FNO × local-representation hybrids — CNN/ConvNeXt branch, direct test of H2, live because s5-B1's H1 result only improved geomean by 0.507 < the 0.884 floor). Fills the approved 4-6 stream envelope. FNO-Transolver variants explicitly routed to s4 batch 2 instead (not a new stream). Websearcher dispatched only ~2 min before this walk — no output yet |
+| s1_poisson | best_skill_on_dataset (ifc_poisson) = 1.566 [1.456, 1.696], family mf_fno_transfer_film | 1 | **s1_poisson-B1** (`mf_composition / ladder-data-fusion`, `models_r1/mf_fno_ladder`, MFFP_LADDER_MODE 4-arm sweep, ifc_poisson, 200ep) | `analyzing`, stage `mechanism_analysis_running` | seed 0 = **65991280 COMPLETED** (4m28s, H100, 4 arms serial) | Initial analysis landed 17:21Z (card `5_actual_result` written ~17:31Z): **FALSIFIED per clause** — allpairs must beat two_level by >0.240, measured −2.960 (allpairs 5.813 > 2.35 = 1.5x anchor, "cratered"). But C1 clears its own 10.6x floor: the row-correspondence fix is real (legacy_pairing 8.362 → allpairs 5.813, +2.549 skill at fixed rows). C3: the controlling variable is the **level set**, not the pair set — two_level (2.853) dominates, wins 125/128 samples, uniform 2x degradation over allpairs/adjacent. Amplitude-domination caveat (42x max\|Y\| spread, shared scaler) flagged as top mechanism-analyzer probe. Mechanism-analyzer now dispatched; `6_analysis` still null |
+| s2_beyond_copy | copylf_bar = 1.0; certified best skills per dataset: helmholtz 13.82, pfc 11.51, allen_cahn 16.33, fisher_kpp 4.18, cahn_hilliard 5.53 | 1 | **s2_beyond_copy-B1** (`diagnostic / copy-LF excess-error forensics`, `models_r1/s2_copylf_forensics`, 0ep diagnostic) | `analyzing`, stage `mechanism_analysis_running` | seed 0 = **65991328 COMPLETED** (46s, H100, diagnostic) | Initial analysis landed 17:26Z: **H1 FALSIFIED** (legs A+C fire, B+D don't). Cross-stream headlines: (1) champion NEVER sees LF at test time, category error confirmed (M1, 5/5×3/3); (2) fisher_kpp is an **information deficit** — X-only family collapses to ~4.1-4.2, champion-best lookup delta 0.070 = 6x below floor — strong evidence for the deferred `s8_data`; (3) pfc: training-free knn10 (8.466) **beats** trained champion (11.511) by 3.045, above the 1.151 floor; (4) allen_cahn + cahn_hilliard are unanticipated training-wins; (5) **M3: excess error concentrates in the LOWEST spectral band, not high-k** — directly challenges `s6_local`'s H2 high-k framing, dispatched to its brainstormer; (6) **M4: pfc error is NOT interface-concentrated** (mid-distance peak) — directly challenges `s3_warp`'s interface premise, dispatched to its brainstormer; (7) M5a: helmholtz amplitude share 0.865 — normalization is the helmholtz story (s5/s7 lead); (8) M5b pairing sound, §12.2 data-defect branch CLOSED. Mechanism-analyzer dispatched (top probe: pfc NN-distance stratification, 23x heavy-tailed LOO gap); `6_analysis` still null |
+| ~~s3_testtime~~ → **s3_warp** | s3_testtime (legacy anchor, retired) champion_panel_geomean = 6.703 [6.219, 7.102]; **s3_warp: no anchor file yet** (pre-card, brainstormer stage) | 1 | s3_testtime-B1 **`retired_by_operator`** (ADR 0010, audit trail kept) → s3_warp has no card yet | `brainstormer_running` | — | Websearch returned SUCCESS 17:27Z (5 iterations, 9/9): D1 `mf_warp_correct` preempted-but-MF-composition-open (Flowers 2603.04430 owns warp primitive but no MF correction; Khamlich 2603.04232 owns OT-for-MF on Allen-Cahn but classical/no-warp-of-LF) — claimable novelty **narrow**: neural cross-fidelity field-level warp at N_hf 5-25. D2 warp-oracle diagnostic is cheapest defensible card and gates D1. Design-changing: needs a warp-off control (champion is LF-blind, so any D1 win could just be use-LF-at-test-time). Brainstormer dispatched with s2-B1's cross-findings to confront (M4: pfc error NOT interface-peaked; M3: low-band concentration) — now actively running, `brainstormer/s3_warp/batch_1/iteration_1.md` + `summary_so_far.md` written ~17:37-17:39Z |
+| s4_hybrid_routing | champion_panel_geomean = 6.703 [6.219, 7.102], family mf_fno_transfer_film | 1 | **s4_hybrid_routing-B1** (`mf_composition_measurement`, base `fno_transolver_seq`, panel, 200ep) | `drafted`, stage `builder_running` | — (not yet submitted) | **STALL WATCH — orchestrator DEADLINE SET, but fresh activity found this walk.** Orchestrator's 17:34Z pulse noted no worktree write since 09:31 local (63 min), no reply to a 17:10Z ping, and set a deadline: stop the agent and redispatch a "verify and finish" builder if no response/write by the next pulse. This walk's filesystem scan found a **new file created at 10:34:32 local (17:34:32Z)** — `worktrees/s4_hybrid_routing/B1/scratchpad/contract_smoke_ifc_poisson.log` (0 bytes, i.e. actively open/being written, ~82s old at time of scan) — landing right at/just after the deadline pulse timestamp. This is evidence the builder is alive and mid-step (consistent with the orchestrator's own "long CPU contract smoke on the contended login node" theory), not vanished. **Flagged for orchestrator**: re-check worktree state before killing the agent at the next pulse — the trigger condition ("no file write by next pulse") may already be moot |
+| s5_tuning | champion_panel_geomean = 6.703 [6.219, 7.102], family mf_fno_transfer_film | 1 | **s5_tuning-B1** (`tuning_spectral_bandwidth`) | `analyzing`, stage `mechanism_analysis_running` | seed 0 = **65988184 COMPLETED** (36m37s, H100) — `panel_geomean_skill 6.1958`; H100 anchor carry-over retrain **65989241 COMPLETED** (32m08s) → `7.1171`, PASS vs anchor (see Gate G5) | Initial analysis landed 17:31Z: geomean 6.1958 vs anchor 6.7030, Δ≈−0.507, **inside the 0.884 noise floor** → improved-but-below-threshold, not cratered, falsification **NOT_RESOLVABLE** (leg A decisively unmet; leg B flips depending on anchor basis — ifc_poisson's −0.247 clears the 0.240 floor vs the 3-seed mean but not vs the paired seed-0/H100 retrain). Entire panel movement traces to helmholtz (leave-one-out Δ −0.086); direction surprise: ifc_poisson **improved** at modes-cap 32 (= full Nyquist there) where the card predicted worse. Knob-fired audit PASS. Mechanism-analyzer dispatched (top probes: helmholtz per-band error vs seed instability; ifc_poisson full-Nyquist behavior at N_hf=5); `6_analysis` still null. Card `job_ids` still does not list `65989241` (read-only observation, carried over, not corrected here) |
+| s6_local | **no anchor file yet** (pre-card, brainstormer stage) | 1 | no card yet | `brainstormer_running` | — | Websearch returned SUCCESS 17:34Z (5 iterations, 9/9): D1 parallel-local-path **PREEMPTED** (NO-LIDK ICML'24 is exactly it, −34 to −72%); D2 fidelity-asymmetric capacity (LF trains spectral backbone, only a small zero-init HF-trained local adapter) preempted-but-MF-composition-**open**, with a published **opposing** prediction (F-Adapter: scarce capacity belongs in LOW bands) — genuinely falsifiable; D3 local corrector consuming real test-time LF, no-harm-to-copy-LF floor — open composition (boundary with s2/s6). Anti-direction rejected in-repo (ConvNeXt 3.6 vs champion 1.5 on helmholtz). **Operator correction at 17:37Z**: the websearcher's "mentor's hybrid never run" diagnosis was wrong — Eloise confirmed the mentor's FNO-CNN hybrid and iFNO **were** trained (code likely not pushed to GitHub); `program.md` §13.2 corrected, brainstormer messaged mid-flight not to premise the design on "never tried" (results still unavailable; the literature known-bad-recipe finding stands, now only weakly corroborated). Brainstormer running |
+| s7_loss *(new)* | **no anchor file yet** (pre-card, websearch stage) | 1 | no card yet | `websearch_running` | — | **New stream this walk**: ADR 0012 (17:25Z) — Eloise asked for further streams from the proposals/reports backlog; scoped `s7_loss` (interface-aware / gradient-domain / sharp-region-weighted **training objectives**, architecture held fixed at champion; ingests the F14-F18 structural-constraint backlog). Round metric is unchanged (still per-sample rel-L2 via `eval/nrmse.py`) — only the training objective varies. Envelope now 7 streams by Eloise's direction. `s8_data` (cross-dataset pretraining / N_hf leverage) explicitly **deferred** pending s2-B1 part 5 — now landed, with the fisher_kpp information-deficit finding as its conditioning evidence; orchestrator may revisit. Websearcher in flight (4/5 iterations written, no `report.md` yet) |
+
+**Scouting (not stream-bound)**: a stream-gap-mining websearcher is running in `websearches/_scouting/2026-07-29_stream_gap_mining/` (dispatched alongside s7_loss at 17:25Z; 4 iterations + `summary_so_far.md` so far), surveying: (a) foundation-style cross-dataset pretraining fairness under immutable-1, (b) uncertainty-weighted/trust-region LF-vs-model fusion, (c) retrieval-augmented/nonparametric hybrids (motivated by s2-B1's knn10-beats-champion pfc finding), (d) meta-learning/in-context operator learning, (e) any other recurring 2024-2026 MF operator-learning theme none of the 7 streams cover.
 
 ## Running / pending jobs
 | Job | Card | State | Elapsed | Node/Reason |
 |---|---|---|---|---|
-| 65984594 | (unrelated) | RUNNING | ~2:53 h | interactive `bash` session, out of round scope |
+| 65984594 | (unrelated) | RUNNING | ~3:14 h | interactive `bash` session, out of round scope |
 
-No `r1-{stream}-B{N}-s{seed}` jobs currently RUNNING/PENDING — all four submitted this window (`65988184`, `65991280`, `65991328`) and the anchor-recert retrain (`65989241`) have COMPLETED; s3_warp/s6_local are pre-card (websearch stage) and s4 is pre-submit (builder stage).
-
-**Recently completed (this walk):**
-| Job | Card | State | Elapsed | Result |
-|---|---|---|---|---|
-| 65991280 | s1_poisson-B1 (seed 0, 4-arm ladder, ifc_poisson, H100) | COMPLETED | 4m28s | per-arm skills two_level 2.853 / adjacent 6.055 / allpairs 5.813 / legacy_pairing 8.362; upserted into timing ledger |
-| 65991328 | s2_beyond_copy-B1 (seed 0, diagnostic, 5-dataset panel, H100) | COMPLETED | 46s | `panel_geomean_skill 9.624` (lookup diagnostic, excluded from leaderboard); upserted into timing ledger |
-| 65989241 | anchor recert retrain (`r1-recert-h100`, H100) | COMPLETED | 32m08s | genuine H100 retrain of champion `mf_fno_transfer_film`: `panel_geomean_skill 7.1171` vs certified anchor 6.7030 [6.2185, **7.1022**] — lands just **above** the anchor's own upper CI bound (Δ≈+0.015 over the CI edge). Consistent with the earlier false-positive-resume snapshot `65989097`'s 7.1034 (both real-H100 numbers cluster ~7.10-7.12, marginally above the p100-derived CI). Anchor JSONs unchanged (mtime/value identical) — no recomputation performed by the maintainer; this is the ADR 0005 H100 carry-over comparison the orchestrator/mentor were waiting on |
-
-No `r1-{stream}-B{N}-s{seed}` jobs yet for s3_warp/s6_local (pre-card) or s4 (still `builder_running`). Historical CANCELLED jobs `65958902`/`65958904`/`65960289` and the prior batch-0 INFRA failure `65955389` (fixed and resubmitted as `65956106`) are unchanged, out of scope.
+No `r1-{stream}-B{N}-s{seed}` jobs currently RUNNING/PENDING or newly COMPLETED this walk — `squeue`/`sacct` show no new r1- activity since the last walk (all in-flight work this window is agentic: mechanism-analyzers on s1/s2/s5, brainstormers on s3_warp/s6_local, websearchers on s7_loss + scouting, and the s4 builder's CPU-side contract smoke on the login node, none of which are SLURM jobs).
 
 ## Completed cards
 | Card | Type | Panel geomean skill (±CI) | Falsification verdict | Tools promoted |
 |---|---|---|---|---|
-| _none — no card has reached the analysis stage (`5_actual_result` still null on all 5 existing cards). `s5_tuning-B1`, `s1_poisson-B1`, `s2_beyond_copy-B1` all have completed seed-0 runs with initial-analyzers now dispatched; `s3_testtime-B1` is terminal (`retired_by_operator`, no analysis to come); `s4_hybrid_routing-B1` is mid-build_ | | | | |
+| _none — no card has reached final analysis (`6_analysis` still null on all 5 existing cards, per-seed provisional-single-seed only, ADR 0004). `s1_poisson-B1`, `s2_beyond_copy-B1`, `s5_tuning-B1` all have seed-0 runs + a returned initial analysis and are now in `mechanism_analysis_running`; `s3_testtime-B1` is terminal (`retired_by_operator`, no analysis to come); `s4_hybrid_routing-B1` is mid-build_ | | | | |
 
 ## Flags
-- **Stream replacement — s3_testtime → s3_warp (ADR 0010, 2026-07-29T17:15Z)**:
-  Eloise (operator): "remove s3 and replace." `s3_testtime-B1` builder stopped
-  mid-build (no GPU spent, no SLURM ever submitted); card → `retired_by_operator`
-  (locked fields preserved for audit; explicitly **not** counted as a
-  skip/abandonment per ADR 0010's own text). New lever stream `s3_warp`
-  (warp-then-correct registration fusion) started at batch 1 with a fresh
-  websearcher — prior-art re-verification mandatory for MF PDE fusion
-  specifically. No card/anchor exists yet for `s3_warp` (expected at this
-  stage).
-- **New stream s6_local (ADR 0011, 2026-07-29T17:20Z)**: Eloise proposed
-  additional streams; orchestrator scoped `s6_local` (FNO × local-representation
-  hybrids, direct H2 test) to fill the approved 4-6 stream envelope. Websearcher
-  dispatched only minutes before this walk; must read
-  `docs/reports/MF_FNO_CNN_Hybrid_Report.md` and diagnose the mentor's prior
-  failed FNO-CNN attempt before proposing (constraint carried at birth).
-- **New ADRs since last walk**: `0009-unknown-physics-constraint.md` (models
-  must not assume known PDE at test time — weather is the canonical case;
-  s3-B1's own diagnostic findings independently support it), `0010-s3-replacement.md`
-  (see above), `0011-s6-local-stream.md` (see above).
-- **Anchor-recert retrain landed above the certified CI** (informational,
-  orchestrator/mentor territory, not actionable by the maintainer): genuine
-  H100 retrain `65989241` → `panel_geomean_skill 7.1171`, and the earlier
-  (checkpoint-resume false-positive) snapshot `65989097` → `7.1034` — both
-  sit just above the certified anchor's upper CI bound `7.1022`. The anchor
-  itself (`state/anchors/s5_tuning.json` etc., value 6.7030 [6.219, 7.102])
-  is unchanged by this walk; no anchor file was edited or recomputed.
-- **s1_poisson-B1 and s2_beyond_copy-B1 both moved `built`(review_running) →
-  `reviewed_suggest`** this walk; both reviewer verdicts were SUGGEST/submit-as-is;
-  both seed-0 jobs were submitted and completed within the same window
-  (`65991280` 4m28s, `65991328` 46s). Initial-analyzers dispatched for both;
-  `5_actual_result` still null on both cards pending analyzer return.
-- **s4_hybrid_routing-B1**: still `drafted`/`builder_running`; worktree file
-  activity stopped ~49 min ago after producing a full script set
-  (`01_train_eval.sh` … `03_aggregate_panel.sh`) and a family
-  (`models_r1/fno_transolver_seq`) — no error/debug_notes recorded, so not
-  flagged as stalled yet, but duration (~63 min since worktree creation) is
-  worth an orchestrator glance next pulse.
-- **s5_tuning-B1 card `job_ids` stale vs SLURM reality** (carried over,
-  read-only observation): still does not list `65989241` (the completed
-  genuine anchor-recert retrain). No card edit made by the maintainer.
-- **ADR 0004 — strict single-seed**, **ADR 0005 — H100 switch**, **ADR 0006 —
-  G4 submit-verified split**, **ADR 0007 — propose-many/screen-cheap/promote-few**,
-  **ADR 0008 — ignore pinn**: all carried over unchanged from prior walks (see
-  prior `index.md` history in `state/maintainer_report.md` for full text).
-- **s3_testtime benchmark-integrity flag** (for mentor, historical — the
-  stream that raised it is now retired): `ext__helmholtz_2d` test HF fields
-  are exactly reconstructable from the condition vector via two FFTs (2-D
-  DST-I diagonalization). Compounds the existing noise-floor alert
-  (`ext__helmholtz_2d` seed spread 9.695 skill units, unfalsifiable at smoke
-  tier per `state/noise_floor.json`).
+- **s4_hybrid_routing stall watch — fresh activity detected, orchestrator should re-verify before killing the agent.** The orchestrator's 17:34Z pulse set a deadline ("if no builder response or file write by the next pulse, stop the agent and dispatch a fresh builder to verify-and-finish"), citing no worktree write since 09:31 local (63 min). This walk's filesystem scan found `worktrees/s4_hybrid_routing/B1/scratchpad/contract_smoke_ifc_poisson.log` created 10:34:32 local (17:34:32Z), 0 bytes and open, ~82s old at scan time — landing at/just after the deadline pulse. Not a SLURM job (contract smoke runs on the login node per the orchestrator's own theory), so it doesn't show in `squeue`/`sacct`. Recommend the orchestrator check worktree mtimes again before declaring the deadline tripped.
+- **G5 (ADR 0005 H100 carry-over) resolved PASS this walk (17:26Z)**: previously flagged by the prior maintainer walk as pending orchestrator/mentor action (genuine H100 retrain landed ~0.015 above the certified anchor's own CI edge). Orchestrator's own comparison closed it: geomean delta 0.0137 is far inside the 0.884 noise floor and all per-dataset deltas are inside their own floors — hardware confound closed, anchors stand unchanged and uncorrected.
+- **New stream s7_loss (ADR 0012, 2026-07-29T17:25Z)**: training-objective lever stream (interface-aware/gradient-domain/sharp-weighted losses, architecture fixed at champion), round metric unchanged. Envelope now 7 streams. `s8_data` (cross-dataset pretraining) explicitly deferred pending s2-B1 evidence — that evidence landed this walk (fisher_kpp information-deficit finding); worth an orchestrator revisit.
+- **Cross-stream findings from s2-B1's initial analysis actively feeding two brainstormers**: M3 (excess error concentrates in the LOWEST spectral band, not high-k) was dispatched to challenge `s6_local`'s H2 premise; M4 (pfc error is NOT interface-concentrated) was dispatched to challenge `s3_warp`'s interface premise. Both brainstormers are running with this cross-check live.
+- **Operator correction on s6_local (2026-07-29T17:37Z)**: Eloise corrected the s6 websearcher's "mentor's hybrid never run" diagnosis — the mentor's FNO-CNN hybrid and iFNO were in fact trained (code likely unpushed); `program.md` §13.2 corrected, s6 brainstormer messaged mid-flight. User-side follow-up noted (Eloise may ask mentor to push that code/results) — out of maintainer scope, informational only.
+- **s3_testtime → s3_warp stream replacement (ADR 0010, carried over)**: `s3_testtime-B1` remains `retired_by_operator` (audit trail preserved, explicitly not a skip/abandonment). `s3_warp` websearch completed 17:27Z and its brainstormer is now actively running (iteration 1 + summary written this walk).
+- **s5_tuning-B1 card `job_ids` stale vs SLURM reality** (carried over, read-only observation): still does not list `65989241` (the completed genuine anchor-recert retrain). No card edit made by the maintainer.
+- **New ADR since last walk**: `0012-s7-loss-stream.md` (see above). `0009`, `0010`, `0011` carried over unchanged.
+- **ADR 0004 — strict single-seed**, **ADR 0005 — H100 switch (now G5-resolved)**, **ADR 0006 — G4 submit-verified split**, **ADR 0007 — propose-many/screen-cheap/promote-few**, **ADR 0008 — ignore pinn**: all carried over unchanged from prior walks.
+- **s3_testtime benchmark-integrity flag** (carried over, historical — the stream that raised it is now retired): `ext__helmholtz_2d` test HF fields are exactly reconstructable from the condition vector via two FFTs (2-D DST-I diagonalization). Compounds the existing noise-floor alert (`ext__helmholtz_2d` seed spread 9.695 skill units, unfalsifiable at smoke tier per `state/noise_floor.json`).
 - **reopen candidates**: none (all cards have `reopen_candidate: false`).
 - **blocked.md**: does not exist — no blocked entries.
-- **abandoned streams**: none. `state/streams/` directory still does not
-  exist — no batch has reached 3 consecutive skip/blocked (and `s3_testtime`'s
-  operator retirement is explicitly excluded from this trigger per ADR 0010).
-- **Transcript inbox**: `state/transcripts/` still does not exist — nothing
-  to archive this run.
-- **Timing ledger**: upserted 2 new COMPLETED r1- jobs this walk — `65991280`
-  (s1_poisson B1 s0, `mf_fno_ladder`, ifc_poisson, 200ep, h100, 4.47 min) and
-  `65991328` (s2_beyond_copy B1 s0, `s2_copylf_forensics`, 5-dataset
-  diagnostic panel, 0ep, h100, 0.77 min) — 38 → 40 entries; re-validated as
-  parseable JSON. Anchor-recert job `65989241` (`r1-recert-h100`) is an infra
-  job with no `{stream}-B{N}-s{seed}` card mapping and is intentionally
-  excluded from the per-card ledger, per the maintainer-role's stream-job
-  matching rule (its result is surfaced above in Running/pending and Flags
-  instead).
+- **abandoned streams**: none. `state/streams/` directory still does not exist — no batch has reached 3 consecutive skip/blocked (and `s3_testtime`'s operator retirement is explicitly excluded from this trigger per ADR 0010).
+- **Transcript inbox**: `state/transcripts/` still does not exist — nothing to archive this run.
+- **Timing ledger**: unchanged this walk (40 entries, re-validated as parseable JSON) — `sacct`/`squeue` show no new COMPLETED `r1-{stream}-B{N}-s{seed}` jobs since the last walk (only agentic in-flight work this window, no SLURM submissions).

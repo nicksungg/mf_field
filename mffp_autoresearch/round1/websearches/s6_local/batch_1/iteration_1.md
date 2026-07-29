@@ -43,8 +43,16 @@ to move to the multi-fidelity composition.
   reduced 34–72%** on 2-D turbulent Navier-Stokes and spherical shallow water.
   **No** mention of few-sample/data-efficiency or multi-fidelity in the
   fetched material; benchmarks are smooth-turbulent, **not** sharp-interface.
-- Also surfaced (not fetched): LOGLO-FNO https://arxiv.org/pdf/2504.04260 ,
-  SAOT "locality-aware spectral transformer" https://arxiv.org/pdf/2511.18777 .
+- **LOGLO-FNO, "Efficient Learning of Local and Global Features in Fourier
+  Neural Operators"**, https://arxiv.org/pdf/2504.04260 (TMLR 12/2025) —
+  FETCHED. Confirms the same motif independently: **parallel branches**, a
+  local branch using "convolution kernels" beside the global Fourier branch,
+  plus explicit **high-frequency-targeted loss terms** to counter spectral
+  bias; testing "focuses on problems with sharp discontinuities and
+  high-frequency phenomena"; claims comparable-or-fewer parameters. **No
+  prominent few-shot / minimal-data claims; no multi-fidelity.**
+- Also surfaced (not fetched): SAOT "locality-aware spectral transformer"
+  https://arxiv.org/pdf/2511.18777 .
 
 ### Term 2 — U-FNO
 

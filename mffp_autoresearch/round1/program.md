@@ -479,13 +479,19 @@ hybrids, U-Nets. 22 of 30 factory families are FNO-backboned; the top-10 are
 variants of one idea — the zoo is deep but narrow, which is why streams own
 questions, not families.
 
-**Corrections that reframe old intuitions** (from Eloise, 2026-07-28):
-`convnext_unet_film` is a ConvNeXt-**U-Net** (rank 2 overall, craters only on
-`sod_1d`), NOT a CNN-FNO hybrid; the FNO→CNN two-stage hybrid
-(`docs/reports/MF_FNO_CNN_Hybrid_Report.md`) was never built; iFNO was never
-built. `sharp__sod_1d` (the shock tube) is already solved by
-`fno_fire_distcond` (0.0001) — the open problem is sharp-**2D** fusion, not
-shock representability.
+**Corrections that reframe old intuitions** (from Eloise, 2026-07-28,
+amended 2026-07-29): `convnext_unet_film` is a ConvNeXt-**U-Net** (rank 2
+overall, craters only on `sod_1d`), NOT a CNN-FNO hybrid. The FNO→CNN
+two-stage hybrid and iFNO **were trained by the mentor off-repo** — the code
+and results were likely never pushed to GitHub, so there is NO in-repo
+evidence of either; the only empirical signal is the mentor's own report that
+they were "not going well" (PROMPT-7-28). Agents must treat the mentor's
+hybrid as *attempted with unknown-but-poor results, details unavailable*, not
+as never-run, and must not cite in-repo absence as evidence about its
+performance. (Operator action item: Eloise may ask the mentor to push the
+code/results — that evidence would upgrade s6_local's priors.) `sharp__sod_1d`
+(the shock tube) is already solved by `fno_fire_distcond` (0.0001) — the open
+problem is sharp-**2D** fusion, not shock representability.
 
 ### 13.3 Prior-art discipline
 

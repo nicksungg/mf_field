@@ -51,7 +51,7 @@
       "MFFP_MODES_CAP": "32"
     }
   },
-  "status": "reviewed_suggest",
+  "status": "analyzing",
   "skipped_reason": null,
   "reopen_candidate": false,
   "scripts_path": {
@@ -104,7 +104,355 @@
     }
   ],
   "debug_notes": [],
-  "5_actual_result": null,
+  "5_actual_result": {
+    "protocol": "ADR 0004 strict single-seed; all numbers below are provisional-single-seed point estimates (no CI)",
+    "seeds_available": [
+      0
+    ],
+    "nrmse_def_hash": "d3d0ade9191c13bacc40702f3eb26ad290e01641cacee22a1d2233b74c035850",
+    "nrmse_def_hash_consistent": true,
+    "result_json_paths": {
+      "panel_seed0": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s5_tuning/B1/eval/result_panel_s0.json",
+      "guard_contract_seed0": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s5_tuning/B1/eval/guard_contract_s0.json",
+      "anchor_batch0_champion": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/batch0/eval/mf_fno_transfer_film__<dataset>_s{0,1,2}.json",
+      "h100_inference_recert": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/recert/h100_champion_seed0.json",
+      "h100_retrain_recert": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/recert/h100_champion_seed0_retrain.json",
+      "per_dataset_training_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s5_tuning/B1/training/mf_fno_transfer_film_modes/<dataset>_e200_s0.json",
+      "guard_cap12_comparator": null
+    },
+    "knob_fired_audit": {
+      "verdict": "PASS",
+      "n_params_by_dataset": {
+        "ext__helmholtz_2d": 33609793,
+        "ifc_poisson": 33610305,
+        "sharp__allen_cahn_2d": 33609793,
+        "sharp__cahn_hilliard": 33613889,
+        "sharp__fisher_kpp_2d": 33609537,
+        "sharp__phase_field_crystal_2d": 33609537
+      },
+      "modes": [
+        32,
+        32
+      ],
+      "modes_cap": 32,
+      "modes_cap_source": "env:MFFP_MODES_CAP",
+      "note": "all six ~3.36e7 (cap-12 base = 4,773,953/4,774,465); read from the per-dataset training JSONs. preds_test.npz present for all six datasets (mechanism-analyzer per-band probe ready).",
+      "cap32_vs_nyquist": {
+        "ifc_poisson (64x64)": "32 = full Nyquist (no truncation at all)",
+        "ext__helmholtz_2d (96x96)": "32 of 48 = 67% of Nyquist",
+        "sharp__phase_field_crystal_2d (128x128)": "32 of 64 = 50% of Nyquist",
+        "sharp__allen_cahn_2d / cahn_hilliard / fisher_kpp_2d (256x256)": "32 of 128 = 25% of Nyquist (cap 12 = 9.4%)"
+      }
+    },
+    "per_dataset": {
+      "ext__helmholtz_2d": {
+        "per_seed_nrmse": [
+          2.9508294387751546
+        ],
+        "per_seed_skill": [
+          8.95683202252844
+        ],
+        "mean_skill": 8.95683202252844,
+        "ci95": null,
+        "ci95_note": "single seed (ADR 0004) - no CI computable; point estimate is provisional-single-seed",
+        "reference_type": "copylf",
+        "cached": false,
+        "split": "test_hf",
+        "anchor_skill_3seed_mean": 13.817289529417906,
+        "anchor_skill_seed0_paired": 18.826116154391737,
+        "anchor_per_seed_skill": [
+          18.826116154391737,
+          9.131154960099906,
+          13.49459747376207
+        ],
+        "delta_vs_anchor_mean": -4.860457506889466,
+        "delta_vs_anchor_seed0": -9.869284131863298,
+        "min_claimable_effect": 9.694961194291832,
+        "improves_beyond_floor_vs_anchor_mean": false,
+        "improves_beyond_floor_vs_anchor_seed0": true,
+        "numeric_claim_allowed": false,
+        "h100_same_hardware_cap12_seed0_skill": 19.632685882726165,
+        "delta_vs_h100_same_hardware": -10.675853860197725,
+        "improves_beyond_floor_vs_h100_same_hardware": true
+      },
+      "ifc_poisson": {
+        "per_seed_nrmse": [
+          0.047483125662370736
+        ],
+        "per_seed_skill": [
+          1.3189757128436317
+        ],
+        "mean_skill": 1.3189757128436317,
+        "ci95": null,
+        "ci95_note": "single seed (ADR 0004) - no CI computable; point estimate is provisional-single-seed",
+        "reference_type": "paper_bar",
+        "cached": false,
+        "split": "test_hf",
+        "anchor_skill_3seed_mean": 1.5656334312786022,
+        "anchor_skill_seed0_paired": 1.5446694124160718,
+        "anchor_per_seed_skill": [
+          1.5446694124160718,
+          1.4561616605002385,
+          1.6960692209194965
+        ],
+        "delta_vs_anchor_mean": -0.24665771843497053,
+        "delta_vs_anchor_seed0": -0.22569369957244012,
+        "min_claimable_effect": 0.23990756041925798,
+        "improves_beyond_floor_vs_anchor_mean": true,
+        "improves_beyond_floor_vs_anchor_seed0": false,
+        "numeric_claim_allowed": true,
+        "h100_same_hardware_cap12_seed0_skill": 1.5453089551423054,
+        "delta_vs_h100_same_hardware": -0.2263332422986737,
+        "improves_beyond_floor_vs_h100_same_hardware": false
+      },
+      "sharp__allen_cahn_2d": {
+        "per_seed_nrmse": [
+          0.2647805489452103
+        ],
+        "per_seed_skill": [
+          16.393281658405808
+        ],
+        "mean_skill": 16.393281658405808,
+        "ci95": null,
+        "ci95_note": "single seed (ADR 0004) - no CI computable; point estimate is provisional-single-seed",
+        "reference_type": "copylf",
+        "cached": false,
+        "split": "test_hf",
+        "anchor_skill_3seed_mean": 16.334084085453636,
+        "anchor_skill_seed0_paired": 16.334668349426035,
+        "anchor_per_seed_skill": [
+          16.334668349426035,
+          16.326716760892907,
+          16.34086714604196
+        ],
+        "delta_vs_anchor_mean": 0.059197572952172095,
+        "delta_vs_anchor_seed0": 0.05861330897977268,
+        "min_claimable_effect": 1.633407079448426,
+        "improves_beyond_floor_vs_anchor_mean": false,
+        "improves_beyond_floor_vs_anchor_seed0": false,
+        "numeric_claim_allowed": true,
+        "h100_same_hardware_cap12_seed0_skill": 16.31709644730294,
+        "delta_vs_h100_same_hardware": 0.07618521110286736,
+        "improves_beyond_floor_vs_h100_same_hardware": false
+      },
+      "sharp__cahn_hilliard": {
+        "per_seed_nrmse": [
+          0.49310968649759873
+        ],
+        "per_seed_skill": [
+          5.625253674220797
+        ],
+        "mean_skill": 5.625253674220797,
+        "ci95": null,
+        "ci95_note": "single seed (ADR 0004) - no CI computable; point estimate is provisional-single-seed",
+        "reference_type": "copylf",
+        "cached": false,
+        "split": "test_hf",
+        "anchor_skill_3seed_mean": 5.533466294918019,
+        "anchor_skill_seed0_paired": 5.562588933882767,
+        "anchor_per_seed_skill": [
+          5.562588933882767,
+          5.614819069207008,
+          5.422990881664281
+        ],
+        "delta_vs_anchor_mean": 0.09178737930277858,
+        "delta_vs_anchor_seed0": 0.06266474033802982,
+        "min_claimable_effect": 0.5533465853654416,
+        "improves_beyond_floor_vs_anchor_mean": false,
+        "improves_beyond_floor_vs_anchor_seed0": false,
+        "numeric_claim_allowed": true,
+        "h100_same_hardware_cap12_seed0_skill": 5.562725178391981,
+        "delta_vs_h100_same_hardware": 0.06252849582881659,
+        "improves_beyond_floor_vs_h100_same_hardware": false
+      },
+      "sharp__fisher_kpp_2d": {
+        "per_seed_nrmse": [
+          0.279675508524209
+        ],
+        "per_seed_skill": [
+          4.465356106634579
+        ],
+        "mean_skill": 4.465356106634579,
+        "ci95": null,
+        "ci95_note": "single seed (ADR 0004) - no CI computable; point estimate is provisional-single-seed",
+        "reference_type": "copylf",
+        "cached": false,
+        "split": "test_hf",
+        "anchor_skill_3seed_mean": 4.177358579533458,
+        "anchor_skill_seed0_paired": 4.22528652075225,
+        "anchor_per_seed_skill": [
+          4.22528652075225,
+          4.133486038054026,
+          4.173303179794098
+        ],
+        "delta_vs_anchor_mean": 0.2879975271011217,
+        "delta_vs_anchor_seed0": 0.2400695858823294,
+        "min_claimable_effect": 0.41773549950819566,
+        "improves_beyond_floor_vs_anchor_mean": false,
+        "improves_beyond_floor_vs_anchor_seed0": false,
+        "numeric_claim_allowed": true,
+        "h100_same_hardware_cap12_seed0_skill": 4.116517616572251,
+        "delta_vs_h100_same_hardware": 0.34883849006232825,
+        "improves_beyond_floor_vs_h100_same_hardware": false
+      },
+      "sharp__phase_field_crystal_2d": {
+        "per_seed_nrmse": [
+          0.5207601627251521
+        ],
+        "per_seed_skill": [
+          11.629186293284581
+        ],
+        "mean_skill": 11.629186293284581,
+        "ci95": null,
+        "ci95_note": "single seed (ADR 0004) - no CI computable; point estimate is provisional-single-seed",
+        "reference_type": "copylf",
+        "cached": false,
+        "split": "test_hf",
+        "anchor_skill_3seed_mean": 11.511001428346894,
+        "anchor_skill_seed0_paired": 11.495613563428282,
+        "anchor_per_seed_skill": [
+          11.495613563428282,
+          11.477374003225568,
+          11.560016718386832
+        ],
+        "delta_vs_anchor_mean": 0.1181848649376871,
+        "delta_vs_anchor_seed0": 0.13357272985629898,
+        "min_claimable_effect": 1.1511001428346894,
+        "improves_beyond_floor_vs_anchor_mean": false,
+        "improves_beyond_floor_vs_anchor_seed0": false,
+        "numeric_claim_allowed": true,
+        "h100_same_hardware_cap12_seed0_skill": 11.464728732939415,
+        "delta_vs_h100_same_hardware": 0.16445756034516634,
+        "improves_beyond_floor_vs_h100_same_hardware": false
+      }
+    },
+    "panel_geomean_skill": {
+      "per_seed": [
+        6.195848329238065
+      ],
+      "mean": 6.195848329238065,
+      "ci95": null,
+      "ci95_note": "single seed (ADR 0004): no bootstrap CI. Anchor's own 3-seed CI is [6.2185, 7.1022]."
+    },
+    "vs_anchor": {
+      "anchor_value": 6.703016262587087,
+      "anchor_ci95": [
+        6.21853605194748,
+        7.102239525443188
+      ],
+      "anchor_per_seed": [
+        7.102239525443188,
+        6.21853605194748,
+        6.788273210370594
+      ],
+      "anchor_seed0_paired": 7.102239525443188,
+      "delta": -0.507167933349022,
+      "delta_vs_anchor_seed0_paired": -0.9063911962051225,
+      "delta_pct": -7.566264402188339,
+      "beyond_ci": true,
+      "beyond_ci_note": "marginal: 6.1958 sits 0.0227 below the anchor's 3-seed CI lower bound 6.2185; that interval is the ANCHOR's seed spread, not a CI on this single-seed arm.",
+      "beyond_noise_floor": false,
+      "noise_floor_geomean": 0.884,
+      "improvement_threshold_from_clause": 5.819016262587087
+    },
+    "same_hardware_paired_reference": {
+      "what": "cap-12 champion mf_fno_transfer_film RETRAINED on H100 at seed 0, 200 epochs (ADR 0005 re-certification, job 65989241)",
+      "path": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/recert/h100_champion_seed0_retrain.json",
+      "geomean_skill": 7.117102398598575,
+      "arm_minus_same_hardware": -0.9212540693605096,
+      "exceeds_geomean_floor_0884": true,
+      "adr0005_carryover_check": {
+        "criterion": "every per-dataset value within its certified min_claimable_effect of the batch-0 seed-0 (p100) value",
+        "result": "SATISFIED on all six: max |delta| = 0.807 skill units on ext__helmholtz_2d (floor 9.695); next largest 0.109 on sharp__fisher_kpp_2d (floor 0.418); geomean 7.1171 vs p100 seed-0 7.1022 (+0.0149). Batch-0 p100 anchors and the noise floor therefore carry over to H100 unchanged. (Measurement only - declaring carry-over is the orchestrator/operator's call under ADR 0005.)"
+      },
+      "interpretation_caveat": "the arm beats this paired same-hardware reference by 0.921 > the 0.884 floor, but (a) seed 0 is the champion's WORST seed (anchor per-seed [7.102, 6.219, 6.788]), which is exactly why the pre-registered basis is the 3-seed MEAN 6.703, and (b) 100% of that 0.921 is ext__helmholtz_2d, where the card allows no numeric claim. On the pre-registered basis the improvement is 0.507 < 0.884.",
+      "per_dataset_deltas_beyond_floor_vs_same_hardware": [
+        "ext__helmholtz_2d (-10.676 vs floor 9.695; NO numeric claim allowed by the card)"
+      ]
+    },
+    "effect_decomposition": {
+      "leave_helmholtz_out_geomean_arm": 5.7555926276896425,
+      "leave_helmholtz_out_geomean_anchor": 5.841971060140754,
+      "leave_helmholtz_out_geomean_h100_same_hardware": 5.809890050224605,
+      "leave_helmholtz_out_delta_vs_h100_same_hardware": -0.054297422534962614,
+      "leave_helmholtz_out_delta": -0.08637843245111121,
+      "note": "the entire -0.507 panel movement is ext__helmholtz_2d (the one dataset the card pre-registered as carrying NO numeric claim, floor 9.695). With the anchor's helmholtz value substituted the arm's geomean would be 6.660 (delta -0.043). The four sharp-2D datasets all got slightly WORSE at cap 32 (+0.06 to +0.29 skill), each below its own floor."
+    },
+    "cratered_verdict": "not_cratered",
+    "cratered_detail": {
+      "rule": "geomean > 1.5x anchor (10.0545), or crash, or falsification fired decisively",
+      "observed_geomean": 6.195848329238065,
+      "crash": false,
+      "adr_0004_note": "seeds 1-2 are NOT launched in-round (ADR 0004); the schema value 'proceed_to_seeds_1_2' does not apply. Seeds 1-2 only in the end-of-round top-3 confirmation."
+    },
+    "falsification_verdict": "not_resolvable",
+    "falsification_detail": {
+      "clause_verbatim": "If the cap-32 arm's 3-seed mean panel geomean skill is not at least 0.884 skill units below the certified anchor 6.703 (i.e. not <= 5.819) AND no stable panel dataset improves by more than its own min_claimable_effect (sharp__phase_field_crystal_2d 1.151, sharp__allen_cahn_2d 1.633, sharp__fisher_kpp_2d 0.418, sharp__cahn_hilliard 0.553, ifc_poisson 0.240), then F22's modes_cap is NOT the champion's bottleneck and the panel gap is not spectral bandwidth.",
+      "conjunct_A_geomean_threshold_met": false,
+      "conjunct_A_numbers": "observed 6.1958 vs required <= 5.8190; improvement 0.5072 skill units (7.6%) is BELOW the certified geomean floor 0.884 -> the panel-level effect is not resolvable at this round's noise floor.",
+      "conjunct_B_any_stable_dataset_beyond_floor": "basis-dependent",
+      "conjunct_B_numbers": "ifc_poisson is the only candidate: 1.3190 vs anchor 3-seed mean 1.5656 = improvement 0.2467 > floor 0.240 (margin +2.8%), but vs the paired anchor seed-0 1.5447 the improvement is 0.2257 < 0.240, and vs the H100 same-hardware cap-12 retrain 1.5453 it is 0.2263 < 0.240. All four sharp-2D datasets moved the wrong way (+0.06 to +0.35, each below its floor). ext__helmholtz_2d improved 4.86 skill units vs the 3-seed mean (floor 9.695, no claim allowed); vs the same-hardware retrain the helmholtz movement is 10.68, which WOULD clear that floor - but the card pre-registers NO numeric claim there, so it cannot carry the verdict.",
+      "verdict_reasoning": "Conjunct A is decisively NOT met on the pre-registered basis: 6.1958 vs the required <= 5.8190, an improvement of 0.5072 < the 0.884 geomean floor. Conjunct B flips with the (equally defensible) anchor basis - it is TRUE (no dataset clears) against the paired seed-0 anchor and against the H100 same-hardware retrain, and FALSE (ifc_poisson clears by 2.8%) against the certified 3-seed mean the clause literally names. Because the clause is a conjunction that requires BOTH, and its deciding dataset sits within one basis-choice of its own floor at a single seed, the clause is NOT decidable here. Plain label: improved-but-below-threshold. Deciding it as written needs seeds 1-2 (end-of-round top-3 pass) or a paired re-measure of ifc_poisson.",
+      "same_hardware_cross_check": "against the H100 seed-0 cap-12 retrain (7.1171) the arm's geomean improvement is 0.9213 > 0.884 - but seed 0 is the champion's worst seed and 100% of that gap is ext__helmholtz_2d (leave-helmholtz-out delta is -0.077). This does NOT convert the card into a panel win; it is recorded so the mechanism-analyzer and the end-of-round confirmation pass can see both bases.",
+      "direction_note": "the card PREDICTED ifc_poisson would get WORSE at cap 32 ('full 64^2 spectrum from N_hf=5'); it improved instead - the only per-dataset movement near its floor, and a live lead for the mechanism-analyzer."
+    },
+    "guard_flags": [
+      "heat_local"
+    ],
+    "guard_set": {
+      "fluid": {
+        "nrmse": 0.35470655672095097,
+        "skill": 1.6266497162725373,
+        "copylf_reference_nrmse": 0.21805958171115042,
+        "ratio_to_reference": 1.6266497162725373,
+        "tier": "contract (2 epochs, job 65988185)",
+        "flag_rule": "program.md 2.3: regression > 2x recorded reference",
+        "flagged": false
+      },
+      "heat_local": {
+        "nrmse": 0.11493304695316765,
+        "skill": 47.85842811812975,
+        "copylf_reference_nrmse": 0.00240152155999517,
+        "ratio_to_reference": 47.85842811812975,
+        "tier": "contract (2 epochs, job 65988185)",
+        "flag_rule": "program.md 2.3: regression > 2x recorded reference",
+        "flagged": true
+      },
+      "sharp__sod_1d": {
+        "nrmse": 0.0494521933883321,
+        "skill": 1.4944675011812227,
+        "copylf_reference_nrmse": 0.03309017650048946,
+        "ratio_to_reference": 1.4944675011812227,
+        "tier": "contract (2 epochs, job 65988185)",
+        "flag_rule": "program.md 2.3: regression > 2x recorded reference",
+        "flagged": false
+      }
+    },
+    "guard_note": "Guard is required before a panel-WIN claim (program.md 2.3); this card makes no panel-win claim (improvement below the pre-registered floor), so the guard result is informational. The guard arm ran at contract tier (2 epochs, card item 6c) - an undertrained model cannot approach heat_local's extremely strong copy-LF reference (nRMSE 0.0024, i.e. LF is already almost exactly HF there), so a raw >2x ratio at this tier is expected and is NOT by itself evidence of a cap-32 regression. The analyzer ATTEMPTED the tier-matched cap-12 comparator (score_panel.py --family_dir mf_field/factory_mffp/models/mf_fno_transfer_film --datasets guard --epochs 2 --seed 0) on the login node and it TIMED OUT at the 20-minute analysis cap (exit 124) - the login node has 1 CPU and was running three other agents' contract smokes concurrently; heat_local did not finish. If this flag ever needs adjudication, run it on GPU at contract tier (the cap-32 guard job took 46 s on H100).",
+    "anomalies": [
+      "HARDWARE CONFOUND - RESOLVED DURING THIS ANALYSIS: this arm trained on H100 (hpc-33-16, ADR 0005) while the certified anchor 6.703 and the noise floor were measured on p100 (batch 0). Both ADR-0005 recert legs have now landed. (a) Inference leg (job 65989097, recert/h100_champion_seed0.json, geomean 7.1034): H100 inference on p100 weights reproduces batch-0 to <= 0.0042 skill units. (b) RETRAIN leg (job 65989241, recert/h100_champion_seed0_retrain.json, geomean 7.1171 vs p100 seed-0 7.1022): every per-dataset delta is inside its min_claimable_effect (max 0.807 on ext__helmholtz_2d, floor 9.695). Conclusion: p100 anchors and the noise floor carry over to H100 unchanged, and this card's cross-hardware comparison against 6.703 is licensed. Caveat retained: the arm's only large movement is on ext__helmholtz_2d, the dataset with the widest seed spread and no numeric claim.",
+      "No training pathology: .err empty (0 bytes), no NaN/inf, no preemption or resume events, single clean COMPLETED run; all six per-dataset metrics finite via per_sample_mean.",
+      "Knob-fired audit PASS (n_params ~3.36e7, modes [32,32], modes_cap_source env:MFFP_MODES_CAP on all six datasets) - the arm really is cap 32.",
+      "Guard heat_local flagged by the letter of the >2x rule (ratio 47.86) but at contract tier (2 epochs) only; see guard_note / guard_set for the cap-12 tier-matched comparator.",
+      "Grid-relative reading of the knob: cap 32 is the FULL Nyquist band on ifc_poisson (64x64) and only 25% of Nyquist on the three 256x256 sharp datasets - i.e. F22's '9.4% of Nyquist' complaint is only partially relieved at cap 32 on the sharp panel, which bounds how strongly this card can falsify the bandwidth hypothesis for those datasets."
+    ],
+    "wall_clock_per_seed_min": [
+      36.62
+    ],
+    "wall_clock_detail": {
+      "panel_seed0_job": "65988184 COMPLETED 00:36:37 on hpc-33-16 (H100 80GB), 2026-07-29T09:18:36 -> 09:55:13",
+      "guard_contract_job": "65988185 COMPLETED 00:00:46 (H100)",
+      "train_seconds_by_dataset": {
+        "ext__helmholtz_2d": 212.02,
+        "ifc_poisson": 48.08,
+        "sharp__allen_cahn_2d": 553.1,
+        "sharp__cahn_hilliard": 558.6,
+        "sharp__fisher_kpp_2d": 552.37,
+        "sharp__phase_field_crystal_2d": 234.85
+      },
+      "ledger_note": "cap-12 panel prior was 154.1 min/seed on p100; cap-32 on H100 took 36.6 min/seed. Hardware and knob are confounded in that ratio - not a speedup attributable to modes_cap. state/timing_ledger.json already carries both s5-B1 entries."
+    }
+  },
   "6_analysis": null,
   "7_gap_and_future": null,
   "reanalysis_progress": null

@@ -34,3 +34,32 @@ input for batch-2 brainstormer dispatches; it does not modify program.md.
 - H1-vs-H2 framing (spectral capacity vs local representation) will be partly
   answered by s5-B1 + s2-B1; batch-2 dispatches should condition on those
   results rather than re-proposing the question.
+
+## Scouting gap-mine results (2026-07-29, websearches/_scouting/2026-07-29_stream_gap_mining/)
+
+Orchestrator adjudication of the scout's ranked candidates:
+- **C1 trust-gated fallback fusion** (y = LF + g·Δ, g≡0 init = copy-LF exactly;
+  open-for-MF): NOT a new stream — merged into s6_local-B1's D3 design space
+  (same composition class: gated/identity-init correction consuming real LF).
+  C1's citations + the gaming-risk framing (identity-init makes skill≤1 at
+  init → frame as measurement; gate collapse to zero is a finding, not a win)
+  forwarded to the s6 brainstormer mid-flight.
+- **C2 LF-field-keyed retrieval residual transfer**: batch-2 seed (s6 or s2).
+  Caveat: keyed on LF field, applied to residual — knn-in-X was 4-30x worse
+  than copy-LF.
+- **C3 cross-dataset/foundation pretraining = the deferred s8_data: CLOSED,
+  DO NOT OPEN** (preempted 4x fetched; the champion already IS
+  LF-pretrain→HF-finetune; fragments to s5 (SSL aux) and s1). Any future
+  non-panel-pretraining card needs an operator fairness ruling first.
+- **C5 boosting/cascades**: s4 batch-2 seed (preempted as published; MF
+  composition angle only).
+- **C4 in-context/meta-learning**: not worth it (preempted + wrong problem).
+- **C6 per-sample amplitude calibration**: s5 batch-2 seed (verdict "novel"
+  but thin; helmholtz 86.5% amplitude share motivates).
+- **C0 precondition** (does the base family actually ingest a field-shaped LF
+  at eval?): mandatory build-gate for any C1/C2-class card; s2 batch-2 seed.
+
+**FACT CORRECTION (propagate everywhere)**: n_train_hf = 400 on all five
+beyond-copy sharp datasets; only ifc_poisson is N_hf=5. "Few-shot" framing
+applies to ifc_poisson alone; retrieval banks/exemplar methods are feasible
+on 5/6 panel datasets.
