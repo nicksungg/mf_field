@@ -200,3 +200,82 @@
   for tasks 19-20 and the corrected pending-task dataset breakdown, and
   timestamps refreshed; no structural/status changes to streams).
 ## RUN END 2026-07-29T05:17:45Z
+
+## RUN START 2026-07-29T05:35:13Z
+- Single in-flight check: last run START 2026-07-29T05:15:35Z has matching
+  RUN END 2026-07-29T05:17:45Z (~18 min ago, closed) — no double-walk risk,
+  proceeding.
+- Cards walked: 0 (`experiment_cards/` still only `SCHEMA.md`; no B*.json
+  cards exist yet). All 5 streams still `current_batch=1`,
+  `current_stage=websearch_done_awaiting_G3_brainstormer` — no change.
+  `state/streams/*.json` still absent (no stream card history yet, so no
+  abandonment is possible).
+- G1/G2: still PASS (per state/gates.md, unchanged).
+- G3 array job 65956106 progressed since last walk: 24/36 COMPLETED (was
+  19/36 per prior maintainer walk); confirmed via `sacct -P` with the full
+  un-truncated JobID column (`squeue -r` also correctly expands array
+  tasks when using `-r`, cross-checked, matches sacct). New completions
+  since last walk: tasks 19-20 (mf_fno_pinn_transfer × ext__helmholtz_2d
+  seeds 1-2, ~7.6 min each, matching the seed0/family-0 helmholtz_2d
+  timing prior) and tasks 21-23 (mf_fno_pinn_transfer ×
+  sharp__phase_field_crystal_2d seeds 0-2, ~12.2 min each, matching the
+  family-0 PFC timing prior). Tasks 24-30 now RUNNING (allen_cahn_2d x3,
+  fisher_kpp_2d x3, cahn_hilliard seed0 — the slower 256^2 datasets, 7-20
+  min elapsed so far, within the ~44 min family-0 prior for these
+  datasets). Tasks 31-35 PENDING (cahn_hilliard seeds1-2 + ifc_poisson
+  x3, cluster concurrency cap). 0 FAILED throughout this job — no stall,
+  well within the 6h sbatch time budget.
+- Non-r1 job note (index.md accuracy only, out of scope for this round):
+  `65958904` (plain `bash`), previously PENDING in queue, has since ended
+  `CANCELLED by 28156` at 2026-07-28T22:20:58 and is no longer in
+  `squeue`. No other non-r1 jobs remain in the queue this walk (confirmed
+  via full `squeue -u $USER -r` and `sacct` — only 65956106_* tasks
+  present).
+- Timing ledger: upserted 5 new COMPLETED-task entries (job IDs
+  65956106_19/_20: mf_fno_pinn_transfer x ext__helmholtz_2d seeds 1-2,
+  7.60/7.57 min; 65956106_21/_22/_23: mf_fno_pinn_transfer x
+  sharp__phase_field_crystal_2d seeds 0-2, 12.17/12.18/12.18 min; gpu_type
+  p100, 200 epochs). `timing_ledger.json` now has 24 entries total (was
+  19); validated as parseable JSON after upsert.
+- Abandonment check: no stream has any skipped/blocked batches (no cards
+  exist yet) — no abandonment; no `state/streams/*.json` files created
+  (nothing to record).
+- state/anchors/, state/noise_floor.json: still absent — G3 not complete
+  (12/36 tasks remain: 7 running + 5 pending).
+- Transcript inbox: `state/transcripts/inbox/` still does not exist —
+  nothing to archive.
+- No card files touched (`git status --short experiment_cards/` clean,
+  confirmed before and after this walk).
+- index.md: regenerated (batch0 progress counts 24/36, running-jobs table
+  for tasks 24-30 with per-task node names, updated pending-task dataset
+  breakdown for tasks 31-35, non-r1 job note updated to reflect 65958904's
+  cancellation, and timestamps refreshed; no structural/status changes to
+  streams).
+## RUN END 2026-07-29T05:37:02Z
+
+## RUN START 2026-07-29T05:56:26Z
+- Single in-flight check: last run START 2026-07-29T05:35:13Z has matching
+  RUN END 2026-07-29T05:37:02Z (~19 min ago, closed) — no double-walk risk,
+  proceeding.
+- no changes: cards walked 0 (`experiment_cards/` still only `SCHEMA.md`),
+  all 5 streams still `current_batch=1`,
+  `current_stage=websearch_done_awaiting_G3_brainstormer`. G1/G2 still PASS
+  (state/gates.md unchanged). G3 array job 65956106 unchanged at 24/36
+  COMPLETED (0 new completions since the 05:37 walk), 7 RUNNING (tasks
+  24-30, now 26-39 min elapsed, still within the ~44 min family-0 prior for
+  these datasets — no stall), 5 PENDING (tasks 31-35), 0 FAILED throughout
+  — confirmed via `sacct -P` full un-truncated JobID column cross-checked
+  against `squeue -u $USER -r`. No new r1-{stream}-B{N}-s{seed} jobs (no
+  cards exist). Timing ledger: 0 new COMPLETED-task entries since last
+  walk (still 24 entries, matches 24/36 COMPLETED tasks) — validated as
+  parseable JSON, no upsert needed. Abandonment check: no cards exist, no
+  abandonment possible, no `state/streams/*.json` files created. Anchors
+  (`state/anchors/`) and `state/noise_floor.json` still absent — G3 not
+  complete. Transcript inbox: `state/transcripts/inbox/` still does not
+  exist — nothing to archive. Non-r1 queue: confirmed empty (previously
+  noted `65958904` remains CANCELLED, no new non-r1 jobs). No card files
+  touched (`git status --short experiment_cards/` clean, confirmed before
+  and after this walk).
+- index.md: regenerated (fresh timestamp, elapsed times for tasks 24-30
+  updated to 26-39 min; all counts/structure unchanged from prior walk).
+## RUN END 2026-07-29T05:57:11Z
