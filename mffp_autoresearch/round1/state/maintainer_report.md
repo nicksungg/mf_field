@@ -1995,3 +1995,109 @@
   live turn-3; Running/pending jobs table now shows 3 PENDING r1- jobs
   instead of 1; Flags rewritten around all of the above).
 ## RUN END 2026-07-29T22:26:03Z
+## RUN START 2026-07-29T22:42:37Z
+- SLURM view: `squeue` shows 4 live r1- jobs, all PENDING at scan time: `66005834`
+  (s6_local-B1-guard200, H100), `66008912` (s1_poisson-B2-s0, H100), `66009306`
+  (s7_loss-B1-screen, H100), and a new 4th, `66010795` (s3_warp-B1-verify1,
+  p100), submitted mid-walk by the debugger. All 4 read `(Priority)` /
+  `0:00` — no elapsed time yet. `sacct` confirms all states; no unexpected
+  vanishing/FAILED jobs this walk.
+- `s3_warp-B1` debugger (ALGO attempt 1): a third validation job, `dbg1c`
+  (`66010125`), COMPLETED cleanly (1m04s, p100, exit 0) since last walk.
+  Its printed diagnostics differ in framing from `dbg1b`: this run scores a
+  `fitter` method against a literal-5%-nRMSE threshold and now shows PASS on
+  all 5 panel datasets (pfc nRMSE 0.00011, helmholtz 0.00274, allen_cahn
+  0.00136, fisher_kpp 0.00003, cahn_hilliard 0.01366 — all well under 5%),
+  while three `sab` (iterative alignment) variants mostly FAIL. However,
+  pfc's separately-reported `EPEn unweighted` is still 0.3913 — essentially
+  the same ~0.39 magnitude flagged last walk against the 0.25 tol — so the
+  underlying EPE-based concern has not visibly moved even though this run's
+  PASS/FAIL column is keyed to a different (nRMSE) threshold. Flagging
+  again: neither `dbg1b` nor `dbg1c` completing cleanly demonstrates the
+  pfc gate issue is resolved: this script does not `sys.exit` on failure,
+  and the metric that FAILED (EPE) is not the one now shown passing (nRMSE).
+  Immediately after `dbg1c`, the debugger wrote and submitted a new,
+  narrower verification job, `verify1.sbatch` -> job `66010795` (PENDING,
+  p100), which reruns `score_panel.py --no_cache` on just
+  `sharp__phase_field_crystal_2d,ext__helmholtz_2d` (the previously-aborting
+  dataset plus a control) and dumps M9-selftest/M0-seam diagnostics to
+  `scratchpad/verify1/diag/` — evidence the debugger agent is still actively
+  evaluating attempt-1's fix rather than having concluded it works.
+- Timing ledger: upserted 2 new entries this walk (53 total, was 51) —
+  `s3_warp` / `s3_warp_oracle` seed-0 validation jobs `dbg1b` (`66009547`,
+  1.65 min, p100, hpc-25-20) and `dbg1c` (`66010125`, 1.07 min, p100,
+  hpc-25-20), both across the 5-dataset panel
+  [sharp__phase_field_crystal_2d, ext__helmholtz_2d, sharp__allen_cahn_2d,
+  sharp__fisher_kpp_2d, sharp__cahn_hilliard]. Re-validated as parseable
+  JSON after write (53 entries).
+- **`s6_local-B1`: `analyzing` -> COMPLETE.** Mechanism analyzer finished
+  turn 3 and registered (`reanalysis_progress`: `turn_2` -> `turn_3` ->
+  **`registered`**); `6_analysis` and `7_gap_and_future` are now both
+  populated (previously `6_analysis` was the only populated part-6/7 field
+  reported). `falsification_verdict` is unchanged (`confirmed`, panel
+  geomean skill 0.234572, strong-form 4/4), but the postmortem narrows what
+  it supports: the pre-registered clause read `contribution_d` as evidence
+  a *local neural* corrector adds value; turn-3 evidence instead shows the
+  win is mostly a single closed-form, zero-parameter, shift-invariant (LSI)
+  linear filter — the trained 72k-parameter ConvNeXt-style corrector is
+  1.07-2.19x *worse* than that closed-form filter on 3 of the 4 winning
+  datasets (pfc, allen_cahn, cahn_hilliard). LOCALITY content is supported
+  and quantified (defect operator compact, 94-99% of energy in 12 cells,
+  held-out rho 0.86-0.9998); the "local NEURAL representation" content is
+  not. **The claim is still explicitly provisional**: `guard_flags` still
+  carries `MISSING_200EP_GUARD`, and `provisional_claim.outstanding_...`
+  still lists the 200-epoch guard-set run as outstanding — i.e. `66005834`
+  (still PENDING, unchanged since last walk, H100 congestion) is still owed
+  before B1's claim language can be finalized, exactly as before.
+  **Two new tools were promoted to `tools/`** as part of this
+  registration: `defect_correction_learnability.py` (turn 3 — training-free
+  test of whether `hf - interp(lf)` is a fixed compact-stencil operator of
+  LF, and what a zero-parameter closed-form filter already achieves) and
+  `trust_gate_headroom.py` (turn 1 — value ceiling of a trust gate at
+  per-pixel vs per-sample granularity for any `base + correction` model).
+  Both are documented in `tools/index.md` with `s6_local-B1` as source.
+- **`s6_local` stream advanced to batch 2** (`state/s6_local/current_stage.txt`
+  now `websearch_running`, `current_batch.txt` = `2`). No `s6_local` batch-2
+  experiment card exists yet (pre-card scouting stage, expected) — the
+  batch-2 websearcher is live, `websearches/s6_local/batch_2/iteration_{1,2,3}.md`
+  written this walk (iteration_3 <2 min old at scan time), no `report.md`
+  yet.
+- `s2_beyond_copy-B2` builder: still live and progressing — new scratchpad
+  logs since last walk (`cov_resume_leg1.log`, `path_coverage.log`,
+  `cov_rest.log`, freshest <1 min old at scan time). No `built` transition
+  yet this walk.
+- `s5_tuning-B2` builder: also actively live and progressing — new smoke
+  logs since last walk (`ifc_poisson__A0_maxabs.log`,
+  `ifc_poisson__A1_p995.log`, `drill_ifc_poisson_zscore/phase1.log`,
+  freshest <15s old at scan time). No `built` transition yet this walk.
+- `s1_poisson-B2` (`66008912`) and `s7_loss-B1` (`66009306`): both still
+  PENDING on H100, unchanged since last walk (evening congestion).
+- `s4_hybrid_routing-B1`: unchanged, `analyzing`/`mechanism_analysis_running`,
+  `6_analysis` still null — no fresher artifacts found this walk.
+- No abandonment trigger: no stream has 3 consecutive skip/blocked batches;
+  no stream has reached 3 batches yet. `state/streams/` directory still
+  does not exist.
+- Transcript inbox: `state/transcripts/` still does not exist — nothing to
+  archive this walk.
+- Anchors: `state/anchors/*.json` unchanged (same 5 files, same
+  certified_utc 2026-07-29T14:28:45Z) — rendered verbatim into index.md, no
+  recomputation. Still no anchor files for `s3_warp`/`s6_local`/`s7_loss`
+  (expected, pre-analysis stage for s3_warp/s7_loss; s6_local is a model
+  card that only gets an anchor file if/when a later stream anchors off it,
+  not automatically on completion).
+- ADRs unchanged this walk: `docs/adr/0001`-`0012`, no new ADR since 0012
+  (s7_loss stream).
+- Gates unchanged: G1-G5 all carried-over PASS, no new gate activity this
+  window (`state/gates.md` mtime unchanged).
+- No card files modified by the maintainer this walk (`git status --short
+  experiment_cards/` shows exactly one external edit —
+  `s6_local/batch_1/B1.json` (mechanism analyzer's registration write) —
+  not touched by the maintainer, which only read cards this walk).
+- index.md: regenerated (fresh timestamp; Streams table updated for
+  s6_local's completion + batch-2 advance and s3_warp's dbg1c/verify1
+  debugger cycle; s6_local-B1 moved into the Completed cards table with its
+  falsification postmortem and 2 promoted tools; Running/pending jobs table
+  now shows 4 PENDING r1- jobs instead of 3; Flags rewritten around all of
+  the above, including the still-open guard200 dependency and the still-
+  open pfc EPE-gate question).
+## RUN END 2026-07-29T22:47:12Z

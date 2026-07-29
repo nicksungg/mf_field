@@ -1434,3 +1434,69 @@ scope finding (run 4 passing datasets, mark pfc oracle-unmeasurable with
 evidence, note that periodic textures need a different fitter class) rather
 than endless forcing or gate-weakening. Other streams unchanged; 3 jobs still
 PENDING on H100 congestion.
+
+## s6-B1 COMPLETE (mechanism registered) — 2026-07-29T22:30Z
+
+12/12; 2 tools promoted (defect_correction_learnability.py,
+trust_gate_headroom.py). MECHANISM VERDICT: Richardson-style DEFECT CORRECTION
+on a nested factor-2 ladder — the truncation defect is a compact (94-99%
+energy within 12 cells), nearly shift-invariant LINEAR operator of the LF
+field. STUNNER: a zero-parameter closed-form LSI filter BEATS the trained 72k
+ConvNeXt on 3/4 datasets (pfc 0.0139 vs 0.0300!). Caveats resolved: pixel
+gate inert AND CORRECT to be inert (oracle per-pixel headroom <=4.1%, negative
+on CH; stage-2 gate training structurally blind to generalization — same
+fit_idx); the REAL trust axis is per-sample (oracle per-sample scalar:
+helmholtz 0.33 → 0.16, skill 0.49). Overshoot explained: pre-registration
+forecast a deterministic mechanism with a statistical statistic. CH band-2
+1.518 = DEFECT not trade (LSI reaches 0.090 there). Zero padding: 45-81% of
+remaining error in the boundary band — biggest quantified headroom. Training-
+free learnability predictor: Spearman 1.000 with observed contribution_d.
+Guard pre-claim: no negative held-out rho → no mechanism for guard harm.
+
+Batch-2 prescription (part 7): control-and-repair — circular padding, LSI
+filter as scored control arm, TRUE pixel-gate test (gate trained on held-out
+fold), per-sample trust head, 200-ep pointwise_ctrl. NO capacity spend.
+Batch-3 synthesis RE-SCOPED by evidence: ROUTER form (LF-defect-correction
+wherever test LF exists; champion path only ifc_poisson), with LSI +
+corrector-alone controls mandatory.
+
+PROCESS WARNING for all agents: a git checkout during turn 1 reverted the
+card to a pre-part-5 state (rebuilt byte-for-byte and verified) — NEVER git
+checkout an experiment card. Batch → 2, stage → websearch_running (B1 claim
+language still awaits guard200). Dispatching s6-B2 websearcher.
+
+## Pulse — 2026-07-29T22:34Z
+
+pulse: no-op. dbg1c COMPLETED (1m04s) — debugger evaluating its third
+iteration's results (agent still working; steer delivered). Three jobs still
+PENDING on H100 (guard200, s1-B2, s7 screen). Agents: s2-B2 + s5-B2 builders,
+s6-B2 websearcher, s4 mechanism.
+
+## Pulse — 2026-07-29T22:44Z
+
+pulse: no-op. s3_warp debugger queued a verification job (verify1, 66010795 —
+naming suggests a final pre-relaunch check). Four jobs PENDING on H100. All
+agents in flight.
+
+## Websearch return — s6_local-B2 — 2026-07-29T22:45Z
+
+SUCCESS (5 its, 9/9). Verdicts: (i) closed-form data-estimated LSI defect
+filter preempted-as-method, OPEN as a REPORTED BASELINE (explicit engine
+negative on linear-baseline advocacy in NO benchmarks; DeepFDM quote licenses
+the floor); (ii) circular padding preempted + self-declared hygiene (SineNet
+Table 3) — only B1's boundary-error MEASUREMENT is reportable, not the fix;
+(iii) per-sample trust head = the batch's best open surface (MAST scalar-GP,
+SelectiveNet in-sample, ANCHOR physics-disqualified); (iv) held-out gate
+training = Wolpert 1992 stacking rule — protocol bug fix, no claim; (v)
+pointwise_ctrl = control. Bonus: independent literature states B1's
+stationarity condition (chaotic divergence breaks coarse/fine pairing;
+nudging needed — MFFP's nested ladder supplies pairing for free) — the honest
+explanation of the 4-dataset win AND the helmholtz shutoff. Stage →
+brainstormer_running; dispatching (ADR 0007).
+
+## Pulse — 2026-07-29T22:54Z
+
+pulse: no-op. s3_warp debugger iterating (verify1 FAILED 35s, verify2 queued —
+metric-reconciliation in progress; its debug_notes own the ALGO accounting).
+Three main jobs still PENDING on H100. Agents: s2-B2/s5-B2 builders, s6-B2
+brainstormer, s4 mechanism.
