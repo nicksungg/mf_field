@@ -1,11 +1,11 @@
-# MFFP Autoresearch Round 1 — Dashboard (updated 2026-07-29T04:16:14Z)
+# MFFP Autoresearch Round 1 — Dashboard (updated 2026-07-29T04:55:48Z)
 
 ## Gate status
 | Gate | What | Status |
 |---|---|---|
 | G1 | eval-layer smoke + assertion drill | PASS (2026-07-28) |
 | G2 | copy-LF baselines | PASS (2026-07-28) |
-| G3 | batch 0: anchors + noise floor (3 seeds) | **PENDING** — array job `65956106` (r1-batch0) 6/36 COMPLETED, 6 RUNNING, 24 PENDING, 0 FAILED. First attempt `65955389` FAILED all 14 launched tasks (INFRA: bad GPU node `hpc-93-36`, now excluded) |
+| G3 | batch 0: anchors + noise floor (3 seeds) | **PENDING** — array job `65956106` (r1-batch0) 14/36 COMPLETED, 3 RUNNING, 19 PENDING, 0 FAILED. First attempt `65955389` FAILED all 14 launched tasks (INFRA: bad GPU node `hpc-93-36`, now excluded) |
 | G4 | dry-run card s5\_tuning-B1 | PENDING (gated on G3) |
 
 No card in `state/anchors/*.json` exists yet — every "Anchor" cell below is
@@ -28,17 +28,16 @@ certification) before any brainstormer proposes a slot.
 ## Running / pending jobs
 | Job | Card | State | Elapsed | Node/Reason |
 |---|---|---|---|---|
-| 65956106_6 (r1-batch0) | — (G3 array, task 6: mf_fno_transfer_film × sharp__allen_cahn_2d × seed0) | RUNNING | ~35 min | hpc-24-32 |
-| 65956106_7 (r1-batch0) | — (task 7: allen_cahn_2d × seed1) | RUNNING | ~32 min | hpc-26-18 |
-| 65956106_8 (r1-batch0) | — (task 8: allen_cahn_2d × seed2) | RUNNING | ~31 min | hpc-25-17 |
-| 65956106_9 (r1-batch0) | — (task 9: fisher_kpp_2d × seed0) | RUNNING | ~31 min | hpc-26-17 |
-| 65956106_10 (r1-batch0) | — (task 10: fisher_kpp_2d × seed1) | RUNNING | ~31 min | hpc-26-21 |
-| 65956106_11 (r1-batch0) | — (task 11: fisher_kpp_2d × seed2) | RUNNING | ~22 min | hpc-26-20 |
-| 65956106_[12-35] (r1-batch0) | — (remaining G3 array tasks) | PENDING | 0:00 | Priority |
+| 65956106_12 (r1-batch0) | — (G3 array, task 12: mf_fno_transfer_film × sharp__cahn_hilliard × seed0) | RUNNING | ~26 min | hpc-26-17 |
+| 65956106_13 (r1-batch0) | — (task 13: sharp__cahn_hilliard × seed1) | RUNNING | ~25 min | hpc-25-17 |
+| 65956106_14 (r1-batch0) | — (task 14: sharp__cahn_hilliard × seed2) | RUNNING | ~25 min | hpc-26-21 |
+| 65956106_[17-35] (r1-batch0) | — (remaining G3 array tasks: 17 = ifc_poisson seed2, 18-35 = mf_fno_pinn_transfer × all 6 datasets × 3 seeds) | PENDING | 0:00 | Priority |
 
-No `r1-{stream}-B{N}-s{seed}` jobs exist yet (no cards submitted). Two
-unrelated non-r1 jobs in the user's queue (`65958904`, `65952144` — plain
-`bash`) are out of scope for this round and not tracked.
+No `r1-{stream}-B{N}-s{seed}` jobs exist yet (no cards submitted). One
+unrelated non-r1 job in the user's queue (`65958904`, plain `bash`,
+PENDING) is out of scope for this round and not tracked. (The other
+previously-noted non-r1 job, `65952144`, ended `TIMEOUT` at 04:00:11
+elapsed on 2026-07-28T21:49 — no longer in queue, no action needed.)
 
 ## Completed cards
 | Card | Type | Panel geomean skill (±CI) | Falsification verdict | Tools promoted |
@@ -53,9 +52,12 @@ unrelated non-r1 jobs in the user's queue (`65958904`, `65952144` — plain
   array tasks fast-failed (~4-6s each) on node `hpc-93-36` (INFRA: CUDA
   busy). Diagnosed and fixed same day — `hpc-93-36` excluded via
   `--exclude` in `eval/run_batch0.sbatch`, resubmitted as `65956106`,
-  currently healthy (6 COMPLETED, 0 FAILED so far; tasks 6-11 still running
-  at this walk, same as at the prior maintainer walk — no stall, tasks 6-11
-  are the 256^2 sharp datasets which run longer than helmholtz/PFC).
+  currently healthy (14/36 COMPLETED, 0 FAILED so far; 256^2 sharp-field
+  tasks run ~44 min/task vs ~7-12 min for helmholtz_2d/phase_field_crystal_2d,
+  and ifc_poisson runs ~47s/task — not a stall, well within the 6h sbatch
+  time budget). At current pace, remaining 22 tasks (3 running + 19
+  pending) should clear well inside the time budget once cluster
+  concurrency admits the pending ones.
 - **reopen candidates**: none (no cards exist).
 - **blocked.md**: does not exist — no blocked entries.
 - **abandoned streams**: none.

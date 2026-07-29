@@ -63,3 +63,91 @@
 - index.md: regenerated (timestamps/elapsed refreshed; no structural
   changes — dashboard content otherwise identical to the prior walk).
 ## RUN END 2026-07-29T04:16:45Z
+
+## RUN START 2026-07-29T04:36:39Z
+- Single in-flight check: last run START 2026-07-29T04:16:14Z has matching
+  RUN END 2026-07-29T04:16:45Z (19 min ago, and closed) — no double-walk
+  risk, proceeding.
+- Cards walked: 0 (`experiment_cards/` still only `SCHEMA.md`; no B*.json
+  cards exist yet). All 5 streams still `current_batch=1`,
+  `current_stage=websearch_done_awaiting_G3_brainstormer` — no change.
+  `state/streams/*.json` still empty (no stream card history yet, so no
+  abandonment is possible).
+- G1/G2: still PASS (per state/gates.md, unchanged).
+- G3 array job 65956106 progressed since last walk: 11/36 COMPLETED (was
+  6/36) — tasks 0-10 done, 0 FAILED throughout (confirmed via
+  `sacct -P` parsable output, not lexical grep, to avoid double-counting
+  .batch/.extern step lines). Tasks 11-14 RUNNING (mf_fno_transfer_film x
+  sharp__fisher_kpp_2d seed2, then sharp__cahn_hilliard seeds 0-2, per the
+  sbatch array-index formula f=i/18,d=(i%18)/3,s=i%18%3 read from
+  eval/run_batch0.sbatch — confirms task 6-8=allen_cahn_2d, 9-11=
+  fisher_kpp_2d, 12-14=cahn_hilliard). Tasks 15-35 PENDING (cluster
+  concurrency cap, same as before). No stall — 256^2 sharp-field tasks run
+  ~44 min each (vs ~7-12 min for helmholtz_2d/phase_field_crystal_2d),
+  consistent with the prior walk's observation, still within the 6h sbatch
+  time budget.
+- Timing ledger: upserted 5 new COMPLETED-task entries (job IDs
+  65956106_6..10: mf_fno_transfer_film x sharp__allen_cahn_2d x seeds
+  {0,1,2} at ~44.4-44.5 min/task, and sharp__fisher_kpp_2d x seeds {0,1} at
+  ~44.35-44.53 min/task; gpu_type p100, 200 epochs). `timing_ledger.json`
+  now has 11 entries total (was 6); validated as parseable JSON after
+  upsert. Still tagged `stream: "batch0"` (G3-gate runs, not stream-card
+  runs).
+- Abandonment check: no stream has any skipped/blocked batches (no cards
+  exist yet) — no abandonment; no `state/streams/*.json` files created
+  (nothing to record).
+- state/anchors/, state/noise_floor.json: still absent — G3 not complete
+  (25/36 tasks remain: 4 running + 21 pending).
+- Transcript inbox: `state/transcripts/inbox/` still does not exist —
+  nothing to archive.
+- No card files touched (`git status --short experiment_cards/` clean,
+  confirmed before and after this walk).
+- index.md: regenerated (batch0 progress counts, running-jobs table, and
+  timestamps refreshed; no structural/status changes to streams).
+## RUN END 2026-07-29T04:36:39Z
+
+## RUN START 2026-07-29T04:55:08Z
+- Single in-flight check: last run START 2026-07-29T04:36:39Z has matching
+  RUN END 2026-07-29T04:36:39Z (~18.5 min ago, closed) — no double-walk
+  risk, proceeding.
+- Cards walked: 0 (`experiment_cards/` still only `SCHEMA.md`; no B*.json
+  cards exist yet). All 5 streams still `current_batch=1`,
+  `current_stage=websearch_done_awaiting_G3_brainstormer` — no change.
+  `state/streams/*.json` still empty (no stream card history yet, so no
+  abandonment is possible).
+- G1/G2: still PASS (per state/gates.md, unchanged).
+- G3 array job 65956106 progressed since last walk: 14/36 COMPLETED (was
+  11/36) — tasks 0-11 done (task 11 = mf_fno_transfer_film x
+  sharp__fisher_kpp_2d x seed2, ~44.37 min, finished since last walk), plus
+  tasks 15-16 newly completed (ifc_poisson seeds 0-1, ~47s each — fast,
+  matches ifc_poisson's small-grid smoke tier). 0 FAILED throughout
+  (confirmed via `sacct -P` parsable output). Tasks 12-14 RUNNING
+  (mf_fno_transfer_film x sharp__cahn_hilliard x seeds 0-2, ~25-26 min
+  elapsed per `squeue -o "%.18i ..."` with full array-task-id column —
+  confirmed not the truncated-name aliasing risk from a narrower squeue
+  format). Task 17 (ifc_poisson seed2) + tasks 18-35 (mf_fno_pinn_transfer
+  x all 6 datasets x 3 seeds) still PENDING (cluster concurrency cap). No
+  stall — consistent per-dataset timing pattern holds, still well within
+  the 6h sbatch time budget.
+- Timing ledger: upserted 3 new COMPLETED-task entries (job IDs
+  65956106_11: sharp__fisher_kpp_2d seed2, 44.37 min; 65956106_15:
+  ifc_poisson seed0, 0.78 min; 65956106_16: ifc_poisson seed1, 0.78 min;
+  gpu_type p100, 200 epochs). `timing_ledger.json` now has 14 entries total
+  (was 11); validated as parseable JSON after upsert.
+- Abandonment check: no stream has any skipped/blocked batches (no cards
+  exist yet) — no abandonment; no `state/streams/*.json` files created
+  (nothing to record).
+- state/anchors/, state/noise_floor.json: still absent — G3 not complete
+  (22/36 tasks remain: 3 running + 19 pending).
+- Transcript inbox: `state/transcripts/inbox/` still does not exist —
+  nothing to archive.
+- Non-r1 out-of-scope job note: `65952144` (plain `bash`) ended TIMEOUT at
+  04:00:11 elapsed (2026-07-28T21:49:23) and is no longer in the queue;
+  `65958904` (plain `bash`) still PENDING. Both out of scope for this round,
+  noted only for index.md accuracy.
+- No card files touched (`git status --short experiment_cards/` clean,
+  confirmed before and after this walk).
+- index.md: regenerated (batch0 progress counts 14/36, running-jobs table
+  for tasks 12-14, pending-task description, non-r1 job note, and
+  timestamps refreshed; no structural/status changes to streams).
+## RUN END 2026-07-29T04:56:52Z
