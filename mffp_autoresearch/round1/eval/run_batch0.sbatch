@@ -11,6 +11,7 @@
 #SBATCH --mem=32G
 #SBATCH --time=06:00:00
 #SBATCH --array=0-35
+#SBATCH --exclude=hpc-93-36
 #SBATCH --output=/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/batch0/slurm/%x_%A_%a.out
 #SBATCH --error=/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/batch0/slurm/%x_%A_%a.err
 
