@@ -1,21 +1,669 @@
 {
-  "id": "s6_local-B1",
-  "stream": "s6_local",
-  "batch": 1,
-  "category": "mf_composition / trust-gated LOCAL corrector on the real LF field",
-  "card_type": "model",
-  "created_utc": "2026-07-29T17:51:38Z",
-  "worktree_path": "mffp_autoresearch/round1/worktrees/s6_local/B1",
-  "source_iteration": "brainstormer/s6_local/batch_1/iteration_1.md",
-  "reopened_from": null,
   "1_id_category": "s6_local-B1 \u2014 mf_composition / trust-gated LOCAL corrector on the real LF field",
   "2_motivation": "s2_beyond_copy-B1's M1 measured that the champion `mf_fno_transfer_film` is **LF-blind at\ninference** \u2014 `lf_at_inference = FALSE` on 5/5 datasets x 3/3 seeds,\n`n_field_shaped_inputs_at_eval = 0`, \"the only tensor entering the network at eval is the\n`[16, cond_dim]` condition vector\" (verified independently in\n`factory_mffp/models/mf_fno_transfer_film/model.py::FNO2d.forward`, which lifts the coordinate\ngrid only). That makes the literal form of H2 untestable: a local operator needs a field, and\nthe champion has none. The only field available at test time is the interpolated LF field, so\nthe concrete s6 question is whether a **local operator acting on the real LF field** adds value\nthat the champion's global spectral generator cannot. The websearcher's verdict licenses exactly\nthis and only this: **D3 \u2014 \"local corrector consuming the real interpolated LF field at test\ntime, with an identity-to-copy-LF construction (zero-init gate => at init the model IS copy-LF)\"\n\u2014 `preempted-but-MF-composition-open`**, open because \"A no-harm floor **defined by a real\ncoarse PDE solve** (= round success criterion 2, skill < 1), plus the champion's blind spot that\nit never sees LF at inference\"; stream boundary respected \u2014 \"`s2_beyond_copy`-B1 D2 already owns\n'identity-to-LF'; **s6 owns only 'the corrector is LOCAL'**\". The scouting websearch reached the\nsame class independently (C1, its rank-1 open composition) and sharpens the open surface to \"a\n**field-valued per-pixel/per-band trust gate** over the interpolated LF field inside a neural\noperator, parameterized so the scored copy-LF reference is exactly recoverable and is the\ninitialization\". One variant additionally carries D2 \u2014 \"**preempted-but-MF-composition-open** ...\nIt also carries a *published opposing prediction* (F-Adapter says capacity belongs in LOW bands)\n\u2014 a genuine pre-registered falsification risk\". **No mechanism novelty is claimed**: parallel\nlocal kernels in an FNO are peer-reviewed prior art (NO-LIDK ICML 2024; U-FNO; LOGLO-FNO), and\nlearned coarse-grid correction is standard (Kochkov 2021). The mentor's FNO->CNN two-stage\nhybrid and iFNO **were trained off-repo with poor results reported (\"not going well\"); the code\nand numbers are unavailable**, so no claim here rests on their absence \u2014 instead this design\ndiffers from the plausible naive recipe on three stated axes: it **consumes the given LF field**\ninstead of predicting it (deleting the documented exposure-bias failure,\nhttps://arxiv.org/pdf/2606.02661), it is **zero-init and gated so copy-LF is exactly\nrecoverable**, and the local module is **capacity-constrained** (and, in variant 3, the *only*\nHF-trained parameter set). Fact correction carried into the card: `n_train_hf = 400` on all five\nbeyond-copy datasets (s2-B1 part 5); **N_hf = 5 applies to `ifc_poisson` only**, so the\nliterature's \"free-form refiner overfits at N=5\" argument binds with full force only on the\nifc_poisson leg \u2014 which this card makes a no-op fallback.",
   "3_description": "New family `models_r1/s6_local_lf_corrector`, one substrate, five env-selected variants.\nPrediction on any dataset whose **test** split ships an LF fidelity (all five beyond-copy\ndatasets and all three guard datasets \u2014 verified on disk):\n```\nLF_up = interp(field_by_fid[max(lf_fids)] -> 256-capped working grid)   # == copy-LF construction\nDelta = C_theta(LF_up, coords, FiLM(X))          # LOCAL: depthwise KxK ConvNeXt-lite stack\ny_hat = LF_up + G (*) Delta                      # G = trust gate, EXACTLY 0 at init\n```\n- `C_theta`: depth 4, width 32, depthwise K=7 + pointwise, GroupNorm, per-block FiLM(X),\n  **final 1x1 zero-init** => `Delta \u2261 0` at init. Receptive field ~25 cells.\n- `G`: zero at init in every variant; its scalar component is finally selected on a held-out\n  slice of the HF train split by least-squares projection + line search **whose candidate set\n  contains 0** (construction reused from the in-round sibling `fno_transolver_seq`; cited, not\n  claimed as novel).\n- Target: `R = Y_hf - LF_up` on the HF train split.\n- `max(lf_fids)` is mandatory: `eval/panel_data.py::copylf_prediction` uses the HIGHEST LF\n  fidelity, while the champion's `smoke_eval.py` pretrains on `min(lf_fids)`.\n- **Fallback**: `ifc_poisson`'s test split ships only `fidelity_64` (verified on disk), so there\n  the family runs the champion path verbatim (LF-pretrain -> HF-finetune, X-only FiLM-FNO).\n  Pre-registered **no-op leg**; no claim is made on ifc_poisson.\n- **Builder tripwires**: (i) LF tensor must come from an LF fidelity array whose native grid is\n  strictly coarser than HF (never a downsampled HF field); (ii) no HF *test* field may enter the\n  prediction path; (iii) the identity path's nRMSE must match `eval/copylf_baselines.json` up to\n  the interpolation-kernel difference (`scipy.zoom order=1` vs `F.interpolate bilinear`), delta\n  recorded in `build_notes`; (iv) attempt a re-fetch of the unresolved prior-art threat\n  **AGMF-Net** (https://www.sciencedirect.com/science/article/abs/pii/S002980182502997X, HTTP 403\n  for both websearchers) and record the outcome.\n\n**Ranked variants (ADR 0007)** \u2014 one card, one worktree, one SLURM chain:\n\n| rank | `S6_VARIANT` | recipe delta | rationale |\n|---|---|---|---|\n| 1 | `local_pixel_gate` | `g(x) = sigmoid(h(x) + b0)` with hard-zero offset so `g \u2261 0` at init | the scout's rank-1 open composition (field-valued trust gate); local corrector + local gate = maximal s6 ownership |\n| 2 | `local_scalar_gate` | one scalar gate, held-out selected | clean control for rank 1: does spatial trust structure beat one number? simplest, most robust |\n| 3 | `lf_frozen_adapter` | spectral encoder trained on **LF only**, then FROZEN; the **only** HF-trained params are the zero-init local adapter + gate | the D2 arm; tests F-Adapter's published opposing prediction (scarce capacity belongs in LOW bands) |\n| 4 | `local_band_gate` | 4 per-band scalar gates, edges `k_nyq * [0, 1/8, 1/4, 1/2, 1]` (s2-B1 convention), all init 0 | makes the low-band no-harm claim hard and per-band auditable |\n| 5 | `pointwise_ctrl` | `S6_KERNEL=1` (receptive field = 1 cell) | isolates locality-as-spatial-kernel from pure pointwise recalibration \u2014 H2's real content given s2-B1 M5a amplitude findings |\n\n**Screening plan**: ONE contract-tier job (`--epochs 2 --seed 0`), all five variants, on\n`--datasets panel` **and** `--datasets guard` (the card will claim a panel win, so \u00a72.3 requires\nthe guard set). Reserve 01:00:00 (s2-B1 precedent: 5 datasets, 46 s on H100).\n*Primary function of the screen is the **no-harm assertion**, not ranking*: every variant must\nscore `skill <= 1.02` on each of the five beyond-copy datasets at 2 epochs; a violation means the\nidentity construction is broken (ALGO). With a gate whose search set contains 0, all variants are\nexpected to sit at ~1.000 and be indistinguishable on the scored metric at 2 epochs.\n**Discard rule**: drop only on (i) crash/NaN, (ii) no-harm violation, (iii) 5-dataset contract\ngeomean > 2x the best variant's. Close calls are NOT discarded (ADR 0007).\n**Promotion rule (fixed before submit, no post-hoc switching)**: among survivors promote the\nhighest mean held-out residual-explained fraction `rho = 1 - ||R - G*Delta||^2/||R||^2` over the\nfive beyond-copy datasets, *provided* it beats the runner-up by > 0.05 absolute; otherwise\npromote by rank order 1->2->3->4->5. `rho` is a plumbing/gross-ordering signal recorded in\n`build_notes` only and is never quoted as evidence in parts 5-7 (ADR 0007 guardrail). If no\nvariant survives, the card is ALGO-broken -> debugger.\n**Promoted run**: 200 epochs, seed 0, `--datasets panel`; reserve 06:00:00\n(`state/timing_ledger.json`: champion 200-epoch panel legs sum to ~186 min; the corrector stage\nadds to that).\n\n**Pre-registered gaming hazard (coordinator direction)**: with an identity-init gate,\n`skill <= 1.0` is reachable **at initialization**, so **raw skill is explicitly NOT this card's\nwin condition**. The readout is the *trained gate's contribution*, written as sidecar\ndiagnostics computed through `eval/nrmse.py` on the family's own predictions (no new scored\nmetric; \u00a72.1 untouched): `skill_id` (the `G \u2261 0` path \u2014 deterministic, zero seed variance),\n`contribution_d = skill_id - skill_trained`, the per-band contribution profile\n`||e_b(trained)||^2 / ||e_b(identity)||^2` on the s2-B1 band grid, and the gate statistics\n(selected scalar / mean and percentiles of `g(x)` / fraction of pixels with `g > 0.01`).\n**A gate that collapses to zero is a FINDING (learned fusion adds nothing on top of the real\ncoarse solve), not a failure.**",
   "4_expected_result": "Panel geomean skill **~1.03** vs the certified anchor **6.703016** \u2014 `Delta ~ -5.67`, **6.4x the\n0.884 geomean floor** (the s5-B1 convention, = the anchor ci95 width). Composition: the five\nbeyond-copy datasets land in skill **[0.85, 1.00]** (they start at exactly 1.000 by construction\nand can only be trained away from it), and `ifc_poisson` falls back to the champion path at\n**~1.566**; `(0.95^5 * 1.566)^(1/6) = 1.03`. Per-dataset Layer-1 thresholds and their floors:\nallen_cahn `<= 14.700664` (certified 16.334071, floor 1.633407), pfc `<= 10.359901`\n(11.511001 / 1.151100), cahn_hilliard `<= 4.980119` (5.533466 / 0.553347), fisher_kpp\n`<= 3.759620` (4.177355 / 0.417735) \u2014 each clears its floor by construction and the prediction\nclears each threshold by 3-15x. `ext__helmholtz_2d` (floor **9.694961**) is **report-only, no\nnumeric claim**; `ifc_poisson` (floor 0.239908) is a no-op fallback leg with **no claim**.\n**This geomean move is construction, not discovery, and the card says so.** The reportable\ncontent is `contribution_d` (predicted 0.05-0.20 on `sharp__cahn_hilliard` and\n`sharp__fisher_kpp_2d`, where LF<->HF band coherence stays highest \u2014 fisher_kpp\n[0.9996, 0.9481, 0.8911, 0.0231]; predicted near 0 on `sharp__phase_field_crystal_2d`, whose\nband-2 coherence is 0.0005) and the per-band contribution profile.\nCross-stream evidence confronted: **(a)** the low-band excess (`R_low` 11-209) is a property of\nthe champion's *generated* field \u2014 this design inherits the low band from the real coarse solve\nand so predicts `R_low(trained)/R_low(identity) ~ 1`, i.e. it fixes low-band error by not\ngenerating it; the claim is *not* motivated by high-k sharpness. **(b)** it **damps** spurious\nhigh-k: the base output is a bilinearly upsampled coarse solve (essentially low-pass), and any\nhigh-k the corrector adds is multiplied by a held-out-selected gate whose search set contains 0\n\u2014 versus the champion's pfc band-1 `R_b = 2557`. **(c)** `fisher_kpp`'s information deficit is\nan *X-only* result (cond_dim 2, `nn_over_random` 0.937); this model is not X-only, so a gain\nthere must be LF-driven \u2014 expectations are set low and no falsification leg requires a\nfisher_kpp win. **(d)** this is the round's second LF-consuming model and the **first whose base\nprediction IS the LF field** (s4's `fno_transolver_seq` gates to the champion, floor ~6.7).",
-  "expected_falsification": "H2-local is falsified if, at 200 epochs seed 0, EITHER the promoted variant's panel geomean skill\nis not at least 0.884 skill units below the certified anchor 6.703016 (i.e. not `<= 5.819016`)\nor any of `sharp__allen_cahn_2d`, `sharp__phase_field_crystal_2d`, `sharp__cahn_hilliard`,\n`sharp__fisher_kpp_2d` fails its Layer-1 threshold `14.700664 / 10.359901 / 4.980119 / 3.759620`\n(each exactly one `min_claimable_effect` \u2014 1.633407 / 1.151100 / 0.553347 / 0.417735 \u2014 below the\ncertified champion skill), which would mean the identity-to-copy-LF construction itself is broken;\nOR \u2014 the informative leg \u2014 the held-out-selected trust gate is identically zero, or the trained\ncontribution `contribution_d = skill_id - skill_trained` is below 0.04 on at least 4 of the 5\nbeyond-copy datasets (0.04 exceeds every champion seed-spread floor rescaled to skill 1.0:\nallen_cahn 0.000866, pfc 0.007180, fisher_kpp 0.021973, cahn_hilliard 0.034667), in which case a\nLOCAL corrector adds nothing on top of the real coarse solve and H2 is refuted for this\ncomposition; and the strong form of H2 is supported only if `contribution_d >= 0.10` (the same\n10%-relative rule that generates every `min_claimable_effect`, applied at this model's skill\nlevel of ~1.0) on at least 2 of {allen_cahn, cahn_hilliard, fisher_kpp, pfc} with a non-zero\ngate \u2014 with `ext__helmholtz_2d` report-only (floor 9.694961, no numeric claim), `ifc_poisson` a\npre-registered no-op fallback leg (no LF at test), displacement error explicitly out of scope\n(`s3_warp` owns it), and every Layer-2 number labelled `provisional-single-seed` (ADR 0004).",
+  "5_actual_result": {
+    "_provenance": {
+      "code_hash": "8aa7bfa48632c98286c9312a8b2ff4a9697e400233a26513c4915f7f6288c25c",
+      "diag_sidecars": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s6_local/B1/eval/diag_<ds>__local_pixel_gate_e200_s0.json",
+      "frozen_reference": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round1/eval/copylf_baselines.json",
+      "guard_contract_tier_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s6_local/B1/screen/eval/screen_local_pixel_gate_guard_s0.json",
+      "job_id": "66001535 (200-epoch seed 0, promoted variant local_pixel_gate); screen 66001190",
+      "label": "provisional-single-seed (ADR 0004)",
+      "metric_convention": "score_panel.py metric_source=per_sample_mean (rel_l2_mean over test samples), split=test_hf, cached=false on all 6 datasets; skill = model nRMSE / reference nRMSE, LOWER IS BETTER",
+      "nrmse_def_hash": "d3d0ade9191c13bacc40702f3eb26ad290e01641cacee22a1d2233b74c035850",
+      "panel_data_sha256": "9ef1a149ee327ca3db9982ca3a6ca2a869bcd453bb7b8959841eb95ea5cebdfc",
+      "panel_result_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s6_local/B1/eval/result_panel_s0.json",
+      "panel_result_json_alias": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s6_local/B1/eval/result_panel_local_pixel_gate_s0.json (md5-identical to the above)",
+      "per_dataset_result_jsons": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s6_local/B1/eval/results/local_pixel_gate/s6_local_lf_corrector/<ds>_e200_s0.json",
+      "slurm_log": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s6_local/B1/slurm/r1-s6_local-B1-s0_66001535.out (.err is 0 bytes)"
+    },
+    "anomalies": [
+      "No training anomalies: exit clean, .err file 0 bytes, no NaN/inf in any log, no preemption or resume event, single H100 (hpc-33-19), 200 epochs completed on all 6 datasets.",
+      "helmholtz published skill is 0.9999999999999998 rather than 1.0: score_panel's independent re-score of the prediction differs from the frozen baseline by exactly 1 ULP (1.685e-16 relative). Benign float summation order; recorded because the exact-1.0 seam matters here.",
+      "ifc_poisson fallback re-trains the champion rather than reusing the batch-0 checkpoint: nRMSE 0.055631718 vs the anchor's recorded seed-0 0.055608099 (+0.042%). GPU nondeterminism, not a new result; the leg carries no claim.",
+      "The FIELD-VALUED trust gate is effectively a no-op: g_mean 0.9975-0.9995, g_p50 >= 0.9978, frac_g_gt_0.01 = 1.0 on every dataset INCLUDING helmholtz, where the pixel gate stayed fully OPEN and only the scalar held-out alpha closed the correction. All of the demonstrated trust behaviour comes from the scalar held-out line search (alpha in {0, ~1}), not from the pixel gate the promoted variant is named for. The card's 'per-pixel trust' mechanism is unsupported by its own gate statistics.",
+      "cahn_hilliard's per-sample distribution is heavy-tailed: per-sample-mean rel-L2 0.0411 with std 0.1823 (4.4x the mean) and CI95 [0.0121, 0.0814]; pooled global nRMSE 0.1961 is 4.8x the reported per-sample mean. Its 0.4686 skill is the least robust number on the panel.",
+      "code_hash differs between the screen (58953e3e..., per-variant) and the 200-epoch run (8aa7bfa4...): score_panel.py's code_hash covers the env knobs as well as the .py files, and S6_VARIANT / S6_DIAG_OUT differ. Checked: the worktree is clean at build commit 3abc0e30 with no code drift (only an untracked notes/handoff_code_reviewer.md).",
+      "Observed contribution_d exceeds the card's own prediction by 3-10x and inverts the predicted per-dataset ordering (see falsification_detail.magnitude_vs_prediction). Recorded as the leading epistemic caveat on a single seed."
+    ],
+    "cratered_verdict": "proceed_to_seeds_1_2",
+    "cratered_verdict_detail": "Not cratered: no crash (exit clean, .err 0 bytes, no NaN), panel geomean 0.234572 is 42.9x BELOW the cratered bar of 1.5 x 6.703016 = 10.054524 (project.yaml cratered_skill_factor), and the falsification clause did not fire. Under ADR 0004 seeds 1-2 are not submitted in-round; this card is a candidate for the end-of-round top-3 confirmation pass, which is where its CI comes from.",
+    "falsification_detail": {
+      "clause_layer_1_verbatim": "H2-local is falsified if, at 200 epochs seed 0, EITHER the promoted variant's panel geomean skill is not at least 0.884 skill units below the certified anchor 6.703016 (i.e. not <= 5.819016) or any of sharp__allen_cahn_2d, sharp__phase_field_crystal_2d, sharp__cahn_hilliard, sharp__fisher_kpp_2d fails its Layer-1 threshold 14.700664 / 10.359901 / 4.980119 / 3.759620",
+      "clause_layer_2_refute_verbatim": "OR - the informative leg - the held-out-selected trust gate is identically zero, or the trained contribution contribution_d = skill_id - skill_trained is below 0.04 on at least 4 of the 5 beyond-copy datasets ... in which case a LOCAL corrector adds nothing on top of the real coarse solve and H2 is refuted for this composition",
+      "clause_layer_2_strong_verbatim": "and the strong form of H2 is supported only if contribution_d >= 0.10 ... on at least 2 of {allen_cahn, cahn_hilliard, fisher_kpp, pfc} with a non-zero gate",
+      "label": "provisional-single-seed (ADR 0004)",
+      "layer_1_result": "NOT FALSIFIED. Panel geomean 0.234572 <= 5.819016 (PASS by 5.58 skill units). allen_cahn 0.080540 <= 14.700664; pfc 0.030024 <= 10.359901; cahn_hilliard 0.468582 <= 4.980119; fisher_kpp 0.095142 <= 3.759620 - all four PASS by 3-183x. The identity-to-copy-LF construction is intact.",
+      "layer_2_refute_result": "NOT FALSIFIED. The gate is non-zero on 4 of 5 (alpha = 1.0033 pfc / 1.0000 allen_cahn / 1.0015 fisher_kpp / 1.0000 cahn_hilliard; 0.0 on helmholtz only). contribution_d is below 0.04 on exactly 1 of 5 (helmholtz, 0.0000) - the clause needs 4 of 5.",
+      "layer_2_strong_result": "SUPPORTED, 4 of 4 (needed 2): pfc 0.969976, allen_cahn 0.919460, fisher_kpp 0.904858, cahn_hilliard 0.531418, every one with a non-zero held-out-selected gate. The STRONG form of H2-local is confirmed.",
+      "magnitude_vs_prediction": "The card predicted contribution_d 0.05-0.20 on cahn_hilliard and fisher_kpp and 'near 0' on pfc (from band-2 LF/HF coherence 0.0005). Observed: 0.531 / 0.905 / 0.970. The effect is 3-10x larger than pre-registered AND the predicted ORDERING is inverted (pfc, the predicted-null dataset, is the largest; cahn_hilliard, a predicted-positive, is the smallest). Band coherence did not predict local learnability. This over-shoot is itself the primary reason to treat the headline as provisional."
+    },
+    "falsification_verdict": "confirmed",
+    "guard_flags": [
+      "MISSING_200EP_GUARD: only a contract-tier (2-epoch) guard run exists for the promoted variant. Required before panel-win claim language is finalized. See heightened_scrutiny_checklist.4_guard_set.recommendation."
+    ],
+    "heightened_scrutiny_checklist": {
+      "1_identity_floor_at_trained_endpoint": {
+        "evidence": "skill_id == 1.0 EXACTLY on all five LF-bearing datasets, because nrmse_identity is bit-equal to eval/copylf_baselines.json's frozen test_nrmse on every one (identity_delta_vs_baseline == 0.0 exactly: helmholtz 0.3294501260438018, allen_cahn 0.016151772077279084, cahn_hilliard 0.08765999100758841, fisher_kpp 0.06263229669603956, pfc 0.04478044719481978). The identity path is not a re-implementation: the family imports eval/panel_data.py::copylf_prediction itself, so G==0 IS the scored reference.",
+        "trained_endpoint_caveat_resolved": "The forward-at-init asserts (identity_forward_max_abs_dev, gate_init_max_abs, delta_init_max_abs, all 0.0) run BEFORE checkpoint load (reviewer carry-forward), so on their own they only certify the construction at init. The TRAINED-endpoint identity is certified empirically by ext__helmholtz_2d: after 200 epochs the held-out line search chose alpha=0, and nrmse_trained came back bit-equal to nrmse_identity and to the frozen baseline (0.3294501260438018). Algebraically pred = LF_te + alpha*C_te, so alpha=0 reproduces copy-LF exactly - and helmholtz is the executed proof of that at the trained endpoint.",
+        "verdict": "PASS"
+      },
+      "2_leakage": {
+        "evidence": [
+          "Target: R = Y_tr - LF_tr, train split only (smoke_eval.py:388).",
+          "Corrector (stage 1) and gate head (stage 2) trained on fit_idx only: n_fit = 320 of 400 on every dataset (diag holdout block).",
+          "alpha selected by fit_alpha on val_idx only (n_val = 80), a permutation of the TRAIN split; the candidate set includes 0 and a MIN_GAIN ceiling; test arrays never enter fit_alpha (local_corrector.py:208-231).",
+          "Normalizers are train-derived: scaler_lf = max|LF_tr|, scaler_r = max|R[fit_idx]|; the test path divides by the train-fitted scaler_lf (smoke_eval.py:389-396). No test statistic is used.",
+          "Test-time inputs are exactly LF_te = copylf_prediction(test) and X_te (cond vector). pred = LF_te + alpha * g(LF_te,X_te) * Delta(LF_te,X_te). Y_te is touched only by the scorer and the diagnostics.",
+          "Two tripwires fired clean: (i) LF fidelity grid strictly coarser than HF on BOTH train and test (LF 64->128 pfc, 128->256 for the three 256^2 sets, 24->96 helmholtz) - so LF is never a downsample of HF at equal or finer resolution; (ii) LF_up_test does not alias/share memory with the HF test field.",
+          "Scoring provenance: all six datasets cached=false, metric_source=per_sample_mean, split=test_hf, one single nrmse_def_hash d3d0ade9... shared by the panel JSON, all six diag sidecars, all six per-dataset JSONs and copylf_baselines.json; panel_data_sha256 9ef1a149... matches the eval layer."
+        ],
+        "residual_note": "Consuming the TEST-TIME LF field is legitimate and is the whole point of the design - it is the same field copy-LF uses - but it is a deployment assumption: the method is inapplicable where no LF solve exists at inference (ifc_poisson, which is why that leg falls back to the champion).",
+        "verdict": "PASS - no test-split information beyond the LF field the model is defined to consume"
+      },
+      "3_helmholtz_seam": {
+        "evidence": "diag nrmse_trained == nrmse_identity == copylf_baselines test_nrmse == 0.3294501260438018, bit-identical. score_panel's independent re-score of the same prediction returned 0.32945012604380175, which is ONE ULP away (relative 1.685e-16) - float summation-order noise - which is exactly why the published skill is 0.9999999999999998 rather than 1.0. Band contribution profile [1.0, 1.0, 1.0, 1.0] and identical band error energies confirm a true no-op.",
+        "mechanistic_significance": "The gate closed on the one dataset where the coarse solve is NOT in its asymptotic convergence regime (refinement ratio 4, LF 24^2 on an oscillatory Helmholtz problem, copy-LF nRMSE 0.329, s2-B1 F10: 3% of samples carry 50% of copy-LF's error) - and alpha_ls was 0.183, i.e. the least-squares fit wanted a correction and the held-out MIN_GAIN test overruled it. A leakage or target-copying artifact would not respect that boundary.",
+        "verdict": "PASS (strongest available seam check)"
+      },
+      "4_guard_set": {
+        "adr_0007_note": "The contract-tier guard numbers come from the screen job. They are quoted here as a mechanical no-harm safety check, not as evidence for or against H2-local; no screen number enters the falsification verdict.",
+        "contract_tier_result": "screen/eval/screen_local_pixel_gate_guard_s0.json (promoted variant, epochs=2, seed 0, via score_panel.py, same nrmse_def_hash): heat_local nRMSE 0.00160006 vs guard reference 0.00240152 (ratio 0.666), fluid 0.21565955 vs 0.21805958 (0.989), sharp__sod_1d 0.03191920 vs 0.03309018 (0.965). No guard dataset regressed at all, let alone the >2x flag threshold.",
+        "gap": "No 200-epoch guard run exists. The panel-win claim language should not be finalized on a 2-epoch guard: at 2 epochs the corrector is weak everywhere, so a 2-epoch no-harm result is a much weaker statement than a 200-epoch one, and heat_local (a 5-level ladder whose guard reference is already 0.0024) is exactly the kind of dataset where a strong corrector could overfit.",
+        "recommendation": "orchestrator: fire a 200-epoch guard job for local_pixel_gate on {heat_local, fluid, sharp__sod_1d} (score_panel.py --datasets guard, ~5 min on an H100 by the timing ledger analog) before any panel-win claim is finalized.",
+        "verdict": "PASS at contract tier; 200-epoch guard MISSING - flagged, not blocking"
+      },
+      "5_cross_stream_sanity": {
+        "explicit_too_good_to_be_true_checks": [
+          "TARGET COPYING: ruled out. A prediction contaminated by Y_te would drive ALL bands to ~0 uniformly; instead the band contribution profiles are strongly non-uniform and include bands that got WORSE (cahn_hilliard band 2 = 1.518) or barely moved (allen_cahn band 2 = 0.924, cahn_hilliard band 0 = 0.919). Trained nRMSE 1.3e-3 is 4-5 orders of magnitude above the ~1e-8 a copied target would give.",
+          "TRAIN/TEST NEAR-DUPLICATION: ruled out by s2-B1 F9, median(test->train NN dist)/median(train->train NN dist) in signature space = 1.31 pfc, 1.00 cahn_hilliard, 1.00 helmholtz, 0.99 allen_cahn, 1.00 fisher_kpp; and the tools/lf_conditioned_headroom.py rerun records leak_control 1.310 (pfc) / 0.996 (helmholtz). A per-pixel local operator does not depend on sample-level duplication anyway.",
+          "TRIVIAL POINTWISE RECALIBRATION: the pre-registered pointwise_ctrl control (1x1, no spatial extent) is the right test and at contract tier it produced essentially no gain, so spatial extent appears necessary. That number is screen-tier (ADR 0007) and is NOT quoted as evidence; a 200-epoch pointwise_ctrl arm is the batch-2 control that would settle it.",
+          "LF-IS-A-DOWNSAMPLED-HF violation: ruled out by the strictly-coarser-grid tripwire on both splits plus the datasets' provenance (real coarse consistent solves)."
+        ],
+        "physical_plausibility": "All four datasets where the corrector fires are nested factor-2 ladders (LF 128^2 -> HF 256^2, pfc 64^2 -> 128^2), where the residual R = Y_hf - LF_up is dominated by the leading discretization/interpolation-truncation term, a LOCAL differential functional of the LF field. Learning it is machine-learned defect correction / Richardson extrapolation, which is expected to remove most of the leading term and leave the next order: allen_cahn residual-of-residual 0.0013/0.01615 = 8.1%, pfc 3.0%, fisher_kpp 9.5%. Where the LF solve is NOT in that asymptotic regime (helmholtz, ratio 4, oscillatory) the mechanism has nothing to exploit and the gate correctly shut off. The mechanism's on/off pattern tracks the physics, which is the strongest single argument that this is real.",
+        "s2_b1_training_free_floors": "L5 (copy-LF + mean of the 5 nearest TRAIN residuals keyed on a 16x16 block-mean signature of the test LF field) skill: pfc 0.562, cahn_hilliard 0.625, helmholtz 0.785, allen_cahn 1.042, fisher_kpp 1.062. s2 partitioned the panel into Class A (residual-learnable: pfc, cahn_hilliard, helmholtz) and Class B (residual-unlearnable at N=400: allen_cahn, fisher_kpp, 'nothing in the ladder beats copy-LF').",
+        "single_number_a_skeptic_should_attack_next": "pfc band 3 (k 32-64, i.e. BEYOND the LF field's own Nyquist of 32 on the 128^2 work grid) has contribution ratio 0.0234 - the corrector reduced error in a band the LF field cannot represent by 43x. allen_cahn's analogous beyond-Nyquist band 3 ratio is 0.310. This is either genuine phase-locked sub-grid structure (plausible for a crystal-lattice pattern former) or the most likely place for an artifact to hide.",
+        "this_card": "pfc 0.030 (18.7x below L5), cahn_hilliard 0.469 (1.3x), helmholtz 1.000 (worse than L5's 0.785), allen_cahn 0.081 (12.9x below L5), fisher_kpp 0.095 (11.2x).",
+        "verdict": "CONSISTENT - and it resolves rather than contradicts s2's floors",
+        "why_consistent_on_class_A": "s2's own part 6 pre-registered this: 'The 12.2x panel-geomean improvement of F6 is achieved with no trainable parameters at all, so it is a lower bound on what a trained LF-input residual operator can do, not an upper bound.' s6-B1 is the first family in the round satisfying s2's stated mechanism class (LF field as network INPUT at inference + additive residual on top of it). Class A behaving better than its training-free lower bound is the predicted outcome.",
+        "why_the_class_B_reversal_is_not_a_red_flag": "s2's 'unlearnable' verdict was ESTIMATOR-SPECIFIC, not information-theoretic. Its estimator was a global-signature kNN over 400 whole-field residuals (effective sample size ~400, key = 256-dim block mean). s6's estimator is LOCAL: 320 training fields x 65536 pixels = ~2.1e7 (LF-patch -> residual-pixel) examples with a 25x25 receptive field. On exactly the two Class B datasets, s2's F13 recorded that copy-LF's remaining error is MID-BAND local detail (fisher_kpp error share by band [0.099, 0.653, 0.232, 0.017]) - i.e. precisely the regime a local estimator can reach and a global-signature lookup cannot. So 'unlearnable by whole-field lookup at N=400' and 'learnable by a local operator' are compatible statements, and the Class B label should be retired as a statement about learnability in general."
+      },
+      "6_zero_padding_confound": {
+        "detail": "The reviewer's SUGGEST-A cut was that zero padding on periodic spectral datasets could DEPRESS contribution_d on allen_cahn / cahn_hilliard / pfc (boundary band 12 cells deep = ~18% of pixels on the 256^2 sets, ~34% on pfc 128^2). Observed contribution_d there is 0.919 / 0.531 / 0.970, so padding did not block the readout and 'a LOCAL corrector adds nothing' never had to be adjudicated against it. Note the inversion: pfc has the LARGEST boundary-contaminated fraction (34%) and the LARGEST contribution_d, so zero padding is not the binding constraint. It remains a plausible contributor to the residual error (and to cahn_hilliard's weak band-0/band-2 profile), and circular padding on the periodic datasets is a clean batch-2 follow-up.",
+        "verdict": "MOOT for the readout, LIVE as headroom"
+      }
+    },
+    "panel_geomean_skill": {
+      "ci95": null,
+      "internal_consistency": "geomean recombined from the six published per-dataset skills = 0.23457231117044969 (rel diff 2.4e-16)",
+      "mean": 0.23457231117044963,
+      "per_seed": [
+        0.23457231117044963
+      ]
+    },
+    "per_dataset": {
+      "ext__helmholtz_2d": {
+        "band_contribution_profile": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "band_edges_wavenumber": [
+          0.0,
+          6.0,
+          12.0,
+          24.0,
+          48.0
+        ],
+        "cached": false,
+        "ci95": null,
+        "contribution_d": 0.0,
+        "gate": {
+          "alpha": 0.0,
+          "alpha_ls": 0.18325209591921532,
+          "collapsed_to_zero": true,
+          "effective_mean": 0.0,
+          "frac_effective_gt_0.01": 0.0,
+          "frac_g_gt_0.01": 1.0,
+          "g_max": 0.9999923706054688,
+          "g_mean": 0.9970248255728641,
+          "g_p50": 0.9995027780532837,
+          "g_p90": 0.9999661445617676,
+          "g_p99": 0.9999880790710449
+        },
+        "grids": {
+          "hf_native": [
+            96,
+            96
+          ],
+          "lf_native": [
+            24,
+            24
+          ],
+          "refinement_ratio": 4,
+          "work_grid": [
+            96,
+            96
+          ]
+        },
+        "holdout": {
+          "frac": 0.2,
+          "n_fit": 320,
+          "n_val": 80,
+          "rho": 0.0,
+          "val_rel_base": 0.16657216901523647,
+          "val_rel_gated": 0.16657216901523647
+        },
+        "identity_delta_vs_baseline": 0.0,
+        "k_nyquist": 48.0,
+        "mean_skill": 0.9999999999999998,
+        "n_params": 72162,
+        "nrmse_identity": 0.3294501260438018,
+        "per_seed_nrmse": [
+          0.32945012604380175
+        ],
+        "per_seed_skill": [
+          0.9999999999999998
+        ],
+        "reference_nrmse": 0.3294501260438018,
+        "reference_type": "copylf",
+        "skill_id": 1.0,
+        "status": "REPORT-ONLY per the pre-registration; the gate closed (alpha=0) on held-out evidence and the prediction IS copy-LF",
+        "train_seconds": 60.88699460029602,
+        "within_run_per_sample_dispersion": {
+          "ci95_hi": 0.623771537524089,
+          "ci95_lo": 0.15104870751301017,
+          "global_pooled_nRMSE": 0.7394177024559235,
+          "n_test": 100,
+          "per_sample_mean": 0.3294501260438018,
+          "std": 1.2819482565775715
+        }
+      },
+      "ifc_poisson": {
+        "band_contribution_profile": null,
+        "cached": false,
+        "ci95": null,
+        "contribution_d": null,
+        "gate": null,
+        "grids": {
+          "hf_native": [
+            64,
+            64
+          ],
+          "lf_fidelity_train": 8,
+          "work_grid": [
+            64,
+            64
+          ]
+        },
+        "mean_skill": 1.5453255078541697,
+        "n_params": 4774465,
+        "path": "champion (pre-registered no-op fallback leg: the test split ships only fidelity_64, so there is no LF field at test)",
+        "per_seed_nrmse": [
+          0.055631718282750105
+        ],
+        "per_seed_skill": [
+          1.5453255078541697
+        ],
+        "reference_nrmse": 0.036,
+        "reference_type": "paper_bar",
+        "skill_id": null,
+        "status": "NO CLAIM. Reproduces the batch-0 champion seed-0 leg (0.05563172 here vs the anchor's recorded 0.05560810, +0.042% = GPU nondeterminism on a re-trained champion, not a new result).",
+        "train_seconds": 34.678964138031006,
+        "within_run_per_sample_dispersion": {
+          "ci95_hi": 0.06480539142671221,
+          "ci95_lo": 0.04753852577149891,
+          "n_test": 128,
+          "per_sample_mean": 0.055631718282750084,
+          "std": 0.049855
+        }
+      },
+      "sharp__allen_cahn_2d": {
+        "band_contribution_profile": [
+          0.002258632229640209,
+          0.027850393008095553,
+          0.924097501169575,
+          0.31011570028419017
+        ],
+        "band_edges_wavenumber": [
+          0.0,
+          16.0,
+          32.0,
+          64.0,
+          128.0
+        ],
+        "cached": false,
+        "ci95": null,
+        "contribution_d": 0.919459816520753,
+        "gate": {
+          "alpha": 1.0,
+          "alpha_ls": 1.001193481016334,
+          "collapsed_to_zero": false,
+          "effective_mean": 0.9980752552397462,
+          "frac_effective_gt_0.01": 1.0,
+          "frac_g_gt_0.01": 1.0,
+          "g_max": 0.9995898008346558,
+          "g_mean": 0.9980752552397462,
+          "g_p50": 0.9982196092605591,
+          "g_p90": 0.9986826181411743,
+          "g_p99": 0.998852014541626
+        },
+        "grids": {
+          "hf_native": [
+            256,
+            256
+          ],
+          "lf_native": [
+            128,
+            128
+          ],
+          "refinement_ratio": 2,
+          "work_grid": [
+            256,
+            256
+          ]
+        },
+        "holdout": {
+          "frac": 0.2,
+          "n_fit": 320,
+          "n_val": 80,
+          "rho": 0.9916651848423099,
+          "val_rel_base": 0.015557339886868988,
+          "val_rel_gated": 0.001279927818749737
+        },
+        "identity_delta_vs_baseline": 0.0,
+        "k_nyquist": 128.0,
+        "mean_skill": 0.08054018347924692,
+        "n_params": 72162,
+        "nrmse_identity": 0.016151772077279084,
+        "per_seed_nrmse": [
+          0.0013008666866190345
+        ],
+        "per_seed_skill": [
+          0.08054018347924692
+        ],
+        "reference_nrmse": 0.016151772077279084,
+        "reference_type": "copylf",
+        "skill_id": 1.0,
+        "train_seconds": 281.78493213653564,
+        "within_run_per_sample_dispersion": {
+          "ci95_hi": 0.001591350147972612,
+          "ci95_lo": 0.0010512040791302787,
+          "global_pooled_nRMSE": 0.0008612177138780274,
+          "n_test": 100,
+          "per_sample_mean": 0.001300866686619035,
+          "std": 0.0013826287022270318
+        }
+      },
+      "sharp__cahn_hilliard": {
+        "band_contribution_profile": [
+          0.9185972078926913,
+          0.5743598468900737,
+          1.5181692892101157,
+          0.3862486901423655
+        ],
+        "band_edges_wavenumber": [
+          0.0,
+          16.0,
+          32.0,
+          64.0,
+          128.0
+        ],
+        "cached": false,
+        "ci95": null,
+        "contribution_d": 0.5314175674120701,
+        "gate": {
+          "alpha": 1.0,
+          "alpha_ls": 0.9581695280074098,
+          "collapsed_to_zero": false,
+          "effective_mean": 0.997521597271625,
+          "frac_effective_gt_0.01": 1.0,
+          "frac_g_gt_0.01": 1.0,
+          "g_max": 0.9999146461486816,
+          "g_mean": 0.997521597271625,
+          "g_p50": 0.9978129863739014,
+          "g_p90": 0.9988470077514648,
+          "g_p99": 0.9993717670440674
+        },
+        "grids": {
+          "hf_native": [
+            256,
+            256
+          ],
+          "lf_native": [
+            128,
+            128
+          ],
+          "refinement_ratio": 2,
+          "work_grid": [
+            256,
+            256
+          ]
+        },
+        "holdout": {
+          "frac": 0.2,
+          "n_fit": 320,
+          "n_val": 80,
+          "rho": 0.8788350283568256,
+          "val_rel_base": 0.057512703364508685,
+          "val_rel_gated": 0.008928919162897042
+        },
+        "identity_delta_vs_baseline": 0.0,
+        "k_nyquist": 128.0,
+        "mean_skill": 0.46858243258792986,
+        "n_params": 77282,
+        "nrmse_identity": 0.08765999100758841,
+        "per_seed_nrmse": [
+          0.041075931826971834
+        ],
+        "per_seed_skill": [
+          0.46858243258792986
+        ],
+        "reference_nrmse": 0.08765999100758841,
+        "reference_type": "copylf",
+        "skill_id": 1.0,
+        "train_seconds": 282.4693582057953,
+        "within_run_per_sample_dispersion": {
+          "ci95_hi": 0.08140408441281753,
+          "ci95_lo": 0.012136966213588687,
+          "global_pooled_nRMSE": 0.19612775170600225,
+          "n_test": 100,
+          "note": "heavy-tailed: std is 4.4x the per-sample mean and the pooled (global) nRMSE is 4.8x it. The 0.4686 skill rests on a small number of high-energy samples; the least robust number on the panel.",
+          "per_sample_mean": 0.041075931826971834,
+          "std": 0.18227175112091962
+        }
+      },
+      "sharp__fisher_kpp_2d": {
+        "band_contribution_profile": [
+          0.01056368892889789,
+          0.0032444367102563857,
+          0.01704979608962994,
+          0.16186706333413248
+        ],
+        "band_edges_wavenumber": [
+          0.0,
+          16.0,
+          32.0,
+          64.0,
+          128.0
+        ],
+        "cached": false,
+        "ci95": null,
+        "contribution_d": 0.9048578949309193,
+        "gate": {
+          "alpha": 1.0015261192713574,
+          "alpha_ls": 1.0015261192713574,
+          "collapsed_to_zero": false,
+          "effective_mean": 1.0009991656113173,
+          "frac_effective_gt_0.01": 1.0,
+          "frac_g_gt_0.01": 1.0,
+          "g_max": 1.0,
+          "g_mean": 0.9994738493086698,
+          "g_p50": 0.9999880790710449,
+          "g_p90": 1.0,
+          "g_p99": 1.0
+        },
+        "grids": {
+          "hf_native": [
+            256,
+            256
+          ],
+          "lf_native": [
+            128,
+            128
+          ],
+          "refinement_ratio": 2,
+          "work_grid": [
+            256,
+            256
+          ]
+        },
+        "holdout": {
+          "frac": 0.2,
+          "n_fit": 320,
+          "n_val": 80,
+          "rho": 0.9902280047233595,
+          "val_rel_base": 0.06286683989303646,
+          "val_rel_gated": 0.005958888132985568
+        },
+        "identity_delta_vs_baseline": 0.0,
+        "k_nyquist": 128.0,
+        "mean_skill": 0.09514210506908073,
+        "n_params": 71842,
+        "nrmse_identity": 0.06263229669603956,
+        "per_seed_nrmse": [
+          0.005958968552972434
+        ],
+        "per_seed_skill": [
+          0.09514210506908073
+        ],
+        "reference_nrmse": 0.06263229669603956,
+        "reference_type": "copylf",
+        "skill_id": 1.0,
+        "train_seconds": 288.69858622550964,
+        "within_run_per_sample_dispersion": {
+          "ci95_hi": 0.00650110686025315,
+          "ci95_lo": 0.005456727054635663,
+          "global_pooled_nRMSE": 0.006564621899432087,
+          "n_test": 100,
+          "per_sample_mean": 0.005958968552972435,
+          "std": 0.0026909349638218065
+        }
+      },
+      "sharp__phase_field_crystal_2d": {
+        "band_contribution_profile": [
+          7.116852820222365e-05,
+          0.0400118231792708,
+          0.045746531417950854,
+          0.02338835403569181
+        ],
+        "band_edges_wavenumber": [
+          0.0,
+          8.0,
+          16.0,
+          32.0,
+          64.0
+        ],
+        "cached": false,
+        "ci95": null,
+        "contribution_d": 0.9699759597039808,
+        "gate": {
+          "alpha": 1.003285142591454,
+          "alpha_ls": 1.003285142591454,
+          "collapsed_to_zero": false,
+          "effective_mean": 1.00095070274571,
+          "frac_effective_gt_0.01": 1.0,
+          "frac_g_gt_0.01": 1.0,
+          "g_max": 0.9996910095214844,
+          "g_mean": 0.9976732040108618,
+          "g_p50": 0.997797966003418,
+          "g_p90": 0.9983464479446411,
+          "g_p99": 0.998833179473877
+        },
+        "grids": {
+          "hf_native": [
+            128,
+            128
+          ],
+          "lf_native": [
+            64,
+            64
+          ],
+          "refinement_ratio": 2,
+          "work_grid": [
+            128,
+            128
+          ]
+        },
+        "holdout": {
+          "frac": 0.2,
+          "n_fit": 320,
+          "n_val": 80,
+          "rho": 0.9994329433814936,
+          "val_rel_base": 0.03432287489525935,
+          "val_rel_gated": 0.0011881351128830507
+        },
+        "identity_delta_vs_baseline": 0.0,
+        "k_nyquist": 64.0,
+        "mean_skill": 0.030024040296019225,
+        "n_params": 71842,
+        "nrmse_identity": 0.04478044719481978,
+        "per_seed_nrmse": [
+          0.0013444899510510302
+        ],
+        "per_seed_skill": [
+          0.030024040296019225
+        ],
+        "reference_nrmse": 0.04478044719481978,
+        "reference_type": "copylf",
+        "skill_id": 1.0,
+        "train_seconds": 87.79255628585815,
+        "within_run_per_sample_dispersion": {
+          "ci95_hi": 0.0015214294647380667,
+          "ci95_lo": 0.001168183698597355,
+          "global_pooled_nRMSE": 0.0018292836924423198,
+          "n_test": 100,
+          "per_sample_mean": 0.0013444899510510306,
+          "std": 0.0009014676004534316
+        }
+      }
+    },
+    "provisional_claim": {
+      "outstanding_before_the_claim_hardens": [
+        "200-epoch guard-set run (missing; see guard_flags)",
+        "seeds 1-2 (deferred to the end-of-round top-3 confirmation pass by ADR 0004)",
+        "a 200-epoch pointwise_ctrl arm to prove spatial extent is necessary",
+        "an explanation for the beyond-LF-Nyquist band-3 gain on pfc (43x)"
+      ],
+      "statement": "PROVISIONAL, SINGLE SEED (ADR 0004): a 72k-parameter local (25-cell receptive field) corrector applied additively to the real interpolated LF field, with a scalar trust coefficient selected on a train-held-out slice, reaches panel geomean skill 0.234572 - 28.6x below the round's certified champion anchor 6.703016 - and goes BELOW the copy-LF bar on 4 of 5 beyond-copy datasets (pfc 0.030, allen_cahn 0.081, fisher_kpp 0.095, cahn_hilliard 0.469), matching copy-LF bit-exactly on the 5th (helmholtz). The pre-registered informative readout contribution_d = skill_id - skill_trained is 0.970 / 0.919 / 0.905 / 0.531, clearing the strong-form threshold 0.10 on 4 of 4 eligible datasets (2 required).",
+      "what_it_is_NOT": "It is NOT a beat-the-paper result on ifc_poisson (that leg is the unchanged champion fallback, skill 1.545, no claim). The panel geomean move is partly construction, as the card itself pre-registered: identity-init makes skill <= 1 reachable on the five copy-LF datasets. The reportable discovery is contribution_d and its band profile, not the geomean."
+    },
+    "seeds_available": [
+      0
+    ],
+    "vs_anchor": {
+      "anchor_basis_1_champion_panel_geomean": {
+        "anchor_source": "state/anchors/s3_testtime.json | s4 | s5 (mf_fno_transfer_film, batch 0, 3-seed, ci95 [6.21853605, 7.10223953])",
+        "anchor_value": 6.703016262587087,
+        "beyond_ci": true,
+        "beyond_ci_detail": "0.234572 lies 5.98 anchor-ci95-widths (width 0.884) below the anchor's lower bound 6.218536",
+        "delta": -6.468443951416638,
+        "note": "s6_local has no anchor file of its own; the round's champion panel geomean is the operative panel bar",
+        "ratio_better": 28.577862
+      },
+      "anchor_basis_2_copylf_bar": {
+        "anchor_source": "state/anchors/s2_beyond_copy.json (anchor_type copylf_bar; 'the bar is copy-LF itself (skill 1.0)')",
+        "anchor_value": 1.0,
+        "delta_per_dataset": {
+          "ext__helmholtz_2d": 0.0,
+          "sharp__allen_cahn_2d": -0.91946,
+          "sharp__cahn_hilliard": -0.531418,
+          "sharp__fisher_kpp_2d": -0.904858,
+          "sharp__phase_field_crystal_2d": -0.969976
+        },
+        "note": "4 of the 5 beyond-copy datasets go BELOW the copy-LF bar for the first time in the round with a trained model; the 5th (helmholtz) matches it bit-exactly."
+      },
+      "beyond_noise_floor": true,
+      "beyond_noise_floor_detail": {
+        "cross_check_vs_state_noise_floor_json": "measured against each dataset's certified 3-seed champion skill and its min_claimable_effect, the improvements are 16.25 vs 1.633 (allen_cahn), 11.48 vs 1.151 (pfc), 4.08 vs 0.418 (fisher_kpp), 5.06 vs 0.553 (cahn_hilliard), 12.82 vs 9.695 (helmholtz) - all clear. ifc_poisson does NOT (delta 0.0203 vs floor 0.2399) and is correctly labelled NOT RESOLVABLE, matching its pre-registered no-claim status.",
+        "sharp__allen_cahn_2d": {
+          "clears": true,
+          "contribution_d": 0.91946,
+          "floor": 0.000866,
+          "x_over_floor": 1061.7
+        },
+        "sharp__cahn_hilliard": {
+          "clears": true,
+          "contribution_d": 0.531418,
+          "floor": 0.034667,
+          "x_over_floor": 15.3
+        },
+        "sharp__fisher_kpp_2d": {
+          "clears": true,
+          "contribution_d": 0.904858,
+          "floor": 0.021973,
+          "x_over_floor": 41.2
+        },
+        "sharp__phase_field_crystal_2d": {
+          "clears": true,
+          "contribution_d": 0.969976,
+          "floor": 0.00718,
+          "x_over_floor": 135.1
+        },
+        "test_used": "the card's own pre-registered floors rescaled to this model's skill level of ~1.0 (verbatim from expected_falsification), applied to contribution_d"
+      }
+    },
+    "wall_clock_detail": {
+      "elapsed_min": 17.9,
+      "end_utc_local": "2026-07-29 12:53:15 PDT",
+      "gpu": "NVIDIA H100 80GB HBM3",
+      "host": "hpc-33-19",
+      "job_id": "66001535",
+      "note_for_timing_ledger": "s6_local-B1, 6-dataset panel, 200 epochs, seed 0, h100, elapsed_min 17.9 - about half the 36.62 min of the s5_tuning-B1 champion analog (job 65988184) because the corrector is 72k params vs the champion's 4.77M; the --time=02:00:00 right-size was correct with 6.7x headroom.",
+      "peak_mem_mb_max": 1420.0,
+      "start_utc_local": "2026-07-29 12:35:21 PDT",
+      "train_seconds_by_dataset": {
+        "ext__helmholtz_2d": 60.887,
+        "ifc_poisson": 34.679,
+        "sharp__allen_cahn_2d": 281.785,
+        "sharp__cahn_hilliard": 282.469,
+        "sharp__fisher_kpp_2d": 288.699,
+        "sharp__phase_field_crystal_2d": 87.793
+      }
+    },
+    "wall_clock_per_seed_min": [
+      17.9
+    ]
+  },
+  "6_analysis": null,
+  "7_gap_and_future": null,
   "anchor_reference": null,
+  "batch": 1,
+  "build_commit": "3abc0e30d56446148f5322787fbfd1d5f384cc82",
+  "build_notes": [
+    "Built family models_r1/s6_local_lf_corrector (manifest.json, smoke_eval.py, local_corrector.py, bands.py, model.py, INSPIRATION.md) on branch round1/exp-s6_local-B1 @3abc0e3, from base_family mf_fno_transfer_film @967562e per recipe. `model.py` is a BYTE-IDENTICAL copy of the base family's (sha256 80d8940d8b90a4ac612ba39c8d233328e8421a55de337bca97157df0a00b85d3, verified) and supplies both FiLMNorm for the corrector and the whole champion fallback path. `bands.py::band_masks` is reused BYTE-FOR-BYTE from s2_beyond_copy-B1 models_r1/s2_copylf_forensics/forensics.py so the per-band contribution profile and the variant-4 gate sit on exactly the s2-B1 dyadic grid; `local_corrector.py::fit_alpha` is adapted with citation from s4_hybrid_routing-B1 models_r1/fno_transolver_seq/smoke_eval.py::_fit_alpha (LS projection + line search whose candidate set contains 0). Nothing outside the worktree was modified; the round eval layer and the guarded factory surfaces are byte-untouched.",
+    "IDENTITY PROOF (the card's core property), EXACT on every dataset with LF. LF_up is produced by importing round1/eval/panel_data.py::copylf_prediction READ-ONLY -- the very function that generated eval/copylf_baselines.json -- so the G=0 path is byte-equal to the scored reference rather than an approximation; tripwire (iii)'s anticipated scipy.zoom-vs-F.interpolate kernel difference is therefore ZERO, not merely small. Measured `identity_delta_vs_baseline` (model identity nRMSE minus copylf_baselines.json), all via score_panel.py at 2 epochs seed 0: ext__helmholtz_2d 0.0 (0.3294501260438018 vs 0.3294501260438018); sharp__sod_1d 0.0 (0.03309017650048946 vs 0.03309017650048946) on ALL FIVE variants. `identity_forward_max_abs_dev` (max|y_hat_init - LF_up| from an actual forward pass of the initialized model over the whole test split) = 0.0 exactly, and `gate_init_max_abs` = 0.0 exactly, on every run. `skill_id` = 1.0 exactly. The family HARD-ASSERTS both at runtime on every dataset (raises S6ContractError if |delta| > 1e-9 or the forward deviation is non-zero), so a future regression cannot pass silently. ifc_poisson takes the pre-registered champion fallback (its test split ships only fidelity_64) and is excluded from the identity assertion by construction. Full evidence table: <worktree>/scratchpad/SMOKE_EVIDENCE.md.",
+    "CONTRACT SMOKE (mandatory), through the round eval layer, login node CPU, exit 0. Command: `export ROUND1_EVAL_RESULTS=<wt>/scratchpad/smoke/results_local_pixel_gate; python ${ROUND_ROOT}/eval/score_panel.py --family_dir <wt>/models_r1/s6_local_lf_corrector --datasets ext__helmholtz_2d --epochs 2 --seed 0 --no_cache --out <wt>/scratchpad/contract_smoke.json --env <all 18 recipe knobs, S6_VARIANT=local_pixel_gate>`. Result: nRMSE 0.32945012604380175, skill 0.9999999999999998, split test_hf, metric_source per_sample_mean, code_hash 3b5e3ef5554c014e895f11befaa2a47a52a044f6cd8d0430390ad823beb85e74 (<wt>/scratchpad/contract_smoke.json). The held-out line search selected alpha = 0 at 2 epochs (alpha_ls = 0.0), i.e. the gate collapsed to zero and the model returned exactly copy-LF -- the card's pre-registered safe outcome, expected at contract tier. All five variants additionally ran end-to-end on sharp__sod_1d (skills 0.8526 / 0.9081 / 0.9131 / 0.9646 / 0.9859; alphas 1.5 / 1.0 / 1.083 / 1.5 / 1.5; rho 0.2598 / 0.1672 / 0.1593 / 0.0683 / 0.0271), and the champion fallback ran on ifc_poisson (nRMSE 0.49000172 at 2 epochs, untrained -- no claim). Reproduction script: <wt>/scratchpad/aux_smoke.sh.",
+    "CHECKPOINT RESUME (immutable 8) implemented and TESTED. The family writes <ckpt_dir>/last.pt (the contract path) AND a per-variant mirror <ckpt_dir>/variant_<S6_VARIANT>/last.pt, both atomically (tmp + os.replace so a mid-write preemption cannot truncate). Resume is keyed on (epochs_target, grid, seed, variant, kernel, depth, width, path, dataset): a checkpoint written by a DIFFERENT variant is REJECTED, closing the s1_poisson-B1 collision trap at the model layer as well as the script layer. Mid-stage resume is supported for every stage (encoder / corrector / gate) with optimizer, scheduler and shuffling-generator state; stages already completed are skipped. Test: re-running local_pixel_gate on sharp__sod_1d with --no_cache reported train_seconds = 7.15e-07 (all stages skipped) and reproduced nRMSE 0.03191927475082079 bit-for-bit (<wt>/scratchpad/aux/sod_resume.json vs sod_local_pixel_gate.json). A mid-stage checkpoint was inspected during the helmholtz run: {stage: 'gate', epoch: 1, variant: 'local_pixel_gate', kernel: 7, depth: 4, width: 32, path: 'lf_corrector', scaler_lf/scaler_r present}. The family also refuses to resume if the recomputed scalers disagree with the checkpoint's.",
+    "TRAINING IS STAGED TO AVOID A DEAD INIT -- the single most important implementation decision, and it is NOT in the card. With y = LF_up + g(*)Delta and BOTH the corrector head and the gate zero-init, a joint loss on y has gradient 0 for both modules (dL/d(Delta params) proportional to g = 0, dL/d(gate params) proportional to Delta = 0), so the model could never leave the identity. Implemented instead, in the spirit of the cited fno_transolver_seq construction: stage 1 fits Delta against the residual R = Y_hf - LF_up directly (gradient non-zero at Delta = 0); stage 2 fits the pixel gate against g(*)Delta ~ R with the corrector FROZEN (gradient non-zero at g = 0); stage 3 selects the gate's scalar component alpha on the held-out slice by LS projection + line search containing 0. Verified empirically: alphas and rho are non-zero on sod_1d after only 2 epochs, and alpha = 0 on helmholtz (the search correctly declining a non-beneficial correction).",
+    "VARIANT MAPPING (card part 3 table -> code, models_r1/s6_local_lf_corrector/smoke_eval.py::VARIANTS). local_pixel_gate = field-valued gate, K = S6_KERNEL; local_scalar_gate = one held-out-selected scalar; lf_frozen_adapter = pixel gate PLUS an FNO2d spectral encoder pretrained on the LF fidelity only and then frozen, its hidden features concatenated into the local adapter's input (the ONLY HF-trained parameters are the zero-init adapter + gate, per the D2 arm); local_band_gate = 4 per-band scalars on the s2-B1 dyadic grid, fit on the FIT split, times a held-out alpha; pointwise_ctrl = local_pixel_gate with the kernel forced to 1. Two readings the card left open, resolved and flagged for review: (a) variant 3's gate type is unspecified -- it uses the rank-1 pixel gate so variant 3 differs from variant 1 in EXACTLY the frozen-encoder axis; (b) variant 4's band coefficients are fit on the FIT split (not the held-out slice) so that the card's 'scalar component ... selected on a held-out slice' remains the held-out step. Neither changes any card number.",
+    "HYPERPARAMETER PROVENANCE -- every value is recipe, base-family-verbatim, or an explicitly recorded builder choice; nothing is guessed. FROM THE RECIPE: S6_KERNEL 7, S6_DEPTH 4, S6_WIDTH 32, S6_GATE_INIT zero, S6_GATE_HOLDOUT_FRAC 0.2, S6_GATE_LINESEARCH_INCLUDES_ZERO 1, S6_BAND_EDGES_FRAC 0,0.125,0.25,0.5,1.0 (asserted at runtime against the s2-B1 dyadic grid), S6_LF_SOURCE dataset_lf_fidelity, S6_LF_FID max, S6_FALLBACK_NO_TEST_LF champion, S6_LEAKAGE_TRIPWIRE 1, and the five variant names. VERBATIM FROM THE BASE FAMILY's SMOKE dict (mf_fno_transfer_film @967562e): batch_size 16, weight_decay 1e-5, grad_clip 1.0, cosine schedule with eta_min 1e-6, shuffling generator manual_seed(0), hidden_channels 64 / n_blocks 4 / modes_cap 12 for the FNO encoder + fallback; corrector and gate LR = the base family's HF-stage lr_finetune 3e-4, encoder LR = its LF-stage lr_pretrain 1e-3. BUILDER CHOICES (score-affecting, none specified by the card): ConvNeXt inverted-bottleneck expansion 4 (Liu 2022 canonical); torch-default ZERO padding on the depthwise convs (no padding mode is specified anywhere in the card; note it is NOT circular, which would matter for the periodic phase-field datasets -- flagged for the reviewer); the pixel-gate head is one ConvNeXt-lite block at the same kernel plus a zero-init 1x1 (capacity-constrained per the card, but the depth is the builder's); MIN_GAIN 1e-3 in the line search, carried over with the cited fno_transolver_seq construction; CKPT_SAVES_PER_STAGE 5 (preemption granularity, score-neutral). Receptive field is 1 + depth*(K-1) = 25 cells, matching the card's stated ~25. Parameter counts at 96x96: corrector 57,633, pixel gate 14,529.",
+    "SLURM SCRIPTS at <wt>/scripts/, all `bash -n` clean, all paths absolute, headers per ADR 0005 / slurm_rules.md (partition gpu, --gres=gpu:h100:1, --mem=32G, --cpus-per-task=4, --requeue, --exclude=hpc-93-36, logs under <outputs>/s6_local/B1/slurm/). 00_screen.sh (job r1-s6_local-B1-screen, --time=01:00:00): ONE job looping the 5 variants x {panel, guard} at --epochs 2 --seed 0, each arm with its own ROUND1_EVAL_RESULTS=<outputs>/screen/training/<variant> and S6_DIAG_OUT=<outputs>/screen/diag, then screen_report.py -> <outputs>/screen/screen_table.{json,md}. 01_train_eval.sh (job r1-s6_local-B1-s<seed>, --time=02:00:00) takes SEED=$1 and the promoted variant as an optional $2 (default local_pixel_gate = the recipe's S6_VARIANT), runs ONE score_panel.py on --datasets panel --epochs 200 with ROUND1_EVAL_RESULTS=<outputs>/eval/results/<variant> and S6_DIAG_OUT=<outputs>/eval, writing <outputs>/eval/result_panel_s<seed>.json plus a variant-tagged copy. submit.sh submits seed 0 only (ADR 0004 strict 1-seed); submit_seeds_2_3.sh is parameterized for the end-of-round top-3 confirmation and is NOT to be fired in-round. All 18 recipe env knobs are passed verbatim in both job scripts (verified programmatically against recipe.env), with the two directed exceptions below.",
+    "TWO DIRECTED DEVIATIONS, both recorded. (1) S6_DIAG_OUT is repo-relative in the recipe ('mffp_autoresearch_outputs/round1/s6_local/B1/eval'); the job scripts pass it ABSOLUTE per the orchestrator's build direction -- '/resnick/groups/Hippo/ezeng/mf_field/' + the recipe value in 01_train_eval.sh, and '<outputs>/s6_local/B1/screen/diag' in 00_screen.sh so the screen's 2-epoch sidecars cannot overwrite the 200-epoch ones. (The family also absolutizes a relative value against the worktree root, so the recipe string alone still works.) (2) --time=02:00:00 for the promoted run rather than the card part-3 advisory 'reserve 06:00:00'. Justification from state/timing_ledger.json, per slurm_rules.md section 4 which requires right-sizing from the ledger: the closest analog, s5_tuning-B1 job 65988184 (same 6-dataset panel, 200 epochs, seed 0, h100), took 36.62 min; the card's 06:00:00 was derived from the p100 batch-0 sum (154 min). 02:00:00 is >3x the h100 analog and leaves room for the corrector and gate stages. The screen keeps the card's 01:00:00.",
+    "SCREEN MACHINERY BUILT AND DRY-RUN; THE PROMOTION DECISION IS THE ORCHESTRATOR'S, TAKEN AFTER THE SCREEN. scripts/screen_report.py implements the card's rules verbatim and with no post-hoc switching: no-harm assertion skill <= 1.02 on each of the five beyond-copy datasets; discard only on crash/NaN, no-harm violation, or 5-dataset contract geomean > 2x the best variant's; promote the highest mean held-out rho if its margin over the runner-up exceeds 0.05 absolute, else rank order 1->5. It exits 2 on a no-harm violation or if no variant survives (ALGO -> debugger) and 3 on missing inputs. Dry run against a synthetic screen tree in the real file-naming convention, built from the aux-smoke numbers: happy path exit 0 promoting lf_frozen_adapter ('max mean held-out rho 0.2598 beats runner-up local_band_gate 0.1672 by > 0.05'); with an injected skill 1.35 on one arm, exit 2 with 'NO-HARM VIOLATION on [pointwise_ctrl]' (<wt>/scratchpad/screen_dryrun/out/screen_table.md). NOTE FOR THE ORCHESTRATOR: run 00_screen.sh, record the promoted variant in these build_notes, and only then run `submit.sh <promoted_variant>`. rho is a plumbing / gross-ordering signal for build_notes only and must never be quoted as evidence in card parts 5-7 (ADR 0007 guardrail).",
+    "LEAKAGE TRIPWIRES (S6_LEAKAGE_TRIPWIRE=1) implemented as hard runtime assertions. (i) The LF tensor is taken from the dataset's own LF fidelity array at max(lf_fids) -- the same fidelity eval/panel_data.py::copylf_prediction uses -- and the run RAISES unless that fidelity's native grid is strictly coarser than HF (verified firing path on every dataset; e.g. helmholtz 24x24 -> 96x96, sod_1d 64 -> 128). LF is never a downsampled HF field (immutable 1). (ii) The prediction path receives only (X_test, LF_up_test); the code asserts LF_up_test does not alias the HF test array, and the identity assertion itself is the strongest leakage check available -- had any HF test information entered LF_up, the identity nRMSE would not equal copylf_baselines.json to 0.0. (iii) The 256-cap is asserted to be a no-op on the LF-corrector path (working grid == native HF grid on every panel and guard dataset), so the scored target is the raw native HF test field exactly as in make_copylf_baselines.py. (iv) copylf_baselines.json's _nrmse_def_hash is checked against the imported nrmse.py's NRMSE_DEF_HASH at startup.",
+    "AGMF-NET RE-FETCH (builder tripwire iv): STILL 403, RESOLVED INDIRECTLY, VERDICT UNCHANGED. Direct WebFetch of https://www.sciencedirect.com/science/article/abs/pii/S002980182502997X returned HTTP 403 Forbidden again (third refusal, after both websearch loops). Retrieved via web search instead: the paper is 'Ensemble adaptive gated multi-fidelity neural network for Bayesian optimization: Application to hydrofoil design', Ocean Engineering, October 2025; the method is three expert subnetworks (linear, nonlinear, residual) combined by a deep Mixture-of-Experts gating network that reweights them per input, embedded in a Bayesian-optimization loop and evaluated on hydrofoil design (lift-to-drag ratio). ASSESSMENT: the target is a SCALAR QoI inside a BO loop, the gate is a router OVER EXPERT SUBNETWORKS rather than a field-valued gate over an interpolated LF FIELD, and no identity / no-harm-at-initialization guarantee is reported. It therefore does not preempt the C1/D3 open surface, and the card's prior_art verdict 'preempted-but-MF-composition-open' stands. The full text remains unfetched; this rests on the indexed abstract only and is recorded as such in the family's INSPIRATION.md.",
+    "KNOWN LIMITATION / WATCH ITEM for the reviewer and debugger: the depthwise convolutions use torch's default ZERO padding. The card specifies no padding mode, so this is the documented builder default rather than a choice against alternatives; on the periodic phase-field datasets (allen_cahn, cahn_hilliard, pfc) circular padding would be the physically natural option and zero padding biases Delta near the domain boundary. This cannot break the no-harm floor (the gate's search set contains 0, so a boundary-damaged Delta is simply switched off) but it may depress contribution_d. Flagged rather than changed, because changing it would be an unrecorded hyperparameter decision.",
+    {
+      "author": "orchestrator",
+      "note": "ADR-0007 screen (job 66001190, 8.6 min H100): all 5 variants survivors, no-harm PASS on all 5 beyond-copy datasets, identity exactly 0.0 everywhere. rho: band_gate 0.6480, scalar_gate 0.6089 (margin 0.039 <= 0.05) -> rank-order fallback -> PROMOTED: local_pixel_gate (pre-registered rank 1). Screen skills are build_notes-only per ADR 0007 (2-epoch, not reportable). Full table: outputs/s6_local/B1/screen/screen_table.{json,md}.",
+      "utc": "2026-07-29T19:35Z"
+    }
+  ],
+  "card_type": "model",
+  "category": "mf_composition / trust-gated LOCAL corrector on the real LF field",
+  "created_utc": "2026-07-29T17:51:38Z",
+  "debug_notes": [],
+  "expected_falsification": "H2-local is falsified if, at 200 epochs seed 0, EITHER the promoted variant's panel geomean skill\nis not at least 0.884 skill units below the certified anchor 6.703016 (i.e. not `<= 5.819016`)\nor any of `sharp__allen_cahn_2d`, `sharp__phase_field_crystal_2d`, `sharp__cahn_hilliard`,\n`sharp__fisher_kpp_2d` fails its Layer-1 threshold `14.700664 / 10.359901 / 4.980119 / 3.759620`\n(each exactly one `min_claimable_effect` \u2014 1.633407 / 1.151100 / 0.553347 / 0.417735 \u2014 below the\ncertified champion skill), which would mean the identity-to-copy-LF construction itself is broken;\nOR \u2014 the informative leg \u2014 the held-out-selected trust gate is identically zero, or the trained\ncontribution `contribution_d = skill_id - skill_trained` is below 0.04 on at least 4 of the 5\nbeyond-copy datasets (0.04 exceeds every champion seed-spread floor rescaled to skill 1.0:\nallen_cahn 0.000866, pfc 0.007180, fisher_kpp 0.021973, cahn_hilliard 0.034667), in which case a\nLOCAL corrector adds nothing on top of the real coarse solve and H2 is refuted for this\ncomposition; and the strong form of H2 is supported only if `contribution_d >= 0.10` (the same\n10%-relative rule that generates every `min_claimable_effect`, applied at this model's skill\nlevel of ~1.0) on at least 2 of {allen_cahn, cahn_hilliard, fisher_kpp, pfc} with a non-zero\ngate \u2014 with `ext__helmholtz_2d` report-only (floor 9.694961, no numeric claim), `ifc_poisson` a\npre-registered no-op fallback leg (no LF at test), displacement error explicitly out of scope\n(`s3_warp` owns it), and every Layer-2 number labelled `provisional-single-seed` (ADR 0004).",
+  "id": "s6_local-B1",
+  "job_ids": [
+    "66001190 (no-harm screen, contract tier)",
+    "66001535 (200-epoch seed 0, promoted variant local_pixel_gate)",
+    "66005834 (200-ep guard set, analyzer-recommended pre-claim)"
+  ],
+  "logs": {},
+  "output_paths": {
+    "diagnostics": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s6_local/B1/eval",
+    "eval": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s6_local/B1/eval",
+    "screen": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s6_local/B1/screen",
+    "screen_table": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s6_local/B1/screen/screen_table.json",
+    "slurm": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s6_local/B1/slurm",
+    "training": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s6_local/B1/eval/results"
+  },
   "prior_art": {
-    "verdict": "preempted-but-MF-composition-open",
     "citations": [
       "https://arxiv.org/pdf/2102.01010",
       "https://www.sciencedirect.com/science/article/abs/pii/S0045793023001962",
@@ -32,91 +680,50 @@
       "https://arxiv.org/html/2606.03469"
     ],
     "unresolved_threat": "AGMF-Net https://www.sciencedirect.com/science/article/abs/pii/S002980182502997X (HTTP 403, both loops).",
+    "verdict": "preempted-but-MF-composition-open",
     "verdict_quoted": {
-      "source": "websearches/s6_local/batch_1/report.md, ## Prior-art verdict, rows D3 and D2 (D2 applies to variant 3 only); websearches/_scouting/2026-07-29_stream_gap_mining/report.md row C1",
-      "D3": "**D3** \u2014 local corrector consuming the **real interpolated LF field at test time**, with an\nidentity-to-copy-LF construction (zero-init gate \u21d2 at init the model IS copy-LF) |\n**preempted-but-MF-composition-open** | https://arxiv.org/pdf/2102.01010 and\nhttps://www.sciencedirect.com/science/article/abs/pii/S0045793023001962 (learned coarse-grid\ncorrection); https://arxiv.org/abs/2605.12965 (U-HNO per-pixel spectral/local routing,\nshock-aware, **no** no-harm guarantee); https://arxiv.org/pdf/1901.09321 (Fixup\nidentity-at-init; fetched by s2-B1) | A no-harm floor **defined by a real coarse PDE solve**\n(= round success criterion 2, skill < 1), plus the champion's blind spot that it never sees LF\nat inference. **Stream-boundary flag: `s2_beyond_copy`-B1 D2 already owns \"identity-to-LF\";\ns6 owns only \"the corrector is LOCAL\".**",
+      "C1_scouting": "**C1 Guaranteed-fallback, trust-gated MF fusion** \u2014 `y = LF_up + g \u2299 \u0394(LF,X)`, `g\u2208[0,1]`\nper-pixel/per-band, `g\u22610` at init reproduces copy-LF exactly |\n**preempted-but-MF-composition-open** | MAST https://arxiv.org/html/2602.20974 (GP, **scalar\nQoI**, no guarantee, ~2.04x worst case); physics-guided correction\nhttps://arxiv.org/html/2606.03469 (additive, **explicitly ungated**, **\"no formal guarantee\nexists\"**, physics prior); CV gating\nhttps://www.emergentmind.com/topics/learnable-skip-and-gate-fusion (hit); safe policy\nimprovement (hit) | OPEN: a **field-valued per-pixel/per-band trust gate over the interpolated\nLF field inside a neural operator, parameterized so the scored copy-LF reference is exactly\nrecoverable and is the initialization**. -> **NEW STREAM (rank 1)**. Unresolved threat to\nre-check: AGMF-Net (403)",
       "D2_variant_3_only": "**D2** \u2014 fidelity-asymmetric capacity: LF trains the spectral backbone; the ONLY HF-trained\nmodule is a small, capacity-constrained, zero-init **local** adapter |\n**preempted-but-MF-composition-open** | https://arxiv.org/html/2509.23173v1 (F-Adapter: PEFT on\nFNO, per-band widths, N=24, single fidelity); https://arxiv.org/abs/2204.09157 (MF DeepONet: LF\nsubnet + HF correction subnet, no locality); https://arxiv.org/html/2505.21573v3 (5-trajectory\nspectral model beats data-driven at 200) | **Aligning the spectral/local inductive-bias split\nwith the LF/HF data split** appears in no fetched source. It also carries a *published opposing\nprediction* (F-Adapter says capacity belongs in LOW bands) \u2014 a genuine pre-registered\nfalsification risk, which is what makes it a real experiment.",
-      "C1_scouting": "**C1 Guaranteed-fallback, trust-gated MF fusion** \u2014 `y = LF_up + g \u2299 \u0394(LF,X)`, `g\u2208[0,1]`\nper-pixel/per-band, `g\u22610` at init reproduces copy-LF exactly |\n**preempted-but-MF-composition-open** | MAST https://arxiv.org/html/2602.20974 (GP, **scalar\nQoI**, no guarantee, ~2.04x worst case); physics-guided correction\nhttps://arxiv.org/html/2606.03469 (additive, **explicitly ungated**, **\"no formal guarantee\nexists\"**, physics prior); CV gating\nhttps://www.emergentmind.com/topics/learnable-skip-and-gate-fusion (hit); safe policy\nimprovement (hit) | OPEN: a **field-valued per-pixel/per-band trust gate over the interpolated\nLF field inside a neural operator, parameterized so the scored copy-LF reference is exactly\nrecoverable and is the initialization**. -> **NEW STREAM (rank 1)**. Unresolved threat to\nre-check: AGMF-Net (403)"
+      "D3": "**D3** \u2014 local corrector consuming the **real interpolated LF field at test time**, with an\nidentity-to-copy-LF construction (zero-init gate \u21d2 at init the model IS copy-LF) |\n**preempted-but-MF-composition-open** | https://arxiv.org/pdf/2102.01010 and\nhttps://www.sciencedirect.com/science/article/abs/pii/S0045793023001962 (learned coarse-grid\ncorrection); https://arxiv.org/abs/2605.12965 (U-HNO per-pixel spectral/local routing,\nshock-aware, **no** no-harm guarantee); https://arxiv.org/pdf/1901.09321 (Fixup\nidentity-at-init; fetched by s2-B1) | A no-harm floor **defined by a real coarse PDE solve**\n(= round success criterion 2, skill < 1), plus the champion's blind spot that it never sees LF\nat inference. **Stream-boundary flag: `s2_beyond_copy`-B1 D2 already owns \"identity-to-LF\";\ns6 owns only \"the corrector is LOCAL\".**",
+      "source": "websearches/s6_local/batch_1/report.md, ## Prior-art verdict, rows D3 and D2 (D2 applies to variant 3 only); websearches/_scouting/2026-07-29_stream_gap_mining/report.md row C1"
     }
   },
+  "reanalysis_progress": "turn_1",
   "recipe": {
-    "base_family": "mf_fno_transfer_film",
     "base_commit": "967562e2a4e3493515edab36b0fcb23655fce71f",
-    "family_dir": "models_r1/s6_local_lf_corrector",
+    "base_family": "mf_fno_transfer_film",
     "datasets": "panel",
+    "env": {
+      "S6_BAND_EDGES_FRAC": "0,0.125,0.25,0.5,1.0",
+      "S6_DEPTH": "4",
+      "S6_DIAG_OUT": "mffp_autoresearch_outputs/round1/s6_local/B1/eval",
+      "S6_FALLBACK_NO_TEST_LF": "champion",
+      "S6_GATE_HOLDOUT_FRAC": "0.2",
+      "S6_GATE_INIT": "zero",
+      "S6_GATE_LINESEARCH_INCLUDES_ZERO": "1",
+      "S6_KERNEL": "7",
+      "S6_LEAKAGE_TRIPWIRE": "1",
+      "S6_LF_FID": "max",
+      "S6_LF_SOURCE": "dataset_lf_fidelity",
+      "S6_PROMOTION_RULE": "max_holdout_rho_margin_0.05_else_rank_order",
+      "S6_SCREEN_DATASETS": "panel,guard",
+      "S6_SCREEN_EPOCHS": "2",
+      "S6_SCREEN_NOHARM_MAX_SKILL": "1.02",
+      "S6_SCREEN_VARIANTS": "local_pixel_gate,local_scalar_gate,lf_frozen_adapter,local_band_gate,pointwise_ctrl",
+      "S6_VARIANT": "local_pixel_gate",
+      "S6_WIDTH": "32"
+    },
     "epochs": 200,
+    "family_dir": "models_r1/s6_local_lf_corrector",
     "seeds": [
       0
-    ],
-    "env": {
-      "S6_VARIANT": "local_pixel_gate",
-      "S6_SCREEN_VARIANTS": "local_pixel_gate,local_scalar_gate,lf_frozen_adapter,local_band_gate,pointwise_ctrl",
-      "S6_SCREEN_EPOCHS": "2",
-      "S6_SCREEN_DATASETS": "panel,guard",
-      "S6_SCREEN_NOHARM_MAX_SKILL": "1.02",
-      "S6_PROMOTION_RULE": "max_holdout_rho_margin_0.05_else_rank_order",
-      "S6_KERNEL": "7",
-      "S6_DEPTH": "4",
-      "S6_WIDTH": "32",
-      "S6_GATE_INIT": "zero",
-      "S6_GATE_HOLDOUT_FRAC": "0.2",
-      "S6_GATE_LINESEARCH_INCLUDES_ZERO": "1",
-      "S6_BAND_EDGES_FRAC": "0,0.125,0.25,0.5,1.0",
-      "S6_LF_SOURCE": "dataset_lf_fidelity",
-      "S6_LF_FID": "max",
-      "S6_FALLBACK_NO_TEST_LF": "champion",
-      "S6_LEAKAGE_TRIPWIRE": "1",
-      "S6_DIAG_OUT": "mffp_autoresearch_outputs/round1/s6_local/B1/eval"
-    }
+    ]
   },
-  "status": "reviewed_suggest",
-  "skipped_reason": null,
   "reopen_candidate": false,
-  "scripts_path": {
-    "screen": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round1/worktrees/s6_local/B1/scripts/00_screen.sh",
-    "screen_report": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round1/worktrees/s6_local/B1/scripts/screen_report.py",
-    "train_eval": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round1/worktrees/s6_local/B1/scripts/01_train_eval.sh",
-    "submit": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round1/worktrees/s6_local/B1/scripts/submit.sh",
-    "seeds_2_3": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round1/worktrees/s6_local/B1/scripts/submit_seeds_2_3.sh"
-  },
-  "output_paths": {
-    "training": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s6_local/B1/eval/results",
-    "eval": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s6_local/B1/eval",
-    "slurm": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s6_local/B1/slurm",
-    "screen": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s6_local/B1/screen",
-    "screen_table": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s6_local/B1/screen/screen_table.json",
-    "diagnostics": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s6_local/B1/eval"
-  },
-  "build_commit": "3abc0e30d56446148f5322787fbfd1d5f384cc82",
-  "job_ids": [
-    "66001190 (no-harm screen, contract tier)",
-    "66001535 (200-epoch seed 0, promoted variant local_pixel_gate)"
-  ],
-  "logs": {},
-  "build_notes": [
-    "Built family models_r1/s6_local_lf_corrector (manifest.json, smoke_eval.py, local_corrector.py, bands.py, model.py, INSPIRATION.md) on branch round1/exp-s6_local-B1 @3abc0e3, from base_family mf_fno_transfer_film @967562e per recipe. `model.py` is a BYTE-IDENTICAL copy of the base family's (sha256 80d8940d8b90a4ac612ba39c8d233328e8421a55de337bca97157df0a00b85d3, verified) and supplies both FiLMNorm for the corrector and the whole champion fallback path. `bands.py::band_masks` is reused BYTE-FOR-BYTE from s2_beyond_copy-B1 models_r1/s2_copylf_forensics/forensics.py so the per-band contribution profile and the variant-4 gate sit on exactly the s2-B1 dyadic grid; `local_corrector.py::fit_alpha` is adapted with citation from s4_hybrid_routing-B1 models_r1/fno_transolver_seq/smoke_eval.py::_fit_alpha (LS projection + line search whose candidate set contains 0). Nothing outside the worktree was modified; the round eval layer and the guarded factory surfaces are byte-untouched.",
-    "IDENTITY PROOF (the card's core property), EXACT on every dataset with LF. LF_up is produced by importing round1/eval/panel_data.py::copylf_prediction READ-ONLY -- the very function that generated eval/copylf_baselines.json -- so the G=0 path is byte-equal to the scored reference rather than an approximation; tripwire (iii)'s anticipated scipy.zoom-vs-F.interpolate kernel difference is therefore ZERO, not merely small. Measured `identity_delta_vs_baseline` (model identity nRMSE minus copylf_baselines.json), all via score_panel.py at 2 epochs seed 0: ext__helmholtz_2d 0.0 (0.3294501260438018 vs 0.3294501260438018); sharp__sod_1d 0.0 (0.03309017650048946 vs 0.03309017650048946) on ALL FIVE variants. `identity_forward_max_abs_dev` (max|y_hat_init - LF_up| from an actual forward pass of the initialized model over the whole test split) = 0.0 exactly, and `gate_init_max_abs` = 0.0 exactly, on every run. `skill_id` = 1.0 exactly. The family HARD-ASSERTS both at runtime on every dataset (raises S6ContractError if |delta| > 1e-9 or the forward deviation is non-zero), so a future regression cannot pass silently. ifc_poisson takes the pre-registered champion fallback (its test split ships only fidelity_64) and is excluded from the identity assertion by construction. Full evidence table: <worktree>/scratchpad/SMOKE_EVIDENCE.md.",
-    "CONTRACT SMOKE (mandatory), through the round eval layer, login node CPU, exit 0. Command: `export ROUND1_EVAL_RESULTS=<wt>/scratchpad/smoke/results_local_pixel_gate; python ${ROUND_ROOT}/eval/score_panel.py --family_dir <wt>/models_r1/s6_local_lf_corrector --datasets ext__helmholtz_2d --epochs 2 --seed 0 --no_cache --out <wt>/scratchpad/contract_smoke.json --env <all 18 recipe knobs, S6_VARIANT=local_pixel_gate>`. Result: nRMSE 0.32945012604380175, skill 0.9999999999999998, split test_hf, metric_source per_sample_mean, code_hash 3b5e3ef5554c014e895f11befaa2a47a52a044f6cd8d0430390ad823beb85e74 (<wt>/scratchpad/contract_smoke.json). The held-out line search selected alpha = 0 at 2 epochs (alpha_ls = 0.0), i.e. the gate collapsed to zero and the model returned exactly copy-LF -- the card's pre-registered safe outcome, expected at contract tier. All five variants additionally ran end-to-end on sharp__sod_1d (skills 0.8526 / 0.9081 / 0.9131 / 0.9646 / 0.9859; alphas 1.5 / 1.0 / 1.083 / 1.5 / 1.5; rho 0.2598 / 0.1672 / 0.1593 / 0.0683 / 0.0271), and the champion fallback ran on ifc_poisson (nRMSE 0.49000172 at 2 epochs, untrained -- no claim). Reproduction script: <wt>/scratchpad/aux_smoke.sh.",
-    "CHECKPOINT RESUME (immutable 8) implemented and TESTED. The family writes <ckpt_dir>/last.pt (the contract path) AND a per-variant mirror <ckpt_dir>/variant_<S6_VARIANT>/last.pt, both atomically (tmp + os.replace so a mid-write preemption cannot truncate). Resume is keyed on (epochs_target, grid, seed, variant, kernel, depth, width, path, dataset): a checkpoint written by a DIFFERENT variant is REJECTED, closing the s1_poisson-B1 collision trap at the model layer as well as the script layer. Mid-stage resume is supported for every stage (encoder / corrector / gate) with optimizer, scheduler and shuffling-generator state; stages already completed are skipped. Test: re-running local_pixel_gate on sharp__sod_1d with --no_cache reported train_seconds = 7.15e-07 (all stages skipped) and reproduced nRMSE 0.03191927475082079 bit-for-bit (<wt>/scratchpad/aux/sod_resume.json vs sod_local_pixel_gate.json). A mid-stage checkpoint was inspected during the helmholtz run: {stage: 'gate', epoch: 1, variant: 'local_pixel_gate', kernel: 7, depth: 4, width: 32, path: 'lf_corrector', scaler_lf/scaler_r present}. The family also refuses to resume if the recomputed scalers disagree with the checkpoint's.",
-    "TRAINING IS STAGED TO AVOID A DEAD INIT -- the single most important implementation decision, and it is NOT in the card. With y = LF_up + g(*)Delta and BOTH the corrector head and the gate zero-init, a joint loss on y has gradient 0 for both modules (dL/d(Delta params) proportional to g = 0, dL/d(gate params) proportional to Delta = 0), so the model could never leave the identity. Implemented instead, in the spirit of the cited fno_transolver_seq construction: stage 1 fits Delta against the residual R = Y_hf - LF_up directly (gradient non-zero at Delta = 0); stage 2 fits the pixel gate against g(*)Delta ~ R with the corrector FROZEN (gradient non-zero at g = 0); stage 3 selects the gate's scalar component alpha on the held-out slice by LS projection + line search containing 0. Verified empirically: alphas and rho are non-zero on sod_1d after only 2 epochs, and alpha = 0 on helmholtz (the search correctly declining a non-beneficial correction).",
-    "VARIANT MAPPING (card part 3 table -> code, models_r1/s6_local_lf_corrector/smoke_eval.py::VARIANTS). local_pixel_gate = field-valued gate, K = S6_KERNEL; local_scalar_gate = one held-out-selected scalar; lf_frozen_adapter = pixel gate PLUS an FNO2d spectral encoder pretrained on the LF fidelity only and then frozen, its hidden features concatenated into the local adapter's input (the ONLY HF-trained parameters are the zero-init adapter + gate, per the D2 arm); local_band_gate = 4 per-band scalars on the s2-B1 dyadic grid, fit on the FIT split, times a held-out alpha; pointwise_ctrl = local_pixel_gate with the kernel forced to 1. Two readings the card left open, resolved and flagged for review: (a) variant 3's gate type is unspecified -- it uses the rank-1 pixel gate so variant 3 differs from variant 1 in EXACTLY the frozen-encoder axis; (b) variant 4's band coefficients are fit on the FIT split (not the held-out slice) so that the card's 'scalar component ... selected on a held-out slice' remains the held-out step. Neither changes any card number.",
-    "HYPERPARAMETER PROVENANCE -- every value is recipe, base-family-verbatim, or an explicitly recorded builder choice; nothing is guessed. FROM THE RECIPE: S6_KERNEL 7, S6_DEPTH 4, S6_WIDTH 32, S6_GATE_INIT zero, S6_GATE_HOLDOUT_FRAC 0.2, S6_GATE_LINESEARCH_INCLUDES_ZERO 1, S6_BAND_EDGES_FRAC 0,0.125,0.25,0.5,1.0 (asserted at runtime against the s2-B1 dyadic grid), S6_LF_SOURCE dataset_lf_fidelity, S6_LF_FID max, S6_FALLBACK_NO_TEST_LF champion, S6_LEAKAGE_TRIPWIRE 1, and the five variant names. VERBATIM FROM THE BASE FAMILY's SMOKE dict (mf_fno_transfer_film @967562e): batch_size 16, weight_decay 1e-5, grad_clip 1.0, cosine schedule with eta_min 1e-6, shuffling generator manual_seed(0), hidden_channels 64 / n_blocks 4 / modes_cap 12 for the FNO encoder + fallback; corrector and gate LR = the base family's HF-stage lr_finetune 3e-4, encoder LR = its LF-stage lr_pretrain 1e-3. BUILDER CHOICES (score-affecting, none specified by the card): ConvNeXt inverted-bottleneck expansion 4 (Liu 2022 canonical); torch-default ZERO padding on the depthwise convs (no padding mode is specified anywhere in the card; note it is NOT circular, which would matter for the periodic phase-field datasets -- flagged for the reviewer); the pixel-gate head is one ConvNeXt-lite block at the same kernel plus a zero-init 1x1 (capacity-constrained per the card, but the depth is the builder's); MIN_GAIN 1e-3 in the line search, carried over with the cited fno_transolver_seq construction; CKPT_SAVES_PER_STAGE 5 (preemption granularity, score-neutral). Receptive field is 1 + depth*(K-1) = 25 cells, matching the card's stated ~25. Parameter counts at 96x96: corrector 57,633, pixel gate 14,529.",
-    "SLURM SCRIPTS at <wt>/scripts/, all `bash -n` clean, all paths absolute, headers per ADR 0005 / slurm_rules.md (partition gpu, --gres=gpu:h100:1, --mem=32G, --cpus-per-task=4, --requeue, --exclude=hpc-93-36, logs under <outputs>/s6_local/B1/slurm/). 00_screen.sh (job r1-s6_local-B1-screen, --time=01:00:00): ONE job looping the 5 variants x {panel, guard} at --epochs 2 --seed 0, each arm with its own ROUND1_EVAL_RESULTS=<outputs>/screen/training/<variant> and S6_DIAG_OUT=<outputs>/screen/diag, then screen_report.py -> <outputs>/screen/screen_table.{json,md}. 01_train_eval.sh (job r1-s6_local-B1-s<seed>, --time=02:00:00) takes SEED=$1 and the promoted variant as an optional $2 (default local_pixel_gate = the recipe's S6_VARIANT), runs ONE score_panel.py on --datasets panel --epochs 200 with ROUND1_EVAL_RESULTS=<outputs>/eval/results/<variant> and S6_DIAG_OUT=<outputs>/eval, writing <outputs>/eval/result_panel_s<seed>.json plus a variant-tagged copy. submit.sh submits seed 0 only (ADR 0004 strict 1-seed); submit_seeds_2_3.sh is parameterized for the end-of-round top-3 confirmation and is NOT to be fired in-round. All 18 recipe env knobs are passed verbatim in both job scripts (verified programmatically against recipe.env), with the two directed exceptions below.",
-    "TWO DIRECTED DEVIATIONS, both recorded. (1) S6_DIAG_OUT is repo-relative in the recipe ('mffp_autoresearch_outputs/round1/s6_local/B1/eval'); the job scripts pass it ABSOLUTE per the orchestrator's build direction -- '/resnick/groups/Hippo/ezeng/mf_field/' + the recipe value in 01_train_eval.sh, and '<outputs>/s6_local/B1/screen/diag' in 00_screen.sh so the screen's 2-epoch sidecars cannot overwrite the 200-epoch ones. (The family also absolutizes a relative value against the worktree root, so the recipe string alone still works.) (2) --time=02:00:00 for the promoted run rather than the card part-3 advisory 'reserve 06:00:00'. Justification from state/timing_ledger.json, per slurm_rules.md section 4 which requires right-sizing from the ledger: the closest analog, s5_tuning-B1 job 65988184 (same 6-dataset panel, 200 epochs, seed 0, h100), took 36.62 min; the card's 06:00:00 was derived from the p100 batch-0 sum (154 min). 02:00:00 is >3x the h100 analog and leaves room for the corrector and gate stages. The screen keeps the card's 01:00:00.",
-    "SCREEN MACHINERY BUILT AND DRY-RUN; THE PROMOTION DECISION IS THE ORCHESTRATOR'S, TAKEN AFTER THE SCREEN. scripts/screen_report.py implements the card's rules verbatim and with no post-hoc switching: no-harm assertion skill <= 1.02 on each of the five beyond-copy datasets; discard only on crash/NaN, no-harm violation, or 5-dataset contract geomean > 2x the best variant's; promote the highest mean held-out rho if its margin over the runner-up exceeds 0.05 absolute, else rank order 1->5. It exits 2 on a no-harm violation or if no variant survives (ALGO -> debugger) and 3 on missing inputs. Dry run against a synthetic screen tree in the real file-naming convention, built from the aux-smoke numbers: happy path exit 0 promoting lf_frozen_adapter ('max mean held-out rho 0.2598 beats runner-up local_band_gate 0.1672 by > 0.05'); with an injected skill 1.35 on one arm, exit 2 with 'NO-HARM VIOLATION on [pointwise_ctrl]' (<wt>/scratchpad/screen_dryrun/out/screen_table.md). NOTE FOR THE ORCHESTRATOR: run 00_screen.sh, record the promoted variant in these build_notes, and only then run `submit.sh <promoted_variant>`. rho is a plumbing / gross-ordering signal for build_notes only and must never be quoted as evidence in card parts 5-7 (ADR 0007 guardrail).",
-    "LEAKAGE TRIPWIRES (S6_LEAKAGE_TRIPWIRE=1) implemented as hard runtime assertions. (i) The LF tensor is taken from the dataset's own LF fidelity array at max(lf_fids) -- the same fidelity eval/panel_data.py::copylf_prediction uses -- and the run RAISES unless that fidelity's native grid is strictly coarser than HF (verified firing path on every dataset; e.g. helmholtz 24x24 -> 96x96, sod_1d 64 -> 128). LF is never a downsampled HF field (immutable 1). (ii) The prediction path receives only (X_test, LF_up_test); the code asserts LF_up_test does not alias the HF test array, and the identity assertion itself is the strongest leakage check available -- had any HF test information entered LF_up, the identity nRMSE would not equal copylf_baselines.json to 0.0. (iii) The 256-cap is asserted to be a no-op on the LF-corrector path (working grid == native HF grid on every panel and guard dataset), so the scored target is the raw native HF test field exactly as in make_copylf_baselines.py. (iv) copylf_baselines.json's _nrmse_def_hash is checked against the imported nrmse.py's NRMSE_DEF_HASH at startup.",
-    "AGMF-NET RE-FETCH (builder tripwire iv): STILL 403, RESOLVED INDIRECTLY, VERDICT UNCHANGED. Direct WebFetch of https://www.sciencedirect.com/science/article/abs/pii/S002980182502997X returned HTTP 403 Forbidden again (third refusal, after both websearch loops). Retrieved via web search instead: the paper is 'Ensemble adaptive gated multi-fidelity neural network for Bayesian optimization: Application to hydrofoil design', Ocean Engineering, October 2025; the method is three expert subnetworks (linear, nonlinear, residual) combined by a deep Mixture-of-Experts gating network that reweights them per input, embedded in a Bayesian-optimization loop and evaluated on hydrofoil design (lift-to-drag ratio). ASSESSMENT: the target is a SCALAR QoI inside a BO loop, the gate is a router OVER EXPERT SUBNETWORKS rather than a field-valued gate over an interpolated LF FIELD, and no identity / no-harm-at-initialization guarantee is reported. It therefore does not preempt the C1/D3 open surface, and the card's prior_art verdict 'preempted-but-MF-composition-open' stands. The full text remains unfetched; this rests on the indexed abstract only and is recorded as such in the family's INSPIRATION.md.",
-    "KNOWN LIMITATION / WATCH ITEM for the reviewer and debugger: the depthwise convolutions use torch's default ZERO padding. The card specifies no padding mode, so this is the documented builder default rather than a choice against alternatives; on the periodic phase-field datasets (allen_cahn, cahn_hilliard, pfc) circular padding would be the physically natural option and zero padding biases Delta near the domain boundary. This cannot break the no-harm floor (the gate's search set contains 0, so a boundary-damaged Delta is simply switched off) but it may depress contribution_d. Flagged rather than changed, because changing it would be an unrecorded hyperparameter decision.",
-    {
-      "utc": "2026-07-29T19:35Z",
-      "author": "orchestrator",
-      "note": "ADR-0007 screen (job 66001190, 8.6 min H100): all 5 variants survivors, no-harm PASS on all 5 beyond-copy datasets, identity exactly 0.0 everywhere. rho: band_gate 0.6480, scalar_gate 0.6089 (margin 0.039 <= 0.05) -> rank-order fallback -> PROMOTED: local_pixel_gate (pre-registered rank 1). Screen skills are build_notes-only per ADR 0007 (2-epoch, not reportable). Full table: outputs/s6_local/B1/screen/screen_table.{json,md}."
-    }
-  ],
+  "reopened_from": null,
   "review_notes": [
     {
       "attempt": 1,
-      "verdict": "SUGGEST",
       "findings": [
         "Q1 card-implementation alignment PASS - every card part-3 item traces to code: local_corrector.py:89 depthwise Conv2d(w,w,(7,7),groups=w); model.py:85 FiLMNorm = nn.GroupNorm(min(8,C),C,affine=False)+FiLM MLP (card's 'GroupNorm, per-block FiLM(X)'); local_corrector.py:121-123 zero-init head weight AND bias; :128 receptive_field = 1+4*(7-1) = 25 (card's '~25'); smoke_eval.py:388 R = Y_tr - LF_tr (card's 'Target: R = Y_hf - LF_up'); :315 lf_tr = max(train['lf_fids']) (card's mandatory max(lf_fids)); :851-853 champion fallback iff not test['lf_fids']. Tripwires (i) :331-339, (ii) :353-355, (iii) :358-367, (iv) INSPIRATION.md:32-51. VARIANTS dict smoke_eval.py:93-100 maps 1:1 to the card's ranked table.",
         "Q2 recipe fidelity PASS - all 18 recipe.env knobs verified programmatically present verbatim in BOTH 01_train_eval.sh and 00_screen.sh; datasets panel, epochs 200, seed 0 only, family_dir and base_family/base_commit 967562e recorded in manifest.json; model.py sha256 80d8940d... verified byte-identical to factory_mffp/models/mf_fno_transfer_film/model.py. No silent hyperparameter: every value is recipe, base-family SMOKE dict verbatim, or enumerated in build_note 7. S6_VARIANT passed as $VARIANT/$V rather than the pinned local_pixel_gate is card-sanctioned (part-3 promotion rule + ADR 0007; S6_SCREEN_VARIANTS enumerates the legal values).",
@@ -136,12 +743,20 @@
         "MINOR (no action) - card ambiguity resolutions (a) variant 3 uses the rank-1 pixel gate (FAITHFUL and the better reading: it isolates variant 3 on exactly the frozen-encoder axis) and (b) variant-4 band coefficients LS-fit on the FIT split with alpha still held-out selected (FAITHFUL; G=0 at init still holds since the coefficients multiply an all-zero Delta, and no-harm is carried by alpha) - neither changes any card number. PixelGate's clamp(...,0,1) at local_corrector.py:185 is trainable at init (subgradient 0.5, verified) but pixels driven negative can stay dead; frac_g_gt_0.01 partially measures this. Latent seam: the family imports panel_data.py/nrmse.py from the WORKTREE eval dir while score_panel.py runs from the MAIN tree - byte-identical today (checked) and guarded by the _nrmse_def_hash assertion at smoke_eval.py:174-178. write_diag's relative-path fallback would write inside the worktree, never a guarded surface, and never fires since both job scripts pass absolute paths.",
         "ORCHESTRATOR CHECKLIST BEFORE SUBMIT - (1) sbatch scripts/00_screen.sh and require exit 0 (exit 2 = ALGO -> debugger, exit 3 = missing inputs); (2) record the promoted variant plus screen_table.md in build_notes BEFORE submit.sh; (3) bash scripts/submit.sh <promoted_variant>, seed 0 only, do NOT fire submit_seeds_2_3.sh in-round; (4) never quote rho or any screen number as evidence in card parts 5-7 (ADR 0007). Full review: state/s6_local/review_B1.md; handoff: <worktree>/notes/handoff_code_reviewer.md."
       ],
-      "utc": "2026-07-29T19:20:31Z"
+      "utc": "2026-07-29T19:20:31Z",
+      "verdict": "SUGGEST"
     }
   ],
-  "debug_notes": [],
-  "5_actual_result": null,
-  "6_analysis": null,
-  "7_gap_and_future": null,
-  "reanalysis_progress": null
+  "scripts_path": {
+    "screen": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round1/worktrees/s6_local/B1/scripts/00_screen.sh",
+    "screen_report": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round1/worktrees/s6_local/B1/scripts/screen_report.py",
+    "seeds_2_3": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round1/worktrees/s6_local/B1/scripts/submit_seeds_2_3.sh",
+    "submit": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round1/worktrees/s6_local/B1/scripts/submit.sh",
+    "train_eval": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round1/worktrees/s6_local/B1/scripts/01_train_eval.sh"
+  },
+  "skipped_reason": null,
+  "source_iteration": "brainstormer/s6_local/batch_1/iteration_1.md",
+  "status": "analyzing",
+  "stream": "s6_local",
+  "worktree_path": "mffp_autoresearch/round1/worktrees/s6_local/B1"
 }

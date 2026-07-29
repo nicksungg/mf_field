@@ -1278,3 +1278,49 @@ Single resume sent. Queue unchanged. No r1 SLURM jobs.
 Serialized policy holds while the outage continues: the solo window belongs
 to the s6 analyzer retry. Maintainer resumes with the next cron after
 capacity returns.
+
+## Pulse — queue-head retry #4 — 2026-07-29T21:06Z
+
+s6 analyzer solo resume sent. Queue and SLURM state unchanged.
+
+## Pulse — head alive; slot 2 released — 2026-07-29T21:15Z
+
+s6 analyzer (head) has survived a full pulse interval — first such survival
+this outage. Released slot 2 (s4 mechanism). Remaining queue: s1-B2, s2-B2,
+s5-B2, s3_warp debugger, s7 reviewer — one per pulse as capacity confirms.
+
+## Maintainer dispatch SKIPPED (3rd) — 2026-07-29T21:16Z
+
+Two recovered agents in flight (s6 head, s4 slot 2); five queue items still
+outrank the idempotent maintainer walk during the capacity ramp. Next cron
+picks it up.
+
+## s6-B1 SCRUTINY PASSED — 2026-07-29T21:18Z
+
+Initial analyzer: all 6 scrutiny checks PASS. Verdict CONFIRMED, strong form
+4/4 (needed 2). Geomean 0.2346 = 28.6x better than champion, 5.98 CI-widths
+below the anchor lower bound. Identity floor bit-exact at trained endpoint;
+leakage ruled out (train-only provenance, both tripwires clean); helmholtz
+seam 1-ULP; target-copying and near-duplication ruled out; s2 reconciliation
+RESOLVES not contradicts (s2's part 6 pre-registered its floor as a lower
+bound; Class-B reversal is estimator-specific — 2.1e7 patch examples vs ~400
+whole-field lookups). Two honest caveats recorded: (a) the FIELD gate is a
+no-op (g~1 everywhere; trust behaviour is the scalar alpha — the variant name
+overstates the mechanism); (b) result overshoots pre-registration 3-10x with
+inverted ordering (pfc predicted ~0, is largest) — mechanism analyzer must
+explain. Guard200 job submitted: 66005834. Mechanism analyzer dispatched.
+Queue slot 3 released (s1-B2 builder).
+
+## Pulse — capacity recovered; full release — 2026-07-29T21:48Z
+
+s1-B2 builder SUCCESS (10/10): commit 21fdcda; sha pins verified pre-edit;
+B1 reproduction BIT-FOR-BIT (15 digits both control cells); 5 arms distinct
+code_hash; resume drill incl. cross-scaler ckpt refusal. NEW ROUND-WIDE BUILD
+TRAP FOUND: score_panel --env is nargs=* without append — multiple --env
+flags silently keep only the last (builder's first smoke silently ran the
+wrong arm); workaround = single --env flag + per-arm no-default assertions;
+recorded for all future multi-knob cards (eval layer NOT edited — would
+invalidate every cache). 2-ep glance (non-reportable): primary
+allpairs__per_level 7.83 vs 10.15-11.37 others. Stage → review_running;
+reviewer dispatched. Releasing remaining queue: s2-B2 builder, s5-B2
+brainstormer, s3_warp debugger, s7 reviewer. Maintainer dispatched.
