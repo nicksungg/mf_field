@@ -1,0 +1,63 @@
+{
+  "_notes": {
+    "characterization_ref": "lf_hf_rel_resid from akash dataset_characterization.csv; computed on a different split/definition, sanity reference only (G2 bound: 0.25-4x)",
+    "heat_local": "ratio_to_ref 0.028 is outside the G2 bound: heat_local has a 5-level ladder and this file uses the HIGHEST LF (l4, 96x96 -> 128x128) per the round convention, while the characterization's lf_hf_rel_resid evidently reflects a coarser fidelity. Verified deliberately divergent, not a bug (gate G2, gates.md).",
+    "ifc_poisson": "ifc test ships only the HF fidelity, so copy-LF is undefined on the test split; the skill reference is the published paper bar instead (ADR 0002). skill < 1 there means 'beats the paper', matching spec success criterion 1."
+  },
+  "_nrmse_def_hash": "d3d0ade9191c13bacc40702f3eb26ad290e01641cacee22a1d2233b74c035850",
+  "_split": "test",
+  "ext__helmholtz_2d": {
+    "characterization_ref": 0.2046,
+    "ratio_to_ref": 1.610215669813303,
+    "reference_type": "copylf",
+    "test_nrmse": 0.3294501260438018
+  },
+  "fluid": {
+    "characterization_ref": 0.2394,
+    "ratio_to_ref": 0.9108587373063928,
+    "reference_type": "copylf",
+    "test_nrmse": 0.21805958171115042
+  },
+  "heat_local": {
+    "characterization_ref": 0.085,
+    "ratio_to_ref": 0.028253194823472584,
+    "reference_type": "copylf",
+    "test_nrmse": 0.00240152155999517
+  },
+  "ifc_poisson": {
+    "characterization_ref": 80.2893,
+    "ratio_to_ref": null,
+    "reference_type": "paper_bar",
+    "test_nrmse": 0.036
+  },
+  "sharp__allen_cahn_2d": {
+    "characterization_ref": 0.0414,
+    "ratio_to_ref": 0.3901394221564996,
+    "reference_type": "copylf",
+    "test_nrmse": 0.016151772077279084
+  },
+  "sharp__cahn_hilliard": {
+    "characterization_ref": 0.1379,
+    "ratio_to_ref": 0.635677962346544,
+    "reference_type": "copylf",
+    "test_nrmse": 0.08765999100758841
+  },
+  "sharp__fisher_kpp_2d": {
+    "characterization_ref": 0.1951,
+    "ratio_to_ref": 0.3210266360637599,
+    "reference_type": "copylf",
+    "test_nrmse": 0.06263229669603956
+  },
+  "sharp__phase_field_crystal_2d": {
+    "characterization_ref": 0.1471,
+    "ratio_to_ref": 0.3044218028199849,
+    "reference_type": "copylf",
+    "test_nrmse": 0.04478044719481978
+  },
+  "sharp__sod_1d": {
+    "characterization_ref": 0.0573,
+    "ratio_to_ref": 0.5774899912825386,
+    "reference_type": "copylf",
+    "test_nrmse": 0.03309017650048946
+  }
+}

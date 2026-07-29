@@ -63,11 +63,6 @@ def copylf_prediction(data: dict) -> np.ndarray:
     hf = np.asarray(data["field_by_fid"][hf_fid], dtype=np.float64)
     lf_grid = data["grid_shape_by_fid"].get(lf_fid)
     hf_grid = data["grid_shape_by_fid"].get(hf_fid)
-    if lf_grid is None or hf_grid is None:
-        raise ValueError(
-            f"grid shape unknown (lf_fid {lf_fid}: {lf_grid}, hf_fid {hf_fid}: {hf_grid}); "
-            "copy-LF needs 2-D grids to interpolate between"
-        )
     n_hf = hf.shape[0]
     if lf.shape[0] < n_hf:
         raise ValueError(
@@ -75,6 +70,21 @@ def copylf_prediction(data: dict) -> np.ndarray:
             "index alignment violated"
         )
     lf = lf[:n_hf]  # index-aligned truncation (repo convention: aligned/nested)
+
+    if lf_grid is None or hf_grid is None:
+        # 1-D signals (e.g. sod_1d). Perfect-square lengths can trick the
+        # loader's square-grid inference for SOME fidelities, so the 1-D path
+        # engages whenever EITHER grid is unknown; lengths are the truth.
+        if lf.shape[1] == hf.shape[1]:
+            return lf
+        factor = hf.shape[1] / lf.shape[1]
+        out = np.empty((n_hf, hf.shape[1]), dtype=np.float64)
+        for i in range(n_hf):
+            up = zoom(lf[i], factor, order=1, grid_mode=True, mode="nearest")
+            if up.shape != (hf.shape[1],):
+                raise ValueError(f"1-D interpolation produced {up.shape}, expected {(hf.shape[1],)}")
+            out[i] = up
+        return out
 
     if tuple(lf_grid) == tuple(hf_grid):
         return lf
