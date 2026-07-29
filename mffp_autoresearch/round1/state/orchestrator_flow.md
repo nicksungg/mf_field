@@ -1197,3 +1197,84 @@ whenever the API stabilizes.
 
 Wave hold continues. Single canary re-launched (s7 builder). All other state
 unchanged; no r1 SLURM jobs (s3_warp resubmit gated on its queued debugger).
+
+## WAVE LIFTED — full resume + s7 builder return — 2026-07-29T20:28Z
+
+s7 canary COMPLETED: build SUCCESS (10/10). Commit 990f889. Default-
+equivalence BITWISE (17 digits, both datasets, matches s5-B1's independent
+factory numbers); all 6 arms distinct at 2 ep; A2ctl β=1 ≡ A0 to 1.16e-8
+through two full float32 stages (Parseval claim holds); mid-pretrain SIGKILL
+resume bit-identical; screen dry-run exercised all 5 promotion branches +
+divergence FAIL path. Deviation 1 accepted (per-arm ckpt subdirs — the s1
+collision trap, correctly closed; shared last.pt would have made every arm
+report A-def). All six deferred agents resumed (s4 mech, s6 analyzer, s3_warp
+debugger, s1-B2/s2-B2 builders, s5-B2 brainstormer). s7 stage →
+review_running; dispatching code-reviewer.
+
+## 529 — s6 analyzer down again post-lift — 2026-07-29T20:31Z
+
+The wave is intermittent rather than fully lifted (s7 got a clean window; s6
+analyzer did not). s6 back to deferred; resume at next pulse. Others not yet
+re-failed.
+
+## 529 — s3_warp debugger down again — 2026-07-29T20:31Z
+
+Deferred queue: s6 analyzer, s3_warp debugger. Holding both for next pulse.
+The API is admitting some traffic (s7 completed; reviewer dispatch went out)
+— capacity-limited rather than fully down. Continuing pulse-cadence retries.
+
+## 529 — capacity still tight — 2026-07-29T20:31Z
+
+s1-B2, s5-B2, s4 mech also re-failed. Deferred queue: s4 mech, s6 analyzer,
+s3_warp debugger, s1-B2 builder, s5-B2 brainstormer (+watch s2-B2 builder +
+s7 reviewer). Lesson from the s7 canary: single agents get through in quiet
+windows — resuming SIX at once during a capacity crunch competes with
+ourselves. NEW POLICY: resume ONE agent per pulse, oldest-work-first order:
+(1) s6 analyzer [the headline result's verdict], (2) s4 mech, (3) s1-B2,
+(4) s2-B2, (5) s5-B2, (6) s3_warp debugger.
+
+## 529 — s7 reviewer down; agentic layer fully paused again — 2026-07-29T20:32Z
+
+All seven work items now deferred. Serialized queue (one per pulse):
+(1) s6 analyzer, (2) s4 mech, (3) s1-B2 builder, (4) s2-B2 builder,
+(5) s5-B2 brainstormer, (6) s3_warp debugger, (7) s7 reviewer.
+
+## Pulse — serialized resume 1/7 — 2026-07-29T20:34Z
+
+Resumed s6 analyzer ONLY (queue head; the round's most important pending
+verdict). Remaining queue: s4 mech, s1-B2, s2-B2, s5-B2, s3_warp debugger,
+s7 reviewer — one per pulse. No r1 SLURM jobs.
+
+## Maintainer dispatch SKIPPED this cycle — 2026-07-29T20:35Z
+
+Deliberate skip under the serialized-resume policy: API capacity is the
+bottleneck and the s6 analyzer (queue head) has the window. The maintainer
+walk is idempotent and low-priority vs the verdict queue; next maintainer
+cron (~20 min) will run it if capacity allows.
+
+## 529 — s6 analyzer failed again (queue head retry next pulse) — 2026-07-29T20:37Z
+
+Even the single serialized resume died. Capacity still zero for subagents.
+s6 stays at queue head; retry next pulse. No further action possible from
+this side — waiting out the platform.
+
+## Pulse — queue-head retry (s6 analyzer) — 2026-07-29T20:44Z
+
+Single resume: s6 analyzer. Queue unchanged behind it. No r1 SLURM jobs.
+
+## 529 — queue-head retry failed — 2026-07-29T20:51Z
+
+s6 analyzer died again. Outage now ~1.5h. Continuing one-retry-per-pulse at
+the queue head; everything remains checkpointed. (For Eloise: this is purely
+an Anthropic API capacity event — status.claude.com; the round's data and
+cluster work are unaffected.)
+
+## Pulse — queue-head retry #3 (s6 analyzer) — 2026-07-29T20:54Z
+
+Single resume sent. Queue unchanged. No r1 SLURM jobs.
+
+## Maintainer dispatch SKIPPED again — 2026-07-29T20:55Z
+
+Serialized policy holds while the outage continues: the solo window belongs
+to the s6 analyzer retry. Maintainer resumes with the next cron after
+capacity returns.
