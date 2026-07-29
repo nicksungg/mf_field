@@ -604,3 +604,61 @@
   submission; s5_tuning stream row and running-jobs note updated to
   reflect the same; flags section otherwise unchanged from last walk).
 ## RUN END 2026-07-29T15:18:40Z
+
+## RUN START 2026-07-29T15:37:08Z
+- Single in-flight check: last run START 2026-07-29T15:16:51Z has matching
+  RUN END 2026-07-29T15:18:40Z (~18.5 min ago, closed) — no double-walk
+  risk, proceeding.
+- Card walk: 1 card total (`experiment_cards/s5_tuning/batch_1/B1.json`,
+  `s5_tuning-B1`, `card_type: model`, `status: drafted`, `job_ids: []`,
+  `reopen_candidate: false`, `scripts_path: {}`, `output_paths: {}`,
+  `build_commit: null`). No other streams have cards yet. Card JSON
+  unchanged since last walk (still `drafted`, no build fields populated).
+- Stage deltas since last walk: s1_poisson/s2_beyond_copy/s3_testtime/
+  s4_hybrid_routing all unchanged at `brainstormer_done_awaiting_G4`.
+  s5_tuning unchanged at `builder_running` (per `current_stage.txt`), but
+  the underlying worktree progressed further: `worktrees/s5_tuning/B1/
+  scripts/{submit.sh, submit_seeds_2_3.sh}` are now ~26 min old (unchanged
+  content since last walk, just aging) and the builder has moved into its
+  contract-tier verification gate — `scratchpad/contract_smoke_{
+  BASE_factory,default,resume_midstage,resume_finished}.json` all newly
+  written 2-6 min before this walk (via filesystem-relative epoch deltas,
+  not lexical HH:MM), i.e. the builder is actively running the base/
+  default/knob-audit/checkpoint-resume smoke checks the card's §3.6
+  requires before any submit. No `notes/handoff_experiment_builder.md`
+  filed yet. Card still has no `scripts_path`/`output_paths`/
+  `build_commit`/`job_ids` — build not finished, no submission has
+  occurred.
+- `orchestrator_flow.md` confirms: pulses at 14:54Z, 15:04Z, 15:14Z, 15:23Z,
+  15:33Z all logged `no-op` — s1-s4 correctly holding for G4, s5 builder
+  still in flight, no r1-* SLURM jobs. 15:33Z pulse notes the long builder
+  runtime is consistent with its multi-run verification suite. Consistent
+  with the filesystem evidence above.
+- SLURM view: `squeue -u $USER` shows only the pre-existing unrelated
+  `bash` job 65984594 (RUNNING, ~1:10:09 elapsed) — not r1-scoped. No
+  `r1-{stream}-B{N}-s{seed}` jobs in queue or in `sacct` (2-day window,
+  grep `^r1-` empty) — consistent with `s5_tuning-B1` not yet submitted
+  even though `scripts/submit.sh` exists and is ready to fire. `sacct`
+  confirms G3's array `65956106` unchanged at 36/36 COMPLETED, 0 FAILED.
+  Non-r1 historical entries (CANCELLED 65958902/65958904/65960289,
+  batch-0 INFRA failure 65955389) unchanged, out of scope.
+- Timing ledger: no new COMPLETED r1- jobs this walk -> no upsert needed;
+  re-validated `timing_ledger.json` as parseable JSON (`_note` + `entries`
+  top-level keys, 36 entries, unchanged from last walk).
+- Abandonment check: only 1 card exists (status `drafted`, not skipped/
+  blocked); no stream has 3 consecutive skip/blocked batches.
+  `state/streams/` directory still does not exist — correct, no
+  abandonment condition met.
+- Transcript inbox: `state/transcripts/` still does not exist — nothing to
+  archive this walk.
+- Anchors: all 5 `state/anchors/*.json` unchanged (still certified
+  2026-07-29T14:28:45Z, same values as last walk) — rendered verbatim into
+  index.md, no recomputation.
+- No card files modified by this walk (`git status --short
+  experiment_cards/` clean before and after).
+- index.md: regenerated (fresh timestamp; G4 row and s5_tuning stream row
+  updated to describe the builder's contract-tier verification suite now
+  running (scratchpad smoke-check files 2-6 min old); running-jobs note
+  elapsed for 65984594 refreshed to ~1:10:09; flags section otherwise
+  unchanged from last walk).
+## RUN END 2026-07-29T15:38:20Z

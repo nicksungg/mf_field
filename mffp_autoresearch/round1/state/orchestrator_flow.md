@@ -185,3 +185,21 @@ no r1-* SLURM jobs.
 pulse: no-op. s1-s4 await G4; s5_tuning builder still in flight (maintainer:
 family dir + all 3 launch scripts written, card mechanics fields not yet
 committed — builder in final verification/commit phase). No r1-* SLURM jobs.
+
+## Pulse — 2026-07-29T15:33Z
+
+pulse: no-op. s1-s4 await G4; s5_tuning builder agent still in flight; no r1-*
+SLURM jobs. Builder runtime is long but consistent with its verification suite
+(contract smoke + resume + default-equivalence + knob audit = multiple 2-epoch
+training runs).
+
+## Pulse — 2026-07-29T15:43Z
+
+pulse: no-op. s1-s4 await G4; s5_tuning builder in flight — maintainer's last
+walk saw live contract-tier verification artifacts (default-equivalence + both
+resume proofs) minutes old in the worktree scratchpad. No r1-* SLURM jobs.
+
+## Pulse — 2026-07-29T15:53Z
+
+pulse: no-op. Unchanged: s1-s4 await G4; s5_tuning builder in flight (progress
+confirmed by maintainer 15:37Z walk); no r1-* SLURM jobs.
