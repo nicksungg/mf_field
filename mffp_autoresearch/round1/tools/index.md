@@ -14,6 +14,8 @@ tool: name, what it measures, invocation, provenance card.
 | `field_error_decomposition.py` | splits a predictor's test error into per-sample AMPLITUDE vs STRUCTURE, plus the per-sample-gain oracle | s1_poisson-B1 turn 2 |
 | `lf_conditioned_headroom.py` | how much of a dataset's copy-LF error is removable, training-free, by conditioning on the per-sample LF FIELD; classifies datasets A (residual-learnable) / B (residual-unlearnable) | s2_beyond_copy-B1 turn 2 |
 | `lf_at_inference_audit.py` | whether a model family actually consumes the LF field at inference, or only during training | s2_beyond_copy-B1 turn 3 |
+| `dc_pattern_split.py` | whether a prediction's score is a real field prediction or only the DC (spatial-mean) level; constant-field oracle + demeaned pattern error | s5_tuning-B1 turn 3 |
+| `regen_preds_from_ckpt.py` | recovers a control arm's `preds_test.npz` from a checkpoint that shipped without one (eval-only resume), with a mandatory seam check | s5_tuning-B1 turn 1 |
 | `render_readme.py` | regenerates `round1/README.md` from the experiment cards (housekeeping, not a probe) | round infrastructure |
 
 ---
@@ -181,6 +183,101 @@ card `experiment_cards/s1_poisson/batch_1/B1.json` part 6, turn-2 findings.
 
 ---
 
+## `dc_pattern_split.py`
+
+**Measures.** Whether a prediction is a *field* prediction or only a *level*
+prediction, from any saved `(pred, target)` pair. Complementary to
+`field_error_decomposition.py`: that tool centers by the across-sample **mean
+field**; this one centers each sample by **its own spatial mean** and adds the
+constant-field oracle.
+
+| key | meaning |
+|---|---|
+| `nrmse_constant_field_oracle` | score of predicting each test sample's own spatial mean everywhere — the level-only ceiling |
+| `hf_dc_energy_share` | fraction of HF energy in the DC term = how much of the metric is winnable with no pattern at all |
+| `nrmse_pattern_only` (+ median) | rel-L2 of the demeaned prediction vs the demeaned truth; `≈ 1` = the pattern is worth exactly nothing |
+| `corr_demeaned_mean/median` | per-sample Pearson r of the demeaned fields |
+| `relerr_of_spatial_mean` | how well the level itself is predicted |
+| `verdict` | `LEVEL_ONLY` / `WEAK_PATTERN` / `REAL_PATTERN` |
+
+**Read it as.** `LEVEL_ONLY` → the model carries no field information; do not
+attribute its skill to any spatial mechanism and do not expect capacity, bandwidth
+or resolution knobs to move it (s5-B1: raising `modes_cap` on a `LEVEL_ONLY` model
+only gave its noise pattern more spectral channels, and every sharp dataset got
+worse). `nrmse_raw > nrmse_constant_field_oracle` → a per-sample scalar beats the
+model; the honest baseline for that dataset is a level regressor.
+
+**Invoke.**
+```bash
+source "$PROJECT_ROOT/.venv/bin/activate"
+python tools/dc_pattern_split.py \
+    --preds cap32=<a>/preds_test.npz cap12=<b>/preds_test.npz \
+    [--dataset sharp__allen_cahn_2d --include-copylf] [--n-samples 24] [--out d.json]
+```
+Seconds (arms are paired on the first `min(N)` samples and the tool refuses
+mismatched targets). `--include-copylf` loads the full test split — slow for 256²
+datasets on a contended login node.
+
+**Verified.** Run 2026-07-29 from `tools/` on `s5_tuning-B1`'s shipped cap-32
+predictions and the regenerated cap-12 control: `ifc_poisson` → both arms
+`REAL_PATTERN` (corr 0.9942 / 0.9937, nRMSE 0.04748 / 0.05563);
+`sharp__allen_cahn_2d` → both arms **`LEVEL_ONLY`, flagged worse than the level
+oracle** (constant-field oracle 0.25913 vs 0.26478 / 0.26354; corr 0.0108 / 0.0118;
+DC energy share 0.9808) — identical to card part 6 finding F13.
+
+**Provenance.** `worktrees/s5_tuning/B1/scratchpad/reanalysis_turn_3b.py`;
+card `experiment_cards/s5_tuning/batch_1/B1.json` part 6, findings F8/F13.
+
+---
+
+## `regen_preds_from_ckpt.py`
+
+**Measures.** Nothing by itself — it *recovers the input* every paired probe needs.
+Points a family entrypoint that dumps `preds_test.npz` at a control's `last.pt`,
+copied into a scratch dir (source artifacts are never written). Contract families
+resume from a finished checkpoint, so `smoke_eval.py` skips training and runs the
+eval path only. This is the after-the-fact answer to the note under
+`field_error_decomposition.py` ("if a family does not dump predictions…"): the
+control does not have to be rebuilt or retrained.
+
+**Two seams it enforces.**
+`--verify_json` compares the regenerated score against the control's official result
+JSON on the **round's** metric — the per-sample mean (`rel_l2_per_sample` /
+`rel_l2_mean`), never the family JSON's legacy ratio-of-sums `nRMSE` field (they
+differ by 3× on `ext__helmholtz_2d`); `seam_ok` requires < 1e-3 relative.
+`train_seconds` must be ~0 (`resume_clean`): if the `--env` knobs do not reproduce
+the CONTROL's configuration, the checkpoint fails its shape check and the family
+silently **retrains**, which this catches.
+
+**Invoke.**
+```bash
+source "$PROJECT_ROOT/.venv/bin/activate"
+python tools/regen_preds_from_ckpt.py \
+    --family_dir <worktree>/models_r1/<family> \
+    --dataset_dir "$FACTORY_ROOT/data/<ds>" --dataset_name <ds> \
+    --ckpt "$OUTPUTS_ROOT/recert/.../ckpt_<ds>_e200_s0/last.pt" \
+    --workdir <scratch>/control_infer --epochs 200 --seed 0 \
+    [--env MFFP_MODES_CAP=12] [--verify_json <official>.json] [--timeout 1100]
+```
+No number from here may enter a card — the official JSON stays the source of truth;
+the predictions are for structural decomposition only.
+
+**Verified.** Run 2026-07-29 from `tools/` against the ADR-0005 H100 cap-12 retrain
+on `ifc_poisson`: `resume_clean true` (`train_seconds` 7e-07), regenerated 0.0556275
+vs official 0.0556311, `rel_delta` 6.5e-05, `seam_ok true`. Same path reproduced
+five of six panel datasets to ≤ 6.5e-05; `sharp__fisher_kpp_2d` came in at 9.2e-03
+(systematic, one-signed) — see card part 6 surprises.
+
+**Cost warning.** On the login node (`nproc` 1, load ≈ 20 with concurrent agents) a
+100-sample 256² FNO forward does **not** fit in a 20-minute cap; it fired twice on
+`sharp__cahn_hilliard` / `sharp__fisher_kpp_2d`. Fall back to a paired sample-first
+subset (pattern: `worktrees/s5_tuning/B1/scratchpad/regen_cap12_subset.py`) or a GPU.
+
+**Provenance.** `worktrees/s5_tuning/B1/scratchpad/regen_cap12_preds.py`;
+card `experiment_cards/s5_tuning/batch_1/B1.json` part 6, probe protocol.
+
+---
+
 ## Standing warning `ladder_level_diagnostic` + `field_error_decomposition` encode
 
 **Never pool fidelity levels under one target scaler without checking the
@@ -192,3 +289,18 @@ dependence. Symptom triple: right shape (Pearson r ≈ 0.97), collapsed
 conditional variance (≈ 0.44 of target), ~75 % of squared error removable by a
 per-sample gain. Run `ladder_level_diagnostic.py` first; run
 `field_error_decomposition.py` before blaming the architecture.
+
+---
+
+## Standing warning `dc_pattern_split` encodes
+
+**Never interpret a panel skill number before checking whether the model predicts a
+pattern at all.** On three of the five beyond-copy datasets the certified champion's
+demeaned prediction is uncorrelated with the demeaned truth (|r| ≤ 0.012) and its
+pattern-only error equals that of predicting zero pattern — it scores 0.26–0.52 only
+because 63–98 % of those fields' energy is in the DC term. Symptom triple:
+`corr_demeaned_mean` < 0.1, `nrmse_pattern_only` ≈ 1, `nrmse_raw` at or above
+`nrmse_constant_field_oracle`. On such a model, capacity/bandwidth/resolution knobs
+are not neutral — they are mildly **negative**, because the added degrees of freedom
+are filled with uncorrelated energy (s5-B1: cap 32 injected 1.7–18.9× more top-band
+energy than cap 12 on all four sharp datasets, and all four scores got worse).

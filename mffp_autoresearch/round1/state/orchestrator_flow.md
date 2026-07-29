@@ -954,3 +954,142 @@ ADR 0007 reconciled as sweep-pattern (arms are factor levels, not
 candidates; all reported; ~6 min total). Vendoring pinned to B1 commit
 d070f86 + sha256 pins. Cratered forewarning recorded (threshold 0.0845,
 point prediction 0.085). Stage → starter_running; dispatching starter.
+
+## Starter return — s1_poisson-B2 — 2026-07-29T19:29Z
+
+SUCCESS / drafted (18/18, no TBDs). Card at experiment_cards/s1_poisson/
+batch_2/B2.json (both clauses verbatim; cratered forewarning in part 4;
+vendoring pin with 5 sha256s; _primary_arm allpairs__per_level). Stage →
+builder_running; dispatching builder.
+
+## Builder return — s3_warp-B1 — 2026-07-29T19:32Z
+
+SUCCESS / built (10/10). Commit 4799abd. Contract smoke exit 0: scored
+test_hf (NN-in-LF displacement transfer) skill 0.7013 on helmholtz; oracle
+ladder MONOTONE 1.000→0.771→0.554→0.420→0.363→0.325 (warp-removable error
+exists); rung-0 seam delta 5.55e-17; M9 self-test EPE 0.0602 cells (fitter
+beats the exact planted displacement, ratio 0.656). Two declared deviations
+for the reviewer to rule: (1) EPE gates on the gradient-normal component
+(aperture problem — tangential displacement unobservable); (2) the card's
+"<5% of unwarped" gate is unattainable by ANY optimiser (two bilinear
+resamples mean the exact planted phi only reaches 10-18% of unwarped) —
+replaced with max(5%, 1.5x exact-planted-phi). Also gram-form NN distance
+(s2's would allocate 21GB at 256²; indices verified identical 20/20).
+Stage → review_running; dispatching code-reviewer.
+
+## Initial analysis — s4_hybrid_routing-B1 — 2026-07-29T19:33Z
+
+analyzed_single_seed: geomean 5.6649; NOT cratered; clause NOT falsified
+(both conjuncts fail). DECISIVE paired control: base_only == H100 champion
+seed-0 to 16 significant digits on 3 datasets — the entire panel movement is
+CORRECTOR-ATTRIBUTABLE. Decomposition: pfc -71.37% (91.4% of the total move;
+-69.6% corrector + -5.8% stage3-joint), fisher_kpp -12.20% (9.5%); the gate
+collapsed bit-exactly to base on allen_cahn/cahn_hilliard/ifc_poisson. Vs
+anchor -1.038 and vs paired control -1.452 both clear the 0.884 floor; vs the
+anchor's best seed only -0.554 (inside floor) — honesty note recorded. Two
+alpha=0 modes distinguished (LS-zero vs line-search-veto). Guard run: fluid
+and sod_1d BEAT copy-LF at 2 ep; heat_local literal flag dispositioned
+not-card-attributable. TOP ANOMALY for mechanism: cahn_hilliard 54.9x
+val/test gap — the line search vetoed an alpha_ls=1.10 correction judged on a
+~55x-easier val split. pfc's win confounded with sole stage3_joint (n=1).
+ADR 0004: no seeds 1-2; stage → mechanism_analysis_running; dispatching.
+
+## s6 screen complete + promotion + submit — 2026-07-29T19:35Z
+
+Screen job 66001190 COMPLETED 8.6 min: ALL 5 variants no-harm PASS on all 5
+beyond-copy datasets at 2 epochs (bc-geomeans 0.53-1.00 — every variant at or
+below copy-LF already; identity 0.0 everywhere; guard report-only all <1).
+Promotion rule applied as pre-registered: max-rho margin 0.039 <= 0.05 →
+rank-order fallback → local_pixel_gate. Recorded in build_notes (screen
+numbers non-reportable per ADR 0007). Submitted 200-epoch seed 0: job 66001535.
+Stage → seed0_running.
+
+## s5-B1 COMPLETE — 2026-07-29T19:41Z
+
+Mechanism register done (9/9; 2 tools promoted: dc_pattern_split.py,
+regen_preds_from_ckpt.py). VERDICT: modes_cap is TWO different knobs —
+bandwidth knob on ifc_poisson (real F22: band error falls only above the
+k=12 truncation edge; no overfit at N_hf=5, fit gap NARROWED) vs decoder-
+noise knob everywhere else. DEVASTATING control: on 5/6 panel datasets the
+champion is a DC(spatial-mean)-predictor plus UNCORRELATED noise pattern
+(demeaned corr 0.001-0.13; allen_cahn: model 0.2648 WORSE than the constant-
+field oracle 0.2591; pred32-pred12 per-sample corr 0.018 on helmholtz).
+Cap 32 injects spurious high-k on sharp sets (top-band ratio up to 18.9x).
+helmholtz "-4.861" is amplitude/tail (after per-sample rescale cap32 is
+WORSE); 43% of the gap from 5 samples. F22 answered ROUND-WIDE. B2 rec:
+output normalization / per-sample scaling (amplitude theme now FOUR-way
+convergent: s1 74.7% gain error, s2 86.5%, s5 alpha 0.05-0.07, s7 design);
+modes+muP-LR branch NOT recommended (negative sign on 5/6). Cross-stream
+directive: verify LF enters the forward pass before spending batches on
+capacity. Batch → 2, stage → websearch_running; dispatching websearcher.
+
+## s3_warp review + amendment + submit — 2026-07-29T19:44Z
+
+Reviewer: SUGGEST / submit (7/7 findings PASS; deviation (a) ruled FAITHFUL —
+aperture problem, stricter mask, hard-abort retained; deviation (b) ruled
+FAITHFUL with independent reproduction of the unattainability numbers; rung-0
+seam genuine — 4.44e-16 identity dev proves no zero-phi bypass; s2 reuse
+sha-verified + gram-form equivalence re-run 20/20 x5). Operator amendment
+applied per reviewer F-5: M9's unsatisfiable literal threshold replaced by
+the verified achievable-optimum gate (signed operator_amendments entry).
+Carry-forwards F-1..F-4 recorded for the analyzer (esp. F-4: do_not_promote
+is analyst-enforced; the 5-dataset geomean is NOT a panel score). Submitted
+diagnostic: job 66001846. Stage → seed0_running.
+
+## Pulse — 2026-07-29T19:44Z
+
+pulse: no-op. Jobs: s6 200-ep RUNNING 9 min; s3_warp diagnostic PENDING.
+Agents: s1-B2/s2-B2/s7 builders, s4 mechanism, s5-B2 websearcher. All
+healthy.
+
+## Note — late 529 on s5-B1 mechanism agent — 2026-07-29T19:51Z
+
+Post-completion follow-up turn of the s5-B1 mechanism-analyzer task died on a
+transient API 529. Verified no loss: card status complete, parts 6-7
+registered, both tools on disk. No redispatch needed; s5-B2 unaffected.
+
+## s4 mechanism agent 529 + resume — 2026-07-29T19:53Z
+
+s4-B1 mechanism-analyzer died mid-turn-1 on a transient API 529 (server
+overload; second 529 in minutes — platform blip). Resumed the same agent
+with context intact via message (turn-1 alpha-sweep probe pending). No state
+lost; card untouched (parts 6-7 still null as expected at that stage).
+
+## s6-B1 200-ep COMPLETE — potential round-defining result — 2026-07-29T19:54Z
+
+Job 66001535 COMPLETED 18 min. Orchestrator glance: panel geomean skill
+0.2346 — BELOW copy-LF. Per-dataset: pfc 0.0300, allen_cahn 0.0805,
+fisher_kpp 0.0951, cahn_hilliard 0.4686 (all <1!), helmholtz 1.0000 exactly
+(gate closed = no-harm floor working), ifc_poisson 1.5453 (champion fallback,
+no LF at test). If it survives scrutiny: success criterion 2 provisionally
+4/5 (helmholtz at parity, not below). NOTE the tension to resolve: s2-B1
+called allen_cahn/fisher_kpp residual-UNLEARNABLE (training-free floor ~1.0)
+— s6's trained corrector at 0.08-0.10 refutes the generalization of that
+claim beyond training-free constructions (consistent with s4's corrector
+also beating the lookup on pfc). Analyzer dispatched with HEIGHTENED-SCRUTINY
+brief: leakage checks, seam verification, guard set, identity-floor
+verification at the trained endpoint, contribution_d readout per the card
+(raw skill is NOT the win condition — pre-registered). Stage →
+initial_analysis_running.
+
+## 529 wave — resumes — 2026-07-29T19:56Z
+
+Platform 529 wave hit three background agents tonight: s5-B1 mechanism (post-
+completion, benign), s4-B1 mechanism (resumed mid-turn-1), s7-B1 builder
+(resumed at handoff-writing — build essentially done), s1-B2 builder (resumed
+at --env fix). All resumed with context intact via SendMessage. s6-B1
+initial-analyzer dispatched with the heightened-scrutiny brief (geomean
+0.2346 result). s2-B2 builder untouched so far.
+
+## 529 — s2-B2 builder resumed — 2026-07-29T19:57Z
+
+The 529 wave also caught the s2-B2 builder (at "Now the contract smoke
+test"). Resumed with context intact. Tally: 4 resumed (s4 mech, s7 builder,
+s1-B2 builder, s2-B2 builder), 1 benign post-completion (s5 mech).
+
+## 529 — s4 mechanism died again immediately after resume — 2026-07-29T19:57Z
+
+Second 529 on the s4-B1 mechanism analyzer right after resume — the overload
+wave is ongoing. Backing off: will re-resume at the next pulse (~10 min)
+rather than hammering the API. No state lost (its scratchpad persists;
+resumes replay from transcript).

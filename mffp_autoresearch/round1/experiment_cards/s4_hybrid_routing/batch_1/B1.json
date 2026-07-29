@@ -9,10 +9,10 @@
   "source_iteration": "brainstormer/s4_hybrid_routing/batch_1/iteration_1.md",
   "reopened_from": null,
   "1_id_category": "s4_hybrid_routing-B1 / mf_composition_measurement",
-  "2_motivation": "Panel-benchmark the built-but-unbenchmarked\n`mf_field/akash/models/fno_transolver_seq` (FNO-FiLM base + zero-init,\nalpha-gated Transolver corrector trained on out-of-fold LF\u2192HF residuals),\nreading the **per-dataset gate `alpha`** as the measurement. The websearcher's\nprior-art verdict for this direction (D1) is\n`preempted-but-MF-composition-open`, and its instruction is verbatim:\n*\"**D1 is a measurement card \u2014 it should claim no novelty at all**, only that\nit measures whether the +30.6% oracle survives against copy-LF on sharp 2-D\"*;\nwhat it lists as still open is *\"out-of-fold LF->HF residual targets under\nN_hf scarcity; the *real LF field* as corrector context; the least-squares +\nline-search `alpha` that makes the hybrid collapse **exactly** to the FNO when\nthe correction is useless.\"* program.md \u00a712.4:\n*\"`mf_field/akash/models/fno_transolver_seq` (sequential FNO\u2192Transolver\nresidual hybrid) is BUILT but unbenchmarked \u2014 batch 1 should start by scoring\nit on the panel (cheap, mostly evaluation).\"* The reason it earns GPU time\nrather than being a formality: the certified champion `mf_fno_transfer_film`\nis `FNO2d(cond_dim, ...)` and **never consumes the LF field at test time**\n(verified in its `smoke_eval.py` lines 106\u2013170 \u2014 LF appears only as\npretraining targets), while the copy-LF reference *is* the LF field and has\nskill 1.0 against the champion's 4.18\u201316.33 on the sharp sets. This artifact\nis the round's first model whose prediction path cross-attends to the **real\ntest-time LF field** (all five npz_l panel datasets ship test LF), so the card\nmeasures how much of that discarded 4\u201316\u00d7 information a gated point-based\ncorrector recovers \u2014 informative whether it wins or loses (program.md \u00a71).",
-  "3_description": "1. `models_r1/fno_transolver_seq/` = verbatim copy of the three files from\n   `mf_field/akash/models/fno_transolver_seq/` at `967562e`\n   (`git diff --stat round1-substrate -- <those paths>` is empty).\n2. Exactly **two** mechanical edits (a third should draw a code-reviewer FAIL \u2014\n   the artifact under measurement must stay the built family):\n   (a) replace `AKASH = Path(__file__).resolve().parents[2]` with an upward\n   search from `__file__` for the first ancestor containing\n   `mf_field/akash/common/mffp.py`, raising `RuntimeError` if absent (the\n   worktree is a full checkout, so it resolves; `parents[2]` would point at\n   the worktree root once the family sits under `models_r1/`);\n   (b) make the existing `--ctx_source` default\n   `os.environ.get(\"MFFP_CTX_SOURCE\", \"auto\")` so the knob is recipe-recorded\n   (program.md \u00a75.5) \u2014 a no-op at the declared value.\n3. Run only through `round1/eval/score_panel.py --datasets panel --epochs 200\n   --seed {0,1,2} --env MFFP_CTX_SOURCE=auto`; do **not** set\n   `ROUND1_EVAL_RESULTS` (batch 0's `eval/run_batch0.sbatch` did not).\n4. SLURM: one array task per (dataset, seed), `--time 08:00:00` for\n   `sharp__allen_cahn_2d` / `sharp__fisher_kpp_2d` / `sharp__cahn_hilliard`\n   (batch-0 champion 44.4 min \u00d7 \u22485.25 epoch-equivalents: LF-pretrain +\n   HF-finetune + 4 out-of-fold folds + corrector + epochs/4 joint stage),\n   `--time 03:00:00` for the other three. Resume from `<ckpt_dir>/last.pt` is\n   already implemented (lines 300\u2013315 / 425\u2013431).\n5. Guard set at contract tier in the seed-0 script\n   (`--datasets guard --epochs 2 --seed 0`), per program.md \u00a72.3.\n6. Measurement extraction requires **no new code** \u2014 `finalize_and_write`\n   already emits, per run: `alpha`, `alpha_least_squares`, `base_only_rel_l2`\n   (the *paired within-run control*: the champion recipe on the identical\n   seed/split), `base_only_rel_l2_final_fno`, `val_rel_l2_base`,\n   `val_rel_l2_hybrid`, `stage3_joint`, `correction_rms_raw_units`,\n   `ctx_source`, `ctx_fidelity`, `latency_ms_per_sample`, `peak_mem_mb`\n   (`smoke_eval.py` lines 474\u2013500). The analyzer tabulates these per\n   (dataset, seed) alongside the scored skills.",
-  "4_expected_result": "- *Free sanity gate*: `base_only_rel_l2` reproduces the batch-0 anchor\n  per-dataset skills within each dataset's `min_claimable_effect` (the\n  stage-1 recipe is the byte-identical `SMOKE` dict + `WORK_CAP = 256`);\n  a larger gap means broken plumbing, not science.\n- *Primary*: `alpha > 0` on **\u2265 3 of the 5** sharp-2-D panel datasets.\n- *Score*: panel geomean skill moves from the anchor **6.703 [6.219, 7.102]**\n  to **4.5\u20136.0** (\u221210% to \u221233%), with \u2265 1 sharp dataset improving by more than\n  its noise floor \u2014 `sharp__allen_cahn_2d` needs \u2265 **1.633** skill units off\n  16.334, `sharp__phase_field_crystal_2d` \u2265 **1.151** off 11.511,\n  `sharp__fisher_kpp_2d` \u2265 **0.418** off 4.177, `sharp__cahn_hilliard`\n  \u2265 **0.553** off 5.533 (each floor = 10% relative). Directional evidence: a\n  2-epoch contract-tier run I executed on `ifc_poisson` gave\n  `rel_l2=0.438569` vs `base_only=0.490003` (\u221210.5%) with `alpha=1.5001`, on\n  the *weaker* context path.\n- *Not claimed*: skill < 1 anywhere (needs 4\u201316\u00d7; criterion 2 stays open);\n  nothing on `ext__helmholtz_2d` (floor **9.695** \u2248 70% relative \u2014 recorded,\n  never claimed); `ifc_poisson` (floor **0.240** on mean skill 1.566) is a\n  watch item.\n- Cratered threshold: 1.5 \u00d7 6.703 = **10.05** panel geomean skill at seed 0.",
-  "expected_falsification": "If the fitted gate `alpha` is 0 on \u2265 4 of the 5\nsharp-2-D panel datasets at seed 0 (the least-squares + line-search-containing-0\ngate rejecting the correction on its own held-out split) **and** no sharp-2-D\ndataset's 3-seed mean skill beats the batch-0 anchor by at least its\n`min_claimable_effect` (allen_cahn 1.633, pfc 1.151, fisher_kpp 0.418,\ncahn_hilliard 0.553 skill units), then the +30.6% FNO\u2194Transolver pairwise\noracle does not transfer to sharp-2-D multi-fidelity fusion and routing\nbetween these two experts is not this stream's lever.",
+  "2_motivation": "Panel-benchmark the built-but-unbenchmarked\n`mf_field/akash/models/fno_transolver_seq` (FNO-FiLM base + zero-init,\nalpha-gated Transolver corrector trained on out-of-fold LF→HF residuals),\nreading the **per-dataset gate `alpha`** as the measurement. The websearcher's\nprior-art verdict for this direction (D1) is\n`preempted-but-MF-composition-open`, and its instruction is verbatim:\n*\"**D1 is a measurement card — it should claim no novelty at all**, only that\nit measures whether the +30.6% oracle survives against copy-LF on sharp 2-D\"*;\nwhat it lists as still open is *\"out-of-fold LF->HF residual targets under\nN_hf scarcity; the *real LF field* as corrector context; the least-squares +\nline-search `alpha` that makes the hybrid collapse **exactly** to the FNO when\nthe correction is useless.\"* program.md §12.4:\n*\"`mf_field/akash/models/fno_transolver_seq` (sequential FNO→Transolver\nresidual hybrid) is BUILT but unbenchmarked — batch 1 should start by scoring\nit on the panel (cheap, mostly evaluation).\"* The reason it earns GPU time\nrather than being a formality: the certified champion `mf_fno_transfer_film`\nis `FNO2d(cond_dim, ...)` and **never consumes the LF field at test time**\n(verified in its `smoke_eval.py` lines 106–170 — LF appears only as\npretraining targets), while the copy-LF reference *is* the LF field and has\nskill 1.0 against the champion's 4.18–16.33 on the sharp sets. This artifact\nis the round's first model whose prediction path cross-attends to the **real\ntest-time LF field** (all five npz_l panel datasets ship test LF), so the card\nmeasures how much of that discarded 4–16× information a gated point-based\ncorrector recovers — informative whether it wins or loses (program.md §1).",
+  "3_description": "1. `models_r1/fno_transolver_seq/` = verbatim copy of the three files from\n   `mf_field/akash/models/fno_transolver_seq/` at `967562e`\n   (`git diff --stat round1-substrate -- <those paths>` is empty).\n2. Exactly **two** mechanical edits (a third should draw a code-reviewer FAIL —\n   the artifact under measurement must stay the built family):\n   (a) replace `AKASH = Path(__file__).resolve().parents[2]` with an upward\n   search from `__file__` for the first ancestor containing\n   `mf_field/akash/common/mffp.py`, raising `RuntimeError` if absent (the\n   worktree is a full checkout, so it resolves; `parents[2]` would point at\n   the worktree root once the family sits under `models_r1/`);\n   (b) make the existing `--ctx_source` default\n   `os.environ.get(\"MFFP_CTX_SOURCE\", \"auto\")` so the knob is recipe-recorded\n   (program.md §5.5) — a no-op at the declared value.\n3. Run only through `round1/eval/score_panel.py --datasets panel --epochs 200\n   --seed {0,1,2} --env MFFP_CTX_SOURCE=auto`; do **not** set\n   `ROUND1_EVAL_RESULTS` (batch 0's `eval/run_batch0.sbatch` did not).\n4. SLURM: one array task per (dataset, seed), `--time 08:00:00` for\n   `sharp__allen_cahn_2d` / `sharp__fisher_kpp_2d` / `sharp__cahn_hilliard`\n   (batch-0 champion 44.4 min × ≈5.25 epoch-equivalents: LF-pretrain +\n   HF-finetune + 4 out-of-fold folds + corrector + epochs/4 joint stage),\n   `--time 03:00:00` for the other three. Resume from `<ckpt_dir>/last.pt` is\n   already implemented (lines 300–315 / 425–431).\n5. Guard set at contract tier in the seed-0 script\n   (`--datasets guard --epochs 2 --seed 0`), per program.md §2.3.\n6. Measurement extraction requires **no new code** — `finalize_and_write`\n   already emits, per run: `alpha`, `alpha_least_squares`, `base_only_rel_l2`\n   (the *paired within-run control*: the champion recipe on the identical\n   seed/split), `base_only_rel_l2_final_fno`, `val_rel_l2_base`,\n   `val_rel_l2_hybrid`, `stage3_joint`, `correction_rms_raw_units`,\n   `ctx_source`, `ctx_fidelity`, `latency_ms_per_sample`, `peak_mem_mb`\n   (`smoke_eval.py` lines 474–500). The analyzer tabulates these per\n   (dataset, seed) alongside the scored skills.",
+  "4_expected_result": "- *Free sanity gate*: `base_only_rel_l2` reproduces the batch-0 anchor\n  per-dataset skills within each dataset's `min_claimable_effect` (the\n  stage-1 recipe is the byte-identical `SMOKE` dict + `WORK_CAP = 256`);\n  a larger gap means broken plumbing, not science.\n- *Primary*: `alpha > 0` on **≥ 3 of the 5** sharp-2-D panel datasets.\n- *Score*: panel geomean skill moves from the anchor **6.703 [6.219, 7.102]**\n  to **4.5–6.0** (−10% to −33%), with ≥ 1 sharp dataset improving by more than\n  its noise floor — `sharp__allen_cahn_2d` needs ≥ **1.633** skill units off\n  16.334, `sharp__phase_field_crystal_2d` ≥ **1.151** off 11.511,\n  `sharp__fisher_kpp_2d` ≥ **0.418** off 4.177, `sharp__cahn_hilliard`\n  ≥ **0.553** off 5.533 (each floor = 10% relative). Directional evidence: a\n  2-epoch contract-tier run I executed on `ifc_poisson` gave\n  `rel_l2=0.438569` vs `base_only=0.490003` (−10.5%) with `alpha=1.5001`, on\n  the *weaker* context path.\n- *Not claimed*: skill < 1 anywhere (needs 4–16×; criterion 2 stays open);\n  nothing on `ext__helmholtz_2d` (floor **9.695** ≈ 70% relative — recorded,\n  never claimed); `ifc_poisson` (floor **0.240** on mean skill 1.566) is a\n  watch item.\n- Cratered threshold: 1.5 × 6.703 = **10.05** panel geomean skill at seed 0.",
+  "expected_falsification": "If the fitted gate `alpha` is 0 on ≥ 4 of the 5\nsharp-2-D panel datasets at seed 0 (the least-squares + line-search-containing-0\ngate rejecting the correction on its own held-out split) **and** no sharp-2-D\ndataset's 3-seed mean skill beats the batch-0 anchor by at least its\n`min_claimable_effect` (allen_cahn 1.633, pfc 1.151, fisher_kpp 0.418,\ncahn_hilliard 0.553 skill units), then the +30.6% FNO↔Transolver pairwise\noracle does not transfer to sharp-2-D multi-fidelity fusion and routing\nbetween these two experts is not this stream's lever.",
   "anchor_reference": null,
   "prior_art": {
     "verdict": "preempted-but-MF-composition-open",
@@ -20,7 +20,7 @@
       "https://arxiv.org/html/2602.11197",
       "https://arxiv.org/abs/2311.12902"
     ],
-    "verdict_quote": "**D1** \u2014 panel-benchmark the built `fno_transolver_seq` (FNO-FiLM base +\nzero-init alpha-gated Transolver corrector on out-of-fold LF->HF residuals)\n| `preempted-but-MF-composition-open` | https://arxiv.org/html/2602.11197\n(FNO smooth background + ViT high-contrast corrector);\nhttps://arxiv.org/abs/2311.12902 (hierarchical FNO + conv-residual +\nattention, frequency-complementary, sequential, no MF) | Neither source is\nmulti-fidelity. Open: out-of-fold LF->HF residual targets under N_hf\nscarcity; the *real LF field* as corrector context; the least-squares +\nline-search `alpha` that makes the hybrid collapse **exactly** to the FNO\nwhen the correction is useless. **D1 is a measurement card \u2014 it should claim\nno novelty at all**, only that it measures whether the +30.6% oracle\nsurvives against copy-LF on sharp 2-D.",
+    "verdict_quote": "**D1** — panel-benchmark the built `fno_transolver_seq` (FNO-FiLM base +\nzero-init alpha-gated Transolver corrector on out-of-fold LF->HF residuals)\n| `preempted-but-MF-composition-open` | https://arxiv.org/html/2602.11197\n(FNO smooth background + ViT high-contrast corrector);\nhttps://arxiv.org/abs/2311.12902 (hierarchical FNO + conv-residual +\nattention, frequency-complementary, sequential, no MF) | Neither source is\nmulti-fidelity. Open: out-of-fold LF->HF residual targets under N_hf\nscarcity; the *real LF field* as corrector context; the least-squares +\nline-search `alpha` that makes the hybrid collapse **exactly** to the FNO\nwhen the correction is useless. **D1 is a measurement card — it should claim\nno novelty at all**, only that it measures whether the +30.6% oracle\nsurvives against copy-LF on sharp 2-D.",
     "citation_labels": [
       "https://arxiv.org/html/2602.11197 (FNO smooth background + ViT high-contrast corrector)",
       "https://arxiv.org/abs/2311.12902 (hierarchical FNO + conv-residual + attention, frequency-complementary, sequential, no MF)"
@@ -42,7 +42,7 @@
       "MFFP_CTX_SOURCE": "auto"
     }
   },
-  "status": "reviewed_suggest",
+  "status": "analyzing",
   "skipped_reason": null,
   "reopen_candidate": false,
   "scripts_path": {
@@ -100,7 +100,477 @@
     }
   ],
   "debug_notes": [],
-  "5_actual_result": null,
+  "5_actual_result": {
+    "protocol_label": "provisional-single-seed (ADR 0004: seed 0 only in-round; seeds 1-2 run only in the end-of-round top-3 confirmation pass). No CI is computed for this card.",
+    "seeds_available": [
+      0
+    ],
+    "nrmse_def_hash": "d3d0ade9191c13bacc40702f3eb26ad290e01641cacee22a1d2233b74c035850",
+    "nrmse_def_hash_consistent": true,
+    "nrmse_def_hash_checked_files": [
+      "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s4_hybrid_routing/B1/eval/result_panel_s0.json",
+      "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s4_hybrid_routing/B1/eval/result_ext__helmholtz_2d_s0.json",
+      "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s4_hybrid_routing/B1/eval/result_ifc_poisson_s0.json",
+      "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s4_hybrid_routing/B1/eval/result_sharp__allen_cahn_2d_s0.json",
+      "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s4_hybrid_routing/B1/eval/result_sharp__cahn_hilliard_s0.json",
+      "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s4_hybrid_routing/B1/eval/result_sharp__fisher_kpp_2d_s0.json",
+      "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s4_hybrid_routing/B1/eval/result_sharp__phase_field_crystal_2d_s0.json",
+      "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s4_hybrid_routing/B1/eval/guard_contract_s0.json",
+      "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/recert/h100_champion_seed0_retrain.json"
+    ],
+    "authoritative_panel_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s4_hybrid_routing/B1/eval/result_panel_s0.json",
+    "trap_note": "The six per-dataset result_<ds>_s0.json files each carry a top-level panel_geomean_skill computed over ONE dataset (e.g. 19.8619 for helmholtz alone). Those keys were IGNORED. Only result_panel_s0.json (job 65996900, all six datasets cached=true) supplies the panel geomean; the per-dataset files supplied per-dataset nRMSE/skill only. alpha / base_only_rel_l2 / ctx_source come from the family JSONs under output_paths.training, which score_panel.py never aggregates.",
+    "per_dataset": {
+      "ext__helmholtz_2d": {
+        "per_seed_nrmse": [
+          6.543507222018085
+        ],
+        "per_seed_skill": [
+          19.861905353006595
+        ],
+        "mean_skill": 19.861905353006595,
+        "ci95": null,
+        "reference_type": "copylf",
+        "metric_source": "per_sample_mean",
+        "cached": true,
+        "alpha": 0.0,
+        "alpha_least_squares": 1.5,
+        "alpha_zero_mode": "ls_positive_line_search_rejected",
+        "base_only_rel_l2": 6.543507222018086,
+        "base_only_rel_l2_final_fno": 6.543507222018086,
+        "full_hybrid_rel_l2": 6.543507222018086,
+        "corrector_delta_pct_vs_base_only": 0.0,
+        "ctx_source": "real_lf",
+        "ctx_fidelity": 1,
+        "stage3_joint": false,
+        "correction_rms_raw_units": 0.0,
+        "val_rel_l2_base": 6.308050632476807,
+        "val_rel_l2_hybrid": 6.308050632476807,
+        "val_to_test_gap_ratio": 1.0373263632871046,
+        "latency_ms_per_sample": 0.35614728927612305,
+        "peak_mem_mb": 454.580224,
+        "anchor_mean_skill": 13.817289529417906,
+        "min_claimable_effect": 9.694961194291832,
+        "delta_skill_vs_anchor_mean": -6.044615823588689,
+        "beats_anchor_by_floor": false,
+        "paired_h100_champion_nrmse": 6.467990838642503,
+        "paired_h100_champion_skill": 19.632685882726165,
+        "base_only_vs_paired_champion_rel_pct": 1.1675400485173126,
+        "source_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s4_hybrid_routing/B1/eval/result_ext__helmholtz_2d_s0.json",
+        "readout_source_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round1/eval/results/fno_transolver_seq/ext__helmholtz_2d_e200_s0.json"
+      },
+      "ifc_poisson": {
+        "per_seed_nrmse": [
+          0.05563486139090377
+        ],
+        "per_seed_skill": [
+          1.5454128164139938
+        ],
+        "mean_skill": 1.5454128164139938,
+        "ci95": null,
+        "reference_type": "paper_bar",
+        "metric_source": "per_sample_mean",
+        "cached": true,
+        "alpha": 0.0,
+        "alpha_least_squares": 0.0,
+        "alpha_zero_mode": "ls_itself_zero",
+        "base_only_rel_l2": 0.05563486139090375,
+        "base_only_rel_l2_final_fno": 0.05563486139090375,
+        "full_hybrid_rel_l2": 0.05563486139090375,
+        "corrector_delta_pct_vs_base_only": 0.0,
+        "ctx_source": "fno_base",
+        "ctx_fidelity": 32,
+        "stage3_joint": false,
+        "correction_rms_raw_units": 0.0,
+        "val_rel_l2_base": 0.04090325906872749,
+        "val_rel_l2_hybrid": 0.04090325906872749,
+        "val_to_test_gap_ratio": 1.3601571771438445,
+        "latency_ms_per_sample": 0.2944469451904297,
+        "peak_mem_mb": 331.014656,
+        "anchor_mean_skill": 1.5656334312786022,
+        "min_claimable_effect": 0.23990756041925798,
+        "delta_skill_vs_anchor_mean": 0.020220614864608466,
+        "beats_anchor_by_floor": false,
+        "paired_h100_champion_nrmse": 0.05563112238512299,
+        "paired_h100_champion_skill": 1.5453089551423054,
+        "base_only_vs_paired_champion_rel_pct": 0.006721068388437779,
+        "source_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s4_hybrid_routing/B1/eval/result_ifc_poisson_s0.json",
+        "readout_source_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round1/eval/results/fno_transolver_seq/ifc_poisson_e200_s0.json"
+      },
+      "sharp__allen_cahn_2d": {
+        "per_seed_nrmse": [
+          0.26355002277981737
+        ],
+        "per_seed_skill": [
+          16.31709644730294
+        ],
+        "mean_skill": 16.31709644730294,
+        "ci95": null,
+        "reference_type": "copylf",
+        "metric_source": "per_sample_mean",
+        "cached": true,
+        "alpha": 0.0,
+        "alpha_least_squares": 0.0,
+        "alpha_zero_mode": "ls_itself_zero",
+        "base_only_rel_l2": 0.2635500227798173,
+        "base_only_rel_l2_final_fno": 0.2635500227798173,
+        "full_hybrid_rel_l2": 0.2635500227798173,
+        "corrector_delta_pct_vs_base_only": 0.0,
+        "ctx_source": "real_lf",
+        "ctx_fidelity": 2,
+        "stage3_joint": false,
+        "correction_rms_raw_units": 0.0,
+        "val_rel_l2_base": 0.23268763720989227,
+        "val_rel_l2_hybrid": 0.23268763720989227,
+        "val_to_test_gap_ratio": 1.1326344018100374,
+        "latency_ms_per_sample": 1.1342668533325195,
+        "peak_mem_mb": 1846.9504,
+        "anchor_mean_skill": 16.33407079448426,
+        "min_claimable_effect": 1.633407079448426,
+        "delta_skill_vs_anchor_mean": 0.01697434718131774,
+        "beats_anchor_by_floor": false,
+        "paired_h100_champion_nrmse": 0.26355002277981737,
+        "paired_h100_champion_skill": 16.31709644730294,
+        "base_only_vs_paired_champion_rel_pct": -2.220446049250313e-14,
+        "source_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s4_hybrid_routing/B1/eval/result_sharp__allen_cahn_2d_s0.json",
+        "readout_source_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round1/eval/results/fno_transolver_seq/sharp__allen_cahn_2d_e200_s0.json"
+      },
+      "sharp__cahn_hilliard": {
+        "per_seed_nrmse": [
+          0.48762843911552667
+        ],
+        "per_seed_skill": [
+          5.562725178391981
+        ],
+        "mean_skill": 5.562725178391981,
+        "ci95": null,
+        "reference_type": "copylf",
+        "metric_source": "per_sample_mean",
+        "cached": true,
+        "alpha": 0.0,
+        "alpha_least_squares": 1.1027355194091797,
+        "alpha_zero_mode": "ls_positive_line_search_rejected",
+        "base_only_rel_l2": 0.48762843911552656,
+        "base_only_rel_l2_final_fno": 0.48762843911552656,
+        "full_hybrid_rel_l2": 0.48762843911552656,
+        "corrector_delta_pct_vs_base_only": 0.0,
+        "ctx_source": "real_lf",
+        "ctx_fidelity": 2,
+        "stage3_joint": false,
+        "correction_rms_raw_units": 0.0,
+        "val_rel_l2_base": 0.008878429420292377,
+        "val_rel_l2_hybrid": 0.008878429420292377,
+        "val_to_test_gap_ratio": 54.92282655319778,
+        "latency_ms_per_sample": 1.111602783203125,
+        "peak_mem_mb": 1847.066112,
+        "anchor_mean_skill": 5.533465853654415,
+        "min_claimable_effect": 0.5533465853654416,
+        "delta_skill_vs_anchor_mean": -0.02925932473756543,
+        "beats_anchor_by_floor": false,
+        "paired_h100_champion_nrmse": 0.48762843911552667,
+        "paired_h100_champion_skill": 5.562725178391981,
+        "base_only_vs_paired_champion_rel_pct": -2.220446049250313e-14,
+        "source_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s4_hybrid_routing/B1/eval/result_sharp__cahn_hilliard_s0.json",
+        "readout_source_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round1/eval/results/fno_transolver_seq/sharp__cahn_hilliard_e200_s0.json"
+      },
+      "sharp__fisher_kpp_2d": {
+        "per_seed_nrmse": [
+          0.22638408362358076
+        ],
+        "per_seed_skill": [
+          3.6144943673747756
+        ],
+        "mean_skill": 3.6144943673747756,
+        "ci95": null,
+        "reference_type": "copylf",
+        "metric_source": "per_sample_mean",
+        "cached": true,
+        "alpha": 0.7407730221748352,
+        "alpha_least_squares": 0.9876973628997803,
+        "alpha_zero_mode": "n/a (alpha>0)",
+        "base_only_rel_l2": 0.2578269527156267,
+        "base_only_rel_l2_final_fno": 0.2578269527156267,
+        "full_hybrid_rel_l2": 0.22638408362358078,
+        "corrector_delta_pct_vs_base_only": -12.195338292163049,
+        "ctx_source": "real_lf",
+        "ctx_fidelity": 2,
+        "stage3_joint": false,
+        "correction_rms_raw_units": 0.059356994926929474,
+        "val_rel_l2_base": 0.2393767386674881,
+        "val_rel_l2_hybrid": 0.21427297592163086,
+        "val_to_test_gap_ratio": 0.9457229841285661,
+        "latency_ms_per_sample": 11.046741008758545,
+        "peak_mem_mb": 1887.575552,
+        "anchor_mean_skill": 4.177354995081957,
+        "min_claimable_effect": 0.41773549950819566,
+        "delta_skill_vs_anchor_mean": 0.562860627707181,
+        "beats_anchor_by_floor": true,
+        "paired_h100_champion_nrmse": 0.25782695271562683,
+        "paired_h100_champion_skill": 4.116517616572251,
+        "base_only_vs_paired_champion_rel_pct": -4.440892098500626e-14,
+        "source_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s4_hybrid_routing/B1/eval/result_sharp__fisher_kpp_2d_s0.json",
+        "readout_source_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round1/eval/results/fno_transolver_seq/sharp__fisher_kpp_2d_e200_s0.json"
+      },
+      "sharp__phase_field_crystal_2d": {
+        "per_seed_nrmse": [
+          0.1469580089286472
+        ],
+        "per_seed_skill": [
+          3.28174500556679
+        ],
+        "mean_skill": 3.28174500556679,
+        "ci95": null,
+        "reference_type": "copylf",
+        "metric_source": "per_sample_mean",
+        "cached": true,
+        "alpha": 0.25085851550102234,
+        "alpha_least_squares": 0.9943591356277466,
+        "alpha_zero_mode": "n/a (alpha>0)",
+        "base_only_rel_l2": 0.5133266545166788,
+        "base_only_rel_l2_final_fno": 0.483804416219514,
+        "full_hybrid_rel_l2": 0.14695800892864713,
+        "corrector_delta_pct_vs_base_only": -71.37144396543853,
+        "ctx_source": "real_lf",
+        "ctx_fidelity": 2,
+        "stage3_joint": true,
+        "correction_rms_raw_units": 0.2736245095729828,
+        "val_rel_l2_base": 0.12493988126516342,
+        "val_rel_l2_hybrid": 0.08902785181999207,
+        "val_to_test_gap_ratio": 1.176229778998701,
+        "latency_ms_per_sample": 5.416834354400635,
+        "peak_mem_mb": 678.747648,
+        "anchor_mean_skill": 11.511001428346894,
+        "min_claimable_effect": 1.1511001428346894,
+        "delta_skill_vs_anchor_mean": 8.229256422780104,
+        "beats_anchor_by_floor": true,
+        "paired_h100_champion_nrmse": 0.5133956796283266,
+        "paired_h100_champion_skill": 11.464728732939415,
+        "base_only_vs_paired_champion_rel_pct": -0.013444817396535136,
+        "source_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s4_hybrid_routing/B1/eval/result_sharp__phase_field_crystal_2d_s0.json",
+        "readout_source_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round1/eval/results/fno_transolver_seq/sharp__phase_field_crystal_2d_e200_s0.json"
+      }
+    },
+    "panel_geomean_skill": {
+      "per_seed": [
+        5.664888697217776
+      ],
+      "mean": 5.664888697217776,
+      "ci95": null,
+      "source": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s4_hybrid_routing/B1/eval/result_panel_s0.json"
+    },
+    "vs_anchor": {
+      "anchor_value": 6.703016262587087,
+      "anchor_ci95": [
+        6.21853605194748,
+        7.102239525443188
+      ],
+      "anchor_per_seed": [
+        7.102239525443188,
+        6.21853605194748,
+        6.788273210370594
+      ],
+      "anchor_source": "state/anchors/s4_hybrid_routing.json (mf_fno_transfer_film, batch0, 3-seed, certified 2026-07-29T14:28:45Z)",
+      "delta": -1.0381275653693107,
+      "delta_pct": -15.48746899457225,
+      "beyond_ci": true,
+      "beyond_ci_note": "G=5.6649 sits BELOW the anchor's 3-seed CI lower bound 6.2185. This is the ANCHOR's CI; this card has no CI of its own (single seed).",
+      "beyond_noise_floor": true,
+      "geomean_noise_floor": 0.884,
+      "vs_paired_h100_seed0_control": {
+        "control_value": 7.117102398598575,
+        "control_source": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/recert/h100_champion_seed0_retrain.json",
+        "control_note": "mf_fno_transfer_film, same H100 hardware, same seed 0, same nrmse_def_hash. This is the cleanest of the three bases: the within-run base_only_rel_l2 of THIS card reproduces this control's per-dataset nRMSE bit-exactly on 3 of 6 datasets.",
+        "delta": -1.4522137013807983,
+        "delta_pct": -20.404563824552437,
+        "beyond_noise_floor": true
+      },
+      "vs_best_anchor_seed": {
+        "best_anchor_seed_value": 6.21853605194748,
+        "delta": -0.553647354729704,
+        "beyond_noise_floor": false,
+        "note": "Against the anchor's BEST individual seed (6.2185) the seed-0 gap is only -0.5536, i.e. INSIDE the 0.884 geomean floor. The win clears the floor against the anchor mean (-1.038) and against the paired same-seed control (-1.452), but not against the anchor's luckiest seed. Single-seed caveat retained."
+      }
+    },
+    "corrector_attribution": {
+      "method": "Paired within-run control. base_only_rel_l2 is the stage-1 FNO-FiLM base evaluated on the identical seed/split inside the same run; the panel geomean move is decomposed multiplicatively as dlog(skill_ds) summed /6, using the score_panel-produced skills of the paired H100 champion seed-0 control as the base geomean (7.1171). Ratios only -- no metric was recomputed by hand.",
+      "sanity_gate_verdict": "PASS (emphatic)",
+      "sanity_gate_evidence": "base_only_rel_l2 vs paired H100 champion seed-0 nRMSE: allen_cahn/cahn_hilliard/fisher_kpp identical to 16 significant digits (rel diff 0.000000%); pfc -0.0134%; ifc_poisson +0.0067%; helmholtz +1.1675%. Every gap is far inside the dataset's min_claimable_effect. The base inside the hybrid IS the champion; the plumbing is sound and every panel-level movement is attributable to the corrector.",
+      "base_geomean_used": 7.117102398598575,
+      "full_geomean": 5.664888697217776,
+      "total_dlog": -1.3692805755644384,
+      "total_move_pct": -20.404563824552437,
+      "per_dataset_dlog": {
+        "ext__helmholtz_2d": 0.011607768905104607,
+        "ifc_poisson": 6.720842534800572e-05,
+        "sharp__allen_cahn_2d": 0.0,
+        "sharp__cahn_hilliard": 0.0,
+        "sharp__fisher_kpp_2d": -0.13005559213420173,
+        "sharp__phase_field_crystal_2d": -1.2508999607606892
+      },
+      "per_dataset_share_pct": {
+        "ext__helmholtz_2d": -0.8477275667420979,
+        "ifc_poisson": -0.00490830196143704,
+        "sharp__allen_cahn_2d": -0.0,
+        "sharp__cahn_hilliard": -0.0,
+        "sharp__fisher_kpp_2d": 9.498096624980665,
+        "sharp__phase_field_crystal_2d": 91.35453924372287
+      },
+      "headline": "91.4% of the -20.4% panel geomean move comes from ONE dataset (sharp__phase_field_crystal_2d), 9.5% from sharp__fisher_kpp_2d, and -0.8% is given back by ext__helmholtz_2d. The four alpha=0 datasets contribute exactly 0.000000 by construction (the gate collapsed the hybrid to the base, bit-exactly).",
+      "leave_one_out": {
+        "geomean_excl_pfc_full": 6.318387,
+        "geomean_excl_pfc_base": 6.469766,
+        "geomean_excl_pfc_ratio_pct": -2.34,
+        "geomean_excl_pfc_and_fisher_kpp_ratio_pct": 0.29,
+        "note": "Drop pfc and the panel advantage falls to -2.34% (well inside the geomean floor). Drop pfc and fisher_kpp and the hybrid is +0.29% WORSE than its own base -- i.e. exactly the helmholtz give-back. The entire claim is two datasets, and effectively one."
+      },
+      "pfc_internal_split": {
+        "base_only_rel_l2": 0.5133266545166788,
+        "base_only_rel_l2_final_fno": 0.483804416219514,
+        "full_hybrid_rel_l2": 0.14695800892864713,
+        "stage3_joint_finetune_pct": -5.75,
+        "corrector_pct_on_top_of_final_fno": -69.62,
+        "total_pct": -71.37,
+        "note": "pfc is the ONLY dataset where stage3_joint fired. Of its -71.37% total, joint fine-tuning of the FNO itself accounts for -5.75% and the alpha-gated Transolver corrector for -69.62%. So the corrector -- not base drift -- owns the win, but it is entangled with the one dataset that also got the extra joint stage."
+      },
+      "fisher_kpp_split": {
+        "base_only_rel_l2": 0.2578269527156267,
+        "full_hybrid_rel_l2": 0.22638408362358078,
+        "corrector_pct": -12.2,
+        "stage3_joint": false,
+        "note": "Clean corrector-only effect: stage3 did not fire, base is bit-identical to the champion, so -12.20% is purely the alpha=0.7408 gated correction. Skill 3.6145 vs anchor mean 4.1774 = -0.5629 vs floor 0.4177 -> clears its floor by 1.35x. The single most trustworthy per-dataset win on this card."
+      }
+    },
+    "gate_behaviour": {
+      "alpha_gt_zero_count_npz_l_5": "2 of 5 (sharp__fisher_kpp_2d 0.7408, sharp__phase_field_crystal_2d 0.2509)",
+      "alpha_eq_zero_count_npz_l_5": "3 of 5 (ext__helmholtz_2d, sharp__allen_cahn_2d, sharp__cahn_hilliard)",
+      "alpha_eq_zero_count_all_6_panel": "4 of 6 (+ ifc_poisson)",
+      "exact_collapse_verified": "On all four alpha=0 datasets rel_l2_mean == base_only_rel_l2 == base_only_rel_l2_final_fno to 16 digits and correction_rms_raw_units == 0.0 exactly. The paper's claim that the gate collapses the hybrid EXACTLY to the FNO when the correction is useless is verified at 200 epochs, not just at contract tier.",
+      "two_distinct_zero_modes": "(i) ls_itself_zero -- the least-squares fit on out-of-fold residuals already returns 0 (sharp__allen_cahn_2d, ifc_poisson): the corrector's OOF residual predictions carry no usable signal. (ii) ls_positive_line_search_rejected -- LS wants a large correction but the line search on the held-out split vetoes it (ext__helmholtz_2d alpha_ls=1.5, sharp__cahn_hilliard alpha_ls=1.1027): the correction fits in-fold and fails to generalise. These are different failure mechanisms and should not be pooled.",
+      "latency_cost": "Where the corrector is live the inference cost jumps: fisher_kpp 11.05 ms/sample and pfc 5.42 ms/sample vs 0.29-1.13 ms/sample on the four collapsed datasets -- a 5-38x latency multiplier for the gated path."
+    },
+    "cratered_verdict": "proceed_to_seeds_1_2",
+    "cratered_detail": "NOT cratered. Threshold = CRATERED_SKILL_FACTOR 1.5 x anchor 6.703016 = 10.0545 panel geomean skill; observed 5.664889, i.e. 44% below the threshold and 15.5% BELOW (better than) the anchor itself. No crash: all 8 SLURM jobs COMPLETED with ExitCode 0:0 and zero-byte .err files. Under ADR 0004 'proceed' does not mean seeds 1-2 run now -- it means the card is eligible for the end-of-round top-3 confirmation pass via scripts/submit_seeds_2_3.sh.",
+    "falsification_verdict": "confirmed",
+    "falsification_detail": {
+      "clause_verbatim": "If the fitted gate `alpha` is 0 on >= 4 of the 5 sharp-2-D panel datasets at seed 0 (the least-squares + line-search-containing-0 gate rejecting the correction on its own held-out split) **and** no sharp-2-D dataset's 3-seed mean skill beats the batch-0 anchor by at least its `min_claimable_effect` (allen_cahn 1.633, pfc 1.151, fisher_kpp 0.418, cahn_hilliard 0.553 skill units), then the +30.6% FNO<->Transolver pairwise oracle does not transfer to sharp-2-D multi-fidelity fusion and routing between these two experts is not this stream's lever.",
+      "verdict": "NOT FALSIFIED -- the clause is a conjunction and BOTH conjuncts fail.",
+      "conjunct_1": "FALSE. alpha = 0 on 3 of the 5 real-test-LF (npz_l) panel datasets -- ext__helmholtz_2d 0.0, sharp__allen_cahn_2d 0.0, sharp__cahn_hilliard 0.0 -- while sharp__fisher_kpp_2d = 0.7408 and sharp__phase_field_crystal_2d = 0.2509 are > 0. 3 < 4. Denominator sensitivity: restricted to the four sharp__ datasets the clause's own conjunct 2 enumerates, alpha = 0 on 2 of 4; across all six panel datasets, 4 of 6. No reading of 'of the 5' reaches 4.",
+      "conjunct_2": "FALSE on the available evidence. 3-seed means do not exist (ADR 0004). At seed 0 two sharp datasets beat the batch-0 anchor by more than their min_claimable_effect: sharp__phase_field_crystal_2d 3.2817 vs anchor 11.5110 = 8.2293 skill units against a floor of 1.151 (7.1x the floor), and sharp__fisher_kpp_2d 3.6145 vs 4.1774 = 0.5629 against a floor of 0.418 (1.35x). This conjunct would need 3-seed confirmation to be settled, but since conjunct 1 is already decisively false at seed 0 the conjunction cannot fire regardless.",
+      "scope_note": "'confirmed' here is scoped to the pre-registered falsification clause: it did not fire. It is NOT a claim that the card's part-4 primary expectation was met -- see expected_result_scorecard."
+    },
+    "expected_result_scorecard": {
+      "free_sanity_gate": "PASS (emphatic). base_only reproduces the paired H100 champion seed-0 per-dataset nRMSE bit-exactly on allen_cahn / cahn_hilliard / fisher_kpp, within 0.014% on pfc and ifc_poisson, within 1.17% on helmholtz -- all far inside each min_claimable_effect. Plumbing is not broken.",
+      "primary_alpha_criterion": "FAIL. Card predicted 'alpha > 0 on >= 3 of the 5 sharp-2-D panel datasets'; observed 2 of 5.",
+      "score_criterion": "PASS. Card predicted the panel geomean moves from 6.703 to 4.5-6.0 (-10% to -33%); observed 5.664889 (-15.5%), inside the predicted band. The companion condition '>= 1 sharp dataset improving by more than its noise floor' is met by two: pfc (8.229 vs floor 1.151) and fisher_kpp (0.563 vs floor 0.418).",
+      "not_claimed_items_hold": "Skill < 1 achieved nowhere (min panel skill 1.5454 on ifc_poisson) -- spec criterion 2 stays open, as the card said. ext__helmholtz_2d moved +0.2292 skill units WORSE than the paired control, far inside its 9.695 report-only floor -> recorded, not claimed. ifc_poisson moved 0.0202 better, inside its 0.240 floor -> watch item unchanged.",
+      "net": "The card's SCORE prediction landed and its GATE prediction did not: the panel win is real at seed 0 but is carried by 2 of 5 gates, 91% of it by a single dataset."
+    },
+    "guard_flags": [
+      {
+        "dataset": "heat_local",
+        "nRMSE": 0.01642772331908432,
+        "skill": 6.840547922924898,
+        "recorded_reference_nrmse": 0.00240152155999517,
+        "ratio_to_recorded_reference": 6.841,
+        "rule": "program.md 2.3: guard regression > 2x vs its recorded reference flags the card in part 5 (analyzer interprets; no auto-reject).",
+        "disposition": "FLAG RECORDED, NOT A REGRESSION CAUSED BY THIS CARD.",
+        "justification": "The recorded reference in eval/copylf_baselines.json is the copy-LF nRMSE, so the ratio IS the skill; at contract tier (2 epochs) no model in this round beats copy-LF on heat_local. The only other recorded contract-tier guard run -- s5_tuning-B1 (mf_fno_transfer_film_modes, champion lineage) -- gives heat_local nRMSE 0.114933, i.e. this card is 7.0x BETTER on the same dataset at the same tier. Under the literal rule the champion lineage would flag at 47.86x. No card-attributable regression exists.",
+        "peer_comparison_source": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s5_tuning/B1/eval/guard_contract_s0.json"
+      }
+    ],
+    "guard_table": {
+      "required_because": "Claiming-adjacent: panel geomean improvement 1.0381 vs the certified anchor (and 1.4522 vs the paired H100 seed-0 control) both exceed the 0.884 geomean noise floor, so the guard check is mandatory, not optional.",
+      "source": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s4_hybrid_routing/B1/eval/guard_contract_s0.json",
+      "job": "65996899",
+      "tier": "contract (2 epochs, seed 0, MFFP_CTX_SOURCE=auto)",
+      "rows": [
+        {
+          "dataset": "fluid",
+          "nRMSE": 0.178340531713707,
+          "skill": 0.8178523058433786,
+          "recorded_ref_nrmse": 0.21805958171115042,
+          "ratio_to_ref": 0.818,
+          "s5_peer_nrmse": 0.35470655672095097,
+          "ratio_to_peer": 0.503,
+          "flag": false
+        },
+        {
+          "dataset": "heat_local",
+          "nRMSE": 0.01642772331908432,
+          "skill": 6.840547922924898,
+          "recorded_ref_nrmse": 0.00240152155999517,
+          "ratio_to_ref": 6.841,
+          "s5_peer_nrmse": 0.11493304695316765,
+          "ratio_to_peer": 0.143,
+          "flag": true
+        },
+        {
+          "dataset": "sharp__sod_1d",
+          "nRMSE": 0.024778101095754176,
+          "skill": 0.7488053469702002,
+          "recorded_ref_nrmse": 0.03309017650048946,
+          "ratio_to_ref": 0.749,
+          "s5_peer_nrmse": 0.0494521933883321,
+          "ratio_to_peer": 0.501,
+          "flag": false
+        }
+      ],
+      "summary": "2 of 3 guard datasets come in BELOW copy-LF (skill 0.818 and 0.749) after only 2 epochs, and all 3 are 2.0-7.0x better than the only recorded contract-tier peer. Guard status: clean."
+    },
+    "anomalies": [
+      "NONE of the failure kinds: all 8 SLURM jobs (65996887/89/93/95/97/98 dataset, 65996899 guard, 65996900 aggregate) COMPLETED with ExitCode 0:0; every .err file is 0 bytes; no NaN, no preemption, no requeue, no resume-after-preemption event. Nodes hpc-33-19 / hpc-33-22.",
+      "BUILDER'S OPEN RISK CLOSED: peak_mem_mb on the 256^2 sharp datasets is 1846.95 (allen_cahn) / 1847.07 (cahn_hilliard) / 1887.58 (fisher_kpp) MB -- ~2.4% of an 80 GB H100. The n_query=2048 / n_ctx=1024 / full-field _corr_full_field eval path never approached the limit.",
+      "SEVERE VAL/TEST MISCALIBRATION ON sharp__cahn_hilliard: val_rel_l2_base = 0.008878 against test rel_l2 = 0.487628, a 54.9x gap. The alpha line search is calibrated on a held-out split ~55x easier than test. This is the dataset where alpha_least_squares = 1.1027 (LS wants a big correction) but the line search returned alpha = 0. The gate's veto there rests on an unrepresentative split. Second-largest gap is pfc at 4.11x (val 0.1249 vs base test 0.5133); the other four are 0.95-1.36x.",
+      "stage3_joint fired on EXACTLY ONE dataset (sharp__phase_field_crystal_2d) -- the same dataset that carries 91.4% of the panel geomean move. The joint stage and the win are perfectly confounded at n=1 dataset.",
+      "ext__helmholtz_2d is the only dataset where the hybrid scores WORSE than the paired control (skill 19.8619 vs 19.6327, +0.2292). alpha = 0 there, so the hybrid's prediction path is identical to its own base -- the gap is base-vs-champion training variance (+1.17% nRMSE), not a corrector effect, and is 42x inside the dataset's 9.695 report-only floor.",
+      "Reviewer trap (state/s4_hybrid_routing/review_B1.md, action item 2) confirmed live: each per-dataset result_<ds>_s0.json carries a single-dataset panel_geomean_skill (e.g. 19.86190535300659 for helmholtz). These were ignored; only result_panel_s0.json was used for the geomean.",
+      "Reviewer S3/S5 walltime concerns resolved empirically: the heavy sharp datasets used 28.9-31.3 min against a 240 min limit (7.7x headroom; the reviewer's h100-scaled estimate of ~56 min was 1.8x conservative) and the guard job used 1.42 min of its 30 min budget. The card's own 08:00:00/03:00:00 text would have been 15x oversized.",
+      "Score-cache behaviour as designed: the six per-dataset jobs all report cached=false; the afterok aggregate (65996900) reports cached=true on all six and finished in 3 seconds, confirming the split-panel recombination is a pure cache hit with no retraining."
+    ],
+    "wall_clock_per_seed_min": [
+      122.93
+    ],
+    "wall_clock_breakdown_min": {
+      "ext__helmholtz_2d": 15.47,
+      "sharp__phase_field_crystal_2d": 15.47,
+      "sharp__allen_cahn_2d": 31.28,
+      "sharp__fisher_kpp_2d": 28.88,
+      "sharp__cahn_hilliard": 30.73,
+      "ifc_poisson": 1.1,
+      "panel_total": 122.93,
+      "guard_contract": 1.42,
+      "panel_aggregate": 0.05,
+      "grand_total": 124.4,
+      "source": "sacct -j 65996887,65996889,65996893,65996895,65996897,65996898,65996899,65996900 Elapsed",
+      "note_for_timing_ledger": "fno_transolver_seq, h100, 200 ep, seed 0: panel = 122.93 GPU-min = 2.05 GPU-h. That is ~3.4x the champion's h100 panel analog (36.62 min, job 65988184), consistent with the card's 5.25 stage-equivalents estimate being ~1.5x conservative."
+    },
+    "anchor_action": {
+      "anchor_file": "state/anchors/s4_hybrid_routing.json",
+      "updated": false,
+      "reason": "Single-seed results do not overwrite certified anchors. The stream anchor stays mf_fno_transfer_film 6.703016 [6.2185, 7.1022], 3-seed, certified 2026-07-29T14:28:45Z. This card's 5.664889 is a seed-0 point estimate under ADR 0004 and is recorded below as a provisional claim only; nothing was written to state/anchors/.",
+      "provisional_anchor_claim": {
+        "stream": "s4_hybrid_routing",
+        "anchor_type": "champion_panel_geomean",
+        "family": "fno_transolver_seq",
+        "value": 5.664888697217776,
+        "per_seed": [
+          5.664888697217776
+        ],
+        "ci95": null,
+        "provisional": true,
+        "seeds": [
+          0
+        ],
+        "source_card": "s4_hybrid_routing-B1",
+        "source_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s4_hybrid_routing/B1/eval/result_panel_s0.json",
+        "jobs": "65996887/89/93/95/97/98 (train+eval), 65996900 (aggregate)",
+        "build_commit": "4691d1fbaaa4dc9e0e6fbaf3bf607afef203404c",
+        "recorded_utc": "2026-07-29T20:00:00Z",
+        "promotion_condition": "Would become the stream anchor only after the ADR 0004 end-of-round top-3 confirmation pass (scripts/submit_seeds_2_3.sh, seeds 1-2) reproduces a 3-seed mean below 6.703016 by more than the 0.884 geomean floor.",
+        "caveat": "91.4% of the margin is one dataset (sharp__phase_field_crystal_2d) and the gap to the anchor's BEST individual seed (6.2185) is only 0.5536, inside the 0.884 floor. Treat as a candidate for the leaderboard, not as an established anchor."
+      }
+    }
+  },
   "6_analysis": null,
   "7_gap_and_future": null,
   "reanalysis_progress": null

@@ -63,3 +63,14 @@ Orchestrator adjudication of the scout's ranked candidates:
 beyond-copy sharp datasets; only ifc_poisson is N_hf=5. "Few-shot" framing
 applies to ifc_poisson alone; retrieval banks/exemplar methods are feasible
 on 5/6 panel datasets.
+
+## Batch-3 synthesis candidate (2026-07-29, Eloise prompted: invest in
+## transfer_film as stage 1)
+
+Champion (mf_fno_transfer_film) stage-1 + LF-consuming corrector (s4
+mechanism) + identity/no-harm gate at copy-LF (s6 floor). Hold until (a)
+s6-B1 200-ep result and (b) s4-B1 mechanism turns resolve the pfc stage-3
+confound. Evidence basis: s4 paired control (all gains corrector-side),
+s5 mechanism (backbone = DC+noise on 5/6 sharp sets; keep it for
+ifc_poisson/X-path, don't invest in its capacity). Owner: s4 or s6 per
+whichever mechanism the readouts favor.

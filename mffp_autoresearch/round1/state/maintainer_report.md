@@ -1650,3 +1650,118 @@
   r1- jobs; Completed cards table gains s1_poisson-B1; Flags rewritten
   around these six deltas).
 ## RUN END 2026-07-29T19:26:00Z
+
+## RUN START 2026-07-29T19:35:29Z
+- `s4_hybrid_routing-B1`: `5_actual_result` populated this walk (initial
+  analyzer SUCCESS, `handoff_initial_analyzer.md` written 2026-07-29T19:33Z).
+  `panel_geomean_skill = 5.664888697217776` (~5.665); `cratered_verdict =
+  "proceed_to_seeds_1_2"` (44% below the 10.05 cratered threshold);
+  top-level `falsification_verdict = "confirmed"` (clause NOT falsified,
+  both conjuncts fail). Decisive paired control: `base_only` reproduces the
+  H100 champion seed-0 nRMSE to 16 sig figs on 3/6 datasets — the entire
+  panel movement is corrector-attributable (pfc -71.37% = 91.4% of the
+  move, fisher_kpp -12.20%). Vs anchor -1.038 and vs paired control -1.452
+  both clear the 0.884 noise floor; vs anchor's best individual seed only
+  -0.554 (inside floor, honesty note recorded). Anchor file untouched (ADR
+  0004: single-seed point estimates never overwrite certified anchors).
+  Stage advanced to `mechanism_analysis_running`; mechanism-analyzer now
+  dispatched/in flight, no handoff file yet from it.
+- `s6_local-B1`: screen job `66001190` (5 variants x panel+guard, 2 epochs,
+  h100) COMPLETED 8m36s this walk. All 5 variants no-harm PASS on all 5
+  beyond-copy datasets (identity exactly 0.0 everywhere). Promotion rule:
+  max held-out-rho margin (band_gate 0.6480 vs scalar_gate 0.6089, margin
+  0.039) <= the 0.05 threshold -> rank-order fallback -> `local_pixel_gate`
+  promoted (pre-registered rank 1), recorded verbatim in `build_notes`
+  (screen numbers non-reportable per ADR 0007). 200-epoch seed-0
+  confirmation run submitted this walk: job `66001535`, stage ->
+  `seed0_running`. Now the round's only live r1- SLURM job (confirmed via
+  `squeue`, elapsed ~4 min at scan). (Card status `reviewed_suggest` and
+  its SUGGEST/proceed review verdict were already recorded last walk at
+  19:20:31Z; carried over unchanged this walk.)
+- `s3_warp-B1`: builder returned SUCCESS this walk (`Builder return —
+  s3_warp-B1 — 2026-07-29T19:32Z` in `state/orchestrator_flow.md`),
+  commit `4799abdec705d64e8300b18ab0650fb74e012c9b`. Contract smoke exit 0:
+  scored test_hf (NN-in-LF displacement transfer) skill 0.7013 on
+  helmholtz; oracle ladder confirmed monotone
+  1.000->0.771->0.554->0.420->0.363->0.325; rung-0 seam delta 5.55e-17; M9
+  self-test EPE 0.0602 cells. Two declared deviations flagged for the
+  reviewer: (1) EPE gates on the gradient-normal component only (aperture
+  problem); (2) the card's "<5% of unwarped" gate is unattainable by any
+  optimiser, replaced with `max(5%, 1.5x exact-planted-phi)` and justified.
+  Card status `built`, `job_ids` empty (diagnostic, no training job yet),
+  stage `review_running` — but no reviewer filesystem activity was
+  detected in the worktree this scan (freshest scratchpad files are the
+  builder's own smoke outputs, ~8-13 min before scan); review not yet
+  visibly underway, worth a closer look next walk if it remains quiet.
+- `s1_poisson-B2`: card drafted this walk (starter return
+  2026-07-29T19:29Z, 18/18, no TBDs) — 2x2 `MFFP_LADDER_SCALER
+  {shared,per_level}` x `{two_level,allpairs}` factorial plus a 5th
+  mechanism-disentangler arm `shared_reweight`; two falsification clauses
+  (F1 normalization, F2 composition); vendoring pinned to B1 commit
+  `d070f86` + 5 sha256s; cratered forewarning recorded (threshold 0.0845
+  vs point prediction 0.085). Builder dispatched and confirmed actively
+  running — `models_r1/mf_fno_ladder_norm/INSPIRATION.md` was written
+  ~11s before this scan, the freshest artifact of any live build this
+  walk.
+- `s5_tuning-B1`: mechanism-analyzer completed probe turn 3 this walk.
+  `6_analysis` now populated (was null last walk) — `reanalysis_progress`
+  advanced `turn_2` -> `turn_3`; freshest artifact
+  `reanalysis_turn_3_results.md` ~5.3 min before scan. Key mechanism
+  finding (high confidence, directly measured): on `ext__helmholtz_2d`
+  (100% of the panel movement) the cap-32 gain is entirely amplitude/tail,
+  not shape — per-sample optimal rescale nearly closes the cap-12/cap-32
+  gap; `modes_cap` is not one knob but two, and which one dominates
+  depends on whether the condition-to-field map is learnable on that
+  dataset. `falsification_postmortem`: the clause landed `not_resolvable`
+  at the observed numbers and the mechanism explains why. Surprise noted:
+  the champion's predictions on 3/4 sharp panel datasets are essentially
+  uncorrelated with the truth once the spatial mean is removed (|corr| <=
+  0.012) yet still score nRMSE 0.26-0.52. `7_gap_and_future` still null —
+  card not yet complete. Card `job_ids` still stale (lists `65988184` as
+  RUNNING, omits `65989241`) — carried over unchanged, read-only
+  observation.
+- `s2_beyond_copy-B2`: no card-level delta this walk (drafted last walk,
+  unchanged). Builder still active — `models_r1/s2_lf_residual_control/`
+  pycache mtimes ~5.5 min before scan, live, not stalled.
+- `s7_loss-B1`: still screening — one new arm result file since last walk
+  (`contract_smoke_BASE_factory_ifc.json`, ~7.2 min before scan), on top
+  of the six arm files already seen last walk. No handoff update, no
+  build_notes yet — live, not stalled.
+- SLURM view: `squeue` shows exactly one live r1- job, `66001535`
+  (s6_local-B1 seed-0 200-epoch run, ~4 min elapsed). `sacct` confirms all
+  prior r1- array-job entries unchanged and COMPLETED; no new
+  vanishing/FAILED jobs this walk.
+- Timing ledger: upserted 1 new entry this walk (49 total, was 48) —
+  `s6_local` / `s6_local_lf_corrector` screen job `66001190` (5 variants x
+  panel+guard, 2 epochs, h100, 8.6 min). Re-validated as parseable JSON
+  after write. Job `66001535` still RUNNING, not upserted (only COMPLETED
+  jobs are ledgered).
+- No abandonment trigger: no stream has 3 consecutive skip/blocked
+  batches; no stream has even reached 3 batches yet. `state/streams/`
+  directory still does not exist.
+- Transcript inbox: `state/transcripts/` still does not exist — nothing to
+  archive this walk.
+- Anchors: `state/anchors/*.json` unchanged (same 5 files, same
+  certified_utc 2026-07-29T14:28:45Z) — rendered verbatim into index.md,
+  no recomputation. Still no anchor files for `s3_warp`/`s6_local`/
+  `s7_loss` (expected, pre-analysis stage).
+- ADRs unchanged this walk: `docs/adr/0001`-`0012`, no new ADR since 0012
+  (s7_loss stream).
+- Gates unchanged: G1-G5 all carried-over PASS, no new gate activity this
+  window (`state/gates.md` mtime unchanged).
+- No card files modified by the maintainer this walk (`git status --short
+  experiment_cards/` shows only pre-existing external edits:
+  `s3_warp/batch_1/B1.json` (builder's write), `s4_hybrid_routing/batch_1/
+  B1.json` (analyzer's write), `s5_tuning/batch_1/B1.json` (mechanism-
+  analyzer's write), `s6_local/batch_1/B1.json` (orchestrator's screen/
+  promotion write), and a new untracked `s1_poisson/batch_2/` directory
+  (starter's card draft) — all external, unrelated to the maintainer,
+  which only read cards this walk).
+- index.md: regenerated (fresh timestamp; Streams table updated for
+  s1_poisson's B2 card draft + builder-in-flight, s3_warp's builder
+  SUCCESS, s4_hybrid_routing's initial analysis + part-5 population,
+  s5_tuning's turn-3 mechanism analysis, and s6_local's screen-complete +
+  promotion + 200-epoch submit; Running/pending jobs table now shows one
+  live r1- job (`66001535`) instead of zero; Flags rewritten around these
+  five deltas).
+## RUN END 2026-07-29T19:41:00Z
