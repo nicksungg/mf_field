@@ -33,3 +33,10 @@
 - 2026-07-29T06:34:06Z pulse: no-op. batch0: 31/36; final 5 tasks pending behind a deep gpu queue (253 pending jobs partition-wide), 0 failed. Waiting on fairshare.
 - 2026-07-29T06:43:58Z pulse: no-op. batch0: 34/36 done, last 2 (cahn_hilliard tail) running, 0 failed. G3 aggregation imminent.
 - 2026-07-29T06:53:56Z pulse: no-op. batch0: 34/36, last 2 running, 0 failed.
+- 2026-07-29T07:03:55Z pulse: no-op. batch0: 34/36, final 2 cahn_hilliard seeds ~30 min elapsed (~44 expected), 0 failed.
+- 2026-07-29T07:13:55Z pulse: no-op. batch0: 34/36, last 2 tasks ~34 min elapsed, 0 failed. G3 next.
+
+## 2026-07-29T14:29:11Z — G3 PASS
+- batch0 36/36, 0 failed. Anchors + noise floor certified (champion geomean skill 6.703 [6.219,7.102] @ 200ep).
+- ALERT: helmholtz noise floor 9.695 (diverging seed) — claims there unfalsifiable at smoke tier; passed to brainstormers.
+- Dispatching ALL 5 brainstormers (batch 1). s5_tuning continues the G4 chain (starter/builder/review/submit follow); s1-s4 hold after brainstormer until G4 PASS.

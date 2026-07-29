@@ -363,3 +363,82 @@
   currently RUNNING this walk vs 7 running two walks ago; queue-depth note
   updated 253->238; all other counts/structure unchanged).
 ## RUN END 2026-07-29T06:37:40Z
+
+## RUN START 2026-07-29T06:57:26Z
+- Single in-flight check: last run START 2026-07-29T06:35:26Z has matching
+  RUN END 2026-07-29T06:37:40Z (~20 min ago, closed) — no double-walk risk,
+  proceeding.
+- no card changes: cards walked 0 (`experiment_cards/` still only
+  `SCHEMA.md` + `.gitkeep`; no B*.json cards exist). All 5 streams still
+  `current_batch=1`, `current_stage=websearch_done_awaiting_G3_brainstormer`.
+  G1/G2 still PASS (state/gates.md unchanged, mtime unchanged since
+  2026-07-28T19:05).
+- G3 array job 65956106 progressed: 34/36 COMPLETED (was 31/36), 2 RUNNING
+  (tasks 31-32, cahn_hilliard seeds1-2, on hpc-24-32/hpc-25-17, ~15-16 min
+  elapsed each), 0 PENDING (was 5), 0 FAILED. Tasks 33-35 (mf_fno_pinn_transfer
+  x ifc_poisson seeds 0-2) completed since the last walk in ~50s each —
+  confirmed via `sacct -j 65956106 -P` (COMPLETED, exit 0:0). Cross-checked
+  against `squeue -j 65956106 -a -r` (only 31-32 remain, both `R`, not
+  vanished). This matches the orchestrator's own pulse log
+  (state/orchestrator_flow.md, 06:53:56Z pulse: "34/36, last 2 running").
+  G3 not yet certified (state/anchors/, state/noise_floor.json still absent
+  — aggregation happens on job completion, not yet fired).
+- Non-r1 queue: confirmed empty of new activity; historical CANCELLED jobs
+  `65958902`/`65958904`/`65960289` unchanged, out of round scope.
+- Timing ledger: upserted 3 new COMPLETED-task entries (job IDs
+  65956106_33/_34/_35: mf_fno_pinn_transfer x ifc_poisson seeds 0-2,
+  0.87/0.83/0.83 min; gpu_type p100, 200 epochs) — consistent with the
+  fast ifc_poisson pattern already seen for family 0 (tasks 15-17, ~47-59s).
+  `timing_ledger.json` now has 34 entries total (was 31); validated as
+  parseable JSON after upsert.
+- Abandonment check: no stream has any skipped/blocked batches (no cards
+  exist yet) — no abandonment; no `state/streams/*.json` files created.
+- Transcript inbox: `state/transcripts/inbox/` still does not exist —
+  nothing to archive.
+- No card files touched (`git status --short experiment_cards/` clean,
+  confirmed before and after this walk).
+- index.md: regenerated (G3 counts updated 31/36->34/36, 0 RUNNING/5
+  PENDING -> 2 RUNNING/0 PENDING; running-jobs table now shows the two live
+  cahn_hilliard tasks with node/elapsed instead of the queued-tail note;
+  "G3 close to completion" flag updated to reflect tasks moved off
+  fairshare into RUNNING; timestamps refreshed; no structural/status
+  changes to streams).
+## RUN END 2026-07-29T06:58:05Z
+
+## RUN START 2026-07-29T07:16:39Z
+- Single in-flight check: last run START 2026-07-29T06:57:26Z has matching
+  RUN END 2026-07-29T06:58:05Z (~19 min ago, closed) — no double-walk risk,
+  proceeding.
+- no card changes: cards walked 0 (`experiment_cards/` still only
+  `SCHEMA.md` + `.gitkeep`; no B*.json cards exist). All 5 streams still
+  `current_batch=1`, `current_stage=websearch_done_awaiting_G3_brainstormer`.
+  G1/G2 still PASS (state/gates.md unchanged, mtime unchanged since
+  2026-07-28T19:05).
+- G3 array job 65956106: still 34/36 COMPLETED, 2 RUNNING (tasks 31-32,
+  cahn_hilliard seeds1-2, unchanged nodes hpc-24-32/hpc-25-17), 0 PENDING,
+  0 FAILED — elapsed increased from ~35/36 min (last walk) to ~36/37 min
+  this walk, consistent with the ~44 min typical for this family's 256^2
+  tail tasks — not stalled. Confirmed via `squeue -j 65956106 -a -r` (both
+  still `R`) cross-checked against `sacct -j 65956106 -P` (RUNNING, exit
+  0:0 pending). G3 not yet certified (state/anchors/, state/noise_floor.json
+  still absent).
+- Non-r1 queue: confirmed empty of new activity; historical CANCELLED jobs
+  `65958902`/`65958904`/`65960289` unchanged, out of round scope.
+- Timing ledger: 0 new COMPLETED-task entries since last walk (still 34
+  entries, matches sacct's 34 COMPLETED tasks for job 65956106; tasks 31-32
+  still RUNNING, not yet eligible for upsert) — validated `json.load`
+  succeeds, parseable.
+- Abandonment check: no cards exist, no abandonment possible; no
+  `state/streams/*.json` files exist or created this walk.
+- state/anchors/, state/noise_floor.json: still absent (only `.gitkeep`)
+  — G3 not complete (2/36 tasks remain, both RUNNING not queued).
+- Transcript inbox: `state/transcripts/` directory does not exist —
+  nothing to archive.
+- No card files touched (`git status --short experiment_cards/` clean,
+  confirmed before and after this walk).
+- index.md: regenerated (fresh timestamp; elapsed on the two RUNNING tail
+  tasks updated ~35/36min -> ~36/37min; running-jobs note reworded to drop
+  the now-stale "moved off fairshare since prior walk" framing since that
+  transition already happened two walks ago; all other counts/structure
+  unchanged).
+## RUN END 2026-07-29T07:17:05Z
