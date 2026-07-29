@@ -655,3 +655,68 @@ No r1 SLURM jobs. Next actions all fire on agent returns.
 SUCCESS / drafted (17/17, no TBDs). Card at experiment_cards/s3_warp/batch_1/
 B1.json with do_not_promote + batch-2 warp-off-control constraint carried as
 pre-registered flags in part 4. Stage → builder_running; dispatching builder.
+
+## Builder return — s4_hybrid_routing-B1 — 2026-07-29T17:48Z
+
+SUCCESS / built (10/10). Commit 4691d1f. model.py+manifest byte-identical to
+akash family; smoke_eval.py = exactly the 2 permitted edits (upward-search
+path fix, MFFP_CTX_SOURCE env default) — git diff is 2 hunks. Contract smokes:
+helmholtz exercises real-test-time-LF branch (ctx_source=real_lf, alpha=0 →
+exact FNO collapse); ifc_poisson reproduces brainstormer's numbers exactly
+(0.43857 vs base 0.49000, -10.5%, alpha=1.50); resume bit-identical with
+train_seconds 258.6→0.85. Deviations sane (per-dataset jobs with ledger-based
+walltimes; cache-only aggregate job afterok; training artifacts in eval/
+results because the card FORBIDS ROUND1_EVAL_RESULTS; 256² memory
+SLURM-verified-only, analytic ~1-2GB vs 80GB). Stage → review_running;
+dispatching code-reviewer.
+
+## Brainstormer return — s6_local-B1 — 2026-07-29T17:50Z
+
+SUCCESS / slot_filled (12/12). MODEL card, first ADR-0007 propose-many design:
+trust-gated LOCAL corrector on the real LF field — y = LF_up + G*Delta with
+G exactly 0 at init (model IS copy-LF at initialization; only round-1 model
+with this property; s4's gate collapses to the champion, floor ~6.7, not
+copy-LF). 5 ranked variants (per-pixel gate / scalar gate / D2 frozen-adapter
+with F-Adapter opposing prediction / per-band gate on s2's band grid /
+pointwise control isolating locality-as-kernel), one substrate, env-knob
+selection; ONE contract screen whose primary function is the no-harm
+assertion (skill<=1.02 all 5); promotion by held-out rho with 0.05 margin
+else pre-registered order. Gaming hazard handled as directed: readout =
+contribution_d (skill_id - skill_trained) + per-band profile, thresholds
+support>=0.10 / refute<0.04, both exceed all rescaled seed-spread components.
+Verified first-hand: champion lifts coordinate grid only (no field input) —
+H2 literal reading untestable, forcing the D3/C1 pivot. Mentor correction
+honored (trained off-repo, details unavailable; differentiating axes named).
+ifc_poisson no-LF fallback pre-registered. AGMF-Net 403 threat carried to
+builder. Stage → starter_running; dispatching starter.
+
+## Brainstormer return — s7_loss-B1 — 2026-07-29T17:53Z
+
+SUCCESS / slot_filled (11/11). MODEL card, ADR-0007: objective-
+reparameterization on the frozen champion substrate. Load-bearing idea:
+rel_i² = (1-cos²) + (g-cos)² EXACTLY (verified 4.4e-16) — shape+gain
+factorization of the scored metric; L_amp(λ) is a 1-param family with λ=1 =
+the metric itself. Mechanism target: smoke_eval.py:96 global-scaler MSE vs
+408x per-sample norm spread + M5a systematic under-gain. 5 arms (A1a λ=4 /
+A1b auto-balanced / A2a low-band x4 / A2b mild / A0 rel-L2 control) + A-def
+default-equivalence. Screen: equivalence to 1e-9, panel + guard at 2 ep.
+Promotion: validity gate → FIXED rank order (not screen numbers) → gross
+override at <=0.5x only; all-die => A0 promoted and card reframed as
+measurement. Falsification on pfc >=1.151 and/or cahn_hilliard >=0.553 (both
+with measured oracle headroom), secondary geomean >=0.884 WITH leave-
+helmholtz-out also improving; helmholtz qualitative; trade-offs pre-declared.
+Stage → starter_running; dispatching starter.
+
+## Starter return — s6_local-B1 — 2026-07-29T17:54Z
+
+SUCCESS / drafted (15/15, no TBDs; parts machine-verified as report
+substrings). Card at experiment_cards/s6_local/batch_1/B1.json (18 env knobs,
+family_dir models_r1/s6_local_lf_corrector). Stage → builder_running;
+dispatching builder.
+
+## Pulse — 2026-07-29T17:55Z
+
+pulse: no-op. All 7 streams have agents in flight (s1/s2/s5 mechanism, s3_warp
++ s6 builders, s4 reviewer, s7 starter). No r1 SLURM jobs. Next SLURM
+submissions queue up on: s4 review PASS (6 per-dataset jobs + aggregate),
+s3_warp build+review (1 diagnostic job), s6/s7 builds (screen jobs first).
