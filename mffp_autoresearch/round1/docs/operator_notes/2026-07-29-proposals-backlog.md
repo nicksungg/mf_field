@@ -92,3 +92,16 @@ whichever mechanism the readouts favor.
   winning methods are deterministic/data-light). Re-arguable only if batch-3
   plateaus and residual distributions become the question; must address the
   pre-falsification explicitly.
+
+## Record corrections from s1-B3 websearch (2026-07-30)
+
+- **The 0.018 "IFC-GPODE stretch bar" is mis-attributed** (ADR 0002 and
+  program.md §1): the benchmark paper's 0.018 is IFC-ODE2 EXTRAPOLATING to a
+  128² mesh (m=2.14), not IFC-GPODE at the m=1/64² setting the round scores;
+  IFC-GPODE's own performance "drops when m>1". ADR immutable in-round —
+  0.036 stays the denominator; correct the stretch-goal framing between
+  rounds (source: ar5iv fetch of 2207.00678).
+- **Infrastructure**: ar5iv.labs.arxiv.org/html/<id> resolves pre-2024 arXiv
+  papers that have no /html endpoint (this batch: 12/12 fetches, 0 failures).
+  Also: summariser digit-rendering is unreliable — table digits need two
+  independent renderings.

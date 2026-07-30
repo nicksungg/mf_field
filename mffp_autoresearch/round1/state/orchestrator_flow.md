@@ -1853,3 +1853,373 @@ open.
 ## Pulse — 2026-07-30T02:24Z
 
 pulse: no-op. 13 PENDING, no movement.
+
+## RESULT WAVE — all 8 jobs resolved — 2026-07-30T02:58Z
+
+Backfill worked: 6 COMPLETED + 2 screens FAILED (both diagnosed).
+- s6-B1 GUARD200: fluid 0.2437 / heat_local 0.0359 / sod_1d 0.0278 — all far
+  below copy-LF; MISSING_200EP_GUARD resolved; B1 claim guard-complete
+  (build_notes provenance entry).
+- s7-B1 screen: 5/5 arms valid, clause 2 → A1a promoted (= recipe, no
+  amendment). Gate-1 DIVERGED-at-1e-9 ADJUDICATED pass-with-exception: 5/6
+  datasets exact 0.0 incl. both card-named; sole pfc delta 3.4e-6 = GPU
+  nondeterminism (corroborated by s6-B2's C3 2.2e-7 weight delta same wave).
+  Main run: 66023542.
+- s2-B2 screen: 4/4 arms survived; pinned rank-1 lf_resid_fno promoted (F1
+  guard applied). Non-reportable glimpse: trained arms <1 on allen_cahn
+  (0.26) and fisher_kpp (0.66) at 2 ep. Main run: 66023543.
+- s5-B2 screen: DEFAULT-EQUIVALENCE BLOCKER REAL — helmholtz a_def 22.712 vs
+  base 22.613 (0.44% rel, far above nondeterminism) exactly where the builder
+  could not verify locally. NO promotion/run. Debugger (ALGO 1/5).
+- s6-B2 screen: C3 pairing tripwire fired correctly (max|dw| 2.2e-7 GPU
+  nondeterminism vs bit-identity requirement). Debugger (ALGO 1/5).
+- s4-B2 screen: INFRA — _arm_env.sh sourced via $0 → SLURM spool dir. Doomed
+  afterok chain scancelled (66022846-50). Debugger (INFRA, no ALGO count).
+- s1-B2 (5:36) + s3_warp (6:26) clean → initial-analyzers dispatched.
+
+## s1-B2 SUCCESS CRITERION 1 (provisional) — 2026-07-30T03:05Z
+
+Initial analysis: allpairs__per_level skill 0.9514 (nRMSE 0.03425) — BELOW
+the paper bar 0.036. FIRST sub-paper-bar ifc_poisson number of the round
+(provisional-single-seed). F1 CONFIRMED +4.864 skill = 20.3x floor (beats
+even the optimistic prediction); F2 CONFIRMED +1.230 = 5.1x floor (the
+card's PRIMARY extrapolation predicted F2 would fire — the alternative one
+verified; honest prediction bookkeeping). NOT cratered (forewarning did not
+materialize — 2.47x better than point prediction). B1 continuity ~250x
+inside gate. shared_reweight read via the S1-mandated ftgt sweep: shared
+arms REPRESENT only 4-5% of the needed 75.7x dynamic range; per_level needs
+only 1.8x and delivers 104% — loss-weighting channel ruled insufficient;
+per_level's two channels (gain representation vs unit continuity) deferred
+to part 6. Guard obligation flagged by analyzer → guard contract job
+submitted: 66023672. Mechanism analyzer dispatched. Stage →
+mechanism_analysis_running.
+
+## s4-B2 debug return — 2026-07-30T03:08Z
+
+INFRA fixed_and_relaunched (ALGO stays 0/5). Spool-path defect reproduced
+deterministically in all four sbatch scripts (invisible to bash -n and to
+login-node smokes — the sibling file IS adjacent there). SECOND latent defect
+found: submit.sh parsed no arguments — my earlier --time 02:00:00 override
+was SILENTLY DROPPED (sacct: the failed screen ran at 01:00:00); the flow-log
+entry claiming it applied is hereby CORRECTED. submit.sh now errors on
+unknown args; override verified real on the new chain (66023665 screen @2h →
+66023666 array → 66023667/8 guards → 66023669/70 aggregates). Zero-artifact
+state verified pre-relaunch (no quarantine needed). Commit 7065955. Noted:
+screen may legitimately cache-hit 2 datasets; V3 keeps teeth via the --out
+JSON.
+
+## Initial analysis — s3_warp-B1 — 2026-07-30T03:10Z
+
+analyzed_single_seed (diagnostic; do_not_promote honoured; the 5-dataset
+geomean explicitly marked not-a-panel-score). CEILINGS at the learnable C16
+rung: 76.9-85.3% of copy-LF error is warp-removable on allen_cahn/
+cahn_hilliard/pfc; 52% fisher_kpp; 58% helmholtz (report-only). Legs: A NOT
+falsified (warp opportunity real, beat predictions 3/4); B does not fire
+(with post-debug bias correction; pfc uncounted — certified non-sensitive
+mask); C FIRES (topology mismatch real: fisher_kpp 100% of samples!); D does
+not fire (training-free NN transfer captures 63-99% of ceiling — the
+displacement is LEARNABLE). ANOMALY A1 (top mechanism probe): a near-constant
++0.5-HF-cell isotropic offset carries 26-98% of displacement energy on all 4
+sharp sets, resolution-independent, absent on helmholtz, reproduced by
+independent TV-L1 — smells like a REGISTRATION CONVENTION (align_corners/
+zoom half-pixel) in the copy-LF construction rather than physics. If so:
+copy-LF itself is systematically half-cell misregistered on sharp sets — a
+benchmark-level finding affecting the reference and every LF consumer.
+Batch-2 rec: D1 card on cahn_hilliard + pfc with a constant-displacement-only
+control arm binding. Stage → mechanism_analysis_running; dispatching with A1
+cause diagnosis as turn-1 priority.
+
+## s5-B2 debug return — 2026-07-30T03:29Z
+
+ALGO 1/5 fixed_and_relaunched. ROOT CAUSE: device-mixed provenance, not
+family code — screen omitted --no_cache; gate compared a CPU cache hit (base)
+vs fresh CUDA (A-def). Family arithmetic verified BIT-EQUAL (scale floats to
+the hex digit). REFINEMENT with round-wide import: this family's GPU runs are
+NOT bitwise reproducible (1.9e-4 rel helmholtz between two identical fresh
+same-job H100 runs; 6e-6 heat_local; 0.0 sod) — bitwise gates are only
+decidable on CPU; the fixed screen pins the equivalence pair to CPU +
+private cache + --no_cache everywhere. ATTEMPT-0 SCREEN NUMBERS VOID
+(device-mixed across arms too). 42 stale done-state ckpts quarantined
+(code_hash unchanged — they WOULD have silently reloaded). Re-run: 66024808.
+RETROSPECTIVE NOTE on my s7 gate-1 adjudication: the refined explanation is
+that s7's screen (also no --no_cache, per its reviewer) compared CPU-cached
+pairs (exact 0.0, still a valid CPU-vs-CPU code-path comparison) except pfc
+where one side was fresh CUDA — same artifact class. Adjudication conclusion
+(pass-with-exception) STANDS, with the cleaner causal story. The s7 main run
+proceeds; its 200-ep results are fresh-computed and unaffected by cache
+comparisons.
+
+## s1-B2 COMPLETE (mechanism registered) — 2026-07-30T03:59Z
+
+12/12; 2 tools promoted (residual_gain_learnability.py, interface_locality_
+profile.py). CHANNEL SEPARATION: per_level heals (b) per-level target
+standardization (3.23x isolated); the S1 "unit discontinuity" (c) is
+ANTI-CAUSAL — the 42x jump is a partial repair (killing it costs 9.9-111x);
+(a) loss-weighting already dead. B1 part 6 AMENDED: the net CAN represent
+the 75.7x law (shared_hf delivers 96.1%) at 1.32x cost — nuisance and signal
+share the f_tgt amplitude budget; ratio-transfer extrapolation invalid when
+factors share a DOF (why part 4's F2 sign was wrong). s6 RECONCILIATION:
+this is NOT defect correction (no field input; test split has no LF; f_src
+moves prediction 0.89%) — the ladder supplies RESOLUTION-AXIS SUPERVISION IN
+TAG SPACE; 70 new condition points + level-graded multiplicity (~55% of F2),
+working only after amplitude equalization. REMAINING HEADROOM: 57% of the
+0.03425 is per-sample gain, LINEAR in X (R² 0.919) → LOO oracle skill 0.675;
+blocker = 6 params vs 5 HF samples → part-7 spec: gain head g(X) fitted on
+the 175 POOLED LADDER ROWS, frozen base, one clause. Explicitly ruled out by
+measurement: interface losses, CNN branches, LF correctors, mode capacity.
+Honest status: criterion 1 PROVISIONALLY met (seed 0); stretch 0.018 at
+1.90x; guard OWED (job 66023672 queued). Batch → 3; dispatching websearcher.
+
+## s1-B2 guard resolved — 2026-07-30T03:59Z
+
+Job 66023672 (1m19s): fluid 1.43, heat_local 2.40 (marginal >2x flag —
+recorded with the established tier-artifact caveat; not card-attributable
+substance), sod_1d 0.79. Guard obligation closed; B2's provisional
+criterion-1 claim now fully documented.
+
+## s6-B2 debug return — all three wave-failures fixed — 2026-07-30T04:02Z
+
+ALGO 1/5 fixed_and_relaunched. Root cause confirmed as cuDNN conv-backward
+nondeterminism (~2x float32 eps, unstructured across 43/45 tensors — a knob
+divergence would be structured and O(1)); fix = STRUCTURAL borrowing (option
+a): trust_head_circ loads circ_repair's trained stages 0-2 with full meta/
+scaler/hash validation — C3 holds by construction, tripwire proven still
+armed (N1: the exact 2.235e-7 drift still raises). Bonuses: reviewer F2
+applied (exit ${GATE_RC:-0}); latent requeue-retrain defect removed.
+Verified: sha-equal pairing on 2 datasets incl. the trained path (alpha=1.5);
+b1_replica bit-identical to pre-fix; borrower 811s → 106s. Quarantine + F1
+mkdir done. Re-screen: 66024957. Commits c3c4a84/d083d44.
+
+ROUND STATE: all three wave failures fixed+relaunched; s1-B2 COMPLETE (crit-1
+provisional + guard closed); s3_warp in mechanism (half-cell anomaly); s1-B3
+websearch running. Cluster: s4-B2 chain, s5-B2 re-screen, s6-B2 re-screen,
+s7 + s2-B2 main runs.
+
+## s3_warp-B1 COMPLETE — REGISTRATION DEFECT CONFIRMED IN CLOSED FORM — 2026-07-30T04:15Z
+
+Mechanism register 12/12; tool promoted (registration_audit.py). A1 =
+hypothesis (a) CONFIRMED closed-form: copylf_prediction's cell-centred zoom
+on node-sampled data → fixed (r-1)/2-cell misregistration on the whole sharp
+panel (helmholtz: ±1.5-cell stretch variant). FREE WIN (zero params): skill
+0.116/0.253/0.466/0.497 by fixed shift; node-aligned band-limited → pfc
+7.1e-06 = NO FIDELITY GAP under a correct reference. Skill denominator
+inflated 2.0-8.6x. s6-B1's LSI = 87-98% the analytic phase ramp; genuine
+residual concentrates on cahn_hilliard (LSI-refractory 0.44; oracle-warp-
+over-fix ceiling 83-85% there vs 1-17% elsewhere). Legs A/B INVERT
+re-referenced (postmortem recorded). MENTOR NOTE WRITTEN:
+docs/operator_notes/2026-07-30-benchmark-registration-note.md (fix between
+rounds; round-1 metric stays frozen; contrasts remain valid; failure claims
+strengthen; s6 claims reinterpreted not retracted). s3_warp-B2: NARROW D1
+card cahn_hilliard-only with constant-displacement arm MANDATORY +
+corrected-reference sidecar. SECOND git-checkout card incident (recovered
+byte-exact; disclosed) — the warning is now a standing tools/index.md entry.
+Batch → 2; dispatching websearcher.
+
+## Websearch return — s1_poisson-B3 — 2026-07-30T04:15Z
+
+SUCCESS (5 its, 9/9, ZERO fetch failures via the ar5iv route). Verdicts:
+(i) gain-head class preempted-but-open — every fetched MF scale estimator
+fits against HF observations; OPEN = supervising the law on auxiliary ladder
+levels via the frozen operator's own residuals; (ii) exact construction
+"not previously reported" (narrow, weak claim); (iii) STRETCH BAR CORRECTED:
+0.018 = IFC-ODE2 extrapolating to 128², NOT IFC-GPODE at the scored setting
+(ADR 0002 immutable in-round; operator note written); (iv) LOO headroom
+0.02431 = upper bound only (small-N calibration overfitting warning).
+Adversarial prior AGAINST transfer carried (co-kriging fits per-level rhos):
+mandatory instrumentation = per-level gain-law coefficient table. Effect
+budget honest: available 0.0099-0.0113 nRMSE vs floor 0.0086 — tight. Stage
+→ brainstormer_running; dispatching.
+
+## Brainstormer return — s1_poisson-B3 — 2026-07-30T04:32Z
+
+SUCCESS / slot_filled (12/12). Gain-head card: log g = a_f + b*X — slope from
+ladder levels 8/16/32 (170 rows), intercept from the 5 HF rows (the open MF
+composition). 5 arms one job (~5 min); head fit CLOSED-FORM (no RNG); G1-G3
+share G0's ckpt (paired). F1 primary (>0.240 skill vs frozen base), F2
+composition (vs the literature's HF-only fit). HONESTY EXEMPLAR: modal
+prediction = F1 FALSIFIED (0.47x floor; fires only if ladder law explains
+>=0.798 of test gain variance vs 0.919 achievable-on-test) — stated in part
+4 in advance; the per-level coefficient table + leave-one-LEVEL-out R²
+decides the mechanism either way. Adversarial prior converted to arm G3.
+Builder hard rule owed: no test target in head fit or lambda selection.
+Stage → starter_running; dispatching.
+
+## Starter return — s1_poisson-B3 — 2026-07-30T04:36Z
+
+SUCCESS / drafted (17/17, no TBDs; modal-failure prediction + 2x2 table +
+mechanism decider all verbatim; anchor tension transcribed visibly). Stage →
+builder_running; dispatching builder.
+
+## Websearch return — s3_warp-B2 — 2026-07-30T04:50Z
+
+SUCCESS (5 its, 6/6, 59 URLs verified). Verdicts: (i) narrow CH warp-then-
+correct = open in the ONE-SIDED instance only (displacement from LF+cond, no
+target at inference — registration is pairwise, mesh-nets output nodes, MF
+fusion is value-space); (ii) single-interpolation composition PREEMPTED
+(JUBW 2017 — comply and cite); (iii) warp-vs-correction attribution:
+unreported anywhere → control arm, not citation. Design gifts: residual
+0.64-0.74 cells is sub-voxel → single-scale suffices; SUPERVISED warp
+targets from B1's own train-split oracle phi are legal (ADR-0009-safe) and
+beat self-supervision by -80% EPE in the literature; U-Net heads fail on
+untextured bulk (CH's matrix!); inverse-consistency = diagnostic not loss
+(many-to-one topology); phase-field displacement metric must be re-derived
+in-repo. Stage → brainstormer_running; dispatching.
+
+## Brainstormer return — s3_warp-B2 — 2026-07-30T05:05Z
+
+SUCCESS / slot_filled (12/12). One-sided band-limited displacement head (FNO
+enc on raw LF + cond → 512 Fourier coeffs, JUBW single resample) + s6-class
+corrector, cahn_hilliard only, 7 arms (1 scored + 6 ref_*), 5 hard-stop
+seams. Legs A-D incl. Leg B' = MY suggested clause pre-registered AS
+ARITHMETICALLY UNATTAINABLE with proof (max margin 0.47 < 0.553) — a mentor-
+facing exhibit of floor-convention degeneracy on copy-LF-referenced sets;
+Leg B (0.20 > certified spread 0.192) carries the science = capture >51% of
+the certified oracle ceiling. Leg C mechanism-honesty (a pass with tiny phi
+= intensity correction mislabelled). B1's saved p_train must NOT be reused
+(fitted on the misregistered image). Stage → starter_running; dispatching.
+
+## Starter return — s3_warp-B2 — 2026-07-30T05:09Z
+
+SUCCESS / drafted (18/18, no TBDs; Legs A-D + B'-unattainability proof
+verbatim; vendoring provenance in recipe). Stage → builder_running;
+dispatching builder.
+
+## 529 — s1-B3 builder resumed at the finish line — 2026-07-30T06:19Z
+
+Single transient 529 (died at "prepare the commit"). Resumed. If a wave
+recurs, the serialized queue-head protocol from last night reapplies.
+
+## 529 — s1-B3 re-failed; wave protocol re-engaged — 2026-07-30T06:23Z
+
+Second consecutive 529. Holding resumes to pulse cadence (s1-B3 = queue
+head; watch s3_warp-B2 builder for the same fate). SLURM chains unaffected.
+
+## 529 — s3_warp-B2 builder also down — 2026-07-30T06:23Z
+
+Both builders now in the deferred queue (s1-B3 at head, near-complete;
+s3_warp-B2 second, mid-contract-smoke). Pulse-cadence resumes, one per pulse
+until the wave clears.
+
+## PULSE — result wave landed + 529 queue-head resume — 2026-07-30T07:15Z
+
+All five SLURM chains COMPLETED 0:0 (66023542 s7 main 37m; 66023543 s2-B2
+main 17m; 66023665-70 s4-B2 full chain incl. 13-task array; 66024808 s5-B2
+re-screen; 66024957 s6-B2 re-screen). Actions this pulse:
+
+1. **529 queue head resumed**: s1-B3 builder (SendMessage; finalize handoff
+   + atomic commit + card mechanics only, reuse artifacts). s3_warp-B2
+   builder next pulse if the head survives.
+2. **s5-B2 re-screen READ (orchestrator duty, 3 guards)**: (a) default
+   equivalence now BITWISE PASS on helmholtz + ifc_poisson with fresh runs —
+   attempt-0 "0.44% divergence" confirmed as device-mixed cache provenance;
+   (b) A0 finite everywhere; (c) A4 gm 33.43 = 1.98x A0 < 3x broken bar →
+   survives (ifc_poisson 1405.8 noted; irrelevant, rank 4). A-def "CRASHED"
+   row = renderer mislabel for a SKIPPED redundant panel leg (env-unset ==
+   maxabs == A0; its guard+equiv legs ran and match A0). Promotion per fixed
+   rank: **A2 (zscore)** = recipe arm, no amendment. Recorded in card BEFORE
+   submit. Main seed-0: **66056499** (running).
+3. **s6-B2 re-screen READ (no-harm duty)**: all_pass true, 0 failures. C3
+   pairing sha-equal per dataset (structural borrow holds); tripwire armed;
+   V2 enforced PASS (lsi_ctrl alpha→1.0 sharp, 0.0 helmholtz); identity
+   floor exact; no-harm max skill 1.02. V1 ifc_poisson dev 7.8x = expected
+   contract-tier artifact (2ep vs B1 200ep), reported-not-enforced. Sweep
+   submitted: **66056503** (--time 02:00:00, ~100 min estimate). REMINDER
+   pre-logged: on completion run/read 02_verify_gates.py →
+   validity_gates_s0.json FIRST; all_pass false = ALGO debugger before any
+   C1/C2/C3 contrast.
+4. **Initial-analyzers dispatched** (3, concurrent): s7-B1 (A1a promoted;
+   gate-1 adjudication stands — cache provenance), s2-B2 (lf_resid_fno
+   promoted; blend-w bias caveat carried; floors read as ref_*), s4-B2
+   (pure gate effect = legs.oof vs legs.b1_insample ONLY; V2 read on
+   fisher_kpp; missing/truncated JSON = RESOURCE flag not card-fail).
+
+Stages: s2/s7/s4 → initial_analyzer_running; s5/s6 → seed0_running.
+Queue: 66056499 RUNNING, 66056503 PENDING(Priority). Builders: s1-B3
+resumed (canary), s3_warp-B2 still deferred.
+
+## 529 WAVE CLEARED — s1-B3 built; s3_warp-B2 resumed — 2026-07-30T07:25Z
+
+Canary survived: s1-B3 builder returned SUCCESS/built (commit 57c2457,
+14/14 checklist; all five recipe pins byte-verified pre-edit; B2-continuity
+digit-exact to 17 digits; TestTargetFirewall + positive leak control both
+drilled; 7-step resume drill incl. G1-resumes-G0). Builder deviations
+disclosed: (1) staged byte-identical cp instead of literal shared ckpt root
+(avoids per-arm JSON overwrite of the mandatory coefficient table; sha
+asserted per arm); (2) heat_local guard leg scripted-not-run (login node);
+(3) score-neutral choices in build_notes #13. → code-reviewer dispatched
+(adversarial focus: test-target isolation of the closed-form head fit).
+s3_warp-B2 builder resumed (second in queue) from the contract-smoke point.
+Stages: s1_poisson → reviewer_running; s3_warp → builder_running.
+
+## Initial-analyzer return — s2_beyond_copy-B2 — 2026-07-30T07:40Z
+
+SUCCESS (6/6). lf_resid_fno, 5-dataset beyond-copy geomean skill **0.380264**
+(s0, 200ep). Skills: pfc 0.01836, allen_cahn 0.28728, cahn_hilliard 0.45323,
+fisher_kpp 0.80419; helmholtz 4.13597 (loses; substrate-sanity leg short by
+0.014 = 0.14% → recorded not-resolvable, report-only per clause). NOT
+cratered; falsification clause NOT fired (both primary legs clear with
+margin; Class-B no-harm holds). Guard: heat_local/fluid clean; sod_1d
+FLAGGED 2.433x — champion-fallback 1-D path at contract tier (mirrors
+s1-B2's heat_local tier artifact; guard at report tier unmeasured — noted,
+not chased). cahn_hilliard heavy tail (per-sample std 4.6x mean). Blend-w
+caveat carried verbatim. ADR 0004: no seeds 1-2 now (analyzer's
+proceed_to_seeds_1_2 = cratered-rule output, deferred to round end).
+→ mechanism-analyzer dispatched; KEY question = registration-fix share of
+the win (esp. pfc 0.018 vs the ~7e-6 node-aligned floor) vs genuine
+correction; helmholtz failure diagnosis; tail concentration.
+Stage → mechanism_analyzer_running.
+
+## Initial-analyzer return — s7_loss-B1 — 2026-07-30T07:55Z
+
+SUCCESS (6/6). A1a (rel-error objective, λ=4), s0, 200ep. Panel geomean
+6.2413 vs anchor 6.7030 BUT leave-helmholtz-out REGRESSES 1.556 — the whole
+move is helmholtz-only, and that "win" is the undershoot twin of the
+champion's 620% overshoot (5th data point for the amplitude/normalization
+theme). allen_cahn TOTAL COLLAPSE (skill 61.998, 100/100 rel-L2>=0.9, g_med
+0.0275). pfc/cahn_hilliard bimodal (gain right/shape destroyed on the
+collapsed mode). Falsification clause FIRED verbatim (all 3 conjuncts):
+champion's sharp-2D excess error NOT attributable to the global-scaler MSE
+objective — s7 lever falsified at the objective level. CRATERED (3rd limb).
+Premise (hf_norm_spread) measured ABSENT on primary targets. Guard: no
+arm-attributable regression (heat_local 44.7x flag = substrate/tier
+property, substrate itself 49.3x). Loss-metric identity verified to 4e-14.
+→ mechanism-analyzer dispatched (collapse basin, bimodality separator,
+undershoot artifact, hf_norm_spread design rule). Stage →
+mechanism_analyzer_running. s7 batch-2 design will need the design rule
+before any second loss card is considered.
+
+## Review + submit — s1_poisson-B3 — 2026-07-30T08:10Z
+
+Reviewer: **SUGGEST**, submit as-is. Test-target isolation survives
+adversarial audit BY CONSTRUCTION (4 live uses of test target, none in
+training/selection; closed-form PRESS over train rows only; gain_head.py
+imports neither torch nor loaders; derived-scalar route closed by
+fit_rows_are_train_rows). B2-continuity bit-verified 17 digits. Staged-cp
+deviation justified (score_panel out_json collision proven). S-items: S1
+heat_local guard leg unrun (closing now on GPU), S3 submit via wrapper only
+(done), S4 --time card-locked. ANALYZER OBLIGATION pre-logged: re-read
+gain.per_level_coefficient_table[*].std_log_g_over_b2_test_gain_std at
+200ep BEFORE interpreting the mechanism-decider table (<1 ⇒ a G1 null is
+base-overfit artifact, not physics); 200-ep validity gate (0.030825-
+0.037675) is post-hoc, not script-asserted. Submitted: main **66058189**
+(running), heat guard **66058194**. Stage → seed0_running.
+
+## Initial-analyzer return — s4_hybrid_routing-B2 — 2026-07-30T08:25Z
+
+SUCCESS (6/6). Panel geomeans: sparse 5.4102, dense 3.7406 (s0). C1
+**CONFIRMED** — OOF gate protocol real: ch 0.48763→0.31925 (34.5%, 3.47x
+floor) at alpha_oof=1.0; pfc alpha prediction essentially exact (0.99525 vs
+0.9944) and IMPROVED 70.8% instead of the predicted downside. C2 trigger
+FIRED — in-run one-scalar control degenerated to a=1.0 (=copy-LF)
+everywhere; dense beats it nowhere. C3 FALSIFIED — attention 6.24x worse
+than zero-param LSI on fkpp, BUT skill 0.7676 < 1 (first sub-1 attention
+number; favourable contradiction of part 4). Conjunction not fired →
+attention retirement NOT licensed. A1 CRITICAL: stage-3 joint fine-tune
+DEGRADES +20-28% wherever kept; its keep test still in-sample — the same
+defect the card repaired at the gate, one stage downstream. Guard:
+heat_local flagged both arms (within-lineage 1.6-2.0x regression, chunking
+suspect 16384>4096); fluid/sod_1d sub-1 at contract tier. V3 seam 0.475% =
+RESOURCE/nondeterminism. → mechanism-analyzer dispatched (stage-3 OOF-flip
++ panel cost; top-band 2x failure vs chunking; cross-branch ~100% finding
+vs 2511.06294; dense-gap-as-registration question; batch-3 ROUTER
+implications). Stage → mechanism_analyzer_running.

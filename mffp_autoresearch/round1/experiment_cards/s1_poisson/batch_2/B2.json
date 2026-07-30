@@ -77,7 +77,7 @@
       "_sbatch": "partition gpu, --gres=gpu:h100:1 (ADR 0005), --time=02:00:00; B1 ran 4 arms in 4.45 min, so 5 arms is ~6 min (5% of the request)."
     }
   },
-  "status": "reviewed_suggest",
+  "status": "complete",
   "skipped_reason": null,
   "reopen_candidate": false,
   "scripts_path": {
@@ -92,7 +92,8 @@
   },
   "build_commit": "21fdcdade463a4ceebb52a80d329790d8a401af7",
   "job_ids": [
-    "66008912 (seed 0, 5 arms serial: 2x2 factorial + shared_reweight)"
+    "66008912 (seed 0, 5 arms serial: 2x2 factorial + shared_reweight)",
+    "66023672 (guard-set contract run, analyzer-flagged obligation)"
   ],
   "logs": {},
   "build_notes": [
@@ -104,7 +105,12 @@
     "BUILD TRAP 1 (arm-invisible ckpt paths) extended to the SCALER dimension and drilled. (a) The family writes <ckpt_dir>/mode_<MFFP_LADDER_MODE>__scal_<MFFP_LADDER_SCALER>/last.pt and stores BOTH ladder_mode and ladder_scaler in the ckpt meta; (b) scripts/01_train_eval.sh exports a per-arm ROUND1_EVAL_RESULTS=<outputs>/eval/results_<tag> (recipe._sweep verbatim). Drill (<wt>/scratchpad/resume_drill.sh, log resume_drill.log): (i) a 4-epoch allpairs/per_level run SIGTERM'd during the joint stage left meta {epochs_target: 4, grid: [64,64], ladder_mode: allpairs, ladder_scaler: per_level, seed: 0, n_rows_total: 280, stage: joint, epoch: 1}; (ii) the re-run printed '[resume] mid-run checkpoint: mode=allpairs stage=joint epoch=1/4' then '[resume] joint[allpairs|per_level] continues from epoch 1/4' and finished exit 0 (nRMSE 0.148451) -- no restart from epoch 0; (iii) META GUARD on the new dimension: the per_level checkpoint planted under mode_allpairs__scal_shared was refused with '[resume] checkpoint config mismatch (epochs/grid/ladder_mode/ladder_scaler: got allpairs/per_level, want allpairs/shared); training fresh'; (iv) MFFP_LADDER_SCALER=bogus exits 1 with an explicit error instead of defaulting.",
     "SCORE-NEUTRAL INSTRUMENTATION (card part 3 item 4) verified against the card's own verifiable numerics, all read back from the committed smoke JSONs (key `normalization`, flattened to the JSON top level by finalize_and_write). shared_scaler_S = 0.07714622467756271 (card: max|Y_all| = 0.077146); scaler_hf = 0.0018356895307078958 (card: 0.0018357); level_scaler = {8: 0.077146225, 16: 0.023720205, 32: 0.006939544, 64: 0.0018356895}; stage-1 rows by target level in the 280-row allpairs set = {8: 100, 16: 100, 32: 60, 64: 20} (card: 100/100/60/20) and 110 rows = {8: 100, 64: 10} for two_level; measured consecutive per-level RMS ratios 4.3788 / 4.1957 / 4.1198 (card: 4.379 / 4.196 / 4.120, i.e. the empirical ~h^2 law demanded by prior-art verdict (ii) -- NOT hard-coded), end-to-end 75.69x (card 75.7x); shared_reweight raw weights {8: 1.0, 16: 10.5777, 32: 123.5855, 64: 1766.1635} with raw mean 156.772 and normalized {0.0063787, 0.0674720, 0.7883134, 11.2658062}, mean(w) = 1.0000001 in float32, dynamic range 1766.16 (card: 1 / 10.6 / 125 / 1766, mean 157.1, normalized 0.0064 / 0.0675 / 0.796 / 11.24, range ~1766 -- the card's '125' for fid 32 is 123.59 to full precision, a rounding difference in the card text, not a defect). The f_tgt output-RMS sweep over {0, 1/3, 2/3, 1} runs after the scored prediction and after the timing/peak-memory reads, in eval mode under no_grad, consuming no RNG; at 2 epochs its ranges are allpairs__shared 2.14x, allpairs__per_level 1.67x, allpairs__shared_reweight 1.10x (plumbing only -- B1's production T2 value was 3.4x). B1's preds_test.npz dump is carried unchanged.",
     "SLURM scripts at <wt>/scripts/, all three `bash -n` clean, every path absolute (no relative paths, verified by grep). 01_train_eval.sh takes SEED=$1 and runs the FIVE recipe.env._arms serially, one score_panel.py call each with --datasets ifc_poisson --epochs 200 --seed $SEED, --env MFFP_LADDER_MODE=<m> MFFP_LADDER_SCALER=<s> (ONE flag, two values) and --out result_ifc_poisson_<tag>_s$SEED.json, each under its own ROUND1_EVAL_RESULTS, each followed by the env-guard assert. submit.sh submits seed 0 only (ADR 0004 strict single-seed; recipe.seeds = [0]); submit_seeds_2_3.sh exists for the end-of-round top-3 confirmation only. Headers per ADR 0005 and recipe._sbatch: partition gpu, --gres=gpu:h100:1, --time=02:00:00, --requeue, --exclude=hpc-93-36, --mem=32G, --cpus-per-task=4, job name r1-s1_poisson-B2-s<seed> (set by the submit wrappers, which is why 01_train_eval.sh must never be sbatch'd directly), logs under <outputs>/s1_poisson/B2/slurm/. --time justified by state/timing_ledger.json: the s1_poisson B1 entry is 4.47 min for 4 arms of this same family at 200 epochs on h100, so 5 arms is ~5.6 min, about 5% of the request. The loop was dry-run end-to-end with python stubbed out: all five arms emit the correct tag/mode/scaler triple, the correct per-arm ROUND1_EVAL_RESULTS and the correct result_ifc_poisson_<arm>_s0.json filenames. NOT submitted -- the orchestrator submits.",
-    "HYPERPARAMETER PROVENANCE: zero new hyperparameters and zero TBDs. Every value is inherited from the vendored B1 family / the recipe (hidden 64, n_blocks 4, modes_cap 12, batch 16, lr_pretrain 1e-3, lr_finetune 3e-4, weight_decay 1e-5, grad_clip 1.0, 200+200 two-stage schedule, cond_from=target correspondence fix, self pairs, eval query (f_src=0, f_tgt=1), CKPT_SAVES_PER_STAGE=5). The scaler modes and the weight formula w proportional to (S/s_f)^2 mean-normalized are quoted from card part 3, not chosen by the builder. Score-neutral builder choices, none of them model hyperparameters: the extra.normalization payload, the FTGT_SWEEP tuple {0, 1/3, 2/3, 1} (card part 3 item 4 states these four values), and the per-arm env-guard in the job script. One naming deviation from the orchestrator's dispatch text, resolved in favour of the LOCKED card: the checkpoint subdirectory is mode_<MODE>__scal_<SCALER> (card part 3 item 3 and recipe.env._sweep), not arm_<MODE>__<SCALER> (dispatch paraphrase). The result JSON's `model` field is 'mf_fno_ladder_norm'; it does not enter any metric."
+    "HYPERPARAMETER PROVENANCE: zero new hyperparameters and zero TBDs. Every value is inherited from the vendored B1 family / the recipe (hidden 64, n_blocks 4, modes_cap 12, batch 16, lr_pretrain 1e-3, lr_finetune 3e-4, weight_decay 1e-5, grad_clip 1.0, 200+200 two-stage schedule, cond_from=target correspondence fix, self pairs, eval query (f_src=0, f_tgt=1), CKPT_SAVES_PER_STAGE=5). The scaler modes and the weight formula w proportional to (S/s_f)^2 mean-normalized are quoted from card part 3, not chosen by the builder. Score-neutral builder choices, none of them model hyperparameters: the extra.normalization payload, the FTGT_SWEEP tuple {0, 1/3, 2/3, 1} (card part 3 item 4 states these four values), and the per-arm env-guard in the job script. One naming deviation from the orchestrator's dispatch text, resolved in favour of the LOCKED card: the checkpoint subdirectory is mode_<MODE>__scal_<SCALER> (card part 3 item 3 and recipe.env._sweep), not arm_<MODE>__<SCALER> (dispatch paraphrase). The result JSON's `model` field is 'mf_fno_ladder_norm'; it does not enter any metric.",
+    {
+      "utc": "2026-07-30T04:55Z",
+      "author": "orchestrator",
+      "note": "Guard obligation resolved (job 66023672, 1m19s, contract tier, winning arm env): fluid 1.4323, heat_local 2.3964, sod_1d 0.7861 \u2014 all under the >2x-vs-reference flag threshold except heat_local 2.40x which MARGINALLY exceeds 2x; recorded per \u00a72.3 as a flag for the analyzer lineage (tier artifact caveat applies as in s5-B1's case: 2-epoch guard vs a near-exact copy-LF reference 0.0024; the s6-B1 200-ep guard on the same dataset scored 0.036). No auto-reject; the ifc_poisson claim is single-dataset and unaffected in substance; flag preserved for honesty."
+    }
   ],
   "review_notes": [
     {
@@ -129,8 +135,405 @@
     }
   ],
   "debug_notes": [],
-  "5_actual_result": null,
-  "6_analysis": null,
-  "7_gap_and_future": null,
-  "reanalysis_progress": null
+  "5_actual_result": {
+    "protocol": "provisional-single-seed (ADR 0004). Seed 0 only, 200-epoch smoke tier, one SLURM job (66008912, H100 hpc-33-19, COMPLETED) running all FIVE arms serially. NO confidence interval is computed for this card; every value below is a single-seed point estimate carrying the label provisional-single-seed. Skill = nRMSE / paper_bar 0.036 (ADR 0002) -> LOWER IS BETTER. All numbers parsed verbatim from score_panel.py result JSONs; nothing recomputed by hand.",
+    "seeds_available": [
+      0
+    ],
+    "metric_provenance": {
+      "result_json_dir": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s1_poisson/B2/eval/",
+      "files": [
+        "result_ifc_poisson_two_level__shared_s0.json",
+        "result_ifc_poisson_allpairs__shared_s0.json",
+        "result_ifc_poisson_two_level__per_level_s0.json",
+        "result_ifc_poisson_allpairs__per_level_s0.json",
+        "result_ifc_poisson_allpairs__shared_reweight_s0.json"
+      ],
+      "family_json_dir_pattern": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s1_poisson/B2/eval/results_<arm>/mf_fno_ladder_norm/ifc_poisson_e200_s0.json",
+      "nrmse_def_hash": "d3d0ade9191c13bacc40702f3eb26ad290e01641cacee22a1d2233b74c035850",
+      "nrmse_def_hash_consistent_across_arms": true,
+      "nrmse_def_hash_matches_B1_and_noise_floor": true,
+      "metric_source": "per_sample_mean",
+      "split": "test_hf",
+      "reference_type": "paper_bar",
+      "reference_value": 0.036,
+      "n_test_samples": 128,
+      "cached_all_arms": false,
+      "code_hash_per_arm": {
+        "two_level__shared": "c336f1bc92aeadac28a7d5caf97cb8eb3bc25717a4aae682ef8238c27ee4de97",
+        "allpairs__shared": "18d30a3d80976fd05c6a7a16dda2894b5cfb2637dffbdb98756e117113b01430",
+        "two_level__per_level": "f56e0ceb439aefe3aeafa5b9d6032ec2fb1adc9e6370904397b6503f6eff7060",
+        "allpairs__per_level": "9b2481f96912dcfd12614c2e15fcb2689767e9186fc6d1b246ff4a6ba85780bb",
+        "allpairs__shared_reweight": "51875587acc7d48f8d6d79537a9ad8050d3f5aebb2fe624117fb313f18d1b5f3"
+      },
+      "code_hash_distinct_per_arm": true,
+      "env_guard": "all 5 arms printed [env-guard] OK arm=<tag>; every family JSON reports ladder_mode_source == ladder_scaler_source == 'env:MFFP_LADDER_*' (the reviewer's --env trap did not fire)"
+    },
+    "per_arm": {
+      "two_level__shared": {
+        "role": "B1-continuity cell (2x2)",
+        "mode": "two_level",
+        "scaler": "shared",
+        "n_stage1_rows": 110,
+        "nRMSE": 0.10266942347017724,
+        "skill": 2.851928429727146,
+        "train_seconds": 34.81604480743408,
+        "ftgt_out_rms_dynamic_range": 2.7393976321634868
+      },
+      "allpairs__shared": {
+        "role": "B1-continuity cell (2x2); F1 comparator",
+        "mode": "allpairs",
+        "scaler": "shared",
+        "n_stage1_rows": 280,
+        "nRMSE": 0.20934889763342765,
+        "skill": 5.8152471564841015,
+        "train_seconds": 78.67532134056091,
+        "ftgt_out_rms_dynamic_range": 3.3040857688990473
+      },
+      "two_level__per_level": {
+        "role": "F2 comparator (2x2)",
+        "mode": "two_level",
+        "scaler": "per_level",
+        "n_stage1_rows": 110,
+        "nRMSE": 0.07854787470864379,
+        "skill": 2.1818854085734385,
+        "train_seconds": 35.048975467681885,
+        "ftgt_out_rms_dynamic_range": 1.6404930014073074
+      },
+      "allpairs__per_level": {
+        "role": "PRIMARY (recipe.env._primary_arm); in BOTH clauses",
+        "mode": "allpairs",
+        "scaler": "per_level",
+        "n_stage1_rows": 280,
+        "nRMSE": 0.03425002000872467,
+        "skill": 0.9513894446867965,
+        "train_seconds": 75.94404149055481,
+        "ftgt_out_rms_dynamic_range": 1.8827336900629021
+      },
+      "allpairs__shared_reweight": {
+        "role": "mechanism instrumentation; in NO clause",
+        "mode": "allpairs",
+        "scaler": "shared_reweight",
+        "n_stage1_rows": 280,
+        "nRMSE": 0.2185920066609737,
+        "skill": 6.072000185027048,
+        "train_seconds": 79.89475679397583,
+        "ftgt_out_rms_dynamic_range": 3.8708708827576115
+      }
+    },
+    "arm_ranking_best_to_worst": [
+      "allpairs__per_level (0.9514)",
+      "two_level__per_level (2.1819)",
+      "two_level__shared (2.8519)",
+      "allpairs__shared (5.8152)",
+      "allpairs__shared_reweight (6.0720)"
+    ],
+    "per_dataset": {
+      "ifc_poisson": {
+        "_arm": "allpairs__per_level (PRIMARY) - see per_arm for the other four",
+        "per_seed_nrmse": [
+          0.03425002000872467
+        ],
+        "per_seed_skill": [
+          0.9513894446867965
+        ],
+        "mean_skill": 0.9513894446867965,
+        "ci95": null,
+        "_ci95_null_reason": "single seed (ADR 0004); no bootstrap is defined over n=1"
+      }
+    },
+    "panel_geomean_skill": {
+      "_note": "this card's panel is the single dataset ifc_poisson (recipe.datasets), not the round's 6-dataset panel; the value is the primary arm allpairs__per_level, so panel geomean == the per-dataset skill",
+      "per_seed": [
+        0.9513894446867965
+      ],
+      "mean": 0.9513894446867965,
+      "ci95": null,
+      "per_arm": {
+        "two_level__shared": 2.851928429727146,
+        "allpairs__shared": 5.8152471564841015,
+        "two_level__per_level": 2.1818854085734385,
+        "allpairs__per_level": 0.9513894446867965,
+        "allpairs__shared_reweight": 6.072000185027048
+      }
+    },
+    "noise_floor_used": {
+      "dataset": "ifc_poisson",
+      "min_claimable_effect": 0.23990756041925798,
+      "equivalent_nrmse": 0.0086367,
+      "source": "state/noise_floor.json (batch-0 certified, 3-seed, mf_fno_transfer_film)"
+    },
+    "b1_continuity_gate": {
+      "gate": "card part 4 / starter handoff: the two `shared` cells must reproduce B1 seed 0 within 10%",
+      "status": "PASSED by 250x margin",
+      "two_level__shared": {
+        "B1_skill": 2.853062928769859,
+        "B2_skill": 2.851928429727146,
+        "delta_skill": -0.001134499042713,
+        "relative_pct": -0.0398,
+        "multiple_of_floor": 0.0047,
+        "B1_nRMSE": 0.1027102654357149,
+        "B2_nRMSE": 0.10266942347017724
+      },
+      "allpairs__shared": {
+        "B1_skill": 5.813198325385676,
+        "B2_skill": 5.8152471564841015,
+        "delta_skill": 0.0020488310984255,
+        "relative_pct": 0.0352,
+        "multiple_of_floor": 0.0085,
+        "B1_nRMSE": 0.2092751397138843,
+        "B2_nRMSE": 0.20934889763342765
+      },
+      "note": "not bit-identical (B1's contract-tier 2-epoch smokes were; these are fresh 200-epoch GPU runs under a different code_hash, so cuDNN/atomics nondeterminism is expected). Both cells agree with B1 to <0.04% relative = <0.01x the noise floor. B1's central C2a contrast is reproduced: at `shared`, allpairs is 2.963 skill (12.35x floor) WORSE than two_level, vs B1's -2.960."
+    },
+    "contrasts": [
+      {
+        "id": "F1",
+        "clause": "PRE-REGISTERED (expected_falsification F1 - normalization contrast)",
+        "clause_verbatim": "F1 - normalization contrast. Falsified if `allpairs__per_level` fails to beat `allpairs__shared` on `ifc_poisson` test nRMSE by more than the certified noise floor - seed-0 skill improving by <= 0.23991 skill units (<= 0.0086367 nRMSE)",
+        "comparison": "allpairs__per_level (0.9513894446867965) vs allpairs__shared (5.8152471564841015)",
+        "delta_skill": 4.863857711797305,
+        "delta_nrmse": 0.17509887762470297,
+        "direction": "allpairs__per_level BETTER (lower skill)",
+        "multiple_of_floor": 20.274,
+        "clears_floor": true,
+        "verdict": "CONFIRMED (not falsified)",
+        "vs_prediction": "card part 4 predicted delta = 0.124 nRMSE / 3.45 skill / 14.4x floor; observed 0.1751 nRMSE / 4.864 skill / 20.3x floor - larger than even the optimistic end of the reduced-capacity proxy extrapolation"
+      },
+      {
+        "id": "F2",
+        "clause": "PRE-REGISTERED (expected_falsification F2 - composition contrast)",
+        "clause_verbatim": "F2 - composition contrast. Falsified if `allpairs__per_level` fails to beat `two_level__per_level` by more than the certified noise floor - seed-0 skill improving by <= 0.23991 skill units (<= 0.0086367 nRMSE)",
+        "comparison": "allpairs__per_level (0.9513894446867965) vs two_level__per_level (2.1818854085734385)",
+        "delta_skill": 1.230495963886642,
+        "delta_nrmse": 0.04429784,
+        "direction": "allpairs__per_level BETTER",
+        "multiple_of_floor": 5.129,
+        "clears_floor": true,
+        "verdict": "CONFIRMED (not falsified)",
+        "vs_prediction": "card part 4's PRIMARY extrapolation predicted F2 WOULD fire (-0.06 skill, 0.23x floor); the alternative 'transfer the per_level gap' extrapolation predicted +0.95 skill / 4.0x floor. The observed +1.230 skill / 5.13x floor matches the ALTERNATIVE extrapolation and refutes the primary one. The two extrapolations disagreed qualitatively; the alternative won."
+      },
+      {
+        "id": "A1",
+        "clause": "auxiliary (2x2 completion) - normalization effect at two_level",
+        "comparison": "two_level__per_level (2.1818854085734385) vs two_level__shared (2.851928429727146)",
+        "delta_skill": 0.6700430211537075,
+        "multiple_of_floor": 2.793,
+        "clears_floor": true,
+        "direction": "per_level BETTER"
+      },
+      {
+        "id": "A2",
+        "clause": "auxiliary (2x2 completion) - composition effect at shared (= B1's C2a)",
+        "comparison": "allpairs__shared (5.8152471564841015) vs two_level__shared (2.851928429727146)",
+        "delta_skill": -2.963318726757,
+        "multiple_of_floor": 12.352,
+        "clears_floor": true,
+        "direction": "allpairs WORSE - reproduces B1's sign reversal"
+      },
+      {
+        "id": "A3",
+        "clause": "auxiliary - 2x2 INTERACTION (the factorial's whole point)",
+        "definition": "(shared - per_level | allpairs) - (shared - per_level | two_level)",
+        "value_skill": 4.193814690643597,
+        "multiple_of_floor": 17.481,
+        "reading_factual": "the normalization fix is worth 4.864 skill on allpairs but only 0.670 skill on two_level: a 7.26x larger effect, and the interaction alone is 17.5x the floor. The two factors are strongly NON-additive; the sign of the composition contrast flips with the scaler (-2.963 at shared -> +1.230 at per_level), which is exactly B1 part 6's reduced-capacity prediction now reproduced at production capacity."
+      },
+      {
+        "id": "A4",
+        "clause": "auxiliary - mechanism arm (in NO clause; cannot falsify anything)",
+        "comparison": "allpairs__shared_reweight (6.072000185027048) vs allpairs__shared (5.8152471564841015)",
+        "delta_skill": -0.2567530285429465,
+        "delta_nrmse": -0.009243109027546,
+        "direction": "shared_reweight WORSE than shared",
+        "multiple_of_floor": 1.07,
+        "clears_floor": "marginal (1.07x) - at single seed with no CI, NOT a resolvable effect",
+        "reading_factual": "loss reweighting is not merely 'approximately shared', it is if anything very slightly worse, and it is 5.121 skill (21.3x floor) away from per_level. See shared_reweight_S1_caveat for the sound reading."
+      }
+    ],
+    "shared_reweight_S1_caveat": {
+      "why_the_card_rule_is_unsound": "code-reviewer SUGGEST item S1 (state/s1_poisson/review_B2.md): level_scaler[64] == scaler_hf == 0.0018356895307078958 exactly, so `per_level` ALSO repairs a 42x stage-1 vs stage-2 unit discontinuity (stage 1 in units of S=0.0771, stage 2 + eval in units of 0.0018357) that `shared` and `shared_reweight` both keep. The 5th arm therefore does NOT cleanly isolate the card's two named channels ((a) equalizing per-level loss contribution vs (b) removing the 75.7x gain law from the represented function), and the card's stated rule - 'if shared_reweight ~ shared then B1 part 6 is confirmed' - is NOT SOUND AS WRITTEN. Per S1 the discriminator is extra/normalization.ftgt_output_rms_sweep, which is instrumented per arm.",
+      "discriminator_measurement": {
+        "quantity": "normalization.ftgt_output_rms_sweep.out_rms_dynamic_range = raw network output RMS at f_tgt=0.000 divided by that at f_tgt=1.000, f_src held at 0.0, post-finetune",
+        "observed": {
+          "two_level__shared": 2.7393976321634868,
+          "allpairs__shared": 3.3040857688990473,
+          "allpairs__shared_reweight": 3.8708708827576115,
+          "two_level__per_level": 1.6404930014073074,
+          "allpairs__per_level": 1.8827336900629021
+        },
+        "required_by_the_training_targets": {
+          "under_shared": 75.69108162416441,
+          "under_shared_note": "= native RMS ratio fid8/fid64 (0.024549880517337468 / 0.00032434310609058477); dividing every level by one S leaves the full 75.7x gain law inside the function the net must represent",
+          "under_per_level": 1.8010644939031786,
+          "under_per_level_note": "= (rms/own max_abs)_fid8 / (rms/own max_abs)_fid64 = 0.3177/0.1767; per-level scaling leaves only this residual shape-factor ratio"
+        },
+        "captured_fraction_of_required": {
+          "allpairs__shared": 0.0437,
+          "two_level__shared": 0.0362,
+          "allpairs__shared_reweight": 0.0511,
+          "allpairs__per_level": 1.045,
+          "two_level__per_level": 0.911
+        }
+      },
+      "factual_reading": "Under `shared` the net is required to span 75.69x of f_tgt-conditional output amplitude and spans only 3.30x (4.4%); reweighting the loss by w ~ (S/s_f)^2 (normalized weights 0.00638 / 0.0675 / 0.788 / 11.27, dynamic range 1766x) moves that to 3.87x (5.1%) - i.e. equalizing each level's loss contribution recovers ~0.7% of the missing dynamic range and does not improve test nRMSE. Under `per_level` the required span drops to 1.801x and the net delivers 1.883x (104.5% of required; two_level 1.640x = 91.1%). Fact: the shared-scaler arms are limited by their ability to REPRESENT the gain law, not by how the loss WEIGHTS it - which is the sweep signature S1 named as diagnostic of channel (b). Caveat retained: this run cannot separate channel (b) from S1's third channel (stage-1/stage-2 unit continuity), since per_level fixes both at once; the sweep only rules OUT the loss-weighting channel (a) as sufficient. Interpretation is deferred to part 6 (mechanism-analyzer).",
+      "S4_cross_check": "reviewer S4 warned that if shared_reweight came back 'anomalously bad', optimizer-scale (the 1/156.77 global loss rescale interacting with Adam eps=1e-8) should be suspected before mechanism. It did NOT come back anomalously bad - it is within 1.07x the floor of `shared` - so no optimizer-scale artifact needs to be invoked."
+    },
+    "vs_anchor": {
+      "anchor_source": "state/anchors/s1_poisson.json (mf_fno_transfer_film, batch0, 3-seed certified)",
+      "anchor_value": 1.5656334312786022,
+      "anchor_nrmse": 0.056363,
+      "anchor_ci95": [
+        1.4561616605002385,
+        1.6960692209194965
+      ],
+      "primary_arm_value": 0.9513894446867965,
+      "delta": 0.6142439865918057,
+      "delta_sign_convention": "positive = primary arm BETTER than anchor (skill is lower-is-better)",
+      "beyond_ci": true,
+      "beyond_ci_basis": "0.9514 lies below the anchor's 3-seed CI lower bound 1.4562; this card itself has NO CI (n=1, ADR 0004), so the comparison is single-seed-vs-3-seed and is labelled provisional-single-seed",
+      "beyond_noise_floor": true,
+      "multiple_of_floor": 2.56,
+      "other_reference_lines_from_card_part_4": {
+        "paper_bar_IFC_ODE2_skill_1.0": "primary arm skill 0.9514 < 1.0, i.e. nRMSE 0.034250 is BELOW the published bar 0.036 - first sub-paper-bar seed-0 number on ifc_poisson in this round",
+        "stretch_bar_IFC_GPODE_0.018_nrmse": "not reached (0.034250 is 1.90x that bar)",
+        "training_free_matched_level_lookup": {
+          "skill": 6.8967,
+          "nrmse": 0.24828,
+          "primary_is_x_better": 7.25
+        },
+        "hf_train_mean_predictor": {
+          "skill": 11.2064,
+          "nrmse": 0.40343,
+          "primary_is_x_better": 11.78
+        }
+      }
+    },
+    "cratered_verdict": "proceed_to_seeds_1_2",
+    "cratered_detail": {
+      "rule": "cratered iff crash, OR panel geomean skill > cratered_skill_factor (1.5) x stream anchor skill, OR the falsification clause fired decisively",
+      "threshold_skill": 2.3484501469179033,
+      "threshold_nrmse": 0.08454420528904451,
+      "primary_arm_skill": 0.9513894446867965,
+      "crashed": false,
+      "exceeds_threshold": false,
+      "clause_fired": false,
+      "verdict_note": "NOT cratered. Card part 4's cratered forewarning ('the primary arm's point prediction (0.085) sits essentially on [the 0.084544 threshold]... the card may be labelled cratered even if F1 succeeds') did NOT materialize: the observed 0.034250 nRMSE is 2.47x better than the 0.085 point prediction and 1.75x better than the optimistic end (0.060) of the reduced-capacity proxy's predicted range, i.e. the honest-extrapolation label in part 4 under-predicted this arm. Per ADR 0004 seeds 1-2 are NOT submitted now; 'proceed_to_seeds_1_2' means eligible for the end-of-round top-3 confirmation pass via scripts/submit_seeds_2_3.sh."
+    },
+    "falsification_verdict": "confirmed",
+    "falsification_verdict_detail": "BOTH pre-registered clauses CONFIRMED (neither falsified), on seed 0 with no CI (ADR 0004): F1 by 4.8639 skill = 20.27x the 0.23991 floor; F2 by 1.2305 skill = 5.13x the floor. Both clear the noise floor by a wide margin, so both effects are resolvable in the batch-0-certified sense; both remain labelled provisional-single-seed. Neither clause references allpairs__shared_reweight, which accordingly falsifies nothing.",
+    "guard_flags": [
+      {
+        "flag": "guard_set_owed_at_confirmation_not_run_now",
+        "trigger_text": "card part 4: 'Guard set: owed only if an arm claims a panel win over the anchor (i.e. nRMSE < 0.056363)'. The primary arm's 0.03425002 < 0.056363, so the card's own trigger fires.",
+        "why_not_run": "the analyzer's guard rule keys on a THREE-SEED panel geomean beating the anchor beyond the CI; only seed 0 exists (ADR 0004), so the guard set is not run at this stage, per the orchestrator's instruction for this single-dataset card. Recorded as an owed obligation, not a waiver.",
+        "guard_set": [
+          "heat_local",
+          "fluid",
+          "sharp__sod_1d"
+        ],
+        "guard_reference_nrmse_from_eval_copylf_baselines_json": {
+          "heat_local": 0.00240152155999517,
+          "fluid": 0.21805958171115042,
+          "sharp__sod_1d": 0.03309017650048946
+        },
+        "regression_bar": "> 2x the recorded guard reference nRMSE on any guard dataset",
+        "mitigating_fact": "mf_fno_ladder_norm's DEFAULT scaler is `shared`, which the builder and reviewer verified bit-preserving vs the vendored mf_fno_ladder (contract smokes identical to 15 digits), so no guard dataset can regress unless `per_level` is promoted to the family default. The guard obligation attaches to any such promotion / to the end-of-round confirmation, not to this run.",
+        "severity": "note - no auto-reject"
+      }
+    ],
+    "anomalies": [
+      {
+        "kind": "none_material",
+        "detail": "job 66008912 COMPLETED. slurm .err is 0 bytes; .out shows 5 clean arms with no NaN/inf, no warning, no requeue and no resume-after-preemption event; every arm reports cached=false and a distinct code_hash; the [env-guard] assertion printed OK for all 5 arms."
+      },
+      {
+        "kind": "prediction_miss_not_a_defect",
+        "detail": "card part 4's reduced-capacity proxy under-predicted the primary arm by 2.47x in nRMSE and got the F2 sign wrong (it predicted F2 would fire). The proxy's own stated attenuation caveat covers this; flagged for part 6 because the size of the miss is itself information about the capacity dependence of the effect."
+      },
+      {
+        "kind": "metric_definition_note",
+        "detail": "score_panel's per_sample_mean metric equals the family JSON's splits.test_hf.rel_l2_mean, not splits.test_hf.nRMSE (which is the field-pooled value, e.g. 0.030483732271437067 for the primary arm vs the scored 0.034250020008724666). This card, B1, the anchor and the noise floor all use the same per_sample_mean convention under nrmse_def_hash d3d0ade9..., so all comparisons above are apples-to-apples. No hand-recomputation was performed."
+      },
+      {
+        "kind": "reviewer_S1_carried",
+        "detail": "the per_level arms carry an unresolved confound between the amplitude channel and the stage-1/stage-2 unit-continuity channel (see shared_reweight_S1_caveat). This does NOT affect F1 or F2 as written - both are pre-registered contrasts on test nRMSE - but it constrains any mechanistic claim in part 6."
+      }
+    ],
+    "wall_clock_per_seed_min": [
+      5.6
+    ],
+    "wall_clock_detail": {
+      "job_id": "66008912",
+      "state": "COMPLETED",
+      "elapsed": "5m36s (sacct); 5m32s between the first and last log timestamps",
+      "node": "hpc-33-19",
+      "gpu": "NVIDIA H100 80GB HBM3",
+      "per_arm_wall_seconds_from_log_timestamps": {
+        "two_level__shared": 41,
+        "allpairs__shared": 84,
+        "two_level__per_level": 40,
+        "allpairs__per_level": 82,
+        "allpairs__shared_reweight": 85
+      },
+      "per_arm_train_seconds_from_family_json": {
+        "two_level__shared": 34.81604480743408,
+        "allpairs__shared": 78.67532134056091,
+        "two_level__per_level": 35.048975467681885,
+        "allpairs__per_level": 75.94404149055481,
+        "allpairs__shared_reweight": 79.89475679397583
+      },
+      "ledger_note": "for state/timing_ledger.json: s1_poisson B2, ifc_poisson, 200 epochs, h100, 5 arms serial = 5.6 min wall (B1 was 4 arms / 4.47 min). Confirms reviewer S3: --time=02:00:00 is ~21x the need; two_level arms ~35 s, allpairs arms ~78 s of training each. peak_mem_mb 398.7, n_params 4,774,977, identical across all five arms."
+    },
+    "anchor_file_action": "NOT UPDATED. state/anchors/s1_poisson.json is untouched: anchors require a 3-seed certified result and this card has seed 0 only (ADR 0004). allpairs__per_level (0.9514) is recorded here as an anchor-BEATING CANDIDATE (0.6142 skill / 2.56x floor below the certified 3-seed anchor 1.5656, and below its CI lower bound 1.4562) whose promotion is deferred to the end-of-round top-3 confirmation pass."
+  },
+  "6_analysis": {
+    "protocol": "Three probe turns, all in <worktree>/scratchpad, no SLURM, no worktree code edits, nothing recomputed by hand (every nRMSE via ${ROUND_ROOT}/eval/nrmse.py, nrmse_def_hash d3d0ade9191c13bacc40702f3eb26ad290e01641cacee22a1d2233b74c035850 = the card's hash; every dataset read via ${ROUND_ROOT}/eval/panel_data.py). This login node (hpc-93-30) has 1 CPU core and NO GPU (nvidia-smi absent), so every re-trained arm is B1 turn 3's REDUCED-CAPACITY PROXY (hidden 16 / blocks 2 / modes 8, joint 30 ep + finetune 200 ep, seed 0) and NO turn-1/turn-3 training number is or may become a card number. Validity gate for the proxy: the two arms B1 also ran reproduce it to 0.09% (shared 0.2141157 vs 0.2143110) and 0.13% (per_level 0.0874653 vs 0.0873520), and the B1/B2 families' row construction is bit-identical (build_rows / _to_grid / _fnorm_fn sha256-16 4e52d505986dd569 / fc48f25468845943 / 06443ea4387899d3 in both; model.py and backbone.py diff-identical). Turn 1 = channel separation of per_level's three effects, 5 proxy arms with two NEW scaler modes that move the stage-2 divisor as well as the stage-1 one (reanalysis_turn_1.py -> turn1_out/, run_turn1_grid.sh, turn1_grid.log). Turn 2 = training-free decomposition of the five SHIPPED preds_test.npz (tools/field_error_decomposition.py + reanalysis_turn_2.py -> turn2_out/, incl. turn2_panels.png). Turn 3 = row-set anatomy + coverage test + 2 more proxy arms + an f_src sensitivity sweep on the shipped production checkpoints (reanalysis_turn_3.py, fsrc_invariance.py -> turn3_out/). Promoted tools used: field_error_decomposition.py, ladder_level_diagnostic.py, defect_correction_learnability.py. Turn results: scratchpad/reanalysis_turn_{1,2,3}_results.md.",
+    "findings": [
+      "T1 - THE DEFERRED S1 QUESTION IS ANSWERED: the healing channel is (b) gain-law representation, NOT (c) stage-1/stage-2 unit continuity. At matched HF presentation scale (normalized HF-target RMS 0.1767 in BOTH stages, identical stage-2 divisor), the only difference being the cross-level spread carried in stage 1, per_level (levels at 0.314/0.235/0.192/0.177, span 1.78x) scores 0.087465 vs shared_hf (13.203/3.039/0.727/0.177, span 74.73x) 0.282735 - a 3.23x effect (turn1_out/*.json).",
+      "T1 - channel (c) is ANTI-causal: both routes that enforce stage-1<->stage-2 unit continuity are WORSE than shared (0.214116) - shared_hf 0.282735 (1.32x worse) and shared_s2S 2.114185 (9.87x worse). Holding stage 1 fixed and moving stage 2 down to the coarse units costs 9.87x (shared -> shared_s2S) and 111.5x (per_level 0.087465 -> per_level_s2S 9.753598). The real requirement is that the STAGE-2 HF target be presented at O(1): every arm with normalized stage-2 target RMS 0.0042 collapses (var ratio 37.5 / 651.4, Pearson r 0.363 / 0.147, mean stage-2 grad norm 1.85e-3), i.e. the 42.03x jump under `shared` is a partial REPAIR of the shared scaler, not a defect.",
+      "T1 - the network CAN represent the 75.7x gain law, and representing it is what costs: shared_hf delivers 71.80x of the required 74.73x f_tgt output span (96.1% captured) where shared delivers 2.83x (3.8%, matching production's 3.30/75.69 = 4.4%) - and shared_hf has the worst structure-only error of the three non-catastrophic arms (0.23155 vs shared 0.09876 vs per_level 0.05922) and over-disperses (var ratio 2.083). Measured optimizer-scale confound (reviewer S4): shared_hf is the ONLY arm whose stage-1 grad clip binds on 100% of steps (mean pre-clip grad norm 22.57 vs 0.039 elsewhere), a bias in the direction of an effective LR reduction, i.e. its 0.282735 is if anything pessimistic; every other contrast has clip fraction 0.002.",
+      "T1 - S1's identity re-verified bit-for-bit from the arm's own rows: level_scaler = 0.07714622467756271 / 0.023720204830169678 / 0.006939543876796961 / 0.0018356895307078958 at fid 8/16/32/64 and scaler_hf = 0.0018356895307078958.",
+      "T2 - the F2 composition win is UNIFORM and broad-band: allpairs__per_level beats two_level__per_level on 128/128 test samples (median per-sample ratio 0.4319, p05-p95 0.3386-0.7202, 81.30% of squared error removed); it also beats allpairs__shared 128/128 and the training-free matched-8-squared lookup 128/128. Radial-band error ratio 0.409 / 0.313 / 0.510 / 0.524 / 0.553 / 0.612 over bands 0-5: EVERY band improves, largest factor in band 1 (3.19x), band 0 (99.78% of target energy) 2.44x (turn2_out/turn2_results.json, decomp5.json).",
+      "T2 - the F2 win is a STRUCTURE win, not only calibration: structure-only nRMSE (per-sample oracle gain applied) 0.02292 vs 0.05798 = 2.53x, larger than the 2.29x total; Pearson r_min 0.9597 vs 0.8587. B1's 'the arms differ only in per-sample scale' held in the shared-scaler regime and does NOT carry over to per_level.",
+      "T2 - ifc_poisson's error is BULK-dominated, not interface-local: relative error binned by |grad HF| decile falls MONOTONICALLY from the smoothest to the steepest decile for every trained arm (allpairs__per_level 0.0569 -> 0.0232; two_level__per_level 0.1812 -> 0.0509; allpairs__shared 0.3774 -> 0.1196), while 53.05% of the target energy sits in the steepest decile. The ladder's edge is largest in the SMOOTHEST decile (3.19x) and smallest in the steepest (2.19x).",
+      "T2 - of the winning arm's remaining 0.034250, 57.10% of the squared error is STILL per-sample amplitude: the per-sample oracle gain gives 0.022917 (skill 0.6366) while ONE global oracle gain gives 0.03511 (no help). Residual gain: mean 0.99307, std 0.03046, range [0.90123, 1.03765]. That gain is nearly linear in the 5-D condition vector - leave-one-out ridge on [1, X] R^2 = 0.9190 -> nRMSE 0.02431 (skill 0.6752); LOO kNN R^2 0.823/0.867/0.859/0.842 for k=1/3/5/10. HEADROOM LABEL: the LOO fit uses the test targets, so 0.0243 is an upper bound on a calibration head, not a score.",
+      "T2 - copy-LF is UNDEFINED on this dataset: the ifc_poisson TEST split contains only fidelity 64 (128 samples; asserted in the probe), which is why eval/copylf_baselines.json gives it reference_type='paper_bar'. Canonical training-free reference lines (tools/ladder_level_diagnostic.py): matched-8-squared + one gain 0.2482811 (skill 6.897), matched-16-squared 0.310876, matched-32-squared 0.361327, nearest-HF-train-condition 0.399390, HF-train-mean 0.403428 - the winning arm is 7.25x better than the best of them.",
+      "T3 - the ladder's 'pairs' add NO information; the LEVELS do. allpairs' 280 rows are 175 distinct (cond, f_tgt) points + 105 exact duplicates (max target difference inside a duplicate group = 0.0), with multiplicity 1/2/3/4 by target level 8/16/32/64; two_level's 110 rows are 105 distinct + 5 duplicates. allpairs adds exactly 70 distinct new parameter points (50 at 16-squared + 20 at 32-squared). The input row is [cond(5), f_src_tag, f_tgt_tag] - 7 channels, NO field channel - and f_src is measurably inert at inference: sweeping it 0->1 on the shipped production checkpoints moves the prediction by relative L2 0.0089 (allpairs__per_level), 0.0250 (two_level__per_level), 0.0319 (allpairs__shared) (turn3_out/turn3_anatomy.json, fsrc_invariance.json).",
+      "T3 - defect correction is NOT EXPRESSIBLE on ifc_poisson: no LF field exists in the test split, and tools/defect_correction_learnability.py --datasets ifc_poisson returns verbatim {'dataset': 'ifc_poisson', 'error': 'no LF fidelity in one of the splits'}; the train levels are also NOT index-aligned (max |X^(s)-X^(t)| = 0.7394 / 0.7095 / 0.5809 / 0.7016 / 0.7145 / 0.6819 over the six ordered pairs), so a per-sample defect y^(t)_i - y^(s)_i is undefined too.",
+      "T3 - condition-space DENSITY, not grid resolution, governs a training-free matched-level predictor: matched-8-squared (100 train samples) 0.248281 beats matched-16-squared (50) 0.310876 beats matched-32-squared (20) 0.361327 beats nearest-HF-train (5) 0.399390 - the most accurate fields give the worst predictor.",
+      "T3 [PROXY] F2 decomposes into COVERAGE x LEVEL-GRADED WEIGHTING, and neither alone: at identical proxy config and per_level scaler, two_level 0.147214 -> self_only (all four levels, self pairs only, 175 distinct rows, uniform multiplicity) 0.135253 (1.09x) -> allpairs (same 175 points at multiplicity 1/2/3/4, 280 rows) 0.087465 (1.68x; 1.55x on top of self_only); while up-weighting the HF rows WITHOUT the intermediate levels HURTS (two_level_hf4x 0.165299, 0.89x). HONEST DEFECT: the hf4x arm was intended at multiplicity 4 and delivered 6 (the two_level set already carries 2 copies), so it is an a-fortiori result, not the matched control it was designed to be.",
+      "T3 - the coverage effect is GLOBAL, not local gap-filling: per-sample log-improvement correlates only -0.155 with distance to the 70 newly added points (terciles of that distance give improvement factors 2.377 / 2.294 / 2.135), whereas both arms' absolute per-sample error correlates 0.541 (two_level) and 0.610 (allpairs) with distance to the nearest of the 5 HF training points."
+    ],
+    "interpretation": [
+      "MECHANISM, CHANNEL VERDICT (high confidence; T1 five-arm grid + the shipped shared_reweight arm): per_level's benefit is channel (b) - per-level target standardization removes the cross-level amplitude spread from the function the pooled stage must represent - worth 3.23x against a control that fixes only the unit discontinuity at matched HF presentation scale. Channel (a) (loss weighting) was already dead (shipped shared_reweight 0.218592, 1.07x floor WORSE than shared, and -4.04% of squared error per-sample). Channel (c) (stage-1/stage-2 unit continuity, reviewer S1's third channel) is not a defect at all but a partial repair: enforcing it while keeping the shared scaler costs 1.32x-9.87x, and enforcing it in the opposite direction under per_level costs 111.5x. The one governing variable that reproduces all five arms is the NORMALIZED AMPLITUDE AT WHICH EACH LEVEL'S TARGET IS PRESENTED IN EACH STAGE, under two rules: (i) the HF target must be at O(1) in stage 2, else the 5-row finetune's gradients cannot rescale the pooled stage's output; (ii) given (i), the flatter the cross-level spread in stage 1, the better.",
+      "AMENDMENT TO B1 PART 6 (high confidence): 'amplitude-channel capture' was right about the locus and wrong about the cause. B1 inferred from delivered span 3.4x vs required 75.7x that the network could not carry the level law; shared_hf shows it CAN (96.1% of the required span) once the units make the law natural, and that carrying it is WORSE than failing to carry it. The correct statement is that the f_tgt axis is a FINITE AMPLITUDE BUDGET and any of it spent on the discretization level law is taken out of the condition-dependent amplitude at f_tgt = 1, which is what the metric scores. Both shared (fails to carry it) and shared_hf (carries it) are expressions of the same trade-off.",
+      "MECHANISM, COMPOSITION SIDE (high confidence): what the ladder supplies is SUPERVISION ALONG THE f_tgt AXIS - 70 extra parameter points whose fields are the same shape at a different resolution (B1 T1: rel-L2 <= 0.18, Pearson r >= 0.94 after one gain for every ordered level pair). Those rows teach X -> y(X; resolution) at resolutions with 100 / 50 / 20 samples and the network evaluates the same map where it has 5. This is h-continuation learned in TAG space, not defect correction.",
+      "ANATOMY OF THE +4.194 SKILL INTERACTION (high confidence): the ladder's information and the shared scaler's nuisance ride the SAME degree of freedom - the f_tgt-conditional output amplitude. Under shared that axis must span 75.69x of pure discretization gain, the axis is saturated by the nuisance, and the ladder's continuation signal is destroyed (allpairs 2.963 skill WORSE than two_level). Under per_level the required span drops to 1.80x, the network delivers 1.883x (104.5%), the axis is freed, and the same rows are worth +1.230 skill - so the sign flips. That is why the two factors are multiplicative rather than additive, and why B1's level-set contrast was unmeasurable: B1 measured a signal through the channel that carried its own noise.",
+      "CROSS-STREAM RECONCILIATION WITH s6_local (high confidence): s6's nested-ladder Richardson mechanism and this card's ladder mechanism share the physics (an h^2-convergent nested factor-2 ladder; consecutive RMS ratios 4.379 / 4.196 / 4.120) and share nothing else. Defect correction requires an LF field at inference (absent here) and a per-sample LF<->HF pairing (absent here); this family has no field input channel at all and its f_src tag is measurably inert. So on ifc_poisson the ladder can only act as PARAMETER-SPACE / RESOLUTION-AXIS AUGMENTATION. The round-wide corollary from s2-B1's F14 holds here in its strongest form: on ifc_poisson it is not that families do not read the LF field, it is that there is none to read - which is also why this is the one panel dataset where X -> field is genuinely learnable (s2-B1, corr 0.994) and why the paper bar rather than copy-LF is the reference.",
+      "WHY THE ROW-SIDE LEVER WORKED WHERE shared_reweight FAILED (medium confidence): allpairs is exactly self_only plus a level-graded row multiplicity 1:2:3:4, worth 1.55x - the same up-weighting idea that shared_reweight applied as a 1766x loss-weight ladder and that gained nothing. The difference is that per_level has already put every level at equal target amplitude, so multiplicity acts on comparable targets; re-weighting cannot repair a representation. Same lever, opposite outcome, decided by the normalization - the interaction seen from the row side.",
+      "SCOPE / WHAT THE 0.9514 MEANS (high confidence): this is the round's first sub-paper-bar ifc_poisson number (0.034250 < 0.036) and it is a SEED-0 POINT ESTIMATE with no CI (ADR 0004, strict 1-seed in-round). Round-1 success criterion 1 (program.md section 1) is therefore met PROVISIONALLY and only the end-of-round top-3 confirmation pass (seeds 1-2 via scripts/submit_seeds_2_3.sh) can turn it into a mean +/- CI claim. Two facts argue the effect is not a seed accident - the F1 contrast is 20.3x and F2 5.13x the batch-0 certified floor, and the two shared cells reproduce B1's independent seed-0 runs to <0.04% - but neither is a substitute for seeds. The guard set (heat_local, fluid, sharp__sod_1d) remains OWED at confirmation, mitigated only by `shared` being the bit-preserving family default. The 0.018 IFC-GPODE stretch bar is NOT reached (0.034250 is 1.90x it).",
+      "NOT SUPPORTED / RETIRED: (1) reviewer S1's framing that per_level 'heals a 42x stage-1/stage-2 unit discontinuity' as one of two beneficial effects - the discontinuity is load-bearing and removing it costs 9.9x-111x; (2) any reading of the F2 win as defect correction or Richardson extrapolation on this dataset; (3) an interface-local or high-band reading of ifc_poisson's error - the error is bulk-dominated (monotone decreasing in |grad HF|) and 99.78% of the target energy is in band 0, so interface-aware losses (s7) and local branches (s6) are the wrong levers for THIS stream; (4) 'coverage as local gap-filling' - the improvement is only weakly graded by distance to the new points."
+    ],
+    "falsification_postmortem": "Both clauses were confirmed, and the mechanism explains WHY each landed where it did, including the two prediction misses card part 5 flagged. F1 (normalization) was predicted at 3.45 skill / 14.4x floor from a reduced-capacity proxy and came in at 4.864 skill / 20.3x floor. The under-prediction is capacity-dependent in an identifiable way: the proxy's shared arm reproduces production almost exactly (0.2141 vs 0.2093) while its per_level arm is 2.55x worse than production's (0.0875 vs 0.0343). Removing the amplitude nuisance frees capacity that a hidden-16 / modes-8 network does not have to spend, so the proxy could measure the DAMAGE at production fidelity but not the REPAIR. Any future proxy-based prediction of a normalization fix should therefore be quoted as a lower bound. F2 (composition) is the more interesting postmortem: part 4's PRIMARY extrapolation predicted F2 WOULD fire (-0.06 skill) and the ALTERNATIVE extrapolation predicted +0.95 skill; the observed +1.230 matched the alternative. The reason the primary extrapolation failed is now mechanical rather than statistical - it transferred each arm's proxy RATIO, which presumes the two factors are separable, and turn 1 + turn 3 show they are not: the ladder's information and the scaler's nuisance occupy the same f_tgt amplitude axis (interaction +4.194 skill = 17.5x the floor). A ratio-transfer extrapolation is invalid whenever the two manipulated factors share a degree of freedom, and the card's own 2x2 was the instrument that revealed it. The deeper correction is to B1's postmortem sentence rather than to B2's clauses: B1 concluded that the shared scaler 'converted the ladder's information into a 42x nuisance gain law that captured the network's amplitude channel'. Turn 1 shows the network can carry that law when the units invite it (shared_hf delivers 96.1% of the required span) and is WORSE for doing so; and turn 3 shows the ladder's information is not a defect signal but resolution-axis supervision from 70 extra parameter points. So the accurate sentence is: the f_tgt axis is a finite amplitude budget shared by a removable discretization nuisance and the ladder's usable h-continuation signal, and per-level target standardization is what stops the nuisance from spending the budget. Neither clause references allpairs__shared_reweight, and that arm accordingly falsified nothing - but it is the one that isolated channel (a) and is the reason the part-6 verdict could be narrowed to (b).",
+    "surprises": [
+      "The 42x stage-1/stage-2 unit break that the code reviewer flagged as a defect is a PARTIAL REPAIR. Removing it while keeping the shared scaler costs 9.87x (shared_s2S 2.114185 vs shared 0.214116), and removing it under per_level costs 111.5x (per_level_s2S 9.753598 vs per_level 0.087465). The finetune's 42x renormalization is the only thing that lifts the HF target out of the pooled stage's output noise floor.",
+      "The network CAN represent the 75.7x cross-level gain law - 96.1% of the required f_tgt span - and is 1.32x WORSE for doing it. B1's inference that the law was unlearnable was an artifact of the units, not a capacity statement.",
+      "The winning arm beats two_level__per_level on 128/128 samples with p95 ratio 0.72 - the per-sample rel-L2 CDFs of the three main arms are fully disjoint. Single-seed or not, this contrast has no overlap at the sample level.",
+      "ifc_poisson's error is worst in the SMOOTHEST decile of |grad HF| and falls monotonically toward the steepest, for every arm. The dataset's `ifc` prefix and the round's sharp-interface intuition point the wrong way here.",
+      "A training-free matched-8-squared lookup (0.248281) beats matched-32-squared (0.361327) even though 32-squared fields are 4x more accurate - because 8-squared has 100 parameter points and 32-squared has 20. On this dataset, condition-space density dominates field fidelity.",
+      "The ladder's cross pairs contain zero new information: 105 of allpairs' 280 rows are exact duplicates (max target difference 0.0) and the f_src tag moves the shipped model's prediction by <1% relative L2. The composition factor is really a level-graded RE-WEIGHTING of 175 distinct points, and 55% of its value comes from that weighting rather than from the 70 new points.",
+      "57.1% of the winning arm's remaining squared error is still a per-sample scalar gain, and that gain is 0.919-R^2 LINEAR in the 5-D condition vector. The single largest remaining error term on the round's flagship dataset is a 6-parameter calibration - which cannot be fitted from the 5 HF training samples, so the intermediate levels are the only place to estimate it."
+    ]
+  },
+  "7_gap_and_future": {
+    "open_question": "Is ifc_poisson's gap CLOSED, or is 0.034250 a seed-0 point on a distribution whose mean straddles 0.036? Everything else about this stream now hinges on that one question, because the mechanism is settled and the remaining error is characterized. Specifically: (i) do seeds 1-2 of `allpairs__per_level` keep the mean below 0.036 - the effect being measured (F1 20.3x floor, F2 5.13x floor, 128/128 per-sample wins over the two_level control) is far larger than the batch-0 floor, but ADR 0004 gives this card no CI and the honest status of round-1 success criterion 1 is PROVISIONALLY MET, not met; (ii) can the 57.10% of remaining squared error that is a per-sample scalar gain actually be removed, given that the gain is 0.919-R^2 LINEAR in the 5-D condition vector (LOO headroom 0.02431 = skill 0.6752, i.e. 1.35x from the 0.018 IFC-GPODE stretch bar) but cannot be fitted from 5 HF training samples - so the gain law would have to be estimated on the 70 intermediate-level points and transferred, which is exactly the same 'learn it where the data is, apply it where it is not' move that the ladder itself makes and which has never been tested for the gain; and (iii) is anything left after that? The remaining 43% is structure (0.022917 with an oracle gain), bulk-dominated (error monotone DECREASING in |grad HF|), and 99.78% of the target energy is in radial band 0 - so no interface, high-band or locality lever is available, and the only visible structural handles are more low-cost levels / more samples per level (condition-space density beat field fidelity in the training-free ladder: matched-8-squared 0.248281 beats matched-32-squared 0.361327).",
+    "next_direction": "s1_poisson batch 3 should be a MODEL card that attacks the CALIBRATION residual and nothing else, with `per_level` + `allpairs` frozen as the new base. Concretely: keep `models_r1/mf_fno_ladder_norm` and add one head that predicts a per-sample scalar gain g(X) applied to the field output, with the head FITTED ON THE POOLED LADDER ROWS (all 175 distinct points, where each level's own per-level scaler already puts the targets at comparable amplitude) rather than on the 5 HF rows - the 6-parameter-on-5-points saturation is the whole design constraint. Predictions to write into part 4, all traceable to part 6: base 0.034250 (seed 0); per-sample ORACLE gain 0.022917 (skill 0.6366) is the hard ceiling; a condition-LINEAR gain reaches 0.02431 (skill 0.6752) IF the law transfers from the lower levels; the honest falsifiable clause is 'the head fails to beat the frozen base by more than 0.23991 skill units (0.0086367 nRMSE)', which is a demanding bar because the whole available effect is 0.0099-0.0113 nRMSE - so the card must ALSO pre-register the negative reading (the gain is a property of the HF solve that the lower levels do not share, which would itself close the stream). Cheap arms worth adding in the same job: (a) `self_only` at production capacity, since the proxy says 55% of F2's value is the level-graded row multiplicity rather than the 70 new points and that split has never been seen at hidden 64; (b) a 5-level or resampled-level variant, since condition-space density beat field fidelity in every training-free comparison. Do NOT spend batch 3 on: interface-aware losses, local/CNN branches, LF-consuming defect correctors, or spectral-mode capacity - part 6 rules all four out for this dataset with direct measurements. Wall clock: 5 arms of the current recipe cost 5.6 min/seed on one H100, so a 6-arm batch-3 job plus the OWED guard set (heat_local, fluid, sharp__sod_1d) is still well under an hour. The guard obligation is now due: this card's primary arm is below the anchor's CI floor, and any promotion of `per_level` to the family default changes the default behaviour on every dataset.",
+    "cross_stream_notes": "1) FOR s6_local (and any stream reasoning about nested ladders): the s6 Richardson / defect-correction mechanism and this card's ladder mechanism are DISJOINT mechanism classes that happen to share the same physics. ifc_poisson is a nested factor-2, h^2-convergent ladder (consecutive RMS ratios 4.379 / 4.196 / 4.120) and yet defect correction is not even expressible on it: its TEST split contains only fidelity 64, so `tools/defect_correction_learnability.py --datasets ifc_poisson` returns {'error': 'no LF fidelity in one of the splits'}, and its train levels are not index-aligned (max |X^(s)-X^(t)| = 0.58-0.74 over all six pairs) so a per-sample defect is undefined. What works here is resolution-axis supervision in TAG space: 70 extra (X, y) points at 16-squared/32-squared teach X -> y(X; resolution) where there are 100/50/20 samples, and the model evaluates it where there are 5. Before importing a defect-correction story into a stream, check the test split actually ships an LF field. 2) ROUND-WIDE NORMALIZATION RULE, stronger than B1's version: when a family pools multi-level targets, the governing variable is THE NORMALIZED AMPLITUDE AT WHICH EACH LEVEL'S TARGET IS PRESENTED IN EACH TRAINING STAGE, and there are two rules - (i) the HF target must be at O(1) in the stage that is finetuned/evaluated (violating this cost 9.9x and 111.5x in two measured arms), (ii) given (i), the flatter the cross-level spread in the pooled stage, the better (74.73x -> 1.78x was worth 2.45x-3.23x). Two things that DON'T work and should not be tried again: per-row loss reweighting to equalize level contributions (B2's shipped `shared_reweight`: 1766x weight range, -4.04% of squared error, WORSE than the baseline), and 'restoring unit continuity' between stages while keeping a shared scaler (2 arms, both worse). Also retire the intuition that a network cannot represent a large cross-level gain law: it represented 96.1% of a 74.73x span when the units invited it, and was 1.32x worse for doing so. 3) FOR EVERY STREAM WITH AN INTERFACE STORY (s3_warp, s6_local, s7_loss): run the newly promoted `tools/interface_locality_profile.py` on your shipped preds before attributing anything to sharp regions. On ifc_poisson all three main arms come back BULK-DOMINATED with relative error falling MONOTONICALLY from the smoothest to the steepest |grad HF| decile (0.0569 -> 0.0232 for the winning arm) even though 53.05% of the target energy is in the steepest decile. The claim is cheap to test and was false here. 4) FOR ANY CARD WHOSE ERROR IS AMPLITUDE-DOMINATED: 'X% of the error is a per-sample gain' is not yet a lever. `tools/residual_gain_learnability.py` (promoted here) adds the missing step - LOO R^2 of the gain against the condition vector and the nRMSE a head could reach - plus the fit-feasibility check (n_hf_train vs cond_dim+1) that decides whether the head can be trained at all. On this card: 57.1% amplitude, LOO-linear R^2 0.919, headroom 0.02431, n_hf_train 5. 5) METHOD WARNING ON PROXY EXTRAPOLATION, for every brainstormer that writes a part-4 prediction from a reduced-capacity scratchpad proxy: transferring each arm's proxy RATIO presumes the manipulated factors are separable. This card's 2x2 interaction is +4.194 skill (17.5x the floor) because the two factors share one degree of freedom, and the ratio-transfer extrapolation got the F2 SIGN wrong while the gap-transfer alternative got it right. Also: the proxy reproduced the DAMAGE at production fidelity (shared 0.2141 vs 0.2093) but understated the REPAIR by 2.55x (per_level 0.0875 vs 0.0343), so a proxy-based prediction of a normalization fix is a LOWER bound. 6) BOOKKEEPING: ifc_poisson has 100 / 50 / 20 / 5 train samples at fid 8 / 16 / 32 / 64 and a HF-only 128-sample test split; its reference in eval/copylf_baselines.json is the paper bar 0.036, NOT copy-LF, and copy-LF is undefined there. Training-free floors to quote next to any ifc_poisson skill: matched-8-squared + one gain 0.248281 (skill 6.897), HF-train-mean 0.403428.",
+    "promoted_tools": [
+      "residual_gain_learnability.py",
+      "interface_locality_profile.py"
+    ]
+  },
+  "reanalysis_progress": "registered"
 }

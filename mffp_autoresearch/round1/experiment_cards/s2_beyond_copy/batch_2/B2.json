@@ -79,7 +79,7 @@
       "S2_DIAG_OUT": "mffp_autoresearch_outputs/round1/s2_beyond_copy/B2/eval"
     }
   },
-  "status": "reviewed_suggest",
+  "status": "analyzing",
   "skipped_reason": null,
   "reopen_candidate": false,
   "scripts_path": {
@@ -104,7 +104,8 @@
   },
   "build_commit": "5bf0e86c292042b3050979f5c35af538305f1152",
   "job_ids": [
-    "66011965 (ADR-0007 screen: 4 trained arms + floors)"
+    "66011965 (ADR-0007 screen: 4 trained arms + floors)",
+    "66023543 (200-ep seed 0, promoted lf_resid_fno = pinned rank 1; all arms survived; reviewer F1 guard applied)"
   ],
   "logs": {},
   "build_notes": [
@@ -142,8 +143,404 @@
     }
   ],
   "debug_notes": [],
-  "5_actual_result": null,
+  "5_actual_result": {
+    "seeds_available": [
+      0
+    ],
+    "scored_arm": "lf_resid_fno",
+    "scored_arm_provenance": "promoted arm pinned in the card before the 200-epoch submit per ADR 0007 (job_ids: '66023543 (200-ep seed 0, promoted lf_resid_fno = pinned rank 1; all arms survived; reviewer F1 guard applied)'). All other arms in the outputs are contract-tier screen context only and are NOT part of part 5.",
+    "result_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s2_beyond_copy/B2/eval/result_beyond_copy5_s0.json",
+    "per_run_json_dir": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s2_beyond_copy/B2/eval/results/lf_resid_fno/s2_lf_residual_control",
+    "nrmse_def_hash": "d3d0ade9191c13bacc40702f3eb26ad290e01641cacee22a1d2233b74c035850",
+    "nrmse_def_hash_consistency": "verified identical across all 53 metric JSONs under the B2 output tree (the scored result_beyond_copy5_s0.json, the 5 per-run e200_s0 JSONs, all floor_*.json sidecars, every screen JSON) AND round1/eval/copylf_baselines.json '_nrmse_def_hash'. Only screen/screen_summary.json carries no hash field (a derived table, not a metric file).",
+    "epochs": 200,
+    "dataset_set": "the 5 beyond-copy datasets of recipe.datasets == state/anchors/s2_beyond_copy.json 'datasets'. ifc_poisson is NOT in this card's set, so panel_geomean_skill below is a 5-dataset geomean over this stream's anchor set, not the 6-dataset round panel of project.yaml.",
+    "metric_reading_convention": "reviewer F3 honoured: score_panel scored metric_source='per_sample_mean' on split 'test_hf' for every dataset, i.e. the same per-sample-mean rel-L2 the ref_* floors report, so trained-arm-vs-floor and arm-vs-threshold comparisons are apples-to-apples. The raw ratio-of-sums 'nRMSE' key of test_hf is recorded per dataset as nrmse_ratio_of_sums_key for transparency and is never compared across split types.",
+    "per_dataset": {
+      "ext__helmholtz_2d": {
+        "per_seed_nrmse": [
+          1.362596619068399
+        ],
+        "per_seed_skill": [
+          4.135972371390855
+        ],
+        "mean_skill": 4.135972371390855,
+        "ci95": null,
+        "ci95_note": "null by construction: ADR 0004 pins seed 0 only, so no across-seed CI exists. The eval layer's own sample-level percentile-bootstrap CI on the SCORED nRMSE is in nrmse_ci95_sample_bootstrap (verbatim rel_l2_ci95_lo/hi).",
+        "nrmse_ci95_sample_bootstrap": [
+          1.1860653964781394,
+          1.5673171370967052
+        ],
+        "nrmse_per_sample_std": 0.9797012427837146,
+        "n_test_samples": 100,
+        "reference_type": "copylf",
+        "metric_source": "per_sample_mean",
+        "split": "test_hf",
+        "cached": false,
+        "copylf_reference_nrmse": 0.3294501260438018,
+        "nrmse_ratio_of_sums_key": 0.6712340990391588,
+        "certified_batch0_champion_skill": 13.817289529417906,
+        "min_claimable_effect": 9.694961194291832,
+        "ref_floor_skills_training_free_not_leaderboard_eligible": {
+          "copylf_identity": 1.0,
+          "retr_blockmean16_k5": 0.78506560459662,
+          "retr_patch_k5": 0.7873203966460548,
+          "retr_s1grad_k5": 0.5914766455857665,
+          "blend_trained_retrieval": 0.78506560459662
+        },
+        "blend_w_post_hoc": 1.0,
+        "train_seconds": 114.56137466430664
+      },
+      "sharp__phase_field_crystal_2d": {
+        "per_seed_nrmse": [
+          0.0008221527738511882
+        ],
+        "per_seed_skill": [
+          0.01835963741662444
+        ],
+        "mean_skill": 0.01835963741662444,
+        "ci95": null,
+        "ci95_note": "null by construction: ADR 0004 pins seed 0 only, so no across-seed CI exists. The eval layer's own sample-level percentile-bootstrap CI on the SCORED nRMSE is in nrmse_ci95_sample_bootstrap (verbatim rel_l2_ci95_lo/hi).",
+        "nrmse_ci95_sample_bootstrap": [
+          0.0006539660708452332,
+          0.001001153012099561
+        ],
+        "nrmse_per_sample_std": 0.0008794275257700173,
+        "n_test_samples": 100,
+        "reference_type": "copylf",
+        "metric_source": "per_sample_mean",
+        "split": "test_hf",
+        "cached": false,
+        "copylf_reference_nrmse": 0.04478044719481978,
+        "nrmse_ratio_of_sums_key": 0.001388152744225309,
+        "certified_batch0_champion_skill": 11.511001428346894,
+        "min_claimable_effect": 1.1511001428346894,
+        "ref_floor_skills_training_free_not_leaderboard_eligible": {
+          "copylf_identity": 1.0,
+          "retr_blockmean16_k5": 0.5619783646721216,
+          "retr_patch_k5": 0.5262324614121286,
+          "retr_s1grad_k5": 0.5197717508043579,
+          "blend_trained_retrieval": 0.018359637416624438
+        },
+        "blend_w_post_hoc": 0.0,
+        "train_seconds": 116.3165020942688
+      },
+      "sharp__allen_cahn_2d": {
+        "per_seed_nrmse": [
+          0.00464011211501068
+        ],
+        "per_seed_skill": [
+          0.2872819213154938
+        ],
+        "mean_skill": 0.2872819213154938,
+        "ci95": null,
+        "ci95_note": "null by construction: ADR 0004 pins seed 0 only, so no across-seed CI exists. The eval layer's own sample-level percentile-bootstrap CI on the SCORED nRMSE is in nrmse_ci95_sample_bootstrap (verbatim rel_l2_ci95_lo/hi).",
+        "nrmse_ci95_sample_bootstrap": [
+          0.0031039079168839584,
+          0.006566967048234678
+        ],
+        "nrmse_per_sample_std": 0.00885064321751846,
+        "n_test_samples": 100,
+        "reference_type": "copylf",
+        "metric_source": "per_sample_mean",
+        "split": "test_hf",
+        "cached": false,
+        "copylf_reference_nrmse": 0.016151772077279084,
+        "nrmse_ratio_of_sums_key": 0.004823467922229189,
+        "certified_batch0_champion_skill": 16.33407079448426,
+        "min_claimable_effect": 1.633407079448426,
+        "ref_floor_skills_training_free_not_leaderboard_eligible": {
+          "copylf_identity": 1.0,
+          "retr_blockmean16_k5": 1.0417006655105725,
+          "retr_patch_k5": 1.0792533578640975,
+          "retr_s1grad_k5": 1.0062263826548563,
+          "blend_trained_retrieval": 0.2872819213154937
+        },
+        "blend_w_post_hoc": 0.0,
+        "train_seconds": 263.5141065120697
+      },
+      "sharp__fisher_kpp_2d": {
+        "per_seed_nrmse": [
+          0.050368365933764286
+        ],
+        "per_seed_skill": [
+          0.8041915847059978
+        ],
+        "mean_skill": 0.8041915847059978,
+        "ci95": null,
+        "ci95_note": "null by construction: ADR 0004 pins seed 0 only, so no across-seed CI exists. The eval layer's own sample-level percentile-bootstrap CI on the SCORED nRMSE is in nrmse_ci95_sample_bootstrap (verbatim rel_l2_ci95_lo/hi).",
+        "nrmse_ci95_sample_bootstrap": [
+          0.04688577405883256,
+          0.054013561173231375
+        ],
+        "nrmse_per_sample_std": 0.018477340820706113,
+        "n_test_samples": 100,
+        "reference_type": "copylf",
+        "metric_source": "per_sample_mean",
+        "split": "test_hf",
+        "cached": false,
+        "copylf_reference_nrmse": 0.06263229669603956,
+        "nrmse_ratio_of_sums_key": 0.05323093656862016,
+        "certified_batch0_champion_skill": 4.177354995081957,
+        "min_claimable_effect": 0.41773549950819566,
+        "ref_floor_skills_training_free_not_leaderboard_eligible": {
+          "copylf_identity": 1.0,
+          "retr_blockmean16_k5": 1.0615925704947986,
+          "retr_patch_k5": 1.069181407189772,
+          "retr_s1grad_k5": 1.1056272759322343,
+          "blend_trained_retrieval": 0.8041915847059978
+        },
+        "blend_w_post_hoc": 0.0,
+        "train_seconds": 254.20669317245483
+      },
+      "sharp__cahn_hilliard": {
+        "per_seed_nrmse": [
+          0.039729981758783305
+        ],
+        "per_seed_skill": [
+          0.45322822078939096
+        ],
+        "mean_skill": 0.45322822078939096,
+        "ci95": null,
+        "ci95_note": "null by construction: ADR 0004 pins seed 0 only, so no across-seed CI exists. The eval layer's own sample-level percentile-bootstrap CI on the SCORED nRMSE is in nrmse_ci95_sample_bootstrap (verbatim rel_l2_ci95_lo/hi).",
+        "nrmse_ci95_sample_bootstrap": [
+          0.010549916582637224,
+          0.0803646136776009
+        ],
+        "nrmse_per_sample_std": 0.18298400488087765,
+        "n_test_samples": 100,
+        "reference_type": "copylf",
+        "metric_source": "per_sample_mean",
+        "split": "test_hf",
+        "cached": false,
+        "copylf_reference_nrmse": 0.08765999100758841,
+        "nrmse_ratio_of_sums_key": 0.19653277355722393,
+        "certified_batch0_champion_skill": 5.533465853654415,
+        "min_claimable_effect": 0.5533465853654416,
+        "ref_floor_skills_training_free_not_leaderboard_eligible": {
+          "copylf_identity": 1.0,
+          "retr_blockmean16_k5": 0.6250553400217439,
+          "retr_patch_k5": 0.5928273705653887,
+          "retr_s1grad_k5": 0.6119051001495275,
+          "blend_trained_retrieval": 0.453228220789391
+        },
+        "blend_w_post_hoc": 0.0,
+        "train_seconds": 266.568053483963
+      }
+    },
+    "panel_geomean_skill": {
+      "per_seed": [
+        0.38026407576440685
+      ],
+      "mean": 0.38026407576440685,
+      "ci95": null,
+      "ci95_note": "null by construction: one seed (ADR 0004). Every number in part 5 is provisional-single-seed.",
+      "n_datasets": 5
+    },
+    "vs_anchor": {
+      "anchor_file": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round1/state/anchors/s2_beyond_copy.json",
+      "anchor_type": "copylf_bar",
+      "anchor_value": 1.0,
+      "delta": -0.6197359242355931,
+      "delta_direction": "improvement (skill is lower-better)",
+      "beyond_ci": true,
+      "beyond_ci_basis": "No across-seed CI exists (single seed). Judged instead on the eval layer's own sample-level percentile-bootstrap CI of the scored nRMSE: on 4/5 datasets the whole CI lies below the copy-LF bar (pfc [0.000654, 0.001001] vs copy-LF 0.044780; allen_cahn [0.003104, 0.006567] vs 0.016152; cahn_hilliard [0.010550, 0.080365] vs 0.087660; fisher_kpp [0.046886, 0.054014] vs 0.062632), and on ext__helmholtz_2d the whole CI lies ABOVE it ([1.186065, 1.567317] vs 0.329450). Treat as sample-level only; a seed-level CI is unavailable in-round.",
+      "beyond_noise_floor": true,
+      "beyond_noise_floor_detail": {
+        "ext__helmholtz_2d": {
+          "delta_vs_anchor_skill_1p0": -3.1359723713908547,
+          "rescaled_seed_spread_floor": 0.7016543420944195,
+          "abs_delta_over_floor": 4.469397797824583,
+          "resolvable": true,
+          "direction": "regression"
+        },
+        "sharp__phase_field_crystal_2d": {
+          "delta_vs_anchor_skill_1p0": 0.9816403625833756,
+          "rescaled_seed_spread_floor": 0.007179454861133817,
+          "abs_delta_over_floor": 136.72909455807203,
+          "resolvable": true,
+          "direction": "improvement"
+        },
+        "sharp__allen_cahn_2d": {
+          "delta_vs_anchor_skill_1p0": 0.7127180786845062,
+          "rescaled_seed_spread_floor": 0.0008662823105649906,
+          "abs_delta_over_floor": 822.7318854285163,
+          "resolvable": true,
+          "direction": "improvement"
+        },
+        "sharp__fisher_kpp_2d": {
+          "delta_vs_anchor_skill_1p0": 0.19580841529400217,
+          "rescaled_seed_spread_floor": 0.021973016900171897,
+          "abs_delta_over_floor": 8.911312278309419,
+          "resolvable": true,
+          "direction": "improvement"
+        },
+        "sharp__cahn_hilliard": {
+          "delta_vs_anchor_skill_1p0": 0.546771779210609,
+          "rescaled_seed_spread_floor": 0.034666726563180886,
+          "abs_delta_over_floor": 15.772235610827149,
+          "resolvable": true,
+          "direction": "improvement"
+        }
+      },
+      "certified_batch0_champion_skills": {
+        "ext__helmholtz_2d": 13.817289529417906,
+        "sharp__allen_cahn_2d": 16.33407079448426,
+        "sharp__cahn_hilliard": 5.533465853654415,
+        "sharp__fisher_kpp_2d": 4.177354995081957,
+        "sharp__phase_field_crystal_2d": 11.511001428346894
+      }
+    },
+    "cratered_verdict": "proceed_to_seeds_1_2",
+    "cratered_verdict_detail": "NOT cratered. (a) no crash: SLURM 66023543 COMPLETED 0:0, .err empty (0 bytes), all 5 datasets finite on test_hf per assert_env. (b) panel geomean 0.380264 <= CRATERED_SKILL_FACTOR 1.5 x anchor 1.0 = 1.5. (c) the pre-registered falsification clause did not fire. Under ADR 0004 (seed 0 only) this value means 'not cratered, eligible for the end-of-round top-3 seed-1/2 confirmation', not an in-round 3-seed launch.",
+    "falsification_verdict": "confirmed",
+    "falsification_verdict_detail": {
+      "clause_quoted_verbatim": "H-B2 (\"a trained operator that receives the real coarse solve as an input and predicts the fidelity residual exploits the LF field at least as well as the training-free LF-keyed retrieval rule, and correctly no-ops where the residual is unlearnable\") is FALSIFIED if, at 200 epochs / seed 0, the promoted arm's scored skill is not `<= 0.512` on `sharp__phase_field_crystal_2d` ... or not `<= 0.555` on `sharp__cahn_hilliard` ... \u2014 OR if it degrades on Class B, i.e. skill `> 1.05` on `sharp__allen_cahn_2d` ... or `> 1.05` on `sharp__fisher_kpp_2d` ...; the substrate-sanity leg additionally requires improvement over the certified batch-0 champion skills by more than each dataset's `min_claimable_effect` (pfc 11.511001 needs >= 1.151100, allen_cahn 16.334071 >= 1.633407, cahn_hilliard 5.533466 >= 0.553347, fisher_kpp 4.177355 >= 0.417735, ext__helmholtz_2d 13.817290 >= 9.694961); with `ext__helmholtz_2d` otherwise REPORT-ONLY ...",
+      "deciding_numbers_falsification_triggers": {
+        "sharp__phase_field_crystal_2d": {
+          "clause_leg": "skill must be <= 0.512",
+          "threshold": 0.512,
+          "observed_skill": 0.01835963741662444,
+          "margin": 0.49364036258337557,
+          "falsification_trigger_fired": false
+        },
+        "sharp__cahn_hilliard": {
+          "clause_leg": "skill must be <= 0.555",
+          "threshold": 0.555,
+          "observed_skill": 0.45322822078939096,
+          "margin": 0.10177177921060909,
+          "falsification_trigger_fired": false
+        },
+        "sharp__allen_cahn_2d": {
+          "clause_leg": "FALSIFIED if skill > 1.05 (Class-B no-harm)",
+          "threshold": 1.05,
+          "observed_skill": 0.2872819213154938,
+          "margin": 0.7627180786845063,
+          "falsification_trigger_fired": false
+        },
+        "sharp__fisher_kpp_2d": {
+          "clause_leg": "FALSIFIED if skill > 1.05 (Class-B no-harm)",
+          "threshold": 1.05,
+          "observed_skill": 0.8041915847059978,
+          "margin": 0.2458084152940022,
+          "falsification_trigger_fired": false
+        }
+      },
+      "triggers_fired": [],
+      "verdict_reasoning": "None of the four 'FALSIFIED if' conditions fired: pfc 0.018360 <= 0.512 (margin 0.493640), cahn_hilliard 0.453228 <= 0.555 (margin 0.101772), allen_cahn 0.287282 not > 1.05, fisher_kpp 0.804192 not > 1.05. Hence H-B2 is CONFIRMED at 200 epochs / seed 0, provisional-single-seed (ADR 0004).",
+      "substrate_sanity_leg": {
+        "ext__helmholtz_2d": {
+          "certified_champion_skill": 13.817289529417906,
+          "arm_skill": 4.135972371390855,
+          "improvement": 9.681317158027051,
+          "min_claimable_effect_required": 9.694961194291832,
+          "met": false,
+          "slack": -0.013644036264780723
+        },
+        "sharp__phase_field_crystal_2d": {
+          "certified_champion_skill": 11.511001428346894,
+          "arm_skill": 0.01835963741662444,
+          "improvement": 11.49264179093027,
+          "min_claimable_effect_required": 1.1511001428346894,
+          "met": true,
+          "slack": 10.34154164809558
+        },
+        "sharp__allen_cahn_2d": {
+          "certified_champion_skill": 16.33407079448426,
+          "arm_skill": 0.2872819213154938,
+          "improvement": 16.046788873168765,
+          "min_claimable_effect_required": 1.633407079448426,
+          "met": true,
+          "slack": 14.413381793720339
+        },
+        "sharp__fisher_kpp_2d": {
+          "certified_champion_skill": 4.177354995081957,
+          "arm_skill": 0.8041915847059978,
+          "improvement": 3.373163410375959,
+          "min_claimable_effect_required": 0.41773549950819566,
+          "met": true,
+          "slack": 2.9554279108677632
+        },
+        "sharp__cahn_hilliard": {
+          "certified_champion_skill": 5.533465853654415,
+          "arm_skill": 0.45322822078939096,
+          "improvement": 5.080237632865025,
+          "min_claimable_effect_required": 0.5533465853654416,
+          "met": true,
+          "slack": 4.526891047499583
+        }
+      },
+      "substrate_sanity_leg_status": "MET on 4/5: pfc (+10.341542 slack), allen_cahn (+14.413382), cahn_hilliard (+4.526891), fisher_kpp (+2.955428). UNMET on ext__helmholtz_2d: improvement over the certified champion is 13.817290 - 4.135972 = 9.681317 against the required min_claimable_effect 9.694961, short by 0.013644 (99.86% of the requirement). That dataset's min_claimable_effect equals 70.17% of the champion skill itself (9.694961 / 13.817290 = 0.701654), which the clause itself calls a floor that 'admits no fine-grained claim' while designating ext__helmholtz_2d REPORT-ONLY. Recorded as: the helmholtz substrate-sanity sub-requirement is NOT RESOLVABLE (the measured improvement sits inside that dataset's seed-spread floor), not as a fired falsification trigger. Interpretation is left to the mechanism-analyzer.",
+      "vs_training_free_floors_context_only": "the scored arm vs the required floor retr_blockmean16_k5 (ref_* split, training-free, NOT leaderboard-eligible per B1 part 5 do_not_promote): pfc 0.018360 vs 0.561978; cahn_hilliard 0.453228 vs 0.625055; allen_cahn 0.287282 vs 1.041701; fisher_kpp 0.804192 vs 1.061593; ext__helmholtz_2d 4.135972 vs 0.785066 (the arm LOSES to the floor by 5.27x there, and also to the best floor rung retr_s1grad_k5 0.591477)."
+    },
+    "guard_flags": [
+      "sharp__sod_1d: contract-tier nRMSE 0.08052201 is 2.433x the guard reference 0.03309018 in eval/copylf_baselines.json (> 2x => FLAGGED, no auto-reject). Context, not interpretation: this dataset is 1-D and therefore ran on the card's pre-registered S2_FALLBACK_NO_TEST_LF=champion path (arm_effective='champion', mf_mechanism='base_transfer_learning', fallback_reason='1-D dataset (working grid (1, 128)); the card pre-registers sharp__sod_1d on this path'), i.e. the number does NOT exercise the scored LF-residual mechanism; and it is a 2-epoch contract-tier number (ADR 0007: screen numbers are never reportable)."
+    ],
+    "guard_set_detail": {
+      "tier": "contract (2 epochs, seed 0)",
+      "source_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s2_beyond_copy/B2/screen/lf_resid_fno__guard_s0.json",
+      "source_note": "produced by round1/eval/score_panel.py inside the ADR-0007 screen job 66011965 with the promoted arm S2_ARM=lf_resid_fno, the same 26 recipe knobs, the same code_hash 71c76898..., the same nrmse_def_hash, seed 0, epochs 2. The analyzer could NOT re-run it independently: this login node has no GPU (nvidia-smi not found) and the analyzer may not submit SLURM jobs. No converged (200-epoch) guard run exists, so the guard status of the scored arm at report tier is UNMEASURED.",
+      "rows": {
+        "fluid": {
+          "nrmse_contract_tier": 0.08660886230037353,
+          "guard_reference_nrmse": 0.21805958171115042,
+          "ratio_to_reference": 0.3971798057243765,
+          "skill": 0.3971798057243765,
+          "flagged_regression_gt_2x": false
+        },
+        "heat_local": {
+          "nrmse_contract_tier": 0.00019347071830077902,
+          "guard_reference_nrmse": 0.00240152155999517,
+          "ratio_to_reference": 0.08056172450151484,
+          "skill": 0.08056172450151484,
+          "flagged_regression_gt_2x": false
+        },
+        "sharp__sod_1d": {
+          "nrmse_contract_tier": 0.08052200632680118,
+          "guard_reference_nrmse": 0.03309017650048946,
+          "ratio_to_reference": 2.433411206664616,
+          "skill": 2.433411206664616,
+          "flagged_regression_gt_2x": true
+        }
+      },
+      "reference_source": "round1/eval/copylf_baselines.json test_nrmse (guard reference)"
+    },
+    "blend_readout_caveat": "PRE-LOGGED CAVEAT, carried per instruction \u2014 the post-hoc blend weight w is NOT an unbiased mechanism statistic. Verbatim from every per-run result JSON (splits.ref_blend_trained_retrieval / blend.caveat): \"the trained model saw the holdout during training; w is conservatively biased toward 0\". Verbatim from the card's build_notes (BLEND CAVEAT): \"the trained arm is fitted on ALL of the HF train split including the 20% blend holdout, so the blend weight w is conservatively biased toward 0 (the safe direction for a floor-discipline card). The retrieval archive for the holdout is the complementary 80% (no self-retrieval).\" Observed at 200 epochs / seed 0: w = 0.0 on pfc, allen_cahn, cahn_hilliard, fisher_kpp; w = 1.0 on ext__helmholtz_2d (the blend collapses onto the pure retrieval floor there). Both the blend and the floors are ref_* splits with reportable=false and are not leaderboard-eligible.",
+    "anomalies": [
+      "CLEAN RUN: SLURM 66023543 COMPLETED 0:0, elapsed 00:17:34 (sacct), single node, h100; .err is 0 bytes; no NaN, no preemption/requeue line in the .out; assert_env passed (26 recipe knobs present and equal, 5 datasets scored on test_hf, all finite); identity_proof abs_delta_nrmse = 0.0 and max_abs_field_delta_vs_LF_up = 0.0 on all 5 datasets; F6 floor-reproduction deltas 2.16e-05 .. 4.07e-04 (tol 0.02).",
+      "ext__helmholtz_2d is the one dataset that moves the WRONG way: skill 4.135972 (nRMSE 1.362597 vs copy-LF 0.329450), a resolvable regression vs the copy-LF anchor (3.135972 = 4.47x its rescaled seed-spread floor 0.701654). It is also the only single-LF-rung dataset (lf_fids [1] vs [1, 2] elsewhere), has the largest copy-LF nRMSE of the five, and is the only dataset where the post-hoc blend picks w = 1.0 (all-retrieval) despite the pre-logged bias-toward-0 caveat.",
+      "The substrate-sanity sub-requirement misses on ext__helmholtz_2d by 0.013644 skill units (9.681317 vs 9.694961 required) \u2014 a 0.14% shortfall against a floor equal to 70% of the champion skill. Not a fired falsification trigger; recorded as not-resolvable on the clause's own REPORT-ONLY dataset.",
+      "Heavy-tailed per-sample error on 2 datasets (reviewer F3 territory): the ratio-of-sums 'nRMSE' key of test_hf diverges from the SCORED per-sample-mean by 4.95x on sharp__cahn_hilliard (0.196533 vs 0.039730) and by 0.49x on ext__helmholtz_2d (0.671234 vs 1.362597). Consistently, cahn_hilliard's per-sample std 0.182984 is 4.6x its mean and its sample bootstrap CI is wide ([0.010550, 0.080365]). The scored comparison is unaffected (per_sample_mean throughout, floors included), but the win on cahn_hilliard rests on a distribution with a small catastrophic tail.",
+      "Guard: heat_local 0.081x and fluid 0.397x of their guard references (no regression); sharp__sod_1d flagged at 2.433x, on the pre-registered 1-D champion-fallback path (not the LF-residual mechanism) and at contract tier only. See guard_flags.",
+      "Training-free floor context (ref_* only, never leaderboard-eligible): the two NEW retrieval keys beat the required blockmean rung on 4/5 datasets \u2014 retr_s1grad_k5 0.591477 vs 0.785066 (helmholtz) and 0.519772 vs 0.561978 (pfc); retr_patch_k5 0.526232 (pfc) and 0.592827 vs 0.625055 (cahn_hilliard). Floors on Class B stay >= 1.0 (allen_cahn 1.006226..1.079253, fisher_kpp 1.061593..1.105627).",
+      "Anchor NOT updated: state/anchors/s2_beyond_copy.json is anchor_type 'copylf_bar' with value 1.0 (a fixed reference bar, not a best-achieved record) and \u00a72e conditions an update on a 3-seed result; this card is single-seed (ADR 0004). File left untouched.",
+      "Screen/smoke artifacts under <outputs>/{screen,smoke}/ are build-tier and were used ONLY for the guard regression check and as arm context; no screen number enters any reportable field (ADR 0007)."
+    ],
+    "wall_clock_per_seed_min": [
+      17.566666666666666
+    ],
+    "wall_clock_detail": {
+      "job_id": "66023543",
+      "job_name": "r1-s2_beyond_copy-B2-s0",
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "elapsed": "00:17:34",
+      "start_utc_local": "2026-07-29T19:58:39",
+      "end_utc_local": "2026-07-29T20:16:13",
+      "gpu": "1x NVIDIA H100 80GB HBM3 (hpc-33-22)",
+      "train_seconds_per_dataset": {
+        "ext__helmholtz_2d": 114.56137466430664,
+        "sharp__phase_field_crystal_2d": 116.3165020942688,
+        "sharp__allen_cahn_2d": 263.5141065120697,
+        "sharp__fisher_kpp_2d": 254.20669317245483,
+        "sharp__cahn_hilliard": 266.568053483963
+      },
+      "train_minutes_total": 16.919445498784384,
+      "screen_job_for_the_ledger": "66011965 (ADR-0007 screen, 4 arms x {5 beyond-copy, guard} at 2 epochs + floors; 19:42 -> 19:49 => ~7 min)"
+    },
+    "provisional": "provisional-single-seed (ADR 0004); no CI claims"
+  },
   "6_analysis": null,
   "7_gap_and_future": null,
-  "reanalysis_progress": null
+  "reanalysis_progress": "turn_1"
 }

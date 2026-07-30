@@ -2,17 +2,17 @@
   "id": "s3_warp-B1",
   "stream": "s3_warp",
   "batch": 1,
-  "category": "diagnostic / warp-opportunity oracle \u2014 displacement-vs-thickness decomposition of the LF->HF discrepancy on the beyond-copy panel",
+  "category": "diagnostic / warp-opportunity oracle — displacement-vs-thickness decomposition of the LF->HF discrepancy on the beyond-copy panel",
   "card_type": "diagnostic",
   "created_utc": "2026-07-29T17:43:37Z",
   "worktree_path": "mffp_autoresearch/round1/worktrees/s3_warp/B1",
   "source_iteration": "brainstormer/s3_warp/batch_1/iteration_1.md",
   "reopened_from": null,
-  "1_id_category": "s3_warp-B1 \u2014 diagnostic / warp-opportunity oracle \u2014 displacement-vs-thickness decomposition of the LF->HF discrepancy on the beyond-copy panel",
-  "2_motivation": "The websearcher's prior-art verdict makes D2 both the least preempted direction and the gate on D1. Verbatim, the D2 row's open part: *\"The metric is old; no fetched source applies it **between two fidelities of one PDE solve**, and none reports an oracle-warp upper bound on MF fusion error. It also gates D1: iteration 4's two-regime finding (shape/position vs interfacial-thickness error) means D1's premise is an empirical question about *our* LF grids.\"* Program.md \u00a712.3's mechanism prior \u2014 *\"coarse LF solves *displace* sharp interfaces, and rel-L2 punishes displacement doubly\"* \u2014 is therefore an untested empirical claim about this benchmark, and the one source that would have settled the two-regime question **403'd** (MDPI cryst12101496; the websearch marks the claim snippet-level, not citation-grade). The cross-stream evidence sharpens rather than removes the question: s2_beyond_copy-B1 M4 shows the *champion's* excess error is mid-distance on pfc and far-field on cahn_hilliard, but M1 shows the champion is **LF-blind at inference** (`lf_at_inference = FALSE`, 5/5 datasets x 3/3 seeds, zero field-shaped inputs), so its error is not the object a warp acts on. The right rows are copy-LF's error-mass/area shares \u2014 allen_cahn `[2.049, 0.814, 0.560, 0.552]` (interface-tilted), pfc `[1.276, 1.811, 0.840, 0.105]`, fisher_kpp `[1.034, 0.637, 0.909, 1.389]`, cahn_hilliard `[0.750, 0.562, 0.589, 2.162]`, helmholtz `[0.070, 0.248, 0.717, 3.011]` \u2014 plus M5a's copy-LF `amplitude_share_of_error` (allen_cahn 4.9e-5, fisher_kpp 0.0016, pfc 0.0045, cahn_hilliard 0.067, helmholtz 0.691), which says the sharp-dataset LF error is structural rather than amplitude. This card measures the ceiling a warp can reach, the regime it would be operating in, and the topology constraint \u00a712.3 requires \u2014 training-free, at s2-B1's demonstrated cost scale.",
-  "3_description": "new contract family `worktrees/s3_warp/B1/models_r1/s3_warp_oracle/` (`manifest.json` with `\"diagnostic\": true`, `smoke_eval.py` on the unchanged six-argument factory CLI, `INSPIRATION.md`, helper modules), invoked by unmodified `eval/score_panel.py` at `--epochs 0 --seed 0` on the five beyond-copy datasets. It trains no model. The warp primitive is `torch.nn.functional.grid_sample(LF_up, base_grid + phi)` \u2014 deliberately the same STN-style bilinear sampling a D1 model would use \u2014 with `phi` parameterised by a `C x C x 2` control grid bilinearly upsampled to the HF grid, `|phi|` clamped to 16 cells, and a Laplacian smoothness penalty. Measurements (all from one shared fit pass; sidecar `warp_oracle_<dataset>.json` under `${S3W_DIAG_OUT}`):\n\n- **M0 seam.** Rung `C = 0` (`phi == 0`) is the **warp-off control** and must equal `eval/copylf_baselines.json` to <= 1e-9 or the run aborts; every nRMSE is computed by importing `eval/nrmse.py` and each sidecar records `nrmse_def_hash`.\n- **M1 oracle ladder.** Per test sample, minimise `||grid_sample(LF, I + phi) - HF||^2 + lambda ||Laplacian phi||^2` by Adam (400 iters), coarse-to-fine over `C in {0, 4, 8, 16, 32, full}` (each rung initialised from the upsampled previous rung; loss asserted monotone-non-increasing in `C`). Report `skill_oracle(C) = nRMSE_warp(C) / nRMSE_copyLF`. The **learnable rung** is `C = 16` (512 dof, the low-mode budget a small FNO displacement head can plausibly express); `C = full` is the unbounded reference whose only job is to price the DOF axis.\n- **M2 regime.** Distribution of `|phi|` in grid cells (median / p90 / max), overall and restricted to near-interface pixels, using s2-B1's *identical* interface rule (`tau = 0.1` on `|u| / max|u|`, top-decile `|grad u|` fallback, pooled-quartile distance strata) so the sidecars are directly comparable.\n- **M3 displacement/amplitude decomposition** (Keil & Craig 2009 DAS, adopted by citation): split copy-LF's squared error into DIS (removed by the warp), AMP (further removed by a post-warp per-sample optimal scalar rescale, same `alpha` construction as s2 M5a), RES (remainder \u2014 the thickness/topology term no diffeomorphism can reach).\n- **M4 thickness probe.** Interface-band gradient-energy ratio `||grad HF|| / ||grad(warp(LF))||` before and after warping; a persistent ratio > 1 is direct evidence of the un-warpable interfacial-thickness regime.\n- **M5 topology** (\u00a712.3 requirement): connected-component counts of the phase indicator, LF vs HF, per sample; `mean |dN|` and the fraction of samples with `dN != 0`, per dataset. Names which datasets need a metamorphosis-style appearance term (MetaRegNet arXiv:2303.09088) and which are safely diffeomorphic.\n- **M6 spatial tie-in.** Warp benefit per s2 interface-distance stratum \u2014 does the removed error sit where copy-LF's error sits?\n- **M7 spectral tie-in.** Dyadic-band decomposition with s2-B1's identical band edges of copy-LF error vs post-warp error \u2014 is s2's low-band excess displacement-explainable, or is band-0 dominance only the 0.961-0.9998 HF energy share?\n- **M8 learnability bracket (scored).** Fit displacements on the *train* split too, then transfer to each test sample from its nearest neighbour (a) in LF-field space \u2014 this is the **scored `test_hf` split** \u2014 and (b) in condition space (`ref_transfer_cond`). Neither consults test-split HF. Stated confound: a field-conditioned learned head can exceed retrieval, so a poor transfer number does **not** falsify D1.\n- **M9 optimiser self-test (hard-stop).** Apply a known smooth random displacement to HF to synthesise a pseudo-LF (in memory only; never written, never scored); the fitter must recover it to < 0.25 cells endpoint error and drive nRMSE below 5% of unwarped, else the job aborts. This prevents \"optimiser failed\" being reported as \"no warp regime\". A `skimage.registration.optical_flow_tvl1` cross-check is run on the `C=full` rung of one dataset as a second opinion.\n\nSplit-key discipline (s2 precedent: `score_panel._extract_test_metric` reads only `test*` keys): copy-LF, every oracle rung, and the condition-space transfer are written under `ref_*` keys. **`do_not_promote: true` is pre-registered in the card** \u2014 the scored entry is a training-free nonparametric transfer, not a model, and is ineligible for the leaderboard, anchors, and top-3 confirmation. Oracle rungs are HF-fitted upper bounds and are never scored.\n\nDataset scope: the five beyond-copy panel datasets. `ifc_poisson` is excluded because its test split ships only the HF fidelity, so copy-LF is undefined and there is no LF field to warp (ADR 0002; `eval/copylf_baselines.json` `_notes.ifc_poisson`). `ext__helmholtz_2d` is the **built-in negative control** and is report-only (far-field copy-LF error, 69% amplitude, oscillatory not interface-dominated, floor 9.695).\n\nSubmit-time job env (not a scoring knob; s2-B1 precedent, reviewer suggestion S1): `ROUND1_EVAL_RESULTS=${OUTPUTS_ROOT}/s3_warp/B1/eval/results` so the family writes nothing into `round1/eval/results/`. Wall-clock estimate: 6 rungs x 400 Adam iters x ~500 fields x 5 datasets, GPU-batched \u2014 10-25 min on H100 (s2-B1's inference-only 5-dataset diagnostic was 0.77 min; this adds the fit). Suggested `--time 01:00:00`.",
-  "4_expected_result": "The measured quantity is `skill_oracle(C=16) = nRMSE(oracle-warped LF) / nRMSE(copy-LF)` per dataset; copy-LF is skill 1.0 by definition, so an effect is `1 - skill_oracle`. Predictions, grounded in the s2 copy-LF geometry:\n- `sharp__allen_cahn_2d` \u2014 copy-LF error most interface-concentrated (2.049x area share in the nearest stratum) and essentially zero amplitude (4.9e-5): predict `skill_oracle(16) ~ 0.25-0.45`, i.e. 55-75% of copy-LF's error removable; interface-pixel median `|phi| ~ 0.5-2` HF cells.\n- `sharp__fisher_kpp_2d` \u2014 travelling-front dataset, flat-ish error profile: predict `0.40-0.65`.\n- `sharp__phase_field_crystal_2d` \u2014 near+mid error, 128^2: predict `0.35-0.60`.\n- `sharp__cahn_hilliard` \u2014 far-field-concentrated copy-LF error and the largest sharp-dataset amplitude share (0.067): predict `0.70-0.90`, the weakest warp candidate of the four.\n- `ext__helmholtz_2d` (report-only, no claim) \u2014 predict `> 0.85` and an AMP term dominating DIS; a near-zero warp benefit here is the validity signal that the fitter is not simply absorbing arbitrary error.\n- `C = full` rung: predict `< 0.15` on every dataset \u2014 expected and uninformative on its own; its purpose is to price the DOF axis (`skill(full)` vs `skill(16)` is the gap a learned low-mode head must not be judged against).\nSo I expect **leg A not to fire** (>= 2 of the 4 sharp datasets at `skill_oracle(16) <= 0.44`), with allen_cahn and pfc the likely carriers, and I expect **leg B not to fire** on allen_cahn/pfc but plausibly to fire on cahn_hilliard.\nAgainst the noise floor: a leg-A-passing effect is >= 0.56 skill units, which exceeds `min_claimable_effect` on `sharp__cahn_hilliard` (0.553) and `sharp__fisher_kpp_2d` (0.418) outright, and exceeds the certified `spread` by 40x on `sharp__allen_cahn_2d` (0.0141), 6.8x on `sharp__phase_field_crystal_2d` (0.0826), 2.9x on `sharp__cahn_hilliard` (0.192) and 6.1x on `sharp__fisher_kpp_2d` (0.0918). On allen_cahn (1.633) and pfc (1.151) *no* copy-LF-referenced effect can clear `min_claimable_effect`, because that quantity is anchor-referenced (`max(spread, 0.1 x anchor mean skill)`, verified against all six entries) while a copy-LF-referenced effect lives in [0, 1] by construction \u2014 the same structural property that round-1 success criterion 2 (\"skill < 1\") has. This is declared, not worked around. `ext__helmholtz_2d` carries no leg and no numeric claim (floor 9.695).\nConsequences either way: a passing leg A + leg B licenses the D1 model card and fixes its target (the ceiling); a firing leg A retires the warp mechanism for this panel with a measured number rather than a failed 200-epoch run.\n\nPRE-REGISTERED FLAG (brainstormer report, \"Notes for downstream agents\" item 1: \"part 4 must carry `do_not_promote: true` **pre-registered**\"; source text is the report's split-key-discipline paragraph, verbatim): **`do_not_promote: true` is pre-registered in the card** \u2014 the scored entry is a training-free nonparametric transfer, not a model, and is ineligible for the leaderboard, anchors, and top-3 confirmation. Oracle rungs are HF-fitted upper bounds and are never scored.\n\nPRE-REGISTERED BATCH-2 CONSTRAINT (brainstormer report, \"Notes for downstream agents\" item 3, verbatim): \"**The next brainstormer in this stream** inherits a pre-registered requirement: any D1 (`mf_warp_correct`) model card must carry the architecture-level **warp-off control** (identical network, displacement forced to zero) as its comparator, not the champion alone \u2014 because s2-B1 M1 proves the champion is LF-blind at inference and a warp model would be the round's first LF-consuming model.\"",
-  "expected_falsification": "**Leg A (primary)** \u2014 the stream premise (\"the LF->HF discrepancy on sharp-interface panel datasets is substantially a geometric displacement of features\") is **falsified** if the oracle warp at the learnable rung (`C = 16`, smoothness-penalised, `|phi| <= 16` cells) leaves `skill_oracle > 0.44` (i.e. removes < 56% of copy-LF's error) on **3 or more** of the four sharp datasets `{sharp__allen_cahn_2d, sharp__phase_field_crystal_2d, sharp__cahn_hilliard, sharp__fisher_kpp_2d}` \u2014 with `ext__helmholtz_2d` excluded from the count as report-only (floor 9.695) and the M9 self-test having passed, so the result cannot be an optimiser artefact. **Leg B (regime)** \u2014 the premise is falsified *as a displacement story* even if leg A passes, if the median `|phi_oracle|` at near-interface pixels is `< 0.5` grid cells on 3 or more of those four datasets (a sub-cell \"warp\" is resampling/sharpening, not transport; 0.5 cells is 2x the pre-registered 0.25-cell self-test accuracy floor). **Leg C (topology, reported)** \u2014 if `> 25%` of test samples show a LF/HF connected-component mismatch on 2 or more sharp datasets, any future D1 card must carry a metamorphosis-style appearance term or scope to the topology-preserving subset. **Leg D (learnability, reported, non-falsifying)** \u2014 nearest-neighbour displacement transfer at skill `>= 1.0` on 4 or more of the 5 datasets means the benefit cannot be retrieved and must be *predicted from the field*; the confound (a learned head sees more than a retrieval index) is stated in the card.",
+  "1_id_category": "s3_warp-B1 — diagnostic / warp-opportunity oracle — displacement-vs-thickness decomposition of the LF->HF discrepancy on the beyond-copy panel",
+  "2_motivation": "The websearcher's prior-art verdict makes D2 both the least preempted direction and the gate on D1. Verbatim, the D2 row's open part: *\"The metric is old; no fetched source applies it **between two fidelities of one PDE solve**, and none reports an oracle-warp upper bound on MF fusion error. It also gates D1: iteration 4's two-regime finding (shape/position vs interfacial-thickness error) means D1's premise is an empirical question about *our* LF grids.\"* Program.md §12.3's mechanism prior — *\"coarse LF solves *displace* sharp interfaces, and rel-L2 punishes displacement doubly\"* — is therefore an untested empirical claim about this benchmark, and the one source that would have settled the two-regime question **403'd** (MDPI cryst12101496; the websearch marks the claim snippet-level, not citation-grade). The cross-stream evidence sharpens rather than removes the question: s2_beyond_copy-B1 M4 shows the *champion's* excess error is mid-distance on pfc and far-field on cahn_hilliard, but M1 shows the champion is **LF-blind at inference** (`lf_at_inference = FALSE`, 5/5 datasets x 3/3 seeds, zero field-shaped inputs), so its error is not the object a warp acts on. The right rows are copy-LF's error-mass/area shares — allen_cahn `[2.049, 0.814, 0.560, 0.552]` (interface-tilted), pfc `[1.276, 1.811, 0.840, 0.105]`, fisher_kpp `[1.034, 0.637, 0.909, 1.389]`, cahn_hilliard `[0.750, 0.562, 0.589, 2.162]`, helmholtz `[0.070, 0.248, 0.717, 3.011]` — plus M5a's copy-LF `amplitude_share_of_error` (allen_cahn 4.9e-5, fisher_kpp 0.0016, pfc 0.0045, cahn_hilliard 0.067, helmholtz 0.691), which says the sharp-dataset LF error is structural rather than amplitude. This card measures the ceiling a warp can reach, the regime it would be operating in, and the topology constraint §12.3 requires — training-free, at s2-B1's demonstrated cost scale.",
+  "3_description": "new contract family `worktrees/s3_warp/B1/models_r1/s3_warp_oracle/` (`manifest.json` with `\"diagnostic\": true`, `smoke_eval.py` on the unchanged six-argument factory CLI, `INSPIRATION.md`, helper modules), invoked by unmodified `eval/score_panel.py` at `--epochs 0 --seed 0` on the five beyond-copy datasets. It trains no model. The warp primitive is `torch.nn.functional.grid_sample(LF_up, base_grid + phi)` — deliberately the same STN-style bilinear sampling a D1 model would use — with `phi` parameterised by a `C x C x 2` control grid bilinearly upsampled to the HF grid, `|phi|` clamped to 16 cells, and a Laplacian smoothness penalty. Measurements (all from one shared fit pass; sidecar `warp_oracle_<dataset>.json` under `${S3W_DIAG_OUT}`):\n\n- **M0 seam.** Rung `C = 0` (`phi == 0`) is the **warp-off control** and must equal `eval/copylf_baselines.json` to <= 1e-9 or the run aborts; every nRMSE is computed by importing `eval/nrmse.py` and each sidecar records `nrmse_def_hash`.\n- **M1 oracle ladder.** Per test sample, minimise `||grid_sample(LF, I + phi) - HF||^2 + lambda ||Laplacian phi||^2` by Adam (400 iters), coarse-to-fine over `C in {0, 4, 8, 16, 32, full}` (each rung initialised from the upsampled previous rung; loss asserted monotone-non-increasing in `C`). Report `skill_oracle(C) = nRMSE_warp(C) / nRMSE_copyLF`. The **learnable rung** is `C = 16` (512 dof, the low-mode budget a small FNO displacement head can plausibly express); `C = full` is the unbounded reference whose only job is to price the DOF axis.\n- **M2 regime.** Distribution of `|phi|` in grid cells (median / p90 / max), overall and restricted to near-interface pixels, using s2-B1's *identical* interface rule (`tau = 0.1` on `|u| / max|u|`, top-decile `|grad u|` fallback, pooled-quartile distance strata) so the sidecars are directly comparable.\n- **M3 displacement/amplitude decomposition** (Keil & Craig 2009 DAS, adopted by citation): split copy-LF's squared error into DIS (removed by the warp), AMP (further removed by a post-warp per-sample optimal scalar rescale, same `alpha` construction as s2 M5a), RES (remainder — the thickness/topology term no diffeomorphism can reach).\n- **M4 thickness probe.** Interface-band gradient-energy ratio `||grad HF|| / ||grad(warp(LF))||` before and after warping; a persistent ratio > 1 is direct evidence of the un-warpable interfacial-thickness regime.\n- **M5 topology** (§12.3 requirement): connected-component counts of the phase indicator, LF vs HF, per sample; `mean |dN|` and the fraction of samples with `dN != 0`, per dataset. Names which datasets need a metamorphosis-style appearance term (MetaRegNet arXiv:2303.09088) and which are safely diffeomorphic.\n- **M6 spatial tie-in.** Warp benefit per s2 interface-distance stratum — does the removed error sit where copy-LF's error sits?\n- **M7 spectral tie-in.** Dyadic-band decomposition with s2-B1's identical band edges of copy-LF error vs post-warp error — is s2's low-band excess displacement-explainable, or is band-0 dominance only the 0.961-0.9998 HF energy share?\n- **M8 learnability bracket (scored).** Fit displacements on the *train* split too, then transfer to each test sample from its nearest neighbour (a) in LF-field space — this is the **scored `test_hf` split** — and (b) in condition space (`ref_transfer_cond`). Neither consults test-split HF. Stated confound: a field-conditioned learned head can exceed retrieval, so a poor transfer number does **not** falsify D1.\n- **M9 optimiser self-test (hard-stop).** Apply a known smooth random displacement to HF to synthesise a pseudo-LF (in memory only; never written, never scored); the fitter must recover it to < 0.25 cells endpoint error and drive nRMSE below 5% of unwarped, else the job aborts. This prevents \"optimiser failed\" being reported as \"no warp regime\". A `skimage.registration.optical_flow_tvl1` cross-check is run on the `C=full` rung of one dataset as a second opinion.\n\nSplit-key discipline (s2 precedent: `score_panel._extract_test_metric` reads only `test*` keys): copy-LF, every oracle rung, and the condition-space transfer are written under `ref_*` keys. **`do_not_promote: true` is pre-registered in the card** — the scored entry is a training-free nonparametric transfer, not a model, and is ineligible for the leaderboard, anchors, and top-3 confirmation. Oracle rungs are HF-fitted upper bounds and are never scored.\n\nDataset scope: the five beyond-copy panel datasets. `ifc_poisson` is excluded because its test split ships only the HF fidelity, so copy-LF is undefined and there is no LF field to warp (ADR 0002; `eval/copylf_baselines.json` `_notes.ifc_poisson`). `ext__helmholtz_2d` is the **built-in negative control** and is report-only (far-field copy-LF error, 69% amplitude, oscillatory not interface-dominated, floor 9.695).\n\nSubmit-time job env (not a scoring knob; s2-B1 precedent, reviewer suggestion S1): `ROUND1_EVAL_RESULTS=${OUTPUTS_ROOT}/s3_warp/B1/eval/results` so the family writes nothing into `round1/eval/results/`. Wall-clock estimate: 6 rungs x 400 Adam iters x ~500 fields x 5 datasets, GPU-batched — 10-25 min on H100 (s2-B1's inference-only 5-dataset diagnostic was 0.77 min; this adds the fit). Suggested `--time 01:00:00`.",
+  "4_expected_result": "The measured quantity is `skill_oracle(C=16) = nRMSE(oracle-warped LF) / nRMSE(copy-LF)` per dataset; copy-LF is skill 1.0 by definition, so an effect is `1 - skill_oracle`. Predictions, grounded in the s2 copy-LF geometry:\n- `sharp__allen_cahn_2d` — copy-LF error most interface-concentrated (2.049x area share in the nearest stratum) and essentially zero amplitude (4.9e-5): predict `skill_oracle(16) ~ 0.25-0.45`, i.e. 55-75% of copy-LF's error removable; interface-pixel median `|phi| ~ 0.5-2` HF cells.\n- `sharp__fisher_kpp_2d` — travelling-front dataset, flat-ish error profile: predict `0.40-0.65`.\n- `sharp__phase_field_crystal_2d` — near+mid error, 128^2: predict `0.35-0.60`.\n- `sharp__cahn_hilliard` — far-field-concentrated copy-LF error and the largest sharp-dataset amplitude share (0.067): predict `0.70-0.90`, the weakest warp candidate of the four.\n- `ext__helmholtz_2d` (report-only, no claim) — predict `> 0.85` and an AMP term dominating DIS; a near-zero warp benefit here is the validity signal that the fitter is not simply absorbing arbitrary error.\n- `C = full` rung: predict `< 0.15` on every dataset — expected and uninformative on its own; its purpose is to price the DOF axis (`skill(full)` vs `skill(16)` is the gap a learned low-mode head must not be judged against).\nSo I expect **leg A not to fire** (>= 2 of the 4 sharp datasets at `skill_oracle(16) <= 0.44`), with allen_cahn and pfc the likely carriers, and I expect **leg B not to fire** on allen_cahn/pfc but plausibly to fire on cahn_hilliard.\nAgainst the noise floor: a leg-A-passing effect is >= 0.56 skill units, which exceeds `min_claimable_effect` on `sharp__cahn_hilliard` (0.553) and `sharp__fisher_kpp_2d` (0.418) outright, and exceeds the certified `spread` by 40x on `sharp__allen_cahn_2d` (0.0141), 6.8x on `sharp__phase_field_crystal_2d` (0.0826), 2.9x on `sharp__cahn_hilliard` (0.192) and 6.1x on `sharp__fisher_kpp_2d` (0.0918). On allen_cahn (1.633) and pfc (1.151) *no* copy-LF-referenced effect can clear `min_claimable_effect`, because that quantity is anchor-referenced (`max(spread, 0.1 x anchor mean skill)`, verified against all six entries) while a copy-LF-referenced effect lives in [0, 1] by construction — the same structural property that round-1 success criterion 2 (\"skill < 1\") has. This is declared, not worked around. `ext__helmholtz_2d` carries no leg and no numeric claim (floor 9.695).\nConsequences either way: a passing leg A + leg B licenses the D1 model card and fixes its target (the ceiling); a firing leg A retires the warp mechanism for this panel with a measured number rather than a failed 200-epoch run.\n\nPRE-REGISTERED FLAG (brainstormer report, \"Notes for downstream agents\" item 1: \"part 4 must carry `do_not_promote: true` **pre-registered**\"; source text is the report's split-key-discipline paragraph, verbatim): **`do_not_promote: true` is pre-registered in the card** — the scored entry is a training-free nonparametric transfer, not a model, and is ineligible for the leaderboard, anchors, and top-3 confirmation. Oracle rungs are HF-fitted upper bounds and are never scored.\n\nPRE-REGISTERED BATCH-2 CONSTRAINT (brainstormer report, \"Notes for downstream agents\" item 3, verbatim): \"**The next brainstormer in this stream** inherits a pre-registered requirement: any D1 (`mf_warp_correct`) model card must carry the architecture-level **warp-off control** (identical network, displacement forced to zero) as its comparator, not the champion alone — because s2-B1 M1 proves the champion is LF-blind at inference and a warp model would be the round's first LF-consuming model.\"",
+  "expected_falsification": "**Leg A (primary)** — the stream premise (\"the LF->HF discrepancy on sharp-interface panel datasets is substantially a geometric displacement of features\") is **falsified** if the oracle warp at the learnable rung (`C = 16`, smoothness-penalised, `|phi| <= 16` cells) leaves `skill_oracle > 0.44` (i.e. removes < 56% of copy-LF's error) on **3 or more** of the four sharp datasets `{sharp__allen_cahn_2d, sharp__phase_field_crystal_2d, sharp__cahn_hilliard, sharp__fisher_kpp_2d}` — with `ext__helmholtz_2d` excluded from the count as report-only (floor 9.695) and the M9 self-test having passed, so the result cannot be an optimiser artefact. **Leg B (regime)** — the premise is falsified *as a displacement story* even if leg A passes, if the median `|phi_oracle|` at near-interface pixels is `< 0.5` grid cells on 3 or more of those four datasets (a sub-cell \"warp\" is resampling/sharpening, not transport; 0.5 cells is 2x the pre-registered 0.25-cell self-test accuracy floor). **Leg C (topology, reported)** — if `> 25%` of test samples show a LF/HF connected-component mismatch on 2 or more sharp datasets, any future D1 card must carry a metamorphosis-style appearance term or scope to the topology-preserving subset. **Leg D (learnability, reported, non-falsifying)** — nearest-neighbour displacement transfer at skill `>= 1.0` on 4 or more of the 5 datasets means the benefit cannot be retrieved and must be *predicted from the field*; the confound (a learned head sees more than a retrieval index) is stated in the card.",
   "anchor_reference": null,
   "prior_art": {
     "verdict": "preempted-pivoted",
@@ -46,7 +46,7 @@
       "S3W_DIAG_OUT": "${OUTPUTS_ROOT}/s3_warp/B1/eval"
     }
   },
-  "status": "running",
+  "status": "complete",
   "skipped_reason": null,
   "reopen_candidate": false,
   "scripts_path": {
@@ -78,7 +78,7 @@
     "HYPERPARAMETER PROVENANCE: all 11 S3W_* knobs come verbatim from recipe.env and are REQUIRED at runtime (a missing/empty knob is a hard stop, never a default); datasets, epochs 0 and seed 0 likewise from the recipe. S3W_DIAG_OUT is expanded to the literal absolute /resnick/.../mffp_autoresearch_outputs/round1/s3_warp/B1/eval in scripts/01_train_eval.sh (the recipe stores the unexpanded ${OUTPUTS_ROOT} string); the family accepts an absolute path or resolves a relative one against the repo root. BUILDER CHOICES the card did not specify, all recorded in the sidecar's objective_definition / M9 blocks so they are auditable: grid_sample bilinear + align_corners=True + padding_mode='border'; per-sample data term normalised by ||HF_i||^2 (so lambda means the same on every dataset and the per-sample fits are independent); smoothness = mean over pixels of |5-point Laplacian phi|^2 with replicate padding; the |phi| <= 16-cell constraint enforced by projecting each control vector onto that ball after every Adam step (bilinear upsampling is a convex combination, so the bound also holds on the HF grid); fits in float32 for throughput, every REPORTED field re-warped in float64 and scored ONLY through eval/nrmse.py (no metric is recomputed by hand anywhere); chunking at 1.2e7 cells/chunk, <=256 samples; self-test uses 8 test HF fields, a 4x4 planted control grid at peak |d| = 2.0 cells, 40 fixed-point inversion iterations; topology indicator threshold = per-sample 0.5*(max+min) with 4-connectivity, reported raw and with a min-component-size-4 variant; the TV-L1 second opinion runs on sharp__allen_cahn_2d only (the card says 'one dataset') over 8 samples, and every other dataset's sidecar records why it did not run. TRAIN-SPLIT FITS STOP AT THE LEARNABLE RUNG (0->4->8->16) because only the C=16 control grid is transferred in M8; C=32/full are fitted on the test split only, where they are the reported ceiling.",
     "SPLIT-KEY DISCIPLINE verified in the smoke result JSON: the only test* key is test_hf = the M8 NN-in-LF-field displacement transfer (a training-free nonparametric transfer that consults no test HF; the train NN index list is recorded in the sidecar). Every other predictor -- copy-LF, all six oracle rungs (C0/C4/C8/C16/C32/Cfull) and the condition-space transfer -- is under ref_*, which score_panel._extract_test_metric ignores. Observed splits: ['ref_copylf','ref_oracle_C0','ref_oracle_C16','ref_oracle_C32','ref_oracle_C4','ref_oracle_C8','ref_oracle_Cfull','ref_transfer_cond','test_hf'].",
     "IDEMPOTENCE / PREEMPTION: each dataset writes <ckpt_dir>/last.pt with {complete, dataset, epochs_target, nrmse_def_hash, env, sidecar path, result}; a re-run re-emits the stored result only if all of those match and the sidecar still exists, else it recomputes. Verified: a second invocation on the same ckpt_dir printed '[resume] ext__helmholtz_2d already complete; re-emitting result' in 27 s and produced a byte-identical test_hf nRMSE. Because score_panel gives each dataset its own ckpt_dir, a requeue re-fits at most the dataset in flight. Nothing trains, so there is no partial-epoch state to restore.",
-    "SLURM (ADR 0005 + the card's suggestion): scripts/01_train_eval.sh (SEED=$1, one score_panel.py invocation over the five beyond-copy datasets) + scripts/submit.sh (seed 0 only). No submit_seeds_2_3.sh -- this is a diagnostic card (program.md \u00a74.3: single run, no seeds 1-2), and 01_train_eval.sh is seed-parameterized anyway. Both pass `bash -n`; every path is absolute. Headers: --job-name=r1-s3_warp-B1-s0, --partition=gpu, --gres=gpu:h100:1, --mem=64G (raised from the s2 diagnostic's 32G: the ladder holds six float64 warped test fields at 256^2), --time=01:00:00 per the card's estimate, --exclude=hpc-93-36, --requeue, logs to <outputs_root>/s3_warp/B1/slurm/%x_%j.{out,err}. The script exports ROUND1_EVAL_RESULTS=<outputs_root>/s3_warp/B1/eval/results (card part 3 / s2-B1 precedent) so nothing is written into round1/eval/results/, and passes --no_cache because a cache hit would skip the sidecar measurement entirely. state/timing_ledger.json has no analog for an Adam-fitting diagnostic (the closest entry, s2-B1's inference-only 5-dataset diagnostic, is 0.77 min on h100); the smoke's 1856 s for one 96^2 dataset on 8 CPU threads is the only measured datapoint and the family prints a loud warning if it lands on CPU, where it would exceed the walltime rather than silently produce numbers.",
+    "SLURM (ADR 0005 + the card's suggestion): scripts/01_train_eval.sh (SEED=$1, one score_panel.py invocation over the five beyond-copy datasets) + scripts/submit.sh (seed 0 only). No submit_seeds_2_3.sh -- this is a diagnostic card (program.md §4.3: single run, no seeds 1-2), and 01_train_eval.sh is seed-parameterized anyway. Both pass `bash -n`; every path is absolute. Headers: --job-name=r1-s3_warp-B1-s0, --partition=gpu, --gres=gpu:h100:1, --mem=64G (raised from the s2 diagnostic's 32G: the ladder holds six float64 warped test fields at 256^2), --time=01:00:00 per the card's estimate, --exclude=hpc-93-36, --requeue, logs to <outputs_root>/s3_warp/B1/slurm/%x_%j.{out,err}. The script exports ROUND1_EVAL_RESULTS=<outputs_root>/s3_warp/B1/eval/results (card part 3 / s2-B1 precedent) so nothing is written into round1/eval/results/, and passes --no_cache because a cache hit would skip the sidecar measurement entirely. state/timing_ledger.json has no analog for an Adam-fitting diagnostic (the closest entry, s2-B1's inference-only 5-dataset diagnostic, is 0.77 min on h100); the smoke's 1856 s for one 96^2 dataset on 8 CPU threads is the only measured datapoint and the family prints a loud warning if it lands on CPU, where it would exceed the walltime rather than silently produce numbers.",
     "OBSERVATIONS FOR THE REVIEWER/ANALYZER from the helmholtz smoke (the card's built-in negative control, report-only): skill_oracle(C=16) = 0.4204 -- well below the brainstormer's >0.85 prediction -- with median |phi| at near-interface pixels of 3.92 cells and max |phi| pinned at exactly 16.0, i.e. THE |phi| <= 16-CELL CONSTRAINT IS BINDING on this dataset. The M3 split at C16 is DIS 0.874 / AMP 0.082 / RES 0.044 and the M7 band ratios are [0.120, 18.50, 3.96, 1.13] (the warp removes 88% of band-0 error while multiplying band-1 error 18x), which is what a large phase-shifting warp on an oscillatory field looks like. M8 transfer_field skill 0.701, transfer_cond 1.042. The M9 leg-B calibration ratio (median |phi_fit| / median |phi_true| under a KNOWN 2-cell warp) is 1.117 on the interface mask and 1.138 on stratum 0 -- leg B's statistic is biased HIGH by roughly that factor and the analyzer should discount it accordingly. None of this is a claim: it is one dataset, and the interpretation belongs to part 5."
   ],
   "review_notes": [
@@ -96,9 +96,9 @@
       "findings": [
         "3.1 card-implementation alignment PASS - M0-M9, split-key discipline, do_not_promote and the ROUND1_EVAL_RESULTS redirect all trace to smoke_eval.py:538-893; no paraphrase drift; the only two departures from part-3 literals are the declared M9 deviations, both ruled faithful.",
         "3.2 recipe fidelity PASS - all 11 S3W_* knobs verbatim in scripts/01_train_eval.sh, S3W_DIAG_OUT correctly expanded to the literal absolute outputs path, dataset string / --epochs 0 / --seed $1 exact; every non-recipe constant (SELFTEST_*, MONOTONE_RTOL, OPTFLOW_*, CHUNK_*, align_corners/padding_mode, ||HF||^2 normalisation, topology threshold) declared in build_notes AND echoed into the sidecar.",
-        "3.3 \u00a75 immutables PASS - data read-only; round1/eval/ byte-untouched (git status clean, and no s3_warp_oracle dir under eval/results, so the smoke's redirect worked); ONE nRMSE definition verified (rel_l2_per_sample is exactly eval/nrmse.py's per-sample ratio, smoke agrees to 2 ulp, nrmse_def_hash cross-checked against copylf_baselines.json with a hard stop); seed 0; guarded factory surfaces and akash/ untouched; no pre-falsified lever re-proposed; epochs 0 is the locked recipe value with the completed s2-B1 diagnostic as precedent.",
+        "3.3 §5 immutables PASS - data read-only; round1/eval/ byte-untouched (git status clean, and no s3_warp_oracle dir under eval/results, so the smoke's redirect worked); ONE nRMSE definition verified (rel_l2_per_sample is exactly eval/nrmse.py's per-sample ratio, smoke agrees to 2 ulp, nrmse_def_hash cross-checked against copylf_baselines.json with a hard stop); seed 0; guarded factory surfaces and akash/ untouched; no pre-falsified lever re-proposed; epochs 0 is the locked recipe value with the completed s2-B1 diagnostic as precedent.",
         "3.4 contract compliance PASS - manifest.json with diagnostic:true, unchanged 6-arg CLI, INSPIRATION.md citing all four prior_art URLs plus the Keil-Craig provenance caveat, checkpoint-resume from <ckpt_dir>/last.pt implemented and env/hash-gated (smoke_eval.py:462-477, 898), seeding from --seed for python-numpy-torch-cuda, diagnostic JSON + phi npz written under S3W_DIAG_OUT.",
-        "3.5 SLURM correctness PASS - bash -n run by the reviewer on both scripts, both clean; partition gpu + typed gres gpu:h100:1 match project.yaml; job name r1-s3_warp-B1-s0; logs under outputs_root/s3_warp/B1/slurm/; absolute paths; set -euo pipefail; 01_train_eval.sh takes SEED=$1; submit.sh seed 0 only; --time 01:00:00, --mem 64G, --requeue, --exclude present; absence of submit_seeds_2_3.sh is CORRECT for a diagnostic (\u00a74.3) and documented.",
+        "3.5 SLURM correctness PASS - bash -n run by the reviewer on both scripts, both clean; partition gpu + typed gres gpu:h100:1 match project.yaml; job name r1-s3_warp-B1-s0; logs under outputs_root/s3_warp/B1/slurm/; absolute paths; set -euo pipefail; 01_train_eval.sh takes SEED=$1; submit.sh seed 0 only; --time 01:00:00, --mem 64G, --requeue, --exclude present; absence of submit_seeds_2_3.sh is CORRECT for a diagnostic (§4.3) and documented.",
         "3.6 smoke evidence PASS - build_notes cites the full score_panel.py command and scratchpad/contract_smoke.json + .log + the 25 kB sidecar are committed and were read; exit 0, metric_source per_sample_mean, split test_hf, nRMSE 0.231032, skill 0.70127, nrmse_def_hash matches copylf_baselines.json. Run at --epochs 0 = the recipe tier, which is the exact command the job will run.",
         "3.7 blast radius PASS - 13 files, all under models_r1/ scripts/ notes/ scratchpad/; no substrate contamination; all 17 locked card fields verified byte-identical to HEAD by key-wise JSON comparison."
       ],
@@ -124,20 +124,20 @@
       "attempt": 2,
       "verdict": "reviewed_suggest (post-debug focused ruling on debug attempt 1, commit b72f243; card status left at 'running' because job 66011595 is live)",
       "findings": [
-        "P-0 OVERALL: SUGGEST \u2014 do NOT scancel 66011595. Both M9 gate-statistic changes accepted; one mandatory record correction (P-4/P-5).",
+        "P-0 OVERALL: SUGGEST — do NOT scancel 66011595. Both M9 gate-statistic changes accepted; one mandatory record correction (P-4/P-5).",
         "CHANGE 1 (exactly-attainable fit direction) = PASS, faithful AND stricter: endpoint error is now measured against the card's own noun d (smoke_eval.py:311) instead of the unnamed fixed-point inverse; the exact-d floor is 0 by construction (gt_field = warp(hf64,d,base64) is bit-identical to the synthesis), so the nRMSE threshold tightens from max(0.05*unwarped, 1.5*exact) ~ 0.15-0.27 of unwarped to the card's literal 0.05. Verified on all five datasets by job 66010125: fitter nRMSE 0.00003-0.01366 of unwarped, 3.7x-1600x margin under the literal clause.",
         "CHANGE 2 (|grad u|-evidence-weighted EPE) = SUGGEST, a legitimate correction of an ill-posed statistic, NOT gate-softening: (a) warp_core.py:337 normalises by gn+1e-12 and pfc's s2 mask has median |grad u| 2.1e-8 vs field RMS 4.55e-2, so the unweighted mean projects onto numerical noise (unweighted 0.3913 while the fitter reproduces the target to 1.1e-4 of unwarped); (b) it is a no-op where the mask has support (allen_cahn 99.1%, fisher 100%, cahn_hilliard 100% support share; weighted vs unweighted agree to <=2e-4); (c) Sum(g*e)/Sum(g) is the scale-invariant field-perturbation-per-unit-gradient, the statistic that couples to the nRMSE leg. Same mask, same 0.25 tolerance, same hard WarpHardStop, literal value recorded.",
         "P-4 MANDATORY (analyzer): the claimed RUNTIME proof of teeth does not cover the EPE leg. Job 66010125 measured the wired-in control (SELFTEST_SABOTAGE_ITERS=5) on all five datasets: weighted EPE 0.2276/0.2107/0.2043/0.2123/0.1760, i.e. it PASSES the 0.25-cell leg on 5/5 and fails only the nRMSE leg (0.53-0.62 of unwarped). Report M9's operative teeth as the nRMSE leg; read broken_optimiser_control.epe_normal_interface_mask_weighted_mean from the sidecar and record that it is < 0.25. Not a FAIL because the gate is an AND, so composite strictness is bounded below by the now-literal 5% nRMSE leg (10-20x violated by every sabotage variant).",
         "P-5 (record accuracy): the 0.33-0.35 teeth figures in debug_notes[0].verification and the debugger handoff belong to an UNIMPLEMENTED sabotage (lr=1e-4, i.e. lr/200), not to the implemented 5-iteration control. Correct this when quoting M9.",
         "P-6 (future warp card, one line): make the control the lr/200 fit (sab_cfg['lr'] = cfg['lr']/200) or raise SELFTEST_AMPLITUDE, so the planted signal exceeds the tolerance in the gating statistic. Note the EPE leg's weakness is largely inherited: at AMPL=2.0 (peak) the mean normal projection is ~0.2 cells vs a 0.25 tolerance, so the UNWEIGHTED 5-iter control already passed on 3/5 datasets (0.1927/0.2094/0.1766); weighting flips 2 more.",
-        "CHANGE 3 (float64 reported field) = PASS: real, load-bearing bug (job 66010795 aborted with ladder rung-0 0.04478044967257278 vs M0 seam 0.04478044719481978, |d|=2.48e-9 vs a 1e-9 tolerance, on p100). Fit path verified untouched \u2014 the optimiser sees only lf32 (smoke_eval.py:196 wc.objective, :204 wc.fit); lf64 is consumed only at :220 for the reported field; lf64.float() is bit-identical to as_tensor(dtype=float32) (single IEEE round-to-nearest of the same source). py_compile clean on both modules.",
-        "CHANGE 4 (locked fields) = PASS: the card diff removes exactly three lines \u2014 status, the single job_ids entry, and the empty debug_notes array. recipe, build_notes, review_notes, operator_amendments and all 17 locked fields byte-identical; no recipe knob touched; bash -n clean on both scripts.",
+        "CHANGE 3 (float64 reported field) = PASS: real, load-bearing bug (job 66010795 aborted with ladder rung-0 0.04478044967257278 vs M0 seam 0.04478044719481978, |d|=2.48e-9 vs a 1e-9 tolerance, on p100). Fit path verified untouched — the optimiser sees only lf32 (smoke_eval.py:196 wc.objective, :204 wc.fit); lf64 is consumed only at :220 for the reported field; lf64.float() is bit-identical to as_tensor(dtype=float32) (single IEEE round-to-nearest of the same source). py_compile clean on both modules.",
+        "CHANGE 4 (locked fields) = PASS: the card diff removes exactly three lines — status, the single job_ids entry, and the empty debug_notes array. recipe, build_notes, review_notes, operator_amendments and all 17 locked fields byte-identical; no recipe knob touched; bash -n clean on both scripts.",
         "CHANGE 5 (stale-artifact quarantine) = PASS: outputs .../s3_warp/B1/eval/results/ is empty, all pre-fix artifacts are under eval/stale_pre_debug1/, and no last.pt exists outside quarantine; score_panel rebuilds ckpt_<ds>_e0_s0 inside the emptied tree (score_panel.py:85-88) and the job passes --no_cache. Nothing pre-fix can short-circuit resume.",
-        "P-1 (analyzer): M9 now exercises moving=HF(sharp)/target=pseudo-LF(attainable) while production fits moving=LF(blurred)/target=HF(unattainable) \u2014 M9 certifies the optimiser machinery and identifiability, not the conditioning of the production fit. Do not over-claim.",
+        "P-1 (analyzer): M9 now exercises moving=HF(sharp)/target=pseudo-LF(attainable) while production fits moving=LF(blurred)/target=HF(unattainable) — M9 certifies the optimiser machinery and identifiability, not the conditioning of the production fit. Do not over-claim.",
         "P-2 (analyzer): unwarped flipped argument order (smoke_eval.py:335), so nrmse_fraction_of_unwarped now has denominator ||pseudo_LF|| and is NOT comparable to the pre-debug field of the same name.",
         "P-3 (operator, informational): the 2026-07-29T19:55Z amendment is now inert by construction; a one-line addendum noting that the debug fix restored the literal clause would clean the record. Locked field, untouched.",
         "P-7 (future cards, structural): the resume guard (smoke_eval.py:641-645) keys on dataset+epochs+nrmse_def_hash+env+sidecar existence but NOT on a code hash, so relaunch correctness after a code change depends entirely on manual quarantine. Add code_hash to the last.pt marker.",
-        "P-8 (informational): warp_core.normal_tangential_error now returns a 5-tuple; the committed scratchpad/diagnose_attempt_1{,b,c}.py unpack 4 and will raise if re-run at b72f243 (they ran against the pre-change module and compute the weighted statistic independently \u2014 which is stronger evidence, but they are not re-executable as committed)."
+        "P-8 (informational): warp_core.normal_tangential_error now returns a 5-tuple; the committed scratchpad/diagnose_attempt_1{,b,c}.py unpack 4 and will raise if re-run at b72f243 (they ran against the pre-change module and compute the weighted statistic independently — which is stronger evidence, but they are not re-executable as committed)."
       ],
       "utc": "2026-07-30T00:05Z"
     }
@@ -173,15 +173,1633 @@
       "utc": "2026-07-29T23:28Z"
     }
   ],
-  "5_actual_result": null,
-  "6_analysis": null,
-  "7_gap_and_future": null,
-  "reanalysis_progress": null,
+  "5_actual_result": {
+    "seeds_available": [
+      0
+    ],
+    "card_type_note": "DIAGNOSTIC. do_not_promote:true is pre-registered (part 3/4) and honoured: nothing from this card enters the leaderboard, the anchors, or the top-3 confirmation set. No anchor file was created or modified for s3_warp.",
+    "per_dataset": {
+      "ext__helmholtz_2d": {
+        "per_seed_nrmse": [
+          0.2310319816267058
+        ],
+        "per_seed_skill": [
+          0.7012654218744755
+        ],
+        "mean_skill": 0.7012654218744755,
+        "ci95": null,
+        "reference_type": "copylf",
+        "split": "test_hf",
+        "cached": false,
+        "metric_source": "per_sample_mean",
+        "scored_predictor": "M8 transfer_field (nearest-neighbour oracle-phi retrieval in LF-field space; do_not_promote)",
+        "copylf_reference_nrmse": 0.3294501260438018,
+        "grid": [
+          96,
+          96
+        ],
+        "n_test_hf": 100,
+        "n_train_hf": 400,
+        "wall_seconds": 18.8
+      },
+      "sharp__allen_cahn_2d": {
+        "per_seed_nrmse": [
+          0.004209785754170978
+        ],
+        "per_seed_skill": [
+          0.2606392496147801
+        ],
+        "mean_skill": 0.2606392496147801,
+        "ci95": null,
+        "reference_type": "copylf",
+        "split": "test_hf",
+        "cached": false,
+        "metric_source": "per_sample_mean",
+        "scored_predictor": "M8 transfer_field (nearest-neighbour oracle-phi retrieval in LF-field space; do_not_promote)",
+        "copylf_reference_nrmse": 0.016151772077279084,
+        "grid": [
+          256,
+          256
+        ],
+        "n_test_hf": 100,
+        "n_train_hf": 400,
+        "wall_seconds": 110.3
+      },
+      "sharp__cahn_hilliard": {
+        "per_seed_nrmse": [
+          0.04358240308778619
+        ],
+        "per_seed_skill": [
+          0.4971755368308607
+        ],
+        "mean_skill": 0.4971755368308607,
+        "ci95": null,
+        "reference_type": "copylf",
+        "split": "test_hf",
+        "cached": false,
+        "metric_source": "per_sample_mean",
+        "scored_predictor": "M8 transfer_field (nearest-neighbour oracle-phi retrieval in LF-field space; do_not_promote)",
+        "copylf_reference_nrmse": 0.08765999100758841,
+        "grid": [
+          256,
+          256
+        ],
+        "n_test_hf": 100,
+        "n_train_hf": 400,
+        "wall_seconds": 105.8
+      },
+      "sharp__fisher_kpp_2d": {
+        "per_seed_nrmse": [
+          0.03037119687287891
+        ],
+        "per_seed_skill": [
+          0.4849127123706351
+        ],
+        "mean_skill": 0.4849127123706351,
+        "ci95": null,
+        "reference_type": "copylf",
+        "split": "test_hf",
+        "cached": false,
+        "metric_source": "per_sample_mean",
+        "scored_predictor": "M8 transfer_field (nearest-neighbour oracle-phi retrieval in LF-field space; do_not_promote)",
+        "copylf_reference_nrmse": 0.06263229669603956,
+        "grid": [
+          256,
+          256
+        ],
+        "n_test_hf": 100,
+        "n_train_hf": 400,
+        "wall_seconds": 106.5
+      },
+      "sharp__phase_field_crystal_2d": {
+        "per_seed_nrmse": [
+          0.014611972284409745
+        ],
+        "per_seed_skill": [
+          0.32630250923666665
+        ],
+        "mean_skill": 0.32630250923666665,
+        "ci95": null,
+        "reference_type": "copylf",
+        "split": "test_hf",
+        "cached": false,
+        "metric_source": "per_sample_mean",
+        "scored_predictor": "M8 transfer_field (nearest-neighbour oracle-phi retrieval in LF-field space; do_not_promote)",
+        "copylf_reference_nrmse": 0.04478044719481978,
+        "grid": [
+          128,
+          128
+        ],
+        "n_test_hf": 100,
+        "n_train_hf": 400,
+        "wall_seconds": 22.5
+      }
+    },
+    "panel_geomean_skill": {
+      "per_seed": [
+        0.42809799641105367
+      ],
+      "mean": 0.42809799641105367,
+      "ci95": null,
+      "IS_NOT_A_PANEL_SCORE": true,
+      "note": "Binding constraint F-4 (review_B1.md): score_panel's 0.42809799641105367 is the geomean over the FIVE requested datasets of the do_not_promote nearest-neighbour-transfer entry. The round-1 panel is six datasets and this card excludes ifc_poisson by design (ADR 0002: its test split ships HF only, so copy-LF and 'LF to warp' are both undefined). It must never be recorded or compared as a panel score."
+    },
+    "vs_anchor": {
+      "anchor_value": null,
+      "delta": null,
+      "beyond_ci": null,
+      "beyond_noise_floor": true,
+      "note": "anchor_reference is null (locked) and no state/anchors/s3_warp.json exists; a diagnostic with do_not_promote cannot establish or beat an anchor, so §2e was not triggered. The reference here is copy-LF (skill 1.0 by construction). Noise-floor cross-check on the leg-A effect (1 - skill_oracle(C16)) against state/noise_floor.json certified per-dataset 'spread': allen_cahn 0.8528 vs 0.0141 (60.3x), pfc 0.7694 vs 0.0826 (9.3x), cahn_hilliard 0.8045 vs 0.1918 (4.2x), fisher_kpp 0.5212 vs 0.0918 (5.7x) -> all four resolvable. Against the anchor-referenced min_claimable_effect the effect clears it outright on cahn_hilliard (0.8045 > 0.5533) and fisher_kpp (0.5212 > 0.4177) and CANNOT clear it on allen_cahn (1.6334) or pfc (1.1511) because a copy-LF-referenced effect lives in [0,1] by construction while min_claimable_effect is anchor-referenced -- this structural mismatch is DECLARED in the locked part 4, not worked around. ext__helmholtz_2d is report-only (floor 9.695) and carries no claim; its 0.5796 effect is far below that floor and is NOT claimed.",
+      "single_seed_caveat": "Seed 0 only (diagnostic; §4.3 -- scripts_path.seeds_2_3 is null by design). No CI on any number in this card. The training-free measurement has no optimiser seed variance beyond the Adam fit itself; the fits' reproducibility was not measured across seeds."
+    },
+    "cratered_verdict": "n/a",
+    "cratered_verdict_note": "Diagnostic card -> no cratered rule (subagent spec §2b). Job 66011595 COMPLETED, exit 0:0, 00:06:26. The measurement is recorded against the pre-registered falsification clause instead.",
+    "falsification_verdict": "confirmed",
+    "falsification_by_leg": {
+      "leg_A_primary": {
+        "verdict": "NOT FALSIFIED (premise confirmed)",
+        "clause_verbatim": "Leg A (primary) - the stream premise (\"the LF->HF discrepancy on sharp-interface panel datasets is substantially a geometric displacement of features\") is falsified if the oracle warp at the learnable rung (C = 16, smoothness-penalised, |phi| <= 16 cells) leaves skill_oracle > 0.44 (i.e. removes < 56% of copy-LF's error) on 3 or more of the four sharp datasets {sharp__allen_cahn_2d, sharp__phase_field_crystal_2d, sharp__cahn_hilliard, sharp__fisher_kpp_2d} - with ext__helmholtz_2d excluded from the count as report-only (floor 9.695) and the M9 self-test having passed, so the result cannot be an optimiser artefact.",
+        "deciding_numbers": "skill_oracle(C16): allen_cahn 0.1472, cahn_hilliard 0.1955, pfc 0.2306, fisher_kpp 0.4788. Datasets with skill_oracle > 0.44: 1 of 4 (fisher_kpp 0.4788 only). 1 < 3 -> leg A does not fire. M9 self-test passed on 5/5 datasets. Error removed at C16: 85.3% / 80.4% / 76.9% / 52.1%.",
+        "vs_part4_prediction": "Beat the pre-registered predictions on 3 of 4: allen_cahn predicted 0.25-0.45, measured 0.1472; pfc predicted 0.35-0.60, measured 0.2306; cahn_hilliard predicted 0.70-0.90 (the 'weakest candidate'), measured 0.1955 -- the largest miss and in the favourable direction. fisher_kpp predicted 0.40-0.65, measured 0.4788 (inside). Cfull predicted <0.15 on every dataset: held on allen_cahn 0.0686, pfc 0.0941 and cahn_hilliard 0.1510 (marginal miss) but not fisher_kpp 0.1771 or helmholtz 0.3246. helmholtz (report-only) predicted >0.85 with AMP dominating DIS: BOTH WRONG -- measured 0.4204 at C16 with DIS_share 0.8738 vs AMP_share 0.0822."
+      },
+      "leg_B_regime": {
+        "verdict": "NOT FALSIFIED at face value (1 of 4 fires, and that one is certified non-sensitive) -- BUT see the constant-offset caveat, which the mechanism-analyzer must rule on",
+        "clause_verbatim": "Leg B (regime) - the premise is falsified as a displacement story even if leg A passes, if the median |phi_oracle| at near-interface pixels is < 0.5 grid cells on 3 or more of those four datasets (a sub-cell \"warp\" is resampling/sharpening, not transport; 0.5 cells is 2x the pre-registered 0.25-cell self-test accuracy floor).",
+        "deciding_numbers": "median |phi_oracle| at C16 on the s2 near-interface stratum-0 mask, in HF cells: allen_cahn 0.7076, fisher_kpp 0.7072, cahn_hilliard 1.0191, pfc 0.0000. Below 0.5: 1 of 4 (pfc) -> 1 < 3, leg B does not fire.",
+        "F1_bias_correction_applied": "Per binding constraint F-1 the recorded M9 leg_B_magnitude_bias was applied. Post-debug values differ from the 1.117/1.138 quoted in the original review (the debug changed the fit direction): allen_cahn 1.0004, fisher_kpp 1.0000 (unbiased), cahn_hilliard 0.8194 (biased LOW by 18% -> corrected median 1.244, further from the threshold), pfc 1.37e-07.",
+        "pfc_is_not_resolvable": "pfc's 0.0000 must NOT be counted as a leg-B firing. Its own calibration says the statistic has no sensitivity there: under a KNOWN planted warp with median |phi_true| = 0.6307 cells on that mask the fitter's recovered median was 8.57e-08 cells (leg_B_magnitude_bias = 1.36e-07). Cause (debugger's flat-mask finding, debug_notes[0]): pfc's s2 interface mask |u| <= 0.1*max|u| selects the homogeneous matrix around the crystal -- grad_median on the mask 2.107e-08 against a field-wide gradient RMS of 4.551e-02, gradient support only 12.43% of mask cells (vs 99.1% allen_cahn, 100.0% fisher_kpp, 100.0% cahn_hilliard, 51.8% helmholtz). Where |grad u| ~ 0 no data term determines phi in any direction and the fitter correctly leaves phi ~ 0. On pfc read the all-pixel median instead: 0.3220 cells at C16 (also < 0.5, on a mask that IS resolvable) -- recorded, not counted, because the clause names near-interface pixels."
+      },
+      "leg_C_topology": {
+        "verdict": "FIRES (reported, non-falsifying)",
+        "clause_verbatim": "Leg C (topology, reported) - if > 25% of test samples show a LF/HF connected-component mismatch on 2 or more sharp datasets, any future D1 card must carry a metamorphosis-style appearance term or scope to the topology-preserving subset.",
+        "deciding_numbers": "frac_samples_delta_N_nonzero (raw / min_size_4): fisher_kpp 1.00 / 0.97, allen_cahn 0.35 / 0.36, pfc 0.26 / 0.21, cahn_hilliard 0.05 / 0.06. Above 25%: 3 of 4 raw (fisher_kpp, allen_cahn, pfc), 2 of 4 under the min-size-4 variant (fisher_kpp, allen_cahn). >= 2 either way -> leg C FIRES robustly. Severity is wildly uneven: mean |dN| fisher_kpp 17.46 (of ~259 LF vs ~277 HF components, max 56), allen_cahn 0.41 (of ~22.6), pfc 0.30 (of ~17.0), cahn_hilliard 0.11 (of ~7.9).",
+        "consequence": "The pre-registered consequence is now binding on any batch-2 D1 card: appearance/metamorphosis term or scope to the topology-preserving subset. cahn_hilliard (5-6%) is the only sharp dataset that is safely near-diffeomorphic; fisher_kpp is disqualified as a diffeomorphic-warp target on this evidence alone."
+      },
+      "leg_D_learnability": {
+        "verdict": "DOES NOT FIRE (reported, non-falsifying) -- the benefit IS retrievable",
+        "clause_verbatim": "Leg D (learnability, reported, non-falsifying) - nearest-neighbour displacement transfer at skill >= 1.0 on 4 or more of the 5 datasets means the benefit cannot be retrieved and must be predicted from the field; the confound (a learned head sees more than a retrieval index) is stated in the card.",
+        "deciding_numbers": "SCORED test_hf skill (transfer_field, LF-field-space nearest neighbour, consults_test_hf=false): allen_cahn 0.2606, pfc 0.3263, fisher_kpp 0.4849, cahn_hilliard 0.4972, helmholtz 0.7013. At skill >= 1.0: 0 of 5 -> 0 < 4, leg D does not fire. Condition-space transfer: allen_cahn 0.2562, fisher_kpp 0.4851, pfc 0.5139, cahn_hilliard 0.6207, helmholtz 1.0421 (the only >= 1.0 entry; helmholtz is the report-only negative control). Field-space NN beats condition-space NN on 3 of 5 (pfc 0.326 vs 0.514, cahn_hilliard 0.497 vs 0.621, helmholtz 0.701 vs 1.042); condition-space is marginally better on allen_cahn and a tie on fisher_kpp.",
+        "bracket": "A training-free retrieval of oracle displacements from the 400 train samples captures (1 - skill_transfer)/(1 - skill_oracle(C16)) = 98.8% (fisher_kpp), 87.6% (pfc), 86.7% (allen_cahn), 62.5% (cahn_hilliard), 51.5% (helmholtz) of the C16 oracle's error removal. This is a LOWER bracket on learnability, per the card's stated confound; it is not a model and is do_not_promote."
+      }
+    },
+    "M0_seam": {
+      "ext__helmholtz_2d": {
+        "passed": true,
+        "tol": 1e-09,
+        "M0_abs_delta_vs_copylf_baselines": 5.551115123125783e-17,
+        "identity_grid_sample_max_abs_dev": 4.440892098500626e-16,
+        "ladder_C0_nrmse": 0.32945012604380175,
+        "copylf_baseline_nrmse": 0.3294501260438018
+      },
+      "sharp__allen_cahn_2d": {
+        "passed": true,
+        "tol": 1e-09,
+        "M0_abs_delta_vs_copylf_baselines": 6.938893903907228e-18,
+        "identity_grid_sample_max_abs_dev": 4.0245584642661925e-16,
+        "ladder_C0_nrmse": 0.016151772077279077,
+        "copylf_baseline_nrmse": 0.016151772077279084
+      },
+      "sharp__cahn_hilliard": {
+        "passed": true,
+        "tol": 1e-09,
+        "M0_abs_delta_vs_copylf_baselines": 0.0,
+        "identity_grid_sample_max_abs_dev": 8.947703689088371e-15,
+        "ladder_C0_nrmse": 0.08765999100758841,
+        "copylf_baseline_nrmse": 0.08765999100758841
+      },
+      "sharp__fisher_kpp_2d": {
+        "passed": true,
+        "tol": 1e-09,
+        "M0_abs_delta_vs_copylf_baselines": 0.0,
+        "identity_grid_sample_max_abs_dev": 1.2045919817182948e-14,
+        "ladder_C0_nrmse": 0.06263229669603956,
+        "copylf_baseline_nrmse": 0.06263229669603956
+      },
+      "sharp__phase_field_crystal_2d": {
+        "passed": true,
+        "tol": 1e-09,
+        "M0_abs_delta_vs_copylf_baselines": 0.0,
+        "identity_grid_sample_max_abs_dev": 3.247402347028583e-15,
+        "ladder_C0_nrmse": 0.04478044719481978,
+        "copylf_baseline_nrmse": 0.04478044719481978
+      }
+    },
+    "M0_seam_summary": "PASS on 5/5 at tol 1e-9. Binding constraint F-3 honoured: the M0 (float64) seam delta vs eval/copylf_baselines.json is 5.551e-17 on ext__helmholtz_2d (0.000e+00 on cahn_hilliard / fisher_kpp / pfc, 6.939e-18 on allen_cahn) and must NOT be conflated with the pre-debug ladder-C0 figure of 2.8e-11. Post-debug the ladder C0 is bit-identical to the M0 field, so the ladder-C0-vs-baseline delta is now also 5.551e-17 / 0.0. identity_grid_sample_max_abs_dev is nonzero on 5/5 (4.03e-16 to 1.21e-14), which is only possible if F.grid_sample actually executed -- the warp-off control is a real code path, not a bypass.",
+    "nrmse_def_hash": "d3d0ade9191c13bacc40702f3eb26ad290e01641cacee22a1d2233b74c035850",
+    "nrmse_def_hash_consistency": "VERIFIED: the scored result JSON, all five warp_oracle_<ds>.json sidecars, and eval/copylf_baselines.json all carry d3d0ade9191c13bacc40702f3eb26ad290e01641cacee22a1d2233b74c035850. No mismatch; no seam assertion triggered. Single seed, so no cross-seed hash comparison was possible.",
+    "M1_oracle_ladder": {
+      "ext__helmholtz_2d": {
+        "skill_oracle_by_rung": {
+          "C0": 0.9999999999999998,
+          "C4": 0.7708205748718225,
+          "C8": 0.5542211123973482,
+          "C16": 0.4204262704271965,
+          "C32": 0.3632334294837727,
+          "Cfull": 0.324635475957118
+        },
+        "nrmse_by_rung": {
+          "C0": 0.32945012604380175,
+          "C4": 0.2539469355486777,
+          "C8": 0.1825882153354424,
+          "C16": 0.1385094877843654,
+          "C32": 0.11966729912675131,
+          "Cfull": 0.10695119847236212
+        },
+        "dof_by_rung": {
+          "C0": 0,
+          "C4": 32,
+          "C8": 128,
+          "C16": 512,
+          "C32": 2048,
+          "Cfull": 18432
+        },
+        "warp_removable_ceiling_C16": 0.5795737295728035,
+        "warp_removable_ceiling_Cfull": 0.675364524042882,
+        "C4_share_of_C16_benefit": 0.39542755897011195,
+        "monotone": true,
+        "monotonicity_violations": [],
+        "monotone_tol_rtol": 0.01
+      },
+      "sharp__allen_cahn_2d": {
+        "skill_oracle_by_rung": {
+          "C0": 0.9999999999999996,
+          "C4": 0.17144516658646497,
+          "C8": 0.16772767732217464,
+          "C16": 0.147235691288853,
+          "C32": 0.10600800210431502,
+          "Cfull": 0.06858767594587298
+        },
+        "nrmse_by_rung": {
+          "C0": 0.016151772077279077,
+          "C4": 0.002769143254455726,
+          "C8": 0.0027090992151591765,
+          "C16": 0.002378117327338179,
+          "C32": 0.0017122170883566176,
+          "Cfull": 0.0011078125091880174
+        },
+        "dof_by_rung": {
+          "C0": 0,
+          "C4": 32,
+          "C8": 128,
+          "C16": 512,
+          "C32": 2048,
+          "Cfull": 131072
+        },
+        "warp_removable_ceiling_C16": 0.852764308711147,
+        "warp_removable_ceiling_Cfull": 0.931412324054127,
+        "C4_share_of_C16_benefit": 0.9716105903468197,
+        "monotone": true,
+        "monotonicity_violations": [],
+        "monotone_tol_rtol": 0.01
+      },
+      "sharp__cahn_hilliard": {
+        "skill_oracle_by_rung": {
+          "C0": 1.0,
+          "C4": 0.36889236468117537,
+          "C8": 0.2579578941859839,
+          "C16": 0.19549477286380626,
+          "C32": 0.17193413782092318,
+          "Cfull": 0.1510175497500852
+        },
+        "nrmse_by_rung": {
+          "C0": 0.08765999100758841,
+          "C4": 0.03233710137071986,
+          "C8": 0.022612586684679793,
+          "C16": 0.017137070031271795,
+          "C32": 0.015071744975279593,
+          "Cfull": 0.013238197053080502
+        },
+        "dof_by_rung": {
+          "C0": 0,
+          "C4": 32,
+          "C8": 128,
+          "C16": 512,
+          "C32": 2048,
+          "Cfull": 131072
+        },
+        "warp_removable_ceiling_C16": 0.8045052271361938,
+        "warp_removable_ceiling_Cfull": 0.8489824502499148,
+        "C4_share_of_C16_benefit": 0.7844667927955987,
+        "monotone": true,
+        "monotonicity_violations": [],
+        "monotone_tol_rtol": 0.01
+      },
+      "sharp__fisher_kpp_2d": {
+        "skill_oracle_by_rung": {
+          "C0": 1.0,
+          "C4": 0.4813736977602206,
+          "C8": 0.4810301082484212,
+          "C16": 0.478847508623064,
+          "C32": 0.45948882236479766,
+          "Cfull": 0.17709467783429902
+        },
+        "nrmse_by_rung": {
+          "C0": 0.06263229669603956,
+          "C4": 0.030149540259787812,
+          "C8": 0.030128020459543145,
+          "C16": 0.02999131923223911,
+          "C32": 0.028778840250865825,
+          "Cfull": 0.011091846405407358
+        },
+        "dof_by_rung": {
+          "C0": 0,
+          "C4": 32,
+          "C8": 128,
+          "C16": 512,
+          "C32": 2048,
+          "Cfull": 131072
+        },
+        "warp_removable_ceiling_C16": 0.521152491376936,
+        "warp_removable_ceiling_Cfull": 0.822905322165701,
+        "C4_share_of_C16_benefit": 0.9951526872096839,
+        "monotone": true,
+        "monotonicity_violations": [],
+        "monotone_tol_rtol": 0.01
+      },
+      "sharp__phase_field_crystal_2d": {
+        "skill_oracle_by_rung": {
+          "C0": 1.0,
+          "C4": 0.30480265725274625,
+          "C8": 0.2974799856537736,
+          "C16": 0.23062855878556301,
+          "C32": 0.14288333820620314,
+          "Cfull": 0.09410822405929845
+        },
+        "nrmse_by_rung": {
+          "C0": 0.04478044719481978,
+          "C4": 0.013649199297947355,
+          "C8": 0.013321286789084553,
+          "C16": 0.010327649998314294,
+          "C32": 0.006398379781562455,
+          "Cfull": 0.004214208358085682
+        },
+        "dof_by_rung": {
+          "C0": 0,
+          "C4": 32,
+          "C8": 128,
+          "C16": 512,
+          "C32": 2048,
+          "Cfull": 32768
+        },
+        "warp_removable_ceiling_C16": 0.769371441214437,
+        "warp_removable_ceiling_Cfull": 0.9058917759407016,
+        "C4_share_of_C16_benefit": 0.9035913025961804,
+        "monotone": true,
+        "monotonicity_violations": [],
+        "monotone_tol_rtol": 0.01
+      }
+    },
+    "M2_M3_M4_decomposition": {
+      "ext__helmholtz_2d": {
+        "das_C16": {
+          "DIS_share": 0.8738235673108102,
+          "AMP_share": 0.08221807226897743,
+          "RES_share": 0.04395836042021224,
+          "alpha_median": 0.998936334757796,
+          "alpha_std": 0.3343330887540413,
+          "E_copylf": 605.7742408667032
+        },
+        "das_Cfull": {
+          "DIS_share": 0.9028208391366738,
+          "AMP_share": 0.057608997178751724,
+          "RES_share": 0.03957016368457462,
+          "alpha_median": 0.999201381325341,
+          "E_copylf": 605.7742408667032
+        },
+        "phi_C16_cells": {
+          "all_pixels": {
+            "median": 2.970243453979492,
+            "mean": 4.531857013702393,
+            "p90": 11.351323127746582,
+            "max": 16.000001907348633,
+            "n_cells": 921600
+          },
+          "interface_cells": {
+            "median": 3.819903612136841,
+            "mean": 5.491752624511719,
+            "p90": 13.076904296875,
+            "max": 16.000001907348633,
+            "n_cells": 212219
+          },
+          "near_interface_stratum0": {
+            "median": 3.922121047973633,
+            "mean": 5.583554267883301,
+            "p90": 13.19594669342041,
+            "max": 16.000001907348633,
+            "n_cells": 261169
+          }
+        },
+        "phi_median_near_interface_by_rung": {
+          "C0": 0.0,
+          "C4": 1.8599783182144165,
+          "C8": 3.069570302963257,
+          "C16": 3.922121047973633,
+          "C32": 4.320637226104736,
+          "Cfull": 4.4661688804626465
+        },
+        "thickness_grad_ratio": {
+          "interface_cells": {
+            "C16": {
+              "hf_over_copylf": 0.9751471812801629,
+              "hf_over_warped": 1.4179175734204397
+            },
+            "Cfull": {
+              "hf_over_copylf": 0.9751471812801629,
+              "hf_over_warped": 1.6328722895502876
+            }
+          },
+          "near_interface_stratum0": {
+            "C16": {
+              "hf_over_copylf": 0.863256105997151,
+              "hf_over_warped": 1.2922402642482658
+            },
+            "Cfull": {
+              "hf_over_copylf": 0.863256105997151,
+              "hf_over_warped": 1.5618750659221048
+            }
+          }
+        }
+      },
+      "sharp__allen_cahn_2d": {
+        "das_C16": {
+          "DIS_share": 0.9710700724526578,
+          "AMP_share": 0.0011833627195610708,
+          "RES_share": 0.027746564827781147,
+          "alpha_median": 1.0000726215360574,
+          "alpha_std": 0.0012864533952634837,
+          "E_copylf": 6.10735073289603
+        },
+        "das_Cfull": {
+          "DIS_share": 0.9935123953331048,
+          "AMP_share": 1.0035158921047173e-05,
+          "RES_share": 0.006477569507974209,
+          "alpha_median": 1.0000172626466628,
+          "E_copylf": 6.10735073289603
+        },
+        "phi_C16_cells": {
+          "all_pixels": {
+            "median": 0.708008348941803,
+            "mean": 0.7081996202468872,
+            "p90": 0.7762020230293274,
+            "max": 3.504133939743042,
+            "n_cells": 6553600
+          },
+          "interface_cells": {
+            "median": 0.7075127959251404,
+            "mean": 0.7070618271827698,
+            "p90": 0.7780234217643738,
+            "max": 2.537062883377075,
+            "n_cells": 662995
+          },
+          "near_interface_stratum0": {
+            "median": 0.7075797915458679,
+            "mean": 0.7078107595443726,
+            "p90": 0.7770845293998718,
+            "max": 3.3189737796783447,
+            "n_cells": 1668097
+          }
+        },
+        "phi_median_near_interface_by_rung": {
+          "C0": 0.0,
+          "C4": 0.7066779732704163,
+          "C8": 0.706536591053009,
+          "C16": 0.7075797915458679,
+          "C32": 0.7104719281196594,
+          "Cfull": 0.7109320759773254
+        },
+        "thickness_grad_ratio": {
+          "interface_cells": {
+            "C16": {
+              "hf_over_copylf": 1.0142472766836157,
+              "hf_over_warped": 1.0138081372354408
+            },
+            "Cfull": {
+              "hf_over_copylf": 1.0142472766836157,
+              "hf_over_warped": 1.0017087916129432
+            }
+          },
+          "near_interface_stratum0": {
+            "C16": {
+              "hf_over_copylf": 1.011240824366666,
+              "hf_over_warped": 1.0145898128308726
+            },
+            "Cfull": {
+              "hf_over_copylf": 1.011240824366666,
+              "hf_over_warped": 1.0029464742440504
+            }
+          }
+        }
+      },
+      "sharp__cahn_hilliard": {
+        "das_C16": {
+          "DIS_share": 0.6893673663554873,
+          "AMP_share": 0.03669540639182507,
+          "RES_share": 0.27393722725268765,
+          "alpha_median": 1.0000638211295327,
+          "alpha_std": 0.03843449299811099,
+          "E_copylf": 217821.1681318244
+        },
+        "das_Cfull": {
+          "DIS_share": 0.794328537679899,
+          "AMP_share": 0.012209986004190761,
+          "RES_share": 0.1934614763159103,
+          "alpha_median": 1.0000538816274849,
+          "E_copylf": 217821.1681318244
+        },
+        "phi_C16_cells": {
+          "all_pixels": {
+            "median": 1.0376752614974976,
+            "mean": 1.77740478515625,
+            "p90": 2.61918044090271,
+            "max": 16.000001907348633,
+            "n_cells": 6553600
+          },
+          "interface_cells": {
+            "median": 1.0081713199615479,
+            "mean": 1.5946784019470215,
+            "p90": 2.294764757156372,
+            "max": 16.000001907348633,
+            "n_cells": 133888
+          },
+          "near_interface_stratum0": {
+            "median": 1.0190733671188354,
+            "mean": 1.6296601295471191,
+            "p90": 2.314404010772705,
+            "max": 16.000001907348633,
+            "n_cells": 1713239
+          }
+        },
+        "phi_median_near_interface_by_rung": {
+          "C0": 0.0,
+          "C4": 0.7223337888717651,
+          "C8": 1.0018062591552734,
+          "C16": 1.0190733671188354,
+          "C32": 1.0203797817230225,
+          "Cfull": 1.0207514762878418
+        },
+        "thickness_grad_ratio": {
+          "interface_cells": {
+            "C16": {
+              "hf_over_copylf": 1.0490867978246439,
+              "hf_over_warped": 1.0052742074723977
+            },
+            "Cfull": {
+              "hf_over_copylf": 1.0490867978246439,
+              "hf_over_warped": 1.0029075409684522
+            }
+          },
+          "near_interface_stratum0": {
+            "C16": {
+              "hf_over_copylf": 1.0210025142221215,
+              "hf_over_warped": 1.0030069145693605
+            },
+            "Cfull": {
+              "hf_over_copylf": 1.0210025142221215,
+              "hf_over_warped": 1.001853555429357
+            }
+          }
+        }
+      },
+      "sharp__fisher_kpp_2d": {
+        "das_C16": {
+          "DIS_share": 0.7361756316586067,
+          "AMP_share": 0.013459365226516173,
+          "RES_share": 0.2503650031148773,
+          "alpha_median": 1.0054019369496414,
+          "alpha_std": 0.0040076712759712875,
+          "E_copylf": 12096.542054182562
+        },
+        "das_Cfull": {
+          "DIS_share": 0.9647046840081116,
+          "AMP_share": 0.0005186950361721554,
+          "RES_share": 0.03477662095571624,
+          "alpha_median": 1.00111172464409,
+          "E_copylf": 12096.542054182562
+        },
+        "phi_C16_cells": {
+          "all_pixels": {
+            "median": 0.7074316740036011,
+            "mean": 0.7076694965362549,
+            "p90": 0.7429569959640503,
+            "max": 1.624222755432129,
+            "n_cells": 6553600
+          },
+          "interface_cells": {
+            "median": 0.7070543766021729,
+            "mean": 0.7070749402046204,
+            "p90": 0.7396085262298584,
+            "max": 1.3159536123275757,
+            "n_cells": 415043
+          },
+          "near_interface_stratum0": {
+            "median": 0.7071589231491089,
+            "mean": 0.7072302103042603,
+            "p90": 0.7398315668106079,
+            "max": 1.4684315919876099,
+            "n_cells": 1804906
+          }
+        },
+        "phi_median_near_interface_by_rung": {
+          "C0": 0.0,
+          "C4": 0.70692378282547,
+          "C8": 0.7068910002708435,
+          "C16": 0.7071589231491089,
+          "C32": 0.7132764458656311,
+          "Cfull": 0.7572677135467529
+        },
+        "thickness_grad_ratio": {
+          "interface_cells": {
+            "C16": {
+              "hf_over_copylf": 1.1131533054827858,
+              "hf_over_warped": 1.131211418779588
+            },
+            "Cfull": {
+              "hf_over_copylf": 1.1131533054827858,
+              "hf_over_warped": 1.0074461020164178
+            }
+          },
+          "near_interface_stratum0": {
+            "C16": {
+              "hf_over_copylf": 1.1135964794175062,
+              "hf_over_warped": 1.159834121807305
+            },
+            "Cfull": {
+              "hf_over_copylf": 1.1135964794175062,
+              "hf_over_warped": 1.0272220390191906
+            }
+          }
+        }
+      },
+      "sharp__phase_field_crystal_2d": {
+        "das_C16": {
+          "DIS_share": 0.9466533050306889,
+          "AMP_share": 0.013541080424990278,
+          "RES_share": 0.03980561454432084,
+          "alpha_median": 1.0000006250698958,
+          "alpha_std": 0.006006099620128142,
+          "E_copylf": 1472.3029200514052
+        },
+        "das_Cfull": {
+          "DIS_share": 0.991222400958874,
+          "AMP_share": 0.0001703933387188193,
+          "RES_share": 0.008607205702407217,
+          "alpha_median": 1.0000006301362374,
+          "E_copylf": 1472.3029200514052
+        },
+        "phi_C16_cells": {
+          "all_pixels": {
+            "median": 0.3219643831253052,
+            "mean": 0.37545859813690186,
+            "p90": 0.8542729616165161,
+            "max": 5.30930233001709,
+            "n_cells": 1638400
+          },
+          "interface_cells": {
+            "median": 5.680431058863178e-07,
+            "mean": 0.214361771941185,
+            "p90": 0.7721272110939026,
+            "max": 3.9047985076904297,
+            "n_cells": 211270
+          },
+          "near_interface_stratum0": {
+            "median": 5.471447366289794e-07,
+            "mean": 0.23425956070423126,
+            "p90": 0.7889760732650757,
+            "max": 4.5246686935424805,
+            "n_cells": 461713
+          }
+        },
+        "phi_median_near_interface_by_rung": {
+          "C0": 0.0,
+          "C4": 4.276436982308951e-07,
+          "C8": 5.210996505411458e-07,
+          "C16": 5.471447366289794e-07,
+          "C32": 5.543821544051752e-07,
+          "Cfull": 5.548523631659918e-07
+        },
+        "thickness_grad_ratio": {
+          "interface_cells": {
+            "C16": {
+              "hf_over_copylf": 1.042218340888494,
+              "hf_over_warped": 1.0133128710233579
+            },
+            "Cfull": {
+              "hf_over_copylf": 1.042218340888494,
+              "hf_over_warped": 1.002144591213331
+            }
+          },
+          "near_interface_stratum0": {
+            "C16": {
+              "hf_over_copylf": 1.0408503489564755,
+              "hf_over_warped": 1.0135825616060665
+            },
+            "Cfull": {
+              "hf_over_copylf": 1.0408503489564755,
+              "hf_over_warped": 1.0020078143106377
+            }
+          }
+        }
+      }
+    },
+    "M5_topology": {
+      "ext__helmholtz_2d": {
+        "raw": {
+          "frac_samples_delta_N_nonzero": 0.52,
+          "mean_abs_delta_N": 0.84,
+          "median_abs_delta_N": 1.0,
+          "max_abs_delta_N": 3,
+          "mean_components_copylf": 3.04,
+          "mean_components_hf": 2.8
+        },
+        "min_size_4": {
+          "frac_samples_delta_N_nonzero": 0.49,
+          "mean_abs_delta_N": 0.76,
+          "median_abs_delta_N": 0.0,
+          "max_abs_delta_N": 3,
+          "mean_components_copylf": 3.04,
+          "mean_components_hf": 2.72
+        }
+      },
+      "sharp__allen_cahn_2d": {
+        "raw": {
+          "frac_samples_delta_N_nonzero": 0.35,
+          "mean_abs_delta_N": 0.41,
+          "median_abs_delta_N": 0.0,
+          "max_abs_delta_N": 2,
+          "mean_components_copylf": 22.62,
+          "mean_components_hf": 22.67
+        },
+        "min_size_4": {
+          "frac_samples_delta_N_nonzero": 0.36,
+          "mean_abs_delta_N": 0.45,
+          "median_abs_delta_N": 0.0,
+          "max_abs_delta_N": 3,
+          "mean_components_copylf": 22.32,
+          "mean_components_hf": 22.39
+        }
+      },
+      "sharp__cahn_hilliard": {
+        "raw": {
+          "frac_samples_delta_N_nonzero": 0.05,
+          "mean_abs_delta_N": 0.11,
+          "median_abs_delta_N": 0.0,
+          "max_abs_delta_N": 4,
+          "mean_components_copylf": 7.9,
+          "mean_components_hf": 7.83
+        },
+        "min_size_4": {
+          "frac_samples_delta_N_nonzero": 0.06,
+          "mean_abs_delta_N": 0.12,
+          "median_abs_delta_N": 0.0,
+          "max_abs_delta_N": 4,
+          "mean_components_copylf": 7.88,
+          "mean_components_hf": 7.78
+        }
+      },
+      "sharp__fisher_kpp_2d": {
+        "raw": {
+          "frac_samples_delta_N_nonzero": 1.0,
+          "mean_abs_delta_N": 17.46,
+          "median_abs_delta_N": 16.5,
+          "max_abs_delta_N": 56,
+          "mean_components_copylf": 259.41,
+          "mean_components_hf": 276.59
+        },
+        "min_size_4": {
+          "frac_samples_delta_N_nonzero": 0.97,
+          "mean_abs_delta_N": 13.78,
+          "median_abs_delta_N": 12.0,
+          "max_abs_delta_N": 35,
+          "mean_components_copylf": 239.92,
+          "mean_components_hf": 253.44
+        }
+      },
+      "sharp__phase_field_crystal_2d": {
+        "raw": {
+          "frac_samples_delta_N_nonzero": 0.26,
+          "mean_abs_delta_N": 0.3,
+          "median_abs_delta_N": 0.0,
+          "max_abs_delta_N": 2,
+          "mean_components_copylf": 16.98,
+          "mean_components_hf": 17.2
+        },
+        "min_size_4": {
+          "frac_samples_delta_N_nonzero": 0.21,
+          "mean_abs_delta_N": 0.23,
+          "median_abs_delta_N": 0.0,
+          "max_abs_delta_N": 2,
+          "mean_components_copylf": 16.94,
+          "mean_components_hf": 17.05
+        }
+      }
+    },
+    "M6_strata": {
+      "ext__helmholtz_2d": {
+        "distance_quantile_edges_cells": [
+          1.0,
+          5.385164737701416,
+          11.180339813232422
+        ],
+        "copylf_err_mass_over_area_share": [
+          0.07002260035026636,
+          0.24823104614679495,
+          0.7169251979140481,
+          3.0104995915405004
+        ],
+        "warp_C16_err_mass_over_area_share": [
+          0.16135976814397227,
+          0.29374507958769375,
+          0.8908021906593149,
+          2.6929088966987336
+        ],
+        "C16_err_energy_removed_share_by_stratum": [
+          0.016105959836424714,
+          0.053388391348320983,
+          0.17101253858725182,
+          0.7594931102280026
+        ],
+        "C16_err_energy_ratio_warp_over_copylf_by_stratum": [
+          0.29076040909817086,
+          0.14931132442014988,
+          0.15677820081668145,
+          0.11286553205229247
+        ],
+        "n_samples_using_gradient_fallback_for_interface_rule": 0
+      },
+      "sharp__allen_cahn_2d": {
+        "distance_quantile_edges_cells": [
+          4.242640495300293,
+          11.045360565185547,
+          22.022714614868164
+        ],
+        "copylf_err_mass_over_area_share": [
+          2.049118818263341,
+          0.814297799369706,
+          0.5596994157478484,
+          0.5523908744998474
+        ],
+        "warp_C16_err_mass_over_area_share": [
+          1.6289706282990626,
+          1.1054245119856358,
+          0.6399047821901626,
+          0.6122987377237449
+        ],
+        "C16_err_energy_removed_share_by_stratum": [
+          0.5247510492655243,
+          0.19940475259794843,
+          0.13869054809428435,
+          0.13715365004224295
+        ],
+        "C16_err_energy_ratio_warp_over_copylf_by_stratum": [
+          0.02299817942884367,
+          0.03927291841578603,
+          0.03307560891630316,
+          0.03206743437917153
+        ],
+        "n_samples_using_gradient_fallback_for_interface_rule": 70
+      },
+      "sharp__cahn_hilliard": {
+        "distance_quantile_edges_cells": [
+          6.4031243324279785,
+          13.0,
+          19.79899024963379
+        ],
+        "copylf_err_mass_over_area_share": [
+          0.7498897898270103,
+          0.5616343513397314,
+          0.5892516363923596,
+          2.162110037103844
+        ],
+        "warp_C16_err_mass_over_area_share": [
+          0.6352998613085002,
+          0.518974870231951,
+          0.32796276217386783,
+          2.6155938640051852
+        ],
+        "C16_err_energy_removed_share_by_stratum": [
+          0.2095341872207564,
+          0.13909988668564927,
+          0.18413796293556173,
+          0.46722796315803244
+        ],
+        "C16_err_energy_ratio_warp_over_copylf_by_stratum": [
+          0.26316516340058177,
+          0.2870382311034146,
+          0.1728903752819828,
+          0.3757851342333577
+        ],
+        "n_samples_using_gradient_fallback_for_interface_rule": 0
+      },
+      "sharp__fisher_kpp_2d": {
+        "distance_quantile_edges_cells": [
+          2.2360680103302,
+          5.0,
+          12.083045959472656
+        ],
+        "copylf_err_mass_over_area_share": [
+          1.0342694777244597,
+          0.6372176150534605,
+          0.9086902773529844,
+          1.3890433793693147
+        ],
+        "warp_C16_err_mass_over_area_share": [
+          0.8437628839798111,
+          0.5756630347810409,
+          1.0802986018224938,
+          1.4906811230906758
+        ],
+        "C16_err_energy_removed_share_by_stratum": [
+          0.3036474565431215,
+          0.15379515716183934,
+          0.20450162802039534,
+          0.33805575827464374
+        ],
+        "C16_err_energy_ratio_warp_over_copylf_by_stratum": [
+          0.21522941041018567,
+          0.23833919989147817,
+          0.31364822904911205,
+          0.2831286708096918
+        ],
+        "n_samples_using_gradient_fallback_for_interface_rule": 61
+      },
+      "sharp__phase_field_crystal_2d": {
+        "distance_quantile_edges_cells": [
+          1.0,
+          3.1622776985168457,
+          6.4031243324279785
+        ],
+        "copylf_err_mass_over_area_share": [
+          1.2759235982606527,
+          1.8109643363762267,
+          0.8402469132055508,
+          0.10455592335997206
+        ],
+        "warp_C16_err_mass_over_area_share": [
+          0.5720881881936478,
+          1.0455014687666153,
+          1.6831836045206627,
+          0.7545795576006373
+        ],
+        "C16_err_energy_removed_share_by_stratum": [
+          0.37074189712218414,
+          0.414763304597544,
+          0.19785963767667047,
+          0.016635160603601387
+        ],
+        "C16_err_energy_ratio_warp_over_copylf_by_stratum": [
+          0.023919154808889894,
+          0.030797982502440827,
+          0.10686416208915411,
+          0.3850028214165225
+        ],
+        "n_samples_using_gradient_fallback_for_interface_rule": 56
+      }
+    },
+    "M7_spectral": {
+      "ext__helmholtz_2d": {
+        "edges_wavenumber": [
+          0.0,
+          6.0,
+          12.0,
+          24.0,
+          48.0
+        ],
+        "k_nyquist": 48.0,
+        "hf_energy_share_by_band": [
+          0.9996192623668808,
+          0.000340995574015709,
+          3.596212895966879e-05,
+          3.7799301437684327e-06
+        ],
+        "lf_hf_coherence_by_band": [
+          0.8753222795859098,
+          0.6336480328345829,
+          0.11347168893156002,
+          0.007738756928556062
+        ],
+        "copylf_err_energy_by_band": [
+          5579700.039603306,
+          1473.1659536044926,
+          1198.4357253675573,
+          443.76254525651376
+        ],
+        "warp_C16_ratio_to_copylf_by_band": [
+          0.12042050872116432,
+          18.50310161570388,
+          3.9641048537444963,
+          1.127969293186657
+        ],
+        "warp_Cfull_ratio_to_copylf_by_band": [
+          0.09405835766069506,
+          8.517916624923037,
+          3.159277784425722,
+          3.1129218057762014
+        ]
+      },
+      "sharp__allen_cahn_2d": {
+        "edges_wavenumber": [
+          0.0,
+          16.0,
+          32.0,
+          64.0,
+          128.0
+        ],
+        "k_nyquist": 128.0,
+        "hf_energy_share_by_band": [
+          0.9998661034244691,
+          0.00013388883838583125,
+          7.737144541620319e-09,
+          5.385755821766429e-16
+        ],
+        "lf_hf_coherence_by_band": [
+          0.9999065386501155,
+          0.9679428877518303,
+          0.11666795531606292,
+          9.614005835799977e-07
+        ],
+        "copylf_err_energy_by_band": [
+          369593.81505342753,
+          27395.564197485735,
+          500.944036156174,
+          2761.0143440048632
+        ],
+        "warp_C16_ratio_to_copylf_by_band": [
+          0.01472937046303622,
+          0.06778296513350984,
+          2.8000717335965546,
+          1.0415469855502548
+        ],
+        "warp_Cfull_ratio_to_copylf_by_band": [
+          0.0008378683814507704,
+          0.015952397447856804,
+          1.2974362428554547,
+          0.434635046500649
+        ]
+      },
+      "sharp__cahn_hilliard": {
+        "edges_wavenumber": [
+          0.0,
+          16.0,
+          32.0,
+          64.0,
+          128.0
+        ],
+        "k_nyquist": 128.0,
+        "hf_energy_share_by_band": [
+          0.9993509844758254,
+          0.0006468058063030874,
+          2.2096874970696283e-06,
+          3.0374608899442554e-11
+        ],
+        "lf_hf_coherence_by_band": [
+          0.9606809259785649,
+          0.8958877628624047,
+          0.4214494646070697,
+          8.015938063980599e-07
+        ],
+        "copylf_err_energy_by_band": [
+          14226233474.795668,
+          44563195.69527323,
+          906898.2057275071,
+          3424505.990576535
+        ],
+        "warp_C16_ratio_to_copylf_by_band": [
+          0.30724322989338876,
+          1.085187296160446,
+          10.46230866366358,
+          1.6233128675440653
+        ],
+        "warp_Cfull_ratio_to_copylf_by_band": [
+          0.20220851339499604,
+          0.8130883684932231,
+          15.447309068863051,
+          2.650890622907174
+        ]
+      },
+      "sharp__fisher_kpp_2d": {
+        "edges_wavenumber": [
+          0.0,
+          16.0,
+          32.0,
+          64.0,
+          128.0
+        ],
+        "k_nyquist": 128.0,
+        "hf_energy_share_by_band": [
+          0.9611547566222971,
+          0.03361822496250525,
+          0.005216280759354951,
+          1.0737655842602934e-05
+        ],
+        "lf_hf_coherence_by_band": [
+          0.9995542223224063,
+          0.948078136369807,
+          0.8911061107305653,
+          0.023128604017391693
+        ],
+        "copylf_err_energy_by_band": [
+          78386761.19094628,
+          517325124.0757699,
+          183902068.5718991,
+          13145026.22429303
+        ],
+        "warp_C16_ratio_to_copylf_by_band": [
+          0.09547538446204863,
+          0.22695561164738276,
+          0.41536701984827906,
+          0.598586624670562
+        ],
+        "warp_Cfull_ratio_to_copylf_by_band": [
+          0.009862433198832784,
+          0.013427637896075886,
+          0.05101187964939679,
+          0.8276856732933062
+        ]
+      },
+      "sharp__phase_field_crystal_2d": {
+        "edges_wavenumber": [
+          0.0,
+          8.0,
+          16.0,
+          32.0,
+          64.0
+        ],
+        "k_nyquist": 64.0,
+        "hf_energy_share_by_band": [
+          0.9998036496985802,
+          0.00019633939445192305,
+          1.0906967399298434e-08,
+          5.181843662384311e-16
+        ],
+        "lf_hf_coherence_by_band": [
+          0.9948403250319706,
+          0.9626886867122496,
+          0.0005267402761543927,
+          6.992509973172419e-07
+        ],
+        "copylf_err_energy_by_band": [
+          23713036.44949229,
+          44479.76805291465,
+          54495.68150905517,
+          310199.1430679601
+        ],
+        "warp_C16_ratio_to_copylf_by_band": [
+          0.020020662966971838,
+          8.61608901498118,
+          3.162399138323739,
+          0.8269229375601836
+        ],
+        "warp_Cfull_ratio_to_copylf_by_band": [
+          0.0006979470317535302,
+          0.6841000735194119,
+          1.2318826947280932,
+          0.3147131631645204
+        ]
+      }
+    },
+    "M8_learnability_bracket": {
+      "ext__helmholtz_2d": {
+        "skill_transfer_field_SCORED": 0.7012654218744748,
+        "skill_transfer_cond": 1.0421310376470057,
+        "nrmse_transfer_field": 0.23103198162670557,
+        "nrmse_transfer_cond": 0.343330201706964,
+        "fraction_of_C16_ceiling_captured_by_retrieval": 0.5154384384290824,
+        "consults_test_hf": {
+          "field": false,
+          "cond": false
+        },
+        "n_unique_train_donors_field": 90
+      },
+      "sharp__allen_cahn_2d": {
+        "skill_transfer_field_SCORED": 0.2606392496147801,
+        "skill_transfer_cond": 0.2561793758361604,
+        "nrmse_transfer_field": 0.004209785754170978,
+        "nrmse_transfer_cond": 0.004137750889405279,
+        "fraction_of_C16_ceiling_captured_by_retrieval": 0.8670165282863174,
+        "consults_test_hf": {
+          "field": false,
+          "cond": false
+        },
+        "n_unique_train_donors_field": 58
+      },
+      "sharp__cahn_hilliard": {
+        "skill_transfer_field_SCORED": 0.4971755368308607,
+        "skill_transfer_cond": 0.6207389191007312,
+        "nrmse_transfer_field": 0.04358240308778619,
+        "nrmse_transfer_cond": 0.05441396806643024,
+        "fraction_of_C16_ceiling_captured_by_retrieval": 0.6250108093878385,
+        "consults_test_hf": {
+          "field": false,
+          "cond": false
+        },
+        "n_unique_train_donors_field": 87
+      },
+      "sharp__fisher_kpp_2d": {
+        "skill_transfer_field_SCORED": 0.48491271237063505,
+        "skill_transfer_cond": 0.4851431993706544,
+        "nrmse_transfer_field": 0.030371196872878908,
+        "nrmse_transfer_cond": 0.030385632803048703,
+        "fraction_of_C16_ceiling_captured_by_retrieval": 0.9883619404148943,
+        "consults_test_hf": {
+          "field": false,
+          "cond": false
+        },
+        "n_unique_train_donors_field": 27
+      },
+      "sharp__phase_field_crystal_2d": {
+        "skill_transfer_field_SCORED": 0.3263025092366668,
+        "skill_transfer_cond": 0.5138984128363054,
+        "nrmse_transfer_field": 0.014611972284409752,
+        "nrmse_transfer_cond": 0.02301260073951787,
+        "fraction_of_C16_ceiling_captured_by_retrieval": 0.8756466053638741,
+        "consults_test_hf": {
+          "field": false,
+          "cond": false
+        },
+        "n_unique_train_donors_field": 81
+      }
+    },
+    "M9_selftest": {
+      "ext__helmholtz_2d": {
+        "passed": true,
+        "passed_nrmse": true,
+        "passed_nrmse_literal_5pct": true,
+        "passed_epe_weighted": true,
+        "passed_epe_unweighted_interface_mask": true,
+        "passed_epe_literal_all_pixels": true,
+        "epe_normal_weighted_mean_cells": 0.002728576126174527,
+        "epe_normal_unweighted_literal_cells": 0.004501738392319485,
+        "nrmse_fraction_of_unwarped": 0.0027350103946710553,
+        "gradient_support_share_of_interface_mask": 0.5182819006331641,
+        "grad_median_interface_mask": 8.144838541797261e-05,
+        "grad_rms_all_cells": 0.0007679113182486799,
+        "leg_B_magnitude_bias_stratum0": 0.9868941591451318,
+        "leg_B_magnitude_bias_interface_mask": 0.9925214424714331,
+        "sabotage_control_5iter": {
+          "passed_gate": false,
+          "epe_normal_weighted_mean": 0.21070789332455156,
+          "nrmse_fraction_of_unwarped": 0.5672467582688013,
+          "which_leg_it_fails": "nRMSE leg only (EPE leg PASSES at <0.25) — see binding constraint P-4/P-5"
+        }
+      },
+      "sharp__allen_cahn_2d": {
+        "passed": true,
+        "passed_nrmse": true,
+        "passed_nrmse_literal_5pct": true,
+        "passed_epe_weighted": true,
+        "passed_epe_unweighted_interface_mask": true,
+        "passed_epe_literal_all_pixels": true,
+        "epe_normal_weighted_mean_cells": 0.0003453364889965467,
+        "epe_normal_unweighted_literal_cells": 0.0005304495758322804,
+        "nrmse_fraction_of_unwarped": 0.0013559359180828105,
+        "gradient_support_share_of_interface_mask": 0.991141787816667,
+        "grad_median_interface_mask": 0.0024083147303695703,
+        "grad_rms_all_cells": 0.00209266689307588,
+        "leg_B_magnitude_bias_stratum0": 1.000385080475077,
+        "leg_B_magnitude_bias_interface_mask": 1.0002908971029727,
+        "sabotage_control_5iter": {
+          "passed_gate": false,
+          "epe_normal_weighted_mean": 0.20433891336438328,
+          "nrmse_fraction_of_unwarped": 0.6181851503670444,
+          "which_leg_it_fails": "nRMSE leg only (EPE leg PASSES at <0.25) — see binding constraint P-4/P-5"
+        }
+      },
+      "sharp__cahn_hilliard": {
+        "passed": true,
+        "passed_nrmse": true,
+        "passed_nrmse_literal_5pct": true,
+        "passed_epe_weighted": true,
+        "passed_epe_unweighted_interface_mask": true,
+        "passed_epe_literal_all_pixels": false,
+        "epe_normal_weighted_mean_cells": 0.0014438367624756442,
+        "epe_normal_unweighted_literal_cells": 0.0014363987869624676,
+        "nrmse_fraction_of_unwarped": 0.01365931896406784,
+        "gradient_support_share_of_interface_mask": 1.0,
+        "grad_median_interface_mask": 0.16152098454466013,
+        "grad_rms_all_cells": 0.06468580211426525,
+        "leg_B_magnitude_bias_stratum0": 0.8193951756350394,
+        "leg_B_magnitude_bias_interface_mask": 0.8075956708062288,
+        "sabotage_control_5iter": {
+          "passed_gate": false,
+          "epe_normal_weighted_mean": 0.17600455545805618,
+          "nrmse_fraction_of_unwarped": 0.5259340703341873,
+          "which_leg_it_fails": "nRMSE leg only (EPE leg PASSES at <0.25) — see binding constraint P-4/P-5"
+        }
+      },
+      "sharp__fisher_kpp_2d": {
+        "passed": true,
+        "passed_nrmse": true,
+        "passed_nrmse_literal_5pct": true,
+        "passed_epe_weighted": true,
+        "passed_epe_unweighted_interface_mask": true,
+        "passed_epe_literal_all_pixels": true,
+        "epe_normal_weighted_mean_cells": 9.001476582601351e-06,
+        "epe_normal_unweighted_literal_cells": 9.346291505822205e-06,
+        "nrmse_fraction_of_unwarped": 2.5029224500417026e-05,
+        "gradient_support_share_of_interface_mask": 0.9998733632196135,
+        "grad_median_interface_mask": 0.10660468120488932,
+        "grad_rms_all_cells": 0.07318142567248404,
+        "leg_B_magnitude_bias_stratum0": 1.0000078599254068,
+        "leg_B_magnitude_bias_interface_mask": 1.0000040397239955,
+        "sabotage_control_5iter": {
+          "passed_gate": false,
+          "epe_normal_weighted_mean": 0.2123328124968509,
+          "nrmse_fraction_of_unwarped": 0.6234068698664018,
+          "which_leg_it_fails": "nRMSE leg only (EPE leg PASSES at <0.25) — see binding constraint P-4/P-5"
+        }
+      },
+      "sharp__phase_field_crystal_2d": {
+        "passed": true,
+        "passed_nrmse": true,
+        "passed_nrmse_literal_5pct": true,
+        "passed_epe_weighted": true,
+        "passed_epe_unweighted_interface_mask": false,
+        "passed_epe_literal_all_pixels": false,
+        "epe_normal_weighted_mean_cells": 3.4978825811238215e-05,
+        "epe_normal_unweighted_literal_cells": 0.39125065562885564,
+        "nrmse_fraction_of_unwarped": 0.0001097875446580191,
+        "gradient_support_share_of_interface_mask": 0.12427336999214454,
+        "grad_median_interface_mask": 2.1073424255447017e-08,
+        "grad_rms_all_cells": 0.04550869699085609,
+        "leg_B_magnitude_bias_stratum0": 1.367399849905678e-07,
+        "leg_B_magnitude_bias_interface_mask": 1.3595449246531706e-07,
+        "sabotage_control_5iter": {
+          "passed_gate": false,
+          "epe_normal_weighted_mean": 0.22757772450899613,
+          "nrmse_fraction_of_unwarped": 0.6001379186743689,
+          "which_leg_it_fails": "nRMSE leg only (EPE leg PASSES at <0.25) — see binding constraint P-4/P-5"
+        }
+      }
+    },
+    "M9_selftest_status": "PASS on 5/5 datasets; no hard stop. BINDING CONSTRAINT P-4/P-5 (review_B1.md post-debug ruling) APPLIED: M9's operative teeth are the nRMSE leg ONLY. The wired-in broken-optimiser control (SELFTEST_SABOTAGE_ITERS = 5) fails only the nRMSE leg on 5/5 datasets (0.526-0.623 of unwarped vs the 0.05 gate) while PASSING the 0.25-cell weighted-EPE leg on 5/5 (0.1760-0.2276). It is therefore NOT claimed here that the 0.25-cell EPE gate certified the fit. debug_notes[0].verification misattributes the 0.33-0.35 EPE teeth figures to the implemented control; they belong to the unimplemented lr/200 variant measured in job 66010125. What M9 does certify (P-1): the optimiser machinery and identifiability in the direction moving=HF, target=pseudo-LF (where the plant is exactly attainable, so the card's literal '<5% of unwarped' clause is in force and the 2026-07-29T19:55Z operator amendment's 1.5x slack is inert by construction). It does NOT certify the conditioning of the production fit (moving=blurred LF, target=HF). Literal-clause margins: nrmse_fraction_of_unwarped 2.50e-05 (fisher_kpp) to 1.37e-02 (cahn_hilliard) against 0.05 -- 3.7x to 2000x. P-2: nrmse_fraction_of_unwarped is not comparable to the pre-debug field of the same name (denominator changed with the direction).",
+    "M9b_optical_flow_crosscheck": {
+      "sharp__allen_cahn_2d": {
+        "available": true,
+        "nrmse_copylf": 0.01136252966897445,
+        "nrmse_tvl1_warped": 0.002032482835382586,
+        "nrmse_oracle_Cfull_same_samples": 0.0008291582190696506,
+        "median_abs_phi_cells": 0.7069105015728706,
+        "n_samples": 8
+      },
+      "other_four_datasets": "available:false (the card asked for one dataset; the builder scoped TV-L1 to sharp__allen_cahn_2d only)",
+      "reading": "An independent registration algorithm (skimage optical_flow_tvl1, defaults, no shared code with the Adam fitter) reduces nRMSE from 0.011363 to 0.002032 on the same 8 samples -- a real, method-independent warp benefit, between the C16 (0.00238 full-split) and Cfull (0.000829 same-samples) rungs. Its median |phi| is 0.70691 cells, matching this card's fitter to 3 decimals (0.7076): the sub-cell magnitude is a property of the LF/HF pair, not of the Adam optimiser."
+    },
+    "warp_removable_ceiling_table": {
+      "definition": "ceiling = 1 - skill_oracle(C), the fraction of copy-LF's nRMSE an HF-fitted oracle warp removes. C16 (512 dof) is the pre-registered learnable rung; Cfull is the unbounded DOF reference whose only job is to price the DOF axis.",
+      "rows": {
+        "ext__helmholtz_2d": {
+          "copylf_nrmse": 0.3294501260438018,
+          "skill_oracle_C16": 0.4204262704271965,
+          "ceiling_C16": 0.5795737295728035,
+          "skill_oracle_Cfull": 0.324635475957118,
+          "ceiling_Cfull": 0.675364524042882,
+          "scored_NN_transfer_skill": 0.7012654218744748,
+          "retrieval_capture_of_C16": 0.5154384384290824,
+          "C4_share_of_C16_benefit": 0.39542755897011195,
+          "DIS_share_C16": 0.8738235673108102,
+          "AMP_share_C16": 0.08221807226897743,
+          "RES_share_C16": 0.04395836042021224,
+          "median_phi_near_interface_C16_cells": 3.922121047973633,
+          "topology_frac_mismatch_raw": 0.52,
+          "topology_mean_abs_dN_raw": 0.84
+        },
+        "sharp__allen_cahn_2d": {
+          "copylf_nrmse": 0.016151772077279084,
+          "skill_oracle_C16": 0.147235691288853,
+          "ceiling_C16": 0.852764308711147,
+          "skill_oracle_Cfull": 0.06858767594587298,
+          "ceiling_Cfull": 0.931412324054127,
+          "scored_NN_transfer_skill": 0.2606392496147801,
+          "retrieval_capture_of_C16": 0.8670165282863174,
+          "C4_share_of_C16_benefit": 0.9716105903468197,
+          "DIS_share_C16": 0.9710700724526578,
+          "AMP_share_C16": 0.0011833627195610708,
+          "RES_share_C16": 0.027746564827781147,
+          "median_phi_near_interface_C16_cells": 0.7075797915458679,
+          "topology_frac_mismatch_raw": 0.35,
+          "topology_mean_abs_dN_raw": 0.41
+        },
+        "sharp__cahn_hilliard": {
+          "copylf_nrmse": 0.08765999100758841,
+          "skill_oracle_C16": 0.19549477286380626,
+          "ceiling_C16": 0.8045052271361938,
+          "skill_oracle_Cfull": 0.1510175497500852,
+          "ceiling_Cfull": 0.8489824502499148,
+          "scored_NN_transfer_skill": 0.4971755368308607,
+          "retrieval_capture_of_C16": 0.6250108093878385,
+          "C4_share_of_C16_benefit": 0.7844667927955987,
+          "DIS_share_C16": 0.6893673663554873,
+          "AMP_share_C16": 0.03669540639182507,
+          "RES_share_C16": 0.27393722725268765,
+          "median_phi_near_interface_C16_cells": 1.0190733671188354,
+          "topology_frac_mismatch_raw": 0.05,
+          "topology_mean_abs_dN_raw": 0.11
+        },
+        "sharp__fisher_kpp_2d": {
+          "copylf_nrmse": 0.06263229669603956,
+          "skill_oracle_C16": 0.478847508623064,
+          "ceiling_C16": 0.521152491376936,
+          "skill_oracle_Cfull": 0.17709467783429902,
+          "ceiling_Cfull": 0.822905322165701,
+          "scored_NN_transfer_skill": 0.48491271237063505,
+          "retrieval_capture_of_C16": 0.9883619404148943,
+          "C4_share_of_C16_benefit": 0.9951526872096839,
+          "DIS_share_C16": 0.7361756316586067,
+          "AMP_share_C16": 0.013459365226516173,
+          "RES_share_C16": 0.2503650031148773,
+          "median_phi_near_interface_C16_cells": 0.7071589231491089,
+          "topology_frac_mismatch_raw": 1.0,
+          "topology_mean_abs_dN_raw": 17.46
+        },
+        "sharp__phase_field_crystal_2d": {
+          "copylf_nrmse": 0.04478044719481978,
+          "skill_oracle_C16": 0.23062855878556301,
+          "ceiling_C16": 0.769371441214437,
+          "skill_oracle_Cfull": 0.09410822405929845,
+          "ceiling_Cfull": 0.9058917759407016,
+          "scored_NN_transfer_skill": 0.3263025092366668,
+          "retrieval_capture_of_C16": 0.8756466053638741,
+          "C4_share_of_C16_benefit": 0.9035913025961804,
+          "DIS_share_C16": 0.9466533050306889,
+          "AMP_share_C16": 0.013541080424990278,
+          "RES_share_C16": 0.03980561454432084,
+          "median_phi_near_interface_C16_cells": 5.471447366289794e-07,
+          "topology_frac_mismatch_raw": 0.26,
+          "topology_mean_abs_dN_raw": 0.3
+        }
+      }
+    },
+    "guard_flags": [],
+    "guard_note": "§2d not triggered: this card claims no panel win (diagnostic, do_not_promote, single seed, five of six panel datasets). No guard-set run was performed and eval/copylf_baselines.json's guard references were not compared.",
+    "anomalies": [
+      {
+        "id": "A1",
+        "severity": "high",
+        "title": "On all four sharp datasets the fitted C16 displacement is dominated by a near-constant ~+0.5-HF-cell offset in BOTH axes -- a grid-registration signature, not spatially varying transport",
+        "evidence": "From the recorded control-grid arrays warp_oracle_<ds>_phi.npz (p_test, (100,2,16,16), HF cells; max matches the sidecar's max_abs_phi_cells). Median per-sample DC (spatial mean of phi) in cells, (axis0, axis1): allen_cahn (+0.4933, +0.4939) with per-sample std 0.0089/0.0078; fisher_kpp (+0.4993, +0.4996) std 0.0021/0.0024; cahn_hilliard (+0.4897, +0.4970) std 1.03/1.04; pfc (+0.4649, +0.4578). Share of sum(phi^2) carried by the DC component: fisher_kpp 97.8%, allen_cahn 89.0%, pfc 60.4%, cahn_hilliard 26.3%, helmholtz 1.6%. Residual spatial fluctuation |phi - DC| median: fisher_kpp 0.0625, allen_cahn 0.0954, pfc 0.0252, cahn_hilliard 0.7598, helmholtz 3.4953 cells. The offset is ~0.5 cells at BOTH 128^2 (pfc) and 256^2 (three datasets) -- resolution-independent in cell units -- is isotropic (|dc0-dc1| < 0.05 cells in 100/100 allen_cahn and fisher_kpp samples, 99/100 pfc), and is absent on ext__helmholtz_2d (a different generator): (-0.034, -0.055) cells, DC share 1.6%.",
+        "corroboration": "The independent TV-L1 cross-check (M9b, no shared code) returns median |phi| 0.70691 cells on allen_cahn vs this fitter's 0.7076 -- so the offset lives in the LF/HF pair, not in the Adam fit. The M0 seam (1e-17) certifies only the identity map and cannot detect an LF-upsampling alignment offset.",
+        "why_it_matters": "(i) Leg B's face-value pass on allen_cahn (0.7076) and fisher_kpp (0.7072) is carried almost entirely by this constant: 0.7071 = |(0.5, 0.5)|, and each axis alone is 0.5 cells, exactly the leg-B threshold. (ii) The recorded rung ladder shows the C4 rung (32 dof, max |phi| 0.825 / 0.760 cells) already delivers 97.2% (allen_cahn) and 99.5% (fisher_kpp) of the C16 error removal -- i.e. on those two datasets nearly the whole measured warp benefit is reachable by a near-constant field. (iii) If the offset is an LF->HF interpolation convention rather than physics, part of copy-LF's error on the sharp panel is a fixed half-cell misregistration correctable by a fixed resample, with no learned warp at all.",
+        "what_I_did_NOT_do": "I did not recompute any nRMSE. phi^2-energy shares are NOT error-removal shares (the DC term covers the flat bulk where it is harmless), so I make no attribution of the error reduction to the offset beyond the recorded C4/C16 ladder comparison. Diagnosing cause (align_corners convention in warp_core.sampling_grid vs the LF-upsampling in data_adapters, or genuine physics) is a mechanism-analyzer task."
+      },
+      {
+        "id": "A2",
+        "severity": "medium",
+        "title": "|phi| saturates the S3W_MAX_DISP_CELLS = 16 clamp on ext__helmholtz_2d and sharp__cahn_hilliard, so their ceilings are lower bounds",
+        "evidence": "Sidecar M2 C16 max = 16.0000 exactly on helmholtz (p90 13.20 on the near-interface mask, all-pixel median 2.97) and on cahn_hilliard (p90 2.31). Fraction of C16 control points at |phi| >= 15.9 cells: helmholtz 4.92% (25.7% above 8 cells), cahn_hilliard 1.30%. Zero on allen_cahn (max 3.50), fisher_kpp (1.62) and pfc (5.31).",
+        "why_it_matters": "skill_oracle on helmholtz and cahn_hilliard is a clamp-limited UPPER bound on skill (lower bound on removable error). It also means helmholtz's fit is far-field phase transport over many cells, not interface repositioning -- consistent with its copy-LF error mass sitting in the farthest stratum (err_mass/area 3.01) and 75.9% of its removed error coming from that stratum."
+      },
+      {
+        "id": "A3",
+        "severity": "medium",
+        "title": "The C16 warp WORSENS interface sharpness on sharp__fisher_kpp_2d and ext__helmholtz_2d (M4 thickness probe)",
+        "evidence": "ratio ||grad HF|| / ||grad(warped LF)|| at C16 vs the unwarped ratio ||grad HF|| / ||grad(copy-LF)||: fisher_kpp interface_cells 1.1312 warped vs 1.1132 unwarped, stratum0 1.1598 vs 1.1136 -- resolved only at Cfull (1.0074 / 1.0272). helmholtz is inverted: copy-LF is SHARPER than HF (0.9751 / 0.8633) and warping makes it worse (1.4179 / 1.2922 at C16, 1.6329 / 1.5619 at Cfull). allen_cahn, cahn_hilliard and pfc behave as intended (C16 warp cuts the excess to 1.013-1.015 from 1.014-1.049, and Cfull to 1.002-1.003).",
+        "why_it_matters": "fisher_kpp is the dataset where leg A comes closest to firing (0.4788) and it is exactly the dataset where a 512-dof warp both fails to reach the Cfull ceiling (0.4788 vs 0.1771) and adds interface blur. Its un-warpable component is DOF-limited high-frequency structure, not a smooth transport field."
+      },
+      {
+        "id": "A4",
+        "severity": "medium",
+        "title": "The warp trades low-band error for high-band error (M7)",
+        "evidence": "warp_C16 err_energy ratio to copy-LF, per dyadic band (s2-B1's identical edges): allen_cahn [0.0147, 0.0678, 2.800, 1.042]; pfc [0.0200, 8.616, 3.162, 0.827]; cahn_hilliard [0.3072, 1.085, 10.46, 1.623]; helmholtz [0.1204, 18.50, 3.964, 1.128]; fisher_kpp is the exception, improving every band [0.0955, 0.2270, 0.4154, 0.5986]. Absolute magnitudes are tiny in the upper bands (HF energy share above band 0 is 1.3e-04 or less on allen_cahn/pfc/cahn_hilliard) but band 1 on pfc (8.6x) and helmholtz (18.5x) is a real regression.",
+        "why_it_matters": "A D1 model trained on rel-L2 would inherit this trade. It also answers M7's question: s2's band-0 excess IS largely displacement-explainable (ratio 0.015-0.31 in band 0 on 4 of 5), while the warp actively injects mid-band error."
+      },
+      {
+        "id": "A5",
+        "severity": "low",
+        "title": "The 's2 interface mask' is majority-gradient-fallback on three of four sharp datasets",
+        "evidence": "n_samples_using_fallback (top-decile |grad u| instead of |u| <= 0.1*max|u|): allen_cahn 70/100, fisher_kpp 61/100, pfc 56/100; helmholtz and cahn_hilliard 0/100. Inherited byte-for-byte from s2-B1's forensics.py (sha256 59b61cb...87f9), so it is comparable to s2 by construction -- but 'near-interface' on those three datasets is a mixed-rule stratum, and on pfc the primary rule additionally selects the flat matrix (A1/leg-B note)."
+      },
+      {
+        "id": "A6",
+        "severity": "info",
+        "title": "Nearest-neighbour donor concentration on fisher_kpp",
+        "evidence": "Unique train donors among 100 test samples, field-space NN: fisher_kpp 27/100, allen_cahn 58/100, pfc 81/100, cahn_hilliard 87/100, helmholtz 90/100 (condition-space is 84-91/100 everywhere). fisher_kpp's retrieval nevertheless captures 98.8% of its C16 ceiling -- consistent with A1: the transferred field is nearly a constant, so which donor is picked hardly matters."
+      },
+      {
+        "id": "A7",
+        "severity": "info",
+        "title": "Run hygiene clean",
+        "evidence": "Job 66011595: sacct COMPLETED, ExitCode 0:0, Elapsed 00:06:26, node hpc-33-19 (H100 80GB), MaxRSS 2.51 GB. .err file is 0 bytes. No NaN, no preemption, no requeue, no resume-from-last.pt short-circuit (all five datasets report cached:false). Pre-debug artifacts are quarantined under eval/stale_pre_debug1/ and eval/results/ was empty at launch (verified by the reviewer)."
+      }
+    ],
+    "wall_clock_per_seed_min": [
+      6.43
+    ],
+    "wall_clock_detail": {
+      "sacct_elapsed": "00:06:26",
+      "node": "hpc-33-19",
+      "gpu": "NVIDIA H100 80GB HBM3",
+      "maxrss_kb": 2506360,
+      "per_dataset_wall_seconds": {
+        "ext__helmholtz_2d": 18.8,
+        "sharp__allen_cahn_2d": 110.3,
+        "sharp__cahn_hilliard": 105.8,
+        "sharp__fisher_kpp_2d": 106.5,
+        "sharp__phase_field_crystal_2d": 22.5
+      },
+      "sum_per_dataset_seconds": 363.9,
+      "note": "Card estimate was 10-25 min at --time 01:00:00; actual 6.4 min including three self-test ladder fits per dataset. 96^2/128^2 datasets 19-23 s each, 256^2 datasets 106-110 s each. Cost scales ~ (n_cells x n_rungs x iters).",
+      "prior_attempts": {
+        "66001846": "aborted on the pre-registered M9 hard stop (pfc), ~1 min",
+        "66009323/66009547/66010125": "debugger diagnostics",
+        "66010795": "p100 verify run, aborted at the pre-fix seam cross-assert"
+      }
+    },
+    "batch_2_recommendation": {
+      "does_a_D1_model_card_deserve_to_exist": "YES -- on sharp__cahn_hilliard and sharp__phase_field_crystal_2d, with sharp__allen_cahn_2d admissible only if the A1 constant-offset confound is resolved first, and with sharp__fisher_kpp_2d and ext__helmholtz_2d excluded from any claim.",
+      "reasoning": [
+        "Leg A is decisively not falsified: an oracle warp at the pre-registered learnable rung removes 76.9-85.3% of copy-LF's error on three of the four sharp datasets, 60x/9.3x/4.2x the certified per-dataset seed spread. The mechanism is real and large.",
+        "Leg D says the benefit is retrievable, not merely oracle-visible: a training-free nearest-neighbour transfer of oracle displacements that never touches test HF already scores 0.26-0.50 on the four sharp datasets, capturing 63-99% of the C16 ceiling. This is the strongest learnability evidence any round-1 card has produced for a warp head.",
+        "sharp__cahn_hilliard is the cleanest target: ceiling 80.4% at C16, genuinely spatially varying phi (DC share only 26.3%, |phi - DC| median 0.76 cells, per-sample DC std ~1.03 cells), median |phi| 1.02 cells (bias-corrected 1.24) -- unambiguously above leg B's 0.5-cell transport threshold -- lowest topology mismatch of the panel (5-6% of samples, mean |dN| 0.11), M4 behaving as intended, and the largest surprise vs the card's own prediction (predicted the weakest candidate at 0.70-0.90, measured 0.1955).",
+        "sharp__phase_field_crystal_2d is the second target: ceiling 76.9%, retrieval captures 87.6%, topology mismatch 26%/21% (borderline), DIS_share 0.9467. Caveat: its leg-B statistic is not resolvable on the s2 mask (certified sensitivity 1.4e-07) and 60% of its phi energy is the constant offset, so its regime classification is weaker than cahn_hilliard's.",
+        "sharp__allen_cahn_2d has the biggest ceiling (85.3%) and the highest DIS_share (0.9711) but 89% of its C16 phi energy is the A1 constant offset and its C4 rung (32 dof) already delivers 97.2% of the C16 benefit -- so most of its headroom may be a fixed half-cell resample rather than a learned warp. Resolve A1 before targeting it.",
+        "sharp__fisher_kpp_2d should be excluded from any D1 claim: it is the only sharp dataset where leg A nearly fires (0.4788), the C16-to-Cfull gap is the panel's largest (0.4788 -> 0.1771, i.e. the reachable part is DOF-limited high-frequency structure a 512-dof head cannot express), 100% of samples have a topology mismatch with mean |dN| 17.5 of ~259 components, and the C16 warp actively increases interface blur (A3).",
+        "ext__helmholtz_2d remains report-only: 4.9% clamp saturation, median |phi| 3.92 cells, 8.2% AMP share, the only >= 1.0 transfer entry (condition-space 1.0421), and a noise floor (9.695) no copy-LF-referenced effect can clear."
+      ],
+      "pre_registered_constraints_that_now_bind_the_batch_2_card": [
+        "Locked part 4 (verbatim): 'any D1 (mf_warp_correct) model card must carry the architecture-level warp-off control (identical network, displacement forced to zero) as its comparator, not the champion alone'. This card makes that control necessary AND insufficient: A1 means the card also needs a CONSTANT-DISPLACEMENT-ONLY arm (or a fixed half-cell resample arm), otherwise a win cannot be distinguished from correcting a grid-registration offset.",
+        "Leg C fired -> the D1 card must carry a metamorphosis-style appearance term (MetaRegNet arXiv:2303.09088, already in prior_art) or scope explicitly to the topology-preserving subset. Under the min_size_4 variant cahn_hilliard (6%) and pfc (21%) are within the 25% bound; allen_cahn (36%) and fisher_kpp (97%) are not.",
+        "The DOF axis is priced and it is cheap: C4 (32 dof) already delivers 78-99.5% of the C16 benefit on all four sharp datasets. A D1 head does not need many displacement modes; it needs the right ones. Judge it against skill_oracle(C16) = 0.147-0.479, never against Cfull.",
+        "Nothing from this card may enter a leaderboard, an anchor or the top-3 set (do_not_promote, pre-registered; F-4)."
+      ]
+    },
+    "provenance": {
+      "scored_result_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s3_warp/B1/eval/result_beyond_copy5_s0.json",
+      "sidecars": [
+        "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s3_warp/B1/eval/warp_oracle_ext__helmholtz_2d.json",
+        "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s3_warp/B1/eval/warp_oracle_sharp__allen_cahn_2d.json",
+        "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s3_warp/B1/eval/warp_oracle_sharp__cahn_hilliard.json",
+        "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s3_warp/B1/eval/warp_oracle_sharp__fisher_kpp_2d.json",
+        "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s3_warp/B1/eval/warp_oracle_sharp__phase_field_crystal_2d.json"
+      ],
+      "phi_arrays": [
+        "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s3_warp/B1/eval/warp_oracle_ext__helmholtz_2d_phi.npz",
+        "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s3_warp/B1/eval/warp_oracle_sharp__allen_cahn_2d_phi.npz",
+        "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s3_warp/B1/eval/warp_oracle_sharp__cahn_hilliard_phi.npz",
+        "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s3_warp/B1/eval/warp_oracle_sharp__fisher_kpp_2d_phi.npz",
+        "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s3_warp/B1/eval/warp_oracle_sharp__phase_field_crystal_2d_phi.npz"
+      ],
+      "slurm_log": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s3_warp/B1/slurm/r1-s3_warp-B1-s0_66011595.out",
+      "job_id": "66011595",
+      "code_hash": "a15b6385091e29b17ee188e87dd983b0782ce9a0c9c4590b6a6b9dee366ea5d6",
+      "noise_floor": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round1/state/noise_floor.json",
+      "copylf_baselines": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round1/eval/copylf_baselines.json",
+      "binding_constraints_applied": "review_B1.md F-1 (leg_B_magnitude_bias), F-3 (M0 seam 5.55e-17), F-4 (five-dataset geomean is not a panel score), post-debug P-1/P-2/P-4/P-5 (M9 teeth = nRMSE leg only; misattribution corrected), debug_notes[0].next_suggestion (pfc flat-mask)",
+      "analysis_scripts": "/tmp/claude-28156/-resnick-groups-Hippo-ezeng-mf-field/8f8e234f-7b29-43a2-96ba-26d87c30fa29/scratchpad/{extract,extra,caps,phi2,dc,mk_part5}.py (throwaway; no repo file created)"
+    }
+  },
+  "6_analysis": {
+    "findings": [
+      "F1 (turn 1) THE CAUSE OF A1 IS A GRID-REGISTRATION CONVENTION, MEASURED IN CLOSED FORM. eval/panel_data.py::copylf_prediction upsamples with scipy.ndimage.zoom(order=1, grid_mode=True, mode='nearest'), i.e. the CELL-CENTRED convention: pushing a linear index ramp through the real function shows it samples LF index (k+0.5)/r - 0.5 exactly (0.0 deviation from that formula on the 128->256, 64->128 and 24->96 maps, isotropic to 0.0). The sharp datasets' fields are POINT SAMPLES on their pseudo-spectral solvers' periodic node grid x_j = j*L/n, and the ladder is dyadic, so LF node j coincides physically with HF node 2j. The mismatch is a fixed offset of (r-1)/2 HF cells = 0.5 at r=2. Evidence that the data is node-sampled: the generators' own up-interpolator (mffp_sharp.common.spectral.spectral_interp) satisfies up[::2,::2] == coarse to 8.9e-16 while its block mean differs by 1.85; and on the real test data nRMSE(LF, HF[::2,::2]) vs nRMSE(LF, HF 2x2 cell mean) is 0.00213 vs 0.01640 (allen_cahn), 0.04060 vs 0.08789 (cahn_hilliard), 0.01230 vs 0.06544 (fisher_kpp), 3.02e-07 vs 0.04433 (pfc).",
+      "F2 (turn 1) THE MEASURED OFFSET EQUALS THE PREDICTED ONE, WITH NO OPTIMISER IN THE LOOP. Closed-form global Lucas-Kanade shift of the eval copy-LF vs HF, median over the 100 test samples, (axis0, axis1) in HF cells: allen_cahn (+0.4995, +0.4996) std 4e-4, cahn_hilliard (+0.5020, +0.4889), pfc (+0.4896, +0.4897), fisher_kpp (+0.4643, +0.4650), ext__helmholtz_2d (+0.0457, +0.0451). These reproduce the card's A1 phi DC values with an estimator sharing no code with the Adam fitter, and the residual shift after correction is <= 0.006 cells on 4/4.",
+      "F3 (turn 1) THE FREE WIN. Zero-parameter registration fixes, scored on the full test splits through eval/nrmse.py, as skill vs the frozen copy-LF baseline: (B) a fixed (r-1)/2-cell shift of the array the eval layer already builds -> allen_cahn 0.1163, pfc 0.2526, fisher_kpp 0.4664, cahn_hilliard 0.4973 (helmholtz 1.1203, i.e. worse - correctly, see F5); (C) node-aligned bilinear resample from the raw LF -> 0.1103 / 0.1648 / 0.3425 / 0.4769; (D) node-aligned band-limited (FFT zero-pad) -> 0.1317 / 7.1e-06 / 0.2063 / 0.4631. On helmholtz the physical Dirichlet-interior-node alignment gives 0.9077.",
+      "F4 (turn 1) THE mode='nearest' WRAP SEAM IS SECOND-ORDER. Re-running the identical cell-centred zoom with mode='grid-wrap' removes only 0.41 % (allen_cahn), 0.74 % (pfc), 0.37 % (fisher_kpp), 0.12 % (cahn_hilliard) and 0.00 % (helmholtz) of copy-LF's error - 120-240x smaller than the half-cell offset on the same datasets. (Companion to the s6-B2 brainstormer's ~4x local wrap-seam measurement: the seam is real and local, but not what drives the metric.)",
+      "F5 (turn 1) HELMHOLTZ CARRIES THE SAME DEFECT AS A ZERO-MEAN STRETCH, NOT AN OFFSET. mf_field_extension_data/solvers.py::grid_xy puts it on the Dirichlet interior-node grid x_j=(j+1)/(n+1) with r=4 and 24/96 NOT nested, so the cell-centred zoom's physical offset map is antisymmetric: +2.88 cells at k=0, -2.88 at k=95, mean 1.7e-15, linear part 1.543 - 0.03249*k. The card's own recorded C16 phi profile fits -1.294 + 0.02629*k (axis 0) and -1.170 + 0.02471*k (axis 1), r^2 0.33 - predicted sign, predicted slope to 15 %, predicted zero mean. A1's 'absent on helmholtz' is therefore not a counter-example.",
+      "F6 (turn 1) sharp__phase_field_crystal_2d HAS NO FIDELITY GAP AT THE SCORED LEVEL PAIR. spectral_interp(LF 64^2 -> 128^2) reproduces the HF test field to nRMSE 3.19e-07 (skill 7.1e-06) and nRMSE(LF, HF[::2,::2]) = 3.02e-07. Mechanism from the source: pdes/phase_field_crystal.py diagonalises against the CONTINUOUS symbol k^2 (r + (1-k^2)^2), unlike allen_cahn / cahn_hilliard / fisher_kpp which use the resolution-dependent DISCRETE 5-point neg_laplacian_symbol; and the state is spectrally resolved (HF energy outside the coarse band 4.9e-16). A resolution-independent symbol on a band-limited state makes the 64^2 and 128^2 solves the same solution. (l1->l2 is not degenerate: 0.00731.)",
+      "F7 (turn 1) NO SHARP DATASET'S HF FIELD CARRIES INFORMATION ABOVE THE LF BAND. Fraction of HF energy above the coarse grid's Nyquist: allen_cahn 4.8e-16, cahn_hilliard 1.0e-12, fisher_kpp 7.5e-07, pfc 4.9e-16. The beyond-copy gap on this panel is never 'missing fine structure'.",
+      "F8 (turn 1) HYPOTHESES (b) PHYSICS AND (c) RIG ARE EXCLUDED. The offset is reproduced by a synthetic linear ramp containing no PDE and no data (F1), is exactly (r-1)/2 at two resolutions, and is isotropic to 0.0; three mutually independent estimators see it (the card's Adam fit, the card's TV-L1 cross-check, my closed-form LK). The M9 self-test structurally cannot see it: its plant is pseudo_lf = wc.warp(hf64, d, base64), synthesised ON THE HF GRID, so the LF->HF upsample is not in the plant path - the same blind spot the M0 seam has (it certifies only the identity map).",
+      "F9 (turn 2) THE RESIDUAL WARP CEILING COLLAPSES ON 3 OF 4 SHARP DATASETS. Re-running the production ladder (family's own warp_core, same iters/lr/lambda/clamp, rungs 0->4->16) with a REGISTRATION-CORRECTED moving image, paired on the same samples: skill of C16 vs its own corrected C0 = 0.9858 (fisher_kpp, n=6), 0.8894 (allen_cahn, n=6), 0.8303 (pfc, n=6), 0.1659/0.1483 (cahn_hilliard, n=6 / n=8 stride-12), 0.6347 (helmholtz, n=12) - i.e. residual ceilings 1.4 / 11.1 / 17.0 / 83.4-85.2 / 36.5 %. Full-split cross-check with no new fitting (card's recorded C16 nRMSE / turn-1 corrected copy-LF): 1.335 (allen_cahn), 1.399 (pfc), 1.398 (fisher_kpp), 0.410 (cahn_hilliard), 0.463 (helmholtz) - on three of four sharp datasets a 512-dof ORACLE warp fitted against test HF is WORSE than a zero-parameter fixed resample.",
+      "F10 (turn 2) WHY AN ORACLE CAN LOSE TO A FIXED RESAMPLE. The card's moving image was built by a misregistered BILINEAR upsample; warping it back applies a SECOND bilinear resample, and the composition low-passes what the first already smeared, whereas the free fix resamples once from the raw LF at the correct coordinates.",
+      "F11 (turn 2) THE RESIDUAL DISPLACEMENT IS SUB-CELL ON 3 OF 4 SHARP DATASETS. Median |phi| of the corrected-image C16 fit (all pixels, HF cells): pfc 0.0000, fisher_kpp 0.034, allen_cahn 0.045, cahn_hilliard 0.64 (n=6) / 0.74 (n=8), helmholtz 1.92; DC components |<=0.13| cells everywhere.",
+      "F12 (turn 2) THE CONSTANT-DISPLACEMENT CONTROL ARM, QUANTIFIED. Applying only the DC of the card's recorded phi (one 2-vector per sample) to copy-LF already delivers, as a share of the full C16 warp's error reduction: fisher_kpp 99.5 %, allen_cahn 96.7 %, pfc 89.9 %, cahn_hilliard 48.9 % (n=8), helmholtz -9.5 % (the constant hurts, per F5).",
+      "F13 (turn 2) THE 'CHEAP DOF AXIS' WAS THE OFFSET. On the corrected moving image the C4 rung buys almost nothing (allen_cahn 0.001445 -> 0.001434, fisher_kpp 0.019224 -> 0.019114, pfc 0.002817 -> 0.002814) and what remains appears only at C16 and only where genuine transport exists (cahn_hilliard 0.060459 -> 0.030621 -> 0.008965). Part 5's C4_share_of_C16_benefit of 78-99.5 % was measuring a near-constant field.",
+      "F14 (turn 3) 87-98 % OF s6_local-B1's ZERO-PARAMETER LSI FILTER IS THE HALF-CELL PHASE RAMP. LF-energy-weighted projection of the fitted T(k) (fit_transfer imported from tools/defect_correction_learnability.py) onto the analytic T_shift(k) = exp(2*pi*i*(s*kx/H + s*ky/W)) - 1, s = (r-1)/2: fraction of T's residual-explaining energy explained by the ramp = 0.9845 (allen_cahn), 0.9510 (pfc), 0.8848 (cahn_hilliard), 0.8705 (fisher_kpp), 0.0002 (helmholtz); best scalar amplitude c = 1.00 +- 0.05 on all four sharp datasets. Refit AFTER the registration correction, the ramp component is gone (0.0001-0.0260). Seam: the fitted filter reproduces s6-B1's skill_LSI (pfc 0.01365 vs 0.0137, allen_cahn 0.05169 vs 0.0515, cahn_hilliard 0.44132 vs 0.4400, fisher_kpp 0.12304 vs 0.1229).",
+      "F15 (turn 3) THE OTHER TWO THINGS THE LSI FILTER DOES. Above the LF band it saturates at |T| = 1.000 with phase pi (weighted mean Re(T)/|T| = -1.000 on allen_cahn, -0.997 on cahn_hilliard for k > k_nyq/2), i.e. it ANNIHILATES the bilinear upsample's out-of-band content - correct, since the HF field has none (F7); the remainder is a small low-mode amplitude correction worth allen_cahn 0.1317 -> 0.0504, fisher_kpp 0.2063 -> 0.1158, cahn_hilliard 0.4631 -> 0.4402.",
+      "F16 (turn 3) THE ZERO-PARAMETER LADDER SATISFIES ROUND-1 SUCCESS CRITERION 2 ON 4 OF 5 BEYOND-COPY DATASETS WITHOUT A MODEL. Test-split skill vs the frozen copy-LF: exact Fourier half-cell shift 0.11955 (allen_cahn), 0.22183 (pfc), 0.35363 (fisher_kpp), 0.49408 (cahn_hilliard); node-aligned band-limited upsample 0.13172 / 7.1e-06 / 0.20631 / 0.46313. Neither involves any fitting.",
+      "F17 (turn 3) A4 IS THE SECOND BILINEAR RESAMPLE, NOT THE FIX. Per-band error-energy ratio to copy-LF (card's M7 bands): allen_cahn oracle warp [0.0147, 0.0678, 2.800, 1.042] (reproduced from the recorded phi to 4 decimals) vs Fourier half-cell shift [0.0074, 0.0390, 0.985, 0.995] and node-aligned band-limited [0.0135, 0.2323, 0.061, 0.000]; pfc warp [0.0200, 8.616, 3.162, 0.827] vs shift [0.0344, 0.246, 1.000, 0.991]. The registration fix removes the low-band error with no mid-band penalty; only the grid_sample-based warp pays it.",
+      "F18 (turn 3) WHAT IS GENUINELY LEFT PER DATASET. Best free (zero-parameter or zero-trained-parameter) reference and the oracle warp's extra on top of it: pfc 7.1e-06 / none (degenerate, F6); allen_cahn 0.0504 / 11 %; fisher_kpp 0.1158 / 1.4 %; cahn_hilliard 0.4402 / 85 %; helmholtz 0.9077 / 36.5 %."
+    ],
+    "interpretation": [
+      "(high confidence) A1's verdict is hypothesis (a): a GRID-REGISTRATION CONVENTION ERROR, not physics and not the rig. copylf_prediction reads point-sampled node-grid fields as if they were finite-volume cell averages; on the four dyadic sharp datasets that is a fixed +0.5-HF-cell isotropic misregistration and on helmholtz a zero-mean +-1.5-cell stretch. The datasets' own helper mffp_sharp/common/ladder.py::upsample_to_hf makes the same cell-centre assumption (its docstring's claim that 'coarse grid points land exactly on HF grid points' is only true under the node convention it does not use), so this is a benchmark-construction convention that the eval layer inherited, not an eval-layer-only bug.",
+      "(high confidence) THE STREAM PREMISE IS FALSIFIED ON 3 OF 4 SHARP DATASETS ONCE THE REFERENCE IS REGISTERED CORRECTLY, AND SURVIVES ON ONE. Re-referenced, leg A's condition (skill_oracle(C16) > 0.44 on >= 3 of 4) is met by fisher_kpp 0.986, allen_cahn 0.889 and pfc 0.830, and leg B's condition (median near-interface |phi| < 0.5 cells) is met on the same three. sharp__cahn_hilliard is the exception on every axis: 85 % of a correctly registered copy-LF's error is removable by a smooth 512-dof displacement of median magnitude 0.64-0.74 cells, and that error is NOT linear-filter-correctable (LSI leaves 0.44). ext__helmholtz_2d is the second transport dataset (stretch + genuine phase error, LSI-refractory at skill 6.59) but remains report-only under its own noise floor 9.695.",
+      "(high confidence) THIS CARD AND s6_local-B1 MEASURED THE SAME ARTEFACT IN TWO LANGUAGES. 'A closed-form linear filter beats a 72k ConvNeXt' and 'an oracle warp removes 77-85 % of copy-LF's error' are both the +0.5-cell offset: the filter expresses it as a unit-amplitude phase ramp (87-98 % of its energy), the warp as a constant displacement (+0.49 to +0.50 cells, 26-98 % of phi energy). Neither is a fusion mechanism. s6's standing warning should be narrowed from 'the defect is a compact linear operator on this physics' to 'the dominant defect is a resampling convention, and the LSI filter is the cheapest detector of it'.",
+      "(high confidence) THE ROUND'S SKILL DENOMINATOR IS INFLATED BY 2.0-8.6x ON THE SHARP PANEL (and 1.10x on helmholtz). Two consequences pointing opposite ways: (i) every qualitative failure claim in the round survives and gets worse - models lose to a reference that is itself misregistered by half a cell, so the true gap to an honest LF passthrough is 2-8x larger than recorded; (ii) 'skill < 1 on the beyond-copy datasets' (success criterion 2) is reachable by a zero-parameter resample on 4 of 5, so any future claim of beating copy-LF on this panel must be reported against a registration-corrected reference or it is measuring the convention. The eval layer is immutable during the round (immutables #3): nothing here was edited, no card score was recomputed, and every corrected number lives in the worktree scratchpad for interpretation only.",
+      "(moderate confidence, mechanism-level) THE PANEL SPLITS INTO A RESAMPLING REGIME AND A TRANSPORT REGIME, and the regime is predictable from the solver, not the physics label: pseudo-spectral solvers whose linear symbol is resolution-INDEPENDENT (pfc's continuous k^2) have no fidelity gap at all; those using the DISCRETE 5-point symbol (allen_cahn, cahn_hilliard, fisher_kpp) have a genuine low-mode coarse-solve error whose size decides whether anything is left after registration; and the one dataset with a large, spatially structured such error (cahn_hilliard, a 4th-order conserved dynamics at output_time 5.0) is the one where transport is real.",
+      "(hypothesis, unmeasured) Because the HF field carries no energy above the LF band on any sharp dataset (F7), the ceiling for ANY method on this panel is set by the coarse solve's low-mode error, and architectures with more spectral bandwidth cannot help - which is consistent with s5-B1's finding that raising modes_cap made every sharp dataset worse. A direct test would be to score each dataset's best free reference against a low-mode-only oracle."
+    ],
+    "falsification_postmortem": "Leg A was recorded as NOT FALSIFIED (skill_oracle(C16) 0.147-0.479, 1 of 4 above the 0.44 bar) and leg B as NOT FALSIFIED at face value (median near-interface |phi| 0.71-1.02 cells on 3 of 4). Both verdicts are correct arithmetic on the recorded artifacts and both invert when the reference is registered correctly, because THE CLAUSE'S DENOMINATOR WAS THE BUG: skill_oracle is measured against copy-LF, copy-LF is misregistered by exactly (r-1)/2 HF cells, and a constant displacement of exactly that size is simultaneously (i) a large fraction of copy-LF's error and (ii) a perfectly legal 'geometric displacement of features' in leg A's and leg B's language. 0.7071 = |(0.5, 0.5)| is the leg-B statistic reading the grid convention, not the physics: at r=2 each axis contributes exactly 0.5 cells, i.e. exactly the threshold. Re-referenced (turn 2 F9/F11), leg A fires on fisher_kpp (0.986), allen_cahn (0.889) and pfc (0.830) - 3 of 4, the clause's own trigger - and leg B fires on the same three (residual median |phi| 0.000-0.045 cells). The premise survives only on sharp__cahn_hilliard (residual ceiling 83-85 %, median |phi| 0.64-0.74 cells) and, report-only, on ext__helmholtz_2d (36.5 %, 1.92 cells). The pre-registered defences did their job up to their design limits and no further: M0 certified only the identity map, M9's plant was synthesised on the HF grid so the LF->HF upsample was never in the plant path (F8), and the TV-L1 cross-check faithfully corroborated the offset without being able to say where it came from - all three are blind to a defect in the MOVING IMAGE's construction rather than in the fitter. The one pre-registration that did work as intended is the card's own instruction to record phi: A1 was only detectable because the control grids were written to disk.",
+    "surprises": [
+      "A 512-dof ORACLE warp, fitted per sample against the test HF field, is BEATEN by a fixed zero-parameter resample on three of the four sharp datasets (by 1.30-1.41x). An oracle losing to a constant is only possible because the oracle was handed a damaged moving image and had to pay a second bilinear resample to fix it (F10).",
+      "sharp__phase_field_crystal_2d has NO multi-fidelity gap at its scored level pair: the correct band-limited upsample of the 64^2 solve reproduces the 128^2 solve to 3.19e-07 relative (skill 7.1e-06). Its entire 0.0448 copy-LF error - and therefore every pfc skill number in the round - is an interpolation convention. Root cause is a solver detail, not a data-handling error: pfc is the only sharp solver using the resolution-independent continuous Laplacian symbol.",
+      "The card predicted cahn_hilliard would be the WEAKEST warp candidate (0.70-0.90) and it turned out to be the ONLY one: it is last in the recorded ladder's headline order but first once registration is corrected. The card's per-dataset predictions were right about the ordering of raw ceilings and exactly inverted about the mechanism.",
+      "helmholtz's 'no offset' (DC -0.034, -0.055 cells) is not the absence of the defect but a different SHAPE of it: a zero-mean +-1.5-cell stretch, visible as a linear ramp in its own recorded phi (fit -1.29 + 0.0263 k vs the predicted -1.469 + 0.0309 k). A DC statistic is structurally blind to it.",
+      "The wrap seam that s6-B2 measured as a ~4x local defect is worth only 0.12-0.74 % of copy-LF's error in aggregate - the two registration findings about the same zoom call differ by two orders of magnitude in metric impact, and the smaller one was found first."
+    ],
+    "_provenance": "3 probe turns, read-only. Scripts and results: worktrees/s3_warp/B1/scratchpad/{reanalysis_turn_1.py, reanalysis_turn_1_results.json, reanalysis_turn_2.py, reanalysis_turn_2_<ds>*.json, reanalysis_turn_3.py, reanalysis_turn_3_results.json} with the three reanalysis_turn_{1,2,3}_results.md and figures turn1_registration_verdict.png / turn2_residual_ceiling.png / turn3_lsi_reconciliation.png. Every nRMSE flows through round1/eval/nrmse.py (single hash d3d0ade9191c13bacc40702f3eb26ad290e01641cacee22a1d2233b74c035850); copy-LF is always eval/panel_data.py::copylf_prediction, unedited. Turn 2 imports the card's own models_r1/s3_warp_oracle/warp_core.py unchanged; turn 3 imports fit_transfer/apply_transfer from tools/defect_correction_learnability.py so the LSI filter is s6-B1's definition. Seams re-verified: (a) variant A reproduces eval/copylf_baselines.json to 0.0 absolute on 5/5 datasets; (b) the re-implemented ladder reproduces the recorded C16 warp to 6 significant digits on 3/3 checked datasets and the recorded M7 band ratios to 4 decimals; (c) the refitted LSI filter reproduces s6-B1's skill_LSI to <= 1.4 % relative on 4/4 sharp datasets. NO eval-layer, data or models edit; no score in this card was recomputed; the corrected copy-LF numbers are scratchpad measurements for interpretation only and are NOT leaderboard, anchor or skill-table entries. Sample-first caveats: turn 2's fitted ladders use 6-12 test samples (paired arms, ratios only); everything in turns 1 and 3 uses the full 100-sample test splits and the 400-sample train splits. Single seed (0) throughout, per the diagnostic protocol."
+  },
+  "7_gap_and_future": {
+    "open_question": "On sharp__cahn_hilliard -- the ONE panel dataset whose beyond-copy gap survives registration correction (residual oracle-warp ceiling 83-85 % over a correctly registered copy-LF, residual median |phi| 0.64-0.74 HF cells, and refractory to a linear filter at skill 0.44) -- is that displacement field PREDICTABLE from the LF field a model actually receives, or is it only visible to an HF-fitted oracle? Everything this card measured about learnability (leg D: retrieval captures 63-99 % of the C16 ceiling) was measured against the MISREGISTERED reference, where the retrieved quantity was mostly a constant; the honest learnability bracket -- nearest-neighbour transfer of displacements fitted on the CORRECTED copy-LF, cahn_hilliard only -- has not been measured and is the gate on the whole D1 direction.",
+    "next_direction": "s3_warp-B2 should be a NARROW model card (D1 mf_warp_correct) scoped to sharp__cahn_hilliard, with ext__helmholtz_2d as a report-only second transport dataset, and it must carry three comparators, not one: (1) the pre-registered architecture-level warp-off control (locked part 4); (2) a CONSTANT-DISPLACEMENT-ONLY arm -- now MANDATORY, since the DC of the recorded phi alone delivers 89.9-99.5 % of the full C16 warp's error reduction on pfc/allen_cahn/fisher_kpp and 48.9 % on cahn_hilliard (part 6 F12); (3) a REGISTRATION-CORRECTED copy-LF reference arm (tools/registration_audit.py variants C/D, or an exact Fourier (r-1)/2-cell shift) reported alongside the frozen skill, because the frozen reference is inflated 2.0-8.6x on this panel (F3) and a D1 win measured only against it is unattributable. Excluded by evidence: sharp__phase_field_crystal_2d (no fidelity gap at all -- F6), sharp__allen_cahn_2d and sharp__fisher_kpp_2d (residual ceilings 11.1 % and 1.4 % -- F9, and leg B's sub-cell verdict -- F11). Implementation notes for the builder: (a) do NOT implement the warp as grid_sample on the interpolated LF -- that second bilinear resample is what injects the mid-band error of anomaly A4 (F17); resample ONCE from the raw LF at warped coordinates, or apply the displacement in Fourier space; (b) budget the DOF from the corrected image, where C4 buys ~nothing and only C16 pays (F13); (c) leg C still binds -- cahn_hilliard is the panel's most nearly diffeomorphic dataset (5-6 % of samples with a component mismatch, mean |dN| 0.11), so the appearance-term clause is satisfiable by scoping rather than by a metamorphosis term. If the corrected-reference learnability bracket on cahn_hilliard comes back at skill >= 1, the honest output is to close s3_warp with a measured negative and hand the registration finding to the benchmark, not to build the model.",
+    "cross_stream_notes": "MENTOR/OPERATOR-FACING BENCHMARK NOTE IS WARRANTED (program.md 12.2's explicit instruction: a data defect is reported, not modelled). Three items, all reproducible in ~2 min by `python tools/registration_audit.py --datasets PANEL --lsi`: (1) eval/panel_data.py::copylf_prediction upsamples with zoom(grid_mode=True) (cell-centred) while the sharp datasets' pseudo-spectral solvers point-sample the node grid x_j = j*L/n; on the dyadic ladder this misregisters copy-LF by exactly (r-1)/2 = 0.5 HF cells, which is 50-100 % of copy-LF's error on all four sharp panel datasets (skill of a zero-parameter fix: 0.110 / 0.165 / 0.343 / 0.477). The datasets' OWN helper mffp_sharp/common/ladder.py::upsample_to_hf makes the same cell-centre assumption, and its docstring's claim that 'coarse grid points land exactly on HF grid points' is true only under the node convention it does not use -- so the fix belongs in the benchmark's ladder helper AND in the eval layer, and must be made BETWEEN rounds (eval is byte-immutable during one). ext__helmholtz_2d has the same defect as a zero-mean +-1.5-cell STRETCH (its Dirichlet interior-node grids 24/96 are not nested); heat_local and fluid are clean, so this is per-dataset, not universal. (2) sharp__phase_field_crystal_2d has NO fidelity gap at its scored level pair: the correct band-limited upsample of the 64^2 solve reproduces the 128^2 solve to 3.19e-07 relative, because pfc is the only sharp solver diagonalising against the resolution-INDEPENDENT continuous symbol while its state is spectrally resolved (HF energy outside the coarse band 4.9e-16). Every pfc number in round 1 is therefore a measurement of an interpolation convention; the dataset needs a coarser LF level (l1 32^2 is not degenerate: 0.00731) or a resolution-dependent symbol before it can carry a claim. (3) Companion to the s6-B2 brainstormer's wrap-seam finding about the SAME zoom call: mode='nearest' vs 'grid-wrap' is worth only 0.12-0.74 % of copy-LF's error, i.e. two orders of magnitude less than the half-cell offset -- both should be fixed in one patch. FOR THE OTHER STREAMS, immediately: s6_local should narrow its standing 'a closed-form LSI filter beats the trained network' warning -- 87-98 % of that filter's energy is the half-cell phase ramp at unit amplitude (part 6 F14), so its win is a registration correction plus annihilation of out-of-band interpolation artefacts, and only a small remainder is a genuine defect operator; s2_beyond_copy's 'why does every mechanism lose to copy-LF' question should be restated against the corrected reference (the gap is 2-8x WORSE than recorded, and 'beating copy-LF' is now reachable with zero parameters on 4 of 5 datasets); s5_tuning/s7_loss should note that no sharp dataset's HF field carries energy above the LF band (F7), so bandwidth/capacity/resolution knobs cannot address this panel's gap at all; and any stream about to claim success criterion 2 must show the registration-corrected reference next to the frozen one.",
+    "promoted_tools": [
+      "registration_audit.py"
+    ]
+  },
+  "reanalysis_progress": "registered",
   "operator_amendments": [
     {
       "utc": "2026-07-29T19:55Z",
       "authority": "orchestrator under Eloise's delegation; reviewer carry-forward F-5 (review_B1.md)",
-      "change": "Part-3 M9 self-test threshold 'warped error < 5% of unwarped' is provably unsatisfiable: the card's own pseudo-LF construction (warp(HF,d)) imposes a double-bilinear-resample floor \u2014 the EXACT planted displacement reaches only 10.5-18.3% of unwarped (verified independently by builder AND reviewer). Amended gate: max(5% x unwarped, 1.5 x exact-planted-phi error), same hard-abort semantics, tolerance 0.25 cells unchanged, EPE gated on the gradient-normal component at the interface mask (aperture problem). Literal outcomes still recorded."
+      "change": "Part-3 M9 self-test threshold 'warped error < 5% of unwarped' is provably unsatisfiable: the card's own pseudo-LF construction (warp(HF,d)) imposes a double-bilinear-resample floor — the EXACT planted displacement reaches only 10.5-18.3% of unwarped (verified independently by builder AND reviewer). Amended gate: max(5% x unwarped, 1.5 x exact-planted-phi error), same hard-abort semantics, tolerance 0.25 cells unchanged, EPE gated on the gradient-normal component at the interface mask (aperture problem). Literal outcomes still recorded."
     }
   ]
 }

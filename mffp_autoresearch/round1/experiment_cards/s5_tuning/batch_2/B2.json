@@ -47,7 +47,7 @@
       "MFFP_MODES_CAP": "12"
     }
   },
-  "status": "reviewed_suggest",
+  "status": "running",
   "skipped_reason": null,
   "reopen_candidate": false,
   "scripts_path": {
@@ -73,7 +73,10 @@
   },
   "build_commit": "a55c788eec97683061b8a049610de59377cfd332",
   "job_ids": [
-    "66012553 (ADR-0007 screen: 5 scaler arms + helmholtz default-equivalence)"
+    "66012553 (ADR-0007 screen: 5 scaler arms + helmholtz default-equivalence)",
+    "66024808 (ADR-0007 screen re-run after debug attempt 1: --no_cache + CPU equivalence instrument)",
+    "66023686 (debug attempt 1 verification: GPU/CPU determinism matrix)",
+    "66056499 (main 200-epoch seed-0 run, promoted arm A2 zscore)"
   ],
   "logs": {},
   "build_notes": [
@@ -116,9 +119,47 @@
       "utc": "2026-07-29T23:41:51Z"
     }
   ],
-  "debug_notes": [],
+  "debug_notes": [
+    {
+      "attempt": 1,
+      "class": "ALGO",
+      "symptom": "screen job 66012553 COMPLETED but the pre-registered DEFAULT-EQUIVALENCE gate (card part 3 item (a)) FAILED: screen_table.json.default_equivalence pass=false, ext__helmholtz_2d base 22.613192981264614 vs A-def 22.712217188241347 (|d| 0.09902420697673264, 0.44% relative); ifc_poisson bitwise identical. A submission BLOCKER per review_B2 action 1.",
+      "diagnosis": "NOT the family code. (i) The default (maxabs) arm's arithmetic is BITWISE the base family's on ext__helmholtz_2d as well as ifc_poisson: the scale floats agree to the bit (max|Y_hf| = 7.382632255554199 = 0x401d87d0c0000000, max|Y_lf| = 1.7269266843795776) and normalize/denormalize are torch.equal with maxabsdiff 0.0 (worktree scratchpad/diagnose_attempt_1.log) -- brief hypotheses (a) float precision, (b) wrong tensor, (c) epsilon/`or 1.0` ordering, (d) dtype/order are all EXCLUDED. (ii) The real defect is in scripts/00_screen.sh: run_arm invoked score_panel.py WITHOUT --no_cache, so the base family's helmholtz number was a CACHE HIT (cached: true) on an entry whose producing result JSON records device: cpu (an earlier login-node contract run), while A-def's was computed FRESH on the job's H100 (device: cuda). ifc_poisson 'passed' only because BOTH sides were CPU cache hits. The same defect mixed devices across the arms: ifc_poisson was a cache hit for all five arms and `fluid` for A0/A3 only, so the guard geomeans were not device-consistent across arms either. (iii) Hypothesis (e) is refined rather than excluded: GPU run-to-run is NOT bitwise reproducible for this family -- the failed screen's own duplicated arithmetic (A0 = explicit maxabs+cap12 vs A-def = env unset -> the same maxabs+cap12, both FRESH, same H100, same job, same seed) differs by 1.9e-4 relative on helmholtz and 6.0e-6 on heat_local (0.0 on sharp__sod_1d). So a max_abs_diff == 0.0 gate is only decidable on a deterministic device; the 0.44% gap is the CPU-vs-GPU device gap on an ill-conditioned dataset (per-sample max|Y| spread 3929x), not drift. Evidence: scratchpad/cache_provenance_attempt_1.log.",
+      "fix": "scripts/00_screen.sh ONLY -- no family code, no card/recipe/gate change: (1) --no_cache on every score_panel call, so the whole screen is one device; (2) a screen-private ROUND1_EVAL_CACHE=$SCREEN_DIR/cache, because --no_cache still WRITES cache entries (score_panel.py:199) and a fresh base-family run would otherwise clobber the shared round1/eval/cache contract-tier entry other cards read (the eval layer itself stays byte-untouched; ROUND1_EVAL_CACHE is its own documented override, score_panel.py:40); (3) the equivalence pair (item (a) only) forced onto CPU via CUDA_VISIBLE_DEVICES= with pinned OMP_NUM_THREADS=MKL_NUM_THREADS=4 -- the deterministic instrument that already proved bitwise equality on ifc_poisson and fluid; the five arms stay on the H100; (4) --time 01:00:00 -> 02:00:00, calibrated from a measured CPU run (ifc_poisson e2 = 62 s train on 4 threads; helmholtz is 17.1x the work => ~18 min/family). The gate is NOT weakened: screen_table.py is untouched and pass is still (max_abs_diff == 0.0). VERIFIED: with the fixed invocation shape (both families fresh, CPU, private cache) ifc_poisson gives base 0.4900017208014249 vs A-def 0.4900017208014249, |d| = 0.0 bitwise (worktree scratchpad/repro_1/). Stale artifacts quarantined: the whole failed screen dir moved to outputs/round1/s5_tuning/B2/screen_attempt0_FAILED_equiv/ (42 stale last.pt with stage=done -- the resume gate carries no code hash and this fix does not change the family's code_hash, so they would have been reloaded and training skipped).",
+      "files_touched": [
+        "worktrees/s5_tuning/B2/scripts/00_screen.sh",
+        "worktrees/s5_tuning/B2/notes/handoff_experiment_debugger_1.md",
+        "worktrees/s5_tuning/B2/scratchpad/diagnose_attempt_1.py",
+        "worktrees/s5_tuning/B2/scratchpad/cache_provenance_attempt_1.py",
+        "worktrees/s5_tuning/B2/scratchpad/verify_equiv_attempt_1.sbatch",
+        "worktrees/s5_tuning/B2/scratchpad/repro_1/"
+      ],
+      "fix_commit": "7f03708",
+      "relaunched_job_ids": [
+        "66024808 (ADR-0007 screen, re-run with the fixed equivalence instrument)",
+        "66023686 (one-off verification: GPU/CPU determinism matrix -> outputs/round1/s5_tuning/B2/debug01_verify/determinism_matrix.txt)"
+      ],
+      "next_suggestion": "If the gate fails AGAIN, read debug01_verify/determinism_matrix.txt FIRST: gpu_base_1 vs gpu_base_2 isolates the instrument (GPU nondeterminism) from the code, and cpu_base vs cpu_adef is the same comparison the fixed screen makes. A residual ~1e-4 helmholtz wobble between two GPU runs of this family is instrument noise, not code drift, and must not be 'fixed' inside the family. Note for the analyzer: attempt 0's screen numbers are void (device-mixed) -- use only the 66024808 table. Card status was reviewed_suggest (the schema has no screen-failed state); the failure was the screen's pre-registered gate, not the job, which COMPLETED 0:0.",
+      "utc": "2026-07-30T04:05:00Z"
+    }
+  ],
   "5_actual_result": null,
   "6_analysis": null,
   "7_gap_and_future": null,
-  "reanalysis_progress": null
+  "reanalysis_progress": null,
+  "promotion": {
+    "utc": "2026-07-30T07:05Z",
+    "screen_job": "66024808",
+    "promoted_arm": "A2",
+    "promoted_mode": "zscore",
+    "rule": "fixed rank order [A2,A1,A3,A4], highest non-broken; ADR 0007 \u2014 recorded before main submit",
+    "survivors": [
+      "A2",
+      "A1",
+      "A3",
+      "A4"
+    ],
+    "requires_recipe_amendment": false,
+    "orchestrator_read_notes": "default_equivalence bitwise PASS (helmholtz + ifc_poisson, fresh runs) \u2014 attempt-0 divergence confirmed as cache provenance; A0 finite; A4 not broken under the >3x-A0 criterion (gm 33.43 = 1.98x A0) despite ifc_poisson skill 1405.8 \u2014 irrelevant to promotion (rank 4); A-def CRASHED row is a renderer mislabel for a skipped redundant panel leg (env-unset == maxabs == A0), guard+equiv legs ran and match A0."
+  }
 }

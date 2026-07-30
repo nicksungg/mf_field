@@ -31,11 +31,34 @@
   "card_type": "model",
   "category": "mf_composition / control-and-repair on the B1 defect-correction substrate \u2014\ncircular-padding repair + zero-parameter closed-form floor + out-of-fold per-sample trust head +\nthe owed pointwise control, all against a B1-replica control.",
   "created_utc": "2026-07-29T23:14:43Z",
-  "debug_notes": [],
+  "debug_notes": [
+    {
+      "attempt": 1,
+      "class": "ALGO",
+      "commit": "c3c4a84",
+      "diagnosis": "GPU kernel nondeterminism, NOT a knob divergence (scratchpad/diagnose_attempt_1.out, three independent checks): (1) the two arms' 35-knob --env blocks, regenerated from the card, differ ONLY in S6_ARM (labels/ckpt paths) and S6_SELECTOR, which is read at smoke_eval.py:921 i.e. STAGE 3 only; (2) the two checkpoints' meta blocks differ ONLY in `arm` (variant/padding_mode/kernel/depth/width/grid/seed/epochs_target/dataset/path all equal) and both data-derived normalisation scalers are bit-equal; (3) the deviation is unstructured and tiny -- 43/45 corrector tensors and 13/16 gate tensors differ, uniformly at 1e-7/1e-8 absolute (max|dw| 2.2352e-07 ~ 2x float32 eps 1.192e-07; ~2e-5 relative after 2 epochs of AdamW), whereas a padding/config divergence would hit a structured subset at O(1) relative size. Neither the family nor the eval layer sets torch.use_deterministic_algorithms / cudnn.deterministic, and score_panel.py's CUBLAS_WORKSPACE_CONFIG does not cover cuDNN convolutions. Conclusion: training the SAME corrector twice (once per arm) on an H100 cannot be bit-reproducible, so the card's C3 bit-identity requirement can only be met BY CONSTRUCTION.",
+      "files_touched": [
+        "worktrees/s6_local/B2/models_r1/s6_local_repair/smoke_eval.py",
+        "worktrees/s6_local/B2/scripts/01_train_eval.sh",
+        "worktrees/s6_local/B2/notes/handoff_experiment_debugger_1.md",
+        "worktrees/s6_local/B2/scratchpad/{diagnose,verify,tripwire_tests}_attempt_1*"
+      ],
+      "fix": "structural (fix option (a)), no recipe/intent change: new smoke_eval.py::borrow_partner_stages -- a PAIRED arm (trust_head_circ) no longer trains stages 0-2 at all; it LOADS the donor arm's (circ_repair's) corrector/gate/encoder from the donor's own checkpoint, whose path comes from the donor's pair record, after validating the donor's config meta (all keys except `arm`), both normalisation scalers, stage completeness and the donor's RECORDED corrector hash. Stage 3' is provably unaffected: trust_head.py draws folds from np.random.default_rng(seed) and touches no torch RNG, and nothing after stage 2 consumes a torch RNG draw. The C3 tripwire stays LIVE and unchanged -- assert_pairing still hashes and still raises; the borrow is what makes the assertion true. Recorded provenance in both arms' diag, result-JSON extra and pair record (corrector_source, corrector_provenance{borrowed_from, donor_ckpt, donor_pair_record, donor_stage, donor_corrector_sha256, stages_0_2_trained_here, donor_for}). Unpaired arms return at the first line of the borrow -> unchanged path. Bonus: this also removes a latent preemption/resume defect (a requeued trust_head_circ used to retrain its corrector and would have re-fired the tripwire). Also applied the reviewer's F2 one-liner: 01_train_eval.sh now ends `exit ${GATE_RC:-0}` so a V1/V2/C3/identity miss is binding at the job level. Determinism enforcement (fix option (b)) was NOT used: it was unnecessary once the shared artefact is shared by construction, it would have perturbed every arm's numbers including b1_replica's V1 reproduction path, and it risks missing-kernel errors. VERIFIED at contract tier on the screen path (scratchpad/verify_attempt_1b.sh, score_panel.py --epochs 2 --seed 0 --no_cache, env from scripts/arm_env.sh, donor before borrower): ext__helmholtz_2d (padding circular) and sharp__sod_1d (padding zeros, TRAINED path alpha=1.5) both give corrector_state_sha256 EQUAL across the two arms with pairing_verified=true; identity_delta_vs_baseline=0.0 and identity_forward_max_abs_dev=0.0 on every leg; no-harm skill 1.0000 / 0.9646 (<= 1.02); b1_replica's helmholtz nRMSE 0.32945012604380175 is bit-identical to the builder's pre-fix CPU contract smoke; borrower wall time drops 811s -> 106s on helmholtz, confirming stages 0-2 are loaded not retrained. Tripwire liveness re-fired (scratchpad/tripwire_tests_attempt_1.out): P1 genuine donor -> verified true; N1 one weight perturbed by the exact 2.2352e-07 drift -> S6ContractError from assert_pairing; N2 donor ckpt with a different padding_mode -> raise; N3 recorded-sha drift -> raise; N4 donor ckpt missing -> raise; N5 no donor record -> no raise, recorded unverified_partner_absent.",
+      "next_suggestion": "if 66024957 still fails C3, the remaining suspect is the FORWARD path rather than the trained artefact -- full_delta/full_gate are still GPU-nondeterministic, so C_val/C_te can differ ~1e-7 relative between the two arms (inherent to any GPU eval, ~4 orders below the pure seed spread the C3 floor is quoted against, and NOT what the card asserts). In that case the next fix is fix option (b) scoped to the paired arms only: torch.backends.cudnn.deterministic=True + benchmark=False (and torch.use_deterministic_algorithms(True, warn_only=True) if a kernel is missing), which must NOT be applied to b1_replica because it would perturb the V1 reproduction path. Watch also: arm order (donor before borrower) is now load-bearing twice over -- a single-arm rerun of trust_head_circ without its donor records unverified_partner_absent instead of passing.",
+      "quarantined": "mffp_autoresearch_outputs/round1/s6_local/B2/screen -> quarantine_attempt_1_job66014970/screen (pre-fix checkpoints/pair records/diags; the family's resume guard carries no code hash, so a relaunch would have resumed them). eval/ and training/ did not exist yet. slurm/ logs kept in place.",
+      "relaunched_job_ids": [
+        "66024957 (2-epoch plumbing screen, relaunch of 66014970)"
+      ],
+      "symptom": "screen job 66014970 FAILED at 4m18s (exit 1) on the family's own C3 tripwire: S6ContractError \"C3 pairing violated on ext__helmholtz_2d: arm 'trust_head_circ' corrector hashes 48ddd17e... but 'circ_repair' recorded 32d0d77a... (max|dw| = 2.2351741790771484e-07)\". Arms b1_replica, circ_repair and lsi_ctrl had already passed panel+guard; the run died on the 4th arm's first dataset.",
+      "utc": "2026-07-30T03:40:00Z"
+    }
+  ],
   "expected_falsification": " (one sentence per contrast; full text in iteration_1.md section 3):\n**C1** \u2014 the padding repair is falsified if `circ_repair`'s test nRMSE is not at least 10% below\n`b1_replica`'s on **both** pfc and allen_cahn (predicted -46.2% / -39.3%), which would mean the\n45-81% boundary error share was not the handicap it looks like;\n**C2** \u2014 H2's *neural* content is supported only if `circ_repair` beats the paired zero-parameter\n`lsi_ctrl` by >10% relative nRMSE on **>=2 of the 4** defect datasets and is refuted at <=1\n(pre-registered expectation: **refuted, 1 of 4 \u2014 fisher_kpp only**), in which case the card's\nheadline is the defect-correction *target*, not the operator class;\n**C3** \u2014 the per-sample trust hypothesis is falsified if BOTH `trust_head_circ` fails to beat\n`circ_repair` by 5% on pfc AND the 4-fold CV inside `val_idx` does not select the head over\n{global scalar, 0} on >=2 of the 5 beyond-copy datasets, with helmholtz report-only, its mechanism\nleg binary, and a helmholtz score worse than copy-LF 0.3294501 an admissible pre-registered outcome\n(per-sample gating trades the exact no-harm floor for headroom).",
   "id": "s6_local-B2",
   "job_ids": [
-    "66014970 (2-epoch plumbing screen)"
+    "66014970 (2-epoch plumbing screen)",
+    "66024957 (2-epoch plumbing screen, relaunch after debug attempt 1)",
+    "66056503 (main sweep: 5 arms + 2 guard legs, seed 0, --time 02:00:00; after re-screen 66024957 all_pass)"
   ],
   "logs": {},
   "output_paths": {
@@ -227,7 +250,7 @@
   },
   "skipped_reason": null,
   "source_iteration": "brainstormer/s6_local/batch_2/iteration_1.md",
-  "status": "reviewed_suggest",
+  "status": "running",
   "stream": "s6_local",
   "worktree_path": "mffp_autoresearch/round1/worktrees/s6_local/B2"
 }

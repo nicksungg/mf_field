@@ -117,7 +117,7 @@
       "_sbatch": "partition gpu, --gres=gpu:h100:1 (ADR 0005), job names r1-s4_hybrid_routing-B2-s0, logs under mffp_autoresearch_outputs/round1/s4_hybrid_routing/B2/slurm/. --time=02:00:00 per array task (ledger: B1 max 31.28 min/dataset on H100; dense adds ~50% on the corrector stage -> ~45 min worst case, >2x headroom), --time=01:00:00 for the screen, --time=00:30:00 for guard + aggregate. Total ~= 335 GPU-min."
     }
   },
-  "status": "reviewed_suggest",
+  "status": "analyzing",
   "skipped_reason": null,
   "reopen_candidate": false,
   "scripts_path": {
@@ -142,7 +142,8 @@
   },
   "build_commit": "79b20d78cb55a7c36b3e3485a24144f49144f2a5",
   "job_ids": [
-    "66022845 66022846 66022847 66022848 66022846 66022849 66022846 66022850 (screen -> afterok 13-task array -> afterok per-arm aggregates; screen time overridden to 02:00:00 per review S1)"
+    "66022845 66022846 66022847 66022848 66022846 66022849 66022846 66022850 (screen -> afterok 13-task array -> afterok per-arm aggregates; screen time overridden to 02:00:00 per review S1)",
+    "66023665 66023666 66023667 66023668 66023669 66023670 (debug attempt 1 relaunch of the full chain: screen 2 h -> afterok 13-task array -> afterok per-arm aggregates, plus the two afterok guards; the 02:00:00 screen override per review S1 is APPLIED this time, verified via squeue TIME_LIMIT -- on the first launch submit.sh silently dropped it and the screen ran with 01:00:00)"
   ],
   "logs": {},
   "build_notes": [
@@ -189,11 +190,1778 @@
       "utc": "2026-07-30T01:28:58Z"
     }
   ],
-  "debug_notes": [],
-  "5_actual_result": null,
+  "debug_notes": [
+    {
+      "attempt": 1,
+      "class": "INFRA",
+      "class_note": "Classified INFRA by the orchestrator's dispatch and recorded as such: the failure is in the SLURM execution environment (sbatch's script spooling), not in the experiment's model/eval code \u2014 no .py, no recipe knob and no numerical path is involved, and every committed contract smoke had already run this same code successfully from the login node. It is not a transient fault, though: it was a latent plumbing defect that would fire on every submission. Does NOT count toward the 5-ALGO cap (ALGO count remains 0/5).",
+      "symptom": "Screen job 66022845 FAILED after 00:00:01 with ExitCode 1:0, nothing executed (0-byte .out; no screen_contract_*.json; no eval artifact). The .err is a single line: `/var/spool/slurmd/job66022845/slurm_script: line 33: /var/spool/slurmd/job66022845/_arm_env.sh: No such file or directory`. The whole afterok chain (66022846 array, 66022847/8 guards, 66022849/50 aggregates) was left in DependencyNeverSatisfied and had already been scancelled by the orchestrator.",
+      "diagnosis": "Line 33 of 00_contract_screen.sh sourced its sibling shared-config file as `source \"$(cd \"$(dirname \"${BASH_SOURCE[0]}\")\" && pwd)/_arm_env.sh\"`. Under sbatch, SLURM copies ONLY the submitted script into /var/spool/slurmd/job<ID>/ (as `slurm_script`) and executes it from there, so ${BASH_SOURCE[0]}'s dirname is the spool dir and the sibling file is simply not there \u2014 the file's own location on NFS is invisible to it. Reproduced deterministically for ALL FOUR sbatch scripts by copying each one alone into a temp dir and running it from cwd=/ (scratchpad/diagnose_attempt_1.sh -> repro_attempt_1_prefix.log): each dies at its own source line (00:33, 01:44, 02:26, 03:36) with exactly the production message, so 01/02/03 carried the identical latent bug and would each have failed the same way once the screen passed. This is invisible to `bash -n` (a syntax check does not resolve `source`) and invisible to any login-node run (where the file IS beside its sibling), which is why the builder's smokes and the reviewer's 7/7 `bash -n` both passed. SECOND, independent defect found while preparing the relaunch: submit.sh contained no argument parsing at all, so the orchestrator's `submit.sh --time 02:00:00` (review S1's 2 h screen override) was silently discarded as an unused positional argument \u2014 `sacct -j 66022845` shows Timelimit 01:00:00, i.e. the override this card's job_ids field claimed was applied never was.",
+      "fix": "Minimal and plumbing-only. (a) In 00/01/02/03 the ${BASH_SOURCE[0]}-derived path is replaced by the absolute `.../worktrees/s4_hybrid_routing/B2/scripts/_arm_env.sh`, each with a comment naming the spool mechanism so it is not reverted. This matches the scripts' existing style \u2014 _arm_env.sh already hardcodes an absolute PROJECT_ROOT, and every #SBATCH log path is absolute. (b) submit.sh gains a `--time <HH:MM:SS>` flag applied to the SCREEN sbatch only (a submit-time override, ADR 0005 precedent \u2014 the card's recipe.env._sbatch values are unchanged, and array/guard/aggregate keep theirs), and now EXITS 2 on any unrecognised argument so a dropped flag can never again be silent. _arm_env.sh itself, every recipe knob, every .py, and all locked card fields are untouched.",
+      "verification": "(1) Post-fix spool harness (scratchpad/verify_attempt_1_postfix.log): all four scripts now get past the source and reach their intended score_panel.py invocation with the full correct --env set; 00 exits 0 (01/02/03 exit 1 only at their trailing `cat` of a result JSON that the harness's stubbed python never wrote \u2014 expected, not a script defect). (2) `bash -n` OK on all 7 scripts. (3) scratchpad/verify_env_attempt_1.py: all three arms' 20-key --env sets still equal the card's recipe.env non-underscore keys plus that arm's _arms deltas, key-for-key, no extras, no omissions (exit 0) \u2014 the fix is env-neutral. (4) scratchpad/dryrun_submit_attempt_1.log (sbatch shadowed by a stub, nothing submitted): `--time 02:00:00` reaches the screen sbatch and NO other job; with no flag nothing is overridden; `--bogus` exits 2; the 13-task map is unchanged (6 gate_repair + 6 gate_repair_dense + attn_gap_fkpp x sharp__fisher_kpp_2d). (5) No quarantine needed, verified before relaunching: zero `*e200*` files anywhere under the outputs dir, no screen_contract_*.json, and the only result/cache entries are the builder's four committed 2-epoch contract smokes under results_contract_smoke_* \u2014 the screen died before any run, so the resume guard's missing code hash is moot here. (6) Post-submit `squeue`: screen 66023665 TIME_LIMIT 2:00:00 (the override is now real), array 66023666_[0-12] 2:00:00, guards and aggregates 0:30:00 and correctly (Dependency)-held.",
+      "files_touched": [
+        "scripts/00_contract_screen.sh",
+        "scripts/01_train_eval.sh",
+        "scripts/02_guard_contract.sh",
+        "scripts/03_aggregate_panel.sh",
+        "scripts/submit.sh",
+        "notes/handoff_experiment_debugger_1.md",
+        "scratchpad/diagnose_attempt_1.sh",
+        "scratchpad/dryrun_submit_attempt_1.sh",
+        "scratchpad/verify_env_attempt_1.py"
+      ],
+      "commit": "7065955",
+      "relaunched_job_ids": [
+        "66023665 (screen, --time=02:00:00 override APPLIED)",
+        "66023666 (13-task array, afterok:66023665)",
+        "66023667 (guard gate_repair)",
+        "66023668 (guard gate_repair_dense)",
+        "66023669 (aggregate gate_repair, afterok:66023666)",
+        "66023670 (aggregate gate_repair_dense, afterok:66023666)"
+      ],
+      "diagnostic_job_ids": [],
+      "next_suggestion": "For the orchestrator: `--time` overrides the SCREEN only. Per review S2, an array TIMEOUT on tasks 7-11 (dense x sharp panel) needs a direct `sbatch --time=... 01_train_eval.sh 0 <arm> <dataset>` or a new flag; --array-time deliberately does not exist. submit_seeds_2_3.sh still uses ${BASH_SOURCE[0]} and that is correct \u2014 it is `bash`-invoked, never sbatched. For the next debugger: the plumbing is now proven, so the next screen failure is a genuine signal (dense-context OOM at 16384 context points, or V4 raising on arm C) and would be ALGO; do not re-diagnose the source path. For the analyzers: nothing numerical changed, so every committed contract-tier number and the reviewer's verification still stand; note the screen may cache-hit helmholtz/ifc_poisson at 2 epochs (code_hash and --env unchanged), which produces the --out JSON the V3 bit-exactness check reads but no fresh diag_*_e2_*.json for those two.",
+      "utc": "2026-07-30T03:12Z"
+    }
+  ],
+  "5_actual_result": {
+    "protocol_label": "provisional-single-seed (ADR 0004: seed 0 only in-round; seeds 1-2 run only in the end-of-round top-3 confirmation pass). No CI is computed for this card; every ci95 field is null by construction and no mean/CI language may be attached to these numbers.",
+    "seeds_available": [
+      0
+    ],
+    "nrmse_def_hash": "d3d0ade9191c13bacc40702f3eb26ad290e01641cacee22a1d2233b74c035850",
+    "nrmse_def_hash_consistent": true,
+    "nrmse_def_hash_checked_files": [
+      "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s4_hybrid_routing/B2/eval/guard_contract_gate_repair_dense_s0.json",
+      "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s4_hybrid_routing/B2/eval/guard_contract_gate_repair_s0.json",
+      "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s4_hybrid_routing/B2/eval/result_attn_gap_fkpp_sharp__fisher_kpp_2d_s0.json",
+      "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s4_hybrid_routing/B2/eval/result_gate_repair_dense_ext__helmholtz_2d_s0.json",
+      "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s4_hybrid_routing/B2/eval/result_gate_repair_dense_ifc_poisson_s0.json",
+      "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s4_hybrid_routing/B2/eval/result_gate_repair_dense_panel_s0.json",
+      "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s4_hybrid_routing/B2/eval/result_gate_repair_dense_sharp__allen_cahn_2d_s0.json",
+      "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s4_hybrid_routing/B2/eval/result_gate_repair_dense_sharp__cahn_hilliard_s0.json",
+      "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s4_hybrid_routing/B2/eval/result_gate_repair_dense_sharp__fisher_kpp_2d_s0.json",
+      "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s4_hybrid_routing/B2/eval/result_gate_repair_dense_sharp__phase_field_crystal_2d_s0.json",
+      "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s4_hybrid_routing/B2/eval/result_gate_repair_ext__helmholtz_2d_s0.json",
+      "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s4_hybrid_routing/B2/eval/result_gate_repair_ifc_poisson_s0.json",
+      "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s4_hybrid_routing/B2/eval/result_gate_repair_panel_s0.json",
+      "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s4_hybrid_routing/B2/eval/result_gate_repair_sharp__allen_cahn_2d_s0.json",
+      "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s4_hybrid_routing/B2/eval/result_gate_repair_sharp__cahn_hilliard_s0.json",
+      "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s4_hybrid_routing/B2/eval/result_gate_repair_sharp__fisher_kpp_2d_s0.json",
+      "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s4_hybrid_routing/B2/eval/result_gate_repair_sharp__phase_field_crystal_2d_s0.json"
+    ],
+    "nrmse_def_hash_note": "All 17 parsed score_panel.py JSONs (15 x e200 + 2 x e2 guard) carry the identical nrmse_def_hash d3d0ade9...; the seam assertion PASSES. Every diag_*.json repeats the same hash under eval_layer['eval/nrmse.py'] and under its own nrmse_def_hash key.",
+    "authoritative_panel_json": {
+      "gate_repair": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s4_hybrid_routing/B2/eval/result_gate_repair_panel_s0.json",
+      "gate_repair_dense": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s4_hybrid_routing/B2/eval/result_gate_repair_dense_panel_s0.json",
+      "attn_gap_fkpp": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s4_hybrid_routing/B2/eval/result_attn_gap_fkpp_sharp__fisher_kpp_2d_s0.json"
+    },
+    "trap_note": "(1) Each per-dataset result_<arm>_<ds>_s0.json carries a top-level panel_geomean_skill that is a ONE-dataset geomean -- ignore it; the 6-dataset panel number lives only in result_<arm>_panel_s0.json (B1 part 5's trap_note, re-printed by both aggregate legs). (2) The family JSON's own splits.test_hf.nRMSE is a POOLED definition and does NOT equal the round's number; score_panel reads splits.test_hf.rel_l2_mean (metric_source per_sample_mean) -- e.g. gate_repair/sharp__cahn_hilliard family nRMSE 0.5384011 vs scored 0.4009179. Never quote the family nRMSE key. (3) screen_contract_*.json are build-tier (2 epochs) and NOT reportable (ADR 0007). (4) The SCORED value is post-stage-3 while alpha_protocol_legs are pre-stage-3; see anomaly A1.",
+    "scored_arms": {
+      "gate_repair": "arm A -- repaired out-of-sample gate, sparse context (S4_CTX_POINTS=1024), base=fno, target=hf_minus_base_oof; 6 panel datasets",
+      "gate_repair_dense": "arm B -- same repaired gate, dense context (S4_CTX_POINTS=full), base=fno, target=hf_minus_base_oof; 6 panel datasets",
+      "attn_gap_fkpp": "arm C -- attention corrector on the hf_minus_copylf target, base=copylf, dense context, sharp__fisher_kpp_2d only (stage 3 skipped: no trainable FNO; ifc_poisson excluded, ADR 0002)"
+    },
+    "per_dataset": {
+      "ext__helmholtz_2d": {
+        "per_seed_nrmse": [
+          6.470547934121085
+        ],
+        "per_seed_skill": [
+          19.640447590118082
+        ],
+        "mean_skill": 19.640447590118082,
+        "ci95": null,
+        "reference_type": "copylf",
+        "metric_source": "per_sample_mean",
+        "cached": true,
+        "alpha_applied": 0.75,
+        "alpha_least_squares": 1.5,
+        "stage3_joint": false,
+        "base_only_rel_l2": 6.470239704452235,
+        "base_only_rel_l2_final_fno": 6.470239704452235,
+        "n_ctx_effective": 576,
+        "ctx_coverage_fraction": 1.0,
+        "ctx_index_is_identity": true,
+        "alpha_protocol_legs_pre_stage3": {
+          "zero": {
+            "alpha": 0.0,
+            "test_nrmse": 6.470239704452235,
+            "test_skill": 19.639512001862123
+          },
+          "b1_insample": {
+            "alpha": 0.0,
+            "test_nrmse": 6.470239704452235,
+            "test_skill": 19.639512001862123
+          },
+          "oof": {
+            "alpha": 0.75,
+            "test_nrmse": 6.470547947348531,
+            "test_skill": 19.640447630268152
+          },
+          "ls": {
+            "alpha": 1.5,
+            "test_nrmse": 6.494174185902451,
+            "test_skill": 19.712161788758955
+          }
+        },
+        "source_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s4_hybrid_routing/B2/eval/result_gate_repair_panel_s0.json",
+        "diag_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s4_hybrid_routing/B2/eval/diag_gate_repair_ext__helmholtz_2d_e200_s0.json",
+        "in_run_lsi_nrmse": 2.337617355563123,
+        "in_run_lsi_skill": 7.095512099613908,
+        "in_run_scalar_blend_ref_nrmse": 0.3294501260438018,
+        "in_run_scalar_blend_a_fitted_on_train": 1.0,
+        "anatomy": {
+          "cosine_vs_hf_minus_base": [
+            -0.012655817622535955,
+            0.02588181836561231
+          ],
+          "cosine_vs_copylf_minus_base": [
+            -0.011743869708519952,
+            0.02316170745005
+          ],
+          "cosine_vs_hf_minus_copylf": [
+            0.17834644647953,
+            0.20868629867413896
+          ],
+          "unit_corr_rms_over_residual_rms": 0.011219793104278387,
+          "corr_rms_over_residual_rms": 0.00841484482820879
+        },
+        "primary_arm": "gate_repair (arm A, sparse ctx)",
+        "arms": {
+          "gate_repair": {
+            "per_seed_nrmse": [
+              6.470547934121085
+            ],
+            "per_seed_skill": [
+              19.640447590118082
+            ],
+            "mean_skill": 19.640447590118082,
+            "ci95": null,
+            "reference_type": "copylf",
+            "metric_source": "per_sample_mean",
+            "cached": true,
+            "alpha_applied": 0.75,
+            "alpha_least_squares": 1.5,
+            "stage3_joint": false,
+            "base_only_rel_l2": 6.470239704452235,
+            "base_only_rel_l2_final_fno": 6.470239704452235,
+            "n_ctx_effective": 576,
+            "ctx_coverage_fraction": 1.0,
+            "ctx_index_is_identity": true,
+            "alpha_protocol_legs_pre_stage3": {
+              "zero": {
+                "alpha": 0.0,
+                "test_nrmse": 6.470239704452235,
+                "test_skill": 19.639512001862123
+              },
+              "b1_insample": {
+                "alpha": 0.0,
+                "test_nrmse": 6.470239704452235,
+                "test_skill": 19.639512001862123
+              },
+              "oof": {
+                "alpha": 0.75,
+                "test_nrmse": 6.470547947348531,
+                "test_skill": 19.640447630268152
+              },
+              "ls": {
+                "alpha": 1.5,
+                "test_nrmse": 6.494174185902451,
+                "test_skill": 19.712161788758955
+              }
+            },
+            "source_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s4_hybrid_routing/B2/eval/result_gate_repair_panel_s0.json",
+            "diag_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s4_hybrid_routing/B2/eval/diag_gate_repair_ext__helmholtz_2d_e200_s0.json",
+            "in_run_lsi_nrmse": 2.337617355563123,
+            "in_run_lsi_skill": 7.095512099613908,
+            "in_run_scalar_blend_ref_nrmse": 0.3294501260438018,
+            "in_run_scalar_blend_a_fitted_on_train": 1.0,
+            "anatomy": {
+              "cosine_vs_hf_minus_base": [
+                -0.012655817622535955,
+                0.02588181836561231
+              ],
+              "cosine_vs_copylf_minus_base": [
+                -0.011743869708519952,
+                0.02316170745005
+              ],
+              "cosine_vs_hf_minus_copylf": [
+                0.17834644647953,
+                0.20868629867413896
+              ],
+              "unit_corr_rms_over_residual_rms": 0.011219793104278387,
+              "corr_rms_over_residual_rms": 0.00841484482820879
+            }
+          },
+          "gate_repair_dense": {
+            "per_seed_nrmse": [
+              6.439960093391508
+            ],
+            "per_seed_skill": [
+              19.54760245723897
+            ],
+            "mean_skill": 19.54760245723897,
+            "ci95": null,
+            "reference_type": "copylf",
+            "metric_source": "per_sample_mean",
+            "cached": true,
+            "alpha_applied": 0.0,
+            "alpha_least_squares": 1.5,
+            "stage3_joint": false,
+            "base_only_rel_l2": 6.439960093391508,
+            "base_only_rel_l2_final_fno": 6.439960093391508,
+            "n_ctx_effective": 576,
+            "ctx_coverage_fraction": 1.0,
+            "ctx_index_is_identity": true,
+            "alpha_protocol_legs_pre_stage3": {
+              "zero": {
+                "alpha": 0.0,
+                "test_nrmse": 6.439960093391508,
+                "test_skill": 19.54760245723897
+              },
+              "b1_insample": {
+                "alpha": 0.0,
+                "test_nrmse": 6.439960093391508,
+                "test_skill": 19.54760245723897
+              },
+              "oof": {
+                "alpha": 0.0,
+                "test_nrmse": 6.439960093391508,
+                "test_skill": 19.54760245723897
+              },
+              "ls": {
+                "alpha": 1.5,
+                "test_nrmse": 6.44372849704757,
+                "test_skill": 19.559040921996335
+              }
+            },
+            "source_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s4_hybrid_routing/B2/eval/result_gate_repair_dense_panel_s0.json",
+            "diag_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s4_hybrid_routing/B2/eval/diag_gate_repair_dense_ext__helmholtz_2d_e200_s0.json",
+            "in_run_lsi_nrmse": 2.337617355563123,
+            "in_run_lsi_skill": 7.095512099613908,
+            "in_run_scalar_blend_ref_nrmse": 0.3294501260438018,
+            "in_run_scalar_blend_a_fitted_on_train": 1.0,
+            "anatomy": {
+              "cosine_vs_hf_minus_base": [
+                -0.013645621999143081,
+                0.022865276192931303
+              ],
+              "cosine_vs_copylf_minus_base": [
+                -0.01271446567837288,
+                0.014293942385561618
+              ],
+              "cosine_vs_hf_minus_copylf": [
+                0.1783465859128142,
+                0.20868940983292655
+              ],
+              "unit_corr_rms_over_residual_rms": 0.006667667893128003,
+              "corr_rms_over_residual_rms": 0.0
+            }
+          },
+          "attn_gap_fkpp": null
+        },
+        "dense_minus_sparse_skill_gain": 0.09284513287911267
+      },
+      "sharp__phase_field_crystal_2d": {
+        "per_seed_nrmse": [
+          0.13827338215308863
+        ],
+        "per_seed_skill": [
+          3.087807085791768
+        ],
+        "mean_skill": 3.087807085791768,
+        "ci95": null,
+        "reference_type": "copylf",
+        "metric_source": "per_sample_mean",
+        "cached": true,
+        "alpha_applied": 0.9928549528121948,
+        "alpha_least_squares": 0.9952502846717834,
+        "stage3_joint": true,
+        "base_only_rel_l2": 0.5134033742670242,
+        "base_only_rel_l2_final_fno": 0.48913162620566053,
+        "n_ctx_effective": 1024,
+        "ctx_coverage_fraction": 0.25,
+        "ctx_index_is_identity": false,
+        "alpha_protocol_legs_pre_stage3": {
+          "zero": {
+            "alpha": 0.0,
+            "test_nrmse": 0.5134033742670242,
+            "test_skill": 11.464900563262239
+          },
+          "b1_insample": {
+            "alpha": 0.24881257116794586,
+            "test_nrmse": 0.39360164929119285,
+            "test_skill": 8.789587285245442
+          },
+          "oof": {
+            "alpha": 0.9952502846717834,
+            "test_nrmse": 0.11481186431366965,
+            "test_skill": 2.5638838266660082
+          },
+          "ls": {
+            "alpha": 0.9952502846717834,
+            "test_nrmse": 0.11481186431366965,
+            "test_skill": 2.5638838266660082
+          }
+        },
+        "source_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s4_hybrid_routing/B2/eval/result_gate_repair_panel_s0.json",
+        "diag_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s4_hybrid_routing/B2/eval/diag_gate_repair_sharp__phase_field_crystal_2d_e200_s0.json",
+        "in_run_lsi_nrmse": 0.0006145763628144416,
+        "in_run_lsi_skill": 0.013724212269267736,
+        "in_run_scalar_blend_ref_nrmse": 0.04478044719481978,
+        "in_run_scalar_blend_a_fitted_on_train": 1.0,
+        "anatomy": {
+          "cosine_vs_hf_minus_base": [
+            0.8215000558964934,
+            0.9611466435920548
+          ],
+          "cosine_vs_copylf_minus_base": [
+            0.8238276883043626,
+            0.9662992410320657
+          ],
+          "cosine_vs_hf_minus_copylf": [
+            0.026327221569269272,
+            0.028431348361111643
+          ],
+          "unit_corr_rms_over_residual_rms": 0.8837447355371864,
+          "corr_rms_over_residual_rms": 0.8774303376997986
+        },
+        "primary_arm": "gate_repair (arm A, sparse ctx)",
+        "arms": {
+          "gate_repair": {
+            "per_seed_nrmse": [
+              0.13827338215308863
+            ],
+            "per_seed_skill": [
+              3.087807085791768
+            ],
+            "mean_skill": 3.087807085791768,
+            "ci95": null,
+            "reference_type": "copylf",
+            "metric_source": "per_sample_mean",
+            "cached": true,
+            "alpha_applied": 0.9928549528121948,
+            "alpha_least_squares": 0.9952502846717834,
+            "stage3_joint": true,
+            "base_only_rel_l2": 0.5134033742670242,
+            "base_only_rel_l2_final_fno": 0.48913162620566053,
+            "n_ctx_effective": 1024,
+            "ctx_coverage_fraction": 0.25,
+            "ctx_index_is_identity": false,
+            "alpha_protocol_legs_pre_stage3": {
+              "zero": {
+                "alpha": 0.0,
+                "test_nrmse": 0.5134033742670242,
+                "test_skill": 11.464900563262239
+              },
+              "b1_insample": {
+                "alpha": 0.24881257116794586,
+                "test_nrmse": 0.39360164929119285,
+                "test_skill": 8.789587285245442
+              },
+              "oof": {
+                "alpha": 0.9952502846717834,
+                "test_nrmse": 0.11481186431366965,
+                "test_skill": 2.5638838266660082
+              },
+              "ls": {
+                "alpha": 0.9952502846717834,
+                "test_nrmse": 0.11481186431366965,
+                "test_skill": 2.5638838266660082
+              }
+            },
+            "source_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s4_hybrid_routing/B2/eval/result_gate_repair_panel_s0.json",
+            "diag_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s4_hybrid_routing/B2/eval/diag_gate_repair_sharp__phase_field_crystal_2d_e200_s0.json",
+            "in_run_lsi_nrmse": 0.0006145763628144416,
+            "in_run_lsi_skill": 0.013724212269267736,
+            "in_run_scalar_blend_ref_nrmse": 0.04478044719481978,
+            "in_run_scalar_blend_a_fitted_on_train": 1.0,
+            "anatomy": {
+              "cosine_vs_hf_minus_base": [
+                0.8215000558964934,
+                0.9611466435920548
+              ],
+              "cosine_vs_copylf_minus_base": [
+                0.8238276883043626,
+                0.9662992410320657
+              ],
+              "cosine_vs_hf_minus_copylf": [
+                0.026327221569269272,
+                0.028431348361111643
+              ],
+              "unit_corr_rms_over_residual_rms": 0.8837447355371864,
+              "corr_rms_over_residual_rms": 0.8774303376997986
+            }
+          },
+          "gate_repair_dense": {
+            "per_seed_nrmse": [
+              0.07219342809236466
+            ],
+            "per_seed_skill": [
+              1.6121640719281614
+            ],
+            "mean_skill": 1.6121640719281614,
+            "ci95": null,
+            "reference_type": "copylf",
+            "metric_source": "per_sample_mean",
+            "cached": true,
+            "alpha_applied": 0.9979593753814697,
+            "alpha_least_squares": 1.000161051750183,
+            "stage3_joint": true,
+            "base_only_rel_l2": 0.513348737964035,
+            "base_only_rel_l2_final_fno": 0.48802990196857715,
+            "n_ctx_effective": 4096,
+            "ctx_coverage_fraction": 1.0,
+            "ctx_index_is_identity": true,
+            "alpha_protocol_legs_pre_stage3": {
+              "zero": {
+                "alpha": 0.0,
+                "test_nrmse": 0.513348737964035,
+                "test_skill": 11.463680470422355
+              },
+              "b1_insample": {
+                "alpha": 0.25,
+                "test_nrmse": 0.38759847380802087,
+                "test_skill": 8.65552932336188
+              },
+              "oof": {
+                "alpha": 1.0,
+                "test_nrmse": 0.05995402200604175,
+                "test_skill": 1.3388437535071616
+              },
+              "ls": {
+                "alpha": 1.000161051750183,
+                "test_nrmse": 0.05995304766390553,
+                "test_skill": 1.3388219953024705
+              }
+            },
+            "source_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s4_hybrid_routing/B2/eval/result_gate_repair_dense_panel_s0.json",
+            "diag_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s4_hybrid_routing/B2/eval/diag_gate_repair_dense_sharp__phase_field_crystal_2d_e200_s0.json",
+            "in_run_lsi_nrmse": 0.0006145763628144416,
+            "in_run_lsi_skill": 0.013724212269267736,
+            "in_run_scalar_blend_ref_nrmse": 0.04478044719481978,
+            "in_run_scalar_blend_a_fitted_on_train": 1.0,
+            "anatomy": {
+              "cosine_vs_hf_minus_base": [
+                0.9444292779398044,
+                0.9896676263680592
+              ],
+              "cosine_vs_copylf_minus_base": [
+                0.946338680768132,
+                0.9936711054283295
+              ],
+              "cosine_vs_hf_minus_copylf": [
+                0.027596338071965567,
+                0.026623023700729054
+              ],
+              "unit_corr_rms_over_residual_rms": 0.9466564140013661,
+              "corr_rms_over_residual_rms": 0.9447246436176653
+            }
+          },
+          "attn_gap_fkpp": null
+        },
+        "dense_minus_sparse_skill_gain": 1.4756430138636067
+      },
+      "sharp__allen_cahn_2d": {
+        "per_seed_nrmse": [
+          0.26355002277981737
+        ],
+        "per_seed_skill": [
+          16.31709644730294
+        ],
+        "mean_skill": 16.31709644730294,
+        "ci95": null,
+        "reference_type": "copylf",
+        "metric_source": "per_sample_mean",
+        "cached": true,
+        "alpha_applied": 0.0,
+        "alpha_least_squares": 0.0,
+        "stage3_joint": false,
+        "base_only_rel_l2": 0.2635500227798173,
+        "base_only_rel_l2_final_fno": 0.2635500227798173,
+        "n_ctx_effective": 1024,
+        "ctx_coverage_fraction": 0.0625,
+        "ctx_index_is_identity": false,
+        "alpha_protocol_legs_pre_stage3": {
+          "zero": {
+            "alpha": 0.0,
+            "test_nrmse": 0.2635500227798173,
+            "test_skill": 16.317096447302937
+          },
+          "b1_insample": {
+            "alpha": 0.0,
+            "test_nrmse": 0.2635500227798173,
+            "test_skill": 16.317096447302937
+          },
+          "oof": {
+            "alpha": 0.0,
+            "test_nrmse": 0.2635500227798173,
+            "test_skill": 16.317096447302937
+          },
+          "ls": {
+            "alpha": 0.0,
+            "test_nrmse": 0.2635500227798173,
+            "test_skill": 16.317096447302937
+          }
+        },
+        "source_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s4_hybrid_routing/B2/eval/result_gate_repair_panel_s0.json",
+        "diag_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s4_hybrid_routing/B2/eval/diag_gate_repair_sharp__allen_cahn_2d_e200_s0.json",
+        "in_run_lsi_nrmse": 0.0008476507475499687,
+        "in_run_lsi_skill": 0.052480355932112886,
+        "in_run_scalar_blend_ref_nrmse": 0.016151772077279084,
+        "in_run_scalar_blend_a_fitted_on_train": 1.0,
+        "anatomy": {
+          "cosine_vs_hf_minus_base": [
+            0.005552641951264691,
+            0.00588063416398444
+          ],
+          "cosine_vs_copylf_minus_base": [
+            0.005605959417601777,
+            0.005867804811980655
+          ],
+          "cosine_vs_hf_minus_copylf": [
+            2.9769552507019962e-05,
+            0.00010131914377774024
+          ],
+          "unit_corr_rms_over_residual_rms": 0.0006178255746057886,
+          "corr_rms_over_residual_rms": 0.0
+        },
+        "primary_arm": "gate_repair (arm A, sparse ctx)",
+        "arms": {
+          "gate_repair": {
+            "per_seed_nrmse": [
+              0.26355002277981737
+            ],
+            "per_seed_skill": [
+              16.31709644730294
+            ],
+            "mean_skill": 16.31709644730294,
+            "ci95": null,
+            "reference_type": "copylf",
+            "metric_source": "per_sample_mean",
+            "cached": true,
+            "alpha_applied": 0.0,
+            "alpha_least_squares": 0.0,
+            "stage3_joint": false,
+            "base_only_rel_l2": 0.2635500227798173,
+            "base_only_rel_l2_final_fno": 0.2635500227798173,
+            "n_ctx_effective": 1024,
+            "ctx_coverage_fraction": 0.0625,
+            "ctx_index_is_identity": false,
+            "alpha_protocol_legs_pre_stage3": {
+              "zero": {
+                "alpha": 0.0,
+                "test_nrmse": 0.2635500227798173,
+                "test_skill": 16.317096447302937
+              },
+              "b1_insample": {
+                "alpha": 0.0,
+                "test_nrmse": 0.2635500227798173,
+                "test_skill": 16.317096447302937
+              },
+              "oof": {
+                "alpha": 0.0,
+                "test_nrmse": 0.2635500227798173,
+                "test_skill": 16.317096447302937
+              },
+              "ls": {
+                "alpha": 0.0,
+                "test_nrmse": 0.2635500227798173,
+                "test_skill": 16.317096447302937
+              }
+            },
+            "source_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s4_hybrid_routing/B2/eval/result_gate_repair_panel_s0.json",
+            "diag_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s4_hybrid_routing/B2/eval/diag_gate_repair_sharp__allen_cahn_2d_e200_s0.json",
+            "in_run_lsi_nrmse": 0.0008476507475499687,
+            "in_run_lsi_skill": 0.052480355932112886,
+            "in_run_scalar_blend_ref_nrmse": 0.016151772077279084,
+            "in_run_scalar_blend_a_fitted_on_train": 1.0,
+            "anatomy": {
+              "cosine_vs_hf_minus_base": [
+                0.005552641951264691,
+                0.00588063416398444
+              ],
+              "cosine_vs_copylf_minus_base": [
+                0.005605959417601777,
+                0.005867804811980655
+              ],
+              "cosine_vs_hf_minus_copylf": [
+                2.9769552507019962e-05,
+                0.00010131914377774024
+              ],
+              "unit_corr_rms_over_residual_rms": 0.0006178255746057886,
+              "corr_rms_over_residual_rms": 0.0
+            }
+          },
+          "gate_repair_dense": {
+            "per_seed_nrmse": [
+              0.26355002277981737
+            ],
+            "per_seed_skill": [
+              16.31709644730294
+            ],
+            "mean_skill": 16.31709644730294,
+            "ci95": null,
+            "reference_type": "copylf",
+            "metric_source": "per_sample_mean",
+            "cached": true,
+            "alpha_applied": 0.0,
+            "alpha_least_squares": 0.0,
+            "stage3_joint": false,
+            "base_only_rel_l2": 0.2635500227798173,
+            "base_only_rel_l2_final_fno": 0.2635500227798173,
+            "n_ctx_effective": 16384,
+            "ctx_coverage_fraction": 1.0,
+            "ctx_index_is_identity": true,
+            "alpha_protocol_legs_pre_stage3": {
+              "zero": {
+                "alpha": 0.0,
+                "test_nrmse": 0.2635500227798173,
+                "test_skill": 16.317096447302937
+              },
+              "b1_insample": {
+                "alpha": 0.0,
+                "test_nrmse": 0.2635500227798173,
+                "test_skill": 16.317096447302937
+              },
+              "oof": {
+                "alpha": 0.0,
+                "test_nrmse": 0.2635500227798173,
+                "test_skill": 16.317096447302937
+              },
+              "ls": {
+                "alpha": 0.0,
+                "test_nrmse": 0.2635500227798173,
+                "test_skill": 16.317096447302937
+              }
+            },
+            "source_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s4_hybrid_routing/B2/eval/result_gate_repair_dense_panel_s0.json",
+            "diag_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s4_hybrid_routing/B2/eval/diag_gate_repair_dense_sharp__allen_cahn_2d_e200_s0.json",
+            "in_run_lsi_nrmse": 0.0008476507475499687,
+            "in_run_lsi_skill": 0.052480355932112886,
+            "in_run_scalar_blend_ref_nrmse": 0.016151772077279084,
+            "in_run_scalar_blend_a_fitted_on_train": 1.0,
+            "anatomy": {
+              "cosine_vs_hf_minus_base": [
+                0.005506430662978562,
+                0.005748165542096477
+              ],
+              "cosine_vs_copylf_minus_base": [
+                0.005558730789524834,
+                0.005727746276172168
+              ],
+              "cosine_vs_hf_minus_copylf": [
+                4.33912559253262e-05,
+                0.00012776802364765689
+              ],
+              "unit_corr_rms_over_residual_rms": 0.0006240625660723636,
+              "corr_rms_over_residual_rms": 0.0
+            }
+          },
+          "attn_gap_fkpp": null
+        },
+        "dense_minus_sparse_skill_gain": 0.0
+      },
+      "sharp__fisher_kpp_2d": {
+        "per_seed_nrmse": [
+          0.22459055655070473
+        ],
+        "per_seed_skill": [
+          3.585858548995319
+        ],
+        "mean_skill": 3.585858548995319,
+        "ci95": null,
+        "reference_type": "copylf",
+        "metric_source": "per_sample_mean",
+        "cached": true,
+        "alpha_applied": 1.0590696334838867,
+        "alpha_least_squares": 1.0590696334838867,
+        "stage3_joint": false,
+        "base_only_rel_l2": 0.2578269527156267,
+        "base_only_rel_l2_final_fno": 0.2578269527156267,
+        "n_ctx_effective": 1024,
+        "ctx_coverage_fraction": 0.0625,
+        "ctx_index_is_identity": false,
+        "alpha_protocol_legs_pre_stage3": {
+          "zero": {
+            "alpha": 0.0,
+            "test_nrmse": 0.2578269527156267,
+            "test_skill": 4.116517616572249
+          },
+          "b1_insample": {
+            "alpha": 0.794302225112915,
+            "test_nrmse": 0.22701228810144036,
+            "test_skill": 3.624524407960838
+          },
+          "oof": {
+            "alpha": 1.0590696334838867,
+            "test_nrmse": 0.2245905565599631,
+            "test_skill": 3.58585854914314
+          },
+          "ls": {
+            "alpha": 1.0590696334838867,
+            "test_nrmse": 0.2245905565599631,
+            "test_skill": 3.58585854914314
+          }
+        },
+        "source_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s4_hybrid_routing/B2/eval/result_gate_repair_panel_s0.json",
+        "diag_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s4_hybrid_routing/B2/eval/diag_gate_repair_sharp__fisher_kpp_2d_e200_s0.json",
+        "in_run_lsi_nrmse": 0.007703185183067003,
+        "in_run_lsi_skill": 0.12299062288025756,
+        "in_run_scalar_blend_ref_nrmse": 0.06263229669603956,
+        "in_run_scalar_blend_a_fitted_on_train": 1.0,
+        "anatomy": {
+          "cosine_vs_hf_minus_base": [
+            0.48968643054200783,
+            0.4880082293131067
+          ],
+          "cosine_vs_copylf_minus_base": [
+            0.510711920956844,
+            0.508426763741685
+          ],
+          "cosine_vs_hf_minus_copylf": [
+            0.022681032044181745,
+            0.022849768996370017
+          ],
+          "unit_corr_rms_over_residual_rms": 0.43772723239621647,
+          "corr_rms_over_residual_rms": 0.46358361957977706
+        },
+        "primary_arm": "gate_repair (arm A, sparse ctx)",
+        "arms": {
+          "gate_repair": {
+            "per_seed_nrmse": [
+              0.22459055655070473
+            ],
+            "per_seed_skill": [
+              3.585858548995319
+            ],
+            "mean_skill": 3.585858548995319,
+            "ci95": null,
+            "reference_type": "copylf",
+            "metric_source": "per_sample_mean",
+            "cached": true,
+            "alpha_applied": 1.0590696334838867,
+            "alpha_least_squares": 1.0590696334838867,
+            "stage3_joint": false,
+            "base_only_rel_l2": 0.2578269527156267,
+            "base_only_rel_l2_final_fno": 0.2578269527156267,
+            "n_ctx_effective": 1024,
+            "ctx_coverage_fraction": 0.0625,
+            "ctx_index_is_identity": false,
+            "alpha_protocol_legs_pre_stage3": {
+              "zero": {
+                "alpha": 0.0,
+                "test_nrmse": 0.2578269527156267,
+                "test_skill": 4.116517616572249
+              },
+              "b1_insample": {
+                "alpha": 0.794302225112915,
+                "test_nrmse": 0.22701228810144036,
+                "test_skill": 3.624524407960838
+              },
+              "oof": {
+                "alpha": 1.0590696334838867,
+                "test_nrmse": 0.2245905565599631,
+                "test_skill": 3.58585854914314
+              },
+              "ls": {
+                "alpha": 1.0590696334838867,
+                "test_nrmse": 0.2245905565599631,
+                "test_skill": 3.58585854914314
+              }
+            },
+            "source_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s4_hybrid_routing/B2/eval/result_gate_repair_panel_s0.json",
+            "diag_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s4_hybrid_routing/B2/eval/diag_gate_repair_sharp__fisher_kpp_2d_e200_s0.json",
+            "in_run_lsi_nrmse": 0.007703185183067003,
+            "in_run_lsi_skill": 0.12299062288025756,
+            "in_run_scalar_blend_ref_nrmse": 0.06263229669603956,
+            "in_run_scalar_blend_a_fitted_on_train": 1.0,
+            "anatomy": {
+              "cosine_vs_hf_minus_base": [
+                0.48968643054200783,
+                0.4880082293131067
+              ],
+              "cosine_vs_copylf_minus_base": [
+                0.510711920956844,
+                0.508426763741685
+              ],
+              "cosine_vs_hf_minus_copylf": [
+                0.022681032044181745,
+                0.022849768996370017
+              ],
+              "unit_corr_rms_over_residual_rms": 0.43772723239621647,
+              "corr_rms_over_residual_rms": 0.46358361957977706
+            }
+          },
+          "gate_repair_dense": {
+            "per_seed_nrmse": [
+              0.07582869733784248
+            ],
+            "per_seed_skill": [
+              1.2106964192267495
+            ],
+            "mean_skill": 1.2106964192267495,
+            "ci95": null,
+            "reference_type": "copylf",
+            "metric_source": "per_sample_mean",
+            "cached": true,
+            "alpha_applied": 1.0563642978668213,
+            "alpha_least_squares": 1.0569828748703003,
+            "stage3_joint": true,
+            "base_only_rel_l2": 0.2578269527156267,
+            "base_only_rel_l2_final_fno": 0.2711837368426781,
+            "n_ctx_effective": 16384,
+            "ctx_coverage_fraction": 1.0,
+            "ctx_index_is_identity": true,
+            "alpha_protocol_legs_pre_stage3": {
+              "zero": {
+                "alpha": 0.0,
+                "test_nrmse": 0.2578269527156267,
+                "test_skill": 4.116517616572249
+              },
+              "b1_insample": {
+                "alpha": 1.0,
+                "test_nrmse": 0.07336235273996797,
+                "test_skill": 1.1713182592680957
+              },
+              "oof": {
+                "alpha": 1.0569828748703003,
+                "test_nrmse": 0.07207703981206731,
+                "test_skill": 1.150796691391727
+              },
+              "ls": {
+                "alpha": 1.0569828748703003,
+                "test_nrmse": 0.07207703981206731,
+                "test_skill": 1.150796691391727
+              }
+            },
+            "source_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s4_hybrid_routing/B2/eval/result_gate_repair_dense_panel_s0.json",
+            "diag_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s4_hybrid_routing/B2/eval/diag_gate_repair_dense_sharp__fisher_kpp_2d_e200_s0.json",
+            "in_run_lsi_nrmse": 0.007703185183067003,
+            "in_run_lsi_skill": 0.12299062288025756,
+            "in_run_scalar_blend_ref_nrmse": 0.06263229669603956,
+            "in_run_scalar_blend_a_fitted_on_train": 1.0,
+            "anatomy": {
+              "cosine_vs_hf_minus_base": [
+                0.9627762595171486,
+                0.9636872907954531
+              ],
+              "cosine_vs_copylf_minus_base": [
+                0.9876954523851915,
+                0.9882323484654949
+              ],
+              "cosine_vs_hf_minus_copylf": [
+                0.10581420130880721,
+                0.09851087809043449
+              ],
+              "unit_corr_rms_over_residual_rms": 0.8519527001883306,
+              "corr_rms_over_residual_rms": 0.8999724159501884
+            }
+          },
+          "attn_gap_fkpp": {
+            "per_seed_nrmse": [
+              0.0480768040552849
+            ],
+            "per_seed_skill": [
+              0.7676040412282207
+            ],
+            "mean_skill": 0.7676040412282207,
+            "ci95": null,
+            "reference_type": "copylf",
+            "metric_source": "per_sample_mean",
+            "cached": false,
+            "alpha_applied": 1.1530342102050781,
+            "alpha_least_squares": 1.1530342102050781,
+            "stage3_joint": false,
+            "base_only_rel_l2": 0.06263229669603956,
+            "base_only_rel_l2_final_fno": 0.06263229669603956,
+            "n_ctx_effective": 16384,
+            "ctx_coverage_fraction": 1.0,
+            "ctx_index_is_identity": true,
+            "alpha_protocol_legs_pre_stage3": {
+              "zero": {
+                "alpha": 0.0,
+                "test_nrmse": 0.06263229669603956,
+                "test_skill": 1.0
+              },
+              "b1_insample": {
+                "alpha": 1.1530342102050781,
+                "test_nrmse": 0.04807680405510561,
+                "test_skill": 0.7676040412253581
+              },
+              "oof": {
+                "alpha": 1.1530342102050781,
+                "test_nrmse": 0.04807680405510561,
+                "test_skill": 0.7676040412253581
+              },
+              "ls": {
+                "alpha": 1.1530342102050781,
+                "test_nrmse": 0.04807680405510561,
+                "test_skill": 0.7676040412253581
+              }
+            },
+            "source_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s4_hybrid_routing/B2/eval/result_attn_gap_fkpp_sharp__fisher_kpp_2d_s0.json",
+            "diag_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s4_hybrid_routing/B2/eval/diag_attn_gap_fkpp_sharp__fisher_kpp_2d_e200_s0.json",
+            "in_run_lsi_nrmse": 0.007703185183067003,
+            "in_run_lsi_skill": 0.12299062288025756,
+            "in_run_scalar_blend_ref_nrmse": 0.06263229669603956,
+            "in_run_scalar_blend_a_fitted_on_train": 0.0,
+            "anatomy": {
+              "cosine_vs_hf_minus_base": [
+                0.6383025189533145,
+                0.6393569081167285
+              ],
+              "cosine_vs_copylf_minus_base": [
+                0.0,
+                0.0
+              ],
+              "cosine_vs_hf_minus_copylf": [
+                0.6383025189533145,
+                0.6393569081167285
+              ],
+              "unit_corr_rms_over_residual_rms": 0.5563220070066097,
+              "corr_rms_over_residual_rms": 0.6414583059685702
+            }
+          }
+        },
+        "dense_minus_sparse_skill_gain": 2.3751621297685697
+      },
+      "sharp__cahn_hilliard": {
+        "per_seed_nrmse": [
+          0.4009178608234394
+        ],
+        "per_seed_skill": [
+          4.573555805963218
+        ],
+        "mean_skill": 4.573555805963218,
+        "ci95": null,
+        "reference_type": "copylf",
+        "metric_source": "per_sample_mean",
+        "cached": true,
+        "alpha_applied": 0.9737069010734558,
+        "alpha_least_squares": 1.2287129163742065,
+        "stage3_joint": true,
+        "base_only_rel_l2": 0.48762843911552656,
+        "base_only_rel_l2_final_fno": 0.4832304695789403,
+        "n_ctx_effective": 1024,
+        "ctx_coverage_fraction": 0.0625,
+        "ctx_index_is_identity": false,
+        "alpha_protocol_legs_pre_stage3": {
+          "zero": {
+            "alpha": 0.0,
+            "test_nrmse": 0.48762843911552656,
+            "test_skill": 5.56272517839198
+          },
+          "b1_insample": {
+            "alpha": 0.0,
+            "test_nrmse": 0.48762843911552656,
+            "test_skill": 5.56272517839198
+          },
+          "oof": {
+            "alpha": 1.0,
+            "test_nrmse": 0.3192459675727547,
+            "test_skill": 3.641866305292214
+          },
+          "ls": {
+            "alpha": 1.2287129163742065,
+            "test_nrmse": 0.32444448734359455,
+            "test_skill": 3.7011695257361885
+          }
+        },
+        "source_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s4_hybrid_routing/B2/eval/result_gate_repair_panel_s0.json",
+        "diag_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s4_hybrid_routing/B2/eval/diag_gate_repair_sharp__cahn_hilliard_e200_s0.json",
+        "in_run_lsi_nrmse": 0.03889715318209325,
+        "in_run_lsi_skill": 0.4437275515887979,
+        "in_run_scalar_blend_ref_nrmse": 0.08765999100758841,
+        "in_run_scalar_blend_a_fitted_on_train": 1.0,
+        "anatomy": {
+          "cosine_vs_hf_minus_base": [
+            0.5005834133160836,
+            0.5077864377989812
+          ],
+          "cosine_vs_copylf_minus_base": [
+            0.5209760685197274,
+            0.5335274562422737
+          ],
+          "cosine_vs_hf_minus_copylf": [
+            -0.03618907180935222,
+            -0.02773355195944819
+          ],
+          "unit_corr_rms_over_residual_rms": 0.42792769286774335,
+          "corr_rms_over_residual_rms": 0.41667614770576394
+        },
+        "primary_arm": "gate_repair (arm A, sparse ctx)",
+        "arms": {
+          "gate_repair": {
+            "per_seed_nrmse": [
+              0.4009178608234394
+            ],
+            "per_seed_skill": [
+              4.573555805963218
+            ],
+            "mean_skill": 4.573555805963218,
+            "ci95": null,
+            "reference_type": "copylf",
+            "metric_source": "per_sample_mean",
+            "cached": true,
+            "alpha_applied": 0.9737069010734558,
+            "alpha_least_squares": 1.2287129163742065,
+            "stage3_joint": true,
+            "base_only_rel_l2": 0.48762843911552656,
+            "base_only_rel_l2_final_fno": 0.4832304695789403,
+            "n_ctx_effective": 1024,
+            "ctx_coverage_fraction": 0.0625,
+            "ctx_index_is_identity": false,
+            "alpha_protocol_legs_pre_stage3": {
+              "zero": {
+                "alpha": 0.0,
+                "test_nrmse": 0.48762843911552656,
+                "test_skill": 5.56272517839198
+              },
+              "b1_insample": {
+                "alpha": 0.0,
+                "test_nrmse": 0.48762843911552656,
+                "test_skill": 5.56272517839198
+              },
+              "oof": {
+                "alpha": 1.0,
+                "test_nrmse": 0.3192459675727547,
+                "test_skill": 3.641866305292214
+              },
+              "ls": {
+                "alpha": 1.2287129163742065,
+                "test_nrmse": 0.32444448734359455,
+                "test_skill": 3.7011695257361885
+              }
+            },
+            "source_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s4_hybrid_routing/B2/eval/result_gate_repair_panel_s0.json",
+            "diag_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s4_hybrid_routing/B2/eval/diag_gate_repair_sharp__cahn_hilliard_e200_s0.json",
+            "in_run_lsi_nrmse": 0.03889715318209325,
+            "in_run_lsi_skill": 0.4437275515887979,
+            "in_run_scalar_blend_ref_nrmse": 0.08765999100758841,
+            "in_run_scalar_blend_a_fitted_on_train": 1.0,
+            "anatomy": {
+              "cosine_vs_hf_minus_base": [
+                0.5005834133160836,
+                0.5077864377989812
+              ],
+              "cosine_vs_copylf_minus_base": [
+                0.5209760685197274,
+                0.5335274562422737
+              ],
+              "cosine_vs_hf_minus_copylf": [
+                -0.03618907180935222,
+                -0.02773355195944819
+              ],
+              "unit_corr_rms_over_residual_rms": 0.42792769286774335,
+              "corr_rms_over_residual_rms": 0.41667614770576394
+            }
+          },
+          "gate_repair_dense": {
+            "per_seed_nrmse": [
+              0.24958412444874511
+            ],
+            "per_seed_skill": [
+              2.8471840069791874
+            ],
+            "mean_skill": 2.8471840069791874,
+            "ci95": null,
+            "reference_type": "copylf",
+            "metric_source": "per_sample_mean",
+            "cached": true,
+            "alpha_applied": 0.9834065437316895,
+            "alpha_least_squares": 1.0349774360656738,
+            "stage3_joint": true,
+            "base_only_rel_l2": 0.48762843911552656,
+            "base_only_rel_l2_final_fno": 0.4853132183015943,
+            "n_ctx_effective": 16384,
+            "ctx_coverage_fraction": 1.0,
+            "ctx_index_is_identity": true,
+            "alpha_protocol_legs_pre_stage3": {
+              "zero": {
+                "alpha": 0.0,
+                "test_nrmse": 0.48762843911552656,
+                "test_skill": 5.56272517839198
+              },
+              "b1_insample": {
+                "alpha": 0.0,
+                "test_nrmse": 0.48762843911552656,
+                "test_skill": 5.56272517839198
+              },
+              "oof": {
+                "alpha": 1.0,
+                "test_nrmse": 0.19509814073397308,
+                "test_skill": 2.225623554046271
+              },
+              "ls": {
+                "alpha": 1.0349774360656738,
+                "test_nrmse": 0.19490403191592304,
+                "test_skill": 2.223409216401253
+              }
+            },
+            "source_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s4_hybrid_routing/B2/eval/result_gate_repair_dense_panel_s0.json",
+            "diag_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s4_hybrid_routing/B2/eval/diag_gate_repair_dense_sharp__cahn_hilliard_e200_s0.json",
+            "in_run_lsi_nrmse": 0.03889715318209325,
+            "in_run_lsi_skill": 0.4437275515887979,
+            "in_run_scalar_blend_ref_nrmse": 0.08765999100758841,
+            "in_run_scalar_blend_a_fitted_on_train": 1.0,
+            "anatomy": {
+              "cosine_vs_hf_minus_base": [
+                0.9045140536988225,
+                0.9516278973245103
+              ],
+              "cosine_vs_copylf_minus_base": [
+                0.9494657257586948,
+                0.9660065358815534
+              ],
+              "cosine_vs_hf_minus_copylf": [
+                -0.2176156412119677,
+                -0.1653688160019887
+              ],
+              "unit_corr_rms_over_residual_rms": 0.5762775210903552,
+              "corr_rms_over_residual_rms": 0.5667150852457321
+            }
+          },
+          "attn_gap_fkpp": null
+        },
+        "dense_minus_sparse_skill_gain": 1.7263717989840304
+      },
+      "ifc_poisson": {
+        "per_seed_nrmse": [
+          0.0556266387061671
+        ],
+        "per_seed_skill": [
+          1.5451844085046418
+        ],
+        "mean_skill": 1.5451844085046418,
+        "ci95": null,
+        "reference_type": "paper_bar",
+        "metric_source": "per_sample_mean",
+        "cached": true,
+        "alpha_applied": 0.0,
+        "alpha_least_squares": 0.0,
+        "stage3_joint": false,
+        "base_only_rel_l2": 0.0556266387061671,
+        "base_only_rel_l2_final_fno": 0.0556266387061671,
+        "n_ctx_effective": 1024,
+        "ctx_coverage_fraction": 1.0,
+        "ctx_index_is_identity": true,
+        "alpha_protocol_legs_pre_stage3": {
+          "zero": {
+            "alpha": 0.0,
+            "test_nrmse": 0.0556266387061671,
+            "test_skill": 1.5451844085046418
+          },
+          "b1_insample": {
+            "alpha": 0.0,
+            "test_nrmse": 0.0556266387061671,
+            "test_skill": 1.5451844085046418
+          },
+          "oof": {
+            "alpha": 0.0,
+            "test_nrmse": 0.0556266387061671,
+            "test_skill": 1.5451844085046418
+          },
+          "ls": {
+            "alpha": 0.0,
+            "test_nrmse": 0.0556266387061671,
+            "test_skill": 1.5451844085046418
+          }
+        },
+        "source_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s4_hybrid_routing/B2/eval/result_gate_repair_panel_s0.json",
+        "diag_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s4_hybrid_routing/B2/eval/diag_gate_repair_ifc_poisson_e200_s0.json",
+        "anatomy": {
+          "unavailable": "RuntimeError: RuntimeError: test split ships no LF fidelity; copy-LF undefined (ADR 0002: ifc_poisson scores against the paper bar)"
+        },
+        "primary_arm": "gate_repair (arm A, sparse ctx)",
+        "arms": {
+          "gate_repair": {
+            "per_seed_nrmse": [
+              0.0556266387061671
+            ],
+            "per_seed_skill": [
+              1.5451844085046418
+            ],
+            "mean_skill": 1.5451844085046418,
+            "ci95": null,
+            "reference_type": "paper_bar",
+            "metric_source": "per_sample_mean",
+            "cached": true,
+            "alpha_applied": 0.0,
+            "alpha_least_squares": 0.0,
+            "stage3_joint": false,
+            "base_only_rel_l2": 0.0556266387061671,
+            "base_only_rel_l2_final_fno": 0.0556266387061671,
+            "n_ctx_effective": 1024,
+            "ctx_coverage_fraction": 1.0,
+            "ctx_index_is_identity": true,
+            "alpha_protocol_legs_pre_stage3": {
+              "zero": {
+                "alpha": 0.0,
+                "test_nrmse": 0.0556266387061671,
+                "test_skill": 1.5451844085046418
+              },
+              "b1_insample": {
+                "alpha": 0.0,
+                "test_nrmse": 0.0556266387061671,
+                "test_skill": 1.5451844085046418
+              },
+              "oof": {
+                "alpha": 0.0,
+                "test_nrmse": 0.0556266387061671,
+                "test_skill": 1.5451844085046418
+              },
+              "ls": {
+                "alpha": 0.0,
+                "test_nrmse": 0.0556266387061671,
+                "test_skill": 1.5451844085046418
+              }
+            },
+            "source_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s4_hybrid_routing/B2/eval/result_gate_repair_panel_s0.json",
+            "diag_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s4_hybrid_routing/B2/eval/diag_gate_repair_ifc_poisson_e200_s0.json",
+            "anatomy": {
+              "unavailable": "RuntimeError: RuntimeError: test split ships no LF fidelity; copy-LF undefined (ADR 0002: ifc_poisson scores against the paper bar)"
+            }
+          },
+          "gate_repair_dense": {
+            "per_seed_nrmse": [
+              0.0556313098054149
+            ],
+            "per_seed_skill": [
+              1.545314161261525
+            ],
+            "mean_skill": 1.545314161261525,
+            "ci95": null,
+            "reference_type": "paper_bar",
+            "metric_source": "per_sample_mean",
+            "cached": true,
+            "alpha_applied": 0.0,
+            "alpha_least_squares": 0.0,
+            "stage3_joint": false,
+            "base_only_rel_l2": 0.055631309805414905,
+            "base_only_rel_l2_final_fno": 0.055631309805414905,
+            "n_ctx_effective": 1024,
+            "ctx_coverage_fraction": 1.0,
+            "ctx_index_is_identity": true,
+            "alpha_protocol_legs_pre_stage3": {
+              "zero": {
+                "alpha": 0.0,
+                "test_nrmse": 0.055631309805414905,
+                "test_skill": 1.5453141612615253
+              },
+              "b1_insample": {
+                "alpha": 0.0,
+                "test_nrmse": 0.055631309805414905,
+                "test_skill": 1.5453141612615253
+              },
+              "oof": {
+                "alpha": 0.0,
+                "test_nrmse": 0.055631309805414905,
+                "test_skill": 1.5453141612615253
+              },
+              "ls": {
+                "alpha": 0.0,
+                "test_nrmse": 0.055631309805414905,
+                "test_skill": 1.5453141612615253
+              }
+            },
+            "source_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s4_hybrid_routing/B2/eval/result_gate_repair_dense_panel_s0.json",
+            "diag_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s4_hybrid_routing/B2/eval/diag_gate_repair_dense_ifc_poisson_e200_s0.json",
+            "anatomy": {
+              "unavailable": "RuntimeError: RuntimeError: test split ships no LF fidelity; copy-LF undefined (ADR 0002: ifc_poisson scores against the paper bar)"
+            }
+          },
+          "attn_gap_fkpp": null
+        },
+        "dense_minus_sparse_skill_gain": -0.00012975275688331678
+      }
+    },
+    "panel_geomean_skill": {
+      "per_seed": [
+        5.41018329550836
+      ],
+      "mean": 5.41018329550836,
+      "ci95": null,
+      "primary_arm": "gate_repair (arm A)",
+      "per_arm": {
+        "gate_repair": {
+          "per_seed": [
+            5.41018329550836
+          ],
+          "mean": 5.41018329550836,
+          "ci95": null,
+          "source": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s4_hybrid_routing/B2/eval/result_gate_repair_panel_s0.json"
+        },
+        "gate_repair_dense": {
+          "per_seed": [
+            3.740550587128339
+          ],
+          "mean": 3.740550587128339,
+          "ci95": null,
+          "source": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s4_hybrid_routing/B2/eval/result_gate_repair_dense_panel_s0.json"
+        },
+        "attn_gap_fkpp": {
+          "per_seed": [
+            null
+          ],
+          "mean": null,
+          "ci95": null,
+          "note": "single-dataset arm; its result JSON's panel_geomean_skill 0.7676040412282207 is the fisher_kpp skill, NOT a panel geomean. No panel number exists for arm C.",
+          "source": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s4_hybrid_routing/B2/eval/result_attn_gap_fkpp_sharp__fisher_kpp_2d_s0.json"
+        }
+      },
+      "card_disclaimer": "Part 4 pre-registers NO panel-geomean claim for arm A, and labels any arm-B geomean move as 'attainment toward the skill-1.0 ceiling' (a better copy-LF re-derivation), NOT fidelity-gap information. Both statements are honoured: these geomeans are recorded as measurements, not as claims."
+    },
+    "vs_anchor": {
+      "anchor_value": 6.703016262587087,
+      "anchor_ci95": [
+        6.21853605194748,
+        7.102239525443188
+      ],
+      "anchor_per_seed": [
+        7.102239525443188,
+        6.21853605194748,
+        6.788273210370594
+      ],
+      "anchor_source": "state/anchors/s4_hybrid_routing.json (mf_fno_transfer_film, batch0, 3-seed, certified 2026-07-29T14:28:45Z)",
+      "delta": -1.292832967078727,
+      "delta_pct": -19.287331500218485,
+      "beyond_ci": true,
+      "beyond_noise_floor": true,
+      "geomean_noise_floor": 0.884,
+      "note": "delta / beyond_* at this level refer to the PRIMARY arm A (5.410183 vs anchor 6.703016 = -1.292833, -19.29%). 'beyond_ci' compares against the ANCHOR's 3-seed CI; this card has no CI of its own (single seed).",
+      "per_arm": {
+        "gate_repair": {
+          "value": 5.41018329550836,
+          "delta": -1.292832967078727,
+          "delta_pct": -19.287331500218485,
+          "beyond_ci": true,
+          "beyond_noise_floor": true
+        },
+        "gate_repair_dense": {
+          "value": 3.740550587128339,
+          "delta": -2.962465675458748,
+          "delta_pct": -44.19600907122607,
+          "beyond_ci": true,
+          "beyond_noise_floor": true
+        }
+      },
+      "vs_best_anchor_seed": {
+        "best_anchor_seed_value": 6.21853605194748,
+        "gate_repair_delta": -0.8083527564391204,
+        "gate_repair_beyond_floor": false,
+        "gate_repair_dense_delta": -2.4779854648191413,
+        "gate_repair_dense_beyond_floor": true,
+        "note": "Against the anchor's LUCKIEST seed, arm A's -0.8084 is INSIDE the 0.884 geomean floor (not resolvable); arm B's -2.4780 clears it."
+      },
+      "vs_same_stream_b1": {
+        "b1_panel_geomean_skill": 5.664888697217776,
+        "b1_source": "experiment_cards/s4_hybrid_routing/batch_1/B1.json part 5 panel_geomean_skill (single seed 0)",
+        "gate_repair_delta": -0.25470540170941636,
+        "gate_repair_beyond_floor": false,
+        "gate_repair_dense_delta": -1.9243381100894372,
+        "gate_repair_dense_beyond_floor": true,
+        "cross_card_caveat": "B2 applies query chunking at 4096 on EVERY arm, which changes model.py's self-slice softmax pooling vs B1's unchunked pass on any dataset with H*W > 4096. Cross-card comparison to B1 is clean only where B1's alpha was 0 (helmholtz, ifc_poisson, allen_cahn, cahn_hilliard); on pfc and fisher_kpp it carries the chunking delta. C1/C2/C3 are all WITHIN-run and unaffected (builder + reviewer both flagged this)."
+      }
+    },
+    "cratered_verdict": "proceed_to_seeds_1_2",
+    "cratered_detail": {
+      "rule": "cratered iff crash, OR panel geomean skill > 1.5 x stream anchor, OR the falsification clause already fired decisively",
+      "threshold": 10.05452439388063,
+      "gate_repair": 5.41018329550836,
+      "gate_repair_cratered": false,
+      "gate_repair_dense": 3.740550587128339,
+      "gate_repair_dense_cratered": false,
+      "crash": false,
+      "crash_evidence": "all 19 SLURM jobs COMPLETED 0:0 (sacct on 66023665, 66023666_0..12, 66023667-66023670); zero bytes in every .err; both aggregate legs report 'cache check: 0 of 6 datasets were NOT cache hits'",
+      "falsification_fired_decisively": false,
+      "note": "ADR 0004 makes this a seed-0-only round; 'proceed_to_seeds_1_2' here means only 'NOT cratered' -- seeds 1-2 run only in the end-of-round top-3 confirmation pass."
+    },
+    "falsification_verdict": "confirmed",
+    "falsification_clause_verbatim": "If (C1) the base-out-of-sample gate fails to improve `sharp__cahn_hilliard` by more than\n10% relative (0.48762844 -> <= 0.43886560, i.e. >= 0.5562725 skill units, above the certified floor 0.5533466)\nagainst the paired in-sample-gate leg of the same run, AND (C2) the dense-LF arm fails to beat the sparse arm by at\nleast each dataset's `min_claimable_effect` on >= 2 of {pfc 1.1511, fisher_kpp 0.41774, cahn_hilliard 0.55335} skill\nunits or fails to beat the in-run one-scalar `base + a*(copylf - base)` control, AND (C3) the attention corrector on\nthe `hf - copylf` target fails to beat the in-run zero-parameter LSI reference on `sharp__fisher_kpp_2d` by more than\n10% relative (0.00769508 -> <= 0.00692557), then no remaining lever of the alpha-gated **attention**-corrector class\n\u2014 not the gate protocol, not context density, not the residual target \u2014 clears this round's noise floor on the sharp\npanel, and s4's recommendation is to retire the attention corrector in favour of the local/closed-form class that s6\nowns.",
+    "falsification_detail": {
+      "structure": "The pre-registered clause is a CONJUNCTION: (C1) AND (C2) AND (C3) must all fail for the class to be retired. C1 does NOT fail, so the clause does NOT fire and the pre-registered retirement recommendation is NOT licensed by this card. C2 and C3 individually DO trigger.",
+      "C1": {
+        "clause": "the base-out-of-sample gate fails to improve sharp__cahn_hilliard by more than 10% relative (0.48762844 -> <= 0.43886560, i.e. >= 0.5562725 skill units, above the certified floor 0.5533466) against the paired in-sample-gate leg of the same run",
+        "read_as": "PURE GATE EFFECT = alpha_protocol_legs.legs.oof vs alpha_protocol_legs.legs.b1_insample (identical base, identical correction field, pre-stage-3, bit-paired) -- the pre-logged reading. No other reading used.",
+        "arm_A_b1_insample_nrmse": 0.48762843911552667,
+        "arm_A_b1_insample_skill": 5.562725155399018,
+        "arm_A_b1_insample_alpha": 0.0,
+        "arm_A_oof_nrmse": 0.3192459680191259,
+        "arm_A_oof_skill": 3.6418663139021166,
+        "arm_A_oof_alpha": 1.0,
+        "relative_improvement_pct": 34.53088,
+        "skill_units_gained": 1.9208588414969017,
+        "bar_nrmse": 0.4388656,
+        "bar_skill_units": 0.5562725,
+        "certified_floor": 0.5533465853654416,
+        "passes_10pct_bar": true,
+        "passes_skill_unit_bar": true,
+        "above_certified_floor": true,
+        "verdict": "NOT FALSIFIED -- C1 CONFIRMED. 34.53% relative, 1.9209 skill units = 3.47x the certified cahn_hilliard floor (0.5533). The B1 gate-protocol defect is real and its repair is worth ~1.92 skill units on cahn_hilliard, measured on a bit-paired contrast.",
+        "arm_B_same_contrast": {
+          "b1_insample_nrmse": 0.48762843911552667,
+          "oof_nrmse": 0.19509813804855405,
+          "relative_improvement_pct": 59.99036,
+          "skill_units_gained": 3.3371015775213126,
+          "note": "the dense arm's pure gate effect is larger still: 60.0% relative, 3.337 skill units"
+        },
+        "part4_point_prediction_miss": "Part 4's C1 row predicted 0.48762844 -> ~0.27720 (skill 3.1622), claim bar <= 0.30681 (skill <= 3.5). Observed pure-gate leg 0.31924597 (skill 3.64187): +4.05% above the part-4 claim bar and +15.2% above the point prediction. The FALSIFICATION bar (10% relative) is cleared by 3.5x; the tighter part-4 claim bar is MISSED. Both recorded; single seed, no CI to adjudicate.",
+        "alpha_oof_in_predicted_range": {
+          "predicted": "[0.75,1.25]",
+          "observed_arm_A": 1.0,
+          "observed_arm_B": 1.0,
+          "in_range": true
+        }
+      },
+      "C1_downside_pfc": {
+        "pre_registered": "alpha may rise 0.2509 -> ~0.9944 and cost up to 8.47x (skill 3.28 -> ~27.8, F13)",
+        "observed_alpha_b1_insample": 0.24881285,
+        "observed_alpha_oof": 0.9952514,
+        "alpha_prediction_accuracy": "alpha moved 0.24881 -> 0.99525 vs predicted 0.2509 -> 0.9944 (0.8% and 0.1% off) -- the alpha mechanism is predicted essentially exactly",
+        "observed_pfc_pure_gate_nrmse": {
+          "b1_insample": 0.39360164929119285,
+          "oof": 0.11481186211109161
+        },
+        "observed_pfc_pure_gate_skill": {
+          "b1_insample": 8.789587302302477,
+          "oof": 2.563883779542697
+        },
+        "verdict": "PRE-REGISTERED DOWNSIDE DID NOT MATERIALISE (falsified in the favourable direction): the repaired gate IMPROVED pfc by 70.8% relative (6.226 skill units) instead of costing up to 8.47x. Panel geomean 5.4102 vs the 7.35 predicted-with-downside and the 10.0545 cratered threshold."
+      },
+      "C2": {
+        "clause": "the dense-LF arm fails to beat the sparse arm by at least each dataset's min_claimable_effect on >= 2 of {pfc 1.1511, fisher_kpp 0.41774, cahn_hilliard 0.55335} skill units or fails to beat the in-run one-scalar `base + a*(copylf - base)` control",
+        "sub_clause_1_dense_beats_sparse": {
+          "sharp__phase_field_crystal_2d": {
+            "sparse_skill": 3.087807085791768,
+            "dense_skill": 1.6121640719281614,
+            "gain": 1.4756430138636065,
+            "floor": 1.1511001428346894,
+            "passes": true
+          },
+          "sharp__fisher_kpp_2d": {
+            "sparse_skill": 3.585858548995319,
+            "dense_skill": 1.2106964192267495,
+            "gain": 2.3751621297685697,
+            "floor": 0.41773549950819566,
+            "passes": true
+          },
+          "sharp__cahn_hilliard": {
+            "sparse_skill": 4.573555805963218,
+            "dense_skill": 2.8471840069791874,
+            "gain": 1.7263717989840306,
+            "floor": 0.5533465853654416,
+            "passes": true
+          },
+          "verdict": "PASSES 3 of 3 (bar was 2 of 3). Dense context is worth 1.48-2.38 skill units on the three sharp datasets, every one above its certified floor."
+        },
+        "sub_clause_2_beats_in_run_scalar_blend": {
+          "control_definition": "sidecars.scalar_blend.ref_nrmse_scalar_blend -- `base + a*(copylf-base)` with `a` fitted on the held-out HF-train split (no test data)",
+          "sharp__phase_field_crystal_2d": {
+            "dense_nrmse": 0.07219342809236466,
+            "control_nrmse": 0.04478044719481978,
+            "a_fitted": 1.0,
+            "beats": false,
+            "ratio": 1.6122
+          },
+          "sharp__fisher_kpp_2d": {
+            "dense_nrmse": 0.07582869733784248,
+            "control_nrmse": 0.06263229669603956,
+            "a_fitted": 1.0,
+            "beats": false,
+            "ratio": 1.2107
+          },
+          "sharp__cahn_hilliard": {
+            "dense_nrmse": 0.24958412444874511,
+            "control_nrmse": 0.08765999100758841,
+            "a_fitted": 1.0,
+            "beats": false,
+            "ratio": 2.8472
+          },
+          "control_degeneracy_note": "On all three datasets the held-out fit chose a = 1.0, so `base + 1*(copylf-base)` == copy-LF exactly and ref_nrmse_scalar_blend equals copylf_baselines.json bit-for-bit. Beating this control is therefore IDENTICAL to reaching skill < 1. The part-4 pre-registered control values (pfc 0.114384 / fisher_kpp 0.202549, from B1 F13 with a different base) are 2.6x / 3.2x LOOSER than the control the run actually emitted; the clause says 'in-run', so the in-run value governs and the bar is strictly harder than pre-registered.",
+          "verdict": "FAILS 0 of 3 -- the dense arm beats the one-scalar control NOWHERE."
+        },
+        "predicted_side_conditions": {
+          "panel_geomean_2p5_to_4p5": {
+            "observed": 3.740550587128339,
+            "in_range": true
+          },
+          "cosine_corr_vs_copylf_minus_base_ge_0p9": {
+            "sharp__cahn_hilliard": 0.9494657257586948,
+            "sharp__fisher_kpp_2d": 0.9876954523851915,
+            "sharp__phase_field_crystal_2d": 0.946338680768132,
+            "all_three_pass": true,
+            "off_target": {
+              "sharp__allen_cahn_2d": 0.005558730789524834,
+              "ext__helmholtz_2d": -0.01271446567837288,
+              "note": "the corrector remains collapsed on allen_cahn and orthogonal on helmholtz even under dense context"
+            }
+          },
+          "toward_but_not_through_skill_1p0": {
+            "pfc": 1.6121640719281614,
+            "fisher_kpp": 1.2106964192267495,
+            "cahn_hilliard": 2.8471840069791874,
+            "all_above_1": true,
+            "holds": true
+          },
+          "allen_cahn_uncollapse_watch": {
+            "pre_registered": "RMS ratio 0.00063 -> ?",
+            "sparse_unit_rms_ratio": 0.0006178255746057886,
+            "dense_unit_rms_ratio": 0.0006240625660723636,
+            "verdict": "NO un-collapse: dense context leaves the allen_cahn corrector at 6.2e-4 of the residual RMS, still a null corrector (alpha = 0 and the scored value bit-identical to the base on BOTH arms)."
+          }
+        },
+        "verdict": "C2 AS A CLAIM IS FALSIFIED. Its two sub-conditions are joined by 'or' inside the falsification trigger and by 'and' inside part 4's claim bar; the control sub-condition fails 3 of 3, so the trigger fires and the claim does not stand. What IS established: dense context is worth 1.48-2.38 skill units over sparse on the three sharp datasets, and the dense corrector is a 0.95-0.99-cosine re-derivation of the copy-LF direction that still lands 21-185% short of free copy-LF."
+      },
+      "C3": {
+        "clause": "the attention corrector on the `hf - copylf` target fails to beat the in-run zero-parameter LSI reference on sharp__fisher_kpp_2d by more than 10% relative (0.00769508 -> <= 0.00692557)",
+        "read_source": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s4_hybrid_routing/B2/eval/result_attn_gap_fkpp_sharp__fisher_kpp_2d_s0.json + diag_attn_gap_fkpp_sharp__fisher_kpp_2d_e200_s0.json (the pre-logged V2 read on fisher_kpp)",
+        "attention_nrmse": 0.0480768040552849,
+        "attention_skill": 0.7676040412282207,
+        "in_run_lsi_nrmse": 0.007703185183067003,
+        "in_run_lsi_skill": 0.12299062288025756,
+        "V2_check": {
+          "s6_b1_f6_reference": 0.0076951,
+          "in_run": 0.007703185183067003,
+          "rel_deviation": 0.001050692397370101,
+          "within_tol": true,
+          "tol": 0.02,
+          "note": "the pre-logged fisher_kpp V2 read PASSES at 0.11% -- the in-run LSI reproduces s6-B1 F6, so the keep bar 0.00692557 = 0.9 x 0.0076951 stands as pre-registered"
+        },
+        "keep_bar_nrmse": 0.00692557,
+        "passes_keep_bar": false,
+        "attention_over_lsi_ratio": 6.2411655,
+        "secondary_keep_conditions": {
+          "cosine_corr_vs_hf_minus_copylf": {
+            "mean": 0.6383025189533145,
+            "median": 0.6393569081167285,
+            "bar": ">= 0.3",
+            "passes": true
+          },
+          "rms_ratio": {
+            "unit_corr_rms_over_residual_rms": 0.5563220070066097,
+            "bar": "[0.5, 2.0]",
+            "passes": true
+          },
+          "note": "both SHAPE conditions pass -- the attention correction points the right way with the right magnitude -- but the ERROR bar fails by 6.94x, so the keep test as a whole fails."
+        },
+        "part4_band_prediction": {
+          "predicted_nrmse_range": [
+            0.01,
+            0.045
+          ],
+          "predicted_skill_range": [
+            0.16,
+            0.72
+          ],
+          "observed_nrmse": 0.0480768040552849,
+          "observed_skill": 0.7676040412282207,
+          "verdict": "direction CONFIRMED (attention loses); magnitude 6.8% WORSE than the predicted worst case -- the observation lands just outside the top of the pre-registered band on both nRMSE and skill."
+        },
+        "peer_references": {
+          "s6_b1_local_corrector_nrmse": 0.0059583,
+          "s6_b1_local_corrector_skill": 0.0951,
+          "attention_over_s6_local_ratio": 8.0689,
+          "note": "transcribed from part 4 (cross-card, not an in-run number)"
+        },
+        "branch_ablation_in_run": {
+          "nrmse_full": 0.04807680405510561,
+          "nrmse_no_cross_branch": 0.06275473662479601,
+          "nrmse_no_self_branch": 0.0517241860930368,
+          "forward_selfcheck_max_abs_diff": 0.0,
+          "forward_selfcheck_bit_exact": true,
+          "reading": "removing the CROSS-attention (LF-context) branch returns the model to 0.062755 ~= the copy-LF identity 0.062632 (+0.2%), i.e. the cross branch carries essentially 100% of the arm's gain; removing the SELF slice-attention branch costs only +7.6% (0.048077 -> 0.051724). That is the OPPOSITE ordering to 2511.06294's 'slice/deslice pooling is what works, the nonlocal content-adaptive part is not'."
+        },
+        "band_read": {
+          "band_edges_frac": [
+            0.0,
+            0.125,
+            0.25,
+            0.5,
+            1.0
+          ],
+          "prediction_error_over_copylf_error_by_band": [
+            0.7666675961907147,
+            0.524498762904537,
+            0.596781226556441,
+            1.9883632511242357
+          ],
+          "lsi_correction_energy_ratio_to_copylf_error_by_band": [
+            0.9885269610511801,
+            0.98678729108634,
+            0.9478306406220711,
+            0.9264461254334885
+          ],
+          "reading": "attention removes 23-48% of the copy-LF error in bands 1-3 but makes the top band (0.5-1.0 of Nyquist -- the sharp-interface band) 1.99x WORSE, while the zero-parameter LSI reproduces 93-99% of the copy-LF error direction in every band including the top one."
+        },
+        "verdict": "FALSIFIED / attention NOT kept: 0.0480768 vs the 0.00692557 keep bar. Attention is 6.24x worse than the in-run zero-parameter LSI and ~8.07x worse than s6-B1's local corrector on the identical `hf - copylf` target and dataset. The trigger fires."
+      },
+      "overall": {
+        "C1_triggered": false,
+        "C2_triggered": true,
+        "C3_triggered": true,
+        "clause_fires": false,
+        "verdict": "CONFIRMED -- the falsification clause does NOT fire. Because it requires C1 AND C2 AND C3, and the gate-protocol repair delivered 34.5% / 1.92 skill units on cahn_hilliard (3.47x its certified floor), the pre-registered conclusion -- 'no remaining lever of the alpha-gated attention-corrector class ... clears this round's noise floor on the sharp panel, and s4's recommendation is to retire the attention corrector in favour of the local/closed-form class that s6 owns' -- is NOT licensed by this card. The gate protocol IS a remaining lever that clears the floor. The residual-target lever (C3) and the context-density lever's claim bar (C2) are each individually falsified.",
+        "resolvability": "All C1 and C2 sub-clause-1 effects sit above their certified per-dataset floors, and both panel-geomean moves vs the anchor (arm A -1.293, arm B -2.962) exceed the 0.884 geomean floor. Nothing here is 'not resolvable' at seed 0 -- but every number is single-seed and carries no CI (ADR 0004)."
+      }
+    },
+    "guard_flags": [
+      {
+        "dataset": "heat_local",
+        "tier": "contract (2 epochs; the guard set is a contract-tier check by design)",
+        "gate_repair_nrmse": 0.03204638289687085,
+        "gate_repair_ratio_to_reference": 13.344,
+        "gate_repair_dense_nrmse": 0.02636904573418691,
+        "gate_repair_dense_ratio_to_reference": 10.98,
+        "recorded_reference_nrmse": 0.00240152155999517,
+        "rule": "guard nRMSE regressed > 2x vs eval/copylf_baselines.json's recorded guard reference flags the card in part 5 (analyzer interprets; no auto-reject).",
+        "disposition": "FLAGGED, two components. (a) The recorded reference IS heat_local's copy-LF nRMSE, so the ratio literally equals the skill, and at contract tier no model in this round beats heat_local's 5-level-ladder copy-LF -- the s5_tuning-B1 champion lineage flags at 47.86x on the same file, i.e. 3.6-4.4x worse than these arms. (b) HOWEVER, within the s4 lineage this IS a relative regression: s4-B1 recorded heat_local 0.01642772 (6.841x) at the same tier, so arm A is 1.95x and arm B 1.61x worse in nRMSE than B1. The plausible mechanism is B2's 4096 query chunking, which does apply on heat_local (work_grid 128x128 = 16384 > 4096) and changes the self-slice softmax pooling vs B1's unchunked pass. Handed to the mechanism-analyzer; not a scored-panel number.",
+        "peer_comparison_sources": [
+          "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s5_tuning/B1/eval/guard_contract_s0.json",
+          "experiment_cards/s4_hybrid_routing/batch_1/B1.json part 5 guard_table"
+        ]
+      }
+    ],
+    "guard_table": {
+      "gate_repair": {
+        "source": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s4_hybrid_routing/B2/eval/guard_contract_gate_repair_s0.json",
+        "epochs": 2,
+        "heat_local": {
+          "nRMSE": 0.03204638289687085,
+          "skill": 13.344199540284494,
+          "ratio_to_reference": 13.344,
+          "flag": true
+        },
+        "fluid": {
+          "nRMSE": 0.184270400596982,
+          "skill": 0.8450461068987705,
+          "ratio_to_reference": 0.845,
+          "flag": false
+        },
+        "sharp__sod_1d": {
+          "nRMSE": 0.024778844953598077,
+          "skill": 0.7488278266884298,
+          "ratio_to_reference": 0.749,
+          "flag": false
+        }
+      },
+      "gate_repair_dense": {
+        "source": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s4_hybrid_routing/B2/eval/guard_contract_gate_repair_dense_s0.json",
+        "epochs": 2,
+        "heat_local": {
+          "nRMSE": 0.02636904573418691,
+          "skill": 10.9801411627718,
+          "ratio_to_reference": 10.98,
+          "flag": true
+        },
+        "fluid": {
+          "nRMSE": 0.18237937807526974,
+          "skill": 0.836374061823415,
+          "ratio_to_reference": 0.836,
+          "flag": false
+        },
+        "sharp__sod_1d": {
+          "nRMSE": 0.024778695436948238,
+          "skill": 0.7488233082280996,
+          "ratio_to_reference": 0.749,
+          "flag": false
+        }
+      },
+      "guard_reference_source": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round1/eval/copylf_baselines.json (heat_local 0.00240152155999517, fluid 0.21805958171115042, sharp__sod_1d 0.03309017650048946)",
+      "note": "fluid (0.845 / 0.836) and sharp__sod_1d (0.749) sit BELOW skill 1.0 on both arms -- both arms beat copy-LF on two guard datasets. At 2 epochs only, so ADR 0007 forbids reading these as a result; recorded because they are the only guard datasets where an s4 arm has ever been under copy-LF. Arm C was not guarded (single-dataset diagnostic arm)."
+    },
+    "anomalies": [
+      {
+        "id": "A1",
+        "severity": "analysis-critical",
+        "title": "stage-3 joint fine-tune degrades test error wherever it is kept",
+        "detail": "The SCORED value is post-stage-3; the alpha legs are pre-stage-3. Wherever stage3_joint = True the scored number is WORSE than that same run's own oof leg: gate_repair/cahn_hilliard 0.3192460 -> 0.4009179 (+25.6%), gate_repair/pfc 0.1148119 -> 0.1382734 (+20.4%), dense/cahn_hilliard 0.1950981 -> 0.2495841 (+27.9%), dense/pfc 0.0599540 -> 0.0721934 (+20.4%), dense/fisher_kpp 0.0720770 -> 0.0758287 (+5.2%). Stage 3 runs only when alpha > 0, so the repaired gate UNLOCKS a stage that then costs 5-28%. Stage 3's keep test still uses the IN-SAMPLE base at the applied alpha (B1 semantics -- e.g. cahn_hilliard val_rel_l2_base_insample 0.0088784 vs val_rel_l2_base_oof 0.1452587): the same in-sample-optimism defect this card was built to repair, surviving one stage downstream. Reviewer S4 pre-flagged exactly this.",
+        "evidence": [
+          "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s4_hybrid_routing/B2/eval/diag_gate_repair_sharp__cahn_hilliard_e200_s0.json",
+          "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s4_hybrid_routing/B2/eval/results_gate_repair/fno_transolver_seq_b2/sharp__cahn_hilliard_e200_s0.json (stage3_joint, val_rel_l2_base, val_rel_l2_hybrid)"
+        ],
+        "classification": "ALGO finding, not an infra failure. It invalidates no number: C1 is read on the pre-stage-3 legs exactly as pre-logged."
+      },
+      {
+        "id": "A2",
+        "severity": "seam",
+        "title": "V3 (dense == sparse bit-exact where the context index is the identity on BOTH arms) does not hold at e200",
+        "detail": "ext__helmholtz_2d (576 ctx pts, identity on both arms): sparse 6.4705479 vs dense 6.4399601 = 0.475% relative. ifc_poisson (1024, identity both): 0.05562664 vs 0.05563131 = 0.0084% relative. Neither is bit-exact. Both deviations sit inside B1's own measured 1.17% run-to-run drift on helmholtz, and the contract-tier screen recorded the same pattern (helmholtz bit_exact = False, ifc_poisson bit_exact = True; screen log lines 351-353 -- ADR 0007 makes those numbers non-reportable but the boolean is a seam fact). Attributed to GPU/cuDNN nondeterminism across separate SLURM jobs rather than a context-path bug: the helmholtz gate additionally landed on alpha 0.75 (sparse) vs 0 (dense), which by the legs is worth only 6.47024 -> 6.47055 (+0.005%).",
+        "classification": "RESOURCE / nondeterminism, not ALGO. Flagged, not fatal.",
+        "evidence": [
+          "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s4_hybrid_routing/B2/eval/result_gate_repair_panel_s0.json",
+          "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s4_hybrid_routing/B2/eval/result_gate_repair_dense_panel_s0.json",
+          "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s4_hybrid_routing/B2/slurm/r1-s4_hybrid_routing-B2-screen_66023665.out lines 351-353"
+        ]
+      },
+      {
+        "id": "A3",
+        "severity": "note",
+        "title": "arm C reaches skill < 1 on a sharp-2D panel dataset, contradicting part 4's 'Not claimed' line -- favourably",
+        "detail": "Part 4 states 'no arm reaches skill < 1 anywhere (criterion 2 stays open in this stream)'. Arm C scores 0.0480768 on sharp__fisher_kpp_2d = skill 0.7676, i.e. it BEATS copy-LF by 23.2%. It is nonetheless 6.24x worse than the in-run zero-parameter LSI (0.0077032, skill 0.1230) on the identical target, so C3 still fails and no criterion-2 claim is made here. The guard datasets fluid (0.845 / 0.836) and sharp__sod_1d (0.749) are also under 1.0, but at contract tier only.",
+        "classification": "pre-registration miss in the favourable direction; recorded, not claimed."
+      },
+      {
+        "id": "A4",
+        "severity": "note",
+        "title": "the in-run one-scalar control degenerated to copy-LF (a = 1.0) on every dataset where it is defined",
+        "detail": "sidecars.scalar_blend.a_fitted_on_train = 1.0 on helmholtz, allen_cahn, cahn_hilliard, fisher_kpp and pfc, so ref_nrmse_scalar_blend equals copylf_baselines.json bit-for-bit and the C2 control bar collapses to 'reach skill < 1'. The part-4 pre-registered control values (pfc 0.114384, fisher_kpp 0.202549, from B1 F13) are 2.6x / 3.2x looser than the control the run actually emitted; the clause says 'in-run', so the in-run value governs and the bar is strictly harder than pre-registered."
+      },
+      {
+        "id": "A5",
+        "severity": "note",
+        "title": "validity gates V1 / V2 / V4",
+        "detail": "V1 (B1 replica) is defined only on B1's four alpha=0 datasets (in_b1_alpha_zero_set = True: helmholtz, ifc_poisson, allen_cahn, cahn_hilliard) and is WITHIN TOL on all four for both arms (max |rel dev| 1.58% on helmholtz; exactly 0.0 on allen_cahn and cahn_hilliard). The within_tol = False entries on pfc, fisher_kpp and arm C are the UNDEFINED cases (reviewer S5b) and must not be read as failures. V2 PASSES on fisher_kpp (0.11% -- the pre-logged read) and on allen_cahn / cahn_hilliard / pfc; it misses on helmholtz (7.48%), reviewer-confirmed to be a transcription defect in s6-B1's text rather than in this family. V4 (copy-LF identity vs the frozen baseline) is exact (abs_dev_from_frozen = 0.0) everywhere it is defined, including arm C.",
+        "classification": "clean where defined."
+      },
+      {
+        "id": "A6",
+        "severity": "none",
+        "title": "no training anomalies",
+        "detail": "Zero bytes in all 19 .err files; no NaN, no preemption, no requeue, no resume-after-preemption event, no TIMEOUT anywhere in the completed chain. All 13 array tasks + screen + 2 guards + 2 aggregates COMPLETED 0:0. Both aggregate legs report 'cache check: 0 of 6 datasets were NOT cache hits', so the panel JSONs are re-reads of the per-task scored results with no recompute drift. The earlier FAILED launch 66022845 (1 s, _arm_env.sh not spooled) was the debugger's attempt-1 INFRA failure and produced no artifacts.",
+        "classification": "clean."
+      }
+    ],
+    "wall_clock_per_seed_min": [
+      195.52
+    ],
+    "wall_clock_breakdown_min": {
+      "chain_span_seed0": 195.52,
+      "chain_span_note": "66023665 Start 2026-07-29T20:16:38 -> 66023670 End 2026-07-29T23:32:09 (sacct)",
+      "gpu_minutes_total": 317.23,
+      "contract_screen_66023665": 14.98,
+      "train_array_66023666_total": 302.07,
+      "train_array_per_task_min": {
+        "0_gate_repair_ext__helmholtz_2d": 20.27,
+        "1_gate_repair_sharp__phase_field_crystal_2d": 17.93,
+        "2_gate_repair_sharp__allen_cahn_2d": 39.5,
+        "3_gate_repair_sharp__fisher_kpp_2d": 32.85,
+        "4_gate_repair_sharp__cahn_hilliard": 40.08,
+        "5_gate_repair_ifc_poisson": 1.03,
+        "6_gate_repair_dense_ext__helmholtz_2d": 15.08,
+        "7_gate_repair_dense_sharp__phase_field_crystal_2d": 18.78,
+        "8_gate_repair_dense_sharp__allen_cahn_2d": 34.48,
+        "9_gate_repair_dense_sharp__fisher_kpp_2d": 33.3,
+        "10_gate_repair_dense_sharp__cahn_hilliard": 38.1,
+        "11_gate_repair_dense_ifc_poisson": 1.05,
+        "12_attn_gap_fkpp_sharp__fisher_kpp_2d": 9.6,
+        "_note": "task -> arm/dataset mapping read from each task's own .out header line. Longest task 40.08 min against the 120 min card walltime (67% headroom). The dense arm was NOT slower than sparse: 141.79 min dense vs 151.66 min sparse over the same 6 datasets, so review S1/S2's 'dense +~50%' extrapolation was pessimistic and no TIMEOUT risk materialised."
+      },
+      "guard_66023667_66023668_min": 0.1,
+      "aggregate_66023669_66023670_min": 0.08,
+      "max_task_peak_mem_gb": 3.4,
+      "for_the_timing_ledger": "s4_hybrid_routing-B2, seed 0, partition gpu / gpu:h100:1, 19 jobs (screen + 13-task array + 2 guards + 2 aggregates), all COMPLETED 0:0; 317.23 GPU-min, 195.52 min wall span, max 40.08 min/task, max peak RSS 3.40 GB."
+    },
+    "anchor_action": {
+      "updated": false,
+      "reason": "Two independent reasons, either sufficient. (1) An anchor is certified only from a 3-SEED result; this card is seed-0 only (ADR 0004), so nothing here may certify an anchor. (2) Part 4 explicitly declines a panel-geomean claim for arm A and labels arm B's geomean as 'attainment toward the skill-1.0 ceiling (a better copy-LF re-derivation), not fidelity-gap information'. state/anchors/s4_hybrid_routing.json is UNTOUCHED.",
+      "for_the_record": "Both arms' single-seed geomeans (A 5.410183, B 3.740551) are numerically below the 3-seed anchor 6.703016 and below its CI lower bound 6.218536; arm B is also 1.924 below s4-B1's 5.664889, beyond the 0.884 geomean floor. If the end-of-round top-3 pass ever runs seeds 1-2 in this stream, arm B is the candidate to re-examine -- with the part-4 caveat that its geomean move is a copy-LF re-derivation, not fidelity-gap information."
+    }
+  },
   "6_analysis": null,
   "7_gap_and_future": null,
-  "reanalysis_progress": null,
+  "reanalysis_progress": "turn_1",
   "brainstormer_category_note": "`mf_composition_repair_and_class_test` \u2014 gate-protocol repair + LF-context density + the\nattention-vs-closed-form head-to-head, all on B1's `fno_transolver_seq` substrate.",
   "brainstormer_card_type_note": "`model` (3 trained arms at smoke tier; the reference values are in-run and cost seconds)",
   "brainstormer_anchor_note": "`\"s4_hybrid_routing-B1\"` (batch >= 2 re-targets the stream's current provisional champion card;\nevery contrast is paired against B1's substrate). Numeric anchor for any geomean statement remains the certified\n`state/anchors/s4_hybrid_routing.json` 6.703016262587087 \u2014 B1's 5.664889 was single-seed and explicitly not promoted.",

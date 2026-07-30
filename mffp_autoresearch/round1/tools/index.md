@@ -17,9 +17,12 @@ tool: name, what it measures, invocation, provenance card.
 | `dc_pattern_split.py` | whether a prediction's score is a real field prediction or only the DC (spatial-mean) level; constant-field oracle + demeaned pattern error | s5_tuning-B1 turn 3 |
 | `regen_preds_from_ckpt.py` | recovers a control arm's `preds_test.npz` from a checkpoint that shipped without one (eval-only resume), with a mandatory seam check | s5_tuning-B1 turn 1 |
 | `defect_correction_learnability.py` | training-free: is `hf - interp(lf)` a fixed (mostly linear, compact-stencil) operator of the LF field on this dataset? predicts whether an LF-consuming additive corrector has headroom, and what a ZERO-parameter closed-form filter already gets | s6_local-B1 turn 3 |
+| `residual_gain_learnability.py` | whether a predictor's leftover per-sample GAIN error is a learnable function of the condition vector (LOO ridge/kNN R^2 + the nRMSE a calibration head could reach) | s1_poisson-B2 turn 2 |
+| `interface_locality_profile.py` | whether a predictor's error is INTERFACE-LOCAL or BULK: relative error binned by decile of \|grad HF\|, next to the target's energy per decile | s1_poisson-B2 turn 2 |
 | `trust_gate_headroom.py` | value ceiling of a trust gate at per-pixel vs per-sample granularity, for any `base + correction` model scored against copy-LF | s6_local-B1 turn 1 |
 | `correction_anatomy.py` | what a `base + alpha*correction` branch actually adds: a re-derivation of copy-LF, real fidelity-gap information, or nothing | s4_hybrid_routing-B1 turn 2 |
 | `routing_headroom.py` | ceiling of a per-sample / per-pixel gate over one scalar `alpha`, for a base that is NOT copy-LF (complements `trust_gate_headroom.py`) | s4_hybrid_routing-B1 turn 3 |
+| `registration_audit.py` | whether a dataset's copy-LF REFERENCE is misregistered (grid-convention mismatch between the solver's sampling and `copylf_prediction`'s `zoom(grid_mode=True)`), and what a zero-parameter fix buys; also flags degenerate ladders and projects a fitted LSI filter onto the half-cell phase ramp | s3_warp-B1 turns 1+3 |
 | `render_readme.py` | regenerates `round1/README.md` from the experiment cards (housekeeping, not a probe) | round infrastructure |
 
 ---
@@ -530,3 +533,183 @@ held-out split used to fit a gate is out-of-sample for the BASE, not only for th
 new component**: the s4-B1 base scored 0.0083 in-sample vs 0.5007 on test
 (58× memorisation) on `sharp__cahn_hilliard`, which forced the gate to veto a
 correction worth 43 % of the test error and 4.3× the dataset's noise floor.
+
+---
+
+## `residual_gain_learnability.py`
+
+**Measures.** The follow-up `field_error_decomposition.py` cannot answer: *is the
+leftover per-sample gain error a function of something the model already has at
+inference?*
+
+| key | meaning |
+|---|---|
+| `frac_sq_error_from_gain` | share of squared error that is a per-sample scalar gain (same definition as `field_error_decomposition.py`) |
+| `nRMSE_oracle_gain` | nRMSE with every sample rescaled by its own ORACLE gain — the floor a perfect calibration head reaches |
+| `loo.<model>.r2` | leave-one-out R² of the gain predicted from the condition vector (`ridge_linear`, `knn{1,3,5,10}`) |
+| `loo.<model>.nRMSE_after_gain` | nRMSE if that LOO-predicted gain were applied |
+| `best_learnable_nRMSE` / `_skill` | the best LOO row — the attainability estimate |
+| `n_hf_train`, `cond_dim` | the fit-feasibility check (see below) |
+
+**Read it as.** High `frac_sq_error_from_gain` **and** high `loo.ridge_linear.r2`
+→ a condition-conditioned calibration head is a real, cheap lever, and
+`best_learnable_nRMSE` sizes it. High `frac_sq_error_from_gain` with LOO R² ≤ 0
+→ the amplitude error is sample-specific and no head keyed on `X` can remove it;
+look at the field instead. **Two honesty rules travel with every number**:
+(1) the LOO fit uses the TEST targets, so `nRMSE_after_gain` is an UPPER BOUND on
+a head, never an achieved score; (2) compare `n_hf_train` with `cond_dim + 1` —
+with 5 HF training samples a 6-parameter linear gain model is already saturated,
+so the honest design estimates the law on the lower-fidelity levels and transfers
+it.
+
+**Invoke.**
+```bash
+source "$PROJECT_ROOT/.venv/bin/activate"
+python tools/residual_gain_learnability.py \
+    --pred_npz <a.npz> [<b.npz> ...] [--labels a b] \
+    --dataset ifc_poisson [--paper_bar 0.036] [--ridge 1e-3] [--out gain.json]
+```
+Seconds; pure numpy. Conditions come from `round1/eval/panel_data.py` (test
+split, HF fidelity) and must match the prediction file's sample count.
+
+**Verified.** Run 2026-07-29 from `round1/` on `s1_poisson-B2`'s shipped
+predictions: `ap_per` nRMSE 0.03425 (the card's scored value),
+`frac_sq_error_from_gain` 0.5710, oracle 0.02292, LOO `ridge_linear` R² **0.9190**
+→ 0.02431 / skill 0.6753, `n_hf_train` 5; `tl_per` 0.07855 → 0.06125.
+
+**Provenance.** `worktrees/s1_poisson/B2/scratchpad/reanalysis_turn_2.py`;
+card `experiment_cards/s1_poisson/batch_2/B2.json` part 6, turn-2 findings.
+
+---
+
+## `interface_locality_profile.py`
+
+**Measures.** The SPATIAL complement to `field_error_decomposition.py`'s spectral
+bands: relative error binned by decile of `|grad(HF target)|` (decile 0 =
+smoothest), pooled over the whole test split so every arm shares identical bins.
+
+| key | meaning |
+|---|---|
+| `error_by_grad_decile[10]` | `sqrt(sum e² / sum y²)` inside each gradient decile |
+| `target_energy_by_decile[10]` | where the target's energy actually is, so a big relative error on 2 % of the energy is not mistaken for the dominant term |
+| `locality_ratio`, `verdict` | decile 9 / decile 0. `> 1.25` INTERFACE-LOCAL, `< 0.8` BULK-DOMINATED, else SPATIALLY FLAT |
+| `monotone_increasing` / `_decreasing` | is the profile ordered at all |
+| `frac_sq_error_in_top_decile` | share of squared error in the steepest 10 % of cells |
+| `ratio_vs_<first label>` | per-decile error ratio between arms — where a contrast's gain lives spatially |
+
+**Read it as.** Round 1's sharp-interface intuition (rel-L2 hides blur in thin
+regions) is an empirical claim, and this tool tests it in one pass. A
+BULK-DOMINATED verdict means interface-aware losses and local branches are aimed
+at the wrong pixels for that dataset.
+
+**Invoke.**
+```bash
+source "$PROJECT_ROOT/.venv/bin/activate"
+python tools/interface_locality_profile.py \
+    --pred_npz <a.npz> [<b.npz> ...] [--labels a b] \
+    [--grid 64 64] [--deciles 10] [--out loc.json] [--plot loc.png]
+```
+Seconds; pure numpy (+ matplotlib only with `--plot`). All files must share the
+same target array — the tool refuses otherwise.
+
+**Verified.** Run 2026-07-29 from `round1/` on `s1_poisson-B2`: all three arms
+**BULK-DOMINATED**, `locality_ratio` 0.4075 (`ap_per`) / 0.2810 (`tl_per`) /
+0.3168 (`ap_shr`), `monotone_decreasing` true for the two `per_level` arms, with
+53.05 % of the target energy in the steepest decile.
+
+**Provenance.** `worktrees/s1_poisson/B2/scratchpad/reanalysis_turn_2.py`;
+card `experiment_cards/s1_poisson/batch_2/B2.json` part 6, turn-2 findings.
+
+---
+
+## Standing warning these two tools encode
+
+**"X % of the error is amplitude" is not yet a lever, and "the error is at the
+interfaces" is usually an assumption.** On `s1_poisson-B2` the amplitude share
+(57.1 %) only became actionable once the gain was shown to be 0.919-R² linear in
+the condition vector — and the same card's error profile falls MONOTONICALLY from
+the smoothest to the steepest gradient decile, so the dataset's error is in the
+bulk. Before proposing a calibration head, check `n_hf_train` vs `cond_dim + 1`:
+the gain law may be unfittable from the HF split and have to be estimated on the
+lower-fidelity levels.
+
+---
+
+## `registration_audit.py`
+
+**Measures.** Whether the round's skill DENOMINATOR on a dataset is misregistered,
+and what a zero-parameter fix is worth. `eval/panel_data.py::copylf_prediction`
+upsamples with `zoom(..., grid_mode=True)` — the CELL-CENTRED convention — while a
+pseudo-spectral solver's state is a POINT sample on the node grid `x_j = j*L/n`,
+where LF node `j` coincides physically with HF node `r*j`. Reading one as the other
+misregisters copy-LF by **`(r-1)/2` HF cells** (0.5 at r=2, 1.5 at r=4).
+
+| block | question answered |
+|---|---|
+| `convention.ramp_probe` | the EXACT coordinate map of the real `copylf_prediction`, from pushing a linear index ramp through it (bilinear interpolation of a linear function is exact, so the output IS the sampled coordinate). Contains no physics and no fitting |
+| `convention.decimation` | the data's own answer: is the raw LF closer to `HF[::r,::r]` (NODE) or to the r×r block mean (CELL-CENTRE)? |
+| `convention.halfdomain_shift_axis0_cells` | is the misregistration CONSTANT or a zero-mean space-varying STRETCH (which no DC statistic can see)? |
+| `variants[*]` | the free win: `A` eval copy-LF (seam-checked against `eval/copylf_baselines.json`, hard stop) · `A2` same convention with `grid-wrap` (isolates the wrap seam) · `B` A + a fixed `(r-1)/2`-cell shift · `C` node-aligned bilinear from the raw LF · `D` node-aligned band-limited · `E` Dirichlet interior-node alignment — each with nRMSE, skill, and its closed-form Lucas–Kanade residual shift |
+| `hf_energy_above_lf_band` | does HF carry ANY information the LF grid cannot represent? |
+| `lsi_ramp_projection` (`--lsi`) | how much of a fitted LSI transfer function (s6-B1's, imported from `defect_correction_learnability.py`) is just the phase ramp |
+| `verdict` | `MISREGISTERED_NODE_DATA` (+ `DEGENERATE` flag) / `NON_NESTED_STRETCH` / `NON_NESTED_BUT_CONSISTENT` / `CONSISTENT` / `INCONCLUSIVE` |
+
+**Read it as.** `MISREGISTERED_NODE_DATA` with variant-A `LK ≈ +(r-1)/2` → that
+dataset's copy-LF reference is inflated; report skills against variant C/D as well,
+and give any model that "beats copy-LF" the fixed-shift arm as its control.
+`decimation.node ≤ 1e-6` → the **ladder is degenerate** (coarse solve = fine solve;
+a dataset bug report, not a modelling target). `hf_energy_above_lf_band ≈ 0` → the
+gap is never "missing fine structure", so bandwidth/capacity knobs cannot address
+it. `lsi_ramp_projection.frac_explained > 0.8` with `best_scalar_c ≈ 1` → whatever a
+learned linear/convolutional corrector wins there, it is mostly undoing the
+resample. `NON_NESTED_STRETCH` → only variant `E` addresses it, and every mean-shift
+statistic is blind to it.
+
+**Invoke.**
+```bash
+source "$PROJECT_ROOT/.venv/bin/activate"
+python tools/registration_audit.py --datasets PANEL --out reg.json [--lsi]
+python tools/registration_audit.py --datasets GUARD --out guard.json
+python tools/registration_audit.py --datasets sharp__cahn_hilliard --out d.json \
+    [--n_test 100] [--n_train 400] [--seam_tol 1e-9]
+```
+Pure numpy/scipy on the login node, ~10–40 s per 256² dataset (+~30 s with `--lsi`).
+It **refuses to report** if variant A does not reproduce the frozen copy-LF baseline.
+Nothing it prints may become a card score — the eval layer stays byte-immutable
+during a round and `eval/copylf_baselines.json` remains the reference; the corrected
+variants are for interpretation and for control arms. 1-D layouts and LF-less test
+splits (`ifc_poisson`) return an `error` field.
+
+**Verified.** Run 2026-07-30 from `round1/` over `PANEL` + `GUARD`:
+`MISREGISTERED_NODE_DATA` on all four sharp panel datasets with variant-A LK
+`+0.464…+0.502` cells and variant `C` skill **0.1103 / 0.1648 / 0.3425 / 0.4769**
+(allen_cahn / pfc / fisher_kpp / cahn_hilliard); pfc additionally flagged
+**DEGENERATE** (variant `D` skill 7.1e-06, node decimation 3.02e-07);
+`NON_NESTED_STRETCH` on `ext__helmholtz_2d` (half-domain LK difference +1.861 cells,
+global ≈ 0, variant `E` skill 0.9077); `NON_NESTED_BUT_CONSISTENT` on `heat_local`
+and `INCONCLUSIVE` on `fluid` (their fixes make things worse — the defect is NOT
+universal). `--lsi` reproduces s3_warp-B1's F14 (0.9845 / 0.9510 / 0.0002 with
+`c` 0.9975 / 1.0025 / 0.2782). Every variant-A nRMSE matched
+`eval/copylf_baselines.json` to `0.0` absolute.
+
+**Provenance.** `worktrees/s3_warp/B1/scratchpad/reanalysis_turn_1.py` +
+`reanalysis_turn_3.py`; card `experiment_cards/s3_warp/batch_1/B1.json` part 6,
+findings F1–F8, F14, F16.
+
+---
+
+## Standing warning `registration_audit` encodes
+
+**Before attributing any sharp-panel skill number to a mechanism, check the
+registration of the reference.** On the four round-1 sharp datasets
+`copylf_prediction` places the upsampled LF half an HF cell off the HF grid, which
+is 50–100 % of copy-LF's entire error: a zero-parameter fixed resample scores skill
+0.110–0.477 there (7.1e-06 on `sharp__phase_field_crystal_2d`, whose ladder has no
+fidelity gap at all), success criterion 2 is reachable without a model, and two
+independent "mechanism" results — s3_warp-B1's 77–85 % oracle-warp ceilings and
+s6_local-B1's zero-parameter LSI filter beating a 72k ConvNeXt — turned out to be
+the same artefact measured in two languages (87–98 % of that filter's energy is the
+half-cell phase ramp at unit amplitude). Symptom triple: a fitted displacement whose
+DC is `≈ (r-1)/2` cells in BOTH axes, `decimation.node ≪ decimation.cellmean`, and a
+learned corrector whose transfer function grows linearly in |k| with phase ≈ π/2.
+The defect is not universal (`heat_local`, `fluid` are clean), so audit per dataset.
