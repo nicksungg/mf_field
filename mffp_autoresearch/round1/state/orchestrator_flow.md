@@ -1800,3 +1800,37 @@ round's build phase is complete; everything else is SLURM + analysis.
 ## Pulse — 2026-07-30T01:24Z
 
 pulse: no-op. Seven PENDING; s4-B2 review is the sole active agent.
+
+## s4-B2 review + chain submit — 2026-07-30T01:30Z
+
+Reviewer: SUGGEST / submit (6/6; four-alpha instrument independently
+verified — one correction field, zero/b1 legs = B1's smoke to 16 digits, no
+test data in any alpha fit; arm C base bit-equal to frozen baseline; vendored
+LSI = promoted tool to 7 digits). Submitted the full chain with S1's
+02:00:00 screen override (dense path's FIRST execution): 66022845 66022846 66022847 66022848 66022846 66022849 66022846 66022850 . S-item
+guards recorded: S2 dense-task TIMEOUT = RESOURCE not ALGO; S4 pure gate
+effect = legs.oof vs legs.b1_insample (C1's scored value mixes stage-3);
+S5 read V2 on fisher_kpp; S6 chunking caveat to parts 5/6. Stage →
+screen_running.
+
+## Pulse — 2026-07-30T01:34Z
+
+pulse: no-op. Full submission phase complete: 13 r1 job-units PENDING across
+all 7 streams (incl. s4-B2's 5-piece chain). Zero agents in flight — the
+round is now entirely SLURM-bound. All screen-read duties + binding guards
+are logged above for the result wave.
+
+## Pulse — 2026-07-30T01:44Z
+
+pulse: no-op. All 13 job-units still PENDING; zero agents; SLURM-bound.
+
+## Pulse — 2026-07-30T01:54Z
+
+pulse: no-op. 13 units PENDING, none running yet.
+
+## Maintainer dispatch SKIPPED — zero-delta idle — 2026-07-30T01:55Z
+
+Provably nothing to walk: no card writes, no queue movement (same 13 PENDING
+units), zero agents since the last walk indexed the milestone ~20 min ago.
+Skipping this cycle to avoid a pure no-op walk; next cron resumes normally
+(and immediately if any job starts).

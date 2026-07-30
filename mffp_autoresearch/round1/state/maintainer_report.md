@@ -2762,3 +2762,86 @@
   job composition); Completed-cards note-line and Flags updated for the
   s4_hybrid_routing-B2 build-completion delta).
 ## RUN END 2026-07-30T01:18:10Z
+
+## RUN START 2026-07-30T01:36:20Z
+- Single in-flight check: last run's `RUN START` (01:15:11Z) has a matching
+  `RUN END` (01:18:10Z), ~18 min before this scan — not in-flight, walk
+  proceeds.
+- Card walk (13 cards, `experiment_cards/*/batch_*/B*.json`): one delta —
+  `s4_hybrid_routing-B2` `status`: `built` -> **`reviewed_suggest`**.
+  `review_notes` grew from `[]` to one entry (attempt 1, verdict
+  `reviewed_suggest`, `diff_reviewed`
+  `round1-substrate..79b20d78cb55a7c36b3e3485a24144f49144f2a5`): reviewer
+  independently re-verified `model.py` byte-identical to B1's frozen
+  `4691d1f` (sha256 `9e8fbacd79377e39`), the three arms' 20-key `--env`
+  sets exactly match recipe.env + card-JSON deltas, 7/7 scripts pass
+  `bash -n`, the 13-task array map reproduces 6+6+1, blast radius confined
+  to 28 files under `models_r1/`/`scripts/`/`notes/`/`scratchpad/` (no
+  guarded-surface touch), locked card fields byte-unchanged, the four
+  alpha legs reproduce B1's contract smoke to 16 significant digits
+  (22.613192981264618 vs 22.613192981264614), Arm C's copy-LF base is
+  bit-equal to the frozen baseline, and the vendored LSI reproduces the
+  promoted tool to 7 digits. Verdict: submit as built, no builder fix
+  required. `job_ids` newly populated with the full submission chain
+  (S1 override: screen wall-time raised to 02:00:00): `66022845` (screen)
+  -> afterok -> `66022846_[0-12]` (13-task array) -> afterok ->
+  `66022847`/`66022848` (per-arm guards) and `66022849`/`66022850`
+  (per-arm aggregates). Confirmed the dependency chain is wired correctly
+  via `squeue -j` (downstream jobs show `Dependency`/`afterok:66022845` or
+  `afterok:66022846` as appropriate).
+- All 12 other cards unchanged since last walk (statuses, `job_ids`,
+  `reopen_candidate` all identical): `s1_poisson-B1/B2`,
+  `s2_beyond_copy-B1/B2`, `s3_testtime-B1`, `s3_warp-B1`,
+  `s4_hybrid_routing-B1`, `s5_tuning-B1/B2`, `s6_local-B1/B2`, `s7_loss-B1`.
+- SLURM view: **13 r1- job-units now PENDING across all 7 streams**
+  (MILESTONE — submission phase complete, zero agents in flight, round is
+  SLURM-bound). The 7 carried-over jobs unchanged: `66005834`
+  s6_local-B1 200-ep guard, `66008912` s1_poisson-B2 seed0, `66009306`
+  s7_loss-B1 screen, `66011595` s3_warp-B1 relaunch, `66011965`
+  s2_beyond_copy-B2 screen, `66012553` s5_tuning-B2 screen, `66014970`
+  s6_local-B2 screen — all still PENDING (Priority)/0:00 on H100,
+  confirmed by both `squeue` and `sacct`. Plus the 6 new
+  `s4_hybrid_routing-B2` chain jobs (see above), all PENDING/0:00,
+  confirmed by both `squeue` and `sacct` (Start/End Unknown), with
+  `Dependency` reason and correct `afterok` targets on the array/downstream
+  jobs. No job flagged as vanished; no new FAILED sacct record needing a
+  debugger this walk.
+- Timing ledger: no new COMPLETED r1- jobs since last walk (all 13 live
+  jobs still 0:00 elapsed PENDING). Ledger unchanged at 53 entries;
+  re-validated as parseable JSON (`_note` + `entries` keys, 53-element
+  list), no write needed this walk.
+- No abandonment trigger: no stream has 3 consecutive skip/blocked
+  batches; no stream has reached 3 batches yet. `state/streams/` directory
+  still does not exist.
+- Transcript inbox: `state/transcripts/` still does not exist — nothing to
+  archive this walk.
+- Anchors: `state/anchors/*.json` unchanged (same 5 files, same
+  certified_utc 2026-07-29T14:28:45Z) — rendered verbatim into index.md,
+  no recomputation.
+- ADRs unchanged this walk: `docs/adr/0001`-`0012`, no new ADR since 0012.
+- Gates unchanged: G1-G5 all carried-over PASS, no new gate activity this
+  window (`state/gates.md` mtime unchanged).
+- DINO-key measurement integrity incident
+  (`docs/operator_notes/2026-07-30-dino-key-measurement.md`): no change
+  since last walk (file mtime unchanged) — carried over verbatim in
+  index.md Flags, not re-summarized in full here.
+- Stage-file lag resolved: `state/s4_hybrid_routing/current_stage.txt`
+  (mtime 18:30:09 local on 2026-07-29) now reads `screen_running (chain:
+  66022845 ...)`, current with the card's `reviewed_suggest`/submitted
+  state — resolving the stage-file/card-status lag flagged in the prior
+  two walks (was stuck at `builder_running`). No maintainer edit made
+  (orchestrator/reviewer-side write).
+- No card files modified by the maintainer this walk. `git status --short
+  experiment_cards/` shows only `s4_hybrid_routing/batch_2/B2.json`
+  modified — that write is the reviewer's/submitter's (review verdict +
+  full job chain), not the maintainer's, and is pending the next
+  auto-sync commit; none of the maintainer's writes touch
+  `experiment_cards/`.
+- index.md: regenerated (fresh timestamp; Streams table updated for
+  `s4_hybrid_routing-B2`'s `built`->`reviewed_suggest` transition, review
+  verdict, and full submission chain; Running/pending jobs table expanded
+  from 7 to 13 r1- job-units with a MILESTONE note (submission phase
+  complete, round SLURM-bound); Completed-cards note-line and Flags
+  updated for the s4_hybrid_routing-B2 review+submission delta and
+  stage-file lag resolution).
+## RUN END 2026-07-30T01:39:02Z
