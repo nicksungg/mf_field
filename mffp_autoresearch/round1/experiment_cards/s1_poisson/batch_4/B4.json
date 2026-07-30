@@ -155,7 +155,7 @@
       }
     }
   },
-  "status": "reviewed_pass",
+  "status": "complete",
   "skipped_reason": null,
   "reopen_candidate": false,
   "scripts_path": {
@@ -213,8 +213,505 @@
     }
   ],
   "debug_notes": [],
-  "5_actual_result": null,
-  "6_analysis": null,
-  "7_gap_and_future": null,
-  "reanalysis_progress": null
+  "5_actual_result": {
+    "headline": "Six-arm 2x2+2 factorial on ifc_poisson, seed 0, job 66076490 (COMPLETED 0:0, 6m01s, H100 hpc-33-16). VALIDITY GATE PASSES (A0 within 0.026 % of B3, A1 within 0.233 %). Outcome **O4 NEITHER** fires, unambiguously and with every decisive read far outside the pre-registered dead band: A2 does NOT recover (1.72905, +0.7751 skill = 3.23x floor WORSE than A1), A4 does NOT degrade (0.60225, -0.0066 skill vs A0 = 0.028x floor, in the improving direction), A3 does NOT degrade (0.54965, -0.0592 vs A0). A5 = 1.60484 >= T_no_recover, which under O4's pre-registered adjudication reads `f_src` exposure as a new mechanism. The modal prior (O2 ~60 %) did NOT hold; O1 (~20 %) did not hold either. Nothing here is claimable beyond the two controls (ADR 0004 provisional-single-seed); A2/A3/A5 are declared non-claimable measurements.",
+    "seeds_available": [
+      0
+    ],
+    "claim_status": "provisional-single-seed (ADR 0004); diagnostic-purpose model card - no arm proposed as a candidate, none promoted to the leaderboard",
+    "job_id": 66076490,
+    "job_state": "COMPLETED 0:0, Elapsed 00:06:01, node hpc-33-16, H100 80GB",
+    "nrmse_def_hash": "d3d0ade9191c13bacc40702f3eb26ad290e01641cacee22a1d2233b74c035850",
+    "nrmse_def_hash_consistent_across_arms": true,
+    "validity_gate": {
+      "clause": "Validity gate (not a clause): A0 must land within +-10 % of B3's 0.021913 (0.019722-0.024104) and A1 within +-10 % of 0.034264 (0.030838-0.037690)",
+      "A0_nrmse": 0.021918648227088725,
+      "A0_band": [
+        0.0197217,
+        0.0241043
+      ],
+      "A0_rel_diff_pct": 0.025775690634448747,
+      "A0_in_band": true,
+      "A1_nrmse": 0.0343438852257568,
+      "A1_band": [
+        0.0308376,
+        0.0376904
+      ],
+      "A1_rel_diff_pct": 0.23314623440578147,
+      "A1_in_band": true,
+      "result": "PASS - card is NOT void; O6 does not fire"
+    },
+    "thresholds_from_this_run": {
+      "floor_min_claimable_effect": 0.23990756041925798,
+      "skill_A0": 0.6088513396413535,
+      "skill_A1": 0.9539968118265778,
+      "T_recover": 0.7140892514073198,
+      "T_no_recover": 0.8487589000606115,
+      "dead_band": [
+        0.7140892514073198,
+        0.8487589000606115
+      ],
+      "dead_band_width": 0.13466964865329167,
+      "note": "recomputed with the card's exact formulas on THIS run's controls (T_recover = skill(A1) - 0.23990756; T_no_recover = skill(A0) + 0.23990756); the card's illustrative (0.7119, 0.8486) used B3's values. No decisive read lands inside the band."
+    },
+    "six_arm_table": [
+      {
+        "arm": "A0",
+        "tag": "so_nat_short",
+        "role": "A0 CONTROL (reproduce B3 self_only__none 0.021913)",
+        "ladder_mode": "self_only",
+        "row_weight_mode": "natural",
+        "stage1_epoch_scale": "1.0",
+        "stage1_epochs_resolved": 200,
+        "stage1_steps_per_epoch": 11,
+        "stage1_total_steps": 2200,
+        "stage1_cosine_T_max": 200,
+        "stage1_rows": 175,
+        "stage2_total_steps": 200,
+        "nRMSE_seed0": 0.021918648227088725,
+        "skill_seed0": 0.6088513396413535,
+        "delta_skill_vs_A0": 0.0,
+        "delta_skill_vs_A1": -0.3451454721852243,
+        "ckpt_key": "mode_self_only__scal_per_level__w_natural__s1x_1.0",
+        "code_hash": "1d9ae81eb6716cb9e17909cc73eef073cc42d3c03598a247e878883babda8af5",
+        "train_seconds": 45.41206765174866,
+        "result_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s1_poisson/B4/eval/result_ifc_poisson_so_nat_short_s0.json"
+      },
+      {
+        "arm": "A1",
+        "tag": "ap_rep_long",
+        "role": "A1 CONTROL (reproduce B3 base__none 0.034264)",
+        "ladder_mode": "allpairs",
+        "row_weight_mode": "natural",
+        "stage1_epoch_scale": "1.0",
+        "stage1_epochs_resolved": 200,
+        "stage1_steps_per_epoch": 18,
+        "stage1_total_steps": 3600,
+        "stage1_cosine_T_max": 200,
+        "stage1_rows": 280,
+        "stage2_total_steps": 200,
+        "nRMSE_seed0": 0.0343438852257568,
+        "skill_seed0": 0.9539968118265778,
+        "delta_skill_vs_A0": 0.3451454721852243,
+        "delta_skill_vs_A1": 0.0,
+        "ckpt_key": "mode_allpairs__scal_per_level__w_natural__s1x_1.0",
+        "code_hash": "e73ac48134c033286460c25720b1adf83b2c630a187bf7b23439bf6f3e85a2d7",
+        "train_seconds": 70.59094834327698,
+        "result_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s1_poisson/B4/eval/result_ifc_poisson_ap_rep_long_s0.json"
+      },
+      {
+        "arm": "A2",
+        "tag": "ap_rep_short",
+        "role": "A2 DECISIVE-STEP (long arm read at matched steps) [NON-CLAIMABLE]",
+        "ladder_mode": "allpairs",
+        "row_weight_mode": "natural",
+        "stage1_epoch_scale": "0.611111",
+        "stage1_epochs_resolved": 122,
+        "stage1_steps_per_epoch": 18,
+        "stage1_total_steps": 2196,
+        "stage1_cosine_T_max": 122,
+        "stage1_rows": 280,
+        "stage2_total_steps": 200,
+        "nRMSE_seed0": 0.06224575345286903,
+        "skill_seed0": 1.7290487070241398,
+        "delta_skill_vs_A0": 1.1201973673827863,
+        "delta_skill_vs_A1": 0.775051895197562,
+        "ckpt_key": "mode_allpairs__scal_per_level__w_natural__s1x_0.611111",
+        "code_hash": "76ea01bf04adb7b7ab3bb7668ff1205151c0b7e07a60cd344ce4798896c839d6",
+        "train_seconds": 49.47570037841797,
+        "result_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s1_poisson/B4/eval/result_ifc_poisson_ap_rep_short_s0.json"
+      },
+      {
+        "arm": "A3",
+        "tag": "so_nat_long",
+        "role": "A3 mirror step control (short arm scaled up) [NON-CLAIMABLE]",
+        "ladder_mode": "self_only",
+        "row_weight_mode": "natural",
+        "stage1_epoch_scale": "1.636364",
+        "stage1_epochs_resolved": 327,
+        "stage1_steps_per_epoch": 11,
+        "stage1_total_steps": 3597,
+        "stage1_cosine_T_max": 327,
+        "stage1_rows": 175,
+        "stage2_total_steps": 200,
+        "nRMSE_seed0": 0.019787320148132646,
+        "skill_seed0": 0.5496477818925736,
+        "delta_skill_vs_A0": -0.059203557748779945,
+        "delta_skill_vs_A1": -0.40434902993400423,
+        "ckpt_key": "mode_self_only__scal_per_level__w_natural__s1x_1.636364",
+        "code_hash": "7d5aa8cf22ecc46cd0fb9f32bf8c5bc5afe3a2a72f2476de74e06734e0afcc9a",
+        "train_seconds": 71.16553378105164,
+        "result_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s1_poisson/B4/eval/result_ifc_poisson_so_nat_long_s0.json"
+      },
+      {
+        "arm": "A4",
+        "tag": "so_rep_short",
+        "role": "A4 DECISIVE-WEIGHT (allpairs weighting, no duplicates, matched steps)",
+        "ladder_mode": "self_only",
+        "row_weight_mode": "ladder_replication",
+        "stage1_epoch_scale": "1.0",
+        "stage1_epochs_resolved": 200,
+        "stage1_steps_per_epoch": 11,
+        "stage1_total_steps": 2200,
+        "stage1_cosine_T_max": 200,
+        "stage1_rows": 175,
+        "stage2_total_steps": 200,
+        "nRMSE_seed0": 0.021680970137798405,
+        "skill_seed0": 0.6022491704944002,
+        "delta_skill_vs_A0": -0.0066021691469533295,
+        "delta_skill_vs_A1": -0.3517476413321776,
+        "ckpt_key": "mode_self_only__scal_per_level__w_ladder_replication__s1x_1.0",
+        "code_hash": "321b6011164b9f1db6d52d201d804c5032c26c6a9efae94c43a1640f97795356",
+        "train_seconds": 44.31745195388794,
+        "result_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s1_poisson/B4/eval/result_ifc_poisson_so_rep_short_s0.json"
+      },
+      {
+        "arm": "A5",
+        "tag": "ap_nat_short",
+        "role": "A5 CLOSURE (matches A0 on weighting AND steps) [NON-CLAIMABLE]",
+        "ladder_mode": "allpairs",
+        "row_weight_mode": "uniform_distinct",
+        "stage1_epoch_scale": "0.611111",
+        "stage1_epochs_resolved": 122,
+        "stage1_steps_per_epoch": 18,
+        "stage1_total_steps": 2196,
+        "stage1_cosine_T_max": 122,
+        "stage1_rows": 280,
+        "stage2_total_steps": 200,
+        "nRMSE_seed0": 0.05777417538412423,
+        "skill_seed0": 1.604838205114562,
+        "delta_skill_vs_A0": 0.9959868654732085,
+        "delta_skill_vs_A1": 0.6508413932879842,
+        "ckpt_key": "mode_allpairs__scal_per_level__w_uniform_distinct__s1x_0.611111",
+        "code_hash": "28ce3b76ce2fcebd9dcf8dc1b5d98f204abdc9f1bfca1347bfc17af0689d8e44",
+        "train_seconds": 47.82544684410095,
+        "result_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s1_poisson/B4/eval/result_ifc_poisson_ap_nat_short_s0.json"
+      }
+    ],
+    "decisive_reads": {
+      "A2_ap_rep_short": {
+        "skill": 1.7290487070241398,
+        "verdict": "does NOT recover",
+        "test": "skill 1.7290487 >= T_no_recover 0.8487589",
+        "delta_vs_A1": 0.775051895197562,
+        "delta_vs_A1_in_floors": 3.2306272209308275,
+        "note": "moved AWAY from recovery: at matched steps the allpairs arm is 0.7751 skill (3.23x floor) WORSE than the 3600-step allpairs control, not better"
+      },
+      "A4_so_rep_short": {
+        "skill": 0.6022491704944002,
+        "verdict": "does NOT degrade",
+        "test": "skill 0.6022492 <= T_recover 0.7140893 (margin 0.1118401)",
+        "delta_vs_A0": -0.0066021691469533295,
+        "delta_vs_A0_in_floors": -0.027519637711356414,
+        "note": "allpairs level weight shares imposed on self_only rows at matched steps move the score by -0.0066 skill (0.028x floor), i.e. marginally BETTER, where >= +0.2399 degradation was required"
+      },
+      "A3_so_nat_long": {
+        "skill": 0.5496477818925736,
+        "verdict": "does NOT degrade",
+        "test": "skill 0.5496478 <= T_recover 0.7140893 (margin 0.1644415)",
+        "delta_vs_A0": -0.059203557748779945,
+        "delta_vs_A0_in_floors": -0.24677654028625404,
+        "note": "self_only scaled up to 3597 steps IMPROVES by 0.0592 skill (0.247x floor); best arm in the factorial, non-claimable"
+      },
+      "A5_ap_nat_short": {
+        "skill": 1.604838205114562,
+        "verdict": ">= T_no_recover (adjudicates O4)",
+        "test": "skill 1.6048382 >= T_no_recover 0.8487589 (excess 0.7560793)",
+        "delta_vs_A0": 0.9959868654732085,
+        "delta_vs_A0_in_floors": 4.151544302033002,
+        "note": "matched to A0 on BOTH realized level weight shares (verified to 1e-6 in-job) and steps (2196 vs 2200); residual = f_src-tag exposure + duplicate-minibatch gradient noise + compressed cosine anneal (122 vs 200 epochs)"
+      },
+      "dead_band_hits": []
+    },
+    "outcome_classification": {
+      "fired": "O4 NEITHER",
+      "row_match": "A2 does not recover = TRUE; A4 does not degrade = TRUE; A3 does not degrade = TRUE",
+      "verdict_verbatim": "neither weighting nor steps reproduces the gap inside a row set \u2192 the cause is `f_src`-tag exposure and/or duplicate-minibatch gradient noise; **A5 adjudicates**: A5 \u2264 T_recover \u21d2 a weight\u00d7step interaction after all; A5 \u2265 T_no_recover \u21d2 **`f_src` exposure is a new mechanism** and the batch-5 direction",
+      "slate_effect_verbatim": "slate **unchanged**; a new s1 open question is opened",
+      "A5_adjudication": "A5 = 1.6048382 \u2265 T_no_recover = 0.8487589 \u21d2 the second branch fires: **`f_src` exposure is a new mechanism** and the batch-5 direction",
+      "outcomes_excluded": {
+        "O1": "requires A2 RECOVERS (<= 0.7140893); A2 = 1.7290487 - excluded",
+        "O2": "requires A4 degrades (>= 0.8487589); A4 = 0.6022492 - excluded",
+        "O3": "requires A2 and A4 partial (inside the dead band); neither is - excluded",
+        "O5": "requires A2 RECOVERS and A4 degrades; neither holds - excluded",
+        "O6": "validity gate PASSED - excluded"
+      },
+      "unresolved_reads": "none - all four reads (A2, A3, A4, A5) sit outside the dead band (0.7140893, 0.8487589) by >= 0.1118 skill; no read is UNRESOLVED",
+      "prior_check": "The modal prediction did NOT hold. Card prior: O2 ~60 %, O1 ~20 %, O3/O4/O5 ~20 % combined. The fired outcome O4 sat in the ~20 % residual bucket."
+    },
+    "per_dataset": {
+      "ifc_poisson": {
+        "arm_reported_as_the_control": "A0 so_nat_short",
+        "per_seed_nrmse": [
+          0.021918648227088725
+        ],
+        "per_seed_skill": [
+          0.6088513396413535
+        ],
+        "mean_skill": 0.6088513396413535,
+        "ci95": null,
+        "ci95_note": "single seed (ADR 0004) - no bootstrap CI is computable; seeds 1-2 were never in this card's recipe",
+        "reference_type": "paper_bar",
+        "split": "test_hf",
+        "cached": false,
+        "metric_source": "per_sample_mean",
+        "per_arm_nrmse": {
+          "A0_so_nat_short": 0.021918648227088725,
+          "A1_ap_rep_long": 0.0343438852257568,
+          "A2_ap_rep_short": 0.06224575345286903,
+          "A3_so_nat_long": 0.019787320148132646,
+          "A4_so_rep_short": 0.021680970137798405,
+          "A5_ap_nat_short": 0.05777417538412423
+        },
+        "per_arm_skill": {
+          "A0_so_nat_short": 0.6088513396413535,
+          "A1_ap_rep_long": 0.9539968118265778,
+          "A2_ap_rep_short": 1.7290487070241398,
+          "A3_so_nat_long": 0.5496477818925736,
+          "A4_so_rep_short": 0.6022491704944002,
+          "A5_ap_nat_short": 1.604838205114562
+        }
+      }
+    },
+    "panel_geomean_skill": {
+      "per_seed": [
+        0.6088513396413535
+      ],
+      "mean": 0.6088513396413535,
+      "ci95": null,
+      "note": "panel here is the single dataset ifc_poisson, so panel geomean == the dataset skill; the value shown is the A0 control arm. Per-arm panel geomeans: A0 so_nat_short=0.6088513, A1 ap_rep_long=0.9539968, A2 ap_rep_short=1.7290487, A3 so_nat_long=0.5496478, A4 so_rep_short=0.6022492, A5 ap_nat_short=1.6048382"
+    },
+    "vs_anchor": {
+      "anchor_value": 1.5656334312786022,
+      "anchor_family": "mf_fno_transfer_film",
+      "anchor_ci95": [
+        1.4561616605002385,
+        1.6960692209194965
+      ],
+      "delta": -0.9567820916372487,
+      "beyond_ci": true,
+      "beyond_noise_floor": true,
+      "per_arm_delta": {
+        "A0_so_nat_short": -0.9567820916372487,
+        "A1_ap_rep_long": -0.6116366194520244,
+        "A2_ap_rep_short": 0.1634152757455376,
+        "A3_so_nat_long": -1.0159856493860286,
+        "A4_so_rep_short": -0.963384260784202,
+        "A5_ap_nat_short": 0.03920477383595977
+      },
+      "note": "NOT the operative threshold - card part 4 verbatim: \"the card produces no leaderboard claim, so `state/anchors/s1_poisson.json` (1.5656 skill, `mf_fno_transfer_film`) is not the operative threshold\". Recorded for completeness only; the operative comparison is the B3 pair and the pre-registered thresholds above. Note also that A2 (+0.1634) and A5 (+0.0392) land WORSE than the anchor."
+    },
+    "cratered_verdict": "n/a",
+    "cratered_note": "n/a as the card directs: this is a diagnostic-purpose model card with no candidate arm and no seeds 1-2 to gate (recipe.seeds = [0]; ADR 0004). Job completed 0:0, no crash. For the record the cratered arithmetic would not have fired on the A0 control either (0.6089 << CRATERED_SKILL_FACTOR x anchor 1.5656).",
+    "falsification_verdict": "falsified",
+    "falsification_clause_verbatim": "the motivating \"condition-space effective-N / level-weighting\" hypothesis is falsified if the weight-only arm A4 (`so_rep_short`: `self_only` rows and steps, `allpairs` level weight shares) fails to degrade \u2014 i.e. lands at skill \u2264 `skill(A0) + 0.23990756` \u2014 while the step-only arm A2 (`ap_rep_short`: `allpairs` rows and weighting at `self_only`'s 2200 stage-1 steps) recovers to skill \u2264 `skill(A1) \u2212 0.23990756`, which would attribute the round's best claimable `ifc_poisson` number to the optimization budget rather than to the ladder's information ordering (outcome O1).",
+    "falsification_clause_fired": false,
+    "falsification_verdict_note": "READ THIS BEFORE QUOTING THE VERDICT. The clause is a CONJUNCTION and it did NOT fire: leg 1 (A4 fails to degrade) is TRUE - A4 = 0.6022492 \u2264 skill(A0) + 0.23990756 = 0.8487589 - but leg 2 (A2 recovers) is FALSE - A2 = 1.7290487, nowhere near skill(A1) - 0.23990756 = 0.7140893. So the clause's own O1 route to falsification (attributing the win to the optimization budget) is NOT taken: the step story is rejected too. The motivating effective-N/weighting hypothesis is nevertheless DISCONFIRMED, via the co-registered outcome table rather than via the clause: O2 (WEIGHT STORY) requires A4 to degrade by \u2265 +0.23990756 skill and A4 instead moved -0.0066 skill (0.028x floor, improving direction), so O2 is excluded and O4 NEITHER fires. Hence the enum \"falsified\" refers to the motivating hypothesis (weighting alone does not reproduce the gap), NOT to the clause having fired. Both single-factor stories - weighting (O2) and steps (O1) - are rejected on this run; the pre-registered residual (f_src exposure / duplicate-minibatch gradient noise) is what survives, per O4 + the A5 adjudication.",
+    "falsification_deciding_numbers": {
+      "A4_skill": 0.6022491704944002,
+      "A4_threshold_T_no_recover": 0.8487589000606115,
+      "A4_degradation_required_skill": 0.23990756041925798,
+      "A4_degradation_observed_skill": -0.0066021691469533295,
+      "A2_skill": 1.7290487070241398,
+      "A2_threshold_T_recover": 0.7140892514073198,
+      "A2_recovery_observed_skill": 0.775051895197562
+    },
+    "guard_flags": [],
+    "guard_note": "No guard obligation. Card recipe `_contract_check` verbatim: \"Guard set NOT owed: this card claims no panel win (program.md \u00a72.3); B3's guard debt is unchanged and remains owed by the confirmation pass.\" No panel win is claimed here, so \u00a72d does not trigger.",
+    "instrumentation": {
+      "status": "ALL PASS",
+      "steps_table_expected": [
+        2200,
+        3600,
+        2196,
+        3597,
+        2200,
+        2196
+      ],
+      "steps_table_realized": [
+        2200,
+        3600,
+        2196,
+        3597,
+        2200,
+        2196
+      ],
+      "steps_table_match": true,
+      "steps_per_epoch_realized": [
+        11,
+        18,
+        18,
+        11,
+        11,
+        18
+      ],
+      "stage1_epochs_resolved": [
+        200,
+        200,
+        122,
+        327,
+        200,
+        122
+      ],
+      "matched_step_accuracy": "A2 2196 vs A0 2200 (-0.182 %); A3 3597 vs A1 3600 (-0.083 %) - both inside the +-1 % tolerance",
+      "env_guard": "[env-guard] OK printed for all six arms (slurm .out lines 32, 63, 94, 125, 156, 187); every *_source == env:MFFP_*; gain_head_applied == false everywhere",
+      "cross_arm_checks": "\"ALL CROSS-ARM CHECKS PASS\" (slurm .out line 188-203): six distinct ckpt keys; A4 shares == A1 shares (1e-6) OK; A5 shares == A0 shares (1e-6) OK",
+      "realized_level_weight_shares": {
+        "A0_so_nat_short": {
+          "8": 0.5714285714285714,
+          "16": 0.2857142857142857,
+          "32": 0.11428571428571428,
+          "64": 0.02857142857142857
+        },
+        "A1_ap_rep_long": {
+          "8": 0.35714285714285715,
+          "16": 0.35714285714285715,
+          "32": 0.21428571428571427,
+          "64": 0.07142857142857142
+        },
+        "A2_ap_rep_short": {
+          "8": 0.35714285714285715,
+          "16": 0.35714285714285715,
+          "32": 0.21428571428571427,
+          "64": 0.07142857142857142
+        },
+        "A3_so_nat_long": {
+          "8": 0.5714285714285714,
+          "16": 0.2857142857142857,
+          "32": 0.11428571428571428,
+          "64": 0.02857142857142857
+        },
+        "A4_so_rep_short": {
+          "8": 0.35714285714285715,
+          "16": 0.35714285714285715,
+          "32": 0.21428571428571427,
+          "64": 0.07142857142857142
+        },
+        "A5_ap_nat_short": {
+          "8": 0.5714285689957288,
+          "16": 0.2857142844978644,
+          "32": 0.11428571805662031,
+          "64": 0.02857142844978644
+        }
+      },
+      "duplicate_multiplicities": "self_only arms {8:[1],16:[1],32:[1],64:[1]}; allpairs arms {8:[1],16:[2],32:[3],64:[4]}; distinct rows {8:100,16:50,32:20,64:5} in every arm",
+      "distinct_code_hashes": 6,
+      "distinct_ckpt_keys": 6,
+      "all_arms_cached_false": true,
+      "nrmse_def_hash_identical_across_six_jsons": true
+    },
+    "anomalies": [
+      "NON-MONOTONE STEP RESPONSE, OPPOSITE SIGN BY ROW SET (the headline surprise). Cutting allpairs from 3600 to 2196 steps costs +0.7751 skill (A1 0.95400 -> A2 1.72905), while raising self_only from 2200 to 3597 steps GAINS 0.0592 skill (A0 0.60885 -> A3 0.54965). The step budget is therefore not a shared monotone axis: the two row sets sit on opposite sides of their own step-response curves, which is exactly why neither single-factor story reproduces the gap.",
+      "A2 (1.72905) and A5 (1.60484) - the two allpairs arms at 122 stage-1 epochs - are the only arms in the factorial WORSE than the stream anchor 1.5656 and the only ones with skill > 1 by a large margin (worse than the paper bar 0.036). Both share the compressed cosine anneal (T_max = 122, one LR update per 18 steps), which the card pre-registered as limitation #2; their 0.1242 skill separation is the entire weighting effect at that budget.",
+      "A4 came out marginally BETTER than A0 (-0.0066 skill, 0.028x floor - 36x below the certified floor, i.e. indistinguishable). The weight-only manipulation is not merely insufficient, it is unresolvable at this floor: imposing allpairs' 0.357/0.357/0.214/0.0714 shares on self_only's 175 rows does essentially nothing.",
+      "Review note N7 is live for this reading (state/s1_poisson/review_B4.md \u00a7D): the loss is a per-minibatch mean of w\u00b7(pred-y)\u00b2, so A4 reproduces A1's per-level shares in expectation over an epoch, not batch-for-batch. Scoped, pre-registered residual - not a build defect.",
+      "Card limitation #1 is now load-bearing: A4/A5 match the level weight shares but not the gradient-noise structure, and A5-vs-A0 is the only bound on that residual - and A5-vs-A0 is 4.15x floor, so that residual is where the whole effect now lives (jointly with the anneal-granularity confound noted above; the two are NOT separated by this design).",
+      "Clean run otherwise: .err is 0 bytes, no NaN/inf anywhere in the per-sample arrays (0 non-finite across all six arms), no preemption/resume event, every arm cached:false (all six trained from scratch), single H100 node throughout."
+    ],
+    "wall_clock_per_seed_min": [
+      6.016666666666667
+    ],
+    "wall_clock_detail": {
+      "job_elapsed": "00:06:01 (sacct 66076490, COMPLETED 0:0)",
+      "per_arm_wall_seconds_from_log_timestamps": {
+        "so_nat_short": 51,
+        "ap_rep_long": 76,
+        "ap_rep_short": 54,
+        "so_nat_long": 77,
+        "so_rep_short": 49,
+        "ap_nat_short": 54
+      },
+      "per_arm_train_seconds_from_json": {
+        "so_nat_short": 45.41206765174866,
+        "ap_rep_long": 70.59094834327698,
+        "ap_rep_short": 49.47570037841797,
+        "so_nat_long": 71.16553378105164,
+        "so_rep_short": 44.31745195388794,
+        "ap_nat_short": 47.82544684410095
+      },
+      "total_train_seconds": 328.78714895248413,
+      "card_estimate_vs_actual": "card `_cost` estimated ~6.7 min GPU; realized 6m01s wall (328.8 s of it in-family training). --time=01:00:00 requested; 10 % used.",
+      "gpu": "1x H100 80GB HBM3, node hpc-33-16, partition gpu",
+      "peak_mem_mb_per_arm": {
+        "so_nat_short": 398.724608,
+        "ap_rep_long": 398.724608,
+        "ap_rep_short": 398.724608,
+        "so_nat_long": 398.724608,
+        "so_rep_short": 398.724608,
+        "ap_nat_short": 398.724608
+      }
+    },
+    "provenance": {
+      "result_jsons": [
+        "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s1_poisson/B4/eval/result_ifc_poisson_so_nat_short_s0.json",
+        "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s1_poisson/B4/eval/result_ifc_poisson_ap_rep_long_s0.json",
+        "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s1_poisson/B4/eval/result_ifc_poisson_ap_rep_short_s0.json",
+        "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s1_poisson/B4/eval/result_ifc_poisson_so_nat_long_s0.json",
+        "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s1_poisson/B4/eval/result_ifc_poisson_so_rep_short_s0.json",
+        "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s1_poisson/B4/eval/result_ifc_poisson_ap_nat_short_s0.json"
+      ],
+      "family_jsons": [
+        "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s1_poisson/B4/eval/results_so_nat_short/mf_fno_ladder_attrib/ifc_poisson_e200_s0.json",
+        "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s1_poisson/B4/eval/results_ap_rep_long/mf_fno_ladder_attrib/ifc_poisson_e200_s0.json",
+        "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s1_poisson/B4/eval/results_ap_rep_short/mf_fno_ladder_attrib/ifc_poisson_e200_s0.json",
+        "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s1_poisson/B4/eval/results_so_nat_long/mf_fno_ladder_attrib/ifc_poisson_e200_s0.json",
+        "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s1_poisson/B4/eval/results_so_rep_short/mf_fno_ladder_attrib/ifc_poisson_e200_s0.json",
+        "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s1_poisson/B4/eval/results_ap_nat_short/mf_fno_ladder_attrib/ifc_poisson_e200_s0.json"
+      ],
+      "preds_npz_available": true,
+      "slurm_out": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s1_poisson/B4/slurm/r1-s1_poisson-B4-s0_66076490.out",
+      "slurm_err": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s1_poisson/B4/slurm/r1-s1_poisson-B4-s0_66076490.err (0 bytes)",
+      "b3_reference_values": "B3 self_only__none 0.021913 nRMSE / 0.6087 skill; B3 base__none 0.034264 / 0.9518 - the validity-gate targets quoted from card part 4",
+      "anchors_touched": "none - state/anchors/s1_poisson.json left byte-unchanged (single seed, no claim; \u00a72e criteria not met)"
+    }
+  },
+  "6_analysis": {
+    "_scope": "Mechanism analysis over 3 probe turns (worktree scratchpad/reanalysis_turn_{1,2,3}{,_results}.{py,md}). All CPU; artifacts + inference from the six shipped last.pt; NO re-training, no GPU, no card-scored number recomputed by hand. Every nRMSE is computed through ${EVAL_DIR}/nrmse.py under nrmse_def_hash d3d0ade9191c13bacc40702f3eb26ad290e01641cacee22a1d2233b74c035850 (the part-5 hash). Skill deltas are priced in the round's ifc_poisson noise floor, state/noise_floor.json min_claimable_effect = 0.23990756 skill.",
+    "findings": [
+      "T1-F1 (turn 1, SEAM): all six arms reproduce their part-5 nRMSE from their shipped `preds_test.npz` through eval/nrmse.py to <= 6.4e-16 relative, and the 128 test targets are BIT-IDENTICAL across all six arms. Every turn-1/2/3 number is on this validated replay.",
+      "T1-F2 (turn 1, P2): no arm is cut off mid-anneal. `_train` (smoke_eval.py:549) builds a FRESH CosineAnnealingLR with T_max = the epoch count it is handed and runs exactly that many epochs, so every arm completes one full half-cosine: lr(final epoch) = 1.062e-6 (T_max 200) / 1.166e-6 (122) / 1.023e-6 (327), all converging on eta_min 1e-6. Terminal LRs agree to 1.2e-4 of lr0. The 122-epoch schedule is the SAME cosine compressed, not a truncated one; its staircase deviates from the continuous cosine by at most 0.01285 of lr0 (vs 0.00777 at T_max 200).",
+      "T1-F3 (turn 1, P2c): the 'one LR update per 18 steps' granularity the card flagged is a property of the ROW SET, not of the anneal: steps/LR-update = ceil(rows/bs) = 11 for the 175-row arms (A0, A3, A4) and 18 for the 280-row arms (A1, A2, A5). It is CONSTANT at 18 across A1 (skill 0.9540, T_max 200) and A2/A5 (1.7290/1.6048, T_max 122), so it cannot distinguish them.",
+      "T1-F4 (turn 1, P2d): stage 2 is identical in all six arms - (stage2_epochs, stage2_total_steps) = (200, 200), 5 rows, bs 5, lr_finetune 3e-4, unweighted, eval-query form. Every scored difference is a stage-1 basin difference that 200 identical HF-finetune steps did not erase.",
+      "T1-F5 (turn 1, P1b): matched STEPS is not matched EPOCHS. Passes over each of the 175 distinct (X,Y) rows = stage-1 epochs: 200 (A0/A1/A4), 327 (A3), 122 (A2/A5). A2 and A5 buy their step match by giving up 39 % of the passes over the same distinct data.",
+      "T1-F6 (turn 1, P3): the contrast table in floor units. WEIGHTING axis, both directions and both budgets: A4-A0 = -0.0066 (-0.03 floors), A5-A2 = -0.1242 (-0.52 floors) - both sub-floor. EPOCH axis within a row set: A2-A1 = +0.7751 (+3.23 floors, RESOLVABLE), A3-A0 = -0.0592 (-0.25 floors, sub-floor). ROW-SET axis at matched epochs and matched T_max=200: A1-A0 = +0.3451 (+1.44 floors), A1-A4 = +0.3517 (+1.47 floors), both RESOLVABLE.",
+      "T1-F7 (turn 1, P3b): the 'sign-flipped step response' is NOT sign-flipped. Both row sets improve with more steps at essentially identical log displacement (1.639x vs 1.635x); only the sensitivity differs: d(skill)/d(ln steps) = -1.5680/nat (allpairs) vs -0.1204/nat (self_only), a 13.0x ratio.",
+      "T2-F1 (turn 2, tools/field_error_decomposition.py): the crater is almost entirely a PER-SAMPLE AMPLITUDE error. Share of squared error from a per-sample scalar gain: A0 0.137, A4 0.154, A3 0.118, A1 0.573, A2 0.821, A5 0.775. Raw nRMSE spans 3.15x across the six arms (0.019787-0.062246); after a per-sample oracle gain it spans only 1.44x (0.018776-0.027084). ONE global gain fixes nothing (A1/A2/A5 get slightly worse), so it is per-sample dispersion, not a constant bias.",
+      "T2-F2 (turn 2, Q2): the defect is regression toward the across-sample MEAN field. corr(log g_i, log||y_i||) / slope / R^2: A0 -0.037 / -0.0007 / 0.001; A4 -0.614 / -0.0109 / 0.377; A3 +0.384 / +0.0073 / 0.148; A1 -0.914 / -0.0728 / 0.836; A2 -0.910 / -0.1599 / 0.827; A5 -0.906 / -0.1446 / 0.821. The allpairs arms under-predict high-amplitude samples and over-predict low-amplitude ones, with 82-84 % of the log-gain variance on that single axis.",
+      "T2-F3 (turn 2, Q2b/Q4/Q5): shape is nearly untouched and the degradation is broad. Regression of the demeaned prediction on the demeaned target: A0 0.9855, A4 0.9751, A3 0.9888, A1 0.9310, A2 0.8577, A5 0.8722, with demeaned correlation >= 0.995 everywhere; per-sample shape correlation with A0's own prediction 0.9997 for every arm. Ratio of per-sample rel-L2 to A0's: A1 mean 1.534 / median 1.488; A2 2.746 / 2.812; A5 2.527 / 2.554 - median ~ mean, so every sample degrades, not a tail. Band-relative error is worst in band 0, which carries 99.78 % of the target energy (A0 0.0152, A1 0.0283, A2 0.0555, A5 0.0496).",
+      "T2-F4 (turn 2, Q3): the three allpairs arms share ONE calibration defect and it is a different axis from A0's residual noise. Cross-arm correlation of log g_i: A1-A2 0.981, A1-A5 0.978, A2-A5 0.998; A0-A1 +0.065, A0-A2 -0.104, A0-A5 -0.124. A4 sits BETWEEN (A4-A0 0.687, A4-A1 0.659).",
+      "T3-F1 (turn 3, R0 SEAM): each arm's shipped preds_test.npz is reproduced from its last.pt on CPU to max|d|/max|pred| 2.6e-4-3.6e-4 and nRMSE relative difference 9e-5-1.6e-3 (GPU-vs-CPU float non-determinism; the worst case is 4.1e-4 of the noise floor in skill). Rebuilt eval query confirmed: fids [8,16,32,64], d = 5, grid (64,64), (f_src, f_tgt) = (0.0, 1.0), scaler_hf 1.8356895307e-03 identical in all six arms.",
+      "T3-F2 (turn 3, R1): sweeping f_src in {0, 1/3, 2/3, 1} at the eval query (f_tgt = 1) - the ALLPAIRS arms are the f_src-INVARIANT ones. nRMSE max/min over the sweep: A0 4.86x, A4 5.24x, A3 5.36x vs A1 1.09x, A2 1.12x, A5 1.13x. Absolute values: A0 0.021916 -> 0.106592 across the sweep; A1 0.034334 -> 0.037578.",
+      "T3-F3 (turn 3, R2/R3b): the allpairs arms put 10x LESS output sensitivity on f_src. Normalised d(output)/d(f_src): A0 0.1460, A4 0.1443, A3 0.1529 vs A1 0.0121, A2 0.0152, A5 0.0191 (share of total column sensitivity 5.2-5.5 % vs 0.50-0.78 %). Inside the FiLM MLP the same split: f_src column sensitivity 0.649/0.668/0.752 (self_only) vs 0.259/0.244/0.268 (allpairs), share 12.3-13.0 % vs 4.4-4.5 %; the allpairs arms instead carry ~1.7x more f_tgt sensitivity. The X-column sensitivities are nearly identical in all six arms (X5 dominant, 1.12-1.30). NOTE: backbone.py zero-initialises the FiLM output projection, so every column's sensitivity starts at exactly 0 and is GROWN - the allpairs arms never grew an f_src response rather than unlearning one.",
+      "T3-F4 (turn 3, R3): the shrinkage is not a loss of modulation magnitude. Across-condition std of FiLM gamma (mean over 4 blocks, ratio to A0): A0 0.03679 (1.000), A4 0.03764 (1.023), A3 0.03950 (1.074), A1 0.04050 (1.101), A2 0.03811 (1.036), A5 0.04151 (1.128). The cratered arms modulate as much or more.",
+      "T3-F5 (turn 3, R4): the amplitude response measured on the network. d log||pred|| / d log||target|| across the 128 test conditions: A0 0.9985, A4 0.9880, A3 1.0063, A1 0.9257, A2 0.8370, A5 0.8527 (corr >= 0.996 throughout). The FiLM modulation magnitude's own response to sample amplitude (slope of log||gamma-1|| on log||y||): 0.3190 / 0.2842 / 0.3130 (self_only) vs 0.2406 / 0.2566 / 0.2231 (allpairs) - a 20-30 % attenuation, in the conditioner."
+    ],
+    "interpretation": [
+      "M1 (HIGH confidence; T1-F2/F3/F6 are arithmetic and code-structural): the ANNEAL CONFOUND does not need to be broken, because the decisive attribution lives entirely in the three arms that share T_max = 200. An 'undertrained-at-cutoff' anneal artifact is structurally impossible here (every arm finishes its own full cosine at eta_min, T1-F2), and the granularity sub-factor the card flagged is a row-set property shared with the arm that did NOT crater (T1-F3). What the 122-epoch arms actually lose is data passes (T1-F5) - the very step axis the card meant to manipulate. Batch 5 does not owe the round an anneal-controlled re-run of A2/A5; the question it owes is different (see part 7).",
+      "M2 (HIGH confidence; T1-F6): A4 is the pivot the card bought and the initial read under-used. A4 carries allpairs' EXACT effective level shares (0.3571/0.3571/0.2143/0.0714) on self_only's rows at the identical 200-epoch T_max=200 schedule and lands 0.03 floors from A0; A1 carries those same shares on 280 rows and 64 % MORE gradient steps and is 1.47 floors WORSE. Since more steps is monotonically better in both row sets (T1-F7), A1's step advantage makes the A1-A4 contrast CONSERVATIVE. Therefore the whole +0.35-skill allpairs penalty is attributable to the 105 duplicate cross rows themselves, at matched weights, matched epochs and matched schedule - with no anneal involvement.",
+      "M3 (HIGH confidence; T2-F1/F2/F3): the allpairs row set does not teach a different or worse FIELD - it leaves the model mis-calibrated in per-sample AMPLITUDE, specifically as regression toward the mean. All six arms learned essentially the same operator shape (structure-only nRMSE spread 1.44x vs 3.15x scored; per-sample shape correlation >= 0.9966).",
+      "M4 (HIGH confidence; T2-F2 + T1-F7 + T3-F5): the shrinkage decreases monotonically with training budget INSIDE the allpairs row set (amplitude-response slope 0.837 at 122 ep -> 0.926 at 200 ep, against A0's 0.999 at 200 ep on 175 rows), and it is localised in the conditioner's amplitude direction while total FiLM dispersion is unchanged or higher (T3-F4). The mechanism is UNDER-CONVERGENCE of one direction in the conditioner under a row set in which 37.5 % (105/280) of every epoch's gradient work is redundant - an optimisation-rate defect, not a representational one. This is the same fact seen three ways: as the 13x step sensitivity (T1-F7), as an amplitude-only error decomposition (T2-F1), and as an attenuated FiLM amplitude response (T3-F5).",
+      "M5 (HIGH confidence; T3-F2/F3): the O4 branch's `f_src`-EXPOSURE reading is REFUTED IN THE FORM IT WAS WRITTEN. `f_src` does not perturb the damaged arms' conditioning pathway - those arms are the ones that correctly learned it is uninformative (B3-T1-F1: the cross rows are exact duplicates up to the f_src tag, making f_src a pure nuisance column under allpairs). Their f_src output sensitivity is 10x LOWER and their score varies 1.09-1.13x over the whole f_src range against 4.9-5.4x for self_only. Whatever the 105 rows cost, it is not paid through an active f_src pathway. What survives of the branch is the weaker, correct statement: the cause is the DUPLICATE ROWS, and 'f_src tag' is only the label that distinguishes them.",
+      "M6 (MEDIUM confidence, UNCONFIRMED - needs training to test; T3-F3 + T2-F4 + T1-F6): why is the weighting lever dead while the replication lever is not, when the two produce identical effective level shares? Candidate mechanism: stage 1 uses AdamW, whose per-parameter update is approximately invariant to a rescale of the loss. Re-weighting rows (A4) mostly rescales gradients, which Adam's normaliser largely absorbs; REPLICATING rows (A1) changes the number and composition of minibatches, which Adam cannot absorb. Consistent with A4 sitting on the same defect AXIS as A1 (log-g correlation 0.659, shrinkage correlation -0.614) at ~1/7 the slope (T2-F2/T2-F4): the weighting does push the model the right way, 0.03 floors' worth. Testing this needs an optimiser-swap or gradient-trajectory arm.",
+      "M7 (HIGH confidence; T3-F2 - a fragility of the WINNING arm, not of the losers): the self_only arms' score depends on an untested degree of freedom. In self_only stage-1 rows f_src == f_tgt, so the two condition columns are perfectly collinear and the network reads a fidelity signal off both; stage 2 then pins it at the eval query (0, 1). Queried at f_src = 1 the same checkpoint scores 0.1066 instead of 0.0219 (4.86x). The scored number is legitimate (the contract's eval query is fixed at f_src = fnorm(lf), and MFFP_GAIN_FSRC=eval keeps it there), but any reuse of a self_only base at a different source tag - a gain head fitted at another f_src, a multi-query ensemble, a loader change in an ADR-0005 recert - would collapse. This should be stated wherever self_only__none is carried forward."
+    ],
+    "falsification_postmortem": "The card's falsification clause targeted O1 (the step story) and never fired; what fired was O4, from the ~20 % residual bucket, against a 60 % modal prior on O2 (the weighting story). The postmortem is mechanism-level and two-sided. (1) WHY THE WEIGHTING PRIOR MISSED: B3's effective-N story was built on an exact structural fact (T1-F1/F2 of B3: allpairs is a per-level replication schedule x1/x2/x3/x4 that moves effective loss weight away from the 100-condition level toward the 5-condition HF level) plus a plausible but untested inference - that the WEIGHT is what does the damage. B4 tested that inference in both directions and it is disconfirmed in its weighting form: A4 (self_only rows, allpairs weights) is 0.03 floors from A0, and A5 (allpairs rows, self_only weights) is only 0.52 floors from A2. B3's causal story is therefore DISCONFIRMED as stated, while B3's structural finding and self_only's superiority are CONFIRMED and robust (A0 reproduces B3 to 0.026 %, A1 to 0.233 %; A1 - A0 = 1.44 floors). The refinement, not a reversal, is that the same 105 rows do the damage through their EXISTENCE AS SEPARATE MINIBATCH ENTRIES rather than through the loss weight they imply - a distinction B3 had no arm to see, and which M6 offers an untested optimiser-level reason for. (2) WHY THE STEP STORY ALSO MISSED: the design read the step axis as a single shared monotone lever, which it is not. Both row sets improve with more steps (T1-F7 corrects part 5's 'sign-flipped' framing - the signs agree), but allpairs is 13x more step-sensitive, so no single matched-step arm could ever have made A2 recover to A0: at 2196 steps the allpairs row set is simply far from converged (T3-F5: amplitude response 0.837). O1 was unfalsifiable in the direction it was written. (3) WHY O4's OWN ADJUDICATION IS ALSO WRONG AS WRITTEN: A5 >= T_no_recover was pre-registered to mean 'f_src exposure is a new mechanism'. Turn 3 measured the f_src pathway directly and found it near-dead in exactly the arms that cratered (10x lower sensitivity, 1.09-1.13x score variation over the full f_src range) and large in the arms that won. The A5 read was correct about WHICH ROWS, wrong about WHICH CHANNEL. (4) WHAT THE CARD DID BUY: A4 is a clean, anneal-free, weight-matched, step-conservative attribution of the entire gap to the duplicated rows (M2) - a stronger result than any of the six pre-registered outcomes anticipated, and it is available without touching the confounded 122-epoch arms at all.",
+    "surprises": [
+      "S1 - the biggest one: the arms that CRATERED are the f_src-INVARIANT ones. The pre-registered O4 branch, the initial-analyzer handoff and the mechanism brief all read 'f_src exposure' as the damaged arms having their conditioning perturbed by a source-identity column. Measured (T3-F2/F3), it is the opposite: allpairs arms vary 1.09-1.13x over the whole f_src range and put 0.50-0.78 % of their conditioning sensitivity there; self_only arms vary 4.9-5.4x and put 5.2-5.5 %.",
+      "S2 - the winning arm is the fragile one. A self_only checkpoint queried at f_src = 1 instead of the eval query's f_src = 0 scores 0.1066 vs 0.0219 (4.86x worse). The stream's best ifc_poisson number sits on a collinearity artifact of its own row set that nothing in the round had tested.",
+      "S3 - a 3.15x spread in scored nRMSE is a 1.44x spread in learned structure. After a per-sample oracle gain the six arms collapse to 0.0188-0.0271; per-sample shape correlation between the best and worst arm's predictions is 0.9997. The whole factorial moved calibration, not representation.",
+      "S4 - the 'sign-flipped step response' (part 5 / initial-analyzer anomaly 1) is not sign-flipped at all: both row sets improve with more steps at 1.64x the budget; they differ 13x in sensitivity. The apparent flip was an artifact of reading two deltas that point in opposite directions along the step axis.",
+      "S5 - A4 is NOT a null. It sits on the allpairs defect axis (log-gain correlation 0.659 with A1, shrinkage correlation -0.614 vs A0's -0.037) with the right sign and ~1/7 the slope. 'Weights do nothing' is wrong; 'weights buy 0.03 floors where the rows buy 1.47' is right.",
+      "S6 - the anneal confound the card and the initial analysis flagged as batch-5's blocking question dissolves on inspection: every arm completes a full cosine at eta_min (so no truncation), and the flagged 18-steps-per-LR-update figure is shared by A1, which did not crater."
+    ]
+  },
+  "7_gap_and_future": {
+    "open_question": "Two halves of one question, both now sharp and both cheap to settle. (a) IS THE ALLPAIRS PENALTY PURE UNDER-CONVERGENCE? Every B4 probe says the allpairs row set damages only the conditioner's amplitude direction and that the damage relaxes monotonically with budget (amplitude response 0.837 at 2196 steps -> 0.926 at 3600 -> A0's 0.999 at 2200 on 175 rows; d(skill)/d(ln steps) = -1.568/nat). That fits a quantitative prediction: allpairs should reach A0's 0.6089 at exp(0.3451/1.568) = 1.246x A1's budget, i.e. ~4485 stage-1 steps ~ 250 stage-1 epochs, and should NOT overshoot much below it. If an `allpairs @ 250 ep` arm lands near 0.61, `self_only` is a pure compute-efficiency win on a redundant row set and the round should say so; if allpairs asymptotes above 0.61 (say a 400-epoch arm is still ~0.8), something about the duplicated rows is genuinely representational and B4's optimisation-rate reading is wrong. (b) WHY IS THE WEIGHT-MATCHED ARM INERT WHILE THE ROW-REPLICATED ARM IS NOT, at identical effective level shares? Part-6 M6's candidate is AdamW's approximate invariance to loss rescaling: re-weighting rows mostly rescales gradients (absorbed), replicating rows changes the number and composition of minibatches (not absorbed). Untested. Both halves are decided by ONE small factorial and neither needs the confounded 122-epoch arms.",
+    "next_direction": "Batch 5 of s1_poisson (parked for the next round; round 1 is at its end-of-round pass). The right card is NOT the 'anneal-controlled f_src A/B' the O4 branch text projected - part 6 M1 shows the anneal confound dissolves (every arm completes a full cosine at eta_min; the flagged 18-steps-per-LR-update figure is a row-set property shared by the arm that did not crater) and part 6 M5 shows the f_src pathway is near-dead in exactly the arms that cratered. The card that is owed instead, all arms at T_max = stage1_epochs so the schedule stays a deterministic function of the budget: (1) `allpairs` at 250 and 400 stage-1 epochs - the falsifiable convergence prediction in the open question, 2 arms, ~2 min each; (2) THE arm that finally separates duplication from tagging at matched epochs: `self_only` rows physically REPLICATED x1/x2/x3/x4 but tagged f_src == f_tgt on every copy (so the row multiset is allpairs' and the tag column is self_only's) against `allpairs` at the same 200 epochs - if the tagged and untagged replications score the same, tagging is irrelevant and duplication is the whole story, closing B3/B4's line; (3) an optimiser-swap arm (SGD+momentum, same budget) for M6. Do NOT re-run A2/A5 in any form: at 2196 steps the allpairs row set is simply not converged, and that is now measured, not inferred. Also do not spend a card on chasing A3: 63.5 % more steps buys 0.25 floors on `self_only`, which is not claimable.",
+    "cross_stream_notes": "(1) B3's cross-stream note (3) - `tools/ladder_pair_row_audit.py` shows the `allpairs` construction is REPLICATION_ONLY on `heat_local` (5 levels x 1024: 15360 rows, 5120 distinct) as well as on `ifc_poisson`, so any family advertising pair-set augmentation on a NESTED ladder is describing a reweighting knob - STANDS UNAFFECTED, and B4 sharpens it: the knob is not the weights, it is the REPLICATION. B4 measured both directions (weights alone move the score 0.03 floors; the replicated rows move it 1.47 floors at identical weights and with 64 % more gradient steps). A stream that finds an all-pairs / all2all arm losing should suspect its optimisation budget, not its loss weighting. (2) NEW, for every FiLM-conditioned family in the round (all of them share `backbone.FiLMNorm`): a model's score can sit on ONE untested value of a condition column. `s1_poisson`'s best ifc_poisson checkpoint scores 0.0219 at the contract's eval query f_src = 0 and 0.1066 at f_src = 1 - a 4.86x fragility that no scored number would ever reveal. Before reusing ANY checkpoint at a query it was not scored at (a gain head fitted at a different source tag, a multi-query ensemble, a loader change in an ADR-0005 recert, an OOD split), run `tools/cond_column_sensitivity_audit.py`; it takes two minutes on 32 samples. (3) NEW, a cheap triage every stream can apply to its own collapses: run `tools/amplitude_shrinkage_audit.py` on the arms' `preds_test.npz`. A large SCORED spread with a small STRUCTURE-ONLY spread and corr(log g_i, log||y_i||) near -0.9 means the arms learned the same operator and differ in convergence of their amplitude calibration - a budget question, not an architecture question. On B4 that turned a 3.15x scored spread into a 1.44x structural spread and reframed the whole card. (4) B3's confirmation obligations on the s1 slate are unchanged by B4: run BOTH `gain__ladder_level_intercept` and `self_only__none`, and B2's guard debt (scored-tier guard-set run) is still owed with whichever arm is promoted.",
+    "promoted_tools": [
+      "amplitude_shrinkage_audit.py",
+      "cond_column_sensitivity_audit.py"
+    ]
+  },
+  "reanalysis_progress": "registered"
 }

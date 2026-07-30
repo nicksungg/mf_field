@@ -3233,3 +3233,262 @@ analyzer: the screen's GPU resume drill shows finished-ckpt reload, NOT
 mid-stage resume — the genuine mid-stage evidence for immutable #8 is
 the login-node drill (scratchpad/smoke_D.out). Main run 66076686 queued
 with A1 promoted; nothing further owed on this slot until results.
+
+## s3_warp-B2 landed; analyzer dispatched — 2026-07-30T20:20Z
+
+66075079 COMPLETED 0:0 (24:41; --time was adequate despite the
+reviewer's thin-walltime worry). Stage claimed [inst:6f03a0f7] per
+protocol (no competing claim present). → initial-analyzer dispatched
+(validity-first read: seams_all_pass + non_reportable; Leg B carries
+the science at ~0.20-0.24 needed; B' evaluated as the pre-registered
+unattainability exhibit; Leg C phi-magnitude read with the 4.46x
+regime-shift caveat; head-capacity caveat carried). Stage →
+initial_analyzer_running.
+
+## Initial-analyzer return — s3_warp-B2 — 2026-07-30T20:45Z
+
+SUCCESS (6/6; validity-first read clean — seams_all_pass in both step
+JSONs; the missing [S1]..[S5] log prints are a cosmetic gap, gate proven
+from JSONs). **FALSIFIED, resolvable**: scored warp 0.48314 = WORST
+promotable arm (+0.006 vs no-correction; captured share −4.15%; Leg B
+shortfall 1.31x floor). Leg A fired (threshold event, 0.22x floor).
+Leg B' fired AS PRE-REGISTERED — arithmetic exhibit banked for the
+mentor: a PERFECT copy-LF-referenced arm maxes at 0.4317 vs the 0.5533
+bar; all four sharp floors >1.0 are unclearable by construction under
+copy-LF reference (metric-convention finding #4). Leg C not triggered;
+phi median 0.5036 cells (not intensity-in-disguise) but only 5.2% better
+than zero-phi on gradient-weighted EPE. Leg D fired but not
+warp-specific. KEY TENSION for mechanism: diag says test interface
+displacement median AND p90 = 0.0 cells (~90% nothing to warp) vs
+s6-B2's rigid-shift oracle 0.4276 — hypothesis-wrong vs
+measurement-wrong to be decided. Oracle ceiling ALSO missed high (0.326
+vs 0.06-0.09). C1 head-capacity confound (591,722 params, 15.8x
+train/test) carried. → mechanism-analyzer dispatched (paradox lead;
+band-2 11x regression; capacity/regime split; topology tail; stream
+disposition). Stage → mechanism_analyzer_running [inst:6f03a0f7].
+
+## Post-restart pulse: s2-B3 screen read + s1-B4 landed — 2026-07-31T00:25Z
+
+Process restart #3 stopped the s3_warp mechanism analyzer (resumed from
+transcript). Post-restart survey: 66076490 (s1-B4 main) COMPLETED 0:0 in
+6:01 (est. 6.7 — excellent); 66076828 (s2-B3 screen) COMPLETED 13:03;
+66076686 (s5-B3 main) still running. s2-B3 SCREEN READ (orchestrator
+duty): no broken arms; A5 no-floor audit 0.9891 → s7-M6 floor rule holds
+at contract tier; sod_1d 2.433x identical across all arms incl. control
+= arm-independent tier artifact, no flag; helmholtz 46.58→0.93 at 2ep
+(the lever fires where predicted). Promoted persample_pred per pinned
+rank, recorded BEFORE submit; claim-checked queue; main **66081956**
+submitted. s1-B4 → initial-analyzer dispatched (O6 validity gate first;
+outcome table verbatim; dead-band honesty). Stages claimed
+[inst:6f03a0f7]. cb2f4ac5's liveness post-restart unknown — its claims
+on s4 (ROUTER starter) stand until contradicted; will survey the s4
+card on next pulse if no movement.
+
+## Initial-analyzer return — s1_poisson-B4 — 2026-07-31T00:50Z
+
+SUCCESS (6/6). Validity gate PASS (A0 +0.026%, A1 +0.233% vs B3 —
+excellent reproduction). **OUTCOME O4 (NEITHER) FIRED** — modal prior
+(O2 weighting 60%) MISSED: A2 does not recover (1.729, 3.23x floor
+WORSE than A1), A4 does not degrade (0.602, wrong sign), A5 adjudicates
+the f_src-exposure branch (1.605 >= T_no_recover). Slate effect
+verbatim: unchanged; new s1 open question. Falsification clause
+(conjunction) did NOT fire; the motivating weighting hypothesis is
+disconfirmed via the outcome table (recorded adjacently so nobody
+misquotes). Anomalies: sign-flipped step response by row set (allpairs
+worsens with fewer steps; self_only IMPROVES at 3597 steps → A3 0.5496,
+non-claimable but slate-relevant: self_only may not be saturated at
+200ep); A2/A5 anneal confound NOT separated by design (limitation #2
+live). Instrumentation all-pass (steps exact, env-guards, distinct
+keys). → focused mechanism pass dispatched (anneal-vs-f_src separation
+from loss trajectories; saturation read; f_src hypothesis articulation;
+batch-5 direction parked for round-end). Stage →
+mechanism_analyzer_running [inst:6f03a0f7].
+
+## ROUTER card adjudication — pre-condition SATISFIED — 2026-07-31T01:05Z
+
+s4-B3 card inspected (drafted 12:32 + operator amendment 23:10Z signed
+[inst:cb2f4ac5] — that instance IS alive post-restart and owns the
+slot). Verdict: consistent SINGLE-variant transcription of the cb2f4ac5
+design (6-arm sweep, corr_cleaned rank 2, S6-namespace knobs, promotion
+rank present; none of the 6f03a0f7-variant arm names present) — NO
+franken-card; the md5 snapshot pinning worked. The rule's honesty label
+was resolved by amendment with brainstormer verbatim text. The
+evidence-fixed fisher_kpp rule-violation finding survives durably
+(s6-B2 part 6: −38.95% surplus where the rho rule says LSI; the
+6f03a0f7 report variant on disk; flow log 19:50Z). Worktree contents
+are normal (substrate is monorepo-rooted; earlier alarm unfounded —
+noted for honesty). s4-B3 builder dispatch belongs to cb2f4ac5; this
+instance stands down on s4. My active slots: s1-B4 mechanism, s3_warp-B2
+mechanism, s2-B3 main (66081956 queued), s5-B3 main (running).
+
+## s3_warp STREAM CLOSED — B2 register complete — 2026-07-30T21:30Z
+
+Register 12/12; tools promoted: warp_premise_audit.py,
+band_weight_counterfactual.py. Verdicts: (1) PARADOX RESOLVED — both
+horns partly right: the 0.0-cell diag was a pixel-lattice floor (reads
+0.0 for a true 0.354-cell shift), BUT the hypothesis was wrong by 100x:
+calibrated sub-pixel estimator puts corrected-path residual displacement
+at 0.00695 cells median (misregistered path reads 0.6959 = the (r−1)/2
+constant, flat). s6-B2's rigid-shift oracle RE-DERIVED that constant
+(reproduced 0.4276→0.4193 at median shift 0.7077; corrected path 0.3989
+at 0.0447 cells, global shift HURTS) — last counter-evidence retired.
+(2) Band-32-64 closed, metrically irrelevant (0.45% of the gap; midband
+excess is the ConvNeXt corrector, not the JUBW resample). (3) Real
+cause: supervision target 99.0% aperture-problem gauge (normal 0.0094 /
+tangential 0.7183) with the loss |∇LF|-weighted exactly where the
+target is unidentifiable; capacity = amplifier not cause (148-feature
+ridge fails identically); regime shift 59.7% stratum imbalance. (4)
+Tail = 2 unmerged-topology samples (LF n_comp 9 vs HF 5), not the
+low-norm set. STREAM CLOSED (quantity absent, not unlearned). Owed:
+one warp_premise_audit.py pass vs the FIXED reference between rounds
+(predicted: will not reopen; corrected cahn_hilliard already 0.0070).
+Contributions to round report: B1 closed-form defect, B2 Leg-B'
+convention exhibit, this seam-verified negative with measured cause.
+FIFTH duplicate-instance sighting (mechanism turns) — handled by
+addendum-not-clobber; single-flighting note recorded. Streams: s3_warp
++ s7_loss CLOSED; 5 active.
+
+## s3_warp-B2 duplicate register verified — one refinement — 2026-07-30T21:50Z
+
+Second mechanism instance verified all part-6 numbers against the probe
+JSONs (one divergence resolved in the card's favour: band share 0.0064%).
+REFINEMENT to the 21:30Z entry: the oracle-ceiling miss is RETRACTED —
+matched-98 ref_oracle_phi = 0.0927, INSIDE the locked 0.06-0.09 band
+(the apparent 0.326 was the 2-sample topology stratum); falsification
+robust to removing those samples (0.2699 vs 0.1964 matched). Closure
+verdict unchanged. Single-flighting/scratchpad-lock note seconded by
+this instance too.
+
+## s1-B4 register complete + s2-B3 main landed — 2026-07-30T22:15Z
+
+s1-B4 mechanism register SUCCESS (8/8; tools amplitude_shrinkage_audit,
+cond_column_sensitivity_audit promoted). VERDICTS: anneal confound
+DISSOLVES (every arm completes a full half-cosine; structurally
+impossible to truncate); A4 is the pivot — allpairs' +0.35-skill penalty
+attributes to the 105 duplicate rows, anneal-free, conservative; f_src
+channel REFUTED with opposite sign (self_only is 10x MORE f_src-
+sensitive); actual damage = per-sample amplitude under-convergence
+(corr(log g, log||y||) −0.91, relaxes monotonically with budget);
+self_only saturated within round resolution (A3−A0 = 0.25 floors,
+sub-floor). SLATE UNCHANGED: self_only__none stays the confirmation arm
++ A3 budget note + NEW FRAGILITY WARNING (f_src=1 scores 0.1066 vs
+0.0219 — fatal for reuse at another source tag; carry to confirmation
+protocol). Nested-ladder degeneracy remark SHARPENED (knob is
+replication, not weights). s1 → B4_complete, NO batch 5 (part-7 items
+are between-rounds follow-ups). Stream count: 2 closed, s1+s6 holding,
+s2/s4/s5 in flight.
+
+s2-B3 main 66081956 COMPLETED 0:0 (36:59 vs 35:08 estimate). →
+initial-analyzer dispatch (claimed [inst:6f03a0f7]).
+
+## Initial-analyzer return — s2_beyond_copy-B3 — 2026-07-30T22:45Z
+
+SUCCESS (6/6). **FALSIFIED — the pre-registered well-founded negative
+branch obtained** (leg (a) fired 6.54x threshold, reference-robust: A1
+pfc 0.146 is 8x worse than even B2's A0; legs (b)+(c) intact; leg (d)
+damage-half satisfied maximally, neutral-pct half fired 2/3 with absent
+antecedent — both readings in card). THE TWIST: helmholtz (report-only)
+improved −88.25% (5.17→0.607; effective-N 1.25→17.25 right direction) —
+the lever WORKS on the non-degenerate decade-spanning dataset; pfc's
+failure mode = the predicted one (q25 floor beaten by float-epsilon
+scales; 93/400 floored; effective-N moved WRONG direction 140→349).
+VALIDITY FLAG: in-job A0 continuity gate MISSED on exactly pfc (+52.2%,
+CIs disjoint) + helmholtz (+24.9%); three sharp controls reproduce to
+5e-07. Candidate cause: builder's float64 s*Delta composition vs pfc
+s_raw_train_min 2.98e-08. (a)-verdict survives either reference.
+Discriminator: BRANCH 1 — lever genuinely per-sample (claim about
+REACH, not value). Oracle: predictor not the limiter (perfect scale
+still 5x worse). A4 gate worth zero on A1; oracle gate says the lever
+fixed the damage. → mechanism-analyzer dispatched (continuity-miss
+diagnosis = round-report-critical: can paired in-job controls silently
+drift 52%?; pfc-vs-helmholtz decomposition; UNIFIED normalization
+eligibility rule across s7/s5/s2 for the report). Stage →
+mechanism_analyzer_running.
+
+## s5-B3 main landed; analyzer dispatched — 2026-07-30T23:00Z
+
+66076686 COMPLETED 0:0 (1:10:18, within the 03:00 request). Queue now
+EMPTY — the round's last main run is in. → initial-analyzer dispatched
+(claimed [inst:6f03a0f7]; legs (a)-(g) verbatim; fallback verification;
+H3 sign; n_eff branch; attribution table; s2-B3 helmholtz convergence
+note). Remaining pipeline: s2-B3 + s5-B3 mechanism closures, the ROUTER
+card (starter still under cb2f4ac5's claim → build → review → screen →
+run), then the round report + confirmation slate.
+
+## Initial-analyzer return — s5_tuning-B3 — 2026-07-30T23:25Z
+
+SUCCESS (8/8). **FALSIFIED**: primary oracle REGRESSED on ifc_poisson
+(2.1799 vs bar 0.945; 0.99 skill units worse than A0; not the predicted
+NULL) → per-sample target-scaler branch retired on ifc_poisson for this
+substrate. Asymmetry held (17x/5x under floor). Mechanism leg (c)
+falsified INFORMATIVELY: helmholtz −76.75% (biggest single-dataset move
+of the round: 4.80→1.12 skill, still 0.38x floor = unclaimable,
+report-only honoured) WITH HF n_eff flat at 1.03 — "de-concentrate the
+MSE" is NOT the mechanism here; decisive-negative branch NOT triggered.
+H3: TRUE decisively rejected; FALSE-leaning indeterminate; SIGN FLIP
+(clip helps per-sample arm −43.5%, hurts global +13.9%). AN4 = the gem:
+LF_pretrain n_eff 3.19→209.84 while HF flat — stage-dissociation
+hypothesis (help delivered through pretrain initialization). Fallback
+CONFIRMED on ifc_poisson. Attribution table missing for ifc_poisson
+(tool flag issue; moot — A1 inert there −0.111%). AN3: A0-vs-B2
+helmholtz continuity −16.7% = SECOND paired-control drift sighting.
+→ mechanism-analyzer dispatched (stage dissociation; oracle-regression
+diagnosis at N_hf=5; H3 tie-in; drift-class statement; UNIFIED
+normalization eligibility rule = register deliverable, coordinating with
+s2-B3's concurrent draft). Stage → mechanism_analyzer_running.
+
+## s2_beyond_copy STREAM CLOSED — B3 register complete — 2026-07-30T23:50Z
+
+Register 5/5; tools promoted: persample_norm_eligibility.py,
+checkpoint_divergence_audit.py. Verdicts: (1) CONTINUITY MISS DIAGNOSED
+— float64 hypothesis dead (2.7e-08); B2-vs-B3 ckpts BIT-IDENTICAL 39/39
+on all three 256^2 datasets after independent 200-ep runs on different
+nodes (!) but diverged on pfc 128^2 / helmholtz 96^2: a GRID-SHAPED
+seed (~1e-4 at 2ep on small grids, <=3.2e-10 at 256^2) amplified 9.19x/
+4.40x by the ill-conditioned objectives. Rebuild faithful; drift is a
+symptom of the card's own defect; (a)-verdict STRENGTHENS (9.95x vs
+B2's own number). Answers the round-report paired-control question:
+drift is grid+conditioning-dependent, not a control-methodology flaw.
+(2) pfc-vs-helmholtz: per-sample norm = 1/s_i^2 reweighting — repairs a
+COLLAPSED effN promoting in-band physics (helmholtz 87-99%); poisons a
+HEALTHY effN by promoting roundoff (pfc effN 140 was fine; floor sat
+inside the noise; 44.8% of training signal became noise; junk-free A0
+would score 0.000993 vs A1 0.006545). (3) UNIFIED RULE SHIPPED: NEED
+(eff fraction < ~0.05 under current denominator) + SIGNAL (promoted
+samples above numerical noise floor) + METRIC ALIGNMENT (denominator
+tracks ||y_i||); SPREAD IS NOT THE DECIDER (pfc: largest spread,
+healthiest effN). Tool reproduces 5/5 outcomes model-free. (4) STREAM
+CLOSED (recommendation accepted): both non-architectural levers spent;
+one positive survives — helmholtz A1 beats the node-aligned FREE FIX
+0.669x on 95/100 samples, the first s2 arm ever to. Streams: s2,
+s3_warp, s7 CLOSED; s1, s6 holding complete; s4 ROUTER + s5 register
+remain.
+
+## s5_tuning STREAM CLOSED — B3 register complete — 2026-07-31T00:15Z
+
+Register 5/5; tool promoted: stage_scaler_placement_forecast.py.
+Verdicts: (1) STAGE DISSOCIATION CONFIRMED + deepened — realized n_eff
+is not a health statistic (A0 and A1 end at the same n_eff for OPPOSITE
+reasons: A0 never fits anything; A1 fits the bulk 110.7x and leaves one
+hard sample); LF-stage Δn_eff vs Δscore Pearson −0.970; at the pretrain
+the statistic is EXACT (own maxabs, 12 s.f. = oracle) vs 3.1% proxy
+fidelity at HF — revin_lf is TWO scalers, one per stage; s7's warning
+becomes conditional, not inverted. (2) Oracle regression on ifc_poisson
+= CENTERING + placement loss on the 69% DC dataset (level rel-err 5.96x;
+normalization actually makes 1-NN interpolation EASIER there — 0.502x),
+plus the separate N_hf coverage clause (35.9% of test scales outside
+the 5 train scales). (3) H3-FALSE on attribution WITH the rider the
+clip is not null (9.8x typical grad norm vs fixed threshold; sign
+follows who owns the large gradients; scaler effect survives clip-off
+at −61.25%). (4) DRIFT-CLASS RULE for the report: n_eff/N < 1% ⇒ only
+in-job paired controls are controls; cross-card gates advisory (5-row
+table; no card conclusion affected). (5) UNIFIED RULE final: s2-B3's
+checks 1-3 + STAGE (0), PLACEMENT/CENTERING F=median(sd_i/s_i) (4,
+subsumes G-rule + effN; Pearson −0.950), LEGALITY/FIDELITY (5), N_hf
+(6). Static-vs-realized instrument correction reconciles s2/s5 — the
+streams AGREE compared like-with-like. (6) STREAM CLOSED: scaler is a
+lever on exactly two datasets, both unavailable as claim sites; a B4 on
+this axis cannot produce a claimable number. Streams: s2, s3_warp, s5,
+s7 CLOSED; s1, s6 holding complete; s4 ROUTER = the last active
+pipeline. Round remaining: ROUTER (cb2f4ac5's claim) → round report +
+confirmation slate.

@@ -36,7 +36,14 @@ tool: name, what it measures, invocation, provenance card.
 | `norm_tail_hedge_audit.py` | is an arm's score bought by ABSTAINING on the samples it cannot fit, and would a per-sample-normalized objective take that hedge away? the `rel < 1 iff g < 2cos` admission rule, the oracle-rescale `hedge_share_of_score`, the low-norm-tail gate (concentration x tail-hardness x amplitude shrink) and the denominator-floor counterfactual | s7_loss-B2 turns 2-3 |
 | `boundary_interior_split.py` | is a predictor's error - or a CONTRAST between two predictors - BOUNDARY-BORNE? squared-error share by distance-to-domain-edge against the pixel share, the round's nRMSE recomputed on interior crops, and a `crop_sign_flip` flag that fires when a comparison's VERDICT is decided by the edge strip | s6_local-B2 turns 1-2 |
 | `persample_gate_audit.py` | audits a SHIPPED per-sample gate / blend / router weight from predictions alone: the alpha it actually realised vs the per-sample optimum, what it captured of the oracle gain, the metric-sensitivity `w = \|\|C\|\|/\|\|Y\|\|` that explains the shortfall, and the per-sample no-harm violation rate | s6_local-B2 turn 3 |
+| `warp_premise_audit.py` | pre-flight for any displacement/warp/registration card: is there any interface displacement to warp (sub-pixel level-set estimator, CALIBRATED on synthetic known shifts so a pixel-lattice "0.0 cells" cannot be misread), what a test-fitted per-sample rigid-shift ORACLE buys on the frozen vs the node-aligned path, and (`--gauge`) whether a fitted `phi` is identifiable or aperture-problem gauge (interface normal vs tangential) | s3_warp-B2 turns 1+3 |
+| `band_weight_counterfactual.py` | is that spectacular per-band error RATIO worth anything? the band's share of the reference's error (pooled energy + the round metric's own weighting) next to the ratio, plus the decisive band-swap counterfactual (replace arm A's error in one band by arm B's and re-score) and an optional sample stratum | s3_warp-B2 turn 2 |
 | `render_readme.py` | regenerates `round1/README.md` from the experiment cards (housekeeping, not a probe) | round infrastructure |
+| `amplitude_shrinkage_audit.py` | whether a predictor's excess error is UNDER-CONVERGED AMPLITUDE (regression toward the mean field) or structural damage; cross-arm defect-axis correlation | s1_poisson-B4 turn 2 |
+| `cond_column_sensitivity_audit.py` | which columns of the condition vector a trained FiLM-conditioned model actually uses, and whether its score sits on one untested value of a tag column | s1_poisson-B4 turn 3 |
+| `persample_norm_eligibility.py` | pre-flight, model-free GO/NO-GO for PER-SAMPLE target/loss normalisation: effective-N NEED test, a promoted-samples-are-noise SAFETY test, and metric-alignment; supersedes residual SPREAD as the decider | s2_beyond_copy-B3 turns 2-3 |
+| `checkpoint_divergence_audit.py` | is a rebuilt/paired CONTROL the same run? weight-space distance + bit-identical tensor count between two checkpoints, next to the scores they produced; flags dataset-dependent training nondeterminism | s2_beyond_copy-B3 turn 1 |
+| `stage_scaler_placement_forecast.py` | pre-flight, model-free, PER STAGE: which output-target scaler this dataset should be trained under — the typical-sample placement `F = median_i(sd_i/s_i)`, the target-energy effective N, the equalisation a FOREIGN-FIDELITY per-sample statistic actually delivers, and a centering-risk flag on DC-dominated targets | s5_tuning-B3 turns 2-3 |
 
 ---
 
@@ -1424,3 +1431,330 @@ scalar), worst ratio 1.656 -> verdict **GATE_HELPS**.
 **Provenance.** `worktrees/s6_local/B2/scratchpad/reanalysis_turn_3.py` +
 `scratchpad/turn3_sensitivity_check.json`; card
 `experiment_cards/s6_local/batch_2/B2.json` part 6, findings F10-F13.
+
+---
+
+## `warp_premise_audit.py`
+
+**Measures.** Before a displacement / warp / registration card is built (or, as here,
+after one is falsified), the two questions that decide it:
+
+* **(A) premise** — interface displacement between a moving image and the HF target,
+  measured with a **sub-pixel** level-set normal estimator `d = (u_mov − u_tgt)/|∇u_tgt|`,
+  *and* with the pixel-lattice EDT estimator the round's diagnostics use, *and* an
+  `edt_calibration` table built by Fourier-shifting the HF field by known amounts on this
+  very data. Plus a test-fitted **per-sample rigid-shift oracle** (exact rel-L2 minimiser
+  over a continuous circular shift, Parseval search) on both the frozen copy-LF path and a
+  node-aligned corrected path, with the global-constant-shift control.
+* **(B) gauge** (`--gauge --phi_npz`) — decomposes a fitted `(N,2,H,W)` displacement into
+  interface-**normal** (identifiable) and **tangential** (aperture-problem gauge) parts.
+
+**Read it as.** `levelset.corrected.median ≲ 0.1` cell → **nothing to warp**; a warp can
+only add error on the bulk. `levelset.copylf.median ≈ expected_registration_offset_cells`
+→ the "displacement" is the round's `(r−1)/2` grid convention (s3_warp-B1 F1/F2), and a
+rigid-shift oracle that looks strong on copy-LF is buying registration — check
+`rigid_oracle.corrected`. Any EDT-style "0.0 cells" reading must be read against
+`edt_calibration` (it reports 0.0 for a true 0.354-cell shift). `gauge.*.interface_normal_
+energy_share ≪ 1` → `|φ − φ_oracle|²` is a supervision target made mostly of gauge; project
+onto the normal component or supervise the warped **image** instead.
+
+**Invoke.**
+```bash
+source "$PROJECT_ROOT/.venv/bin/activate"
+python tools/warp_premise_audit.py --datasets sharp__cahn_hilliard --out a.json
+python tools/warp_premise_audit.py --datasets PANEL --out a.json --no_rigid
+python tools/warp_premise_audit.py --datasets sharp__cahn_hilliard --out a.json \
+    --gauge --phi_npz <outputs>/eval/<fam>_<ds>_phi.npz --phi_keys phi_pred_warp
+```
+Pure numpy/scipy, login-node fine: ~1 min/dataset without the rigid oracle, ~3 min with it
+on 100 × 256². `--tau` sets the interface band (default 0.1, the round convention).
+
+**Verified.** Run 2026-07-30 from `round1/` on `sharp__cahn_hilliard` with the card's own
+φ sidecar → `corrected_skill` **0.4769** (= `ref_reg_corrected` 0.47687619181488217),
+level-set displacement **0.6959** cells (copy-LF, vs the predicted registration constant
+0.7071) → **0.0070** (node-aligned), EDT corrected median **0.0** with the calibration row
+`true 0.354 → EDT 0.0`, rigid oracle **0.4193** (median |s| 0.7077) → **0.3989**
+(median |s| 0.0447), gauge `phi_pred_warp` |φ| 0.5038 = normal 0.0440 + tangential 0.4943,
+normal energy share **0.0346** — matching card part 6 F1–F4 / F9.
+
+**Provenance.** `worktrees/s3_warp/B2/scratchpad/reanalysis_turn_1.py` and
+`reanalysis_turn_3.py`; card `experiment_cards/s3_warp/batch_2/B2.json` part 6,
+findings F1–F4, F9.
+
+**Known gotcha it encodes.** `models_r1/s3_warp_onesided/diagnostics.py::interface_mask`
+returns a **flat** `(N, H*W)` mask (the family reshapes at every one of its own call
+sites); the first run of `reanalysis_turn_3.py` crashed on this and the scratchpad copy was
+fixed with `.reshape(-1, H, W)`. The family file was not touched.
+
+---
+
+## `band_weight_counterfactual.py`
+
+**Measures.** For two predictions on one dataset, per band: (1) the **weight** — the band's
+share of the reference's error, as pooled energy *and* in the round metric's own weighting
+(per-sample share of rel-L2², exact by Parseval); (2) the usual ratios; (3) the
+**counterfactual** — replace arm A's Fourier error in one band by arm B's and re-score
+through `round1/eval/nrmse.py`, giving the share of the A-vs-B skill gap that band actually
+owns; (4) optionally all of it on a sample **stratum** (`--strata_npz`), with a
+stratum-matched reference denominator.
+
+**Why it matters.** Band ratios are unbounded in near-empty bands. This has now produced
+two round-1 headlines worth < 1 % of the metric: s3_warp-B1 F4 (wrap seam, 0.12–0.74 %) and
+s3_warp-B2 part 5 F1 (an 11× band-32–64 regression called "the most informative band signal
+on the card", actually 0.45 %). Complements `band_phase_anatomy.py`, which splits a band's
+failure into amplitude vs phase but does not weight it or re-score.
+
+**Read it as.** `share_of_gap` is the honest attribution — trust it over the ratios.
+`weight(metric)` bounds how much a band can ever be worth. If a stratum restriction flips
+the ranking, the pooled statistic was a statement about a handful of samples.
+
+**Invoke.**
+```bash
+source "$PROJECT_ROOT/.venv/bin/activate"
+python tools/band_weight_counterfactual.py --dataset sharp__cahn_hilliard \
+    --arm_a preds_warp.npz:pred --arm_b preds_warp_off.npz:pred --out b.json
+# zero-parameter built-ins need no prediction files at all:
+python tools/band_weight_counterfactual.py --dataset sharp__cahn_hilliard \
+    --arm_a nodealign --arm_b copylf --out b.json
+python tools/band_weight_counterfactual.py ... --strata_npz strata.npz:matched
+```
+`copylf` = `eval/panel_data.py::copylf_prediction`; `nodealign` = one bilinear resample of
+the raw LF at `k/r` (s3_warp-B1 F3 variant C). Bands default to the round convention
+`[0,.125,.25,.5,1] × k_nyquist`. ~1 min/dataset, pure numpy.
+
+**Verified.** Run 2026-07-30 from `round1/` on `sharp__cahn_hilliard`, arms rebuilt from
+`s3_warp-B2`'s checkpoint: A=`warp` skill **0.48376**, B=`warp_off` **0.43166**, gap
+**+0.05210**; `share_of_gap` **[0.8567, 0.0593, 0.0045, 0.0039]** and `weight(metric)`
+**[0.9964, 3.27e-3, 7.03e-5, 2.68e-4]** — identical to card part 6 F5/F6. With
+`--strata_npz` (98 matched) the skills become **0.26987 / 0.19640**, reproducing part 6
+F12's matched-stratum table. Built-in mode `--arm_a nodealign --arm_b copylf` reproduces
+`ref_reg_corrected` skill **0.47688**.
+
+**Provenance.** `worktrees/s3_warp/B2/scratchpad/reanalysis_turn_2.py` +
+`turn2_counterfactual.py`; card `experiment_cards/s3_warp/batch_2/B2.json` part 6,
+findings F5–F7.
+
+
+## `amplitude_shrinkage_audit.py`
+
+**What it measures.** For each `preds_test.npz`: the per-sample oracle gain
+`g_i = <p_i,y_i>/<y_i,y_i>`, the regression of `log g_i` on centred `log||y_i||`
+(corr / slope / R^2), the amplitude response `d log||p_i|| / d log||y_i||`, the demeaned
+regression `beta`, the structure-only nRMSE (after each sample's own oracle gain), and a
+verdict `SHRINKAGE` / `NEUTRAL` / `AMPLIFICATION`. With several files on the same
+targets it also prints the cross-arm correlation of `log g_i` (do the arms share ONE
+defect axis?) and the scored-vs-structure-only spread ratio.
+
+**Why it is not `field_error_decomposition.py`.** That tool reports how MUCH of the
+squared error is a per-sample gain (a magnitude). This one reports whether that gain
+error is a SHRINKAGE toward the mean (a direction) — the thing that discriminates an
+under-trained model from a structurally damaged one.
+
+**Invocation.**
+```bash
+python tools/amplitude_shrinkage_audit.py \
+    --pred_npz <a>/preds_test.npz <b>/preds_test.npz --labels A0 A1 \
+    [--pred_key pred --target_key target] [--shrinkage_corr_threshold 0.5] \
+    [--out audit.json]
+```
+
+**Verified.** Run 2026-07-30 from `round1/` on `s1_poisson-B4`'s A0/A1/A2 arms:
+`corr(log g, log||y||)` **-0.0365 / -0.9142 / -0.9096**, amplitude slope
+**0.9982 / 0.9256 / 0.8373**, scored spread **2.840x** against a structure-only spread
+of **1.288x** — identical to card part 6 T2-F1/T2-F2.
+
+**Provenance.** `worktrees/s1_poisson/B4/scratchpad/reanalysis_turn_2.py`; card
+`experiment_cards/s1_poisson/batch_4/B4.json` part 6, findings T2-F1..T2-F4.
+
+## `cond_column_sensitivity_audit.py`
+
+**What it measures.** Inference-only, from one or more family checkpoints:
+(R1) the normalised central-difference sensitivity `||d out / d cond_j|| / ||out||` for
+every condition column plus each column's share — where did the conditioning capacity
+go? (R2) a sweep of ONE column over a list of values, re-scored through
+`eval/nrmse.py` — is the score robust to that column, or does it sit on a single
+untested value? (R3) an auto-detected FiLM probe (any submodule named `film`): the
+across-condition modulation std per module and the same per-column sensitivity inside
+the conditioner, which localises R1 in the conditioner rather than the backbone.
+
+**The standing warning it encodes.** A scored number never reveals a tag-column
+fragility. On `s1_poisson-B4` the stream's best `ifc_poisson` checkpoint scores
+**0.0219 at the contract's eval query `f_src = 0` and 0.1066 at `f_src = 1`** (4.86x),
+because `self_only` training makes `f_src` and `f_tgt` perfectly collinear. Run this
+before reusing ANY checkpoint at a query it was not scored at.
+
+**Invocation.**
+```bash
+python tools/cond_column_sensitivity_audit.py \
+    --family_dir <worktree>/models_r1/<family> --model_class LadderFNO2d \
+    --model_kwargs '{"hidden_channels":64,"n_blocks":4,"modes_h":12,"modes_w":12,
+                     "grid":[64,64],"cond_feat_dim":64}' \
+    --ckpt <A>/last.pt <B>/last.pt --labels A B \
+    --dataset_dir "$FACTORY_ROOT/data/<ds>" --split test \
+    --tags 0.0 1.0 --col_names X1 X2 X3 X4 X5 f_src f_tgt \
+    --output_scaler <the family's eval-time output scaler> \
+    --sweep_col f_src --sweep_values 0 0.3333 0.6667 1 \
+    [--n_samples 32] [--eps 0.01] [--device cpu] [--out audit.json]
+```
+`--model_kwargs` is passed to `--model_class` verbatim with `cond_dim` filled in from
+the data + `--tags`; `--tags` are the constant trailing columns of the eval query (omit
+for families conditioned on X alone). COST: 2 x n_columns forward passes per checkpoint;
+a 128-sample 64^2 six-checkpoint audit took ~19 min on a contended 1-core login node —
+use `--n_samples 32`.
+
+**Verified.** Run 2026-07-30 from `round1/` on `s1_poisson-B4`'s A0 (`self_only`) and A1
+(`allpairs`) checkpoints, `--n_samples 32`: `f_src` share **0.048 vs 0.005**, `f_src`
+sweep nRMSE range **4.658x vs 1.085x**, FiLM `f_src` share **0.122 vs 0.044** —
+reproducing card part 6 T3-F2/T3-F3 (full 128-sample values 0.0528/0.0050, 4.86x/1.09x,
+0.1227/0.0438).
+
+**Provenance.** `worktrees/s1_poisson/B4/scratchpad/reanalysis_turn_3.py`; card
+`experiment_cards/s1_poisson/batch_4/B4.json` part 6, findings T3-F2..T3-F5.
+
+---
+
+## `persample_norm_eligibility.py`
+
+**Measures.** Pre-flight, model-free, no GPU: should this dataset's regression
+target (or loss) be normalised PER SAMPLE? Every normalisation is a re-weighting
+of the loss by `1/den_i^2`, so the tool runs three checks on the train split and
+returns a `verdict` with `reasons`:
+
+* **R1 NEED** — `effective_sample_fraction` = effN of the MSE target energy under
+  the CURRENT global scaler, divided by N. Below `--r1_threshold` (0.05) the loss
+  is outlier-dominated and only a PER-SAMPLE denominator can fix it (a
+  per-dataset scaler provably cannot — s5_tuning-B2).
+* **R2 SIGNAL** — do the samples the re-weighting PROMOTES carry signal?
+  `min_i ||r_i||/||y_i||` against `--noise_floor` (1e-06), plus the in-band
+  (`|k| < --modes_cap`) energy fraction of the smallest-scale decile against the
+  white-noise reference, plus `floor_inside_noise` (does the `--floor_q`
+  denominator floor sit inside the numerical noise?).
+* **R3 METRIC** — does the proposed denominator track the SCORED metric's own
+  denominator `||y_i||`? `spearman_log_scale_vs_log_fieldnorm` and
+  `KL(weight || metric-implied weight)` for both normalisations.
+
+**Read it as.** `GO` only when R1 fires and R2 passes. `NO_GO_PROMOTES_NOISE` is
+the s2-B3 `sharp__phase_field_crystal_2d` case — the panel's LARGEST residual
+spread (7.9e04) and a per-sample target normalisation that made it 4.2x worse.
+`legacy_spread_statistic` is reported only to be dismissed: **spread is not the
+decider, effective N is.**
+
+**Invoke.**
+```bash
+source "$PROJECT_ROOT/.venv/bin/activate"
+python tools/persample_norm_eligibility.py \
+    --datasets sharp__phase_field_crystal_2d,ext__helmholtz_2d \
+    --out /path/elig.json [--target residual|field] [--r1_threshold 0.05] \
+    [--noise_floor 1e-6] [--floor_q 0.25] [--modes_cap 12]
+python tools/persample_norm_eligibility.py --datasets PANEL --out elig.json
+```
+`--target residual` (default) uses `y - copyLF(y)` — residual correctors (s2/s6);
+`--target field` uses `y` itself — field regressors (s5/s7). ~10–60 s per 256^2
+dataset on the login node.
+
+**Verified.** Run 2026-07-31 on the 5 beyond-copy datasets
+(`worktrees/s2_beyond_copy/B3/scratchpad/analyzer/t3_eligibility_tool_check.json`):
+`ext__helmholtz_2d` **GO** (effective fraction 0.0031, min relative residual
+4.97e-02), `sharp__phase_field_crystal_2d` **NO_GO_PROMOTES_NOISE** (0.3507,
+1.21e-08), the other three `NO_GO_NO_NEED` (0.394 / 0.442 / 0.661) — 5/5 in the
+direction of the measured 200-epoch outcomes (−88.2 % / +423 % / ±0.9–7.1 %).
+
+**Provenance.** `worktrees/s2_beyond_copy/B3/scratchpad/reanalysis_turn_2.py` +
+`reanalysis_turn_2b.py`; card `experiment_cards/s2_beyond_copy/batch_3/B3.json`
+part 6, findings F5–F8 and F13 (the unified eligibility rule).
+
+---
+
+## `checkpoint_divergence_audit.py`
+
+**Measures.** Is a "paired"/rebuilt control actually the same run? Weight-space
+relative L2 between two checkpoints (complex-safe), the count of bit-identical
+tensors, the five worst tensors, and — when the two result JSONs are supplied —
+the scores they produced, on the round's `rel_l2_mean` convention.
+
+**Read it as.** `BIT_IDENTICAL` -> the rebuild is faithful and training was
+bit-reproducible; any score gap is eval-side and microscopic. `DIVERGED` -> the
+two runs learned different functions and no code-diff story is needed (or
+admissible). `_summary.divergence_is_dataset_specific` = true (some datasets
+bit-identical, others not) is the signature of dataset-dependent training
+nondeterminism rather than a build difference — on round 1 the split was by
+WORKING GRID (256x256 bit-identical across nodes/jobs; 128x128 and 96x96 not).
+
+**Invoke.**
+```bash
+source "$PROJECT_ROOT/.venv/bin/activate"
+python tools/checkpoint_divergence_audit.py --datasets PANEL \
+    --ckpt_a '<OUT_A>/ckpt_{dataset}_e200_s0/last.pt' \
+    --ckpt_b '<OUT_B>/ckpt_{dataset}_e200_s0/last.pt' \
+    [--result_a '<OUT_A>/{dataset}_e200_s0.json'] \
+    [--result_b '<OUT_B>/{dataset}_e200_s0.json'] \
+    [--state_key model] [--split test_hf] [--metric_key rel_l2_mean] \
+    --out /path/divergence.json
+```
+CPU, ~1 s per pair.
+
+**Verified.** Run 2026-07-31 on s2_beyond_copy B2 (`lf_resid_fno`) vs B3-A0
+(`global_ctrl`), 5 datasets
+(`worktrees/s2_beyond_copy/B3/scratchpad/analyzer/t3_divergence_tool_check.json`):
+pfc DIVERGED 0.0779 (1/39, score +5.222e-01), helmholtz DIVERGED 0.3189 (1/39,
++2.495e-01), allen_cahn / cahn_hilliard / fisher_kpp BIT_IDENTICAL 39/39 (score
+deltas −1.9e-11 / −1.9e-11 / +1.5e-08) — reproducing the card's own continuity
+gate exactly.
+
+**Provenance.** `worktrees/s2_beyond_copy/B3/scratchpad/reanalysis_turn_1.py`;
+card `experiment_cards/s2_beyond_copy/batch_3/B3.json` part 6, findings F2–F4.
+
+
+---
+
+## `stage_scaler_placement_forecast.py`
+
+**Measures.** From the TRAIN split alone (no model, no GPU), for EVERY stage of a
+multi-fidelity family (each fidelity's train rows is one stage) and every candidate
+output-target scaler — `global_maxabs`, `global_zscore`, `per_sample_maxabs`,
+`per_sample_zscore` (RevIN as published) and `per_sample_lf_proxy` (`max|LF_i|`, the
+only per-sample statistic that is available at test time):
+
+| key | meaning |
+|---|---|
+| `F_typical_placement` | `median_i(sd_i/s_i)` — where the TYPICAL sample's fluctuation sits inside the network's output range under this scaler. A global scaler places the AGGREGATE well and the typical sample badly whenever one field sets `sd(Y)` or `max|Y|` |
+| `n_eff_target_energy` (+ fraction, `top1_energy_share`) | participation ratio of the per-sample MSE energies; forecasts the realized epoch-1 loss concentration |
+| `proxy_fidelity.equalisation_delivered_vs_oracle` | what a cross-fidelity per-sample statistic actually buys, as a fraction of the true-scale oracle's repair |
+| `dc_energy_share` + `CENTERING_RISK` | replacing a CENTERED global scaler by an UNCENTERED per-sample one costs the level channel on a DC-dominated target |
+| `verdict.best_F_test_time_legal_scaler`, `F_gain_..._over_global_zscore`, `flags` | the recommendation and why |
+
+**Read it as.** `NEED_PER_SAMPLE` (global `n_eff/N` < `--need_neff_frac`) → only a
+per-SAMPLE denominator can fix the concentration; a global scalar divides every sample's
+energy by the same constant. Then pick the largest `F` among test-time-legal scalers.
+`PROXY_WEAK` → the LF statistic delivers < 50 % of the oracle's equalisation at this stage;
+do NOT pre-register a threshold measured on the oracle. `CENTERING_RISK` → use
+`per_sample_zscore`, not `per_sample_maxabs`. No flags and `F_gain ≈ 1` → the scaler is not
+a lever here, and a per-sample arm will REGRESS if it also drops the centering (s5-B3's
+ifc_poisson oracle: F ratio 0.155×, measured +83.8 % with the TRUE test scale).
+Complements — does not replace — `tools/persample_norm_eligibility.py` (NEED / noise-floor
+SAFETY / metric alignment, s2-B3) and `tools/target_range_placement_audit.py` (the global-only
+`G` decomposition, s5-B2); gate all three on `tools/dc_pattern_split.py`, since a `LEVEL_ONLY`
+dataset is inert under any affine scaler.
+
+**Invoke.**
+```bash
+source "$PROJECT_ROOT/.venv/bin/activate"
+python tools/stage_scaler_placement_forecast.py --datasets PANEL --out forecast.json
+python tools/stage_scaler_placement_forecast.py \
+    --datasets ext__helmholtz_2d,ifc_poisson --out forecast.json \
+    [--split train] [--n_max 400] [--need_neff_frac 0.05] [--dc_risk 0.5]
+```
+Pure numpy on the login node, ~2–10 s per dataset.
+
+**Verified.** Run 2026-07-31 from `round1/` on
+`ext__helmholtz_2d,ifc_poisson,sharp__fisher_kpp_2d`: helmholtz `LF_pretrain`
+**NEED_PER_SAMPLE**, best legal `per_sample_lf_proxy`, F gain **11.78×**, proxy equalisation
+**1.00** (at that stage the LF statistic IS the target's own maxabs); helmholtz `HF_finetune`
+**NEED_PER_SAMPLE,PROXY_WEAK**, F gain 35.99×, proxy equalisation **0.031**; `ifc_poisson`
+every stage best legal `global_zscore`, F gain 1.000, no NEED (n_eff/N 0.69–0.77);
+`sharp__fisher_kpp_2d` likewise. Those are exactly the stage where s5-B3's `revin_lf` arm
+delivered −76.75 % on helmholtz, the stage whose pre-registered `n_eff ≥ 50` threshold was
+unreachable (12.53/400), and the dataset whose true-scale ORACLE regressed.
+
+**Provenance.** `worktrees/s5_tuning/B3/scratchpad/reanalysis_turn_{2,2b,2c}.py`; card
+`experiment_cards/s5_tuning/batch_3/B3.json` part 6, findings F6–F9 and interpretation M3.

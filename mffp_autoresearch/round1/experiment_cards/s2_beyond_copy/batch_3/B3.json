@@ -91,7 +91,7 @@
     "screen_spec_verbatim": "S2B3_SCREEN_ARMS=global_ctrl,persample_pred,persample_gradproxy,persample_nofloor; S2B3_SCREEN_EPOCHS=2; S2B3_SCREEN_DATASETS=beyond_copy5,guard; S2B3_SCREEN_BROKEN_FACTOR=3.0 (all four verbatim from recipe.env). Brainstormer prose (report.md:73-74, verbatim): \"*Broken* := crash / non-finite metric / contract-tier 5-dataset geomean > 3.0x A0's on the same screen run. Close calls never reorder. Screen numbers live in `build_notes` only.\"",
     "sbatch": "TBD: brainstormer did not specify"
   },
-  "status": "reviewed_suggest",
+  "status": "complete",
   "skipped_reason": null,
   "reopen_candidate": false,
   "scripts_path": {
@@ -120,7 +120,9 @@
   },
   "build_commit": "71d4e7b3c3f3f743bc57d7e5b92520e80ee3d3de",
   "job_ids": [
-    "66076828 (ADR-0007 screen, 6 arms; review SUGGEST vs 71d4e7b; note-12 figures unverified pending 200-ep)"
+    "66076828 (ADR-0007 screen, 6 arms; review SUGGEST vs 71d4e7b; note-12 figures unverified pending 200-ep)",
+    "66076828 (ADR-0007 screen COMPLETED 13:03; promoted persample_pred)",
+    "66081956 (main 200-ep run: persample_pred + paired global_ctrl + ref arms)"
   ],
   "logs": {},
   "build_notes": [
@@ -186,8 +188,1278 @@
     }
   ],
   "debug_notes": [],
-  "5_actual_result": null,
-  "6_analysis": null,
-  "7_gap_and_future": null,
-  "reanalysis_progress": null
+  "5_actual_result": {
+    "seeds_available": [
+      0
+    ],
+    "provisional": "provisional-single-seed (ADR 0004); no CI claims",
+    "scored_arm": "persample_pred (A1)",
+    "control_arm": "global_ctrl (A0) - paired, same sbatch job / node / seed / code_hash",
+    "scored_arm_provenance": "promotion rank pinned in recipe.env BEFORE submit (S2B3_PROMOTION_RANK='persample_pred,persample_gradproxy', rule pinned_rank1_unless_broken). The ADR-0007 screen job 66076828 promoted the pinned rank-1 arm persample_pred; A2/A5 screen numbers stay in build_notes. The 200-epoch job is 66081956.",
+    "result_json": {
+      "candidate": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s2_beyond_copy/B3/eval/result_beyond_copy5_persample_pred_s0.json",
+      "control": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s2_beyond_copy/B3/eval/result_beyond_copy5_global_ctrl_s0.json",
+      "paired_readout": [
+        "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s2_beyond_copy/B3/eval/paired_readout_s0.json",
+        "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s2_beyond_copy/B3/eval/paired_readout_s0.md"
+      ]
+    },
+    "per_run_json_dir": {
+      "global_ctrl": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s2_beyond_copy/B3/eval/results/global_ctrl/s2_resid_amplitude_norm",
+      "persample_pred": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s2_beyond_copy/B3/eval/results/persample_pred/s2_resid_amplitude_norm"
+    },
+    "nrmse_def_hash": "d3d0ade9191c13bacc40702f3eb26ad290e01641cacee22a1d2233b74c035850",
+    "nrmse_def_hash_consistency": "verified: 97 nrmse_def_hash occurrences across the 61 JSON files under the B3 output tree (both scored result JSONs, all 10 per-run e200_s0 JSONs, every floor_*.json sidecar, every screen JSON) are the SAME string d3d0ade9191c13bacc40702f3eb26ad290e01641cacee22a1d2233b74c035850, which also equals round1/eval/copylf_baselines.json '_nrmse_def_hash' and B2 part 5's hash. Only eval/paired_readout_s0.json and screen/screen_summary.json carry no hash field; both are derived tables, not metric files.",
+    "epochs": 200,
+    "dataset_set": "the 5 beyond-copy datasets of recipe.datasets == state/anchors/s2_beyond_copy.json 'datasets'. ifc_poisson is NOT in this card's set, so panel_geomean_skill is a 5-dataset geomean over this stream's anchor set, not the 6-dataset round panel of project.yaml. ext__helmholtz_2d is REPORT-ONLY throughout (rescaled floor 0.701654).",
+    "metric_reading_convention": "score_panel scored metric_source='per_sample_mean' on split 'test_hf' for every dataset and every arm, i.e. the same per-sample-mean rel-L2 the ref_* floors report, so arm-vs-arm, arm-vs-floor and arm-vs-threshold comparisons are apples-to-apples. The raw ratio-of-sums 'nRMSE' key is recorded per dataset as nrmse_ratio_of_sums_key for transparency and is never compared across split types.",
+    "b2_continuity_gate": {
+      "what_it_is": "card part 4 validity gate: the in-job A0 global_ctrl arm must reproduce B2 part 5 within 10 % on sharp__phase_field_crystal_2d (B2 F6's replay caveat) and 2 % elsewhere. Card part 4 verbatim: 'a miss is recorded as a rebuild-fidelity flag, not a result'.",
+      "verdict": "MISS on 2 of 5 datasets (sharp__phase_field_crystal_2d, ext__helmholtz_2d); PASS on the neutral three",
+      "per_dataset": {
+        "ext__helmholtz_2d": {
+          "b2_part5_skill": 4.135972,
+          "epochs_caveat": "only meaningful at --epochs 200; at contract tier (2 epochs) this flag is expected to miss",
+          "meaning": "card part 4: A0 must reproduce B2 within 10 % on pfc (F6's replay caveat) and 2 % elsewhere; a miss is a REBUILD-FIDELITY FLAG, not a result",
+          "measured_skill": 5.16791338261978,
+          "passed": false,
+          "rel_delta": 0.24950395762345107,
+          "tol": 0.02
+        },
+        "sharp__phase_field_crystal_2d": {
+          "b2_part5_skill": 0.01836,
+          "epochs_caveat": "only meaningful at --epochs 200; at contract tier (2 epochs) this flag is expected to miss",
+          "meaning": "card part 4: A0 must reproduce B2 within 10 % on pfc (F6's replay caveat) and 2 % elsewhere; a miss is a REBUILD-FIDELITY FLAG, not a result",
+          "measured_skill": 0.027946402522134643,
+          "passed": false,
+          "rel_delta": 0.5221352136238911,
+          "tol": 0.1
+        },
+        "sharp__allen_cahn_2d": {
+          "b2_part5_skill": 0.287282,
+          "epochs_caveat": "only meaningful at --epochs 200; at contract tier (2 epochs) this flag is expected to miss",
+          "meaning": "card part 4: A0 must reproduce B2 within 10 % on pfc (F6's replay caveat) and 2 % elsewhere; a miss is a REBUILD-FIDELITY FLAG, not a result",
+          "measured_skill": 0.2872819213101736,
+          "passed": true,
+          "rel_delta": 2.739114402474017e-07,
+          "tol": 0.02
+        },
+        "sharp__cahn_hilliard": {
+          "b2_part5_skill": 0.453228,
+          "epochs_caveat": "only meaningful at --epochs 200; at contract tier (2 epochs) this flag is expected to miss",
+          "meaning": "card part 4: A0 must reproduce B2 within 10 % on pfc (F6's replay caveat) and 2 % elsewhere; a miss is a REBUILD-FIDELITY FLAG, not a result",
+          "measured_skill": 0.45322822078099145,
+          "passed": true,
+          "rel_delta": 4.871300789744044e-07,
+          "tol": 0.02
+        },
+        "sharp__fisher_kpp_2d": {
+          "b2_part5_skill": 0.804192,
+          "epochs_caveat": "only meaningful at --epochs 200; at contract tier (2 epochs) this flag is expected to miss",
+          "meaning": "card part 4: A0 must reproduce B2 within 10 % on pfc (F6's replay caveat) and 2 % elsewhere; a miss is a REBUILD-FIDELITY FLAG, not a result",
+          "measured_skill": 0.8041915966699124,
+          "passed": true,
+          "rel_delta": 5.015345684383577e-07,
+          "tol": 0.02
+        }
+      },
+      "pattern": "the two datasets that miss are exactly the two decade-spanning-residual datasets the card is about; the three the scale audit CLEARS reproduce B2 to <= 5.0e-07 relative (bit-level).",
+      "beyond_sample_noise": "the pfc miss is not sampling noise: B2's scored pfc nRMSE 0.000783 (skill 0.018360, B2 part 5 sample-bootstrap CI [0.000654, 0.001001]) lies BELOW this A0's whole sample-bootstrap CI [0.001053, 0.001466] (skill 0.027946).",
+      "unverified_candidate_cause": "HYPOTHESIS ONLY, not tested here: build note 6 / code-reviewer drill-down 1 records the one deliberate deviation from B2 - the final s*Delta composition now happens in numpy float64 instead of float32 - and pfc's per-sample residual scale bottoms out at s_raw_train_min = 2.98e-08 with a q25 floor of 5.22e-08, i.e. float32-epsilon territory. The mechanism-analyzer should test this before any story is built on the A0 numbers.",
+      "consequence_for_the_card": "all scored deltas are taken against the PAIRED in-job A0 (same node/seed/code_hash), which is what the card pre-registers; leg (a)'s threshold is therefore rescaled from the card's 0.014688 (at B2's 0.018360) to 0.022357 (0.80 x this A0's 0.027946). B2's own numbers are NOT usable as the control here.",
+      "second_continuity_symptom": "the card's leg-(d) reference value 'A0's damage_share 0.098' (from B2 part 6) is not reproduced either: this A0 measures damage_share 0.207431 on pfc, 2.1x the card's quoted reference. Same two-dataset pattern."
+    },
+    "per_dataset": {
+      "ext__helmholtz_2d": {
+        "per_seed_nrmse": [
+          0.1999698867953659
+        ],
+        "per_seed_skill": [
+          0.6069807566829677
+        ],
+        "mean_skill": 0.6069807566829677,
+        "ci95": null,
+        "ci95_note": "null by construction: ADR 0004 pins seed 0 only, so no across-seed CI exists. The eval layer's own sample-level percentile-bootstrap CI on the SCORED nRMSE is in nrmse_ci95_sample_bootstrap (verbatim rel_l2_ci95_lo/hi from the per-run JSON).",
+        "nrmse_ci95_sample_bootstrap": [
+          0.06964969016350328,
+          0.381436959718318
+        ],
+        "nrmse_per_sample_std": 0.8156746721765691,
+        "n_test_samples": 100,
+        "reference_type": "copylf",
+        "metric_source": "per_sample_mean",
+        "split": "test_hf",
+        "cached": false,
+        "copylf_reference_nrmse": 0.3294501260438018,
+        "nrmse_ratio_of_sums_key": 0.45440925440065194,
+        "report_only": true,
+        "a0_paired_control": {
+          "nrmse": 1.7025697152875372,
+          "skill": 5.167913382619782,
+          "nrmse_ci95_sample_bootstrap": [
+            1.5314776033354138,
+            1.8979134374549276
+          ],
+          "nrmse_ratio_of_sums_key": 0.7623004989070723,
+          "b2_continuity": {
+            "b2_part5_skill": 4.135972,
+            "epochs_caveat": "only meaningful at --epochs 200; at contract tier (2 epochs) this flag is expected to miss",
+            "meaning": "card part 4: A0 must reproduce B2 within 10 % on pfc (F6's replay caveat) and 2 % elsewhere; a miss is a REBUILD-FIDELITY FLAG, not a result",
+            "measured_skill": 5.16791338261978,
+            "passed": false,
+            "rel_delta": 0.24950395762345107,
+            "tol": 0.02
+          }
+        },
+        "rel_delta_candidate_vs_a0": -0.8825481946496422,
+        "ref_splits_not_leaderboard_eligible": {
+          "copylf_identity_skill": 1.0,
+          "retr_blockmean16_k5_skill": 0.78506560459662,
+          "a3_ref_oracle_truescale_skill": 0.4204724689561089,
+          "a4_ref_gate_lfkeyed_skill_candidate": 0.6069807566829678,
+          "a4_ref_gate_lfkeyed_skill_a0": 1.0,
+          "a4_note": "A4 ran on A0 as well as on A1; the card pre-registers A4 as a measurement on A1's output only, so the A0 column is unpre-registered context (code-reviewer caveat).",
+          "f6_floor_check": {
+            "abs_delta": 6.560459661997253e-05,
+            "f6_reference": 0.785,
+            "measured_skill": 0.78506560459662,
+            "passed": true,
+            "required_arm": "retr_blockmean16_k5",
+            "tol": 0.02
+          }
+        },
+        "mechanism_instrumentation": {
+          "damage_share_a0": 0.850959822566813,
+          "damage_share_candidate": 0.10945278078821902,
+          "pct_copylf_error_removed_model_a0": -416.791338261978,
+          "pct_copylf_error_removed_model_candidate": 39.30192433170322,
+          "per_sample_model_beats_copylf_frac_a0": 0.04,
+          "per_sample_model_beats_copylf_frac_candidate": 0.96,
+          "no_harm_gate_ORACLE_skill_a0": 0.770226727504994,
+          "no_harm_gate_ORACLE_skill_candidate": 0.5405450249790796,
+          "n_samples_oracle_gate_would_reject_a0": 96,
+          "n_samples_oracle_gate_would_reject_candidate": 4,
+          "note": "uncorrected in-run counterparts of tools/registration_skill_split.py (formulas byte-match per the code-reviewer); the registration-CORRECTED denominators are the mechanism-analyzer's post-hoc job."
+        },
+        "scale_audit": {
+          "before_global_scaler": {
+            "n_samples": 400,
+            "effective_n_samples_of_mse": 1.246282355610445,
+            "energy_share_top1": 0.891999592470577,
+            "energy_share_top5pct": 0.9999535597859185,
+            "normalised_target_max_median": 0.00015629045758960906,
+            "normalised_target_max_min": 6.452290888726862e-05,
+            "scale_max_over_median": 6398.343286100179
+          },
+          "after_floored_s_i": {
+            "n_samples": 400,
+            "effective_n_samples_of_mse": 246.31540787904737,
+            "energy_share_top1": 0.014205863055055893,
+            "energy_share_top5pct": 0.164108225667873,
+            "normalised_target_max_median": 1.0,
+            "normalised_target_max_min": 0.5846416107817317,
+            "scale_max_over_median": 6398.343286100179
+          },
+          "after_predicted_s_hat": {
+            "n_samples": 400,
+            "effective_n_samples_of_mse": 17.252004348083556,
+            "energy_share_top1": 0.1614163658811313,
+            "energy_share_top5pct": 0.589738773919697,
+            "normalised_target_max_median": 0.948060320314825,
+            "normalised_target_max_min": 0.4416799910297037,
+            "scale_max_over_median": 6398.343286100179
+          },
+          "split": "train"
+        },
+        "target_normalisation_candidate": {
+          "target_norm": "per_sample_maxabs",
+          "scale_stat": "maxabs",
+          "floor_mode": "train_quantile",
+          "floor_q": 0.25,
+          "floor_value": 0.0006944594551896444,
+          "n_train_floored": 100,
+          "frac_train_floored": 0.25,
+          "global_scaler_for_reference": 6.292492100968957,
+          "global_over_median_per_sample": 6398.343286100179,
+          "s_raw_train_min": 0.0004060098945046775,
+          "s_raw_train_median": 0.0009834564698394388,
+          "s_raw_train_max": 6.292492100968957
+        },
+        "scale_predictor_quality": {
+          "spearman_rho_shat_strue_test": 0.9512727755982018,
+          "median_abs_log10_ratio_test": 0.03151569801976373,
+          "p90_abs_log10_ratio_test": 0.14657233698954475,
+          "mean_log10_ratio_bias_test": -0.01833439539538718,
+          "spearman_rho_on_train": 0.9703039261669878,
+          "a3_minus_a1_skill_gap": -0.1865082877268589,
+          "a3_minus_a1_skill_gap_sign_note": "negative = the ORACLE true scale is BETTER than the predicted scale (A3 < A1); positive = the predictor beats the true scale. Source field skill_gap_vs_scored_arm = A1 - A3."
+        },
+        "noise_floor_resolvability": {
+          "rescaled_seed_spread_floor": 0.7016543420944195,
+          "delta_vs_anchor_skill_1p0": 0.3930192433170323,
+          "abs_delta_vs_anchor_over_floor": 0.5601322755929655,
+          "resolvable_vs_anchor": false,
+          "direction_vs_anchor": "improvement",
+          "delta_candidate_minus_a0": -4.560932625936814,
+          "abs_delta_vs_a0_over_floor": 6.500255684761462,
+          "resolvable_vs_a0": true,
+          "direction_vs_a0": "improvement"
+        },
+        "certified_batch0_champion_skill": 13.817289529417906,
+        "min_claimable_effect": 9.694961194291832,
+        "sanity_cap_leg_c": 4.122329,
+        "sanity_leg_c_passed": true
+      },
+      "sharp__phase_field_crystal_2d": {
+        "per_seed_nrmse": [
+          0.006544636358396845
+        ],
+        "per_seed_skill": [
+          0.14614941940896764
+        ],
+        "mean_skill": 0.14614941940896764,
+        "ci95": null,
+        "ci95_note": "null by construction: ADR 0004 pins seed 0 only, so no across-seed CI exists. The eval layer's own sample-level percentile-bootstrap CI on the SCORED nRMSE is in nrmse_ci95_sample_bootstrap (verbatim rel_l2_ci95_lo/hi from the per-run JSON).",
+        "nrmse_ci95_sample_bootstrap": [
+          0.005063172864895829,
+          0.008059237981542575
+        ],
+        "nrmse_per_sample_std": 0.00752648108869835,
+        "n_test_samples": 100,
+        "reference_type": "copylf",
+        "metric_source": "per_sample_mean",
+        "split": "test_hf",
+        "cached": false,
+        "copylf_reference_nrmse": 0.04478044719481978,
+        "nrmse_ratio_of_sums_key": 0.01131482017964403,
+        "report_only": false,
+        "a0_paired_control": {
+          "nrmse": 0.0012514524024276289,
+          "skill": 0.027946402522134647,
+          "nrmse_ci95_sample_bootstrap": [
+            0.00105334661557772,
+            0.001465904501021871
+          ],
+          "nrmse_ratio_of_sums_key": 0.001816566645053947,
+          "b2_continuity": {
+            "b2_part5_skill": 0.01836,
+            "epochs_caveat": "only meaningful at --epochs 200; at contract tier (2 epochs) this flag is expected to miss",
+            "meaning": "card part 4: A0 must reproduce B2 within 10 % on pfc (F6's replay caveat) and 2 % elsewhere; a miss is a REBUILD-FIDELITY FLAG, not a result",
+            "measured_skill": 0.027946402522134643,
+            "passed": false,
+            "rel_delta": 0.5221352136238911,
+            "tol": 0.1
+          }
+        },
+        "rel_delta_candidate_vs_a0": 4.2296326617786155,
+        "ref_splits_not_leaderboard_eligible": {
+          "copylf_identity_skill": 1.0,
+          "retr_blockmean16_k5_skill": 0.5619783646721216,
+          "a3_ref_oracle_truescale_skill": 0.1409855720643671,
+          "a4_ref_gate_lfkeyed_skill_candidate": 0.14614941940896767,
+          "a4_ref_gate_lfkeyed_skill_a0": 0.027946402522134643,
+          "a4_note": "A4 ran on A0 as well as on A1; the card pre-registers A4 as a measurement on A1's output only, so the A0 column is unpre-registered context (code-reviewer caveat).",
+          "f6_floor_check": {
+            "abs_delta": 2.1635327878466448e-05,
+            "f6_reference": 0.562,
+            "measured_skill": 0.5619783646721216,
+            "passed": true,
+            "required_arm": "retr_blockmean16_k5",
+            "tol": 0.02
+          }
+        },
+        "mechanism_instrumentation": {
+          "damage_share_a0": 0.2074314777984177,
+          "damage_share_candidate": 1.3911093099987344e-07,
+          "pct_copylf_error_removed_model_a0": 97.20535974778653,
+          "pct_copylf_error_removed_model_candidate": 85.38505805910323,
+          "per_sample_model_beats_copylf_frac_a0": 0.49,
+          "per_sample_model_beats_copylf_frac_candidate": 0.8,
+          "no_harm_gate_ORACLE_skill_a0": 0.02214943894781882,
+          "no_harm_gate_ORACLE_skill_candidate": 0.14614939907798588,
+          "n_samples_oracle_gate_would_reject_a0": 51,
+          "n_samples_oracle_gate_would_reject_candidate": 20,
+          "note": "uncorrected in-run counterparts of tools/registration_skill_split.py (formulas byte-match per the code-reviewer); the registration-CORRECTED denominators are the mechanism-analyzer's post-hoc job."
+        },
+        "scale_audit": {
+          "before_global_scaler": {
+            "n_samples": 400,
+            "effective_n_samples_of_mse": 140.29151975108525,
+            "energy_share_top1": 0.01019288291927698,
+            "energy_share_top5pct": 0.18515599165623997,
+            "normalised_target_max_median": 1.258492919051428e-05,
+            "normalised_target_max_min": 1.4200202189578877e-07,
+            "scale_max_over_median": 79460.12129760225
+          },
+          "after_floored_s_i": {
+            "n_samples": 400,
+            "effective_n_samples_of_mse": 355.2912215746217,
+            "energy_share_top1": 0.008164852371421422,
+            "energy_share_top5pct": 0.08998468695735912,
+            "normalised_target_max_median": 1.0,
+            "normalised_target_max_min": 0.5714285714285714,
+            "scale_max_over_median": 79460.12129760225
+          },
+          "after_predicted_s_hat": {
+            "n_samples": 400,
+            "effective_n_samples_of_mse": 348.84142004491173,
+            "energy_share_top1": 0.006600999961456228,
+            "energy_share_top5pct": 0.10172997266853824,
+            "normalised_target_max_median": 0.9528280856385851,
+            "normalised_target_max_min": 0.4017183609306011,
+            "scale_max_over_median": 79460.12129760225
+          },
+          "split": "train"
+        },
+        "target_normalisation_candidate": {
+          "target_norm": "per_sample_maxabs",
+          "scale_stat": "maxabs",
+          "floor_mode": "train_quantile",
+          "floor_q": 0.25,
+          "floor_value": 5.21540641784668e-08,
+          "n_train_floored": 93,
+          "frac_train_floored": 0.2325,
+          "global_scaler_for_reference": 0.2098725214600563,
+          "global_over_median_per_sample": 79460.12129760225,
+          "s_raw_train_min": 2.9802322387695312e-08,
+          "s_raw_train_median": 2.641230821609497e-06,
+          "s_raw_train_max": 0.2098725214600563
+        },
+        "scale_predictor_quality": {
+          "spearman_rho_shat_strue_test": 0.9753031107949478,
+          "median_abs_log10_ratio_test": 0.048873999971950965,
+          "p90_abs_log10_ratio_test": 0.18832407686685793,
+          "mean_log10_ratio_bias_test": -0.011147820818805151,
+          "spearman_rho_on_train": 0.9750963139357379,
+          "a3_minus_a1_skill_gap": -0.0051638473446005695,
+          "a3_minus_a1_skill_gap_sign_note": "negative = the ORACLE true scale is BETTER than the predicted scale (A3 < A1); positive = the predictor beats the true scale. Source field skill_gap_vs_scored_arm = A1 - A3."
+        },
+        "noise_floor_resolvability": {
+          "rescaled_seed_spread_floor": 0.007179454861133817,
+          "delta_vs_anchor_skill_1p0": 0.8538505805910324,
+          "abs_delta_vs_anchor_over_floor": 118.92972337125158,
+          "resolvable_vs_anchor": true,
+          "direction_vs_anchor": "improvement",
+          "delta_candidate_minus_a0": 0.11820301688683299,
+          "abs_delta_vs_a0_over_floor": 16.464065750552788,
+          "resolvable_vs_a0": true,
+          "direction_vs_a0": "regression"
+        },
+        "certified_batch0_champion_skill": 11.511001428346894,
+        "min_claimable_effect": 1.1511001428346894,
+        "sanity_cap_leg_c": 10.359901,
+        "sanity_leg_c_passed": true
+      },
+      "sharp__allen_cahn_2d": {
+        "per_seed_nrmse": [
+          0.004596990471688325
+        ],
+        "per_seed_skill": [
+          0.2846121434659776
+        ],
+        "mean_skill": 0.2846121434659776,
+        "ci95": null,
+        "ci95_note": "null by construction: ADR 0004 pins seed 0 only, so no across-seed CI exists. The eval layer's own sample-level percentile-bootstrap CI on the SCORED nRMSE is in nrmse_ci95_sample_bootstrap (verbatim rel_l2_ci95_lo/hi from the per-run JSON).",
+        "nrmse_ci95_sample_bootstrap": [
+          0.003066336562179613,
+          0.006521821601074315
+        ],
+        "nrmse_per_sample_std": 0.008839976093243706,
+        "n_test_samples": 100,
+        "reference_type": "copylf",
+        "metric_source": "per_sample_mean",
+        "split": "test_hf",
+        "cached": false,
+        "copylf_reference_nrmse": 0.016151772077279084,
+        "nrmse_ratio_of_sums_key": 0.004828895709689479,
+        "report_only": false,
+        "a0_paired_control": {
+          "nrmse": 0.00464011211492475,
+          "skill": 0.28728192131017366,
+          "nrmse_ci95_sample_bootstrap": [
+            0.0031039079169635914,
+            0.0065669670484023055
+          ],
+          "nrmse_ratio_of_sums_key": 0.004823467922250843,
+          "b2_continuity": {
+            "b2_part5_skill": 0.287282,
+            "epochs_caveat": "only meaningful at --epochs 200; at contract tier (2 epochs) this flag is expected to miss",
+            "meaning": "card part 4: A0 must reproduce B2 within 10 % on pfc (F6's replay caveat) and 2 % elsewhere; a miss is a REBUILD-FIDELITY FLAG, not a result",
+            "measured_skill": 0.2872819213101736,
+            "passed": true,
+            "rel_delta": 2.739114402474017e-07,
+            "tol": 0.02
+          }
+        },
+        "rel_delta_candidate_vs_a0": -0.009293233044461472,
+        "ref_splits_not_leaderboard_eligible": {
+          "copylf_identity_skill": 1.0,
+          "retr_blockmean16_k5_skill": 1.0417006655105725,
+          "a3_ref_oracle_truescale_skill": 0.30577679599850194,
+          "a4_ref_gate_lfkeyed_skill_candidate": 0.28461214346597763,
+          "a4_ref_gate_lfkeyed_skill_a0": 0.2872819213101736,
+          "a4_note": "A4 ran on A0 as well as on A1; the card pre-registers A4 as a measurement on A1's output only, so the A0 column is unpre-registered context (code-reviewer caveat).",
+          "f6_floor_check": {
+            "abs_delta": 0.0002993344894275385,
+            "f6_reference": 1.042,
+            "measured_skill": 1.0417006655105725,
+            "passed": true,
+            "required_arm": "retr_blockmean16_k5",
+            "tol": 0.02
+          }
+        },
+        "mechanism_instrumentation": {
+          "damage_share_a0": 0.0,
+          "damage_share_candidate": 0.0,
+          "pct_copylf_error_removed_model_a0": 71.27180786898263,
+          "pct_copylf_error_removed_model_candidate": 71.53878565340224,
+          "per_sample_model_beats_copylf_frac_a0": 1.0,
+          "per_sample_model_beats_copylf_frac_candidate": 1.0,
+          "no_harm_gate_ORACLE_skill_a0": 0.2872819213101736,
+          "no_harm_gate_ORACLE_skill_candidate": 0.28461214346597763,
+          "n_samples_oracle_gate_would_reject_a0": 0,
+          "n_samples_oracle_gate_would_reject_candidate": 0,
+          "note": "uncorrected in-run counterparts of tools/registration_skill_split.py (formulas byte-match per the code-reviewer); the registration-CORRECTED denominators are the mechanism-analyzer's post-hoc job."
+        },
+        "scale_audit": {
+          "before_global_scaler": {
+            "n_samples": 400,
+            "effective_n_samples_of_mse": 157.4982484082203,
+            "energy_share_top1": 0.019973579138293774,
+            "energy_share_top5pct": 0.24958960636568453,
+            "normalised_target_max_median": 0.22997026327022843,
+            "normalised_target_max_min": 0.07209909391650438,
+            "scale_max_over_median": 4.348388290641481
+          },
+          "after_floored_s_i": {
+            "n_samples": 400,
+            "effective_n_samples_of_mse": 368.32345725262564,
+            "energy_share_top1": 0.0051298541390439765,
+            "energy_share_top5pct": 0.08199280885575766,
+            "normalised_target_max_median": 1.0,
+            "normalised_target_max_min": 0.47940674914269865,
+            "scale_max_over_median": 4.348388290641481
+          },
+          "after_predicted_s_hat": {
+            "n_samples": 400,
+            "effective_n_samples_of_mse": 385.08460776093636,
+            "energy_share_top1": 0.0036014322100615076,
+            "energy_share_top5pct": 0.06560856679488108,
+            "normalised_target_max_median": 0.9447335991349204,
+            "normalised_target_max_min": 0.4820907425922134,
+            "scale_max_over_median": 4.348388290641481
+          },
+          "split": "train"
+        },
+        "target_normalisation_candidate": {
+          "target_norm": "per_sample_maxabs",
+          "scale_stat": "maxabs",
+          "floor_mode": "train_quantile",
+          "floor_q": 0.25,
+          "floor_value": 0.0019254055805504322,
+          "n_train_floored": 100,
+          "frac_train_floored": 0.25,
+          "global_scaler_for_reference": 0.012802552431821823,
+          "global_over_median_per_sample": 4.348388290641481,
+          "s_raw_train_min": 0.0009230524301528931,
+          "s_raw_train_median": 0.002944206353276968,
+          "s_raw_train_max": 0.012802552431821823
+        },
+        "scale_predictor_quality": {
+          "spearman_rho_shat_strue_test": 0.9503975669436125,
+          "median_abs_log10_ratio_test": 0.031595647515031855,
+          "p90_abs_log10_ratio_test": 0.09015682802950517,
+          "mean_log10_ratio_bias_test": -0.0002585079303095883,
+          "spearman_rho_on_train": 0.9697380157438987,
+          "a3_minus_a1_skill_gap": 0.02116465253252431,
+          "a3_minus_a1_skill_gap_sign_note": "negative = the ORACLE true scale is BETTER than the predicted scale (A3 < A1); positive = the predictor beats the true scale. Source field skill_gap_vs_scored_arm = A1 - A3."
+        },
+        "noise_floor_resolvability": {
+          "rescaled_seed_spread_floor": 0.0008662823105649906,
+          "delta_vs_anchor_skill_1p0": 0.7153878565340224,
+          "abs_delta_vs_anchor_over_floor": 825.8137651078727,
+          "resolvable_vs_anchor": true,
+          "direction_vs_anchor": "improvement",
+          "delta_candidate_minus_a0": -0.002669777844196086,
+          "abs_delta_vs_a0_over_floor": 3.081879673215136,
+          "resolvable_vs_a0": true,
+          "direction_vs_a0": "improvement"
+        },
+        "certified_batch0_champion_skill": 16.33407079448426,
+        "min_claimable_effect": 1.633407079448426,
+        "sanity_cap_leg_c": 14.700664,
+        "sanity_leg_c_passed": true
+      },
+      "sharp__cahn_hilliard": {
+        "per_seed_nrmse": [
+          0.04159554841005452
+        ],
+        "per_seed_skill": [
+          0.4745100693251696
+        ],
+        "mean_skill": 0.4745100693251696,
+        "ci95": null,
+        "ci95_note": "null by construction: ADR 0004 pins seed 0 only, so no across-seed CI exists. The eval layer's own sample-level percentile-bootstrap CI on the SCORED nRMSE is in nrmse_ci95_sample_bootstrap (verbatim rel_l2_ci95_lo/hi from the per-run JSON).",
+        "nrmse_ci95_sample_bootstrap": [
+          0.01235538153221939,
+          0.08228116480955999
+        ],
+        "nrmse_per_sample_std": 0.1827844911822195,
+        "n_test_samples": 100,
+        "reference_type": "copylf",
+        "metric_source": "per_sample_mean",
+        "split": "test_hf",
+        "cached": false,
+        "copylf_reference_nrmse": 0.08765999100758841,
+        "nrmse_ratio_of_sums_key": 0.19673411186528914,
+        "report_only": false,
+        "a0_paired_control": {
+          "nrmse": 0.039729981758047005,
+          "skill": 0.45322822078099145,
+          "nrmse_ci95_sample_bootstrap": [
+            0.010549916582672632,
+            0.08036461367653758
+          ],
+          "nrmse_ratio_of_sums_key": 0.19653277355657323,
+          "b2_continuity": {
+            "b2_part5_skill": 0.453228,
+            "epochs_caveat": "only meaningful at --epochs 200; at contract tier (2 epochs) this flag is expected to miss",
+            "meaning": "card part 4: A0 must reproduce B2 within 10 % on pfc (F6's replay caveat) and 2 % elsewhere; a miss is a REBUILD-FIDELITY FLAG, not a result",
+            "measured_skill": 0.45322822078099145,
+            "passed": true,
+            "rel_delta": 4.871300789744044e-07,
+            "tol": 0.02
+          }
+        },
+        "rel_delta_candidate_vs_a0": 0.046956141670758705,
+        "ref_splits_not_leaderboard_eligible": {
+          "copylf_identity_skill": 1.0,
+          "retr_blockmean16_k5_skill": 0.6250553400217439,
+          "a3_ref_oracle_truescale_skill": 0.47687823350430475,
+          "a4_ref_gate_lfkeyed_skill_candidate": 0.4745100693251697,
+          "a4_ref_gate_lfkeyed_skill_a0": 0.45322822078099145,
+          "a4_note": "A4 ran on A0 as well as on A1; the card pre-registers A4 as a measurement on A1's output only, so the A0 column is unpre-registered context (code-reviewer caveat).",
+          "f6_floor_check": {
+            "abs_delta": 5.534002174389929e-05,
+            "f6_reference": 0.625,
+            "measured_skill": 0.6250553400217439,
+            "passed": true,
+            "required_arm": "retr_blockmean16_k5",
+            "tol": 0.02
+          }
+        },
+        "mechanism_instrumentation": {
+          "damage_share_a0": 0.005630192743606374,
+          "damage_share_candidate": 0.010568919744504348,
+          "pct_copylf_error_removed_model_a0": 54.67717792190086,
+          "pct_copylf_error_removed_model_candidate": 52.54899306748303,
+          "per_sample_model_beats_copylf_frac_a0": 0.96,
+          "per_sample_model_beats_copylf_frac_candidate": 0.97,
+          "no_harm_gate_ORACLE_skill_a0": 0.4506764585411527,
+          "no_harm_gate_ORACLE_skill_candidate": 0.4694950104845128,
+          "n_samples_oracle_gate_would_reject_a0": 4,
+          "n_samples_oracle_gate_would_reject_candidate": 3,
+          "note": "uncorrected in-run counterparts of tools/registration_skill_split.py (formulas byte-match per the code-reviewer); the registration-CORRECTED denominators are the mechanism-analyzer's post-hoc job."
+        },
+        "scale_audit": {
+          "before_global_scaler": {
+            "n_samples": 400,
+            "effective_n_samples_of_mse": 176.924029384511,
+            "energy_share_top1": 0.033429943021644815,
+            "energy_share_top5pct": 0.24619722299213842,
+            "normalised_target_max_median": 0.32917982264751566,
+            "normalised_target_max_min": 0.14652544087803118,
+            "scale_max_over_median": 3.037853268032153
+          },
+          "after_floored_s_i": {
+            "n_samples": 400,
+            "effective_n_samples_of_mse": 338.27948826305,
+            "energy_share_top1": 0.009562443031959036,
+            "energy_share_top5pct": 0.1089271391838131,
+            "normalised_target_max_median": 1.0,
+            "normalised_target_max_min": 0.49934537542751184,
+            "scale_max_over_median": 3.037853268032153
+          },
+          "after_predicted_s_hat": {
+            "n_samples": 400,
+            "effective_n_samples_of_mse": 338.3218711331273,
+            "energy_share_top1": 0.009894641669088444,
+            "energy_share_top5pct": 0.109796637028214,
+            "normalised_target_max_median": 0.9914815328739008,
+            "normalised_target_max_min": 0.4987380734650054,
+            "scale_max_over_median": 3.037853268032153
+          },
+          "split": "train"
+        },
+        "target_normalisation_candidate": {
+          "target_norm": "per_sample_maxabs",
+          "scale_stat": "maxabs",
+          "floor_mode": "train_quantile",
+          "floor_q": 0.25,
+          "floor_value": 0.1785216899588704,
+          "n_train_floored": 100,
+          "frac_train_floored": 0.25,
+          "global_scaler_for_reference": 0.6083856821060181,
+          "global_over_median_per_sample": 3.037853268032153,
+          "s_raw_train_min": 0.08914398029446602,
+          "s_raw_train_median": 0.20026829093694687,
+          "s_raw_train_max": 0.6083856821060181
+        },
+        "scale_predictor_quality": {
+          "spearman_rho_shat_strue_test": 0.7829479095814322,
+          "median_abs_log10_ratio_test": 0.024673430000510477,
+          "p90_abs_log10_ratio_test": 0.09687546126899708,
+          "mean_log10_ratio_bias_test": -0.028435050729230874,
+          "spearman_rho_on_train": 0.9669102589695853,
+          "a3_minus_a1_skill_gap": 0.002368164179135046,
+          "a3_minus_a1_skill_gap_sign_note": "negative = the ORACLE true scale is BETTER than the predicted scale (A3 < A1); positive = the predictor beats the true scale. Source field skill_gap_vs_scored_arm = A1 - A3."
+        },
+        "noise_floor_resolvability": {
+          "rescaled_seed_spread_floor": 0.034666726563180886,
+          "delta_vs_anchor_skill_1p0": 0.5254899306748304,
+          "abs_delta_vs_anchor_over_floor": 15.158337194517436,
+          "resolvable_vs_anchor": true,
+          "direction_vs_anchor": "improvement",
+          "delta_candidate_minus_a0": 0.02128184854417814,
+          "abs_delta_vs_a0_over_floor": 0.6138984165520068,
+          "resolvable_vs_a0": false,
+          "direction_vs_a0": "regression"
+        },
+        "certified_batch0_champion_skill": 5.533465853654415,
+        "min_claimable_effect": 0.5533465853654416,
+        "sanity_cap_leg_c": 4.980119,
+        "sanity_leg_c_passed": true
+      },
+      "sharp__fisher_kpp_2d": {
+        "per_seed_nrmse": [
+          0.05392095026115629
+        ],
+        "per_seed_skill": [
+          0.8609128693274612
+        ],
+        "mean_skill": 0.8609128693274612,
+        "ci95": null,
+        "ci95_note": "null by construction: ADR 0004 pins seed 0 only, so no across-seed CI exists. The eval layer's own sample-level percentile-bootstrap CI on the SCORED nRMSE is in nrmse_ci95_sample_bootstrap (verbatim rel_l2_ci95_lo/hi from the per-run JSON).",
+        "nrmse_ci95_sample_bootstrap": [
+          0.05002460421596625,
+          0.058059035799176616
+        ],
+        "nrmse_per_sample_std": 0.020794979904021616,
+        "n_test_samples": 100,
+        "reference_type": "copylf",
+        "metric_source": "per_sample_mean",
+        "split": "test_hf",
+        "cached": false,
+        "copylf_reference_nrmse": 0.06263229669603956,
+        "nrmse_ratio_of_sums_key": 0.05745052716270649,
+        "report_only": false,
+        "a0_paired_control": {
+          "nrmse": 0.050368366683091755,
+          "skill": 0.8041915966699127,
+          "nrmse_ci95_sample_bootstrap": [
+            0.04688577477218357,
+            0.05401356195713893
+          ],
+          "nrmse_ratio_of_sums_key": 0.0532309373385446,
+          "b2_continuity": {
+            "b2_part5_skill": 0.804192,
+            "epochs_caveat": "only meaningful at --epochs 200; at contract tier (2 epochs) this flag is expected to miss",
+            "meaning": "card part 4: A0 must reproduce B2 within 10 % on pfc (F6's replay caveat) and 2 % elsewhere; a miss is a REBUILD-FIDELITY FLAG, not a result",
+            "measured_skill": 0.8041915966699124,
+            "passed": true,
+            "rel_delta": 5.015345684383577e-07,
+            "tol": 0.02
+          }
+        },
+        "rel_delta_candidate_vs_a0": 0.07053203849981324,
+        "ref_splits_not_leaderboard_eligible": {
+          "copylf_identity_skill": 1.0,
+          "retr_blockmean16_k5_skill": 1.0615925704947986,
+          "a3_ref_oracle_truescale_skill": 0.8661137387664,
+          "a4_ref_gate_lfkeyed_skill_candidate": 0.8609128693274614,
+          "a4_ref_gate_lfkeyed_skill_a0": 0.8041915966699124,
+          "a4_note": "A4 ran on A0 as well as on A1; the card pre-registers A4 as a measurement on A1's output only, so the A0 column is unpre-registered context (code-reviewer caveat).",
+          "f6_floor_check": {
+            "abs_delta": 0.00040742950520145094,
+            "f6_reference": 1.062,
+            "measured_skill": 1.0615925704947986,
+            "passed": true,
+            "required_arm": "retr_blockmean16_k5",
+            "tol": 0.02
+          }
+        },
+        "mechanism_instrumentation": {
+          "damage_share_a0": 0.0006061055582175208,
+          "damage_share_candidate": 0.0,
+          "pct_copylf_error_removed_model_a0": 19.580840333008766,
+          "pct_copylf_error_removed_model_candidate": 13.908713067253863,
+          "per_sample_model_beats_copylf_frac_a0": 0.99,
+          "per_sample_model_beats_copylf_frac_candidate": 1.0,
+          "no_harm_gate_ORACLE_skill_a0": 0.8037041716732989,
+          "no_harm_gate_ORACLE_skill_candidate": 0.8609128693274614,
+          "n_samples_oracle_gate_would_reject_a0": 1,
+          "n_samples_oracle_gate_would_reject_candidate": 0,
+          "note": "uncorrected in-run counterparts of tools/registration_skill_split.py (formulas byte-match per the code-reviewer); the registration-CORRECTED denominators are the mechanism-analyzer's post-hoc job."
+        },
+        "scale_audit": {
+          "before_global_scaler": {
+            "n_samples": 400,
+            "effective_n_samples_of_mse": 264.1949593794207,
+            "energy_share_top1": 0.007677443245740528,
+            "energy_share_top5pct": 0.14064199186104687,
+            "normalised_target_max_median": 0.375611567795782,
+            "normalised_target_max_min": 0.19405197950444605,
+            "scale_max_over_median": 2.6623248210068295
+          },
+          "after_floored_s_i": {
+            "n_samples": 400,
+            "effective_n_samples_of_mse": 386.3406263421831,
+            "energy_share_top1": 0.003901813374941937,
+            "energy_share_top5pct": 0.06911442264867523,
+            "normalised_target_max_median": 1.0,
+            "normalised_target_max_min": 0.6685917390047887,
+            "scale_max_over_median": 2.6623248210068295
+          },
+          "after_predicted_s_hat": {
+            "n_samples": 400,
+            "effective_n_samples_of_mse": 393.963105904301,
+            "energy_share_top1": 0.0029669527736468026,
+            "energy_share_top5pct": 0.057391653441090325,
+            "normalised_target_max_median": 0.9697645853057537,
+            "normalised_target_max_min": 0.6681659254237164,
+            "scale_max_over_median": 2.6623248210068295
+          },
+          "split": "train"
+        },
+        "target_normalisation_candidate": {
+          "target_norm": "per_sample_maxabs",
+          "scale_stat": "maxabs",
+          "floor_mode": "train_quantile",
+          "floor_q": 0.25,
+          "floor_value": 0.11921513080596924,
+          "n_train_floored": 100,
+          "frac_train_floored": 0.25,
+          "global_scaler_for_reference": 0.41074691340327263,
+          "global_over_median_per_sample": 2.6623248210068295,
+          "s_raw_train_min": 0.07970625162124634,
+          "s_raw_train_median": 0.15428129211068153,
+          "s_raw_train_max": 0.41074691340327263
+        },
+        "scale_predictor_quality": {
+          "spearman_rho_shat_strue_test": 0.9586430747171889,
+          "median_abs_log10_ratio_test": 0.02073346403982851,
+          "p90_abs_log10_ratio_test": 0.0524179465046337,
+          "mean_log10_ratio_bias_test": -0.0002371083954118791,
+          "spearman_rho_on_train": 0.971878912797819,
+          "a3_minus_a1_skill_gap": 0.0052008694389386045,
+          "a3_minus_a1_skill_gap_sign_note": "negative = the ORACLE true scale is BETTER than the predicted scale (A3 < A1); positive = the predictor beats the true scale. Source field skill_gap_vs_scored_arm = A1 - A3."
+        },
+        "noise_floor_resolvability": {
+          "rescaled_seed_spread_floor": 0.021973016900171897,
+          "delta_vs_anchor_skill_1p0": 0.13908713067253875,
+          "abs_delta_vs_anchor_over_floor": 6.32990596168206,
+          "resolvable_vs_anchor": true,
+          "direction_vs_anchor": "improvement",
+          "delta_candidate_minus_a0": 0.05672127265754856,
+          "abs_delta_vs_a0_over_floor": 2.5814057721452364,
+          "resolvable_vs_a0": true,
+          "direction_vs_a0": "regression"
+        },
+        "certified_batch0_champion_skill": 4.177354995081957,
+        "min_claimable_effect": 0.41773549950819566,
+        "sanity_cap_leg_c": 3.75962,
+        "sanity_leg_c_passed": true
+      }
+    },
+    "panel_geomean_skill": {
+      "per_seed": [
+        0.4005770050431805
+      ],
+      "mean": 0.4005770050431805,
+      "ci95": null,
+      "ci95_note": "null by construction: one seed (ADR 0004). Every number in part 5 is provisional-single-seed.",
+      "n_datasets": 5,
+      "a0_paired_control_geomean": 0.43243932566934296,
+      "leave_helmholtz_out_geomean": {
+        "candidate": 0.3610470395518999,
+        "a0_paired_control": 0.23258284056644984,
+        "note": "the card's 'honest headline' (part 4): ext__helmholtz_2d is REPORT-ONLY and dominates the 5-dataset geomean. On the honest headline the candidate is WORSE than its paired control (0.361047 vs 0.232583, +55.2 %)."
+      }
+    },
+    "vs_anchor": {
+      "anchor_file": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round1/state/anchors/s2_beyond_copy.json",
+      "anchor_type": "copylf_bar",
+      "anchor_value": 1.0,
+      "anchor_value_meaning": "the bar is copy-LF itself (skill 1.0); certified best skills show the gap",
+      "scored_arm_panel_geomean": 0.4005770050431805,
+      "delta": -0.5994229949568195,
+      "delta_direction": "improvement (skill is lower-better)",
+      "beyond_ci": true,
+      "beyond_ci_basis": "no across-seed CI exists (single seed, ADR 0004). Judged on the eval layer's own sample-level percentile-bootstrap CI of the scored nRMSE: on 4/5 datasets the whole CI lies below the copy-LF bar; on ext__helmholtz_2d (REPORT-ONLY) the CI straddles it ([0.069650, 0.381437] vs copy-LF 0.329450). Sample-level only.",
+      "beyond_ci_per_dataset": {
+        "ext__helmholtz_2d": {
+          "nrmse_ci95_sample_bootstrap": [
+            0.06964969016350328,
+            0.381436959718318
+          ],
+          "copylf_reference_nrmse": 0.3294501260438018,
+          "whole_ci_below_copylf_bar": false
+        },
+        "sharp__phase_field_crystal_2d": {
+          "nrmse_ci95_sample_bootstrap": [
+            0.005063172864895829,
+            0.008059237981542575
+          ],
+          "copylf_reference_nrmse": 0.04478044719481978,
+          "whole_ci_below_copylf_bar": true
+        },
+        "sharp__allen_cahn_2d": {
+          "nrmse_ci95_sample_bootstrap": [
+            0.003066336562179613,
+            0.006521821601074315
+          ],
+          "copylf_reference_nrmse": 0.016151772077279084,
+          "whole_ci_below_copylf_bar": true
+        },
+        "sharp__cahn_hilliard": {
+          "nrmse_ci95_sample_bootstrap": [
+            0.01235538153221939,
+            0.08228116480955999
+          ],
+          "copylf_reference_nrmse": 0.08765999100758841,
+          "whole_ci_below_copylf_bar": true
+        },
+        "sharp__fisher_kpp_2d": {
+          "nrmse_ci95_sample_bootstrap": [
+            0.05002460421596625,
+            0.058059035799176616
+          ],
+          "copylf_reference_nrmse": 0.06263229669603956,
+          "whole_ci_below_copylf_bar": true
+        }
+      },
+      "beyond_noise_floor": true,
+      "beyond_noise_floor_detail": {
+        "ext__helmholtz_2d": {
+          "rescaled_seed_spread_floor": 0.7016543420944195,
+          "delta_vs_anchor_skill_1p0": 0.3930192433170323,
+          "abs_delta_vs_anchor_over_floor": 0.5601322755929655,
+          "resolvable_vs_anchor": false,
+          "direction_vs_anchor": "improvement",
+          "delta_candidate_minus_a0": -4.560932625936814,
+          "abs_delta_vs_a0_over_floor": 6.500255684761462,
+          "resolvable_vs_a0": true,
+          "direction_vs_a0": "improvement"
+        },
+        "sharp__phase_field_crystal_2d": {
+          "rescaled_seed_spread_floor": 0.007179454861133817,
+          "delta_vs_anchor_skill_1p0": 0.8538505805910324,
+          "abs_delta_vs_anchor_over_floor": 118.92972337125158,
+          "resolvable_vs_anchor": true,
+          "direction_vs_anchor": "improvement",
+          "delta_candidate_minus_a0": 0.11820301688683299,
+          "abs_delta_vs_a0_over_floor": 16.464065750552788,
+          "resolvable_vs_a0": true,
+          "direction_vs_a0": "regression"
+        },
+        "sharp__allen_cahn_2d": {
+          "rescaled_seed_spread_floor": 0.0008662823105649906,
+          "delta_vs_anchor_skill_1p0": 0.7153878565340224,
+          "abs_delta_vs_anchor_over_floor": 825.8137651078727,
+          "resolvable_vs_anchor": true,
+          "direction_vs_anchor": "improvement",
+          "delta_candidate_minus_a0": -0.002669777844196086,
+          "abs_delta_vs_a0_over_floor": 3.081879673215136,
+          "resolvable_vs_a0": true,
+          "direction_vs_a0": "improvement"
+        },
+        "sharp__cahn_hilliard": {
+          "rescaled_seed_spread_floor": 0.034666726563180886,
+          "delta_vs_anchor_skill_1p0": 0.5254899306748304,
+          "abs_delta_vs_anchor_over_floor": 15.158337194517436,
+          "resolvable_vs_anchor": true,
+          "direction_vs_anchor": "improvement",
+          "delta_candidate_minus_a0": 0.02128184854417814,
+          "abs_delta_vs_a0_over_floor": 0.6138984165520068,
+          "resolvable_vs_a0": false,
+          "direction_vs_a0": "regression"
+        },
+        "sharp__fisher_kpp_2d": {
+          "rescaled_seed_spread_floor": 0.021973016900171897,
+          "delta_vs_anchor_skill_1p0": 0.13908713067253875,
+          "abs_delta_vs_anchor_over_floor": 6.32990596168206,
+          "resolvable_vs_anchor": true,
+          "direction_vs_anchor": "improvement",
+          "delta_candidate_minus_a0": 0.05672127265754856,
+          "abs_delta_vs_a0_over_floor": 2.5814057721452364,
+          "resolvable_vs_a0": true,
+          "direction_vs_a0": "regression"
+        }
+      },
+      "the_comparison_that_matters": "vs the copy-LF anchor the scored arm wins on all five datasets. But the card's pre-registered comparator is the PAIRED A0 control, not the anchor, and against A0 the arm is worse on pfc (+422.96 %, 16.5x the rescaled seed-spread floor), worse on fisher_kpp (+7.05 %, 2.6x floor), worse on cahn_hilliard (+4.70 %, 0.61x floor => NOT resolvable), better on allen_cahn (-0.93 %, 3.1x floor) and far better on the REPORT-ONLY ext__helmholtz_2d (-88.25 %, 6.5x floor)."
+    },
+    "cratered_verdict": "cratered",
+    "cratered_verdict_detail": "(a) NO crash: SLURM 66081956 COMPLETED 0:0, .err 0 bytes, all 5 datasets finite on test_hf for both arms per assert_env. (b) NOT over the skill trigger: panel geomean 0.400577 <= CRATERED_SKILL_FACTOR 1.5 x anchor 1.0 = 1.5 (the control is 0.432439). (c) BUT the pre-registered falsification clause FIRED DECISIVELY on leg (a): 'the scored arm's sharp__phase_field_crystal_2d skill is not <= 0.80 x the paired A0 control's' - observed 0.146149 vs threshold 0.022357, i.e. 6.54x the threshold and 5.23x the control, with disjoint sample-bootstrap CIs ([0.005063, 0.008059] vs [0.001053, 0.001466] in nRMSE) and a delta 16.5x the rescaled batch-0 seed spread. Under the analyzer's cratered rule (crash OR geomean trigger OR the clause fired decisively) the verdict is CRATERED: the card is not a candidate for the end-of-round top-3 seed-1/2 confirmation and no further seeds should be spent on it. This is NOT a judgment that the card failed - the pre-registered well-founded negative makes the (a)-failure a RESULT; it is only the seed-spend decision.",
+    "falsification_verdict": "falsified",
+    "falsification_verdict_detail": {
+      "hypothesis_verdict": "FALSIFIED",
+      "clause_quoted_verbatim": "H-B3 (\"the family's single global `max|HF-LF|` target scaler - not its architecture - is what breaks the LF-residual corrector on the two datasets whose per-sample residual scale spans decades, and replacing it by a per-sample amplitude normalisation whose test-time scale is PREDICTED from `(X, LF)` repairs those and does nothing to the other three\") is FALSIFIED at 200 epochs / seed 0 if ANY of: **(a) PRIMARY (pfc)** the scored arm's `sharp__phase_field_crystal_2d` skill is not `<= 0.80 x` the paired A0 control's (`<= 0.014688` at B2's 0.018360) ...; **(b) ASYMMETRY** any of `sharp__allen_cahn_2d` / `sharp__cahn_hilliard` / `sharp__fisher_kpp_2d` moves by more than **+/-15 %** vs A0 - bands [0.244190, 0.330374] / [0.385244, 0.521212] / [0.683563, 0.924821] ... **in EITHER direction, a favourable move included** ...; **(c) SANITY (absolute noise floor)** the scored arm fails to beat the certified batch-0 champion skills by more than each dataset's `min_claimable_effect`, i.e. skill must be `<= 10.359901` pfc, `<= 14.700664` allen_cahn, `<= 4.980119` cahn_hilliard, `<= 3.759620` fisher_kpp, `<= 4.122329` helmholtz; **(d) MECHANISM (instrumented)** the pfc gain arrives WITHOUT `damage_share` (`tools/registration_skill_split.py`, same shipped per-sample columns) falling from A0's **0.098** to `<= 0.05`, or with `pct_copylf_error_removed_model` on the neutral three moving by more than 2 points - either pattern means the arm bought its number by re-learning more of the `(r-1)/2` resampling convention rather than by ceasing to damage samples copy-LF already had exact.",
+      "leg_a_primary_pfc": {
+        "verdict": "FAILED (decisively)",
+        "clause": "card leg (a): the scored arm's pfc skill must be <= 0.80x the PAIRED A0 control's",
+        "threshold_skill_rescaled_to_in_job_a0": 0.022357122017707717,
+        "threshold_arithmetic": "0.80 x the PAIRED A0 control 0.027946402522134643 = 0.022357122017707717; the card's printed 0.014688 was 0.80 x B2's 0.018360 and is superseded by the paired control, exactly as the card words the leg.",
+        "candidate_skill": 0.14614941940896764,
+        "margin_factor_over_threshold": 6.53704082722327,
+        "direction": "the candidate is 6.54x the threshold and 5.23x the paired control: pfc REGRESSED by +422.96 % where the card predicted -45 %.",
+        "passed": false
+      },
+      "leg_b_asymmetry": {
+        "verdict": "PASSED (all three neutral datasets inside +/-15 %)",
+        "violations": [],
+        "per_dataset_rel_delta_vs_paired_a0": {
+          "sharp__allen_cahn_2d": -0.009293233044461472,
+          "sharp__cahn_hilliard": 0.046956141670758705,
+          "sharp__fisher_kpp_2d": 0.07053203849981324
+        },
+        "also_checked_against_the_cards_absolute_bands": {
+          "sharp__allen_cahn_2d": {
+            "band": [
+              0.24419,
+              0.330374
+            ],
+            "observed": 0.2846121434659776,
+            "inside": true
+          },
+          "sharp__cahn_hilliard": {
+            "band": [
+              0.385244,
+              0.521212
+            ],
+            "observed": 0.4745100693251696,
+            "inside": true
+          },
+          "sharp__fisher_kpp_2d": {
+            "band": [
+              0.683563,
+              0.924821
+            ],
+            "observed": 0.8609128693274612,
+            "inside": true
+          },
+          "note": "the card's absolute bands and the paired-rescaled bands coincide here because A0 reproduced B2 to <= 5.0e-07 on all three."
+        },
+        "caveat_the_band_is_coarser_than_the_noise_floor": "leg (b)'s +/-15 % band is 173x / 4.33x / 6.83x the rescaled batch-0 seed spreads, so two of the three 'neutral' moves ARE resolvable against the round's noise floor even though the leg passes: fisher_kpp +7.05 % = 2.58x floor (regression), allen_cahn -0.93 % = 3.08x floor (improvement). cahn_hilliard +4.70 % = 0.61x floor is not resolvable. Recorded as measurement, not as a leg verdict.",
+        "passed": true
+      },
+      "leg_c_sanity": {
+        "verdict": "PASSED (all five below their absolute caps)",
+        "violations": [],
+        "per_dataset": {
+          "ext__helmholtz_2d": {
+            "cap": 4.122329,
+            "observed_skill": 0.6069807566829677,
+            "passed": true
+          },
+          "sharp__phase_field_crystal_2d": {
+            "cap": 10.359901,
+            "observed_skill": 0.14614941940896764,
+            "passed": true
+          },
+          "sharp__allen_cahn_2d": {
+            "cap": 14.700664,
+            "observed_skill": 0.2846121434659776,
+            "passed": true
+          },
+          "sharp__cahn_hilliard": {
+            "cap": 4.980119,
+            "observed_skill": 0.4745100693251696,
+            "passed": true
+          },
+          "sharp__fisher_kpp_2d": {
+            "cap": 3.75962,
+            "observed_skill": 0.8609128693274612,
+            "passed": true
+          }
+        },
+        "passed": true
+      },
+      "leg_d_mechanism": {
+        "verdict_as_computed_by_the_shipped_script": "FAILED",
+        "sub_clause_1_pfc_damage_share": {
+          "requirement": "damage_share must fall from A0's 0.098 to <= 0.05 on pfc",
+          "a0_measured_in_job": 0.2074314777984177,
+          "a0_value_quoted_by_the_card": 0.098,
+          "candidate": 1.3911093099987344e-07,
+          "target": 0.05,
+          "passed": true,
+          "note": "satisfied about as strongly as it can be: 0.207431 -> 1.39e-07, i.e. the arm essentially stopped damaging the samples copy-LF already had exact. Note the in-job A0 damage_share is 2.1x the 0.098 the card quotes from B2 part 6 (see the continuity flag)."
+        },
+        "sub_clause_2_neutral_pct_copylf_error_removed": {
+          "requirement": "pct_copylf_error_removed_model on the neutral three must move by <= 2 points",
+          "band_points": 2.0,
+          "point_moves": {
+            "sharp__allen_cahn_2d": 0.26697778441960907,
+            "sharp__cahn_hilliard": -2.1281848544178246,
+            "sharp__fisher_kpp_2d": -5.672127265754902
+          },
+          "passed": false,
+          "note": "FIRES on 2 of 3: sharp__fisher_kpp_2d -5.672 points (19.581 -> 13.909) and sharp__cahn_hilliard -2.128 points (54.677 -> 52.549); sharp__allen_cahn_2d +0.267 points is inside the band. Both firing moves are NEGATIVE, i.e. the arm removes LESS of copy-LF's error there - the opposite direction from the 're-learned registration' pattern the clause was written to catch."
+        },
+        "verbatim_reading_caveat": "the clause is conditioned on 'the pfc GAIN arrives WITHOUT ...'. There was no pfc gain (pfc regressed 4.23x), so on the literal reading leg (d)'s antecedent is absent and the leg cannot discharge its stated purpose ('means the arm bought its number by re-learning ... rather than by ceasing to damage'). The shipped paired_readout.py evaluates the two sub-clauses unconditionally and therefore reports leg_d_passed=false. BOTH readings are recorded here; the deciding numbers are above and are the same under either reading.",
+        "passed_as_scripted": false
+      },
+      "which_pre_registered_branch_obtained": {
+        "branch": "PRE-REGISTERED WELL-FOUNDED NEGATIVE - obtains, with one qualification",
+        "branch_text_verbatim": "PRE-REGISTERED WELL-FOUNDED NEGATIVE (card part 4, quoted from https://arxiv.org/html/2604.20061v1): \"A network trained with mean-squared error converges to the conditional expectation ... The resulting prediction is over-smoothed by construction, and no architecture or training procedure can recover information the coarse representation discards.\" Combined with B2 F1 (pfc's node-aligned free fix reaches 7.1e-06, i.e. the pfc ladder carries NO fidelity gap) and F6 (its bottom decile's residual is numerical roundoff, which per-sample normalisation would up-weight by `1/s_i^2` - the risk s7_loss-B1 M6 rule (1) names and the q25 floor mitigates), a clean failure of leg (a) with legs (b)-(d) intact is a RESULT - \"the target-scaler defect is real but unexploitable on a degenerate ladder\" - not a failed card.",
+        "why_it_obtains": "leg (a) fails cleanly and decisively (no crash, no non-finite value, no contract violation; the arm trained normally and its identity/firewall/floor self-checks all pass), and legs (b) and (c) are intact. The predicted failure MODE is also observed: the q25 floor did not stop the roundoff-scale samples from being up-weighted - pfc floors 93/400 train samples at 5.22e-08 and the effective N of the MSE rises 140.29 -> 348.84, so the loss is now spread over samples whose residual is numerical noise, and the arm's share of copy-LF error removed on pfc falls 97.21 % -> 85.39 %.",
+        "the_qualification": "'legs (b)-(d) intact' is not literally true: leg (d)'s neutral-pct sub-clause fires on fisher_kpp (-5.67 pts) and cahn_hilliard (-2.13 pts). Leg (d)'s damage half is intact and is satisfied at the strongest possible level (0.2074 -> 1.4e-07).",
+        "the_twist_the_mechanism_analyzer_should_take": "the repair WORKED on the OTHER decade-spanning dataset: ext__helmholtz_2d 5.167913 -> 0.606981 (-88.25 %, 6.5x its rescaled floor), damage_share 0.8510 -> 0.1095, effective N 1.246 -> 17.25 under s_hat (246.3 under the true floored s_i). So 'unexploitable on a degenerate ladder' is dataset-specific, not a verdict on the lever: the defect is real and exploitable where the residual is real signal, and unexploitable where it is roundoff. ext__helmholtz_2d is REPORT-ONLY (rescaled floor 0.701654), so this cannot be claimed as a win - only as the direction."
+      },
+      "note_from_the_readout": "H-B3 is FALSIFIED if ANY leg fails. A clean failure of leg (a) with (b)-(d) intact is the card's PRE-REGISTERED WELL-FOUNDED NEGATIVE, i.e. a RESULT."
+    },
+    "oracle_and_gate_headroom": {
+      "what_a3_is": "A3 ref_oracle_truescale: A1's own checkpoint re-evaluated with the TRUE per-sample s_i (y_te - lf_te). LEAKED LABEL - fenced ref_* split, never leaderboard-eligible; it bounds the headroom the scale PREDICTOR gives away.",
+      "per_dataset": {
+        "ext__helmholtz_2d": {
+          "a1_skill": 0.6069807566829677,
+          "a3_oracle_skill": 0.4204724689561089,
+          "a3_minus_a1": -0.1865082877268588,
+          "spearman_rho_shat_strue": 0.9512727755982018,
+          "median_abs_log10_ratio": 0.03151569801976373
+        },
+        "sharp__phase_field_crystal_2d": {
+          "a1_skill": 0.14614941940896764,
+          "a3_oracle_skill": 0.1409855720643671,
+          "a3_minus_a1": -0.005163847344600542,
+          "spearman_rho_shat_strue": 0.9753031107949478,
+          "median_abs_log10_ratio": 0.048873999971950965
+        },
+        "sharp__allen_cahn_2d": {
+          "a1_skill": 0.2846121434659776,
+          "a3_oracle_skill": 0.30577679599850194,
+          "a3_minus_a1": 0.021164652532524364,
+          "spearman_rho_shat_strue": 0.9503975669436125,
+          "median_abs_log10_ratio": 0.031595647515031855
+        },
+        "sharp__cahn_hilliard": {
+          "a1_skill": 0.4745100693251696,
+          "a3_oracle_skill": 0.47687823350430475,
+          "a3_minus_a1": 0.002368164179135157,
+          "spearman_rho_shat_strue": 0.7829479095814322,
+          "median_abs_log10_ratio": 0.024673430000510477
+        },
+        "sharp__fisher_kpp_2d": {
+          "a1_skill": 0.8609128693274612,
+          "a3_oracle_skill": 0.8661137387664,
+          "a3_minus_a1": 0.0052008694389387156,
+          "spearman_rho_shat_strue": 0.9586430747171889,
+          "median_abs_log10_ratio": 0.02073346403982851
+        }
+      },
+      "headroom_read": "the scale predictor is NOT the limiter on pfc. rho = 0.9753 and median |log10(s_hat/s_true)| = 0.0489 (a 12 % typical scale error), and a PERFECT scale would move pfc only 0.146149 -> 0.140986 (-3.5 %) - still 5.04x the paired A0's 0.027946. The per-sample normalisation itself, not its predictor, is what loses on pfc. On the three neutral datasets the oracle is WORSE than the predictor (allen_cahn +0.021165, cahn_hilliard +0.002368, fisher_kpp +0.005201 in skill units), i.e. the trained head is adapted to s_hat, not to s_true. Only ext__helmholtz_2d shows real predictor headroom: 0.606981 -> 0.420472 (-30.7 %), with rho 0.9513.",
+      "card_prediction_check": "card part 4 predicted 'A3 (ORACLE) <= A1 on pfc and helmholtz' - TRUE on both - and 'rho(s_hat, s_true) >= 0.8 on the registration-dominated sets' - TRUE on 4/5 (0.9753 pfc, 0.9513 helm, 0.9504 allen_cahn, 0.9586 fisher_kpp) and FALSE on sharp__cahn_hilliard (0.7829).",
+      "a4_gate_measurement_report_only": {
+        "what_it_is": "A4 ref_gate_lfkeyed: physics-free LF-keyed no-harm gate on the arm's output, tau calibrated on a 20 % HF-TRAIN holdout. D2 measurement only, no mechanism claim; ref_* split.",
+        "a4_skill_on_candidate": {
+          "ext__helmholtz_2d": 0.6069807566829678,
+          "sharp__phase_field_crystal_2d": 0.14614941940896767,
+          "sharp__allen_cahn_2d": 0.28461214346597763,
+          "sharp__cahn_hilliard": 0.4745100693251697,
+          "sharp__fisher_kpp_2d": 0.8609128693274614
+        },
+        "a4_skill_on_a0_not_pre_registered": {
+          "ext__helmholtz_2d": 1.0,
+          "sharp__phase_field_crystal_2d": 0.027946402522134643,
+          "sharp__allen_cahn_2d": 0.2872819213101736,
+          "sharp__cahn_hilliard": 0.45322822078099145,
+          "sharp__fisher_kpp_2d": 0.8041915966699124
+        },
+        "read": "on the candidate the calibrated gate selects tau = always_model on every dataset (frac_query_accept_model = 1.0), so it is worth exactly ZERO. On A0 it is worth nothing on the four sharp sets and everything on ext__helmholtz_2d (5.167913 -> 1.0, i.e. it abandons the model for copy-LF). Card part 4 pre-registered the read: 'if the gate is still worth a lot after A1, the scale lever did not fix the damage' - it is worth nothing after A1, so on this criterion the lever DID fix the damage. The independent ORACLE no-harm gate agrees: on pfc it is worth 20.7 % on A0 (0.027946 -> 0.022149) and 1.4e-05 % on A1 (0.14614942 -> 0.14614940).",
+        "carry_the_review_caveat": "A4 also ran on A0, where the card does not pre-register it; and the gate's tau is calibrated on a holdout the model trained on (builder-disclosed bias toward accepting the model)."
+      }
+    },
+    "cross_stream_discriminator_vs_s5_B2": {
+      "clause_verbatim": "**Distinguishing result pattern**: a per-dataset scaler *cannot* move pfc (the defect there is within-dataset spread, 8.24e4), so - pfc moves >= 20 % => the effect is genuinely per-sample and the two findings are distinct levers; - only helmholtz moves and pfc does not => both streams have found the same dataset-level amplitude channel (already reported by s5) and s2 adds no new lever; - all five move => leg (b) fires and neither story survives.",
+      "measured": {
+        "pfc_rel_move_vs_paired_a0": 4.2296326617786155,
+        "helmholtz_rel_move_vs_paired_a0": -0.8825481946496422,
+        "neutral_three_rel_moves": {
+          "sharp__allen_cahn_2d": -0.009293233044461472,
+          "sharp__cahn_hilliard": 0.046956141670758705,
+          "sharp__fisher_kpp_2d": 0.07053203849981324
+        },
+        "leg_b_fired": false
+      },
+      "verdict": "BRANCH 1 obtains: pfc moved by 422.96 %, far beyond the clause's 20 % trigger, and leg (b) did not fire. The lever is therefore genuinely per-SAMPLE - a per-dataset affine such as s5-B2's MFFP_TARGET_SCALER=zscore cannot move pfc at all - and the two streams' findings are distinct levers.",
+      "the_direction_qualification": "the clause's trigger is written direction-agnostically ('pfc moves >= 20 %'). The observed pfc move is a REGRESSION, so branch 1 licenses a claim about the lever's REACH (it acts within-dataset, where a dataset-level scaler cannot), not about its VALUE. ext__helmholtz_2d's -88.25 % is consistent with the same dataset-level amplitude channel s5-B2 already reported (its energy_share_top1 = 0.892 makes its per-sample spread nearly a one-sample effect), so helmholtz alone does NOT establish a new lever."
+    },
+    "guard_flags": [
+      "sharp__sod_1d: contract-tier nRMSE 0.08052201 is 2.433x the guard reference 0.03309018 in eval/copylf_baselines.json (> 2x => FLAGGED, no auto-reject). Context, not interpretation: the value is IDENTICAL for all four screened arms and identical to B2's, because sharp__sod_1d is 1-D and therefore runs on the card's pre-registered S2_FALLBACK_NO_TEST_LF=champion path, which does not exercise the scored per-sample-normalisation mechanism at all; and it is a 2-epoch contract-tier number (ADR 0007: screen numbers are never reportable).",
+      "NO 200-epoch guard run exists: the main job 66081956 scored only the 5 beyond-copy datasets. The guard status of the scored arm at report tier is UNMEASURED. The rows below are contract tier (2 epochs) from the ADR-0007 screen job 66076828 and are recorded as context only.",
+      "The candidate does not regress the guard set relative to its own paired control at contract tier: fluid 0.9943x A0, heat_local 1.0110x A0, sharp__sod_1d 1.0000x A0."
+    ],
+    "guard_set_detail": {
+      "tier": "contract (2 epochs, seed 0) - ADR 0007 screen, NOT a report-tier measurement",
+      "source_json": {
+        "global_ctrl": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s2_beyond_copy/B3/screen/global_ctrl__guard_s0.json",
+        "persample_pred": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s2_beyond_copy/B3/screen/persample_pred__guard_s0.json"
+      },
+      "why_not_re_run": "section 2d of the analyzer contract triggers a guard re-run only when the card claims a panel win beyond the CI. This card claims no win: leg (a) failed and the scored arm is worse than its paired control on 3 of the 4 scoreable datasets and on the leave-helmholtz-out headline. No guard job was therefore submitted (and this analyzer may not submit SLURM jobs).",
+      "rows": {
+        "fluid": {
+          "nrmse_contract_tier_candidate": 0.08610962224933542,
+          "nrmse_contract_tier_a0": 0.08660465624038444,
+          "guard_reference_nrmse": 0.21805958171115042,
+          "ratio_to_reference": 0.39489033948253344,
+          "candidate_over_a0": 0.9942839794932622,
+          "flagged_regression_gt_2x": false
+        },
+        "heat_local": {
+          "nrmse_contract_tier_candidate": 0.0001956390279425843,
+          "nrmse_contract_tier_a0": 0.00019351983881625353,
+          "guard_reference_nrmse": 0.00240152155999517,
+          "ratio_to_reference": 0.08146461443509914,
+          "candidate_over_a0": 1.0109507590503057,
+          "flagged_regression_gt_2x": false
+        },
+        "sharp__sod_1d": {
+          "nrmse_contract_tier_candidate": 0.08052200683698882,
+          "nrmse_contract_tier_a0": 0.08052200683698882,
+          "guard_reference_nrmse": 0.03309017650048946,
+          "ratio_to_reference": 2.4334112220827158,
+          "candidate_over_a0": 1.0,
+          "flagged_regression_gt_2x": true
+        }
+      },
+      "reference_source": "round1/eval/copylf_baselines.json test_nrmse (guard reference)"
+    },
+    "anomalies": [
+      "CLEAN RUN: SLURM 66081956 COMPLETED 0:0, elapsed 00:36:59 (sacct), single node hpc-33-16, 1x NVIDIA H100 80GB HBM3; .err is 0 bytes; no NaN / preemption / requeue / resume line in the .out; assert_env passed after BOTH arms (46 recipe knobs present and equal, 5 datasets scored on test_hf, all finite); identity_proof abs_delta_nrmse = 0.0 and max_abs_field_delta_vs_LF_up = 0.0 on all 10 runs; F6 floor-reproduction deltas 2.16e-05 .. 4.07e-04 (tol 0.02) on all 5 datasets.",
+      "VALIDITY GATE MISS (the most important anomaly): the paired A0 global_ctrl arm does NOT reproduce B2 on the two datasets the card is about - sharp__phase_field_crystal_2d 0.018360 -> 0.027946 (+52.21 %, tol 10 %) and ext__helmholtz_2d 4.135972 -> 5.167913 (+24.95 %, tol 2 %) - while reproducing the neutral three to <= 5.0e-07 relative. Card part 4 words this as a rebuild-fidelity flag, not a result, and all scored deltas here are taken against the paired in-job A0 as the card requires. But it means the card's own A0 column (and its leg-(d) damage_share reference 0.098, measured here as 0.207431) describes a model this job did not reproduce. See 5_actual_result.b2_continuity_gate for the untested float32->float64 composition hypothesis.",
+      "The test-target firewall's status string is HARDCODED to 'clean' in report() (code-reviewer caveat): it must NOT be read as a passed check. What IS evidence: the structural counts, which show the intended asymmetry - A0 6 fit entrypoints checked / 0 fenced oracle uses; A1 8 checked / exactly 1 fenced use (ref_oracle_truescale) - and assert_env's independent hard-fail on a missing/unclean report, on a missing tainted array, and on either ref_* split being marked reportable.",
+      "Code-reviewer F1 is now DISCHARGED by this run: the note-12 figures that had no committed file behind them are reproduced by the 200-epoch instrumentation. ext__helmholtz_2d effective_n_samples_of_mse = 1.246282 (card F10: 1.2), energy_share_top1 = 0.892043 (card F10: 89.2 %), sharp__phase_field_crystal_2d global_over_median_per_sample = 79460.12 (card F10: 79460). One PARTIAL: helmholtz's maxabs-based scale_max_over_median is 6398.34 here, where card part 2 quotes 13702 for the L2-norm-based max/median - a different statistic, same order, not a contradiction but not a reproduction either.",
+      "TIER MIXING IN THE OUTPUT DIRECTORY (hygiene, affects any downstream glob): eval/ holds 2-EPOCH screen artifacts next to 200-epoch ones with no epoch tag in the filename. preds_test_persample_gradproxy_*.npz and preds_test_persample_nofloor_*.npz (all 7 datasets) and preds_test_{global_ctrl,persample_pred}_{fluid,heat_local}.npz are screen outputs (mtimes 12:55-13:08); only preds_test_{global_ctrl,persample_pred}_<the 5 beyond-copy datasets>.npz are the 200-epoch run (mtimes 13:12-13:47). floor_*.json sidecars also predate the main job (they are cache-key guarded and their f6_check passes).",
+      "A2 persample_gradproxy and A5 persample_nofloor have NO 200-epoch run - they exist only at contract tier in the screen (ADR 0007, build_notes only). So the card has no report-tier fallback context and no report-tier audit of the s7-M6 denominator-floor rule.",
+      "The A3 ORACLE is WORSE than the scored arm on all three neutral datasets (allen_cahn 0.305777 vs 0.284612, cahn_hilliard 0.476878 vs 0.474510, fisher_kpp 0.866114 vs 0.860913): the trained head is adapted to the PREDICTED scale, so substituting the true scale at test time hurts. The oracle only helps where the scale distribution is pathological (pfc +3.5 %, helmholtz +30.7 %).",
+      "Heavy per-sample tails persist and now dominate two rows: sharp__cahn_hilliard's ratio-of-sums nRMSE key is 4.73x its scored per-sample-mean (0.196734 vs 0.041596, per-sample std 4.4x the mean), and ext__helmholtz_2d's candidate per-sample std is 4.08x its mean (0.815675 vs 0.199970) with a sample-bootstrap CI of [0.069650, 0.381437]. The -88.25 % helmholtz headline therefore rests on a heavy-tailed distribution - and helmholtz is REPORT-ONLY anyway.",
+      "Unrelated-to-the-lever guard flag carried from B2: sharp__sod_1d is 2.433x the guard reference at contract tier, identically for all four screened arms, because it is 1-D and runs the pre-registered champion fallback."
+    ],
+    "wall_clock_per_seed_min": [
+      36.983333333333334
+    ],
+    "wall_clock_detail": {
+      "job_id": "66081956",
+      "job_name": "r1-s2_beyond_copy-B3-s0",
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "elapsed": "00:36:59",
+      "start_local": "2026-07-30T13:10:09",
+      "end_local": "2026-07-30T13:47:08",
+      "gpu": "1x NVIDIA H100 80GB HBM3 (hpc-33-16)",
+      "note": "ONE job contains BOTH arms (A0 13:10:09-13:28:23, A1 13:28:23-13:47:08); the wall clock is for the pair, not per arm.",
+      "train_seconds_per_dataset": {
+        "global_ctrl": {
+          "ext__helmholtz_2d": 114.56812906265259,
+          "sharp__phase_field_crystal_2d": 115.88277316093445,
+          "sharp__allen_cahn_2d": 265.2691466808319,
+          "sharp__cahn_hilliard": 255.48669028282166,
+          "sharp__fisher_kpp_2d": 253.10158371925354
+        },
+        "persample_pred": {
+          "ext__helmholtz_2d": 107.41483688354492,
+          "sharp__phase_field_crystal_2d": 106.26408529281616,
+          "sharp__allen_cahn_2d": 262.6669673919678,
+          "sharp__cahn_hilliard": 258.0121281147003,
+          "sharp__fisher_kpp_2d": 255.66599011421204
+        }
+      },
+      "scale_predictor_seconds_candidate": {
+        "ext__helmholtz_2d": 8.219732284545898,
+        "sharp__phase_field_crystal_2d": 8.272724151611328,
+        "sharp__allen_cahn_2d": 8.233961343765259,
+        "sharp__cahn_hilliard": 8.247313499450684,
+        "sharp__fisher_kpp_2d": 8.316598176956177
+      },
+      "train_minutes_total_both_arms": 33.23887217839559,
+      "screen_job_for_the_ledger": "66076828 (ADR-0007 screen, 4 arms x {5 beyond-copy, guard} at 2 epochs + floors; 12:55 -> 13:08 => ~13 min)"
+    },
+    "review_caveats_carried": [
+      "code-reviewer F1 (note-12 helmholtz/pfc figures unverified) - DISCHARGED by this run; see anomalies.",
+      "code-reviewer F2/F3 (build note 16 stale + numbering collision) - documentation only; note 17 + the build_commit field are authoritative.",
+      "code-reviewer advisory A1 (the continuity flag is not printed in paired_readout_s0.md) - honoured: the gate was read from the JSON and the slurm log, and is reported FIRST above.",
+      "the firewall report()'s 'clean' string is hardcoded and is not a passed check (see anomalies).",
+      "A4 ran on A0 as well, where the card does not pre-register it.",
+      "code-reviewer advisory A4: the batch-order generator is seed-independent, so a future 3-seed spread on this substrate will be narrower than a fully re-seeded model's."
+    ]
+  },
+  "6_analysis": {
+    "turn_files": [
+      "worktrees/s2_beyond_copy/B3/scratchpad/reanalysis_turn_1_results.md",
+      "worktrees/s2_beyond_copy/B3/scratchpad/reanalysis_turn_2_results.md",
+      "worktrees/s2_beyond_copy/B3/scratchpad/reanalysis_turn_3_results.md"
+    ],
+    "artifacts": [
+      "worktrees/s2_beyond_copy/B3/scratchpad/analyzer/t1_continuity.json",
+      "worktrees/s2_beyond_copy/B3/scratchpad/analyzer/t1_weight_distance_all5.json",
+      "worktrees/s2_beyond_copy/B3/scratchpad/analyzer/t1_sensitivity.json",
+      "worktrees/s2_beyond_copy/B3/scratchpad/analyzer/t2_alignment.json",
+      "worktrees/s2_beyond_copy/B3/scratchpad/analyzer/t2_floored_targets.json",
+      "worktrees/s2_beyond_copy/B3/scratchpad/analyzer/t3_regsplit_global_ctrl.json",
+      "worktrees/s2_beyond_copy/B3/scratchpad/analyzer/t3_regsplit_persample_pred.json",
+      "worktrees/s2_beyond_copy/B3/scratchpad/analyzer/t3_neutral_decomposition.json",
+      "worktrees/s2_beyond_copy/B3/scratchpad/analyzer/t3_neutral_cos_amp.json",
+      "worktrees/s2_beyond_copy/B3/scratchpad/analyzer/t3_eligibility_tool_check.json",
+      "worktrees/s2_beyond_copy/B3/scratchpad/analyzer/t3_divergence_tool_check.json"
+    ],
+    "findings": [
+      "F1 (turn 1, t1_continuity.json). The continuity gate's recorded candidate cause is DEAD. Recomposing every shipped prediction the B2 way -- `(float32(delta_unit) * float32(s))` then added to `lf_up` -- moves the scored per-sample mean by at most 2.7e-08 relative on all 10 arm x dataset pairs (pfc A0 -1.56e-08, helmholtz A0 -2.68e-08, the three neutral sets 1.9e-11 .. 1.5e-08), i.e. 6.3 orders of magnitude below the 0.522 pfc miss. Seam: shipped `rel_l2_model` minus the float64 recomposition = 0.0 exactly on all 10 pairs.",
+      "F2 (turn 1, t1_weight_distance_all5.json + t3_divergence_tool_check.json). The B2 and B3-A0 checkpoints are BIT-IDENTICAL on 39/39 tensors for all three 256x256 datasets (allen_cahn, cahn_hilliard, fisher_kpp) after 200 independent epochs on a different node with a rewritten `_train`/`_predict`, and DIVERGED on the other two (relative weight L2 0.0779 pfc / 0.3189 helmholtz, 1/39 tensors identical -- the `coord_grid` buffer). Both jobs genuinely trained (`train_seconds` 114-266 s in both; B2 job 66023543 on hpc-33-22, B3 job 66081956 on hpc-33-16, both H100).",
+      "F3 (turn 1). Replaying BOTH checkpoints through ONE identical CPU forward path reproduces the miss from the weights alone: pfc 0.00088766 -> 0.00130515 (+47.0 %) and helmholtz 1.35428 -> 1.70263 (+25.7 %), against the GPU-measured +52.2 % / +24.95 %. Same-checkpoint CPU-vs-H100 replay noise, measured directly on B3-A0: pfc +4.3 % (B2 F6 quoted 6.5 %), helmholtz +3.7e-05. The 2-epoch SCREEN jobs show the divergence seed is already present at epoch 2 and is grid-shaped: 256x256 sets agree to <= 3.2e-10 and sod_1d to 6.3e-09, while pfc (128x128) -2.5e-04, helmholtz (96x96) -3.7e-04, heat_local (128x128) +2.5e-04, fluid (64x64) -4.9e-05.",
+      "F4 (turn 1, t1_sensitivity.json). The two divergent datasets are the two that AMPLIFY a weight perturbation into a score change. Relative score change per unit relative Gaussian weight perturbation of the FINAL checkpoint, at eps = 1e-3: pfc 9.19, helmholtz 4.40, allen_cahn 0.68. Incidental: evaluating the SAME pfc checkpoint on CPU instead of the H100 changes the emitted correction FIELD by a median 94 % (relative max-abs per sample) while changing the score by 4.3 %; on helmholtz the same number is 2.3 %.",
+      "F5 (turn 2, t2_alignment.json). The card's selection statistic was the wrong one. Residual spread (`max/median s_i`) is 7.9e04 pfc / 6.4e03 helmholtz / 4.3 / 3.0 / 2.7, but the statistic that ORDERS the five outcomes is the effective N of the MSE target energy under the global scaler (already emitted by `tools/target_scale_spread_audit.py`): helmholtz 1.246/400 = 0.3 % (A1 -88.2 %), pfc 140.3/400 = 35 % (A1 +423 %), allen_cahn 157.5 (-0.9 %), cahn_hilliard 176.9 (+4.7 %), fisher_kpp 264.2 (+7.1 %). Only helmholtz has a collapsed effective N; pfc has the panel's largest spread and a healthy effective N.",
+      "F6 (turn 2, t2_floored_targets.json). pfc's small-residual samples are numerical noise; helmholtz's are physics. In-band (`|k| < modes_cap = 12`) energy fraction of the train residual by decile of `s_raw`: pfc 0.261 / 0.543 / 0.731 / 0.869 / 0.967 for deciles 1-5 (white-noise reference 0.033) against 0.985 for deciles 7-10; helmholtz 0.87-0.997 in EVERY decile. Loss weight by decile: under the global scaler pfc deciles 1-5 receive 9.9e-15 .. 8.1e-12 and deciles 7-10 receive 0.127-0.347; under per-sample normalisation every decile receives ~0.10, so 44.8 % of pfc's training signal moves onto samples whose targets are 3-74 % noise. On helmholtz the global scaler gives decile 10 alone 99.999 % of the weight and per-sample normalisation spreads it 0.033-0.258 over nine deciles of in-band physics.",
+      "F7 (turn 2, t2_alignment.json). pfc paired decile anatomy (by true per-sample scale, 100 test samples). Deciles 1-5 (copy-LF exact to 3.4e-08): A0 emits corrections 3.5e02-1.3e06 times too large at cosine ~0 (rel-L2 ~5e-04, 20.6 % of A0's own score); A1 removes this completely (rel-L2 3.5e-08 = copy-LF's, amplitude ratio 0.06-0.24) -- the pre-registered `damage_share` 0.2074 -> 1.4e-07. Deciles 6-10 (the only samples with real residual, 79.4 % of A0's score and ~100 % of A1's): A0 cosine 0.99973 at amplitude 1.00 (rel-L2 1.7e-03-2.5e-03), A1 cosine 0.992 at amplitude 0.95-0.98 (6.6e-03-1.7e-02), i.e. 8x worse. A0 with its junk fully removed would score 0.000993; A1 scores 0.006545 -- 6.6x worse on the informative samples alone.",
+      "F8 (turn 2). helmholtz is the mirror image: A0's correction is 5x-30x too large at cosine ~0 on deciles 1-9 (the samples the global scaler starved) and A1 reaches amplitude 0.95-1.05 at cosine 0.97-0.998 there, cutting their rel-L2 ~100x; decile 10 -- the single sample A0 was effectively trained on -- is essentially unchanged (1.602 -> 1.512) and now carries 84 % of A1's remaining error.",
+      "F9 (turn 3, t3_regsplit_*.json; part 3 instrumentation item 1, completed post-hoc). Against the node-aligned zero-parameter denominator: `model_skill_vs_best_fix` A0 -> A1 = 3924.3 -> 20522.7 (pfc), 5.694 -> 0.669 (helmholtz), 2.606 -> 2.581 (allen_cahn), 0.979 -> 1.025 (cahn_hilliard), 3.898 -> 4.173 (fisher_kpp); corrected 5-dataset geomeans 11.730 (A0) -> 10.866 (A1) with the free fix at 0.03687. A1 on `ext__helmholtz_2d` beats the free fix 0.669x on 95/100 samples -- the FIRST arm in this stream to beat a node-aligned reference on any dataset, and it is the one dataset with essentially no registration artifact (9.23 % of copy-LF's error).",
+      "F10 (turn 3, t3_neutral_cos_amp.json). fisher_kpp's leg-(d) move is a pure COSINE loss: mean correction-to-truth cosine 0.6889 -> 0.6485 with mean amplitude 1.0385 -> 1.0405 unchanged, falling in 10/10 deciles. B2 F5's law `sqrt(2(1-cos))` predicts a skill ratio 1.063 against the measured 1.0705.",
+      "F11 (turn 3). cahn_hilliard's leg-(d) move is the SCALE PREDICTOR becoming the error floor: mean cosine 0.9377 -> 0.9375 and mean amplitude 0.9616 -> 0.9610 (both unchanged), while the 90 easy samples (deciles 1-9, cosine 0.9998, 9.9 % of the score) roughly double their rel-L2 and decile 10 (90.1 % of the score) is untouched (0.3579 -> 0.3585). cahn_hilliard has the panel's worst scale predictor (rho 0.783, median |log10(s_hat/s)| 0.0247 = 5.8 %), and `sqrt(0.058^2 + 0.041^2) = 0.071` reproduces the measured per-sample ratio 0.067. allen_cahn is the one mild win (cosine 0.9572 -> 0.9602, amplitude 0.9788 -> 0.9895, skill -0.9 %).",
+      "F12 (turn 3). `A1 - A3` (scored minus true-scale ORACLE) is negative only on helmholtz (-0.187) and pfc (-0.005) and POSITIVE on the neutral three (+0.021 / +0.002 / +0.005): where cosine < 1 the optimal multiplier is `cos x s_true`, so the TRUE scale over-shoots and an imperfect predictor's shrinkage is accidentally beneficial. A true-scale oracle is an upper bound only where the correction direction is already right.",
+      "F13 (turns 2-3, promoted as `tools/persample_norm_eligibility.py`). The three-check eligibility rule reproduces all five outcomes from the TRAIN split alone, with no model: helmholtz GO (effective sample fraction 0.0031, min relative residual 4.97e-02, in-band 0.912), pfc NO_GO_PROMOTES_NOISE (0.3507, 1.21e-08, 0.261), allen_cahn / cahn_hilliard / fisher_kpp NO_GO_NO_NEED (0.394 / 0.442 / 0.661)."
+    ],
+    "interpretation": [
+      "MECHANISM VERDICT (high confidence; arithmetic + paired per-sample fields). Per-sample residual normalisation is a re-weighting of the training loss by `1/s_i^2`. It REPAIRS a dataset exactly when the samples it promotes carry signal the global scaler starved, and POISONS one when they carry noise the global scaler was correctly ignoring. helmholtz is the first case (effective N 1.25 of 400; promoted samples 87-99 % in-band physics; F6, F8), pfc is the second (effective N 140 of 400; promoted samples are roundoff at 1.2e-08 relative -- the pfc ladder has no fidelity gap at all, B2 F1; F6, F7). The q25 denominator floor cannot separate them because on pfc the q25 of `s_raw` is ITSELF inside the noise (5.215e-08 vs min 2.98e-08): the floor rescaled roundoff to unit amplitude instead of suppressing it, which is why `effective_n_samples_of_mse` rose 140 -> 349 on pfc (the wrong direction) while rising 1.25 -> 17.3 on helmholtz.",
+      "WHAT THE ARM ACTUALLY TRADED (high confidence). The card's damage half worked MAXIMALLY -- pfc `damage_share` 0.2074 -> 1.4e-07, correction amplitude on the copy-LF-exact deciles 1.3e06x -> 0.06x the truth -- and it was not worth buying: those deciles are 20.6 % of A0's score, while the 8x accuracy loss on the informative deciles (cosine 0.99973 -> 0.992) costs 6.6x. A junk-free A0 would score 0.000993 against A1's 0.006545. The metric is a mean of per-sample rel-L2, so it is dominated by the absolute-error samples that a GLOBAL scaler already trains optimally.",
+      "CONTINUITY-MISS DIAGNOSIS (high confidence). Not the float64 composition (F1: 2.7e-08) and not a code-path difference in the vendored A0 (F2: three of five datasets reproduce B2 BIT-FOR-BIT after 200 independent epochs -- the strongest possible rebuild-fidelity evidence). It is non-bit-reproducible H100 training at working grids <= 128x128 (F3: a ~1e-4 seed present by epoch 2 on pfc / helmholtz / heat_local / fluid and absent at 256x256), amplified by two ill-conditioned objectives (F4: 9.19x and 4.40x versus allen_cahn's 0.68x). Both amplifiers ARE the pathology this card is about, so the drift is a symptom of the defect rather than an artifact of the rebuild. The card's verdict is unaffected because every scored delta was taken against the paired in-job A0, and because the drift moves A0 in the direction that FLATTERS A1 (against B2's own 0.018360 the pfc failure would be 9.95x rather than 6.54x).",
+      "ROUND-WIDE VALIDITY CONSEQUENCE (H-CTRL, medium-high confidence). A paired in-job control is not automatically a bit-faithful control. On this stack it is bit-faithful at 256x256 and can drift 25-50 % at <= 128x128 when the objective is ill-conditioned. Cards touching `sharp__phase_field_crystal_2d`, `ext__helmholtz_2d`, `heat_local` or `fluid` must report their own in-job control (as this card did) and must treat single-seed deltas below ~50 % on pfc/helmholtz as unresolved -- B2's 6.5 % caveat measures only EVAL replay noise (re-measured here at 4.3 %); the TRAINING noise is an order of magnitude larger. `tools/checkpoint_divergence_audit.py` makes the check a 1-second call.",
+      "THE UNIFIED ELIGIBILITY RULE (H-ELIG, medium-high confidence; 5/5 in-panel, consistent with s5-B2 and s7-B2, needs one out-of-sample test). Decide any normalisation with three pre-flight checks: (1) NEED -- effective sample fraction of the loss under the CURRENT denominator < ~0.05 (helmholtz 0.003; pfc 0.35, allen_cahn 0.39, cahn_hilliard 0.44, fisher_kpp 0.66); a per-DATASET scaler can never move this (s5-B2's 1.0145 -> 1.0179), only a per-SAMPLE denominator can. (2) SAFETY/SIGNAL -- the promoted samples must carry signal above the fields' numerical noise floor: `min_i ||r_i||/||y_i||` (helmholtz 0.0497 pass; pfc 1.2e-08 fail), and a denominator floor does not rescue this when the floor quantile is itself inside the noise. (3) SAFETY/METRIC -- the denominator should track the scored metric's own denominator `||y_i||` (`rho(log s, log||y||)`: helmholtz +0.745, cahn_hilliard +0.623, pfc +0.529, allen_cahn -0.035, fisher_kpp -0.029). RESIDUAL SPREAD, the statistic this card and s7-B1 both selected on, is NOT a substitute for (1) and says nothing about (2). This is the same object as s7-B2's low-norm-tail gate seen from the other side: s7 normalises BY `||y_i||` and its danger is that the low-norm tail is intrinsically HARDER; s2-B3 normalises by `||r_i||` and its danger is that the low-residual tail is intrinsically EMPTY.",
+      "A COST THAT APPLIES EVEN WHEN THE RULE SAYS GO (medium-high confidence, F11). A predicted test-time scale converts a learned, converged amplitude into a predicted one, so every sample whose corrector is already direction-exact inherits the predictor's own error as a floor. With median |log10(s_hat/s)| = 0.021-0.049 (2.4-5.8 % excluding helmholtz), that floor is 2-3x the `sqrt(2(1-cos))` limit on high-cosine samples -- measured on cahn_hilliard, where 90 near-perfect samples doubled their error while the arm's mean cosine and mean amplitude did not move. Any future per-sample-normalisation arm should pair it with a per-sample amplitude CALIBRATION at inference (s7-B2 part 7 reaches the same recommendation from the loss side) or keep the global scaler where `cos ~ 1`.",
+      "WHAT SURVIVES FOR THE ROUND REPORT FROM THIS STREAM. (i) The LF-residual substrate itself: identity-at-init, LF consumed at inference, `skill < 1` on 4/5 beyond-copy datasets -- but B2 F2 showed 54-100 % of that is the resampling-convention denominator, and this card's corrected geomeans (11.73 / 10.87) confirm it under a second arm. (ii) B2's registration decomposition, unchanged. (iii) The eligibility rule above, now the round's THIRD normalisation card and the one that supplies the decider. (iv) ONE genuinely positive result: on `ext__helmholtz_2d` a per-sample-normalised LF-residual corrector beats BOTH copy-LF (0.607) and the node-aligned zero-parameter fix (0.669x, 95/100 samples), which answers B2 part 7's standing open question in the affirmative -- on a REPORT-ONLY dataset whose rescaled floor is 0.702 and whose remaining error is 84 % one sample, so it is a mechanism result, not a leaderboard result."
+    ],
+    "falsification_postmortem": "Leg (a) FAILED decisively and the pre-registered WELL-FOUNDED NEGATIVE branch obtained, with two qualifications. The measured pfc skill 0.146149 is 6.54x the pre-registered threshold 0.022357 (0.80 x the paired A0's 0.027946) and 9.95x the threshold computed from B2's own 0.018360, so the negative is robust to the continuity miss in the only direction that matters: had A0 reproduced B2, the failure would be LARGER, not smaller. Legs (b) and (c) passed; leg (d)'s antecedent ('the pfc GAIN arrives without ...') never held because there was no gain, so leg (d) has no verdict force -- its damage half was satisfied maximally (`damage_share` 0.2074 -> 1.39e-07) and its neutral-pct half fired on 2/3 for reasons that are now understood and benign (F10 fisher_kpp: a uniform 0.04 loss of correction cosine; F11 cahn_hilliard: the scale predictor's 5.8 % amplitude error becoming the floor on already-exact samples) rather than for the reason the leg was written to catch (re-learning more of the resampling convention -- `pct_copylf_error_removed_best_fix` is identical for both arms and A1 moved AWAY from the free fix on 4/5 datasets). DOES THE PRE-REGISTERED NEGATIVE'S STATED MECHANISM MATCH THE MEASURED ONE? Partly, and the mismatch matters. Its three components: (i) 'the pfc ladder carries NO fidelity gap' (B2 F1) -- CONFIRMED and sharpened: the minimum per-sample relative residual on train is 1.2e-08 and the bottom decile's residual is 26 % in-band against a 3.3 % white-noise reference, i.e. numerical roundoff. (ii) 'per-sample normalisation would up-weight roundoff by 1/s_i^2 ... which the q25 floor mitigates' -- the up-weighting is CONFIRMED (44.8 % of the training loss moved onto deciles 1-5) and the mitigation clause is FALSIFIED: the q25 of `s_raw` is 5.215e-08 against a minimum of 2.98e-08, so the floor sits inside the noise and rescaled roundoff to unit amplitude, floor and all. (iii) the quoted over-smoothing/conditional-expectation argument (arXiv 2604.20061) is NOT the operative mechanism: A1's predictions are not over-smoothed -- on the informative deciles they have amplitude 0.95-0.98 and cosine 0.992 -- and the loss is a loss of ALIGNMENT caused by training on noise-dominated targets, not an information-theoretic ceiling. The correct statement of this card's negative is therefore narrower and more useful than the one pre-registered: 'per-sample target normalisation is not a repair for a large residual SPREAD; it is a repair for a collapsed effective N, and on a degenerate ladder whose small-residual samples are roundoff it converts 45 % of the training signal into noise.' Everything else in the card behaved as designed: the scale predictor met its pre-registered bar (rho 0.951-0.975 on the two decade-spanning sets, >= 0.78 everywhere), the A3 oracle showed the predictor is NOT the pfc limiter (perfect scale still leaves 0.140986, 5x the paired A0), the effective N under `s_hat` rose 1.25 -> 17.3 on helmholtz as predicted, and the A4 gate was worth exactly 0 on A1, which is what the card predicted would happen if the repair absorbed the damage headroom.",
+    "surprises": [
+      "Two 200-epoch runs, different jobs, different H100 nodes, different (vendored) copies of the family, produced BIT-IDENTICAL weights on all 39 tensors for the three 256x256 datasets -- and irreproducible weights on the 128x128 and 96x96 ones. Training determinism on this stack is a function of the working GRID, not of the seed or the code.",
+      "Evaluating the SAME pfc checkpoint on CPU instead of the H100 changes the emitted correction field by a median 94 % per sample while moving the score only 4.3 %: on that dataset the model's output is arithmetic noise wearing the shape of a prediction.",
+      "The card's own selection statistic (residual spread) pointed the wrong way: pfc had the panel's LARGEST spread and the healthiest effective N, and the decider was sitting unused in the same tool's output.",
+      "The TRUE-scale ORACLE (A3) is WORSE than the predicted scale on three of five datasets, because when the correction's cosine is below 1 the optimal multiplier is `cos x s_true` and the imperfect predictor happens to shrink toward it.",
+      "The stream's first and only win over a node-aligned zero-parameter reference (helmholtz, 0.669x on 95/100 samples) landed on the REPORT-ONLY dataset -- the one place the round's own protocol forbids a fine-grained claim."
+    ]
+  },
+  "7_gap_and_future": {
+    "open_question": "The only place on this benchmark where per-sample target normalisation is a repair is `ext__helmholtz_2d` -- the one dataset whose effective N is collapsed (1.25/400), the one with no registration artifact to re-derive, the one where an LF-consuming model finally beats the node-aligned free fix (0.669x, 95/100 samples) ... and the one the round scores REPORT-ONLY (rescaled floor 0.702), whose remaining error after the repair is 84 % a single test sample. So: is the effective-N pathology a property of ONE dataset or of a CLASS the panel under-samples? Until a second dataset with `effective_sample_fraction < 0.05` exists and is scoreable, the round can state the eligibility rule but cannot demonstrate that acting on it buys a claimable number. Concretely testable without new physics: run `tools/persample_norm_eligibility.py --datasets PANEL --target field` over every dataset the round owns (including the guard set and the extension datasets outside the panel) and count how many trip R1.",
+    "next_direction": "CLOSE s2_beyond_copy; do not open a batch 4. The stream's three cards have now closed its design space from both ends. B1 established the substrate and the Class A / Class B split; B2 showed 54-100 % of every beyond-copy win on the sharp panel is the `(r-1)/2` resampling convention and named the two remaining NON-architectural levers (per-sample target normalisation, per-sample trust gate); B3 spent the first lever and measured the second in passing. What is left is empty or blocked: (i) the target-normalisation lever is now closed -- NO_GO on 4/5 datasets by a pre-flight rule that reproduces all five outcomes, and the one GO is report-only; (ii) the trust gate's headroom largely evaporated with the damage it was gating (B2 measured the oracle at geomean 0.3803 -> 0.2590, but on A1 the shipped LF-keyed gate accepted 100/100 samples and was worth exactly 0.0, and A1's own no-harm ORACLE is now 0.5405 on helmholtz and 0.1461 on pfc, i.e. no better than the arm); (iii) the only architectural lever with quantified headroom is `modes_cap` for fisher_kpp (B2 F5: 16.8 % of its residual is in-band, and this card re-confirms the `sqrt(2(1-cos))` law to 0.4 %), which is a bandwidth question that belongs to whichever stream owns architecture, not to a stream whose thesis is 'beyond copy-LF'; (iv) any further work on the sharp panel is measuring a denominator that `tools/registration_audit.py` has shown to be 54-100 % artifact, and the corrected-denominator geomeans (A0 11.73, A1 10.87 versus a free fix at 0.0369) say the substrate is nowhere near competitive with a one-liner. The between-rounds fix list keeps its standing item -- ship the per-sample target-normalisation module gated on `tools/persample_norm_eligibility.py` rather than on residual spread -- and gains one: the round-1 benchmark's sharp-panel copy-LF denominator needs the node-aligned convention decision made explicitly (operator note `docs/operator_notes/2026-07-30-benchmark-registration-note.md`) before any successor stream re-opens 'beyond copy-LF'.",
+    "cross_stream_notes": "FOUR items. (1) REBUILD/PAIRED-CONTROL FIDELITY, for every stream that compares against a previous card's number or a paired arm: on this stack 200-epoch training is BIT-reproducible across nodes at 256x256 (39/39 tensors, three datasets) and NOT at <= 128x128, where a ~1e-4 divergence is already present at 2 epochs (pfc, helmholtz, heat_local, fluid). Whether that seed matters depends on the objective: the same 1e-3 weight perturbation moves the score 9.19x on pfc, 4.40x on helmholtz and 0.68x on allen_cahn. Practical rule -- always score against your own in-job control, and treat single-seed deltas below ~50 % on pfc/helmholtz (and unquantified deltas on heat_local/fluid) as unresolved. B2's '6.5 % pfc replay' caveat covers EVAL noise only (re-measured 4.3 %); training noise is an order of magnitude larger. One-second check: `tools/checkpoint_divergence_audit.py`. (2) THE UNIFIED NORMALISATION ELIGIBILITY RULE, replacing the spread heuristics in s2-B2 part 7, s5-B2 part 7 (the G-rule) and s7-B1 M6: normalisation is a loss re-weighting by `1/den_i^2`; require (a) NEED, effective sample fraction < ~0.05 under the current denominator -- a per-dataset scaler cannot change it at all, only a per-sample one can; (b) SIGNAL, the promoted samples' relative residual above the data's numerical noise floor (a denominator floor does not help if the floor quantile is itself inside the noise); (c) METRIC ALIGNMENT, the denominator should track `||y_i||`, the scored metric's own denominator. Tool: `tools/persample_norm_eligibility.py` (model-free, reproduces all five of this card's outcomes). s5's G = max|Y|/sd remains the right pre-flight for a per-DATASET affine; it answers a different question (does the scaler do anything) than R1 (does the loss need de-concentrating). (3) FOR ANY CARD SHIPPING A PREDICTED PER-SAMPLE SCALE OR GAIN: the prediction's own accuracy becomes an error FLOOR on every sample whose correction is already direction-exact. Measured here on cahn_hilliard -- median |log10(s_hat/s)| = 5.8 % doubled the error of 90 near-perfect samples while the arm's mean cosine and amplitude did not move -- and a true-scale ORACLE is an upper bound only where cosine ~ 1 (it is WORSE than the imperfect predictor on 3/5 datasets here, because the optimal multiplier is `cos x s_true`). (4) FOR THE ROUND REPORT'S 'does anything beat the resampling convention' thread: yes, once -- `ext__helmholtz_2d`, per-sample-normalised LF-residual FNO, 0.669x the node-aligned free fix on 95/100 samples, on the only panel dataset whose copy-LF is not dominated by the convention (9.2 %). Every other arm in this stream, on every other dataset, remains 2.6x-20523x worse than a `scipy.ndimage.map_coordinates` one-liner.",
+    "promoted_tools": [
+      "persample_norm_eligibility.py",
+      "checkpoint_divergence_audit.py"
+    ]
+  },
+  "reanalysis_progress": "registered",
+  "promotion": {
+    "utc": "2026-07-31T00:20Z",
+    "screen_job": "66076828",
+    "promoted_arm": "persample_pred",
+    "rule": "pinned rank persample_pred->persample_gradproxy; rank 1 not broken -> promoted (matches recipe, no amendment); ADR 0007 recorded before main submit",
+    "orchestrator_read_notes": "no broken arms (all finite, ratios 0.47-1.0 vs global_ctrl); A5 no-floor audit 0.9891 (floor helps, s7-M6 rule holds at contract tier); guard sod_1d 2.433x identical across ALL arms incl. control = the known champion-fallback tier artifact, arm-independent, no flag; helmholtz contract-tier effect 46.58->0.93 (persample lever fires exactly where predicted)."
+  }
 }

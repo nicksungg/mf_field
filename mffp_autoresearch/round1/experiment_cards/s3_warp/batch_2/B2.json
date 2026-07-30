@@ -1,139 +1,664 @@
 {
-  "id": "s3_warp-B2",
-  "stream": "s3_warp",
-  "batch": 2,
-  "category": "mf_composition / one-sided warp-then-correct on the corrected LF->HF path -- displacement-vs-intensity attribution on sharp__cahn_hilliard",
-  "card_type": "model",
-  "created_utc": "2026-07-30T05:06:55Z",
-  "worktree_path": "mffp_autoresearch/round1/worktrees/s3_warp/B2",
-  "source_iteration": "brainstormer/s3_warp/batch_2/iteration_1.md",
-  "reopened_from": null,
-  "1_id_category": "s3_warp-B2 / mf_composition / one-sided warp-then-correct on the corrected LF->HF path -- displacement-vs-intensity attribution on sharp__cahn_hilliard",
-  "2_motivation": "B1 part 7's gate question -- *\"is that displacement field PREDICTABLE from the LF field a model actually receives, or is it only visible to an HF-fitted oracle?\"* -- is exactly the slice the batch-2 websearch found open. Verdict (i), verbatim: *\"preempted-but-MF-composition-open ... The **one-sided** instance: displacement predicted from the LF PDE field + condition vector with **no target field at inference**, applied to that field before a learned correction, inside an MF operator surrogate at small N_hf. Registration is pairwise; mesh-movement nets output nodes not fields; MF/SR fusion is value-space. Every *component* (band-limited Fourier displacement head, supervised warp targets, single-interpolation warp) is published -- the claim is composition + measurement, on ONE dataset (floor 0.553).\"* Verdict (iii), verbatim: *\"**No fetched source, in any field, reports a quantitative per-term attribution of a displacement-vs-intensity error split** -- and none does it across two fidelities of one PDE solve.\"* B1 measured the ceiling (83.4-85.2 % of a correctly registered copy-LF's error removable on `sharp__cahn_hilliard`, residual median `|phi|` 0.64-0.74 HF cells, LSI-refractory at 0.44) but its only learnability evidence was taken against the **misregistered** reference, where the retrieved quantity was mostly the 0.5-cell grid convention. This card replaces that HF-fitted upper bound with an LF-only achievable number, and pre-registers the comparators that make the number attributable.",
-  "3_description": "new contract family `models_r1/s3_warp_onesided` (CLI unchanged), one invocation of the unmodified `eval/score_panel.py --datasets sharp__cahn_hilliard --epochs 200 --seed 0`.\n\n- **Shared input path (JUBW-compliant, ONE interpolation)**: raw LF `field_by_fid[2]` (128^2) sampled once at node-aligned HF coordinates `k/2 + phi_k/2` (HF `fid 3`, 256^2, r=2, 400 train / 100 test, `cond_dim 19`), circular padding. `phi = 0` therefore reproduces B1 F3 variant C (0.4769) exactly; the second bilinear resample B1 F10/F17 blames for the mid-band penalty never happens. JUBW's cited extra trick used: sub-cell fractional offsets passed to the corrector as input channels.\n- **One-sided displacement head**: small FNO-style encoder on the raw LF + broadcast 19-d condition -> `16x16x2 = 512` low Fourier coefficients (Fourier-Net band-limited parameterization, exactly B1's C16 dof per F13), zero-pad + iFFT decode to 256^2, `|phi|` projected onto a 4-cell ball. Single-scale (sub-voxel regime, SuperWarp). Inference inputs: LF + condition ONLY -- no HF, no PDE (ADR 0009), auditable via `tools/lf_at_inference_audit.py`.\n- **Supervision**: `L = relL2(pred,HF) + mu * mean_w|phi - phi_oracle|^2`, `w = |grad LF| / mean|grad LF|` (gradient-evidence mask, the SuperWarp untextured-bulk remedy), `mu` 1.0 -> 0.1 at 50 % of epochs. `phi_oracle` from re-running B1's vendored fitter on the **train split** against the **corrected** moving image (B1's saved `p_train` is unusable -- it was fitted on the misregistered image).\n- **Correction stage**: 4-block ConvNeXt-style corrector, width 48, circular padding, ~70-80 k params (same class/size as s6_local-B1's 77 k), trained jointly; absorbs the 5-6 % topology-mismatch residual (scoping, not metamorphosis -- 12.3's own escape clause).\n- **Arms** (one process, one job, seed 0; only `test_hf` is scored because `score_panel._extract_test_metric` selects `test*`):\n\n  | key | arm | trained | role |\n  |---|---|---|---|\n  | `test_hf` | one-sided warp + correction | yes | **SCORED** proposal |\n  | `ref_warp_off` | identical net, `phi` forced 0, + correction | yes | architecture-level warp-off control (B1 part 4, LOCKED); the s6-class correction baseline |\n  | `ref_const_disp` | `phi` = one global 2-vector per sample + correction | yes | CONSTANT-DISPLACEMENT-ONLY arm (MANDATORY, B1 part 7 / F12) |\n  | `ref_lsi` | zero-parameter closed-form LSI on the same input path | 0 trained params | value-add over the defect-correction class (s6's definition) |\n  | `ref_reg_corrected` | `phi = 0`, no correction | no | registration-corrected reference sidecar (B1 part 7 item 3) |\n  | `ref_frozen_copylf` | `panel_data.copylf_prediction`, unedited | no | frozen reference / seam, skill 1.0 |\n  | `ref_oracle_phi` | oracle `phi` (test-HF-fitted) + trained corrector | no | ceiling, report-only, `do_not_promote` |\n\n- **Hard-stop seams**: S1 frozen copy-LF == 0.08765999100758841 to <=1e-9; S2 `ref_reg_corrected` reproduces B1 F3 variant C 0.4769 +-2 %; S3 vendored `warp_core.py` reproduces B1's recorded C16 nRMSE <=1 % on the misregistered path; S4 vendored LSI reproduces s6_local-B1's `skill_LSI` 0.4400-0.4413 +-2 %; S5 zero Fourier coefficients give `phi == 0` and the warp arm's zeroed forward equals `ref_warp_off`'s at init.\n- **Free diagnostics** (sidecar): endpoint error vs oracle `phi` (masked and unmasked), median/p90 `|phi_pred|`, inverse-consistency error `E_IC` (diagnostic ONLY, never a loss), captured share of the oracle benefit, per-band error ratios on B1's band edges, skill stratified by LF/HF component mismatch, and an in-repo-derived (NOT cited) phase-field interface displacement statistic.\n- Checkpoint resume from `<ckpt_dir>/last.pt` (`{arm_index, epoch, model, optimizer, RNG, cached oracle-phi}`), arms sequential. Submit-time job env `ROUND1_EVAL_RESULTS=<outputs>/s3_warp/B2/eval/results` (B1 precedent, not a scoring knob). Contract-tier 2-epoch plumbing screen first (non-reportable, ADR 0007). No guard legs -- the family's declared support is a 2-D nested periodic dyadic ladder; guard legs recorded as an owed promotion precondition. ~25-35 min on one H100 (ADR 0005); suggested `--time 02:00:00`.",
-  "4_expected_result": "scored metric = `nRMSE` on `sharp__cahn_hilliard` `test_hf`, reported as skill vs the frozen copy-LF reference 0.08765999100758841 (skill 1.0).\n\n| key | predicted skill | grounding |\n|---|---|---|\n| `ref_frozen_copylf` | 1.000 exactly | seam S1 |\n| `ref_reg_corrected` | 0.477 +- 0.01 | B1 F3 variant C 0.4769 (seam S2) |\n| `ref_lsi` | 0.42-0.46 | B1 F15 (0.4631 -> 0.4402 corrected) |\n| `ref_warp_off` | 0.40-0.47 | s6_local-B1 trained corrector 0.4686 |\n| `ref_const_disp` | 0.40-0.47, within 0.03 of `ref_warp_off` | B1 F11 (residual DC <= 0.13 cells); F12's 48.9 % was the grid convention |\n| **`test_hf`** | **0.15-0.35** (central 0.25) | 0.44 x (1 - 0.85f), f = captured share of B1's 83.4-85.2 % ceiling |\n| `ref_oracle_phi` | 0.06-0.09 | B1 F9 ceiling on the corrected C0 |\n\nDelta vs the anchor (`s3_warp-B1`): B1 is a `do_not_promote` diagnostic with no numeric anchor file; its legacy numbers are the 83.4-85.2 % oracle ceiling and the (uninformative, misregistered-path) 63-99 % retrieval bracket. The card's move is to convert the ceiling into an LF-only achievable share -- predicted 30-70 % of it captured.\n**vs the noise floor** (`state/noise_floor.json sharp__cahn_hilliard`: `spread 0.19182714769533593`, `min_claimable_effect 0.5533465853654416`): Leg A's effect `1 - 0.440 = 0.560 > 0.5533` (2.92x `spread`), predicted 0.65-0.85 -> clears. Leg B's arm-vs-arm threshold `0.20 > 0.19182714769533593` clears the certified `spread`; it cannot clear `min_claimable_effect`, which is arithmetically impossible here (see Leg B').",
-  "expected_falsification": "the one-sided displacement head is falsified as a mechanism if it fails to beat the best of `{ref_warp_off, ref_const_disp, ref_lsi}` by more than 0.20 skill units on `sharp__cahn_hilliard` (equivalently captures <= 51 % of B1's certified 83.4-85.2 % oracle ceiling) with seams S1-S5 passed -- in which case the residual displacement is oracle-visible but not LF-predictable and B1 part 7's close-out applies; the separate claimability leg is falsified if the scored skill exceeds 0.440 (effect vs the frozen reference < 0.560 < `min_claimable_effect` 0.5533).\n\nFull pre-registered leg set (verbatim from `iteration_1.md`):\n- **Leg A (claimability, clears 0.5533)**: falsified if `skill(test_hf) > 0.440`. Predicted not to fire; passing attributes nothing on its own (the zero-parameter LSI already reaches 0.4402).\n- **Leg B (attribution, threshold 0.20 > `spread` 0.19182714769533593)**: falsified if `skill(test_hf) > min(skill(ref_warp_off), skill(ref_const_disp), skill(ref_lsi)) - 0.20`.\n- **Leg B' (parent-directed strict reading, pre-registered UNATTAINABLE)**: margin `> 0.5533` over both controls -- recorded and reported, but its firing is NOT evidence about the warp, because `max margin = skill(control) ~ 0.47 < 0.5533` given `skill >= 0` and s6_local-B1's measured control-class skill 0.4686. Its purpose is to document that the anchor-referenced `min_claimable_effect` convention is degenerate on copy-LF-referenced panel datasets. **This is the card's second deliverable and is mentor-facing.**\n- **Leg C (mechanism honesty, reported)**: if Leg B passes while median `|phi_pred| < 0.1` cells or the masked endpoint error exceeds the oracle median `|phi|` (0.64-0.74), the win is intensity correction mislabelled as warping and must be reported as such.\n- **Leg D (scoping cost, reported)**: skill on the 5-6 % topology-mismatch subset reported separately; > 2x the matched subset makes scoping the binding limitation for B3.",
-  "anchor_reference": "s3_warp-B1",
-  "prior_art": {
-    "verdict": "(i) *\"preempted-but-MF-composition-open\"* -- citations `Flowers https://arxiv.org/html/2603.04430`, `MetaRegNet https://arxiv.org/pdf/2303.09088`, `Khamlich https://arxiv.org/html/2603.04232v2`, `Fourier-Net https://arxiv.org/abs/2211.16342`, `SuperWarp https://pmc.ncbi.nlm.nih.gov/articles/PMC9645132/`, `M2N https://arxiv.org/abs/2204.11188`, `UM2N https://arxiv.org/abs/2407.00382`, `weather-SR flow matching https://arxiv.org/html/2604.00897`; open part verbatim: *\"The **one-sided** instance: displacement predicted from the LF PDE field + condition vector with **no target field at inference**, applied to that field before a learned correction, inside an MF operator surrogate at small N_hf. Registration is pairwise; mesh-movement nets output nodes not fields; MF/SR fusion is value-space. Every *component* (band-limited Fourier displacement head, supervised warp targets, single-interpolation warp) is published -- the claim is composition + measurement, on ONE dataset (floor 0.553).\"* (ii) *\"preempted (cite)\"* -- `JUBW: Makansi/Ilg/Brox https://arxiv.org/abs/1707.00471`, open part verbatim: *\"**Nothing.** The 2017 motivation is verbatim B1 F17 ... It is an implementation obligation to cite, never a contribution.\"* (iii) *\"preempted-but-MF-composition-open (weak novelty, strong measurement value)\"* -- `MI2A https://arxiv.org/abs/2504.11433`, open part verbatim: *\"**No fetched source, in any field, reports a quantitative per-term attribution of a displacement-vs-intensity error split** -- and none does it across two fidelities of one PDE solve. Joint-vs-sequential cannot be settled by citation (ablations point both ways) -> must be a control arm.\"* Also cited for the GT-free diagnostic: `inverse-consistency error https://pmc.ncbi.nlm.nih.gov/articles/PMC3915046/`.",
-    "citations": [
-      "Flowers https://arxiv.org/html/2603.04430",
-      "MetaRegNet https://arxiv.org/pdf/2303.09088",
-      "Khamlich https://arxiv.org/html/2603.04232v2",
-      "Fourier-Net https://arxiv.org/abs/2211.16342",
-      "SuperWarp https://pmc.ncbi.nlm.nih.gov/articles/PMC9645132/",
-      "M2N https://arxiv.org/abs/2204.11188",
-      "UM2N https://arxiv.org/abs/2407.00382",
-      "weather-SR flow matching https://arxiv.org/html/2604.00897",
-      "JUBW: Makansi/Ilg/Brox https://arxiv.org/abs/1707.00471",
-      "MI2A https://arxiv.org/abs/2504.11433",
-      "inverse-consistency error https://pmc.ncbi.nlm.nih.gov/articles/PMC3915046/"
-    ]
+ "id": "s3_warp-B2",
+ "stream": "s3_warp",
+ "batch": 2,
+ "category": "mf_composition / one-sided warp-then-correct on the corrected LF->HF path -- displacement-vs-intensity attribution on sharp__cahn_hilliard",
+ "card_type": "model",
+ "created_utc": "2026-07-30T05:06:55Z",
+ "worktree_path": "mffp_autoresearch/round1/worktrees/s3_warp/B2",
+ "source_iteration": "brainstormer/s3_warp/batch_2/iteration_1.md",
+ "reopened_from": null,
+ "1_id_category": "s3_warp-B2 / mf_composition / one-sided warp-then-correct on the corrected LF->HF path -- displacement-vs-intensity attribution on sharp__cahn_hilliard",
+ "2_motivation": "B1 part 7's gate question -- *\"is that displacement field PREDICTABLE from the LF field a model actually receives, or is it only visible to an HF-fitted oracle?\"* -- is exactly the slice the batch-2 websearch found open. Verdict (i), verbatim: *\"preempted-but-MF-composition-open ... The **one-sided** instance: displacement predicted from the LF PDE field + condition vector with **no target field at inference**, applied to that field before a learned correction, inside an MF operator surrogate at small N_hf. Registration is pairwise; mesh-movement nets output nodes not fields; MF/SR fusion is value-space. Every *component* (band-limited Fourier displacement head, supervised warp targets, single-interpolation warp) is published -- the claim is composition + measurement, on ONE dataset (floor 0.553).\"* Verdict (iii), verbatim: *\"**No fetched source, in any field, reports a quantitative per-term attribution of a displacement-vs-intensity error split** -- and none does it across two fidelities of one PDE solve.\"* B1 measured the ceiling (83.4-85.2 % of a correctly registered copy-LF's error removable on `sharp__cahn_hilliard`, residual median `|phi|` 0.64-0.74 HF cells, LSI-refractory at 0.44) but its only learnability evidence was taken against the **misregistered** reference, where the retrieved quantity was mostly the 0.5-cell grid convention. This card replaces that HF-fitted upper bound with an LF-only achievable number, and pre-registers the comparators that make the number attributable.",
+ "3_description": "new contract family `models_r1/s3_warp_onesided` (CLI unchanged), one invocation of the unmodified `eval/score_panel.py --datasets sharp__cahn_hilliard --epochs 200 --seed 0`.\n\n- **Shared input path (JUBW-compliant, ONE interpolation)**: raw LF `field_by_fid[2]` (128^2) sampled once at node-aligned HF coordinates `k/2 + phi_k/2` (HF `fid 3`, 256^2, r=2, 400 train / 100 test, `cond_dim 19`), circular padding. `phi = 0` therefore reproduces B1 F3 variant C (0.4769) exactly; the second bilinear resample B1 F10/F17 blames for the mid-band penalty never happens. JUBW's cited extra trick used: sub-cell fractional offsets passed to the corrector as input channels.\n- **One-sided displacement head**: small FNO-style encoder on the raw LF + broadcast 19-d condition -> `16x16x2 = 512` low Fourier coefficients (Fourier-Net band-limited parameterization, exactly B1's C16 dof per F13), zero-pad + iFFT decode to 256^2, `|phi|` projected onto a 4-cell ball. Single-scale (sub-voxel regime, SuperWarp). Inference inputs: LF + condition ONLY -- no HF, no PDE (ADR 0009), auditable via `tools/lf_at_inference_audit.py`.\n- **Supervision**: `L = relL2(pred,HF) + mu * mean_w|phi - phi_oracle|^2`, `w = |grad LF| / mean|grad LF|` (gradient-evidence mask, the SuperWarp untextured-bulk remedy), `mu` 1.0 -> 0.1 at 50 % of epochs. `phi_oracle` from re-running B1's vendored fitter on the **train split** against the **corrected** moving image (B1's saved `p_train` is unusable -- it was fitted on the misregistered image).\n- **Correction stage**: 4-block ConvNeXt-style corrector, width 48, circular padding, ~70-80 k params (same class/size as s6_local-B1's 77 k), trained jointly; absorbs the 5-6 % topology-mismatch residual (scoping, not metamorphosis -- 12.3's own escape clause).\n- **Arms** (one process, one job, seed 0; only `test_hf` is scored because `score_panel._extract_test_metric` selects `test*`):\n\n  | key | arm | trained | role |\n  |---|---|---|---|\n  | `test_hf` | one-sided warp + correction | yes | **SCORED** proposal |\n  | `ref_warp_off` | identical net, `phi` forced 0, + correction | yes | architecture-level warp-off control (B1 part 4, LOCKED); the s6-class correction baseline |\n  | `ref_const_disp` | `phi` = one global 2-vector per sample + correction | yes | CONSTANT-DISPLACEMENT-ONLY arm (MANDATORY, B1 part 7 / F12) |\n  | `ref_lsi` | zero-parameter closed-form LSI on the same input path | 0 trained params | value-add over the defect-correction class (s6's definition) |\n  | `ref_reg_corrected` | `phi = 0`, no correction | no | registration-corrected reference sidecar (B1 part 7 item 3) |\n  | `ref_frozen_copylf` | `panel_data.copylf_prediction`, unedited | no | frozen reference / seam, skill 1.0 |\n  | `ref_oracle_phi` | oracle `phi` (test-HF-fitted) + trained corrector | no | ceiling, report-only, `do_not_promote` |\n\n- **Hard-stop seams**: S1 frozen copy-LF == 0.08765999100758841 to <=1e-9; S2 `ref_reg_corrected` reproduces B1 F3 variant C 0.4769 +-2 %; S3 vendored `warp_core.py` reproduces B1's recorded C16 nRMSE <=1 % on the misregistered path; S4 vendored LSI reproduces s6_local-B1's `skill_LSI` 0.4400-0.4413 +-2 %; S5 zero Fourier coefficients give `phi == 0` and the warp arm's zeroed forward equals `ref_warp_off`'s at init.\n- **Free diagnostics** (sidecar): endpoint error vs oracle `phi` (masked and unmasked), median/p90 `|phi_pred|`, inverse-consistency error `E_IC` (diagnostic ONLY, never a loss), captured share of the oracle benefit, per-band error ratios on B1's band edges, skill stratified by LF/HF component mismatch, and an in-repo-derived (NOT cited) phase-field interface displacement statistic.\n- Checkpoint resume from `<ckpt_dir>/last.pt` (`{arm_index, epoch, model, optimizer, RNG, cached oracle-phi}`), arms sequential. Submit-time job env `ROUND1_EVAL_RESULTS=<outputs>/s3_warp/B2/eval/results` (B1 precedent, not a scoring knob). Contract-tier 2-epoch plumbing screen first (non-reportable, ADR 0007). No guard legs -- the family's declared support is a 2-D nested periodic dyadic ladder; guard legs recorded as an owed promotion precondition. ~25-35 min on one H100 (ADR 0005); suggested `--time 02:00:00`.",
+ "4_expected_result": "scored metric = `nRMSE` on `sharp__cahn_hilliard` `test_hf`, reported as skill vs the frozen copy-LF reference 0.08765999100758841 (skill 1.0).\n\n| key | predicted skill | grounding |\n|---|---|---|\n| `ref_frozen_copylf` | 1.000 exactly | seam S1 |\n| `ref_reg_corrected` | 0.477 +- 0.01 | B1 F3 variant C 0.4769 (seam S2) |\n| `ref_lsi` | 0.42-0.46 | B1 F15 (0.4631 -> 0.4402 corrected) |\n| `ref_warp_off` | 0.40-0.47 | s6_local-B1 trained corrector 0.4686 |\n| `ref_const_disp` | 0.40-0.47, within 0.03 of `ref_warp_off` | B1 F11 (residual DC <= 0.13 cells); F12's 48.9 % was the grid convention |\n| **`test_hf`** | **0.15-0.35** (central 0.25) | 0.44 x (1 - 0.85f), f = captured share of B1's 83.4-85.2 % ceiling |\n| `ref_oracle_phi` | 0.06-0.09 | B1 F9 ceiling on the corrected C0 |\n\nDelta vs the anchor (`s3_warp-B1`): B1 is a `do_not_promote` diagnostic with no numeric anchor file; its legacy numbers are the 83.4-85.2 % oracle ceiling and the (uninformative, misregistered-path) 63-99 % retrieval bracket. The card's move is to convert the ceiling into an LF-only achievable share -- predicted 30-70 % of it captured.\n**vs the noise floor** (`state/noise_floor.json sharp__cahn_hilliard`: `spread 0.19182714769533593`, `min_claimable_effect 0.5533465853654416`): Leg A's effect `1 - 0.440 = 0.560 > 0.5533` (2.92x `spread`), predicted 0.65-0.85 -> clears. Leg B's arm-vs-arm threshold `0.20 > 0.19182714769533593` clears the certified `spread`; it cannot clear `min_claimable_effect`, which is arithmetically impossible here (see Leg B').",
+ "expected_falsification": "the one-sided displacement head is falsified as a mechanism if it fails to beat the best of `{ref_warp_off, ref_const_disp, ref_lsi}` by more than 0.20 skill units on `sharp__cahn_hilliard` (equivalently captures <= 51 % of B1's certified 83.4-85.2 % oracle ceiling) with seams S1-S5 passed -- in which case the residual displacement is oracle-visible but not LF-predictable and B1 part 7's close-out applies; the separate claimability leg is falsified if the scored skill exceeds 0.440 (effect vs the frozen reference < 0.560 < `min_claimable_effect` 0.5533).\n\nFull pre-registered leg set (verbatim from `iteration_1.md`):\n- **Leg A (claimability, clears 0.5533)**: falsified if `skill(test_hf) > 0.440`. Predicted not to fire; passing attributes nothing on its own (the zero-parameter LSI already reaches 0.4402).\n- **Leg B (attribution, threshold 0.20 > `spread` 0.19182714769533593)**: falsified if `skill(test_hf) > min(skill(ref_warp_off), skill(ref_const_disp), skill(ref_lsi)) - 0.20`.\n- **Leg B' (parent-directed strict reading, pre-registered UNATTAINABLE)**: margin `> 0.5533` over both controls -- recorded and reported, but its firing is NOT evidence about the warp, because `max margin = skill(control) ~ 0.47 < 0.5533` given `skill >= 0` and s6_local-B1's measured control-class skill 0.4686. Its purpose is to document that the anchor-referenced `min_claimable_effect` convention is degenerate on copy-LF-referenced panel datasets. **This is the card's second deliverable and is mentor-facing.**\n- **Leg C (mechanism honesty, reported)**: if Leg B passes while median `|phi_pred| < 0.1` cells or the masked endpoint error exceeds the oracle median `|phi|` (0.64-0.74), the win is intensity correction mislabelled as warping and must be reported as such.\n- **Leg D (scoping cost, reported)**: skill on the 5-6 % topology-mismatch subset reported separately; > 2x the matched subset makes scoping the binding limitation for B3.",
+ "anchor_reference": "s3_warp-B1",
+ "prior_art": {
+  "verdict": "(i) *\"preempted-but-MF-composition-open\"* -- citations `Flowers https://arxiv.org/html/2603.04430`, `MetaRegNet https://arxiv.org/pdf/2303.09088`, `Khamlich https://arxiv.org/html/2603.04232v2`, `Fourier-Net https://arxiv.org/abs/2211.16342`, `SuperWarp https://pmc.ncbi.nlm.nih.gov/articles/PMC9645132/`, `M2N https://arxiv.org/abs/2204.11188`, `UM2N https://arxiv.org/abs/2407.00382`, `weather-SR flow matching https://arxiv.org/html/2604.00897`; open part verbatim: *\"The **one-sided** instance: displacement predicted from the LF PDE field + condition vector with **no target field at inference**, applied to that field before a learned correction, inside an MF operator surrogate at small N_hf. Registration is pairwise; mesh-movement nets output nodes not fields; MF/SR fusion is value-space. Every *component* (band-limited Fourier displacement head, supervised warp targets, single-interpolation warp) is published -- the claim is composition + measurement, on ONE dataset (floor 0.553).\"* (ii) *\"preempted (cite)\"* -- `JUBW: Makansi/Ilg/Brox https://arxiv.org/abs/1707.00471`, open part verbatim: *\"**Nothing.** The 2017 motivation is verbatim B1 F17 ... It is an implementation obligation to cite, never a contribution.\"* (iii) *\"preempted-but-MF-composition-open (weak novelty, strong measurement value)\"* -- `MI2A https://arxiv.org/abs/2504.11433`, open part verbatim: *\"**No fetched source, in any field, reports a quantitative per-term attribution of a displacement-vs-intensity error split** -- and none does it across two fidelities of one PDE solve. Joint-vs-sequential cannot be settled by citation (ablations point both ways) -> must be a control arm.\"* Also cited for the GT-free diagnostic: `inverse-consistency error https://pmc.ncbi.nlm.nih.gov/articles/PMC3915046/`.",
+  "citations": [
+   "Flowers https://arxiv.org/html/2603.04430",
+   "MetaRegNet https://arxiv.org/pdf/2303.09088",
+   "Khamlich https://arxiv.org/html/2603.04232v2",
+   "Fourier-Net https://arxiv.org/abs/2211.16342",
+   "SuperWarp https://pmc.ncbi.nlm.nih.gov/articles/PMC9645132/",
+   "M2N https://arxiv.org/abs/2204.11188",
+   "UM2N https://arxiv.org/abs/2407.00382",
+   "weather-SR flow matching https://arxiv.org/html/2604.00897",
+   "JUBW: Makansi/Ilg/Brox https://arxiv.org/abs/1707.00471",
+   "MI2A https://arxiv.org/abs/2504.11433",
+   "inverse-consistency error https://pmc.ncbi.nlm.nih.gov/articles/PMC3915046/"
+  ]
+ },
+ "recipe": {
+  "base_family": "none as a trained base (new family, built from scratch). TWO modules VENDORED VERBATIM with provenance headers: (a) worktrees/s3_warp/B1/models_r1/s3_warp_oracle/warp_core.py from branch round1/exp-s3_warp-B1 @ 4799abdec705d64e8300b18ab0650fb74e012c9b -> models_r1/s3_warp_onesided/warp_core.py (oracle-phi fitter, unmodified, seam S3); (b) fit_transfer/apply_transfer/rho from mffp_autoresearch/round1/tools/defect_correction_learnability.py -> models_r1/s3_warp_onesided/lsi_ref.py (s6_local-B1's LSI definition, unmodified, seam S4). No checkpoint is reloaded from any prior model.",
+  "base_commit": "967562e2a4e3493515edab36b0fcb23655fce71f",
+  "family_dir": "models_r1/s3_warp_onesided",
+  "datasets": "sharp__cahn_hilliard",
+  "epochs": 200,
+  "seeds": [
+   0
+  ],
+  "env": {
+   "S3W2_ARMS": "warp,warp_off,const_disp",
+   "S3W2_SCORED_ARM": "warp",
+   "S3W2_RESAMPLE": "node_bilinear_single",
+   "S3W2_PAD": "circular",
+   "S3W2_JUBW_OFFSET_CH": "1",
+   "S3W2_PHI_MODES": "16",
+   "S3W2_PHI_MAX_CELLS": "4",
+   "S3W2_PHI_SUP_MU": "1.0",
+   "S3W2_PHI_SUP_MU_LATE": "0.1",
+   "S3W2_PHI_SUP_ANNEAL_FRAC": "0.5",
+   "S3W2_PHI_SUP_MASK": "grad",
+   "S3W2_CORR_BLOCKS": "4",
+   "S3W2_CORR_WIDTH": "48",
+   "S3W2_LR": "1e-3",
+   "S3W2_BATCH": "8",
+   "S3W2_ORACLE_RUNGS": "0,4,16",
+   "S3W2_ORACLE_ITERS": "400",
+   "S3W2_ORACLE_LR": "0.02",
+   "S3W2_ORACLE_LAMBDA": "1e-3",
+   "S3W2_LSI_RIDGE": "1e-6",
+   "S3W2_EIC": "1",
+   "S3W2_SEAM_TOL": "0.02",
+   "S3W2_DIAG_OUT": "${OUTPUTS_ROOT}/s3_warp/B2/eval"
+  }
+ },
+ "status": "complete",
+ "skipped_reason": null,
+ "reopen_candidate": false,
+ "scripts_path": {
+  "submit": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round1/worktrees/s3_warp/B2/scripts/submit.sh",
+  "seeds_2_3": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round1/worktrees/s3_warp/B2/scripts/submit_seeds_2_3.sh",
+  "train_eval": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round1/worktrees/s3_warp/B2/scripts/01_train_eval.sh"
+ },
+ "output_paths": {
+  "training": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s3_warp/B2/training",
+  "eval": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s3_warp/B2/eval",
+  "slurm": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s3_warp/B2/slurm",
+  "scored_result": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s3_warp/B2/eval/result_sharp__cahn_hilliard_s0.json",
+  "contract_screen_result": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s3_warp/B2/eval/screen_contract_sharp__cahn_hilliard_s0.json",
+  "diagnostics_sidecar": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s3_warp/B2/eval/s3_warp_onesided_sharp__cahn_hilliard_diag.json",
+  "phi_sidecar": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s3_warp/B2/eval/s3_warp_onesided_sharp__cahn_hilliard_phi.npz",
+  "family_result_jsons": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s3_warp/B2/eval/results"
+ },
+ "build_commit": "d9fb50104b7a42b39a2639893fe4e12cbd125ed8",
+ "job_ids": [
+  "66075079 (main seed-0 run via submit.sh; review SUGGEST; step-A seam gate enforced in-job)",
+  "66075124 (DUPLICATE of 66075079 \u2014 orchestrator submitted unaware the job was already up; scancel'd at 0:25 elapsed; no artifacts written)"
+ ],
+ "logs": {},
+ "build_notes": [
+  "FAMILY: models_r1/s3_warp_onesided (new, from scratch). onesided.py = periodic node-aligned SINGLE resample (phi=0 reproduces B1 F3 variant C bitwise), 16x16x2 -> 256^2 band-limited REAL decode matrix (512 dof = B1's C16 rung, Fourier-Net), FNO-style head on raw LF + broadcast 19-d cond, 4-block ConvNeXt corrector (circular pad, zero-init head) fed JUBW sub-cell fractional offsets. warp_core.py VENDORED VERBATIM from round1/exp-s3_warp-B1 @4799abd (body sha256 17c2e1ee09b5a996c6f0a3a4e6abbfc537e8b446fe43ce67804d87f365265207, provenance header only); lsi_ref.py VENDORED VERBATIM (fit_transfer/apply_transfer/rho) from tools/defect_correction_learnability.py. Oracle phi RE-FITTED on the train split against the registration-corrected moving image; B1's saved p_train NOT reused (B1 F10).",
+  "SEAM EVIDENCE (all on disk, all pass). S1: nrmse(copylf_prediction(test), HF) = 0.08765999100758841, delta 0.0 vs eval/copylf_baselines.json (tol 1e-9). S2: ref_reg_corrected skill = 0.47687619181488217 vs B1 F3 variant C 0.4769 -> rel dev 2.6e-5 (tol 2%). S3: worktrees/s3_warp/B2/scratchpad/probe_seam_s3.json -- vendored warp_core, B1's own recorded ladder (rungs 0,4,8,16; iters 400; lr 0.02; lambda 1e-3; max_disp 16), full 100-sample test split on the MISREGISTERED path: C16 = 0.017137085533780672 vs B1's recorded 0.017137070031271795 -> rel dev 9.05e-7 (tol 1%); C4 0.03233710348 vs 0.03233710137 and C8 0.02261258683 vs 0.02261258668 also reproduce to 1e-8. S4: LSI skill on the misregistered path = 0.4438847630364397, inside the s6_local-B1 band [0.4400, 0.4413] widened by 2% -> [0.4312, 0.4501]. S5 (CPU, float64): decode(0) max|phi| = 0.0, head coefficients at init max = 0.0, warp-arm forward vs ref_warp_off forward max dev = 0.0 with the corrector head deliberately de-zeroed (corrector delta 0.53, so the comparison is not trivially 0==0).",
+  "SAMPLER SEAM (extra): the torch periodic bilinear sampler at phi=0 equals scipy.ndimage.map_coordinates(order=1, mode='grid-wrap') -- B1's variant-C definition -- to max abs dev 0.0 over the full 100-sample test split, so the model path and the reference arm cannot drift.",
+  "TEST-HF ISOLATION (structural). smoke_eval.LockedHF: .value raises until every trained arm has finished (blocked accesses counted), reference/seam reads are audited by reason, and hf.assert_train_only() checks that every training tensor has exactly n_train rows. assert_head_inputs() asserts DisplacementHead.forward's signature is (self, lf, cond) -- LF + condition only, no target field, no PDE (ADR 0009). All three are reported in the result JSON.",
+  "CONTRACT SMOKE (login node, honest account). The login node was at load ~70 with a 1-core affinity (~230 s per training step), so a single process could not complete the full 3-arm x 2-epoch pass; per the orchestrator's authorization this is recorded rather than stalled on, and SLURM step A (the 2-epoch screen inside 01_train_eval.sh, seams ENFORCED) is the authoritative plumbing gate. Verified in-session instead, with artifacts: (a) three score_panel.py-driven runs (command in scratchpad/run_contract_smoke.sh: score_panel.py --family_dir models_r1/s3_warp_onesided --datasets sharp__cahn_hilliard --epochs 2 --seed 0 --no_cache --env <recipe knobs, ORACLE_ITERS=8>) got through the support gate, seams S1/S2/S4/S5, the S3 applicability gate, the 400-sample TRAIN oracle refit (nRMSE 0.009370 -> 0.007808, max|phi| 0.45 cells, cached in last.pt), and trained 2 of 3 arms with per-epoch checkpoints INCLUDING a real cross-process resume; (b) scratchpad/verify_eval_block.json -- the whole post-training block (predict x 3 arms, TEST oracle ladder, all 7 splits, all 8 diagnostic families, JSON write) on an 8-sample slice, exit 0, all values finite; at fresh weights test_hf == ref_warp_off == ref_const_disp == ref_reg_corrected to 1e-10, the designed identity-at-init.",
+  "TWO REAL BUGS THE SMOKE CAUGHT, BOTH FIXED. (1) RESUME: node_y/node_x were stride-0 torch.meshgrid views, so load_state_dict raised 'more than one element ... refers to a single memory location' when a requeued job reloaded last.pt -> now .contiguous(). (2) NaN: project_ball clamped AFTER sqrt; sqrt has an infinite derivative at 0 and the displacement head is zero-init by construction (seam S5), so the warp arm NaN'd on its FIRST backward pass (recorded history: loss=nan while the gradient-free warp_off arm was healthy at 0.0201) -> the clamp now sits inside the sqrt. Post-fix check: grad at phi==0 is 1.0, f(0) still bitwise 0, |phi| projects to exactly 4.0 on the boundary, and 3 real training steps on real data give finite losses (0.0057 / 0.0206 / 0.0144) with |phi| growing 0 -> 0.019 cells and all parameters finite. Hardening: config_key now includes a sha256 over the family's .py files, so a checkpoint written by different code is never silently resumed.",
+  "SEAM S3 APPLICABILITY GUARD (design decision worth review). S3 compares a FIT to a recorded FIT, so it is only meaningful at s3_warp-B1's recorded fitter configuration. smoke_eval.s3_fit_config_matches_b1() enforces it whenever (S3W2_ORACLE_ITERS, S3W2_ORACLE_LR, S3W2_ORACLE_LAMBDA) == (400, 0.02, 1e-3) -- exactly what the card recipe pins -- and otherwise reports S3 'not applicable' AND stamps non_reportable:true / seams_all_pass:false on the whole result JSON. The seam can never be silently skipped; the login-node smoke used ORACLE_ITERS=8 for cost and is therefore self-stamped non-reportable.",
+  "HYPERPARAMETER PROVENANCE. From recipe.env verbatim: arms, scored arm, resample, pad, JUBW offset channels, phi modes (16), phi max cells (4), mu 1.0 -> 0.1 at 50%, grad mask, corrector blocks (4) and width (48), lr 1e-3, batch 8, oracle rungs 0,4,16, oracle iters/lr/lambda, LSI ridge 1e-6, E_IC on, seam tol 0.02. Cited (prior-best, not invented): GRAD_CLIP 1.0 from the base zoo family mf_fno_transfer_film's SMOKE dict @967562e (the source s6_local-B1 used); ConvNeXt expansion 4 and the depthwise 7x7 kernel from s6_local-B1's ConvNeXtLiteBlock (Liu 2022 canonical); LSI hold-out 0.2 / n_train 320 / seed 0 from the promoted tool's defaults; oracle max_disp 16 cells for the S3 seam only, from B1's own recipe env S3W_MAX_DISP_CELLS. TBD (card says only 'small FNO-style encoder', no width/depth given): HEAD_WIDTH_TBD=24, HEAD_BLOCKS_TBD=2 -> head 591,722 params. Corrector = 84,913 params against the card's '~70-80 k' estimate (blocks/width are recipe-fixed, so the estimate is what moved, not the recipe). Adam weight decay left at 0 (not specified). Condition vector standardised on TRAIN statistics only; the LF field and the corrector's inputs/outputs stay in raw units.",
+  "DECLARED SUPPORT + REFUSAL. The family serves 2-D nested periodic dyadic NODE-SAMPLED ladders. assert_supported() checks squareness, integer nesting and -- from the data itself, per B1 F1 -- that nRMSE(LF, HF[::r,::r]) < nRMSE(LF, r x r blockmean(HF)) (cahn_hilliard: 0.0406 < 0.0879). ext__helmholtz_2d and other non-node-sampled layouts are REFUSED rather than silently mis-warped. No guard legs (card part 3); recorded as an owed promotion precondition.",
+  "OBSERVATION FOR THE ANALYZER (not a card claim): the TRAIN split's registration-corrected LF->HF gap is 4.5x smaller than the TEST split's -- variant-C nRMSE 0.009369736584907532 (train, 400) vs 0.041802962686225575 (test, 100); copy-LF 0.058087 vs 0.087660. Verified twice by independent code paths. The supervision oracle is therefore fitted in a much smaller-displacement regime than the one being scored; Leg C should be read with that in mind.",
+  "SLURM (ADR 0005). scripts/01_train_eval.sh takes SEED=$1 and runs ONE job with two steps: step A = contract-tier 2-epoch screen (seams ENFORCED, non-reportable, its own diag dir and ROUND1_EVAL_RESULTS) and step B = the 200-epoch scored run; set -e aborts before step B on any seam violation. gpu:h100:1, --mem=64G, --requeue, --exclude=hpc-93-36, --time=02:00:00 (the card's own suggestion in part 3 wins; the closest timing_ledger analog is sharp__cahn_hilliard @200 epochs on h100 = 30.73 min for a single-arm family, and this card adds 2 more trained arms plus 3 oracle ladder fits). Job name r1-s3_warp-B2-s{seed} is passed explicitly by submit.sh / submit_seeds_2_3.sh (SBATCH directives cannot read $1). All paths absolute, including the sibling script path in both submit scripts (spool lesson). --no_cache is deliberate: the diagnostics sidecar is written by smoke_eval.py itself, so a score_panel cache hit would silently skip the whole measurement (s3_warp-B1's recorded lesson); idempotence comes from <ckpt_dir>/last.pt instead. S3W2_DIAG_OUT is expanded from the card's literal ${OUTPUTS_ROOT}/s3_warp/B2/eval to an absolute path, and smoke_eval.py hard-stops if it still contains '${'. All three scripts pass bash -n; all 22 recipe env knobs verified equal to recipe.env verbatim by a programmatic diff, and the family's ENV_DEFAULTS equal the recipe too (a bare run reproduces the card)."
+ ],
+ "review_notes": [
+  {
+   "attempt": 1,
+   "verdict": "reviewed_suggest",
+   "utc": "2026-07-30T19:05Z",
+   "review_file": "state/s3_warp/review_B2.md (= worktrees/s3_warp/B2/notes/handoff_code_reviewer.md)",
+   "summary": "SUBMIT AS-IS. Card part 3 faithfully implemented; recipe verbatim; blast radius clean; no SS5 immutable touched; contract satisfied. All five hard-stop seams are RUNTIME-enforced inside smoke_eval.main() (each raises SeamViolation before any arm trains, so set -e kills the job before the 200-epoch step) and the reviewer re-verified them independently rather than trusting build_notes. Only non-blocking findings.",
+   "findings": [
+    "Q1 card-implementation alignment PASS - single node-aligned resample, 16x16x2=512-dof band-limited decode, 4-cell ball, JUBW sub-cell offset channels, grad-mask supervision with mu 1.0->0.1 at 50% (train_arm L605), 4-block/width-48 ConvNeXt corrector, all 7 arms as named split keys, all 8 free diagnostics, sequential arms + last.pt resume. Only test_hf is scored (score_panel._extract_test_metric prefers test_hf; ref_* keys are not test keys).",
+    "Q2 recipe fidelity PASS - programmatic 3-way diff (recipe.env <-> 01_train_eval.sh:66-89 <-> smoke_eval.ENV_DEFAULTS): 22/22 knobs identical verbatim, no extras either side; S3W2_DIAG_OUT is the card's literal ${OUTPUTS_ROOT}/... expanded to absolute (read_env hard-stops if '${' survives). Every non-recipe constant carries cited provenance (GRAD_CLIP 1.0, ConvNeXt expansion 4 + dw-7x7, LSI holdout 0.2/n=320, S3-only max_disp 16).",
+    "Q3 SS5 immutable compliance PASS - no writes to round1/eval/, project.yaml, program.md, ADRs, prompts, or guarded factory surfaces; family only READS eval/{nrmse,panel_data,copylf_baselines}; ROUND1_EVAL_RESULTS redirected to the outputs root; the only round1/eval/ artifact is the gitignored eval/cache/ (round1/.gitignore:4). Scoring through the unmodified score_panel.py in both steps; nRMSE_round_def == score_panel's mean(rel_l2_per_sample). Seeds [0] (ADR 0004), epochs 200/2 = the round's tiers. No pre-falsified lever re-proposed (band-limiting the DISPLACEMENT is not LF spectral freezing).",
+    "Q4 contract compliance PASS - 6-arg CLI exact; manifest.json complete; INSPIRATION.md cites all 11 prior_art citations + li2020fno/liu2022convnext and disclaims v9 copying; resume from <ckpt_dir>/last.pt implemented AND functionally verified by the reviewer (save -> load_state_dict round-trip, max param dev 0.0); config_key now includes a sha256 over the family's .py files (no cross-code resume); seeding covers python/numpy/torch/cuda.",
+    "Q5 SLURM correctness PASS (one operational note) - bash -n run by the reviewer on all 4 shell files, all clean; partition gpu + typed gres gpu:h100:1 = project.yaml; cpus 4, mem 64G, --requeue, --exclude=hpc-93-36 (precedent state/gates.md:38); %x_%j.{out,err} absolute under OUTPUTS_ROOT/s3_warp/B2/slurm/ and mkdir'd by both wrappers; all paths absolute incl. the sibling script; SEED=$1; submit.sh = seed 0 only; submit_seeds_2_3.sh parked; job name r1-s3_warp-B2-s{seed} from the wrappers' --job-name (submit via submit.sh, never sbatch 01_train_eval.sh directly); all 22 knobs in one --env flag (nargs='*'); step A->B ordering enforced by set -euo pipefail. NOTE S1: --time=02:00:00 is card-locked but thin - 3 trained arms plus SIX oracle ladder fits (S3+train+test, once per step; step A and B have different config_keys/ckpt dirs so nothing is shared). Ledger analog 30.73 min for ONE trained model on this dataset/epochs/h100; B1's 100-sample GPU ladder 105.8 s. Plausible total 50-115 min.",
+    "Q6 smoke-test evidence SUGGEST (the one downgraded finding; would be FAIL absent the authorization) - build_notes cites the contract-tier score_panel command and scratchpad/run_contract_smoke.sh is committed, but NO result JSON or log from that run survives (scratchpad/{contract_smoke.json,smoke_results/,diag/} absent), so 'trained 2 of 3 arms', 'per-epoch checkpoints' and 'a real cross-process RESUME' have no on-disk artifact; verify_eval_block.py ran with --fresh so it did not exercise the checkpoint load path either. Downgraded because (a) the orchestrator explicitly authorized shipping without a completed login smoke (flow 2026-07-30T15:55Z, s5-B1 precedent) and the builder disclosed it prominently, (b) SLURM step A is a real 2-epoch seams-ENFORCED score_panel gate that aborts before step B, (c) the reviewer reproduced the substance: S1 delta exactly 0.0; S2 skill 0.47687619181488217 (rel dev 5.0e-5); torch-vs-scipy grid-wrap sampler max dev 0.0; S4 0.4438847630364397 inside the widened band; S5 by executing the family's own seam_s5() (decode(0)/init coeffs/init phi/warp-vs-warp_off all exactly 0.0, corrector delta 0.169); S3 via probe_seam_s3.json (9.05e-7) plus a git-show diff proving warp_core.py is B1@4799abd byte-identical apart from a 24-line provenance header, and lsi_ref.py character-identical to tools/defect_correction_learnability.py:76-93.",
+    "Q7 blast radius PASS - git diff round1-substrate..d9fb501 --stat = 20 files/+3025/-0 confined to models_r1/s3_warp_onesided/ (8), scripts/ (3), notes/ (2), scratchpad/ (7). No substrate file, no eval file, no card, no ADR; single atomic commit; worktree tree clean.",
+    "ADR-0009 legality DRILLED AND CLEAN - DisplacementHead.forward(self, lf, cond) is signature-asserted at runtime (assert_head_inputs); the supervision oracle is REFIT on regc_tr/y_tr (train only) and B1's saved p_train is never loaded (no reference to it exists in the family); every training tensor is row-count-asserted to n_train=400 (LockedHF.assert_train_only); the only test-HF-fitted objects (seam_s3's scalar, ref_oracle_phi) are consumed after training and never enter a loss or a weight.",
+    "BOTH FIXED BUGS VERIFIED BY THE REVIEWER, not taken on report - resume: save->load_state_dict round-trip now succeeds, node_y/node_x strides [65536,256,1] contiguous, max param dev 0.0. NaN: project_ball(0)=0 bitwise, gradient at 0 = 1.0 (finite), boundary radius exactly 4.0, identity inside; 2 real training steps of the warp arm on real data gave finite losses 0.003175/0.019731, grad norms 1.39/3.41, max|phi| 0->0.0133 cells, all parameters finite.",
+    "NON-BLOCKING S2 for the analyzer - the displacement head is 591,722 params (7x the 84,913-param corrector) fit on 400 train samples. Inside builder discretion (card says only 'small FNO-style encoder'; width 24 / 2 blocks IS small vs the zoo default 64/4 ~ 10.5 M) and needs NO operator amendment, but the in-code rationale (onesided.py:54-56, 'chosen small ... so the head cannot dominate the ~86 k corrector') is factually inverted. Read Leg C knowing head capacity/overfit is a live alternative to 'displacement is not LF-predictable' if test_hf ~ ref_warp_off.",
+    "NON-BLOCKING S3 - corrector 84,913 params vs the card's '~70-80 k' prose estimate: no amendment needed, S3W2_CORR_BLOCKS=4 / S3W2_CORR_WIDTH=48 are in the locked recipe.env, so the estimate moved, not the recipe; same class as s6_local-B1's 77 k, as the card intends.",
+    "NON-BLOCKING S4 - batch order does not depend on --seed (train_arm seeds its shuffle generator from sha256(arm) only, smoke_eval.py:589-590), so seeds 1/2 differ from seed 0 in weight init and bootstrap but not in minibatch composition; will mildly UNDERSTATE seed spread if this card enters the end-of-round top-3 confirmation. Do not change it now (it would invalidate the seed-0 checkpoint).",
+    "NON-BLOCKING S5 - two small build_notes inaccuracies: S2's rel dev is 5.0e-5 not 2.6e-5 (both ~400x inside the 2% tol), and 'a bare run reproduces the card' is inexact because ENV_DEFAULTS['S3W2_DIAG_OUT']='' so a bare run writes no diagnostics sidecar; all 22 scoring-relevant knobs do match.",
+    "NON-BLOCKING S6 - LockedHF.reference_read() returns the live array with no copy, so the guard is an audit trail rather than a capability boundary; the real leakage vectors are covered by assert_train_only and the head-signature assert, both of which fire at runtime.",
+    "NON-BLOCKING S7 - the analyzer MUST read non_reportable / seams_all_pass before quoting any number: if S3's fit config ever deviates the job still exits 0 and stamps non_reportable:true / seams_all_pass:false. With the recipe as pinned this cannot fire, but it is the design's only non-aborting failure mode.",
+    "NON-BLOCKING S8 - Leg C context confirmed independently: the supervision oracle is fitted where the corrected LF->HF gap is 4.46x smaller (train variant-C nRMSE 0.009369736584907532, 400 samples) than where the model is scored (test 0.041802962686225575, 100 samples); copy-LF 0.058087 vs 0.087660. Reaches the analyzer via build_notes[9] and machine-readably via oracle_train.nrmse_regc_vs_train_hf in the sidecar.",
+    "FREE PRE-REGISTRATION (measured by the reviewer) - ref_lsi, the zero-parameter arm on the corrected path, will land at skill 0.4426 (card predicted 0.42-0.46). Leg B therefore needs skill(test_hf) < min(controls) - 0.20, i.e. roughly < 0.20-0.24 depending on where the two trained controls land.",
+    "SUBMIT-TIME INSTRUCTIONS - (1) submit scripts/submit.sh (seed 0 only), never sbatch 01_train_eval.sh directly; (2) do not run submit_seeds_2_3.sh now (parked for the end-of-round top-3, ADR 0004); (3) step A should print [S1]..[S5] before any training - a step-A seam violation is an ALGO signal, not infra, since the job exits non-zero by design; (4) on TIMEOUT resubmit the same script once (resume verified, checkpoints atomic per epoch, config_key stable; step A re-runs ~10 min first) and only on a second timeout hand to the debugger to raise --time as an INFRA fix; (5) the reportable number is splits.test_hf in eval/result_sharp__cahn_hilliard_s0.json, valid only if seams_all_pass:true and non_reportable:false."
+   ]
+  }
+ ],
+ "debug_notes": [],
+ "5_actual_result": {
+  "protocol": "Single-dataset card (sharp__cahn_hilliard only, per locked recipe.datasets). Seed 0 only (ADR 0004: seed_protocol.seeds=[0]; seeds 1-2 run only in the end-of-round top-3 confirmation). ONE SLURM job (66075079) ran two steps: step A = contract-tier (2-epoch) seam-enforcing plumbing screen (non_reportable by design), step B = the scored 200-epoch run. 7 arms in one process: 1 SCORED (warp = one-sided displacement head + ConvNeXt corrector) + 6 ref_* (2 trained ablations, 1 zero-parameter LSI, 1 no-correction reference, 1 frozen copy-LF, 1 test-HF-fitted oracle ceiling marked do_not_promote). No metric was recomputed by this analyzer; every number below is parsed verbatim from the result/diagnostics JSONs cited in metric_provenance.",
+  "validity_check": {
+   "rule": "review_B2.md submit-time instruction 5 + finding S7: 'The reportable number is splits.test_hf ... valid only if seams_all_pass: true and non_reportable: false.' Checked FIRST, before any number was quoted.",
+   "seams_all_pass": true,
+   "non_reportable": false,
+   "non_reportable_reason": null,
+   "seam_summary": {
+    "S1": true,
+    "S2": true,
+    "S3": true,
+    "S4": true,
+    "S5": true
+   },
+   "scored_split": "test_hf",
+   "scored_arm": "warp",
+   "verdict": "VALID -- splits.test_hf is reportable.",
+   "seam_measured_values": {
+    "S1_copylf_nrmse": 0.08765999100758841,
+    "S1_abs_delta_vs_frozen": 0.0,
+    "S2_variant_c_skill": 0.47687619181488217,
+    "S2_rel_dev_vs_b1": 4.99228037698134e-05,
+    "S3_nrmse_C16": 0.01713710026564272,
+    "S3_rel_dev_vs_b1_recorded": 1.7642672211970997e-06,
+    "S4_skill_LSI_misregistered_path": 0.4438847630364397,
+    "S5_warp_vs_warp_off_max_abs_dev_at_init": 0.0,
+    "S5_corrector_delta_max_abs": 0.20342987350760477
+   },
+   "step_A_screen": {
+    "path": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s3_warp/B2/eval/screen/s3_warp_onesided/sharp__cahn_hilliard_e2_s0.json",
+    "seams_all_pass": true,
+    "non_reportable": false,
+    "epochs": 2,
+    "note": "The 2-epoch screen ALSO reports seams_all_pass:true / seam_summary S1-S5 all true, i.e. the gate ran and passed before step B trained. Its skill numbers are plumbing-only and are NOT reportable (2 epochs)."
+   },
+   "log_anomaly": "The reviewer expected step A to print literal '[S1]...[S5]' lines in the slurm .out; grep of r1-s3_warp-B2-s0_66075079.out finds NO such lines (the only 'S3W2_*' hits are the echoed env block). The seam gate demonstrably ran and passed anyway: seam_summary {S1..S5: true} plus a full seams.* block with measured values AND tolerances is present in BOTH the step-A screen JSON and the step-B scored JSON, and step B only executes because step A exited 0 under `set -euo pipefail`. Validity is therefore established from the JSONs, not from the log. Cosmetic build note for a future card: route the seam prints to stdout as well."
   },
-  "recipe": {
-    "base_family": "none as a trained base (new family, built from scratch). TWO modules VENDORED VERBATIM with provenance headers: (a) worktrees/s3_warp/B1/models_r1/s3_warp_oracle/warp_core.py from branch round1/exp-s3_warp-B1 @ 4799abdec705d64e8300b18ab0650fb74e012c9b -> models_r1/s3_warp_onesided/warp_core.py (oracle-phi fitter, unmodified, seam S3); (b) fit_transfer/apply_transfer/rho from mffp_autoresearch/round1/tools/defect_correction_learnability.py -> models_r1/s3_warp_onesided/lsi_ref.py (s6_local-B1's LSI definition, unmodified, seam S4). No checkpoint is reloaded from any prior model.",
-    "base_commit": "967562e2a4e3493515edab36b0fcb23655fce71f",
-    "family_dir": "models_r1/s3_warp_onesided",
-    "datasets": "sharp__cahn_hilliard",
-    "epochs": 200,
-    "seeds": [
-      0
+  "seeds_available": [
+   0
+  ],
+  "metric_provenance": {
+   "scored_result_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s3_warp/B2/eval/result_sharp__cahn_hilliard_s0.json",
+   "family_arm_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s3_warp/B2/eval/results/s3_warp_onesided/sharp__cahn_hilliard_e200_s0.json",
+   "diagnostics_sidecar": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s3_warp/B2/eval/s3_warp_onesided_sharp__cahn_hilliard_diag.json",
+   "phi_sidecar": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s3_warp/B2/eval/s3_warp_onesided_sharp__cahn_hilliard_phi.npz",
+   "contract_screen_result": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s3_warp/B2/eval/screen_contract_sharp__cahn_hilliard_s0.json",
+   "slurm_out": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s3_warp/B2/slurm/r1-s3_warp-B2-s0_66075079.out",
+   "nrmse_def_hash": "d3d0ade9191c13bacc40702f3eb26ad290e01641cacee22a1d2233b74c035850",
+   "nrmse_def_hash_consistency": "IDENTICAL (d3d0ade9191c13bacc40702f3eb26ad290e01641cacee22a1d2233b74c035850) across all SIX JSONs parsed and asserted programmatically: the step-B scored result, the step-B family arm JSON, the step-B diagnostics sidecar, the step-A screen result, the step-A screen arm JSON, and the step-A screen diagnostics sidecar (len(set(hashes))==1). Single seed, so no cross-seed hash check applies.",
+   "code_hash_step_B": "c2f0de527babb7cb960db3cfbb7beb70e27ace30a38bf0d96788236f9151c7cf",
+   "code_hash_step_A": "e4d9df1db60fb15ad299c27e390d9146e3c34cc096d8bec20416d95175a99373 (differs from step B by construction: config_key includes epochs, so the screen and the scored run share no cache entry)",
+   "metric_source": "per_sample_mean",
+   "reference_type": "copylf",
+   "cached": false,
+   "note": "The family's splits.*.nRMSE (e.g. test_hf 0.19730755883374065) is the family's own internal whole-tensor definition and is NOT the round metric. The round metric is nRMSE_round_def == rel_l2_mean == score_panel's per_sample_mean, which is what score_panel.py wrote to the scored result JSON (0.04235180801570901). All numbers in this card part use the ROUND definition."
+  },
+  "per_arm": {
+   "test_hf": {
+    "nRMSE_round_def": 0.04235180801570901,
+    "skill_vs_frozen_copylf": 0.4831372616960771,
+    "rel_l2_ci95_lo": 0.012988435487486972,
+    "rel_l2_ci95_hi": 0.0827956195158902,
+    "n_samples": 100,
+    "role": "SCORED -- one-sided displacement head (warp) + ConvNeXt corrector",
+    "card_part4_predicted_skill": "0.15-0.35 (central 0.25)",
+    "prediction_outcome": "MISSED HIGH -- 0.4831 vs a 0.15-0.35 band (0.133 above the top of the band)"
+   },
+   "ref_warp_off": {
+    "nRMSE_round_def": 0.03783953959325296,
+    "skill_vs_frozen_copylf": 0.4316625995316076,
+    "rel_l2_ci95_lo": 0.008831297722852566,
+    "rel_l2_ci95_hi": 0.07817682837760284,
+    "n_samples": 100,
+    "role": "trained ablation: identical code/params, warp disabled (phi==0), corrector only",
+    "card_part4_predicted_skill": "0.40-0.47",
+    "prediction_outcome": "IN BAND"
+   },
+   "ref_const_disp": {
+    "nRMSE_round_def": 0.038361711805113614,
+    "skill_vs_frozen_copylf": 0.4376193901479271,
+    "rel_l2_ci95_lo": 0.009357302137689177,
+    "rel_l2_ci95_hi": 0.07879435002824461,
+    "n_samples": 100,
+    "role": "trained ablation: displacement restricted to a per-sample constant (rigid) shift",
+    "card_part4_predicted_skill": "0.40-0.47, within 0.03 of ref_warp_off",
+    "prediction_outcome": "IN BAND (and 0.0060 from ref_warp_off, inside the 0.03 tolerance)"
+   },
+   "ref_lsi": {
+    "nRMSE_round_def": 0.038801305121894704,
+    "skill_vs_frozen_copylf": 0.4426341444472178,
+    "rel_l2_ci95_lo": 0.009672071175359245,
+    "rel_l2_ci95_hi": 0.07906457674955511,
+    "n_samples": 100,
+    "role": "zero-parameter LSI (linear shift-invariant transfer) on the corrected input path",
+    "card_part4_predicted_skill": "0.42-0.46",
+    "prediction_outcome": "IN BAND",
+    "rho_val_heldout": 0.4949708203508346,
+    "n_trained_params": 0
+   },
+   "ref_reg_corrected": {
+    "nRMSE_round_def": 0.041802962686225575,
+    "skill_vs_frozen_copylf": 0.47687619181488217,
+    "rel_l2_ci95_lo": 0.012503563837347681,
+    "rel_l2_ci95_hi": 0.08246821047794221,
+    "n_samples": 100,
+    "role": "no correction at all: phi=0, node-aligned single resample (s3_warp-B1 F3 variant C)",
+    "card_part4_predicted_skill": "0.477 +- 0.01",
+    "prediction_outcome": "IN BAND (seam S2, rel dev 5.0e-5)"
+   },
+   "ref_frozen_copylf": {
+    "nRMSE_round_def": 0.08765999100758841,
+    "skill_vs_frozen_copylf": 1.0,
+    "rel_l2_ci95_lo": 0.05987468638660969,
+    "rel_l2_ci95_hi": 0.12644915484602057,
+    "n_samples": 100,
+    "role": "frozen copy-LF reference, eval/panel_data.py::copylf_prediction unedited (skill 1.0 by construction)",
+    "card_part4_predicted_skill": "1.000 exactly",
+    "prediction_outcome": "EXACT (seam S1, abs delta 0.0)"
+   },
+   "ref_oracle_phi": {
+    "nRMSE_round_def": 0.028579511771025596,
+    "skill_vs_frozen_copylf": 0.32602686177040074,
+    "rel_l2_ci95_lo": 0.00450650435562865,
+    "rel_l2_ci95_hi": 0.0636118244617268,
+    "n_samples": 100,
+    "role": "test-HF-fitted oracle phi + trained corrector -- REPORT-ONLY CEILING, do_not_promote",
+    "card_part4_predicted_skill": "0.06-0.09",
+    "prediction_outcome": "MISSED HIGH -- 0.3260 vs a 0.06-0.09 band; the achievable ceiling on the corrected path is ~4x weaker than the card predicted",
+    "do_not_promote": true,
+    "oracle": {
+     "rungs": [
+      0,
+      4,
+      16
+     ],
+     "final_rung": "C16",
+     "max_disp_cells": 4.0,
+     "fitted_on": "TEST HF (report-only ceiling; do_not_promote)",
+     "nrmse_warped_no_correction": 0.03001747929612599,
+     "corrector_from_arm": "warp",
+     "wall_seconds": 13.23852801322937
+    }
+   }
+  },
+  "arm_ranking_best_to_worst_skill": [
+   [
+    "ref_oracle_phi (do_not_promote ceiling)",
+    0.32602686177040074
+   ],
+   [
+    "ref_warp_off",
+    0.4316625995316076
+   ],
+   [
+    "ref_const_disp",
+    0.4376193901479271
+   ],
+   [
+    "ref_lsi",
+    0.4426341444472178
+   ],
+   [
+    "ref_reg_corrected",
+    0.47687619181488217
+   ],
+   [
+    "test_hf (SCORED warp arm)",
+    0.4831372616960771
+   ],
+   [
+    "ref_frozen_copylf",
+    1.0
+   ]
+  ],
+  "headline": "The SCORED warp arm is the WORST of every promotable arm on this card. skill(test_hf)=0.4831372616960771 is worse than all three pre-registered controls (best control ref_warp_off 0.4316625995316076, delta +0.0514746621644695) and is also worse than ref_reg_corrected 0.47687619181488217 (delta +0.0062610698811949), i.e. worse than applying NO correction at all beyond the node-aligned single resample. Turning the learned displacement ON strictly degrades the identical pipeline. Both magnitudes are individually INSIDE the certified single-seed spread (0.19182714769533593) and are therefore not resolvable as a measured regression on one seed -- but the FAILURE TO REACH the pre-registered Leg-B threshold is resolvable (shortfall 0.2514746621644695 = 1.31x spread).",
+  "per_dataset": {
+   "sharp__cahn_hilliard": {
+    "per_seed_nrmse": [
+     0.04235180801570901
     ],
-    "env": {
-      "S3W2_ARMS": "warp,warp_off,const_disp",
-      "S3W2_SCORED_ARM": "warp",
-      "S3W2_RESAMPLE": "node_bilinear_single",
-      "S3W2_PAD": "circular",
-      "S3W2_JUBW_OFFSET_CH": "1",
-      "S3W2_PHI_MODES": "16",
-      "S3W2_PHI_MAX_CELLS": "4",
-      "S3W2_PHI_SUP_MU": "1.0",
-      "S3W2_PHI_SUP_MU_LATE": "0.1",
-      "S3W2_PHI_SUP_ANNEAL_FRAC": "0.5",
-      "S3W2_PHI_SUP_MASK": "grad",
-      "S3W2_CORR_BLOCKS": "4",
-      "S3W2_CORR_WIDTH": "48",
-      "S3W2_LR": "1e-3",
-      "S3W2_BATCH": "8",
-      "S3W2_ORACLE_RUNGS": "0,4,16",
-      "S3W2_ORACLE_ITERS": "400",
-      "S3W2_ORACLE_LR": "0.02",
-      "S3W2_ORACLE_LAMBDA": "1e-3",
-      "S3W2_LSI_RIDGE": "1e-6",
-      "S3W2_EIC": "1",
-      "S3W2_SEAM_TOL": "0.02",
-      "S3W2_DIAG_OUT": "${OUTPUTS_ROOT}/s3_warp/B2/eval"
+    "per_seed_skill": [
+     0.4831372616960771
+    ],
+    "mean_skill": 0.4831372616960771,
+    "ci95": null,
+    "ci95_note": "No cross-seed CI: seed 0 only (ADR 0004). The per-sample bootstrap CI on rel_l2 recorded by the family (lo 0.012988435487486972, hi 0.0827956195158902 in nRMSE units, n=100) is a SAMPLE CI, not a seed CI, and must not be used as a seed spread.",
+    "reference_type": "copylf",
+    "split": "test_hf",
+    "cached": false,
+    "metric_source": "per_sample_mean",
+    "copylf_reference_nrmse": 0.08765999100758841,
+    "grid": [
+     256,
+     256
+    ],
+    "n_test_hf": 100,
+    "n_train_hf": 400,
+    "hf_fid": 3,
+    "lf_fid": 2,
+    "r": 2
+   }
+  },
+  "panel_geomean_skill": {
+   "per_seed": [
+    0.4831372616960771
+   ],
+   "mean": 0.4831372616960771,
+   "ci95": null,
+   "IS_NOT_A_PANEL_SCORE": true,
+   "note": "score_panel.py emits the key 'panel_geomean_skill' even for a one-dataset run, where it degenerates to the single sharp__cahn_hilliard skill. The round-1 panel is SIX datasets; this card scores ONE by locked design (recipe.datasets = 'sharp__cahn_hilliard'). This number must never be recorded or compared as a panel score."
+  },
+  "noise_floor_used": {
+   "source": "state/noise_floor.json :: sharp__cahn_hilliard (certified 2026-07-29T14:28:45Z, family mf_fno_pinn_transfer, 3 seeds)",
+   "spread": 0.19182714769533593,
+   "min_claimable_effect": 0.5533465853654416,
+   "ci95": [
+    5.422990852644198,
+    5.614818000339535
+   ],
+   "mean_skill": 5.533465853654415
+  },
+  "vs_anchor": {
+   "anchor_source": "NONE -- state/anchors/s3_warp.json does not exist (only s1_poisson, s2_beyond_copy, s3_testtime, s4_hybrid_routing, s5_tuning). The locked anchor_reference is the CARD 's3_warp-B1', a do_not_promote diagnostic whose own part 5 records 'No anchor file was created or modified for s3_warp' and whose panel_geomean carries IS_NOT_A_PANEL_SCORE:true.",
+   "anchor_value": null,
+   "delta": null,
+   "beyond_ci": null,
+   "beyond_noise_floor": false,
+   "beyond_noise_floor_note": "Judged on the card's own experimental contrast, which is arm-vs-arm within one job. warp vs best control ref_warp_off = +0.0514746621644695 skill units (worse) = 0.27x the certified spread 0.19182714769533593 -> the REGRESSION itself is NOT resolvable on one seed. warp vs ref_reg_corrected = +0.0062610698811949 = 0.03x spread -> not resolvable. What IS resolvable is the shortfall against the pre-registered Leg-B threshold: 0.2514746621644695 = 1.31x spread.",
+   "informative_comparisons": {
+    "vs_best_control_ref_warp_off": {
+     "control": 0.4316625995316076,
+     "arm": 0.4831372616960771,
+     "delta_arm_minus_control": 0.0514746621644695,
+     "direction": "warp arm WORSE",
+     "x_spread": 0.2683387767732578
+    },
+    "vs_ref_reg_corrected_no_correction": {
+     "control": 0.47687619181488217,
+     "arm": 0.4831372616960771,
+     "delta_arm_minus_control": 0.006261069881194958,
+     "direction": "warp arm WORSE",
+     "x_spread": 0.03263912306687126
+    },
+    "vs_in_card_oracle_ceiling_ref_oracle_phi": {
+     "ceiling": 0.32602686177040074,
+     "arm": 0.4831372616960771,
+     "gap": 0.15711039992567638,
+     "note": "do_not_promote ceiling, test-HF-fitted; gap 0.1571 = 0.82x spread"
+    },
+    "vs_B1_legacy_cahn_hilliard": {
+     "B1_transfer_field_skill": 0.4971755368308607,
+     "note": "B1's do_not_promote nearest-neighbour retrieval on the MISREGISTERED path; context only, not a comparator (B1 part 5 forbids promotion)."
     }
+   },
+   "single_seed_caveat": "Seed 0 only (ADR 0004). No cross-seed CI on any number in this card. Additionally review_B2.md finding S4: train_arm seeds its minibatch shuffle from sha256(arm) only, not from --seed, so seeds 1/2 would differ in weight init and bootstrap but NOT in batch composition -- any future seed spread from this family will be understated. This card is not a top-3 candidate, so the point is recorded, not acted on."
   },
-  "status": "reviewed_suggest",
-  "skipped_reason": null,
-  "reopen_candidate": false,
-  "scripts_path": {
-    "submit": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round1/worktrees/s3_warp/B2/scripts/submit.sh",
-    "seeds_2_3": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round1/worktrees/s3_warp/B2/scripts/submit_seeds_2_3.sh",
-    "train_eval": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round1/worktrees/s3_warp/B2/scripts/01_train_eval.sh"
+  "cratered_verdict": "cratered",
+  "cratered_basis": "Subagent spec 2b: cratered <=> crash, OR panel geomean skill > cratered_skill_factor (1.5) x the stream anchor's skill, OR the falsification clause already fired decisively. (i) No crash: job 66075079 COMPLETED, ExitCode 0:0, elapsed 00:24:41, .err is 0 bytes, no NaNs, no preemption. (ii) The skill-factor branch is NOT EVALUABLE: s3_warp has no anchor file and the locked anchor_reference is a do_not_promote diagnostic with no numeric anchor (see vs_anchor). (iii) The falsification clause FIRED DECISIVELY: Leg A and Leg B are both falsified, the scored arm is worse than every trained control, worse than the no-correction reference, and its captured share of the oracle benefit is NEGATIVE (-0.041505453682483956 vs Leg B's <=51% equivalence). Branch (iii) alone carries the verdict => CRATERED. Under ADR 0004 there is no proceed_to_seeds_1_2 branch to take: seeds 1-2 run only in the end-of-round top-3 confirmation, for which a cratered card is not a candidate. Do not launch seeds 1/2.",
+  "falsification_verdict": "falsified",
+  "falsification_by_leg": {
+   "primary_clause": {
+    "clause_verbatim": "the one-sided displacement head is falsified as a mechanism if it fails to beat the best of `{ref_warp_off, ref_const_disp, ref_lsi}` by more than 0.20 skill units on `sharp__cahn_hilliard` (equivalently captures <= 51 % of B1's certified 83.4-85.2 % oracle ceiling) with seams S1-S5 passed -- in which case the residual displacement is oracle-visible but not LF-predictable and B1 part 7's close-out applies",
+    "verdict": "FALSIFIED",
+    "deciding_numbers": "seams S1-S5 all passed (precondition met). best of {ref_warp_off 0.4316625995316076, ref_const_disp 0.4376193901479271, ref_lsi 0.4426341444472178} = ref_warp_off 0.4316625995316076. Required: skill(test_hf) < 0.2316625995316076. Measured: 0.4831372616960771. The arm does not merely fail to beat the best control by 0.20 -- it is 0.0514746621644695 WORSE than it. Shortfall against the threshold = 0.2514746621644695 = 1.31x the certified spread 0.19182714769533593, so the falsification is resolvable above the noise floor.",
+    "equivalence_check": "captured_share_of_oracle_benefit (family-computed, diag captured_share) = -0.041505453682483956, i.e. -4.15% of the oracle benefit, from nrmse_reference 0.041802962686225575 / nrmse_arm 0.04235180801570901 / nrmse_oracle 0.028579511771025596. -4.15% <= 51% => the equivalence form of the clause is falsified too, and by a stronger margin than the skill form: the mechanism captured a NEGATIVE share of the available oracle benefit.",
+    "consequent": "The clause's own consequent now applies: 'the residual displacement is oracle-visible but not LF-predictable and B1 part 7's close-out applies.' CAVEAT (review_B2.md S2, carried below in caveats): head capacity is a live alternative explanation to 'not LF-predictable' and the mechanism-analyzer must adjudicate it before the close-out is taken as settled."
+   },
+   "leg_A_claimability": {
+    "clause_verbatim": "**Leg A (claimability, clears 0.5533)**: falsified if `skill(test_hf) > 0.440`. Predicted not to fire; passing attributes nothing on its own (the zero-parameter LSI already reaches 0.4402).",
+    "verdict": "FALSIFIED",
+    "deciding_numbers": "skill(test_hf) = 0.4831372616960771 > 0.440. Exceedance 0.0431372616960771. The card predicted this leg would NOT fire; it fired. Effect vs the frozen reference = 1 - 0.4831372616960771 = 0.5168627383039229 < min_claimable_effect 0.5533465853654416, so the card's effect is not claimable under the anchor-referenced convention.",
+    "noise_floor_cross_check": "The exceedance 0.0431372616960771 is 0.22x the certified spread 0.19182714769533593 -> the MARGIN by which Leg A fires is itself below the noise floor. Honest reading: Leg A is falsified on the pre-registered threshold, but a single seed cannot resolve 0.4831 from 0.440. Leg A's failure is therefore recorded as a threshold event, not as a resolved effect; Leg B, not Leg A, carries the science and Leg B IS resolvable (1.31x spread)."
+   },
+   "leg_B_attribution": {
+    "clause_verbatim": "**Leg B (attribution, threshold 0.20 > `spread` 0.19182714769533593)**: falsified if `skill(test_hf) > min(skill(ref_warp_off), skill(ref_const_disp), skill(ref_lsi)) - 0.20`.",
+    "verdict": "FALSIFIED",
+    "deciding_numbers": "min(0.4316625995316076, 0.4376193901479271, 0.4426341444472178) = 0.4316625995316076; minus 0.20 = 0.2316625995316076. skill(test_hf) = 0.4831372616960771 > 0.2316625995316076 => FALSIFIED. Shortfall 0.2514746621644695 = 1.31x spread 0.19182714769533593.",
+    "noise_floor_cross_check": "RESOLVABLE. The pre-registered threshold 0.20 was itself chosen to exceed the certified spread 0.19182714769533593, and the measured shortfall exceeds the spread by 1.31x. This is the card's load-bearing verdict.",
+    "science": "Leg B carries the science. On sharp__cahn_hilliard, an LF+cond-conditioned band-limited displacement field, trained with oracle-phi supervision on the train split, captures NONE of the displacement benefit that the test-HF-fitted oracle demonstrably has (ref_oracle_phi 0.3260 vs ref_reg_corrected 0.4769) -- it captures -4.15% of it and degrades the pipeline."
+   },
+   "leg_B_prime_unattainable_exhibit": {
+    "clause_verbatim": "**Leg B' (parent-directed strict reading, pre-registered UNATTAINABLE)**: margin `> 0.5533` over both controls -- recorded and reported, but its firing is NOT evidence about the warp, because `max margin = skill(control) ~ 0.47 < 0.5533` given `skill >= 0` and s6_local-B1's measured control-class skill 0.4686. Its purpose is to document that the anchor-referenced `min_claimable_effect` convention is degenerate on copy-LF-referenced panel datasets. **This is the card's second deliverable and is mentor-facing.**",
+    "verdict": "FALSIFIED -- as pre-registered, and NOT as evidence about the warp. This is the card's mentor-facing exhibit; its firing is a property of the metric convention, not of the mechanism.",
+    "arithmetic_exhibit": "Required margin over BOTH controls: > 0.5533465853654416 skill units. MEASURED margins (control minus arm; positive = arm better): ref_warp_off 0.4316625995316076 - 0.4831372616960771 = -0.0514746621644695; ref_const_disp 0.4376193901479271 - 0.4831372616960771 = -0.04551787154815; ref_lsi 0.4426341444472178 - 0.4831372616960771 = -0.0405031172488593. All negative. MAXIMUM ATTAINABLE margin, independent of this experiment: skill is nRMSE(arm)/nRMSE(copylf) with nRMSE >= 0, so skill(arm) >= 0, so margin = skill(control) - skill(arm) <= skill(control). The measured controls are 0.4316625995316076 / 0.4376193901479271 / 0.4426341444472178, so a margin over BOTH (i.e. over the SMALLEST) is bounded by 0.4316625995316076. 0.4316625995316076 < 0.5533465853654416 by 0.121684 skill units. CONCLUSION: even a PERFECT arm -- nRMSE exactly 0, a flawless reconstruction of the HF field -- would produce a margin of at most 0.4317 and would still FAIL Leg B'. The leg was arithmetically unattainable before the job was submitted, and the card said so in advance.",
+    "the_convention_defect": "min_claimable_effect for sharp__cahn_hilliard is 0.5533465853654416 = 0.10 x the certified ANCHOR-REFERENCED mean_skill 5.533465853654415 (state/noise_floor.json, family mf_fno_pinn_transfer, whose skill lives on a [0, ~17] scale because it is far worse than copy-LF). But every arm on THIS card is copy-LF-REFERENCED and therefore lives in [0, 1] by construction (copy-LF is skill 1.0, seam S1, abs delta 0.0). A floor calibrated on a [0,17] scale cannot be cleared by a contrast on a [0,1] scale whenever the floor exceeds 1.0 minus the control, which is the generic case on the five sharp-2D panel datasets. The same degeneracy is visible in the certified table itself: min_claimable_effect is 1.633 (allen_cahn), 1.151 (phase_field_crystal) and 9.695 (helmholtz) -- all STRICTLY GREATER THAN 1.0, i.e. unclearable by ANY copy-LF-referenced effect whatsoever, including a perfect model. s3_warp-B1 part 5 already flagged this structural mismatch on allen_cahn and pfc; B2 now supplies the worked arithmetic on a dataset where the floor (0.5533) sits just above the attainable maximum (0.4317). RECOMMENDATION for the mentor: min_claimable_effect should be defined on the SAME reference as the effect it gates -- either a copy-LF-referenced floor, or an explicit rule that arm-vs-arm contrasts are gated by `spread` (0.19182714769533593 here, which IS clearable and which Leg B correctly used) rather than by min_claimable_effect.",
+    "do_not_count_as_card_failure": "Per the locked clause, Leg B' firing is NOT evidence about the warp and must not be read as a card failure. The card's failure is Leg B, which is independently and decisively falsified."
+   },
+   "leg_C_mechanism_honesty": {
+    "clause_verbatim": "**Leg C (mechanism honesty, reported)**: if Leg B passes while median `|phi_pred| < 0.1` cells or the masked endpoint error exceeds the oracle median `|phi|` (0.64-0.74), the win is intensity correction mislabelled as warping and must be reported as such.",
+    "verdict": "NOT TRIGGERED (antecedent false: Leg B did not pass, so there is no 'win' to relabel). Readings reported anyway, as the clause is a 'reported' leg.",
+    "phi_magnitudes_read_not_recomputed": {
+     "source": "diag.phi_pred / diag.phi_oracle_test / diag.endpoint_error_vs_oracle -- family-computed summary statistics over 100 test samples x 256x256 x 2 components (6,553,600 cells; 133,888 interface cells). Read verbatim; nothing recomputed from the .npz.",
+     "phi_pred_warp_all_pixels": {
+      "median": 0.5035742098188394,
+      "p90": 1.2180181714614302,
+      "max": 4.000000592321519,
+      "mean": 0.6343591363942072,
+      "n_cells": 6553600
+     },
+     "phi_pred_warp_interface_cells": {
+      "median": 0.5031324531276402,
+      "p90": 1.075910745732636,
+      "max": 4.0000003573551535,
+      "mean": 0.5764000464103775,
+      "n_cells": 133888
+     },
+     "phi_pred_warp_off_all_pixels_median": 0.0,
+     "phi_pred_const_disp_all_pixels": {
+      "median": 0.13562709598740985,
+      "p90": 0.38245888556396573,
+      "max": 1.911543451039497,
+      "mean": 0.20954086017092288,
+      "n_cells": 6553600
+     },
+     "phi_oracle_test_all_pixels": {
+      "median": 0.6635263325363137,
+      "p90": 1.5141596970872702,
+      "max": 4.0000007782416445,
+      "mean": 0.866578009083385,
+      "n_cells": 6553600
+     },
+     "phi_oracle_test_interface_cells": {
+      "median": 0.7205804063167534,
+      "p90": 0.9268801483601532,
+      "max": 4.000000620504034,
+      "mean": 0.8821188830769685,
+      "n_cells": 133888
+     },
+     "endpoint_error_warp": {
+      "unmasked": {
+       "median": 0.5166616209871617,
+       "p90": 2.4650883843237024,
+       "mean": 0.9289127943773536,
+       "max": 8.000000003450626,
+       "n": 6553600
+      },
+      "interface_masked": {
+       "median": 0.4742688371307664,
+       "p90": 1.6878512532391483,
+       "mean": 0.7904665336385093,
+       "max": 7.968819407854506,
+       "n": 133888
+      },
+      "gradient_weighted_mean": 0.9029483457463254
+     },
+     "endpoint_error_warp_off_null": {
+      "unmasked": {
+       "median": 0.6635263325363137,
+       "p90": 1.5141596970872702,
+       "mean": 0.866578009083385,
+       "max": 4.0000007782416445,
+       "n": 6553600
+      },
+      "interface_masked": {
+       "median": 0.7205804063167534,
+       "p90": 0.9268801483601532,
+       "mean": 0.8821188830769685,
+       "max": 4.000000620504034,
+       "n": 133888
+      },
+      "gradient_weighted_mean": 0.952371455395744
+     },
+     "endpoint_error_const_disp": {
+      "unmasked": {
+       "median": 0.6289824100046741,
+       "p90": 2.0972619172030678,
+       "mean": 0.9164473359788842,
+       "max": 4.570140937307351,
+       "n": 6553600
+      },
+      "interface_masked": {
+       "median": 0.7213611490251035,
+       "p90": 1.5226438962193256,
+       "mean": 0.9251739439762544,
+       "max": 4.568743824098079,
+       "n": 133888
+      },
+      "gradient_weighted_mean": 0.9953158141405766
+     }
+    },
+    "reading": "TEST 1 -- 'median |phi_pred| < 0.1 cells': NOT MET. median |phi_pred| = 0.5035742098188394 cells over all pixels and 0.5031324531276402 cells on interface cells, p90 1.2180 / 1.0759, max 4.0000 (the projection ball radius, saturated). The head is emitting genuine cell-scale displacement, roughly 5x the 0.1-cell degeneracy threshold -- this is NOT a zero-warp intensity correction in disguise. TEST 2 -- 'masked endpoint error exceeds the oracle median |phi| (0.64-0.74)': NOT MET on the median. interface-masked endpoint error median 0.4742688371307664 < the oracle interface median |phi| 0.7205804063167534 (and < the all-pixel oracle median 0.6635263325363137), so the clause's stated test does not fire on medians. BUT the distribution tail does: interface-masked p90 endpoint error 1.6878512532391483 and mean 0.7904665336385093 both EXCEED the 0.64-0.74 band, and the unmasked p90 is 2.4650883843237024 with max 8.000000003450626 (two saturated ball radii apart, i.e. the head points the OPPOSITE way from the oracle at its worst). TEST 3 -- the decisive free reading, vs the null: the gradient-weighted mean endpoint error is 0.9029483457463254 for the warp head versus 0.952371455395744 for warp_off, whose phi is IDENTICALLY ZERO everywhere (median = p90 = max = mean = 0.0). Predicting NO DISPLACEMENT AT ALL is only 5.2% worse at recovering the oracle displacement field than the 591,722-parameter head. On the unmasked median the head does better (0.5167 vs 0.6635, 22% closer), but const_disp -- a single rigid shift per sample -- scores 0.9953, i.e. WORSE than zero. SUMMARY for the mechanism-analyzer: the head's phi is not tiny and not degenerate, but it is barely more oracle-like than zero, and it costs skill to apply.",
+    "regime_shift_caveat_MANDATORY": "Flagged by the builder pre-run and confirmed by the reviewer; it conditions every Leg-C reading. The phi supervision oracle is FITTED on the train split, where the corrected LF->HF gap is 4.46x SMALLER than where the model is scored: diag.oracle_train.nrmse_regc_vs_train_hf = 0.009369736584907532 (train) vs ref_reg_corrected nRMSE 0.041802962686225575 (test). The head is therefore trained to imitate displacements drawn from a substantially easier regime than the one it is evaluated in, and 'the head failed to predict displacement' is confounded with 'the head was shown the wrong displacement distribution'. Both oracles saturate the 4-cell ball (oracle_train.max_abs_phi_cells 4.000000634830463), so the ball radius is binding on the supervision target as well. Do NOT close out the stream on Leg C without adjudicating this."
+   },
+   "leg_D_scoping_cost": {
+    "clause_verbatim": "**Leg D (scoping cost, reported)**: skill on the 5-6 % topology-mismatch subset reported separately; > 2x the matched subset makes scoping the binding limitation for B3.",
+    "verdict": "FIRES -- scoping IS the binding limitation for B3, by a very large margin. Reported with two honesty qualifiers (subset size and metric identity).",
+    "deciding_numbers": {
+     "scored_arm_test_hf": {
+      "min_component_size": 1,
+      "frac_samples_mismatched": 0.02,
+      "n_matched": 98,
+      "n_mismatched": 2,
+      "mean_rel_l2_matched": 0.017031972963444136,
+      "mean_rel_l2_mismatched": 1.2830237255766885,
+      "mismatched_over_matched": 75.33030543968411
+     },
+     "ref_warp_off": {
+      "min_component_size": 1,
+      "frac_samples_mismatched": 0.02,
+      "n_matched": 98,
+      "n_mismatched": 2,
+      "mean_rel_l2_matched": 0.012436056337736066,
+      "mean_rel_l2_mismatched": 1.2826102191135806,
+      "mismatched_over_matched": 103.136411116249
+     },
+     "ref_reg_corrected": {
+      "min_component_size": 1,
+      "frac_samples_mismatched": 0.02,
+      "n_matched": 98,
+      "n_mismatched": 2,
+      "mean_rel_l2_matched": 0.016497253138359886,
+      "mean_rel_l2_mismatched": 1.2817827305316443,
+      "mismatched_over_matched": 77.69673652828945
+     }
+    },
+    "reading": "On the SCORED arm, mean rel_l2 on the 2 topology-mismatched samples is 1.2830237255766885 versus 0.017031972963444136 on the 98 matched samples -- a ratio of 75.33030543968411x, i.e. 37.7x the clause's 2x trigger. The mismatched samples are not merely harder, they are catastrophic (rel_l2 > 1 means the prediction is worse than predicting zero). NOT WARP-SPECIFIC: the same ratio is 103.136411116249x for ref_warp_off and 77.69673652828945x for ref_reg_corrected, so this is a property of the DATASET's topology-mismatched tail, not of the mechanism under test. With 2 of 100 samples carrying rel_l2 ~1.28 while the other 98 sit at ~0.017, roughly 60% of the scored arm's mean rel_l2 comes from 2% of the samples.",
+    "qualifier_1_subset_size": "frac_samples_mismatched = 0.02 (2 of 100), BELOW the card's predicted 5-6%. A 2-sample stratum carries no usable CI; the 75x ratio is a point estimate on n=2 and should be quoted as an order of magnitude, not a number.",
+    "qualifier_2_metric_identity": "The clause says 'skill on the ... subset'; the diagnostic reports STRATIFIED MEAN rel_l2 (the round nRMSE definition) and the family's own 'mismatched_over_matched' ratio, not a per-stratum skill (which would require a per-stratum copy-LF reference the sidecar does not carry). The ratio is reported as-measured; it was not converted to skill and no metric was recomputed.",
+    "free_finding_no_displacement_to_correct": "diag.interface_displacement (median EDT distance from the LF interface to the HF interface at tau=0.1, per sample): median 0.0 cells, p90 0.0 cells, mean 0.5408326112068523, max 28.284271247461902 over n=100. On at least 90% of the test samples the LF and HF interfaces are NOT DISPLACED AT ALL at this resolution -- the entire mean is carried by a handful of outliers (plausibly the same topology-mismatched tail). This is the single most informative number on the card and it is NOT part of any leg. It says the mechanism's premise is absent on the bulk of this dataset: there is no interface displacement for a warp to remove on ~90% of samples, so a warp can only add error there, which is exactly what the arm ranking shows."
+   }
   },
-  "output_paths": {
-    "training": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s3_warp/B2/training",
-    "eval": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s3_warp/B2/eval",
-    "slurm": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s3_warp/B2/slurm",
-    "scored_result": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s3_warp/B2/eval/result_sharp__cahn_hilliard_s0.json",
-    "contract_screen_result": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s3_warp/B2/eval/screen_contract_sharp__cahn_hilliard_s0.json",
-    "diagnostics_sidecar": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s3_warp/B2/eval/s3_warp_onesided_sharp__cahn_hilliard_diag.json",
-    "phi_sidecar": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s3_warp/B2/eval/s3_warp_onesided_sharp__cahn_hilliard_phi.npz",
-    "family_result_jsons": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s3_warp/B2/eval/results"
+  "secondary_findings": {
+   "F1_band_error_spectrum": {
+    "source": "diag.band_error_ratios_vs_frozen_copylf (error energy ratio vs frozen copy-LF, bands by wavenumber edges [0,16,32,64,128])",
+    "test_hf_scored_warp": [
+     0.9293266340875677,
+     0.7800534486403834,
+     0.8510242669075981,
+     0.0825500296527376
+    ],
+    "ref_reg_corrected": [
+     0.9291921073566971,
+     0.49514479697955543,
+     0.07798365082880217,
+     0.5847460946246069
+    ],
+    "ref_lsi": [
+     0.9190962214934134,
+     0.49754074267222126,
+     0.07750629657820511,
+     0.002872097568789656
+    ],
+    "ref_oracle_phi": [
+     0.6994049479120151,
+     0.24806308647770164,
+     0.6152165343175178,
+     0.09497486377444768
+    ],
+    "reading": "The scored warp arm is dramatically WORSE than both controls in the two middle bands and better only in the top band. Band 16-32: warp 0.7800534486403834 vs ref_reg_corrected 0.49514479697955543 and ref_lsi 0.49754074267222126 (~1.57x worse). Band 32-64: warp 0.8510242669075981 vs 0.07798365082880217 / 0.07750629657820511 -- 10.9x worse, the controls remove ~92% of copy-LF's error energy in that band and the warp removes only ~15%. Band 64-128: warp 0.0825500296527376 beats ref_reg_corrected 0.5847460946246069 but loses to ref_lsi 0.002872097568789656. Even the do_not_promote oracle shows the same mid-band signature (band 32-64 = 0.6152165343175178 vs the controls' 0.078), so resampling-based warping per se injects 32-64 band error on this dataset. THIS IS THE MOST INFORMATIVE BAND SIGNAL ON THE CARD and the recommended first probe for the mechanism-analyzer."
+   },
+   "F2_oracle_ceiling_far_weaker_than_predicted": "ref_oracle_phi came in at skill 0.32602686177040074, against a locked part-4 prediction of 0.06-0.09 -- the test-HF-FITTED ceiling on the corrected path is ~4x weaker than B1's certified 83.4-85.2% figure implied. Related raw numbers: diag.oracle_test.nrmse_warped_no_correction = 0.03001747929612599 versus the full oracle+corrector nRMSE 0.028579511771025596, i.e. the trained corrector adds only ~4.8% on top of an oracle warp. This is a second-order but load-bearing finding: even with the HF answer in hand, a 4-cell-ball band-limited warp on the CORRECTED path cannot reach the ceiling B1 measured on the raw path, which weakens the premise the card was built on independently of whether the head can learn phi. Rung used: C16, max_disp 4.0 cells.",
+   "F3_train_test_gap_head_capacity_signature": "From diag.training_history, final-epoch IN-LOOP TRAIN rel_l2 (train split, 400 samples, NOT the round metric and NOT comparable to test as a like-for-like number): warp 0.002685 at epoch 200 (0.004164 at epoch 100), warp_off 0.005150, const_disp 0.005468. Against the round TEST nRMSE: warp 0.04235180801570901, warp_off 0.03783953959325296. So the warp arm fits the train split ~1.92x BETTER than warp_off while testing ~1.12x WORSE -- train/test ratio 15.8x for warp versus 7.3x for warp_off. That is a textbook capacity/overfit signature and it is the quantitative hook for the head-capacity caveat below. It does not by itself prove overfit (the warp arm's loss also contains the phi_sup term, which decays from 1.0219 to 0.0443 while warp_off's is pinned at 1.0676 by construction), so the mechanism-analyzer must disentangle the two.",
+   "F4_arms_are_parameter_matched": "n_params_by_arm: warp 676635, warp_off 676635, const_disp 676635 (identical). The warp/warp_off contrast is parameter-matched by construction -- warp_off carries the same 591,722-param head and simply does not apply its output -- so the regression cannot be attributed to a parameter-count difference between the arms. It CAN still be attributed to the head's capacity being spent on a 512-dof target it cannot generalise (see caveat C1).",
+   "F5_warp_is_well_posed": "diag.inverse_consistency, warp arm: E_IC median 0.0 cells, mean 1.702822249378548e-08, max 1.3782600035483483e-05; jacobian_det median 1.000187873840332, mean 1.0000000000131877, min 0.662291944026947, max 1.3577320575714111; frac_folded_cells 0.0. The learned deformation is diffeomorphic and invertible to numerical precision -- the failure is NOT a broken or folded warp field. Whatever went wrong, it is not warp well-posedness.",
+   "F6_lsi_is_the_efficient_frontier": "ref_lsi reaches skill 0.4426341444472178 with n_trained_params = 0 (rho_val_heldout 0.4949708203508346), versus 0.4316625995316076 for a 676,635-parameter trained corrector and 0.4831372616960771 for the same network with the warp switched on. On this dataset the entire achievable gain over no-correction (0.4769) is ~0.045 skill units and a zero-parameter linear shift-invariant filter captures three quarters of it. This reframes the s3 stream question."
   },
-  "build_commit": "d9fb50104b7a42b39a2639893fe4e12cbd125ed8",
-  "job_ids": [
-    "66075079 (main seed-0 run via submit.sh; review SUGGEST; step-A seam gate enforced in-job)",
-    "66075124 (DUPLICATE of 66075079 \u2014 orchestrator submitted unaware the job was already up; scancel'd at 0:25 elapsed; no artifacts written)"
+  "guard_flags": [],
+  "guard_set_note": "NO GUARD OBLIGATION, and none was incurred. Subagent spec 2d triggers the guard set only when the card claims a panel win (3-seed geomean beating the stream anchor beyond the CI). This card (a) scores ONE dataset by locked design, not the six-dataset panel, (b) has no stream anchor to beat, (c) is single-seed with no CI, and (d) its scored arm is WORSE than every control and than the no-correction reference. No guard-set run was performed and none is warranted.",
+  "anomalies": [
+   "DUPLICATE JOB (benign, resolved). 66075124 was submitted 33 s after 66075079 by an orchestrator unaware the job was already up, and scancel'd at 00:00:21 elapsed (sacct: 'CANCELLED by 28156', batch step ExitCode 0:15 = SIGTERM). Its .out shows it reached only the 'step A' banner; it wrote NO artifacts (the eval/screen/ sidecars are timestamped 12:07, matching 66075079's step-A completion at 12:07:27, and 66075124 died at 12:06:13). 66075079 is the RUN OF RECORD for every number in this card part. The card's job_ids already documents both, correctly.",
+   "SEAM PRINTS ABSENT FROM THE LOG (cosmetic; validity unaffected). review_B2.md submit-time instruction 3 expected step A to print '[S1]...[S5]' before training; grep of r1-s3_warp-B2-s0_66075079.out finds no such lines. The gate provably ran and passed: seam_summary {S1,S2,S3,S4,S5: true} and a full seams.* block with measured values and tolerances appear in BOTH the step-A screen arm JSON and the step-B scored arm JSON, and step B only executes because step A returned 0 under `set -euo pipefail`. Validity was established from the JSONs. Build note for a future card: echo the seam table to stdout as well as to the JSON.",
+   "WALLTIME RISK DID NOT MATERIALISE. review_B2.md finding S1 warned of a plausible 50-115 min against a 2 h budget. Actual: 24:41 total (COMPLETED 0:0). Step A took 2 min 08 s (12:05:19 -> 12:07:27), not the predicted 10-15 min; step B took 22 min 33 s. diag/JSON breakdown: train_seconds 1324.1623694896698 (all three arms), eval_seconds 21.856231212615967, train-oracle refit 51.670815229415894 s, test-oracle ladder 13.23852801322937 s, S3 seam probe 20.041264057159424 s. No relaunch is needed for the timing ledger's purposes: ledger entry = s3_warp_onesided / sharp__cahn_hilliard / 200 ep / 3 trained arms + 3 oracle ladders / h100 = 24.7 min.",
+   "CLEAN RUN. .err for 66075079 is 0 bytes. No NaNs (the project_ball sqrt-gradient NaN the builder fixed did not recur: the warp arm's epoch-1 loss is finite at 1.0318347585201264 and all 200 epochs are finite). No preemption, no requeue, no resume-after-preemption event -- one contiguous 24:41 allocation. test_hf_guard: locked_during_training true, blocked_accesses_while_locked 0, all five train tensors row-asserted at 400.",
+   "PREDICTION MISSES (2 of 7 arms). The five reference arms all landed inside their locked part-4 bands (ref_frozen_copylf exact, ref_reg_corrected rel dev 5.0e-5, ref_lsi 0.4426 in [0.42,0.46], ref_warp_off 0.4317 and ref_const_disp 0.4376 both in [0.40,0.47] and 0.0060 apart, inside the 0.03 tolerance). The two that missed are exactly the two that carry the hypothesis: the SCORED arm (0.4831 vs a 0.15-0.35 band) and the ORACLE CEILING (0.3260 vs a 0.06-0.09 band). The controls being right is what makes the misses interpretable rather than suspect.",
+   "TOPOLOGY-MISMATCH FRACTION BELOW SPEC. Leg D was written for a 5-6% mismatched subset; the measured frac_samples_mismatched is 0.02 (2 of 100 samples, at min_component_size 1). The leg still fires overwhelmingly (75x vs a 2x trigger) but rests on n=2."
   ],
-  "logs": {},
-  "build_notes": [
-    "FAMILY: models_r1/s3_warp_onesided (new, from scratch). onesided.py = periodic node-aligned SINGLE resample (phi=0 reproduces B1 F3 variant C bitwise), 16x16x2 -> 256^2 band-limited REAL decode matrix (512 dof = B1's C16 rung, Fourier-Net), FNO-style head on raw LF + broadcast 19-d cond, 4-block ConvNeXt corrector (circular pad, zero-init head) fed JUBW sub-cell fractional offsets. warp_core.py VENDORED VERBATIM from round1/exp-s3_warp-B1 @4799abd (body sha256 17c2e1ee09b5a996c6f0a3a4e6abbfc537e8b446fe43ce67804d87f365265207, provenance header only); lsi_ref.py VENDORED VERBATIM (fit_transfer/apply_transfer/rho) from tools/defect_correction_learnability.py. Oracle phi RE-FITTED on the train split against the registration-corrected moving image; B1's saved p_train NOT reused (B1 F10).",
-    "SEAM EVIDENCE (all on disk, all pass). S1: nrmse(copylf_prediction(test), HF) = 0.08765999100758841, delta 0.0 vs eval/copylf_baselines.json (tol 1e-9). S2: ref_reg_corrected skill = 0.47687619181488217 vs B1 F3 variant C 0.4769 -> rel dev 2.6e-5 (tol 2%). S3: worktrees/s3_warp/B2/scratchpad/probe_seam_s3.json -- vendored warp_core, B1's own recorded ladder (rungs 0,4,8,16; iters 400; lr 0.02; lambda 1e-3; max_disp 16), full 100-sample test split on the MISREGISTERED path: C16 = 0.017137085533780672 vs B1's recorded 0.017137070031271795 -> rel dev 9.05e-7 (tol 1%); C4 0.03233710348 vs 0.03233710137 and C8 0.02261258683 vs 0.02261258668 also reproduce to 1e-8. S4: LSI skill on the misregistered path = 0.4438847630364397, inside the s6_local-B1 band [0.4400, 0.4413] widened by 2% -> [0.4312, 0.4501]. S5 (CPU, float64): decode(0) max|phi| = 0.0, head coefficients at init max = 0.0, warp-arm forward vs ref_warp_off forward max dev = 0.0 with the corrector head deliberately de-zeroed (corrector delta 0.53, so the comparison is not trivially 0==0).",
-    "SAMPLER SEAM (extra): the torch periodic bilinear sampler at phi=0 equals scipy.ndimage.map_coordinates(order=1, mode='grid-wrap') -- B1's variant-C definition -- to max abs dev 0.0 over the full 100-sample test split, so the model path and the reference arm cannot drift.",
-    "TEST-HF ISOLATION (structural). smoke_eval.LockedHF: .value raises until every trained arm has finished (blocked accesses counted), reference/seam reads are audited by reason, and hf.assert_train_only() checks that every training tensor has exactly n_train rows. assert_head_inputs() asserts DisplacementHead.forward's signature is (self, lf, cond) -- LF + condition only, no target field, no PDE (ADR 0009). All three are reported in the result JSON.",
-    "CONTRACT SMOKE (login node, honest account). The login node was at load ~70 with a 1-core affinity (~230 s per training step), so a single process could not complete the full 3-arm x 2-epoch pass; per the orchestrator's authorization this is recorded rather than stalled on, and SLURM step A (the 2-epoch screen inside 01_train_eval.sh, seams ENFORCED) is the authoritative plumbing gate. Verified in-session instead, with artifacts: (a) three score_panel.py-driven runs (command in scratchpad/run_contract_smoke.sh: score_panel.py --family_dir models_r1/s3_warp_onesided --datasets sharp__cahn_hilliard --epochs 2 --seed 0 --no_cache --env <recipe knobs, ORACLE_ITERS=8>) got through the support gate, seams S1/S2/S4/S5, the S3 applicability gate, the 400-sample TRAIN oracle refit (nRMSE 0.009370 -> 0.007808, max|phi| 0.45 cells, cached in last.pt), and trained 2 of 3 arms with per-epoch checkpoints INCLUDING a real cross-process resume; (b) scratchpad/verify_eval_block.json -- the whole post-training block (predict x 3 arms, TEST oracle ladder, all 7 splits, all 8 diagnostic families, JSON write) on an 8-sample slice, exit 0, all values finite; at fresh weights test_hf == ref_warp_off == ref_const_disp == ref_reg_corrected to 1e-10, the designed identity-at-init.",
-    "TWO REAL BUGS THE SMOKE CAUGHT, BOTH FIXED. (1) RESUME: node_y/node_x were stride-0 torch.meshgrid views, so load_state_dict raised 'more than one element ... refers to a single memory location' when a requeued job reloaded last.pt -> now .contiguous(). (2) NaN: project_ball clamped AFTER sqrt; sqrt has an infinite derivative at 0 and the displacement head is zero-init by construction (seam S5), so the warp arm NaN'd on its FIRST backward pass (recorded history: loss=nan while the gradient-free warp_off arm was healthy at 0.0201) -> the clamp now sits inside the sqrt. Post-fix check: grad at phi==0 is 1.0, f(0) still bitwise 0, |phi| projects to exactly 4.0 on the boundary, and 3 real training steps on real data give finite losses (0.0057 / 0.0206 / 0.0144) with |phi| growing 0 -> 0.019 cells and all parameters finite. Hardening: config_key now includes a sha256 over the family's .py files, so a checkpoint written by different code is never silently resumed.",
-    "SEAM S3 APPLICABILITY GUARD (design decision worth review). S3 compares a FIT to a recorded FIT, so it is only meaningful at s3_warp-B1's recorded fitter configuration. smoke_eval.s3_fit_config_matches_b1() enforces it whenever (S3W2_ORACLE_ITERS, S3W2_ORACLE_LR, S3W2_ORACLE_LAMBDA) == (400, 0.02, 1e-3) -- exactly what the card recipe pins -- and otherwise reports S3 'not applicable' AND stamps non_reportable:true / seams_all_pass:false on the whole result JSON. The seam can never be silently skipped; the login-node smoke used ORACLE_ITERS=8 for cost and is therefore self-stamped non-reportable.",
-    "HYPERPARAMETER PROVENANCE. From recipe.env verbatim: arms, scored arm, resample, pad, JUBW offset channels, phi modes (16), phi max cells (4), mu 1.0 -> 0.1 at 50%, grad mask, corrector blocks (4) and width (48), lr 1e-3, batch 8, oracle rungs 0,4,16, oracle iters/lr/lambda, LSI ridge 1e-6, E_IC on, seam tol 0.02. Cited (prior-best, not invented): GRAD_CLIP 1.0 from the base zoo family mf_fno_transfer_film's SMOKE dict @967562e (the source s6_local-B1 used); ConvNeXt expansion 4 and the depthwise 7x7 kernel from s6_local-B1's ConvNeXtLiteBlock (Liu 2022 canonical); LSI hold-out 0.2 / n_train 320 / seed 0 from the promoted tool's defaults; oracle max_disp 16 cells for the S3 seam only, from B1's own recipe env S3W_MAX_DISP_CELLS. TBD (card says only 'small FNO-style encoder', no width/depth given): HEAD_WIDTH_TBD=24, HEAD_BLOCKS_TBD=2 -> head 591,722 params. Corrector = 84,913 params against the card's '~70-80 k' estimate (blocks/width are recipe-fixed, so the estimate is what moved, not the recipe). Adam weight decay left at 0 (not specified). Condition vector standardised on TRAIN statistics only; the LF field and the corrector's inputs/outputs stay in raw units.",
-    "DECLARED SUPPORT + REFUSAL. The family serves 2-D nested periodic dyadic NODE-SAMPLED ladders. assert_supported() checks squareness, integer nesting and -- from the data itself, per B1 F1 -- that nRMSE(LF, HF[::r,::r]) < nRMSE(LF, r x r blockmean(HF)) (cahn_hilliard: 0.0406 < 0.0879). ext__helmholtz_2d and other non-node-sampled layouts are REFUSED rather than silently mis-warped. No guard legs (card part 3); recorded as an owed promotion precondition.",
-    "OBSERVATION FOR THE ANALYZER (not a card claim): the TRAIN split's registration-corrected LF->HF gap is 4.5x smaller than the TEST split's -- variant-C nRMSE 0.009369736584907532 (train, 400) vs 0.041802962686225575 (test, 100); copy-LF 0.058087 vs 0.087660. Verified twice by independent code paths. The supervision oracle is therefore fitted in a much smaller-displacement regime than the one being scored; Leg C should be read with that in mind.",
-    "SLURM (ADR 0005). scripts/01_train_eval.sh takes SEED=$1 and runs ONE job with two steps: step A = contract-tier 2-epoch screen (seams ENFORCED, non-reportable, its own diag dir and ROUND1_EVAL_RESULTS) and step B = the 200-epoch scored run; set -e aborts before step B on any seam violation. gpu:h100:1, --mem=64G, --requeue, --exclude=hpc-93-36, --time=02:00:00 (the card's own suggestion in part 3 wins; the closest timing_ledger analog is sharp__cahn_hilliard @200 epochs on h100 = 30.73 min for a single-arm family, and this card adds 2 more trained arms plus 3 oracle ladder fits). Job name r1-s3_warp-B2-s{seed} is passed explicitly by submit.sh / submit_seeds_2_3.sh (SBATCH directives cannot read $1). All paths absolute, including the sibling script path in both submit scripts (spool lesson). --no_cache is deliberate: the diagnostics sidecar is written by smoke_eval.py itself, so a score_panel cache hit would silently skip the whole measurement (s3_warp-B1's recorded lesson); idempotence comes from <ckpt_dir>/last.pt instead. S3W2_DIAG_OUT is expanded from the card's literal ${OUTPUTS_ROOT}/s3_warp/B2/eval to an absolute path, and smoke_eval.py hard-stops if it still contains '${'. All three scripts pass bash -n; all 22 recipe env knobs verified equal to recipe.env verbatim by a programmatic diff, and the family's ENV_DEFAULTS equal the recipe too (a bare run reproduces the card)."
+  "caveats_carried_forward": {
+   "C1_head_capacity_is_a_LIVE_ALTERNATIVE_EXPLANATION": "MANDATORY carry from review_B2.md finding S2, and the reason the primary clause's consequent ('displacement is oracle-visible but not LF-predictable') must NOT be treated as settled by this card alone. The displacement head is 591,722 parameters -- 6.97x the 84,913-parameter corrector -- fitted on 400 train samples to predict a 16x16x2 = 512-dof coefficient field. The in-code rationale at models_r1/s3_warp_onesided/onesided.py:54-56 states the head was 'chosen small ... so the head cannot dominate the ~86 k corrector'; the reviewer measured the parameter counts and this rationale is FACTUALLY INVERTED -- the head dominates 7:1. Head width 24 / 2 blocks was builder discretion (the card says only 'small FNO-style encoder'), so no operator amendment is owed, but the consequence is that 'the head could not learn phi from LF' and 'the head had ~592k parameters to overfit 400 samples with' are OBSERVATIONALLY EQUIVALENT on this run. F3's 15.8x warp train/test ratio versus warp_off's 7.3x is direct quantitative support for the second reading. The mechanism-analyzer must probe this; the stream should not be closed out on 'not LF-predictable' until it is adjudicated.",
+   "C2_train_test_regime_shift_4_46x": "Carried from build_notes[9] and review_B2.md finding S8, machine-readable at diag.oracle_train.nrmse_regc_vs_train_hf. The phi supervision oracle is fitted where the corrected LF->HF gap is 0.009369736584907532 and the model is scored where it is 0.041802962686225575 -- a 4.46x regime shift. Conditions every Leg-C reading (see leg_C_mechanism_honesty.regime_shift_caveat_MANDATORY).",
+   "C3_single_seed_and_seed_insensitive_batching": "ADR 0004 single seed; no CI on any number. review_B2.md finding S4: train_arm's shuffle generator is seeded from sha256(arm), not from --seed, so any future seed spread from this family will be understated. Not acted on (this card is not a top-3 candidate) and NOT changed, since changing it would invalidate the seed-0 checkpoint.",
+   "C4_corrector_param_count_vs_prose": "review_B2.md finding S3: the corrector is 84,913 params against the card's '~70-80 k' prose estimate. The recipe knobs (S3W2_CORR_BLOCKS=4, S3W2_CORR_WIDTH=48) are locked and were honoured exactly; the prose estimate is what moved. 84.9k is the same class as s6_local-B1's 77k, as the card intends. No action.",
+   "C5_ref_oracle_phi_is_do_not_promote": "ref_oracle_phi (skill 0.32602686177040074) is FITTED ON TEST HF (a.splits.ref_oracle_phi.oracle.fitted_on = 'TEST HF (report-only ceiling; do_not_promote)'; do_not_promote flag true in the arm JSON). It is a ceiling for attribution only. It must never enter the leaderboard, an anchor, the panel, or any claim of achieved skill."
+  },
+  "anchor_action": "NONE -- state/anchors/s3_warp.json was NOT created and no anchor file was touched. Spec 2e triggers only if the result establishes or beats the stream's anchor. s3_warp has no anchor file; this card scores one dataset rather than the six-dataset panel, so it cannot establish a champion_panel_geomean; it is single-seed; and its scored arm is worse than every control. Verified after analysis: ls state/anchors/ still shows exactly s1_poisson.json, s2_beyond_copy.json, s3_testtime.json, s4_hybrid_routing.json, s5_tuning.json.",
+  "wall_clock_per_seed_min": [
+   24.683333333333334
   ],
-  "review_notes": [
-    {
-      "attempt": 1,
-      "verdict": "reviewed_suggest",
-      "utc": "2026-07-30T19:05Z",
-      "review_file": "state/s3_warp/review_B2.md (= worktrees/s3_warp/B2/notes/handoff_code_reviewer.md)",
-      "summary": "SUBMIT AS-IS. Card part 3 faithfully implemented; recipe verbatim; blast radius clean; no SS5 immutable touched; contract satisfied. All five hard-stop seams are RUNTIME-enforced inside smoke_eval.main() (each raises SeamViolation before any arm trains, so set -e kills the job before the 200-epoch step) and the reviewer re-verified them independently rather than trusting build_notes. Only non-blocking findings.",
-      "findings": [
-        "Q1 card-implementation alignment PASS - single node-aligned resample, 16x16x2=512-dof band-limited decode, 4-cell ball, JUBW sub-cell offset channels, grad-mask supervision with mu 1.0->0.1 at 50% (train_arm L605), 4-block/width-48 ConvNeXt corrector, all 7 arms as named split keys, all 8 free diagnostics, sequential arms + last.pt resume. Only test_hf is scored (score_panel._extract_test_metric prefers test_hf; ref_* keys are not test keys).",
-        "Q2 recipe fidelity PASS - programmatic 3-way diff (recipe.env <-> 01_train_eval.sh:66-89 <-> smoke_eval.ENV_DEFAULTS): 22/22 knobs identical verbatim, no extras either side; S3W2_DIAG_OUT is the card's literal ${OUTPUTS_ROOT}/... expanded to absolute (read_env hard-stops if '${' survives). Every non-recipe constant carries cited provenance (GRAD_CLIP 1.0, ConvNeXt expansion 4 + dw-7x7, LSI holdout 0.2/n=320, S3-only max_disp 16).",
-        "Q3 SS5 immutable compliance PASS - no writes to round1/eval/, project.yaml, program.md, ADRs, prompts, or guarded factory surfaces; family only READS eval/{nrmse,panel_data,copylf_baselines}; ROUND1_EVAL_RESULTS redirected to the outputs root; the only round1/eval/ artifact is the gitignored eval/cache/ (round1/.gitignore:4). Scoring through the unmodified score_panel.py in both steps; nRMSE_round_def == score_panel's mean(rel_l2_per_sample). Seeds [0] (ADR 0004), epochs 200/2 = the round's tiers. No pre-falsified lever re-proposed (band-limiting the DISPLACEMENT is not LF spectral freezing).",
-        "Q4 contract compliance PASS - 6-arg CLI exact; manifest.json complete; INSPIRATION.md cites all 11 prior_art citations + li2020fno/liu2022convnext and disclaims v9 copying; resume from <ckpt_dir>/last.pt implemented AND functionally verified by the reviewer (save -> load_state_dict round-trip, max param dev 0.0); config_key now includes a sha256 over the family's .py files (no cross-code resume); seeding covers python/numpy/torch/cuda.",
-        "Q5 SLURM correctness PASS (one operational note) - bash -n run by the reviewer on all 4 shell files, all clean; partition gpu + typed gres gpu:h100:1 = project.yaml; cpus 4, mem 64G, --requeue, --exclude=hpc-93-36 (precedent state/gates.md:38); %x_%j.{out,err} absolute under OUTPUTS_ROOT/s3_warp/B2/slurm/ and mkdir'd by both wrappers; all paths absolute incl. the sibling script; SEED=$1; submit.sh = seed 0 only; submit_seeds_2_3.sh parked; job name r1-s3_warp-B2-s{seed} from the wrappers' --job-name (submit via submit.sh, never sbatch 01_train_eval.sh directly); all 22 knobs in one --env flag (nargs='*'); step A->B ordering enforced by set -euo pipefail. NOTE S1: --time=02:00:00 is card-locked but thin - 3 trained arms plus SIX oracle ladder fits (S3+train+test, once per step; step A and B have different config_keys/ckpt dirs so nothing is shared). Ledger analog 30.73 min for ONE trained model on this dataset/epochs/h100; B1's 100-sample GPU ladder 105.8 s. Plausible total 50-115 min.",
-        "Q6 smoke-test evidence SUGGEST (the one downgraded finding; would be FAIL absent the authorization) - build_notes cites the contract-tier score_panel command and scratchpad/run_contract_smoke.sh is committed, but NO result JSON or log from that run survives (scratchpad/{contract_smoke.json,smoke_results/,diag/} absent), so 'trained 2 of 3 arms', 'per-epoch checkpoints' and 'a real cross-process RESUME' have no on-disk artifact; verify_eval_block.py ran with --fresh so it did not exercise the checkpoint load path either. Downgraded because (a) the orchestrator explicitly authorized shipping without a completed login smoke (flow 2026-07-30T15:55Z, s5-B1 precedent) and the builder disclosed it prominently, (b) SLURM step A is a real 2-epoch seams-ENFORCED score_panel gate that aborts before step B, (c) the reviewer reproduced the substance: S1 delta exactly 0.0; S2 skill 0.47687619181488217 (rel dev 5.0e-5); torch-vs-scipy grid-wrap sampler max dev 0.0; S4 0.4438847630364397 inside the widened band; S5 by executing the family's own seam_s5() (decode(0)/init coeffs/init phi/warp-vs-warp_off all exactly 0.0, corrector delta 0.169); S3 via probe_seam_s3.json (9.05e-7) plus a git-show diff proving warp_core.py is B1@4799abd byte-identical apart from a 24-line provenance header, and lsi_ref.py character-identical to tools/defect_correction_learnability.py:76-93.",
-        "Q7 blast radius PASS - git diff round1-substrate..d9fb501 --stat = 20 files/+3025/-0 confined to models_r1/s3_warp_onesided/ (8), scripts/ (3), notes/ (2), scratchpad/ (7). No substrate file, no eval file, no card, no ADR; single atomic commit; worktree tree clean.",
-        "ADR-0009 legality DRILLED AND CLEAN - DisplacementHead.forward(self, lf, cond) is signature-asserted at runtime (assert_head_inputs); the supervision oracle is REFIT on regc_tr/y_tr (train only) and B1's saved p_train is never loaded (no reference to it exists in the family); every training tensor is row-count-asserted to n_train=400 (LockedHF.assert_train_only); the only test-HF-fitted objects (seam_s3's scalar, ref_oracle_phi) are consumed after training and never enter a loss or a weight.",
-        "BOTH FIXED BUGS VERIFIED BY THE REVIEWER, not taken on report - resume: save->load_state_dict round-trip now succeeds, node_y/node_x strides [65536,256,1] contiguous, max param dev 0.0. NaN: project_ball(0)=0 bitwise, gradient at 0 = 1.0 (finite), boundary radius exactly 4.0, identity inside; 2 real training steps of the warp arm on real data gave finite losses 0.003175/0.019731, grad norms 1.39/3.41, max|phi| 0->0.0133 cells, all parameters finite.",
-        "NON-BLOCKING S2 for the analyzer - the displacement head is 591,722 params (7x the 84,913-param corrector) fit on 400 train samples. Inside builder discretion (card says only 'small FNO-style encoder'; width 24 / 2 blocks IS small vs the zoo default 64/4 ~ 10.5 M) and needs NO operator amendment, but the in-code rationale (onesided.py:54-56, 'chosen small ... so the head cannot dominate the ~86 k corrector') is factually inverted. Read Leg C knowing head capacity/overfit is a live alternative to 'displacement is not LF-predictable' if test_hf ~ ref_warp_off.",
-        "NON-BLOCKING S3 - corrector 84,913 params vs the card's '~70-80 k' prose estimate: no amendment needed, S3W2_CORR_BLOCKS=4 / S3W2_CORR_WIDTH=48 are in the locked recipe.env, so the estimate moved, not the recipe; same class as s6_local-B1's 77 k, as the card intends.",
-        "NON-BLOCKING S4 - batch order does not depend on --seed (train_arm seeds its shuffle generator from sha256(arm) only, smoke_eval.py:589-590), so seeds 1/2 differ from seed 0 in weight init and bootstrap but not in minibatch composition; will mildly UNDERSTATE seed spread if this card enters the end-of-round top-3 confirmation. Do not change it now (it would invalidate the seed-0 checkpoint).",
-        "NON-BLOCKING S5 - two small build_notes inaccuracies: S2's rel dev is 5.0e-5 not 2.6e-5 (both ~400x inside the 2% tol), and 'a bare run reproduces the card' is inexact because ENV_DEFAULTS['S3W2_DIAG_OUT']='' so a bare run writes no diagnostics sidecar; all 22 scoring-relevant knobs do match.",
-        "NON-BLOCKING S6 - LockedHF.reference_read() returns the live array with no copy, so the guard is an audit trail rather than a capability boundary; the real leakage vectors are covered by assert_train_only and the head-signature assert, both of which fire at runtime.",
-        "NON-BLOCKING S7 - the analyzer MUST read non_reportable / seams_all_pass before quoting any number: if S3's fit config ever deviates the job still exits 0 and stamps non_reportable:true / seams_all_pass:false. With the recipe as pinned this cannot fire, but it is the design's only non-aborting failure mode.",
-        "NON-BLOCKING S8 - Leg C context confirmed independently: the supervision oracle is fitted where the corrected LF->HF gap is 4.46x smaller (train variant-C nRMSE 0.009369736584907532, 400 samples) than where the model is scored (test 0.041802962686225575, 100 samples); copy-LF 0.058087 vs 0.087660. Reaches the analyzer via build_notes[9] and machine-readably via oracle_train.nrmse_regc_vs_train_hf in the sidecar.",
-        "FREE PRE-REGISTRATION (measured by the reviewer) - ref_lsi, the zero-parameter arm on the corrected path, will land at skill 0.4426 (card predicted 0.42-0.46). Leg B therefore needs skill(test_hf) < min(controls) - 0.20, i.e. roughly < 0.20-0.24 depending on where the two trained controls land.",
-        "SUBMIT-TIME INSTRUCTIONS - (1) submit scripts/submit.sh (seed 0 only), never sbatch 01_train_eval.sh directly; (2) do not run submit_seeds_2_3.sh now (parked for the end-of-round top-3, ADR 0004); (3) step A should print [S1]..[S5] before any training - a step-A seam violation is an ALGO signal, not infra, since the job exits non-zero by design; (4) on TIMEOUT resubmit the same script once (resume verified, checkpoints atomic per epoch, config_key stable; step A re-runs ~10 min first) and only on a second timeout hand to the debugger to raise --time as an INFRA fix; (5) the reportable number is splits.test_hf in eval/result_sharp__cahn_hilliard_s0.json, valid only if seams_all_pass:true and non_reportable:false."
-      ]
-    }
+  "wall_clock_note": "Seed 0, job 66075079, sacct elapsed 00:24:41 = 24.68 min on one h100, partition gpu, node hpc-33-13, against a 2 h request. Split: step A (2-epoch seam screen) 2.13 min, step B (200-epoch scored run, 3 trained arms + train-oracle refit + test-oracle ladder + 8 diagnostics) 22.55 min. Cancelled duplicate 66075124 burned 21 s and is excluded. For the maintainer's timing ledger: s3_warp_onesided / sharp__cahn_hilliard / 200 ep / seed 0 / h100 = 24.7 min wall (train_seconds 1324.16 across 3 arms; eval_seconds 21.86).",
+  "analysis_utc": "2026-07-30T20:05Z",
+  "analyst_note_for_mechanism_analyzer": "Most informative probes, in priority order: (1) the 32-64 wavenumber band, where the warp arm retains 85.1% of copy-LF's error energy while both controls retain ~7.8% -- an 11x mid-band regression that the do_not_promote oracle partially shares (61.5%), suggesting the single-resample warp itself injects mid-band error on this dataset; (2) diag.interface_displacement, whose per-sample median is 0.0 cells at the p90 -- i.e. there is no interface displacement to remove on ~90% of test samples, which would make the mechanism's premise absent on the bulk of the data; (3) the head-capacity confound C1 (591,722 params, 7x the corrector, 400 train samples, 512-dof target; warp train/test ratio 15.8x vs warp_off's 7.3x) -- this must be adjudicated before B1 part 7's close-out is taken as earned; (4) the 2-sample topology-mismatched tail, which carries roughly 60% of the scored mean rel_l2."
+ },
+ "6_analysis": {
+  "findings": [
+   "F1 (turn 1) THE CARD'S OWN INTERFACE-DISPLACEMENT STATISTIC IS QUANTIZATION-BLIND BELOW HALF A CELL, AND ITS '0.0' WAS A FLOOR, NOT A NUMBER. diagnostics.interface_displacement_cells (median EDT distance from LF interface cells to the nearest HF interface cell) reproduces exactly (median 0.0, p90 0.0, mean 0.5408326112068523, max 28.284271247461902; 96/100 samples read 0.0). Calibrated against synthetic band-limited shifts of the HF field itself, it reports: true 0.354 cells -> 0.0 (99% of samples read 0), true 0.707 -> 1.0, true 1.414 -> 1.414, 2.828 -> 2.828, 5.657 -> 5.657. It lives on the pixel lattice.",
+   "F2 (turn 1) WITH A CALIBRATED SUB-PIXEL ESTIMATOR THE RESIDUAL DISPLACEMENT ON THE CORRECTED PATH IS 0.007 CELLS. Level-set normal displacement d = (u_mov - u_HF)/|grad u_HF| on HF interface cells (calibrated to 0.3% below one cell on the synthetic pairs): median-over-samples 0.006950891394128653 cells, p90 0.14329248269570685, mean 0.17184021960725995, max 5.615193034807656 on the node-aligned path, versus 0.6958828279237411 (p90 0.7036519927325156, flat over 90+ samples) on the misregistered copy-LF -- the latter being |(0.5,0.5)| = 0.7071 to 1.6%, i.e. the (r-1)/2 registration constant re-derived by a fourth independent estimator.",
+   "F3 (turn 1) THE s6_local-B2 RIGID-SHIFT ORACLE (0.4276) WAS THE REGISTRATION CONSTANT. Per-sample rel-L2-optimal continuous Fourier shift, test-fitted, scored through eval/nrmse.py: on copy-LF, skill 0.4193129101583605 (my exact minimiser vs s6-B2's phase-correlation 0.4276, 1.9% apart, same mean shift and per-sample sd) with MEDIAN |shift| 0.7076722405181657 cells; a single GLOBAL constant shift of copy-LF already reaches 0.5492744503487614. On the node-aligned corrected path the same oracle reaches only 0.39887454150221907 (16.4% of the remaining error), its median optimal shift collapses to 0.0447213595499958 cells, and a global constant shift makes things WORSE (0.5298830141550931 vs base 0.47687619181488217).",
+   "F4 (turn 1) THE 16.4% THE CORRECTED-PATH RIGID ORACLE DOES REMOVE IS A 5-SAMPLE TAIL. Samples 89 and 93 carry 61.3% of the summed rel-L2 and the oracle removes 1.3% of its total gain from them (1.3136 -> 1.3134, 1.2499 -> 1.2413). Excluding them: mean rel-L2 0.01650 -> 0.00961 (41.7%) with median |shift| 0.0365 cells and p90 1.0124 -- the removal is concentrated on ~5 samples whose optimal shift is 5.5-7.2 cells, i.e. OUTSIDE the recipe's 4-cell projection ball.",
+   "F5 (turn 2) THE BAND 32-64 SIGNAL IS REAL AND METRICALLY IRRELEVANT. Band-swap counterfactual (replace the scored arm's Fourier error in one band by ref_warp_off's, re-score through eval/nrmse.py). Gap 0.48376202246922034 - 0.4316586945727114 = 0.052103327896508955. Skill if warp had warp_off's error in band 0-16: 0.43912310326280607 (85.67% of the gap); 16-32: 0.48067425998315877 (5.93%); 32-64: 0.4835256089249159 (0.45%); 64-128: 0.4835595668813607 (0.39%). Metric-weighted per-band mean(rel^2_warp - rel^2_warp_off) on the 98 matched samples agrees: shares [92.86%, 6.75%, 0.285%, 0.107%].",
+   "F6 (turn 2) THE REASON: BAND 32-64 HOLDS 0.048% OF COPY-LF'S ERROR. Copy-LF's error splits [97.81%, 1.95%, 0.048%, 0.184%] across bands [0-16, 16-32, 32-64, 64-128] on the 98 matched samples ([99.66%, 0.31%, 0.006%, 0.024%] on all 100). The whole beyond-copy gap on this dataset is below wavenumber 16 of 128 -- consistent with s3_warp-B1 F7.",
+   "F7 (turn 2) THE MID-BAND EXCESS IS THE CORRECTOR, NOT THE JUBW RESAMPLE. Band-32-64 error ratio vs copy-LF on the matched 98, warp-only (corrector bypassed) -> full arm: warp_off 0.0649 -> 0.2886 with phi IDENTICALLY ZERO throughout, warp 0.1124 -> 0.8614. The single resample at phi_pred contributes a factor of only 1.73 over phi = 0; the ConvNeXt corrector contributes 4.4x and 7.7x. B1 F17's second-bilinear-resample penalty was genuinely avoided by the card's single-resample design.",
+   "F8 (turn 2) THE HEAD'S PHI IS 89% OF THE WAY FROM NOISE BACK TO ZERO, AND ZERO IS THE RIGHT ANSWER. Warp-only nRMSE on the 98 matched samples: phi=0 0.016500 (= ref_reg_corrected path, seam), phi_const 0.016860, phi_pred 0.019550, phi_oracle 0.007310, and a RANDOM smooth phi decoded through the same 16x16 basis and rescaled to phi_pred's exact median magnitude 0.5036 cells: 0.043530. The learned field recovers (0.04353-0.01955)/(0.04353-0.01650) = 88.7% of the distance from magnitude-matched noise back to zero, and still lands 18.5% worse than not warping.",
+   "F9 (turn 3) THE SUPERVISION TARGET IS 99% GAUGE. Decomposition of the fitted displacement at interface cells into the component along grad u (NORMAL -- the only direction that moves a level set and the only one image matching identifies) and the orthogonal TANGENTIAL component. phi_oracle TRAIN (the actual supervision target): median |phi| 0.7185839984661527, median |normal| 0.00942000934887477, median |tangential| 0.7182527484273287, normal share of interface phi-energy 0.0099. phi_oracle TEST: 0.7208274651065525 / 0.01021388257896727 / 0.7188368185830362. phi_pred: 0.5053047986573025 / 0.04472494228835302 / 0.49579339027656283. The oracle's normal magnitude 0.0094-0.0102 cells independently reproduces F2's 0.00695 by a different construction. The card's loss mean_w|phi - phi_oracle|^2 with w = |grad LF| concentrates the learning signal exactly where the target is 99% unidentifiable.",
+   "F10 (turn 3) CAPACITY (CAVEAT C1) IS ADJUDICATED: AMPLIFIER, NOT CAUSE. (a) Head endpoint error against the oracle phi, relative to predicting phi == 0: TRAIN 0.4436 (2.25x better than the null), TEST 1.0728 (7.3% WORSE than the null) -- the head fits the train gauge and transfers nothing. (b) A CAPACITY-FREE bracket -- ridge from 148 features (19-d condition + 8x8 complex LF Fourier signature) to the 512 train-oracle coefficients, 0.03% of the head's 591,722 parameters -- has NEGATIVE coefficient R^2 against the test oracle at every lambda (best -0.0421) and its best behaviour is to shrink to phi ~ 0 and reproduce the no-warp baseline: warp-only skill 0.4773 (all) / 0.2611 (matched 98) vs phi=0's 0.47687619181488217 / 0.260543632578927.",
+   "F11 (turn 3) THE 4.46x REGIME SHIFT (CAVEAT C2) IS 59.7% A TRAIN/TEST TOPOLOGY-STRATUM IMBALANCE. nRMSE(regc, HF) train 0.009369736584907532 (reproduces diag.oracle_train.nrmse_regc_vs_train_hf to 0.0) vs test 0.041802962686225575 = 4.461487503667972. Topology-mismatched samples: train 1 of 400 (0.25%), test 2 of 100 (2%) -- an 8x imbalance. Matched-to-matched: 0.009032868262442316 -> 0.016497253138359886 = 1.8263582130333587. In log terms the genuine regime shift is 40.3% of the gap.",
+   "F12 (turn 3) THE ORACLE-CEILING MISS IS A STRATUM EFFECT PLUS A BALL-RADIUS EFFECT, NOT A CEILING FAILURE. Re-scored on the 98 matched samples with a matched copy-LF denominator 0.06331858113386188: ref_oracle_phi skill 0.09274486344645215, ref_warp_off 0.19639899743303138, ref_const_disp 0.2048101798411145, ref_reg_corrected 0.260543632578927, test_hf 0.26986694008872775. The oracle removes 64.4% of ref_reg_corrected's error on the matched 98 (88.9% measured in error energy) versus 31.6% on all 100. B1 F9's certified 83.4-85.2% was measured on n = 6-8 samples with the production ladder's 16-cell clamp; this card's oracle used the recipe's 4-cell ball and SATURATED it (max |phi| 4.0000006), while F4 puts the worst matched samples' optimal shift at 5.5-7.2 cells.",
+   "F13 (turn 3) THE TAIL, CHARACTERISED. Samples 89 and 93 have n_components(HF) = 5 vs n_components(LF) = 9: the coarse solve did not merge the domains the fine solve merged. rel-L2 1.3136 / 1.2500 (no correction), 1.3147 / 1.2514 (scored warp), 1.3144 / 1.2508 (warp_off), 1.1586 / 1.1238 (test-fitted ORACLE warp) -- every arm including the oracle is worse than predicting zero. They carry 61.3% of ref_reg_corrected's and 60.5% of the scored arm's summed rel-L2. Their ||HF|| is NOT anomalous (ranks 86 and 88 of 100, 1.061x and 1.068x the median), so this is not the low-norm-denominator pathology of s7_loss-B2; Spearman(log rel, log ||HF||) = +0.638, i.e. the LARGE-norm samples are the hard ones here.",
+   "F14 (turn 3) THE WARP ACTIVELY BLOCKS THE ADDITIVE CORRECTOR ON EXACTLY THE DISPLACED SAMPLES. rel-L2 (ref_reg_corrected -> ref_warp_off -> scored warp -> oracle): sample 12 0.1693 -> 0.0869 -> 0.1490 -> 0.0490; 48 0.1460 -> 0.0833 -> 0.1377 -> 0.0516; 54 0.1440 -> 0.0838 -> 0.1263 -> 0.0474; 21 0.1292 -> 0.0772 -> 0.1117 -> 0.0374; 73 0.0992 -> 0.0532 -> 0.0917 -> 0.0304. The plain additive corrector roughly halves the error on the moderately displaced samples and switching the learned warp on gives most of that win back. The one genuinely large-displacement matched sample (23) is untouched by every trained arm (0.2953 / 0.2952 / 0.2982) while the test-fitted oracle reaches 0.0807 and a 5.5-cell rigid shift reaches 0.0270.",
+   "F15 (turns 1-3, seams) EVERY NUMBER ABOVE SITS ON A REPRODUCED PIPELINE. CPU replay from <ckpt>/last.pt reproduces the card's recorded nRMSEs: ref_reg_corrected and ref_frozen_copylf to 0.0 relative, ref_warp_off 9.0e-6, ref_const_disp 8.7e-6, ref_oracle_phi 5.9e-6, warp-only-with-oracle-phi 2.2e-3 vs diag's nrmse_warped_no_correction, and the SCORED warp arm 0.042406574539464635 vs 0.04235180801570901 (1.29e-3) -- the last being float32 CPU-vs-CUDA non-determinism in the FFT-based head (max |phi_pred(CPU) - phi_pred(npz)| = 0.0250 cells). Topology strata reproduce exactly (98 matched, mismatched = {89, 93}). All conclusions are contrasts computed within one replay."
   ],
-  "debug_notes": [],
-  "5_actual_result": null,
-  "6_analysis": null,
-  "7_gap_and_future": null,
-  "reanalysis_progress": null
+  "interpretation": [
+   "(high confidence, measured) THE PARADOX IS RESOLVED AND BOTH HORNS WERE PARTLY RIGHT: THE MEASUREMENT WAS QUANTIZATION-LIMITED AND THE HYPOTHESIS WAS WRONG. The EDT statistic could not see below half a cell (F1), so its '0.0' was a floor; a calibrated sub-pixel estimator puts the true residual FURTHER below that floor, at 0.007 cells median (F2), and the interface-normal component of the fitted oracle agrees at 0.0094-0.0102 (F9). The premise of the card -- interface displacement on the corrected LF->HF path that an LF-only head could predict -- is absent on ~93 of 100 test samples by a factor of 100.",
+   "(high confidence, measured) THE LAST STANDING POSITIVE EVIDENCE FOR A DISPLACEMENT LEVER ON sharp__cahn_hilliard IS RETIRED. s6_local-B2 F14's rigid-shift oracle (0.4276) was re-deriving the (r-1)/2 registration offset: its median optimal shift on copy-LF is 0.7077 cells and a single global constant already gets 0.549; on the node-aligned path its median shift collapses to 0.045 cells and a global constant HURTS (F3). Together with s3_warp-B1's own re-referencing of the ceiling, every quantity that made cahn_hilliard look like a transport dataset is either the registration convention or a 5-sample tail.",
+   "(high confidence, measured) THE PROXIMATE CAUSE OF THE FAILURE IS AN OBJECTIVE DEFECT, NOT CAPACITY AND NOT THE REGIME SHIFT: THE SUPERVISION TARGET LIVES IN THE APERTURE-PROBLEM NULL SPACE. A displacement fitted by minimising image L2 is identified only along grad u; on thin smooth phase-field interfaces that leaves 99.0% of the fitted magnitude free (F9). The card supervised the raw vector |phi - phi_oracle|^2 weighted by |grad LF|, i.e. spent the entire learning signal on the free direction. The head memorised the train split's gauge (EPE/null 0.444) and transferred nothing (EPE/null 1.073), and a 148-feature ridge with 0.03% of the parameters fails identically with negative R^2 (F10). This is transferable beyond this card: ANY card supervising a vector field fitted by image matching must project the target onto the identifiable (gradient-normal, gradient-masked) subspace, or supervise the warped IMAGE instead of the displacement.",
+   "(high confidence, measured) FIXING THE OBJECTIVE WOULD NOT SAVE THE LEVER ON THIS DATASET. The identifiable part of the target is 0.0094-0.0102 cells (F9), reproducing the independent 0.00695 (F2). A perfectly gauge-correct, perfectly generalising head would be asked to emit ~0.01 cells -- observationally ref_warp_off, which is the arm that wins. The one-sided warp is therefore falsified for a STRONGER reason than the clause's own consequent ('oracle-visible but not LF-predictable'): on 93 of 100 samples the quantity is not there to be predicted, by either party.",
+   "(high confidence, measured) THE BAND-32-64 LEAD IS CLOSED AND LEAVES A METHODOLOGICAL RESIDUE. Erasing the entire 11x mid-band regression recovers 0.45% of the scored loss (F5) because that band holds 0.048% of copy-LF's error (F6); 85.7% of the regression is at k < 16, where the dataset's whole fidelity gap lives. This is the second time in this stream that a large band/local RATIO turned out to be worth a fraction of a percent of the metric (s3_warp-B1 F4's wrap seam was the first, at 0.12-0.74%). band_error_ratios must always be read next to the band's SHARE of the reference's error.",
+   "(high confidence, measured) THE ERROR MASS ON THIS DATASET IS BIMODAL AND THE WARP CLASS IS MISMATCHED TO EVERY MODE. ~93 samples with residual displacement ~0.007 cells (any applied displacement can only add error, and the head applies 0.50); ~5 samples with genuine multi-cell transport, several outside the recipe's 4-cell ball, on which a plain additive corrector already halves the error and the warp gives it back (F14); 2 samples with a coarse-solve topology error where every arm INCLUDING the test-fitted oracle is worse than predicting zero and which carry 61% of the score (F13). A single band-limited displacement field trained on a mean objective cannot serve those three regimes, and two of the three are not displacement problems.",
+   "(moderate confidence, forward-looking) THE HIGHEST-LEVERAGE OBJECT LEFT ON sharp__cahn_hilliard IS A TOPOLOGY-MISMATCH DETECTOR, NOT A BETTER FIELD MODEL. On the 98 matched samples the additive ref_warp_off already reaches skill 0.1964 against a matched copy-LF denominator and the test-fitted oracle reaches 0.0927 (F12); 61% of the scored metric is two samples on which no method in this card, oracle included, beats predicting zero. Any further modelling effort on this dataset is spent on 39% of the metric unless the tail is detected and abstained on."
+  ],
+  "falsification_postmortem": "The clause was falsified on both of its firing legs (A and B) and the postmortem is that BOTH of the card's two prediction misses -- the scored arm (0.4831 vs a locked 0.15-0.35) and the oracle ceiling (0.3260 vs a locked 0.06-0.09) -- came from the SAME inherited quantity, and that quantity was a stratum artefact rather than a physical one. The card's part-4 arithmetic was 0.44 x (1 - 0.85f), i.e. it multiplied s3_warp-B1 F9's certified 83.4-85.2% oracle ceiling by a captured share f. B1 F9 measured that ceiling on n = 6-8 samples with the production ladder's 16-cell clamp; the 100-sample split contains a 2-sample topology-mismatched stratum that no diffeomorphism can move (F13) and a handful of samples whose optimal displacement is 5.5-7.2 cells, outside the recipe's 4-cell ball (F4). Re-measured on the 98 matched samples the oracle removes 64.4% of the corrected path's error in the metric and 88.9% in error energy (F12) -- B1's bracket was a matched-stratum statement all along. So the CEILING prediction missed because a ceiling certified on six samples was extrapolated to a hundred, and the SCORED prediction missed because it was the ceiling times a share. Beneath that arithmetic the mechanism failed for a reason the card could not have priced from B1: the residual displacement that survives registration correction is 0.007-0.010 HF cells on ~93 of 100 samples (F2, F9), a hundred times smaller than the median |phi| the head emits and than the oracle phi it was supervised on, because the oracle phi's magnitude is 99% APERTURE-PROBLEM GAUGE (F9) rather than displacement. The head therefore behaved exactly as its objective asked: it fitted the train split's unidentifiable tangential slide (endpoint error 0.44x the null on train) and transferred nothing (1.07x the null on test, F10). The two mandatory caveats the initial analyzer carried are now settled and neither rescues the card: C1 (head capacity, 591,722 params) is an amplifier but not the cause -- a 148-feature ridge fails the same way with negative R^2 and its optimum is phi = 0 (F10); C2 (the 4.46x train/test regime shift) is 59.7% a train/test topology-stratum imbalance and only 1.83x on matched-to-matched (F11). Leg C's 'reported' readings are now interpretable: median |phi_pred| 0.5036 was correctly read as 'not intensity correction in disguise', but the right question was not whether the head emits displacement -- it was whether displacement is the right thing to emit, and it is not; the gradient-weighted endpoint error being only 5.2% better than warp_off's identically-zero phi is exactly what a 99%-gauge target predicts. Leg D fired at 75.33x and F13 now names the mechanism (coarse-solve component counts 9 vs 5, ||HF|| unremarkable) and confirms it is a dataset property, not a warp property. Leg B' fired as pre-registered and remains a metric-convention exhibit, untouched by any of this. The pre-registered defences did their job: the single-resample JUBW path was implemented correctly and is NOT the failure (F7), the deformation was diffeomorphic (part 5 F5), the arms were parameter-matched (part 5 F4), and the seams held to <= 1.3e-3 under independent CPU replay (F15) -- which is what makes the negative result trustworthy rather than merely disappointing.",
+  "surprises": [
+   "The card's most-quoted diagnostic and the round's most-quoted counter-evidence were BOTH artifacts of their estimators, in opposite directions: diag.interface_displacement's '0.0 cells' was a pixel-lattice floor that could not represent 0.35 cells (F1), and s6_local-B2's rigid-shift oracle 'beating everything' was re-deriving the (r-1)/2 registration constant (F3). Reconciled, they agree: there is no displacement here.",
+   "An oracle displacement fitted to minimise image L2 has 99.0% of its interface magnitude in the direction that does NOT move the interface (F9). The card's supervision term was gradient-weighted, i.e. deliberately concentrated on exactly the cells where the target is pure gauge.",
+   "A 148-feature ridge with 0.03% of the head's parameters reproduces the head's failure exactly, and its best-regularised behaviour is to output phi = 0 and match the no-warp baseline to three decimals (F10). The 591,722-parameter head was never the problem.",
+   "The 11x mid-band regression that part 5 called 'THE MOST INFORMATIVE BAND SIGNAL ON THE CARD' is worth 0.45% of the scored loss, and most of it is produced by the ConvNeXt CORRECTOR -- visible even in warp_off, whose phi is identically zero (F5, F7).",
+   "On the moderately displaced samples the plain additive corrector halves the error and turning the learned warp ON gives most of that win back (F14): the warp is not merely useless there, it is actively in the corrector's way.",
+   "59.7% of the 4.46x train/test 'regime shift' the builder and reviewer both flagged as a mandatory caveat is simply that the test split drew 2 topology-broken samples in 100 while the train split drew 1 in 400 (F11)."
+  ],
+  "_provenance": "3 probe turns, read-only, single seed (0), full 100-sample test split and 400-sample train split unless stated. Scripts and results: worktrees/s3_warp/B2/scratchpad/{reanalysis_turn_1.py, reanalysis_turn_1_results.json/.md, reanalysis_turn_2.py, reanalysis_turn_2_results.json, turn2_counterfactual.py, reanalysis_turn_2_counterfactual.json, reanalysis_turn_2_results.md, reanalysis_turn_3.py, reanalysis_turn_3_results.json/.md} with figures turn1_displacement_paradox.png, turn2_band_verdict.png, turn2_band_anatomy.png, turn3_target_capacity_tail.png. Every nRMSE flows through round1/eval/nrmse.py (hash d3d0ade9191c13bacc40702f3eb26ad290e01641cacee22a1d2233b74c035850, asserted equal to the card's) and copy-LF is eval/panel_data.py::copylf_prediction unedited; band masks, interface masks, topology strata and the endpoint-error definition are the family's own diagnostics.py / vendored warp_core; the oracle phi decode is the family's oracle_phi.phi_from_p. Arms were rebuilt on CPU from <ckpt>/last.pt and seam-checked against the card's recorded numbers (F15). NO eval-layer, data or models edit; nothing retrained; no score in part 5 was recomputed or changed. Two known limitations, both stated in the turn files: (a) a re-implemented phase-correlation estimator (turn 1 P4) was noise-dominated and was reported then discarded in favour of the exact rel-L2 minimiser; (b) the normal/tangential decomposition is a clean object only on the interface band, since grad u / |grad u| is a noise direction in the flat bulk, so the normal-only warp scores bracket rather than isolate. OPERATIONAL NOTE: two mechanism-analyzer invocations ran concurrently against this worktree (the same duplication pattern the card's anomalies record for SLURM jobs 66075079/66075124); both wrote reanalysis_turn_2.py and its JSON, the second pass's files are the ones on disk, the two agree on every load-bearing number, and reanalysis_turn_2_results.md carries an explicit ADDENDUM recording the collision and the one immaterial discrepancy (band-2 share of pooled all-100 copy-LF error energy quoted as 0.013% in the first pass, 0.006% in the JSON on disk)."
+ },
+ "7_gap_and_future": {
+  "open_question": "Given that 61.3 % of sharp__cahn_hilliard's test-split rel-L2 comes from 2 samples on which EVERY method in this card -- including the test-HF-fitted oracle warp -- is worse than predicting zero (part 6 F13), and that on the remaining 98 the additive ref_warp_off already reaches skill 0.1964 against a matched-stratum copy-LF denominator (F12): IS THE ROUND'S CRITICAL-PANEL QUESTION ('why does multi-fidelity fusion fail?') ACTUALLY A QUESTION ABOUT A HANDFUL OF COARSE-SOLVE TOPOLOGY FAILURES PER DATASET RATHER THAN ABOUT FUSION MECHANISMS AT ALL? The sharp datasets are generated with a fixed coarse grid; where the coarse solve resolves a different number of connected components than the fine solve, the fields are not related by any smooth map and no architecture can help. The measurable version: per panel dataset, the fraction of test samples with a component-count mismatch, and the panel geomean recomputed with those samples excluded (or abstained on). Nothing in round 1 has measured this; it is one pass of tools/warp_premise_audit.py plus the vendored component_counts, and it would tell the round whether its headline is a modelling result or a data-generation result.",
+  "next_direction": "CLOSE s3_warp. There is no surviving next batch for this stream and the stream should not consume another slot in round 1. The reasoning, in the stream's own terms: (1) B1 established that the warp premise on 3 of 4 sharp datasets was the (r-1)/2 registration convention, leaving sharp__cahn_hilliard as the sole candidate; (2) B2 has now measured, with a calibrated sub-pixel estimator on the corrected path, a residual interface displacement of 0.007 HF cells (level-set, F2) and 0.0094-0.0102 cells (interface-normal component of the fitted oracle, F9) on ~93 of 100 samples -- there is no displacement to predict, so the lever is falsified one-sided, not merely unlearned; (3) the last standing counter-evidence, s6_local-B2 F14's rigid-shift oracle at 0.4276, is now shown to be the registration constant (median optimal shift 0.7077 cells on copy-LF, 0.0447 on the node-aligned path, F3); (4) the two live alternative explanations the initial analyzer required be adjudicated first -- head capacity C1 and the 4.46x regime shift C2 -- are both settled and neither rescues the hypothesis (F10, F11). Three things are owed OUTSIDE this stream rather than inside it. (a) THE BETWEEN-ROUNDS REFERENCE FIX. B1's part 7 already asked for eval/panel_data.py::copylf_prediction and mffp_sharp/common/ladder.py::upsample_to_hf to be moved from the cell-centred zoom to the node convention between rounds (eval is byte-immutable during one). Once that lands, the ONE thing worth re-testing from this stream is cheap and pre-registrable: re-run tools/warp_premise_audit.py --datasets PANEL against the FIXED reference. If any dataset then shows levelset.corrected.median > 0.5 cells with a rigid-oracle gain that survives the matched stratum, a warp card becomes reopenable; on the present evidence sharp__cahn_hilliard will not (its corrected number is already 0.0070 and the fix does not change the corrected path, only the reference the round scores against). Recording this as the post-fix re-test note is the honest disposition of the stream, not a plan to build. (b) IF ANY FUTURE ROUND-1 OR ROUND-2 CARD SUPERVISES A FITTED VECTOR FIELD, it must project the target onto the identifiable subspace (interface-normal, gradient-masked) or supervise the warped IMAGE -- F9's 99.0 % gauge share is a general property of L2-fitted displacements on smooth thin interfaces, not a property of this family, and it is now auditable in one command (tools/warp_premise_audit.py --gauge). (c) THE TOPOLOGY-MISMATCH STRATUM belongs to whichever stream owns the panel's tail behaviour (s7_loss has the closest instrument in norm_tail_hedge_audit.py, though F13 shows this is NOT the low-norm pathology): a per-sample abstain/detect gate is worth more on this dataset than any field model, since 61 % of the metric is 2 samples.",
+  "cross_stream_notes": "FOUR ITEMS, all reproducible from tools/ in a few minutes. (1) FOR s6_local, a correction to a banked finding: s6_local-B2 F14 records 'a per-sample constant displacement oracle beats the whole additive class on cahn_hilliard' at skill 0.4276 and reads it as evidence that 'cahn_hilliard's DEFECT IS DISPLACEMENT, AND THE DISPLACEMENT IS PER-SAMPLE' (confidence MEDIUM-HIGH). That oracle was fitted against the MISREGISTERED copy-LF. Re-fitted exactly (rel-L2-optimal continuous Fourier shift, reproducing 0.4276 as 0.4193) its median optimal shift is 0.7077 HF cells = |(0.5,0.5)| = the (r-1)/2 registration constant, a single GLOBAL constant shift already reaches 0.5493, and on the node-aligned corrected path the same oracle reaches only 0.3989 with median shift 0.0447 cells while a global constant shift makes things WORSE. s6-B2's own observation that pfc/allen_cahn/fisher_kpp give (-0.50,-0.50) with sd 0.009-0.037 is the same statistic; cahn_hilliard differs only in having a 5-sample displaced tail on top of the constant. The finding should be re-labelled 'registration + a 5-sample tail', not 'the defect is displacement'. (2) FOR EVERY STREAM READING BAND RATIOS: use tools/band_weight_counterfactual.py. band_error_ratios is unbounded in near-empty bands and has now produced two round-1 headlines worth under 1 % of the metric -- s3_warp-B1 F4 (wrap seam, 0.12-0.74 %) and this card's 11x band-32-64 regression, which part 5 called the most informative signal on the card and which the counterfactual prices at 0.45 % of a 0.0521-skill gap because the band holds 0.048 % of copy-LF's error. 85.7 % of the regression is at k < 16, which is where s3_warp-B1 F7 already said the entire sharp-panel gap lives: on this panel, bandwidth/mid-band arguments cannot matter. (3) FOR THE MAINTAINER / ROUND REPORT -- WHAT s3_warp CONTRIBUTES. Three deliverables, in descending order of value to the round: (i) B1's closed-form registration defect (copylf_prediction's cell-centred zoom misregisters the four dyadic sharp datasets by exactly (r-1)/2 = 0.5 HF cells, worth 50-100 % of copy-LF's error there; sharp__phase_field_crystal_2d has NO fidelity gap at its scored level pair) -- this is a benchmark finding and the single most consequential thing the stream produced; (ii) B2's Leg-B' arithmetic exhibit, that min_claimable_effect is defined on an anchor-referenced scale while every panel arm is copy-LF-referenced in [0,1], so the floor is unclearable by a PERFECT model on sharp__cahn_hilliard (0.5533 > the 0.4317 maximum attainable margin) and is > 1.0 on allen_cahn, pfc and helmholtz -- a metric-convention defect for the mentor, with the worked arithmetic in part 5; (iii) THIS NEGATIVE: a fully pre-registered, seam-verified one-sided warp with 7 arms, in which the scored arm is worse than every control and worse than no correction at all, and whose mechanism is now attributed to the millicell (the premise is absent at 0.007 cells) rather than left as 'the model did not work'. A clean falsification with a measured cause is a round-1 result, and it retires the displacement lever for the panel. (4) FOR ANY STREAM PLANNING A MODEL ON sharp__cahn_hilliard: 2 of 100 test samples have n_components(LF) = 9 vs n_components(HF) = 5 and carry 61.3 % of the summed rel-L2; every arm on this card, including the test-HF-fitted oracle, has rel-L2 > 1.12 on them (worse than predicting zero). Their ||HF|| is unremarkable (ranks 86 and 88 of 100), so this is NOT s7_loss-B2's low-norm-denominator hedge -- it is a coarse-solve topology failure. Stratify before claiming anything on this dataset, and expect the matched-98 numbers to look very different (ref_warp_off 0.1964 vs 0.4317).",
+  "promoted_tools": [
+   "warp_premise_audit.py",
+   "band_weight_counterfactual.py"
+  ]
+ },
+ "reanalysis_progress": "registered"
 }

@@ -151,7 +151,7 @@
       }
     }
   },
-  "status": "reviewed_suggest",
+  "status": "complete",
   "skipped_reason": null,
   "reopen_candidate": false,
   "scripts_path": {
@@ -243,10 +243,2553 @@
     }
   ],
   "debug_notes": [],
-  "5_actual_result": null,
-  "6_analysis": null,
-  "7_gap_and_future": null,
-  "reanalysis_progress": null,
+  "5_actual_result": {
+    "_protocol": "ADR 0004 strict single-seed; every number is provisional-single-seed with no CI. All scored numbers are parsed verbatim from score_panel.py result JSONs under /resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s5_tuning/B3/eval/ \u2014 nothing was recomputed by hand. The card computes NO panel geomean and makes NO panel-level claim (part 3, verbatim: 'Consequence stated up front: this card computes NO panel geomean and makes NO panel-level claim'). Promoted arm A1_revin_lf was pinned BEFORE submit (ADR 0007) and is recorded in the card's `promotion` block; the screen's [identity] FAIL was adjudicated there as H100 cuDNN nondeterminism and is NOT reopened here. ADR-0007 screen numbers are not reportable; the only screen artifacts used below are the pre-registered part-3 item (b) guard leg and the item (d) resume drill, both flagged as such.",
+    "seeds_available": [
+      0
+    ],
+    "nrmse_def_hash": "d3d0ade9191c13bacc40702f3eb26ad290e01641cacee22a1d2233b74c035850",
+    "nrmse_def_hash_consistent": true,
+    "nrmse_def_hash_checked_against": [
+      "eval/result_A0_zscore_ctrl_s0.json",
+      "eval/result_A1_revin_lf_s0.json",
+      "eval/result_A2_zscore_noclip_s0.json",
+      "eval/result_A3_revin_lf_noclip_s0.json",
+      "eval/result_A4_ref_oracle_persample_s0.json",
+      "instrumentation/dc_pattern_split_{ext__helmholtz_2d,sharp__cahn_hilliard,sharp__fisher_kpp_2d}_s0.json",
+      "instrumentation/paired_{A1,A4}_vs_A0_s0.json",
+      "screen/guard_{A0_zscore_ctrl,A1_revin_lf,A5_revin_lf_floorq25}.json",
+      "screen/cards4_A{0,1,2,3,4,5}_*.json",
+      "round1/eval/copylf_baselines.json (_nrmse_def_hash)"
+    ],
+    "nrmse_def_hash_mismatches": [],
+    "code_hash_per_arm": {
+      "A0_zscore_ctrl": "701a4c21153800174e46a2933b7c9032f858f0a752374a542db2dce126972b67",
+      "A1_revin_lf": "25b16142aab49c1f6860ed0419383ec5cbb556ec10ace8872be7fc5382c46e51",
+      "A2_zscore_noclip": "e887b0376895f48df87a49068bd409adf6f8b68c9f4b19ad012fc9056677a1b3",
+      "A3_revin_lf_noclip": "2e0c200deef652b966c7bc1367e8bf845ccf831a7138733c643c02ad2ff6528e",
+      "A4_ref_oracle_persample": "99f93128f75e397d3199cf3b4cf08953b521ad6b8b10ee4114a879f46e08d7bb"
+    },
+    "code_hash_note": "score_panel.py folds `env` into code_hash (score_panel.py:172), so the five arms necessarily carry five distinct code_hashes off ONE family source tree; this is arm isolation, not five different codebases.",
+    "result_json_paths": {
+      "per_arm_scored": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s5_tuning/B3/eval/result_<ARM_TAG>_s0.json",
+      "per_arm_per_dataset_contract_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s5_tuning/B3/eval/results_<ARM_TAG>/mf_fno_transfer_film_scaler_ps/<dataset>_e200_s0.json",
+      "loss_instrumentation": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s5_tuning/B3/instr/<ARM_TAG>/<dataset>__{LF_pretrain,HF_finetune}.json",
+      "dc_pattern_split": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s5_tuning/B3/instrumentation/dc_pattern_split_<dataset>_s0.json",
+      "paired_arm_displacement": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s5_tuning/B3/instrumentation/paired_{A1,A4}_vs_A0_s0.json",
+      "preds_npz": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s5_tuning/B3/eval/results_<ARM_TAG>/mf_fno_transfer_film_scaler_ps/ckpt_<dataset>_e200_s0/<ARM_TAG>/preds_test.npz",
+      "per_sample_npz": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s5_tuning/B3/eval/results_<ARM_TAG>/mf_fno_transfer_film_scaler_ps/ckpt_<dataset>_e200_s0/<ARM_TAG>/per_sample_test.npz",
+      "slurm_out": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s5_tuning/B3/slurm/r1-s5_tuning-B3-s0_66076686.out",
+      "slurm_err": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s5_tuning/B3/slurm/r1-s5_tuning-B3-s0_66076686.err",
+      "screen_guard_leg_part3_item_b": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s5_tuning/B3/screen/guard_{A0_zscore_ctrl,A1_revin_lf,A5_revin_lf_floorq25}.json",
+      "noise_floor": "round1/state/noise_floor.json",
+      "anchor_file": "round1/state/anchors/s5_tuning.json",
+      "anchor_reference_card": "round1/experiment_cards/s5_tuning/batch_2/B2.json (part 5)"
+    },
+    "per_dataset": {
+      "ext__helmholtz_2d": {
+        "per_seed_nrmse": [
+          0.3677212855674654
+        ],
+        "per_seed_skill": [
+          1.1161667776037678
+        ],
+        "mean_skill": 1.1161667776037678,
+        "ci95": null,
+        "ci95_note": "single seed (ADR 0004) \u2014 no CI computable; provisional-single-seed point estimate",
+        "reference_type": "copylf",
+        "reference_nrmse": 0.3294501260438018,
+        "cached": false,
+        "split": "test_hf",
+        "metric_source": "per_sample_mean",
+        "scored_arm": "A1_revin_lf (the card's promoted/scored arm)",
+        "paired_in_job_control_A0_nrmse": 1.581878829363806,
+        "paired_in_job_control_A0_skill": 4.801572997891306,
+        "delta_skill_A1_minus_A0": -3.685406220287538,
+        "delta_nrmse_relative_A1_vs_A0": -0.7675414331732638,
+        "min_claimable_effect": 9.694961194291832,
+        "beyond_noise_floor": false,
+        "batch0_anchor_skill_3seed_mean": 13.817289529417906
+      },
+      "ifc_poisson": {
+        "per_seed_nrmse": [
+          0.042649474926468034
+        ],
+        "per_seed_skill": [
+          1.1847076368463343
+        ],
+        "mean_skill": 1.1847076368463343,
+        "ci95": null,
+        "ci95_note": "single seed (ADR 0004) \u2014 no CI computable; provisional-single-seed point estimate",
+        "reference_type": "paper_bar",
+        "reference_nrmse": 0.036,
+        "cached": false,
+        "split": "test_hf",
+        "metric_source": "per_sample_mean",
+        "scored_arm": "A1_revin_lf (the card's promoted/scored arm)",
+        "paired_in_job_control_A0_nrmse": 0.042697081822502196,
+        "paired_in_job_control_A0_skill": 1.1860300506250612,
+        "delta_skill_A1_minus_A0": -0.001322413778726883,
+        "delta_nrmse_relative_A1_vs_A0": -0.0011149917980828475,
+        "min_claimable_effect": 0.23990756041925798,
+        "beyond_noise_floor": false,
+        "batch0_anchor_skill_3seed_mean": 1.5656334312786022
+      },
+      "sharp__cahn_hilliard": {
+        "per_seed_nrmse": [
+          0.4812844559408502
+        ],
+        "per_seed_skill": [
+          5.490354840433272
+        ],
+        "mean_skill": 5.490354840433272,
+        "ci95": null,
+        "ci95_note": "single seed (ADR 0004) \u2014 no CI computable; provisional-single-seed point estimate",
+        "reference_type": "copylf",
+        "reference_nrmse": 0.08765999100758841,
+        "cached": false,
+        "split": "test_hf",
+        "metric_source": "per_sample_mean",
+        "scored_arm": "A1_revin_lf (the card's promoted/scored arm)",
+        "paired_in_job_control_A0_nrmse": 0.47843708297836285,
+        "paired_in_job_control_A0_skill": 5.457872827490323,
+        "delta_skill_A1_minus_A0": 0.032482012942948835,
+        "delta_nrmse_relative_A1_vs_A0": 0.005951405239664706,
+        "min_claimable_effect": 0.5533465853654416,
+        "beyond_noise_floor": false,
+        "batch0_anchor_skill_3seed_mean": 5.533465853654415
+      },
+      "sharp__fisher_kpp_2d": {
+        "per_seed_nrmse": [
+          0.2590497773858538
+        ],
+        "per_seed_skill": [
+          4.136041484204974
+        ],
+        "mean_skill": 4.136041484204974,
+        "ci95": null,
+        "ci95_note": "single seed (ADR 0004) \u2014 no CI computable; provisional-single-seed point estimate",
+        "reference_type": "copylf",
+        "reference_nrmse": 0.06263229669603956,
+        "cached": false,
+        "split": "test_hf",
+        "metric_source": "per_sample_mean",
+        "scored_arm": "A1_revin_lf (the card's promoted/scored arm)",
+        "paired_in_job_control_A0_nrmse": 0.2642446276917959,
+        "paired_in_job_control_A0_skill": 4.2189835217795055,
+        "delta_skill_A1_minus_A0": -0.08294203757453111,
+        "delta_nrmse_relative_A1_vs_A0": -0.01965924662809491,
+        "min_claimable_effect": 0.41773549950819566,
+        "beyond_noise_floor": false,
+        "batch0_anchor_skill_3seed_mean": 4.177354995081957
+      }
+    },
+    "per_arm_per_dataset": {
+      "A0_zscore_ctrl": {
+        "ext__helmholtz_2d": {
+          "nRMSE": 1.581878829363806,
+          "skill": 4.801572997891306,
+          "reference_type": "copylf",
+          "reference_nrmse": 0.3294501260438018,
+          "cached": false,
+          "split": "test_hf",
+          "metric_source": "per_sample_mean",
+          "scaler_mode": "zscore",
+          "scaler_mode_effective": "zscore",
+          "scaler_fallback": false,
+          "scaler_fallback_reason": null,
+          "scaler_per_sample_available": null,
+          "grad_clip": 1.0,
+          "grad_clip_enabled": true,
+          "train_seconds": 185.38245272636414,
+          "n_params": 4773953,
+          "HF_n_eff_pooled_final": 1.0101535832518702,
+          "HF_n_eff_pooled_epoch1": 1.025626489476434,
+          "HF_n_eff_batch_median_final": 3.0623422774302558,
+          "HF_n_rows": 400,
+          "HF_n_steps": 5000,
+          "HF_clip_rate_all_steps": 0.0434,
+          "HF_grad_norm_max_over_run": 136.8726348876953,
+          "LF_n_eff_pooled_final": 3.1887841601707203,
+          "LF_n_eff_pooled_epoch1": 3.066204786594945,
+          "LF_clip_rate_all_steps": 0.1526,
+          "per_sample_audit": {
+            "n": 100,
+            "rel_l2_mean": 1.5818788293638055,
+            "rel_l2_median": 1.0860764012222583,
+            "rel_l2_p90": 2.9769732583701556,
+            "rel_l2_max": 8.742756089939682,
+            "top_decile_k": 10,
+            "top_decile_mean": 5.309614825625966,
+            "top_decile_share_of_sum": 0.33565243601884276,
+            "top_decile_share_of_energy": 0.678041731724995,
+            "n_eff_score_space": 14.684980055421391,
+            "n_eff_score_space_fraction": 0.14684980055421393,
+            "corr_rel_l2_vs_ynorm": -0.09352509384044055
+          }
+        },
+        "ifc_poisson": {
+          "nRMSE": 0.042697081822502196,
+          "skill": 1.1860300506250612,
+          "reference_type": "paper_bar",
+          "reference_nrmse": 0.036,
+          "cached": false,
+          "split": "test_hf",
+          "metric_source": "per_sample_mean",
+          "scaler_mode": "zscore",
+          "scaler_mode_effective": "zscore",
+          "scaler_fallback": false,
+          "scaler_fallback_reason": null,
+          "scaler_per_sample_available": null,
+          "grad_clip": 1.0,
+          "grad_clip_enabled": true,
+          "train_seconds": 35.285138845443726,
+          "n_params": 4774465,
+          "HF_n_eff_pooled_final": 4.621869976050145,
+          "HF_n_eff_pooled_epoch1": 3.587042154338498,
+          "HF_n_eff_batch_median_final": 4.621869976050145,
+          "HF_n_rows": 5,
+          "HF_n_steps": 200,
+          "HF_clip_rate_all_steps": 0.005,
+          "HF_grad_norm_max_over_run": 1.1233795881271362,
+          "LF_n_eff_pooled_final": 70.7254773569511,
+          "LF_n_eff_pooled_epoch1": 57.31546976647752,
+          "LF_clip_rate_all_steps": 0.04428571428571428,
+          "per_sample_audit": {
+            "n": 128,
+            "rel_l2_mean": 0.04269708182250219,
+            "rel_l2_median": 0.033258785062237124,
+            "rel_l2_p90": 0.08294697246058043,
+            "rel_l2_max": 0.18422983528766088,
+            "top_decile_k": 13,
+            "top_decile_mean": 0.12508207817813247,
+            "top_decile_share_of_sum": 0.2975296676662223,
+            "top_decile_share_of_energy": 0.584588514600418,
+            "n_eff_score_space": 27.350983631936263,
+            "n_eff_score_space_fraction": 0.21367955962450205,
+            "corr_rel_l2_vs_ynorm": -0.6114479324527611
+          }
+        },
+        "sharp__cahn_hilliard": {
+          "nRMSE": 0.47843708297836285,
+          "skill": 5.457872827490323,
+          "reference_type": "copylf",
+          "reference_nrmse": 0.08765999100758841,
+          "cached": false,
+          "split": "test_hf",
+          "metric_source": "per_sample_mean",
+          "scaler_mode": "zscore",
+          "scaler_mode_effective": "zscore",
+          "scaler_fallback": false,
+          "scaler_fallback_reason": null,
+          "scaler_per_sample_available": null,
+          "grad_clip": 1.0,
+          "grad_clip_enabled": true,
+          "train_seconds": 505.4541962146759,
+          "n_params": 4778049,
+          "HF_n_eff_pooled_final": 208.3073351350261,
+          "HF_n_eff_pooled_epoch1": 14.657716664779125,
+          "HF_n_eff_batch_median_final": 14.527339788311181,
+          "HF_n_rows": 400,
+          "HF_n_steps": 5000,
+          "HF_clip_rate_all_steps": 0.0002,
+          "HF_grad_norm_max_over_run": 1.1379162073135376,
+          "LF_n_eff_pooled_final": 361.187643977242,
+          "LF_n_eff_pooled_epoch1": 397.3591912491587,
+          "LF_clip_rate_all_steps": 0.013,
+          "per_sample_audit": {
+            "n": 100,
+            "rel_l2_mean": 0.4784370829783628,
+            "rel_l2_median": 0.24090251294654572,
+            "rel_l2_p90": 1.2805861561586358,
+            "rel_l2_max": 1.4492662239318577,
+            "top_decile_k": 10,
+            "top_decile_mean": 1.353366028099157,
+            "top_decile_share_of_sum": 0.2828723099125581,
+            "top_decile_share_of_energy": 0.4287969700031315,
+            "n_eff_score_space": 30.793919108124506,
+            "n_eff_score_space_fraction": 0.30793919108124507,
+            "corr_rel_l2_vs_ynorm": 0.8065817055454038
+          }
+        },
+        "sharp__fisher_kpp_2d": {
+          "nRMSE": 0.2642446276917959,
+          "skill": 4.2189835217795055,
+          "reference_type": "copylf",
+          "reference_nrmse": 0.06263229669603956,
+          "cached": false,
+          "split": "test_hf",
+          "metric_source": "per_sample_mean",
+          "scaler_mode": "zscore",
+          "scaler_mode_effective": "zscore",
+          "scaler_fallback": false,
+          "scaler_fallback_reason": null,
+          "scaler_per_sample_available": null,
+          "grad_clip": 1.0,
+          "grad_clip_enabled": true,
+          "train_seconds": 505.8432114124298,
+          "n_params": 4773697,
+          "HF_n_eff_pooled_final": 335.7911211356844,
+          "HF_n_eff_pooled_epoch1": 336.99985158055847,
+          "HF_n_eff_batch_median_final": 13.627425809178174,
+          "HF_n_rows": 400,
+          "HF_n_steps": 5000,
+          "HF_clip_rate_all_steps": 0.5436,
+          "HF_grad_norm_max_over_run": 9.413430213928223,
+          "LF_n_eff_pooled_final": 373.08077154873826,
+          "LF_n_eff_pooled_epoch1": 372.776569414497,
+          "LF_clip_rate_all_steps": 0.0384,
+          "per_sample_audit": {
+            "n": 100,
+            "rel_l2_mean": 0.2642446276917959,
+            "rel_l2_median": 0.2543055126281556,
+            "rel_l2_p90": 0.3506897980454822,
+            "rel_l2_max": 0.3999315135528136,
+            "top_decile_k": 10,
+            "top_decile_mean": 0.3709394461458739,
+            "top_decile_share_of_sum": 0.14037728955402734,
+            "top_decile_share_of_energy": 0.1871781969713452,
+            "n_eff_score_space": 82.4944426943631,
+            "n_eff_score_space_fraction": 0.824944426943631,
+            "corr_rel_l2_vs_ynorm": -0.5247848630916793
+          }
+        }
+      },
+      "A1_revin_lf": {
+        "ext__helmholtz_2d": {
+          "nRMSE": 0.3677212855674654,
+          "skill": 1.1161667776037678,
+          "reference_type": "copylf",
+          "reference_nrmse": 0.3294501260438018,
+          "cached": false,
+          "split": "test_hf",
+          "metric_source": "per_sample_mean",
+          "scaler_mode": "revin_lf",
+          "scaler_mode_effective": "revin_lf",
+          "scaler_fallback": false,
+          "scaler_fallback_reason": null,
+          "scaler_per_sample_available": true,
+          "grad_clip": 1.0,
+          "grad_clip_enabled": true,
+          "train_seconds": 174.35351705551147,
+          "n_params": 4773953,
+          "HF_n_eff_pooled_final": 1.0305144974065188,
+          "HF_n_eff_pooled_epoch1": 3.1867749229616686,
+          "HF_n_eff_batch_median_final": 9.61715919278755,
+          "HF_n_rows": 400,
+          "HF_n_steps": 5000,
+          "HF_clip_rate_all_steps": 0.3246,
+          "HF_grad_norm_max_over_run": 99.2421646118164,
+          "LF_n_eff_pooled_final": 209.8448096848566,
+          "LF_n_eff_pooled_epoch1": 306.47783892910223,
+          "LF_clip_rate_all_steps": 0.319,
+          "per_sample_audit": {
+            "n": 100,
+            "rel_l2_mean": 0.3677212855674656,
+            "rel_l2_median": 0.14037183670051354,
+            "rel_l2_p90": 0.7773055085085193,
+            "rel_l2_max": 10.187451528824877,
+            "top_decile_k": 10,
+            "top_decile_mean": 2.0438643723359595,
+            "top_decile_share_of_sum": 0.5558188912512579,
+            "top_decile_share_of_energy": 0.9550260372847788,
+            "n_eff_score_space": 1.3665550854933874,
+            "n_eff_score_space_fraction": 0.013665550854933874,
+            "corr_rel_l2_vs_s": 0.22079931988827856,
+            "corr_rel_l2_vs_ynorm": 0.012780236999931409
+          }
+        },
+        "ifc_poisson": {
+          "nRMSE": 0.042649474926468034,
+          "skill": 1.1847076368463343,
+          "reference_type": "paper_bar",
+          "reference_nrmse": 0.036,
+          "cached": false,
+          "split": "test_hf",
+          "metric_source": "per_sample_mean",
+          "scaler_mode": "revin_lf",
+          "scaler_mode_effective": "zscore",
+          "scaler_fallback": true,
+          "scaler_fallback_reason": "train LF/HF condition vectors are not row-aligned (cannot identify each HF sample's own LF solve)",
+          "scaler_per_sample_available": false,
+          "grad_clip": 1.0,
+          "grad_clip_enabled": true,
+          "train_seconds": 35.28871130943298,
+          "n_params": 4774465,
+          "HF_n_eff_pooled_final": 4.636147155621317,
+          "HF_n_eff_pooled_epoch1": 3.5871039694567726,
+          "HF_n_eff_batch_median_final": 4.636147155621317,
+          "HF_n_rows": 5,
+          "HF_n_steps": 200,
+          "HF_clip_rate_all_steps": 0.005,
+          "HF_grad_norm_max_over_run": 1.1228256225585938,
+          "LF_n_eff_pooled_final": 70.38194587300059,
+          "LF_n_eff_pooled_epoch1": 57.31546976647752,
+          "LF_clip_rate_all_steps": 0.04285714285714286,
+          "per_sample_audit": {
+            "n": 128,
+            "rel_l2_mean": 0.04264947492646805,
+            "rel_l2_median": 0.03316790637149459,
+            "rel_l2_p90": 0.08271545843625928,
+            "rel_l2_max": 0.18451270357983876,
+            "top_decile_k": 13,
+            "top_decile_mean": 0.12503004234878326,
+            "top_decile_share_of_sum": 0.29773786659604945,
+            "top_decile_share_of_energy": 0.5850826771536959,
+            "n_eff_score_space": 27.280691827248123,
+            "n_eff_score_space_fraction": 0.21313040490037596,
+            "corr_rel_l2_vs_ynorm": -0.6120760296085775
+          }
+        },
+        "sharp__cahn_hilliard": {
+          "nRMSE": 0.4812844559408502,
+          "skill": 5.490354840433272,
+          "reference_type": "copylf",
+          "reference_nrmse": 0.08765999100758841,
+          "cached": false,
+          "split": "test_hf",
+          "metric_source": "per_sample_mean",
+          "scaler_mode": "revin_lf",
+          "scaler_mode_effective": "revin_lf",
+          "scaler_fallback": false,
+          "scaler_fallback_reason": null,
+          "scaler_per_sample_available": true,
+          "grad_clip": 1.0,
+          "grad_clip_enabled": true,
+          "train_seconds": 507.6139256954193,
+          "n_params": 4778049,
+          "HF_n_eff_pooled_final": 281.50741155189525,
+          "HF_n_eff_pooled_epoch1": 14.915923073221476,
+          "HF_n_eff_batch_median_final": 14.782018479863154,
+          "HF_n_rows": 400,
+          "HF_n_steps": 5000,
+          "HF_clip_rate_all_steps": 0.0,
+          "HF_grad_norm_max_over_run": 0.8338193893432617,
+          "LF_n_eff_pooled_final": 356.62302443423596,
+          "LF_n_eff_pooled_epoch1": 396.960454992819,
+          "LF_clip_rate_all_steps": 0.0032,
+          "per_sample_audit": {
+            "n": 100,
+            "rel_l2_mean": 0.48128445594084984,
+            "rel_l2_median": 0.24037627541861634,
+            "rel_l2_p90": 1.237304503071565,
+            "rel_l2_max": 1.450213767765898,
+            "top_decile_k": 10,
+            "top_decile_mean": 1.342763327005483,
+            "top_decile_share_of_sum": 0.27899578106684364,
+            "top_decile_share_of_energy": 0.4224707566071612,
+            "n_eff_score_space": 31.217169928143786,
+            "n_eff_score_space_fraction": 0.31217169928143784,
+            "corr_rel_l2_vs_s": 0.07965461673004447,
+            "corr_rel_l2_vs_ynorm": 0.8208410410829707
+          }
+        },
+        "sharp__fisher_kpp_2d": {
+          "nRMSE": 0.2590497773858538,
+          "skill": 4.136041484204974,
+          "reference_type": "copylf",
+          "reference_nrmse": 0.06263229669603956,
+          "cached": false,
+          "split": "test_hf",
+          "metric_source": "per_sample_mean",
+          "scaler_mode": "revin_lf",
+          "scaler_mode_effective": "revin_lf",
+          "scaler_fallback": false,
+          "scaler_fallback_reason": null,
+          "scaler_per_sample_available": true,
+          "grad_clip": 1.0,
+          "grad_clip_enabled": true,
+          "train_seconds": 502.91996669769287,
+          "n_params": 4773697,
+          "HF_n_eff_pooled_final": 348.40563838840023,
+          "HF_n_eff_pooled_epoch1": 345.1586241940156,
+          "HF_n_eff_batch_median_final": 14.170748419519,
+          "HF_n_rows": 400,
+          "HF_n_steps": 5000,
+          "HF_clip_rate_all_steps": 0.0,
+          "HF_grad_norm_max_over_run": 0.18786026537418365,
+          "LF_n_eff_pooled_final": 378.89983500981526,
+          "LF_n_eff_pooled_epoch1": 141.03257269942753,
+          "LF_clip_rate_all_steps": 0.0016,
+          "per_sample_audit": {
+            "n": 100,
+            "rel_l2_mean": 0.2590497773858539,
+            "rel_l2_median": 0.2533980659939684,
+            "rel_l2_p90": 0.3443528211727722,
+            "rel_l2_max": 0.39927892839207163,
+            "top_decile_k": 10,
+            "top_decile_mean": 0.3642432116123601,
+            "top_decile_share_of_sum": 0.14060742120222747,
+            "top_decile_share_of_energy": 0.18860385348937136,
+            "n_eff_score_space": 83.06386671483143,
+            "n_eff_score_space_fraction": 0.8306386671483144,
+            "corr_rel_l2_vs_s": 0.4041068594137103,
+            "corr_rel_l2_vs_ynorm": -0.41813016435231287
+          }
+        }
+      },
+      "A2_zscore_noclip": {
+        "ext__helmholtz_2d": {
+          "nRMSE": 1.3620509614971683,
+          "skill": 4.134316103785851,
+          "reference_type": "copylf",
+          "reference_nrmse": 0.3294501260438018,
+          "cached": false,
+          "split": "test_hf",
+          "metric_source": "per_sample_mean",
+          "scaler_mode": "zscore",
+          "scaler_mode_effective": "zscore",
+          "scaler_fallback": false,
+          "scaler_fallback_reason": null,
+          "scaler_per_sample_available": null,
+          "grad_clip": "off",
+          "grad_clip_enabled": false,
+          "train_seconds": 176.69530153274536,
+          "n_params": 4773953,
+          "HF_n_eff_pooled_final": 8.528145303171092,
+          "HF_n_eff_pooled_epoch1": 2.053272230636799,
+          "HF_n_eff_batch_median_final": 2.3503987868130016,
+          "HF_n_rows": 400,
+          "HF_n_steps": 5000,
+          "HF_clip_rate_all_steps": 0.099,
+          "HF_grad_norm_max_over_run": 874.4346923828125,
+          "LF_n_eff_pooled_final": 2.7925620158773397,
+          "LF_n_eff_pooled_epoch1": 3.0873797111554855,
+          "LF_clip_rate_all_steps": 0.2646,
+          "per_sample_audit": {
+            "n": 100,
+            "rel_l2_mean": 1.3620509614971683,
+            "rel_l2_median": 1.092762463848119,
+            "rel_l2_p90": 1.9814616565973209,
+            "rel_l2_max": 8.792218403951317,
+            "top_decile_k": 10,
+            "top_decile_mean": 3.4404738570855975,
+            "top_decile_share_of_sum": 0.2525950903704678,
+            "top_decile_share_of_energy": 0.5572667014929844,
+            "n_eff_score_space": 10.830636297839153,
+            "n_eff_score_space_fraction": 0.10830636297839152,
+            "corr_rel_l2_vs_ynorm": -0.08390575225377878
+          }
+        },
+        "ifc_poisson": {
+          "nRMSE": 0.047688180901166465,
+          "skill": 1.3246716916990686,
+          "reference_type": "paper_bar",
+          "reference_nrmse": 0.036,
+          "cached": false,
+          "split": "test_hf",
+          "metric_source": "per_sample_mean",
+          "scaler_mode": "zscore",
+          "scaler_mode_effective": "zscore",
+          "scaler_fallback": false,
+          "scaler_fallback_reason": null,
+          "scaler_per_sample_available": null,
+          "grad_clip": "off",
+          "grad_clip_enabled": false,
+          "train_seconds": 31.889305591583252,
+          "n_params": 4774465,
+          "HF_n_eff_pooled_final": 4.845909706691424,
+          "HF_n_eff_pooled_epoch1": 3.591702693788046,
+          "HF_n_eff_batch_median_final": 4.845909706691424,
+          "HF_n_rows": 5,
+          "HF_n_steps": 200,
+          "HF_clip_rate_all_steps": 0.005,
+          "HF_grad_norm_max_over_run": 1.2463961839675903,
+          "LF_n_eff_pooled_final": 65.5209538137165,
+          "LF_n_eff_pooled_epoch1": 57.41272389082285,
+          "LF_clip_rate_all_steps": 0.027857142857142858,
+          "per_sample_audit": {
+            "n": 128,
+            "rel_l2_mean": 0.0476881809011665,
+            "rel_l2_median": 0.03407237305298402,
+            "rel_l2_p90": 0.092153851335421,
+            "rel_l2_max": 0.22372157082503774,
+            "top_decile_k": 13,
+            "top_decile_mean": 0.1537695280123379,
+            "top_decile_share_of_sum": 0.327486127456186,
+            "top_decile_share_of_energy": 0.6424062036606017,
+            "n_eff_score_space": 23.135970294182183,
+            "n_eff_score_space_fraction": 0.1807497679232983,
+            "corr_rel_l2_vs_ynorm": -0.6254894816614224
+          }
+        }
+      },
+      "A3_revin_lf_noclip": {
+        "ext__helmholtz_2d": {
+          "nRMSE": 0.5278131539124807,
+          "skill": 1.6021033600767411,
+          "reference_type": "copylf",
+          "reference_nrmse": 0.3294501260438018,
+          "cached": false,
+          "split": "test_hf",
+          "metric_source": "per_sample_mean",
+          "scaler_mode": "revin_lf",
+          "scaler_mode_effective": "revin_lf",
+          "scaler_fallback": false,
+          "scaler_fallback_reason": null,
+          "scaler_per_sample_available": true,
+          "grad_clip": "off",
+          "grad_clip_enabled": false,
+          "train_seconds": 183.16359114646912,
+          "n_params": 4773953,
+          "HF_n_eff_pooled_final": 3.7107739180676726,
+          "HF_n_eff_pooled_epoch1": 3.4926930419989377,
+          "HF_n_eff_batch_median_final": 4.510114369873051,
+          "HF_n_rows": 400,
+          "HF_n_steps": 5000,
+          "HF_clip_rate_all_steps": 0.7002,
+          "HF_grad_norm_max_over_run": 125.40396118164062,
+          "LF_n_eff_pooled_final": 136.33150472020472,
+          "LF_n_eff_pooled_epoch1": 318.20796631519437,
+          "LF_clip_rate_all_steps": 0.3404,
+          "per_sample_audit": {
+            "n": 100,
+            "rel_l2_mean": 0.5278131539124806,
+            "rel_l2_median": 0.24331002236336896,
+            "rel_l2_p90": 1.0146465527467166,
+            "rel_l2_max": 14.308783415031884,
+            "top_decile_k": 10,
+            "top_decile_mean": 2.692668546344044,
+            "top_decile_share_of_sum": 0.510155634884107,
+            "top_decile_share_of_energy": 0.9449531153493111,
+            "n_eff_score_space": 1.3342552947413664,
+            "n_eff_score_space_fraction": 0.013342552947413664,
+            "corr_rel_l2_vs_s": 0.21582635564780042,
+            "corr_rel_l2_vs_ynorm": 0.0012311411777502785
+          }
+        },
+        "ifc_poisson": {
+          "nRMSE": 0.04769070210889061,
+          "skill": 1.3247417252469615,
+          "reference_type": "paper_bar",
+          "reference_nrmse": 0.036,
+          "cached": false,
+          "split": "test_hf",
+          "metric_source": "per_sample_mean",
+          "scaler_mode": "revin_lf",
+          "scaler_mode_effective": "zscore",
+          "scaler_fallback": true,
+          "scaler_fallback_reason": "train LF/HF condition vectors are not row-aligned (cannot identify each HF sample's own LF solve)",
+          "scaler_per_sample_available": false,
+          "grad_clip": "off",
+          "grad_clip_enabled": false,
+          "train_seconds": 33.374929428100586,
+          "n_params": 4774465,
+          "HF_n_eff_pooled_final": 4.8458883579610506,
+          "HF_n_eff_pooled_epoch1": 3.5916690005334213,
+          "HF_n_eff_batch_median_final": 4.8458883579610506,
+          "HF_n_rows": 5,
+          "HF_n_steps": 200,
+          "HF_clip_rate_all_steps": 0.005,
+          "HF_grad_norm_max_over_run": 1.2464985847473145,
+          "LF_n_eff_pooled_final": 65.53934803284827,
+          "LF_n_eff_pooled_epoch1": 57.412720981164576,
+          "LF_clip_rate_all_steps": 0.027857142857142858,
+          "per_sample_audit": {
+            "n": 128,
+            "rel_l2_mean": 0.04769070210889062,
+            "rel_l2_median": 0.034069500232640514,
+            "rel_l2_p90": 0.09216053499779012,
+            "rel_l2_max": 0.22373183194342197,
+            "top_decile_k": 13,
+            "top_decile_mean": 0.15377755931332837,
+            "top_decile_share_of_sum": 0.32748591815863326,
+            "top_decile_share_of_energy": 0.6424071911955139,
+            "n_eff_score_space": 23.135747860689346,
+            "n_eff_score_space_fraction": 0.18074803016163551,
+            "corr_rel_l2_vs_ynorm": -0.6254522216685938
+          }
+        }
+      },
+      "A4_ref_oracle_persample": {
+        "ext__helmholtz_2d": {
+          "nRMSE": 34.30919281254122,
+          "skill": 104.14077913565487,
+          "reference_type": "copylf",
+          "reference_nrmse": 0.3294501260438018,
+          "cached": false,
+          "split": "test_hf",
+          "metric_source": "per_sample_mean",
+          "scaler_mode": "oracle_y",
+          "scaler_mode_effective": "oracle_y",
+          "scaler_fallback": false,
+          "scaler_fallback_reason": null,
+          "scaler_per_sample_available": true,
+          "grad_clip": 1.0,
+          "grad_clip_enabled": true,
+          "train_seconds": 179.78243136405945,
+          "n_params": 4773953,
+          "HF_n_eff_pooled_final": 242.3410371808419,
+          "HF_n_eff_pooled_epoch1": 11.018842085723888,
+          "HF_n_eff_batch_median_final": 10.665042188047204,
+          "HF_n_rows": 400,
+          "HF_n_steps": 5000,
+          "HF_clip_rate_all_steps": 0.0552,
+          "HF_grad_norm_max_over_run": 9.977824211120605,
+          "LF_n_eff_pooled_final": 204.3312090139765,
+          "LF_n_eff_pooled_epoch1": 306.4779556224117,
+          "LF_clip_rate_all_steps": 0.3306,
+          "per_sample_audit": {
+            "n": 100,
+            "rel_l2_mean": 34.309192812541234,
+            "rel_l2_median": 34.37053857133752,
+            "rel_l2_p90": 64.27924697839042,
+            "rel_l2_max": 86.75533217976339,
+            "top_decile_k": 10,
+            "top_decile_mean": 75.25738181522972,
+            "top_decile_share_of_sum": 0.21935048786026953,
+            "top_decile_share_of_energy": 0.34792463386663497,
+            "n_eff_score_space": 47.49676533691459,
+            "n_eff_score_space_fraction": 0.4749676533691459,
+            "corr_rel_l2_vs_ynorm": -0.3399918018804268
+          },
+          "ref_oracle_persample_LEAKED": {
+            "rel_l2_mean__round_metric": 0.2583804589696857,
+            "nRMSE_field_ratio_of_sums__DO_NOT_USE_FOR_SKILL": 0.3533100714108312,
+            "skill__derived": 0.7842779180947496,
+            "skill_derivation": "score_panel.py does NOT score fenced ref splits (by design). The value above applies score_panel.py's own frozen formula verbatim (`skill = value / baselines[ds]['test_nrmse']`, score_panel.py:210) to the same metric score_panel selects for test_hf (metric_source='per_sample_mean' = rel_l2_mean). Nothing was recomputed from fields; per review_B3.md 'Notes for the initial-analyzer', the split's own `nRMSE` (ratio-of-sums) must NOT be used.",
+            "LEAKED": true,
+            "label": "ORACLE",
+            "leaderboard_eligible": false,
+            "reportable": false
+          }
+        },
+        "ifc_poisson": {
+          "nRMSE": 0.6347782332695069,
+          "skill": 17.63272870193075,
+          "reference_type": "paper_bar",
+          "reference_nrmse": 0.036,
+          "cached": false,
+          "split": "test_hf",
+          "metric_source": "per_sample_mean",
+          "scaler_mode": "oracle_y",
+          "scaler_mode_effective": "oracle_y",
+          "scaler_fallback": false,
+          "scaler_fallback_reason": null,
+          "scaler_per_sample_available": true,
+          "grad_clip": 1.0,
+          "grad_clip_enabled": true,
+          "train_seconds": 45.792359590530396,
+          "n_params": 4774465,
+          "HF_n_eff_pooled_final": 4.632109653411616,
+          "HF_n_eff_pooled_epoch1": 4.978657792311282,
+          "HF_n_eff_batch_median_final": 4.632109653411616,
+          "HF_n_rows": 5,
+          "HF_n_steps": 200,
+          "HF_clip_rate_all_steps": 0.005,
+          "HF_grad_norm_max_over_run": 1.321811556816101,
+          "LF_n_eff_pooled_final": 38.10742682176367,
+          "LF_n_eff_pooled_epoch1": 34.56972605181268,
+          "LF_clip_rate_all_steps": 0.0014285714285714286,
+          "per_sample_audit": {
+            "n": 128,
+            "rel_l2_mean": 0.6347782332695069,
+            "rel_l2_median": 0.5454417725490641,
+            "rel_l2_p90": 0.9925609442730756,
+            "rel_l2_max": 1.7326571658920222,
+            "top_decile_k": 13,
+            "top_decile_mean": 1.3299523522366816,
+            "top_decile_share_of_sum": 0.21278814977370233,
+            "top_decile_share_of_energy": 0.38929284853500834,
+            "n_eff_score_space": 58.83442674402175,
+            "n_eff_score_space_fraction": 0.4596439589376699,
+            "corr_rel_l2_vs_ynorm": -0.6222947294796664
+          },
+          "ref_oracle_persample_LEAKED": {
+            "rel_l2_mean__round_metric": 0.07847707522807779,
+            "nRMSE_field_ratio_of_sums__DO_NOT_USE_FOR_SKILL": 0.0691585477907044,
+            "skill__derived": 2.179918756335494,
+            "skill_derivation": "score_panel.py does NOT score fenced ref splits (by design). The value above applies score_panel.py's own frozen formula verbatim (`skill = value / baselines[ds]['test_nrmse']`, score_panel.py:210) to the same metric score_panel selects for test_hf (metric_source='per_sample_mean' = rel_l2_mean). Nothing was recomputed from fields; per review_B3.md 'Notes for the initial-analyzer', the split's own `nRMSE` (ratio-of-sums) must NOT be used.",
+            "LEAKED": true,
+            "label": "ORACLE",
+            "leaderboard_eligible": false,
+            "reportable": false
+          }
+        },
+        "sharp__cahn_hilliard": {
+          "nRMSE": 0.49236094544365683,
+          "skill": 5.616712251328373,
+          "reference_type": "copylf",
+          "reference_nrmse": 0.08765999100758841,
+          "cached": false,
+          "split": "test_hf",
+          "metric_source": "per_sample_mean",
+          "scaler_mode": "oracle_y",
+          "scaler_mode_effective": "oracle_y",
+          "scaler_fallback": false,
+          "scaler_fallback_reason": null,
+          "scaler_per_sample_available": true,
+          "grad_clip": 1.0,
+          "grad_clip_enabled": true,
+          "train_seconds": 498.50274538993835,
+          "n_params": 4778049,
+          "HF_n_eff_pooled_final": 283.6651191298814,
+          "HF_n_eff_pooled_epoch1": 14.90246398215561,
+          "HF_n_eff_batch_median_final": 14.787977484130716,
+          "HF_n_rows": 400,
+          "HF_n_steps": 5000,
+          "HF_clip_rate_all_steps": 0.0,
+          "HF_grad_norm_max_over_run": 0.8271839022636414,
+          "LF_n_eff_pooled_final": 356.62302443423596,
+          "LF_n_eff_pooled_epoch1": 396.960454992819,
+          "LF_clip_rate_all_steps": 0.0032,
+          "per_sample_audit": {
+            "n": 100,
+            "rel_l2_mean": 0.4923609454436568,
+            "rel_l2_median": 0.27993027143514637,
+            "rel_l2_p90": 1.1839710455951846,
+            "rel_l2_max": 1.3797066989065565,
+            "top_decile_k": 10,
+            "top_decile_mean": 1.2761471023302176,
+            "top_decile_share_of_sum": 0.2591893435374543,
+            "top_decile_share_of_energy": 0.40141422428614926,
+            "n_eff_score_space": 33.64218903289788,
+            "n_eff_score_space_fraction": 0.33642189032897885,
+            "corr_rel_l2_vs_ynorm": 0.822206591777675
+          },
+          "ref_oracle_persample_LEAKED": {
+            "rel_l2_mean__round_metric": 0.4817469532721726,
+            "nRMSE_field_ratio_of_sums__DO_NOT_USE_FOR_SKILL": 0.6834299538584766,
+            "skill__derived": 5.495630877152035,
+            "skill_derivation": "score_panel.py does NOT score fenced ref splits (by design). The value above applies score_panel.py's own frozen formula verbatim (`skill = value / baselines[ds]['test_nrmse']`, score_panel.py:210) to the same metric score_panel selects for test_hf (metric_source='per_sample_mean' = rel_l2_mean). Nothing was recomputed from fields; per review_B3.md 'Notes for the initial-analyzer', the split's own `nRMSE` (ratio-of-sums) must NOT be used.",
+            "LEAKED": true,
+            "label": "ORACLE",
+            "leaderboard_eligible": false,
+            "reportable": false
+          }
+        },
+        "sharp__fisher_kpp_2d": {
+          "nRMSE": 0.304553500060952,
+          "skill": 4.862563184278214,
+          "reference_type": "copylf",
+          "reference_nrmse": 0.06263229669603956,
+          "cached": false,
+          "split": "test_hf",
+          "metric_source": "per_sample_mean",
+          "scaler_mode": "oracle_y",
+          "scaler_mode_effective": "oracle_y",
+          "scaler_fallback": false,
+          "scaler_fallback_reason": null,
+          "scaler_per_sample_available": true,
+          "grad_clip": 1.0,
+          "grad_clip_enabled": true,
+          "train_seconds": 505.27703309059143,
+          "n_params": 4773697,
+          "HF_n_eff_pooled_final": 350.6433227634577,
+          "HF_n_eff_pooled_epoch1": 347.94328195816433,
+          "HF_n_eff_batch_median_final": 14.250360361545331,
+          "HF_n_rows": 400,
+          "HF_n_steps": 5000,
+          "HF_clip_rate_all_steps": 0.0,
+          "HF_grad_norm_max_over_run": 0.20157381892204285,
+          "LF_n_eff_pooled_final": 378.89983500981526,
+          "LF_n_eff_pooled_epoch1": 141.03257269942753,
+          "LF_clip_rate_all_steps": 0.0016,
+          "per_sample_audit": {
+            "n": 100,
+            "rel_l2_mean": 0.3045535000609519,
+            "rel_l2_median": 0.29932115210729016,
+            "rel_l2_p90": 0.40386870717560897,
+            "rel_l2_max": 0.4535260567739604,
+            "top_decile_k": 10,
+            "top_decile_mean": 0.4244722756414484,
+            "top_decile_share_of_sum": 0.13937527414936834,
+            "top_decile_share_of_energy": 0.184018150038817,
+            "n_eff_score_space": 82.65792430859291,
+            "n_eff_score_space_fraction": 0.8265792430859291,
+            "corr_rel_l2_vs_ynorm": -0.7104389735919605
+          },
+          "ref_oracle_persample_LEAKED": {
+            "rel_l2_mean__round_metric": 0.25940486845237215,
+            "nRMSE_field_ratio_of_sums__DO_NOT_USE_FOR_SKILL": 0.26300757248961765,
+            "skill__derived": 4.141710940463966,
+            "skill_derivation": "score_panel.py does NOT score fenced ref splits (by design). The value above applies score_panel.py's own frozen formula verbatim (`skill = value / baselines[ds]['test_nrmse']`, score_panel.py:210) to the same metric score_panel selects for test_hf (metric_source='per_sample_mean' = rel_l2_mean). Nothing was recomputed from fields; per review_B3.md 'Notes for the initial-analyzer', the split's own `nRMSE` (ratio-of-sums) must NOT be used.",
+            "LEAKED": true,
+            "label": "ORACLE",
+            "leaderboard_eligible": false,
+            "reportable": false
+          }
+        }
+      }
+    },
+    "arms_actually_run_200ep": {
+      "A0_zscore_ctrl": [
+        "ext__helmholtz_2d",
+        "ifc_poisson",
+        "sharp__cahn_hilliard",
+        "sharp__fisher_kpp_2d"
+      ],
+      "A1_revin_lf": [
+        "ext__helmholtz_2d",
+        "ifc_poisson",
+        "sharp__cahn_hilliard",
+        "sharp__fisher_kpp_2d"
+      ],
+      "A2_zscore_noclip": [
+        "ext__helmholtz_2d",
+        "ifc_poisson"
+      ],
+      "A3_revin_lf_noclip": [
+        "ext__helmholtz_2d",
+        "ifc_poisson"
+      ],
+      "A4_ref_oracle_persample": [
+        "ext__helmholtz_2d",
+        "ifc_poisson",
+        "sharp__cahn_hilliard",
+        "sharp__fisher_kpp_2d"
+      ],
+      "A5_revin_lf_floorq25": "SCREEN ONLY (contract tier, 2 ep) \u2014 never run at 200 epochs; recipe arm row says datasets='screen_only'"
+    },
+    "panel_geomean_skill": {
+      "per_seed": null,
+      "mean": null,
+      "ci95": null,
+      "not_computed_reason": "card part 3 verbatim: 'this card computes NO panel geomean and makes NO panel-level claim'. The 4 card datasets are a subset of the 6-dataset round panel (pfc and allen_cahn dropped), so no value here is comparable to state/anchors/s5_tuning.json.",
+      "subset_geomean_4_of_6_NOT_THE_PANEL_GEOMEAN": {
+        "A0_zscore_ctrl": 3.38397867445959,
+        "A1_revin_lf": 2.340892093986195,
+        "A2_zscore_noclip": 2.3402161240408343,
+        "A3_revin_lf_noclip": 1.456836699583044,
+        "A4_ref_oracle_persample": 14.964835429735539
+      },
+      "subset_geomean_caveat": "these are score_panel.py's geomeans over whatever dataset list each arm was called with (A2/A3 = 2 datasets only). They are NOT the round panel geomean, are NOT anchor-comparable, and must never be quoted as a panel number."
+    },
+    "vs_anchor": {
+      "anchor_value": null,
+      "delta": null,
+      "beyond_ci": false,
+      "beyond_noise_floor": false,
+      "not_applicable_reason": "the s5_tuning anchor (state/anchors/s5_tuning.json, champion_panel_geomean 6.703016262587087 over 6 datasets) is a PANEL quantity; this card computes no panel geomean over 4 of 6 datasets, so no anchor delta exists. Per-dataset comparison basis declared in card part 4 is the PAIRED IN-JOB A0 (same node/seed/code tree), recorded per dataset above; the batch-0 3-seed per-dataset anchors are carried alongside for reference only.",
+      "declared_primary_basis": "paired in-job A0_zscore_ctrl (card part 4)",
+      "anchor_reference_card_s5_B2_part5_seed0": {
+        "ext__helmholtz_2d_nrmse": 1.8997614943589374,
+        "ext__helmholtz_2d_skill": 5.766461580003633,
+        "ifc_poisson_nrmse": 0.042663819833342574,
+        "ifc_poisson_skill": 1.1851061064817383
+      },
+      "B2_continuity_gate_A0_vs_B2_zscore": {
+        "ifc_poisson": {
+          "B3_A0": 0.042697081822502196,
+          "B2_zscore": 0.042663819833342574,
+          "relative_gap": 0.0007796298899056175,
+          "verdict": "CONTINUOUS (7.8e-4 relative, inside the H100 run-to-run envelope for a 200-epoch train)"
+        },
+        "ext__helmholtz_2d": {
+          "B3_A0": 1.581878829363806,
+          "B2_zscore": 1.8997614943589374,
+          "relative_gap": -0.16732767030968743,
+          "verdict": "NOT continuous at the 1e-3 level: -16.7%. helmholtz is the round's highest-variance dataset (batch-0 3-seed skill spread 9.694961 = 70% of its mean); B2 and B3 differ in family directory name and vendored code_hash, so a 200-epoch helmholtz re-run reproducing to only ~17% is consistent with the certified spread and is NOT evidence of a code defect. Recorded as an observation, not a gate failure; the card's declared basis is the paired in-job A0."
+        }
+      }
+    },
+    "cratered_verdict": "cratered",
+    "cratered_basis": "program.md 4.4 item 4 verbatim: 'The cratered definition (crash / geomean worse than 1.5x anchor / falsification fired) is retained as a seed-0 verdict category.' No crash (job 66076686 COMPLETED 0:0, all metrics finite) and no panel geomean exists to compare against the 1.5x anchor bar, so the verdict turns entirely on the third clause: the pre-registered falsification FIRED, decisively and twice \u2014 leg (a) by 2.31x its bar and leg (c) by 9.7x its threshold (numbers under falsification_legs). Under ADR 0004 no seeds 1-2 follow in-round in any case, so 'cratered' here is a verdict label on the hypothesis, not a launch decision. NOTE: the promoted arm A1_revin_lf did NOT crater as an artifact \u2014 it is finite on all 4 datasets and improves helmholtz nRMSE by 76.75% vs the paired control.",
+    "falsification_verdict": "falsified",
+    "falsification_verdict_summary": "H-s5B3 is FALSIFIED. The clause is disjunctive ('is FALSIFIED at 200 epochs / seed 0 if ANY of:') and TWO independent legs fired: (a) the PRIMARY ifc_poisson oracle bar and (c) the MECHANISM effective-N leg. Leg (b) did NOT fire (both ineligible controls stayed inside band). Legs (e)/(f)/(g) carry no falsification power by construction.",
+    "falsification_legs": {
+      "a_PRIMARY_ifc_poisson_oracle_bar": {
+        "clause_verbatim": "(a) PRIMARY / ifc_poisson bar. A4's `ref_oracle_persample` skill fails to reach **<= 0.945** (nRMSE **<= 0.034020**; equivalently **<= A0_in-job \u2212 0.240**; against the certified batch-0 anchor 1.565633 the bar is **<= 1.325527**). Implied improvement 0.240106 **> floor 0.239908 (1.0008x)**. A failure here retires the per-sample target-scaler branch on `ifc_poisson` round-wide for this substrate; a pass says the headroom exists and the blocker is *scale prediction*, which s5 may not build (E2) \u2014 hand to `s2_beyond_copy-B3` / `s1_poisson`.",
+        "measured_ref_oracle_persample_rel_l2_mean__LEAKED": 0.07847707522807779,
+        "measured_ref_oracle_persample_skill__LEAKED": 2.179918756335494,
+        "metric_read_per_review_B3_instruction": "read from splits.ref_oracle_persample.rel_l2_mean (= per-sample rel-L2 mean, the round's one metric and exactly what score_panel selects for test_hf), NOT the split's backward-compat ratio-of-sums `nRMSE` field 0.0691585477907044. review_B3.md 'Notes for the initial-analyzer' bullet 1.",
+        "bar_skill": 0.945,
+        "bar_nrmse": 0.03402,
+        "bar_alt_A0_in_job_minus_0p240": 0.9460300506250612,
+        "bar_alt_vs_batch0_anchor": 1.325527,
+        "margin_ratio_measured_over_bar": 2.3067923347465547,
+        "A0_paired_legal_skill": 1.1860300506250612,
+        "oracle_minus_A0_skill": 0.9938887057104329,
+        "A4_legal_test_hf_skill_prereg_to_be_worse_than_A0": 17.63272870193075,
+        "A4_legal_test_hf_nrmse": 0.6347782332695069,
+        "verdict": "FALSIFIED",
+        "reading": "The LEAKED oracle reached skill 2.179919, i.e. 2.31x its own 0.945 bar and 0.994 skill units WORSE than the paired legal A0 control (1.186030). Card part 4 predicted a NULL of 1.097-1.194; the measurement is not merely null, it is a REGRESSION: on ifc_poisson, training with per-sample target scales makes the model worse even when handed the true test-time scale. The pre-registered consequence applies verbatim: this 'retires the per-sample target-scaler branch on ifc_poisson round-wide for this substrate'. The pre-registered A4 sanity prediction also held \u2014 A4's LEGAL readout (skill 17.632729) is far worse than A0, the controlled statement of E2 that the arm is unusable without a per-sample test statistic.",
+        "label": "ORACLE / LEAKED \u2014 never leaderboard-eligible, never summed with a legal number (part 4 (g)(5))"
+      },
+      "b_ASYMMETRY_ineligible_controls": {
+        "clause_verbatim": "(b) ASYMMETRY / eligibility rule (E4b, predictor under test). Either ineligible control moves beyond its band **in EITHER direction** \u2014 `sharp__cahn_hilliard` outside **[4.903873, 6.011873]** (band 0.554 > floor 0.553347) or `sharp__fisher_kpp_2d` outside **[3.800984, 4.636984]** (band 0.418 > floor 0.417735). A favourable move counts as falsification: a gain where `G` is 1.32 (pattern without G) or where the pattern channel is dead (G without pattern) means the lever is not what the rule says it is.",
+        "sharp__cahn_hilliard": {
+          "A1_skill": 5.490354840433272,
+          "band": [
+            4.903873,
+            6.011873
+          ],
+          "inside_band": true,
+          "A0_paired_skill": 5.457872827490323,
+          "delta_vs_A0": 0.032482012942948835,
+          "min_claimable_effect": 0.5533465853654416,
+          "delta_beyond_floor": false
+        },
+        "sharp__fisher_kpp_2d": {
+          "A1_skill": 4.136041484204974,
+          "band": [
+            3.800984,
+            4.636984
+          ],
+          "inside_band": true,
+          "A0_paired_skill": 4.2189835217795055,
+          "delta_vs_A0": -0.08294203757453111,
+          "min_claimable_effect": 0.41773549950819566,
+          "delta_beyond_floor": false
+        },
+        "verdict": "NOT FALSIFIED (both ineligible controls stayed inside band)",
+        "reading": "cahn_hilliard 5.490355 sits 0.586 inside its lower bound and 0.522 inside its upper; fisher_kpp 4.136041 sits 0.335 inside its lower and 0.501 inside its upper. Both A1-vs-A0 deltas (+0.032482 and -0.082942) are 17x and 5x SMALLER than the datasets' own min_claimable_effect (0.553347 / 0.417735), i.e. indistinguishable from noise. The eligibility 2x2 held on its two negative cells.",
+        "implementation_validity_subprediction_directional_not_a_claim": {
+          "clause_verbatim": "*Implementation-validity sub-prediction (directional, not a claim):* because `hf_lf_ratio_cv` is 0.0024 / 0.0100 there, A1's per-sample scale is constant to <1% and A1 should sit nearer s5-B1's same-hardware **maxabs** control (5.562725 / 4.116518) than A0's zscore values (5.457873 / 4.218984); both gaps are inside the floors.",
+          "cahn_hilliard": {
+            "A1": 5.490354840433272,
+            "B1_maxabs": 5.562725,
+            "A0_zscore": 5.457873,
+            "abs_gap_to_maxabs": 0.0723701595667281,
+            "abs_gap_to_zscore": 0.03248184043327207,
+            "nearer": "A0_zscore (sub-prediction NOT met)"
+          },
+          "fisher_kpp": {
+            "A1": 4.136041484204974,
+            "B1_maxabs": 4.116518,
+            "A0_zscore": 4.218984,
+            "abs_gap_to_maxabs": 0.019523484204974295,
+            "abs_gap_to_zscore": 0.08294251579502543,
+            "nearer": "B1_maxabs (sub-prediction met)"
+          },
+          "verdict": "SPLIT 1/2 \u2014 met on fisher_kpp, not on cahn_hilliard. Explicitly NOT a claim per the clause's own wording, and every gap here is an order of magnitude inside the floors, so this resolves nothing either way.",
+          "A1_per_sample_denominator_spread_from_run_json": {
+            "sharp__cahn_hilliard_scaler_test": {
+              "kind": "per_sample",
+              "stat": "max|LF_i| (per sample)",
+              "source": "LF_test_on_work_grid",
+              "n": 100,
+              "min": 0.9970813393592834,
+              "max": 1.16453218460083,
+              "median": 0.9996652901172638,
+              "mean": 1.0112765818834304,
+              "spread": 1.1679410080517094,
+              "min_over_median": 0.9974151840785856,
+              "cv": 0.03606462076756665,
+              "floor": {
+                "floor_q": null,
+                "applied": false,
+                "n_floored": 0,
+                "n": 100,
+                "floor_value": null,
+                "ref": null
+              }
+            },
+            "sharp__fisher_kpp_2d_scaler_test": {
+              "kind": "per_sample",
+              "stat": "max|LF_i| (per sample)",
+              "source": "LF_test_on_work_grid",
+              "n": 100,
+              "min": 0.8867143392562866,
+              "max": 0.9835485219955444,
+              "median": 0.9439217150211334,
+              "mean": 0.9423338824510574,
+              "spread": 1.109205612734847,
+              "min_over_median": 0.9393939403506932,
+              "cv": 0.025380943921619815,
+              "floor": {
+                "floor_q": null,
+                "applied": false,
+                "n_floored": 0,
+                "n": 100,
+                "floor_value": null,
+                "ref": null
+              }
+            }
+          }
+        }
+      },
+      "c_MECHANISM_effective_N": {
+        "clause_verbatim": "(c) MECHANISM / effective N (E4a). A1's helmholtz HF-stage epoch-pooled `n_eff` stays **< 10** of 400 \u2014 i.e. `max|LF_i|` does not track per-sample HF energy across the fidelity boundary, exactly the transfer WNE's proof does **not** cover. Two-sided and both informative: `n_eff >= 50` **with** helmholtz relative nRMSE change **< 10%** vs A0 is the decisive negative \u2014 the loss-concentration repair is real and buys nothing, which retires 'de-concentrate the MSE' as an explanation round-wide for this substrate and tells `s7_loss` what its `rel` arm is worth before it lands.",
+        "measured_A1_helmholtz_HF_n_eff_pooled_final": 1.0305144974065188,
+        "of_n_rows": 400,
+        "threshold": 10,
+        "predicted_A1": ">= 50",
+        "verdict": "FALSIFIED",
+        "branch_obtained": "n_eff_LT_10_WITH_LARGE_helmholtz_movement",
+        "branch_NOT_obtained": "the pre-registered decisive-negative branch (n_eff >= 50 WITH < 10% helmholtz movement) did NOT obtain, so the round-wide retirement of 'de-concentrate the MSE' that that branch would have licensed is NOT triggered by this card.",
+        "helmholtz_relative_nrmse_change_A1_vs_A0": -0.7675414331732638,
+        "reading": "A1's helmholtz HF-stage epoch-pooled n_eff is 1.030514 of 400 rows (0.2576% of the data) \u2014 9.7x below the 10 threshold and 48.5x below the predicted >= 50. `max|LF_i|` does NOT track per-sample HF energy across the fidelity boundary; the WNE guarantee does not transfer, exactly as the clause said it might not. The dissociation is the finding: the SAME arm moved helmholtz nRMSE by -76.75% while the HF-stage loss stayed maximally concentrated (top-1 sample carries 98.51% of the pooled loss energy at the final epoch, up from 48.44% at epoch 1). The helmholtz score movement therefore CANNOT be attributed to HF-stage loss de-concentration.",
+        "corroborating_readings": {
+          "A1_helmholtz_HF_top1_energy_share_pooled_final": 0.9850824572717193,
+          "A1_helmholtz_HF_top1_energy_share_pooled_epoch1": 0.4843965542400349,
+          "A0_helmholtz_HF_n_eff_pooled_final": 1.0101535832518702,
+          "A4_oracle_helmholtz_HF_n_eff_pooled_final": 242.3410371808419,
+          "A1_helmholtz_LF_n_eff_pooled_final": 209.8448096848566,
+          "A0_helmholtz_LF_n_eff_pooled_final": 3.1887841601707203,
+          "STAGE_DISSOCIATION": "revin_lf DID repair the effective N \u2014 but in the LF_pretrain stage (3.1888 -> 209.8448, a 65.8x repair), not the HF_finetune stage the clause tested (1.0102 -> 1.0305, no change). The true-scale oracle A4 repairs BOTH (HF 1.0102 -> 242.3410). So the instrument works and the per-sample scale mechanism is real; what fails is specifically the LF proxy's ability to carry HF-sample energy at the 5-HF-row finetune stage.",
+          "formula": "n_eff = 1 / sum_i alpha_i^2, alpha_i = l_i / sum_j l_j",
+          "formula_source": "https://alex.smola.org/posts/40-effective-sample-size/ (formula cited; only the application is claimed)"
+        }
+      },
+      "d_H3_clip_attribution": {
+        "clause_verbatim": "(d) H3 / clip attribution (E3, both signs pre-registered). *H3-TRUE* if helmholtz HF-stage `clip_rate(A0) >= 0.50` AND the clip-off control A2's helmholtz nRMSE regresses to **>= 4.183881** (= 1.899761 + 0.5 x (6.4680 - 1.899761), i.e. it gives back >= 50% of A0's gain over s5-B1's same-hardware maxabs control) - then s5-B2's headline is re-attributed to the clipper as a Huberised loss (https://arxiv.org/html/2412.08941v4), not to the scaler. *H3-FALSE* if `clip_rate < 0.05` in both A0 and A1, or A2 reproduces A0 within 10% relative - the fetched precedent where clipping *'does not improve the performance'* while normalization *'improves significantly'* (https://ar5iv.labs.arxiv.org/html/1707.06799). Caveat carried verbatim into the card: 2206.07136's threshold-redundancy result (*'eta_effective = eta*R'*, R *'cancels out'*) is for **per-sample** DP clipping; ours is a **whole-batch** norm clip, so it is an argument, not a theorem about our recipe.",
+        "H3_TRUE_conditions": {
+          "cond1_clip_rate_A0_helmholtz_HF_ge_0.50": {
+            "measured": 0.0434,
+            "threshold": 0.5,
+            "met": false
+          },
+          "cond2_A2_helmholtz_nrmse_ge_4.183881": {
+            "measured": 1.3620509614971683,
+            "threshold": 4.183881,
+            "met": false
+          },
+          "conjunction_met": false
+        },
+        "H3_FALSE_conditions": {
+          "disj1_clip_rate_lt_0.05_in_BOTH_A0_and_A1": {
+            "A0_helmholtz_HF": 0.0434,
+            "A1_helmholtz_HF": 0.3246,
+            "A0_met": true,
+            "A1_met": false,
+            "disjunct_met": false
+          },
+          "disj2_A2_reproduces_A0_within_10pct_relative": {
+            "A0_helmholtz_nrmse": 1.581878829363806,
+            "A2_helmholtz_nrmse": 1.3620509614971683,
+            "relative_deviation": -0.1389663125810004,
+            "threshold": 0.1,
+            "disjunct_met": false
+          },
+          "disjunction_met": false
+        },
+        "verdict": "H3-TRUE decisively REJECTED; H3-FALSE not literally satisfied - INDETERMINATE on the letter, H3-FALSE-leaning on the sign",
+        "H3_sign": "H3-FALSE-leaning (the clipper is NOT the source of s5-B2's headline)",
+        "reading": "H3-TRUE fails on BOTH conjuncts and not narrowly: A0's helmholtz HF clip_rate is 0.0434 (11.5x under the 0.50 bar) and A2's clip-off helmholtz nRMSE is 1.362051, which is 3.07x BELOW the 4.183881 regression bar - A2 did not give back any of A0's gain, it IMPROVED on A0 by 13.90%. H3-FALSE is missed on both disjuncts, each by a small margin: A1's clip_rate is 0.3246 (not < 0.05, though A0's 0.0434 is), and A2's deviation from A0 is 13.90% (not within 10%). The pre-registered rule is therefore INDETERMINATE as written, but the DIRECTION is unambiguous and is the attribution answer the leg was built to get: removing the clipper did not degrade helmholtz, it improved it, so 'whatever robustification the outlier-dominated loss received' cannot be credited to the clipper. The 10% band was set for a REGRESSION test and is tight for helmholtz, whose batch-0 3-seed skill spread is 9.694961 on a mean of 13.817290 (70%) - a 13.90% same-config deviation is far inside this dataset's own run-to-run envelope. Recorded as measured; adjudicating INDETERMINATE-vs-H3-FALSE is the mechanism analyst's call, not the extractor's.",
+        "clip_rate_table_all_arms_HF_finetune": {
+          "A0_zscore_ctrl": {
+            "ext__helmholtz_2d": {
+              "clip_enabled": true,
+              "clip_rate_all_steps": 0.0434,
+              "clip_rate_epoch1": 0.12,
+              "clip_rate_final": 0.04,
+              "n_steps": 5000,
+              "grad_norm_max_over_run": 136.8726348876953
+            },
+            "ifc_poisson": {
+              "clip_enabled": true,
+              "clip_rate_all_steps": 0.005,
+              "clip_rate_epoch1": 1.0,
+              "clip_rate_final": 0.0,
+              "n_steps": 200,
+              "grad_norm_max_over_run": 1.1233795881271362
+            },
+            "sharp__cahn_hilliard": {
+              "clip_enabled": true,
+              "clip_rate_all_steps": 0.0002,
+              "clip_rate_epoch1": 0.0,
+              "clip_rate_final": 0.0,
+              "n_steps": 5000,
+              "grad_norm_max_over_run": 1.1379162073135376
+            },
+            "sharp__fisher_kpp_2d": {
+              "clip_enabled": true,
+              "clip_rate_all_steps": 0.5436,
+              "clip_rate_epoch1": 0.4,
+              "clip_rate_final": 0.28,
+              "n_steps": 5000,
+              "grad_norm_max_over_run": 9.413430213928223
+            }
+          },
+          "A1_revin_lf": {
+            "ext__helmholtz_2d": {
+              "clip_enabled": true,
+              "clip_rate_all_steps": 0.3246,
+              "clip_rate_epoch1": 0.68,
+              "clip_rate_final": 0.08,
+              "n_steps": 5000,
+              "grad_norm_max_over_run": 99.2421646118164
+            },
+            "ifc_poisson": {
+              "clip_enabled": true,
+              "clip_rate_all_steps": 0.005,
+              "clip_rate_epoch1": 1.0,
+              "clip_rate_final": 0.0,
+              "n_steps": 200,
+              "grad_norm_max_over_run": 1.1228256225585938
+            },
+            "sharp__cahn_hilliard": {
+              "clip_enabled": true,
+              "clip_rate_all_steps": 0.0,
+              "clip_rate_epoch1": 0.0,
+              "clip_rate_final": 0.0,
+              "n_steps": 5000,
+              "grad_norm_max_over_run": 0.8338193893432617
+            },
+            "sharp__fisher_kpp_2d": {
+              "clip_enabled": true,
+              "clip_rate_all_steps": 0.0,
+              "clip_rate_epoch1": 0.0,
+              "clip_rate_final": 0.0,
+              "n_steps": 5000,
+              "grad_norm_max_over_run": 0.18786026537418365
+            }
+          },
+          "A2_zscore_noclip": {
+            "ext__helmholtz_2d": {
+              "clip_enabled": false,
+              "clip_rate_all_steps": 0.099,
+              "clip_rate_epoch1": 0.28,
+              "clip_rate_final": 0.0,
+              "n_steps": 5000,
+              "grad_norm_max_over_run": 874.4346923828125
+            },
+            "ifc_poisson": {
+              "clip_enabled": false,
+              "clip_rate_all_steps": 0.005,
+              "clip_rate_epoch1": 1.0,
+              "clip_rate_final": 0.0,
+              "n_steps": 200,
+              "grad_norm_max_over_run": 1.2463961839675903
+            }
+          },
+          "A3_revin_lf_noclip": {
+            "ext__helmholtz_2d": {
+              "clip_enabled": false,
+              "clip_rate_all_steps": 0.7002,
+              "clip_rate_epoch1": 0.84,
+              "clip_rate_final": 0.32,
+              "n_steps": 5000,
+              "grad_norm_max_over_run": 125.40396118164062
+            },
+            "ifc_poisson": {
+              "clip_enabled": false,
+              "clip_rate_all_steps": 0.005,
+              "clip_rate_epoch1": 1.0,
+              "clip_rate_final": 0.0,
+              "n_steps": 200,
+              "grad_norm_max_over_run": 1.2464985847473145
+            }
+          },
+          "A4_ref_oracle_persample": {
+            "ext__helmholtz_2d": {
+              "clip_enabled": true,
+              "clip_rate_all_steps": 0.0552,
+              "clip_rate_epoch1": 0.6,
+              "clip_rate_final": 0.0,
+              "n_steps": 5000,
+              "grad_norm_max_over_run": 9.977824211120605
+            },
+            "ifc_poisson": {
+              "clip_enabled": true,
+              "clip_rate_all_steps": 0.005,
+              "clip_rate_epoch1": 1.0,
+              "clip_rate_final": 0.0,
+              "n_steps": 200,
+              "grad_norm_max_over_run": 1.321811556816101
+            },
+            "sharp__cahn_hilliard": {
+              "clip_enabled": true,
+              "clip_rate_all_steps": 0.0,
+              "clip_rate_epoch1": 0.0,
+              "clip_rate_final": 0.0,
+              "n_steps": 5000,
+              "grad_norm_max_over_run": 0.8271839022636414
+            },
+            "sharp__fisher_kpp_2d": {
+              "clip_enabled": true,
+              "clip_rate_all_steps": 0.0,
+              "clip_rate_epoch1": 0.0,
+              "clip_rate_final": 0.0,
+              "n_steps": 5000,
+              "grad_norm_max_over_run": 0.20157381892204285
+            }
+          }
+        },
+        "clip_rate_definition_verbatim_from_instrumentation": "fraction of optimizer steps whose PRE-clip global grad-norm exceeded clip_rate_threshold; when clip_enabled is false this is the COUNTERFACTUAL exceedance rate at the card's 1.0, directly comparable to the clipped arms (card H3)",
+        "clip_steps_counted_helmholtz_HF": 5000,
+        "prereg_requirement_ge_5000_steps": "MET (5000 optimizer steps on the helmholtz HF stage per arm)",
+        "supporting_clip_contrasts": {
+          "A1_vs_A3_helmholtz_isolates_the_clip_on_the_revin_arm": {
+            "A1_clip_on_nrmse": 0.3677212855674654,
+            "A3_clip_off_nrmse": 0.5278131539124807,
+            "relative_A3_vs_A1": 0.43536198373167995,
+            "note": "on the PER-SAMPLE arm the clipper HELPS by 43.5% relative, while on the GLOBAL arm (A0 vs A2) it HURTS by 13.9% relative - the clip x scaler interaction has opposite sign in the two output spaces. Counterfactual exceedance rate at 1.0 with clipping off: A3 0.7002 vs A2 0.0990, i.e. the per-sample output space produces 7x more large-gradient steps."
+          },
+          "ifc_poisson_clip_rate_all_arms": 0.005,
+          "ifc_poisson_note": "5 HF training rows, 200 HF steps; 1 step in 200 exceeded 1.0 in every arm."
+        },
+        "caveat_carried_verbatim": "2206.07136's threshold-redundancy result ('eta_effective = eta*R', R 'cancels out') is for per-sample DP clipping; ours is a whole-batch norm clip, so it is an argument, not a theorem about our recipe."
+      },
+      "e_helmholtz_report_only": {
+        "clause_verbatim": "(e) REPORT-ONLY arithmetic. `ext__helmholtz_2d` carries no numeric threshold anywhere in this card because `5.766462 - 9.694961 = -3.928500 < 0`: no attainable skill clears its floor. Every helmholtz number is descriptive (relative reduction vs the paired A0).",
+        "arithmetic_restated": {
+          "s5_B2_helmholtz_skill": 5.766462,
+          "helmholtz_min_claimable_effect": 9.694961194291832,
+          "difference": -3.9284989999999995,
+          "consequence": "negative -> no attainable skill clears the floor -> REPORT-ONLY"
+        },
+        "descriptive_readings": {
+          "A0_paired_nrmse": 1.581878829363806,
+          "A1_nrmse": 0.3677212855674654,
+          "A1_relative_reduction_vs_paired_A0": -0.7675414331732638,
+          "A0_skill": 4.801572997891306,
+          "A1_skill": 1.1161667776037678,
+          "skill_improvement": 3.685406220287538,
+          "skill_improvement_over_min_claimable_effect": 0.38013625288747105,
+          "A2_nrmse": 1.3620509614971683,
+          "A3_nrmse": 0.5278131539124807,
+          "A4_legal_nrmse": 34.30919281254122,
+          "A4_ORACLE_LEAKED_rel_l2_mean": 0.2583804589696857,
+          "A4_ORACLE_LEAKED_skill_derived": 0.7842779180947496,
+          "copylf_reference_nrmse": 0.3294501260438018
+        },
+        "verdict": "REPORT-ONLY, no claim made",
+        "reading": "A1 cut helmholtz nRMSE from 1.581879 to 0.367721 (-76.75%), the largest single-arm move on this card, and skill from 4.801573 to 1.116167. That 3.685406 skill improvement is 0.380x the dataset's own min_claimable_effect of 9.694961 - NOT RESOLVABLE against the noise floor and explicitly unclaimable per this clause. The number is descriptive only and must never be quoted as a win. Separately noteworthy and equally unclaimable: A4's LEAKED oracle readout 0.258380 is the only helmholtz number on this card below the copy-LF reference 0.329450 (skill 0.784278 < 1)."
+      },
+      "f_train_space_score_space_confound": {
+        "clause_verbatim": "(f) TRAIN-SPACE / SCORE-SPACE CONFOUND - mandatory part-4 statement. From the E-verdict retrieval: *'training via backpropagation in the normalized space yields better models ... even when evaluating with the non-normalized MSE'* and *'normalizing by instance on certain stationary datasets might be detrimental'* (https://arxiv.org/html/2603.11869). Our scored metric is the frozen per-sample rel-L2 on the RAW field, so a per-sample scaler shifts **which samples the optimizer serves relative to the metric**; any A1 gain may be metric-realignment rather than a representational change. Separation instruments: per-sample rel-L2 distributions (mean / median / top-decile share / test-side effective N) for A0 vs A1, `tools/paired_arm_displacement.py`, and the cross-stream comparator - `s7_loss-B2` is running `MFFP_S7_LOSS=rel` on this SAME champion family, i.e. the per-sample **weighting** half with the output space unchanged, so **A1 minus s7-B2's `rel` isolates the PLACEMENT half**. A4's legal `splits.test` readout (per-sample-trained, globally denormalized) is pre-registered to be WORSE than A0 - that is the controlled statement of E2's point that the arm is unusable without a per-sample test statistic.",
+        "carries_no_falsification_power": true,
+        "instrument_1_per_sample_rel_l2_distributions": {
+          "ext__helmholtz_2d": {
+            "A0_zscore_ctrl": {
+              "n": 100,
+              "rel_l2_mean": 1.5818788293638055,
+              "rel_l2_median": 1.0860764012222583,
+              "rel_l2_p90": 2.9769732583701556,
+              "rel_l2_max": 8.742756089939682,
+              "top_decile_share_of_sum": 0.33565243601884276,
+              "top_decile_share_of_energy": 0.678041731724995,
+              "n_eff_score_space": 14.684980055421391,
+              "n_eff_score_space_fraction": 0.14684980055421393
+            },
+            "A1_revin_lf": {
+              "n": 100,
+              "rel_l2_mean": 0.3677212855674656,
+              "rel_l2_median": 0.14037183670051354,
+              "rel_l2_p90": 0.7773055085085193,
+              "rel_l2_max": 10.187451528824877,
+              "top_decile_share_of_sum": 0.5558188912512579,
+              "top_decile_share_of_energy": 0.9550260372847788,
+              "n_eff_score_space": 1.3665550854933874,
+              "n_eff_score_space_fraction": 0.013665550854933874
+            },
+            "A2_zscore_noclip": {
+              "n": 100,
+              "rel_l2_mean": 1.3620509614971683,
+              "rel_l2_median": 1.092762463848119,
+              "rel_l2_p90": 1.9814616565973209,
+              "rel_l2_max": 8.792218403951317,
+              "top_decile_share_of_sum": 0.2525950903704678,
+              "top_decile_share_of_energy": 0.5572667014929844,
+              "n_eff_score_space": 10.830636297839153,
+              "n_eff_score_space_fraction": 0.10830636297839152
+            },
+            "A3_revin_lf_noclip": {
+              "n": 100,
+              "rel_l2_mean": 0.5278131539124806,
+              "rel_l2_median": 0.24331002236336896,
+              "rel_l2_p90": 1.0146465527467166,
+              "rel_l2_max": 14.308783415031884,
+              "top_decile_share_of_sum": 0.510155634884107,
+              "top_decile_share_of_energy": 0.9449531153493111,
+              "n_eff_score_space": 1.3342552947413664,
+              "n_eff_score_space_fraction": 0.013342552947413664
+            },
+            "A4_ref_oracle_persample": {
+              "n": 100,
+              "rel_l2_mean": 34.309192812541234,
+              "rel_l2_median": 34.37053857133752,
+              "rel_l2_p90": 64.27924697839042,
+              "rel_l2_max": 86.75533217976339,
+              "top_decile_share_of_sum": 0.21935048786026953,
+              "top_decile_share_of_energy": 0.34792463386663497,
+              "n_eff_score_space": 47.49676533691459,
+              "n_eff_score_space_fraction": 0.4749676533691459
+            }
+          },
+          "ifc_poisson": {
+            "A0_zscore_ctrl": {
+              "n": 128,
+              "rel_l2_mean": 0.04269708182250219,
+              "rel_l2_median": 0.033258785062237124,
+              "rel_l2_p90": 0.08294697246058043,
+              "rel_l2_max": 0.18422983528766088,
+              "top_decile_share_of_sum": 0.2975296676662223,
+              "top_decile_share_of_energy": 0.584588514600418,
+              "n_eff_score_space": 27.350983631936263,
+              "n_eff_score_space_fraction": 0.21367955962450205
+            },
+            "A1_revin_lf": {
+              "n": 128,
+              "rel_l2_mean": 0.04264947492646805,
+              "rel_l2_median": 0.03316790637149459,
+              "rel_l2_p90": 0.08271545843625928,
+              "rel_l2_max": 0.18451270357983876,
+              "top_decile_share_of_sum": 0.29773786659604945,
+              "top_decile_share_of_energy": 0.5850826771536959,
+              "n_eff_score_space": 27.280691827248123,
+              "n_eff_score_space_fraction": 0.21313040490037596
+            },
+            "A2_zscore_noclip": {
+              "n": 128,
+              "rel_l2_mean": 0.0476881809011665,
+              "rel_l2_median": 0.03407237305298402,
+              "rel_l2_p90": 0.092153851335421,
+              "rel_l2_max": 0.22372157082503774,
+              "top_decile_share_of_sum": 0.327486127456186,
+              "top_decile_share_of_energy": 0.6424062036606017,
+              "n_eff_score_space": 23.135970294182183,
+              "n_eff_score_space_fraction": 0.1807497679232983
+            },
+            "A3_revin_lf_noclip": {
+              "n": 128,
+              "rel_l2_mean": 0.04769070210889062,
+              "rel_l2_median": 0.034069500232640514,
+              "rel_l2_p90": 0.09216053499779012,
+              "rel_l2_max": 0.22373183194342197,
+              "top_decile_share_of_sum": 0.32748591815863326,
+              "top_decile_share_of_energy": 0.6424071911955139,
+              "n_eff_score_space": 23.135747860689346,
+              "n_eff_score_space_fraction": 0.18074803016163551
+            },
+            "A4_ref_oracle_persample": {
+              "n": 128,
+              "rel_l2_mean": 0.6347782332695069,
+              "rel_l2_median": 0.5454417725490641,
+              "rel_l2_p90": 0.9925609442730756,
+              "rel_l2_max": 1.7326571658920222,
+              "top_decile_share_of_sum": 0.21278814977370233,
+              "top_decile_share_of_energy": 0.38929284853500834,
+              "n_eff_score_space": 58.83442674402175,
+              "n_eff_score_space_fraction": 0.4596439589376699
+            }
+          },
+          "sharp__cahn_hilliard": {
+            "A0_zscore_ctrl": {
+              "n": 100,
+              "rel_l2_mean": 0.4784370829783628,
+              "rel_l2_median": 0.24090251294654572,
+              "rel_l2_p90": 1.2805861561586358,
+              "rel_l2_max": 1.4492662239318577,
+              "top_decile_share_of_sum": 0.2828723099125581,
+              "top_decile_share_of_energy": 0.4287969700031315,
+              "n_eff_score_space": 30.793919108124506,
+              "n_eff_score_space_fraction": 0.30793919108124507
+            },
+            "A1_revin_lf": {
+              "n": 100,
+              "rel_l2_mean": 0.48128445594084984,
+              "rel_l2_median": 0.24037627541861634,
+              "rel_l2_p90": 1.237304503071565,
+              "rel_l2_max": 1.450213767765898,
+              "top_decile_share_of_sum": 0.27899578106684364,
+              "top_decile_share_of_energy": 0.4224707566071612,
+              "n_eff_score_space": 31.217169928143786,
+              "n_eff_score_space_fraction": 0.31217169928143784
+            },
+            "A4_ref_oracle_persample": {
+              "n": 100,
+              "rel_l2_mean": 0.4923609454436568,
+              "rel_l2_median": 0.27993027143514637,
+              "rel_l2_p90": 1.1839710455951846,
+              "rel_l2_max": 1.3797066989065565,
+              "top_decile_share_of_sum": 0.2591893435374543,
+              "top_decile_share_of_energy": 0.40141422428614926,
+              "n_eff_score_space": 33.64218903289788,
+              "n_eff_score_space_fraction": 0.33642189032897885
+            }
+          },
+          "sharp__fisher_kpp_2d": {
+            "A0_zscore_ctrl": {
+              "n": 100,
+              "rel_l2_mean": 0.2642446276917959,
+              "rel_l2_median": 0.2543055126281556,
+              "rel_l2_p90": 0.3506897980454822,
+              "rel_l2_max": 0.3999315135528136,
+              "top_decile_share_of_sum": 0.14037728955402734,
+              "top_decile_share_of_energy": 0.1871781969713452,
+              "n_eff_score_space": 82.4944426943631,
+              "n_eff_score_space_fraction": 0.824944426943631
+            },
+            "A1_revin_lf": {
+              "n": 100,
+              "rel_l2_mean": 0.2590497773858539,
+              "rel_l2_median": 0.2533980659939684,
+              "rel_l2_p90": 0.3443528211727722,
+              "rel_l2_max": 0.39927892839207163,
+              "top_decile_share_of_sum": 0.14060742120222747,
+              "top_decile_share_of_energy": 0.18860385348937136,
+              "n_eff_score_space": 83.06386671483143,
+              "n_eff_score_space_fraction": 0.8306386671483144
+            },
+            "A4_ref_oracle_persample": {
+              "n": 100,
+              "rel_l2_mean": 0.3045535000609519,
+              "rel_l2_median": 0.29932115210729016,
+              "rel_l2_p90": 0.40386870717560897,
+              "rel_l2_max": 0.4535260567739604,
+              "top_decile_share_of_sum": 0.13937527414936834,
+              "top_decile_share_of_energy": 0.184018150038817,
+              "n_eff_score_space": 82.65792430859291,
+              "n_eff_score_space_fraction": 0.8265792430859291
+            }
+          }
+        },
+        "instrument_1_reading": "On helmholtz A1's improvement is a BULK improvement with a WORSE tail: median 1.086076 -> 0.140372 (-87%), p90 2.976973 -> 0.777306 (-74%), but max 8.742756 -> 10.187452 (+17%) and the score-space effective N COLLAPSES 14.684980 -> 1.366555 while the top-decile share of squared error rises 0.678042 -> 0.955026. The per-sample scaler moved the optimizer to serve the bulk and concentrated the residual score error onto a handful of samples - the exact metric-realignment shape this clause was written to detect. Mirror image of leg (c): TRAIN-space effective N stayed at 1.03 while SCORE-space effective N fell from 14.68 to 1.37.",
+        "instrument_2_paired_arm_displacement": {
+          "A1_vs_A0": {
+            "ext__helmholtz_2d": {
+              "pred_displacement_rel": 3.224792283189556,
+              "cos_displacement_vs_control_error_mean": 0.9127543321084126,
+              "frac_samples_moved_toward_truth": 0.97,
+              "displacement_dc_share": 0.5460165911744207,
+              "displacement_pattern_share": 0.4539834088255795,
+              "amplitude_share_of_log_gain": 0.21020267699066195,
+              "nrmse_ratio_control_over_arm": 4.3018418880012845,
+              "nrmse_ratio_after_optimal_rescale": 3.1656185608087672,
+              "verdict": "MOVED_AND_PAID"
+            },
+            "ifc_poisson": {
+              "pred_displacement_rel": 0.0009259359412708463,
+              "cos_displacement_vs_control_error_mean": 0.07130172324620332,
+              "frac_samples_moved_toward_truth": 0.65625,
+              "displacement_dc_share": 0.16726584185624654,
+              "displacement_pattern_share": 0.8327341581437532,
+              "amplitude_share_of_log_gain": 1.8141594374348264,
+              "nrmse_ratio_control_over_arm": 1.0011162363925048,
+              "nrmse_ratio_after_optimal_rescale": 0.9990921248124726,
+              "verdict": "INERT"
+            },
+            "sharp__cahn_hilliard": {
+              "pred_displacement_rel": 0.21597296955690465,
+              "cos_displacement_vs_control_error_mean": 0.19780773194772386,
+              "frac_samples_moved_toward_truth": 0.73,
+              "displacement_dc_share": 0.02161634148140473,
+              "displacement_pattern_share": 0.9783836585185953,
+              "amplitude_share_of_log_gain": 0.18619410315309856,
+              "nrmse_ratio_control_over_arm": 0.9940838044376048,
+              "nrmse_ratio_after_optimal_rescale": 0.9951827071347213,
+              "verdict": "MOVED_TOWARD_TRUTH_UNCASHED"
+            },
+            "sharp__fisher_kpp_2d": {
+              "pred_displacement_rel": 0.06535305252269065,
+              "cos_displacement_vs_control_error_mean": 0.14400957886284063,
+              "frac_samples_moved_toward_truth": 0.97,
+              "displacement_dc_share": 0.10900136952152574,
+              "displacement_pattern_share": 0.8909986304784742,
+              "amplitude_share_of_log_gain": -0.2090145921509159,
+              "nrmse_ratio_control_over_arm": 1.0200534829960664,
+              "nrmse_ratio_after_optimal_rescale": 1.024295498300986,
+              "verdict": "MOVED_TOWARD_TRUTH_UNCASHED"
+            }
+          },
+          "A4_vs_A0": {
+            "ext__helmholtz_2d": {
+              "pred_displacement_rel": 8.123544889214745,
+              "cos_displacement_vs_control_error_mean": 0.19075969529453274,
+              "frac_samples_moved_toward_truth": 0.69,
+              "displacement_dc_share": 0.32878105819818604,
+              "displacement_pattern_share": 0.6712189418018141,
+              "amplitude_share_of_log_gain": 1.3772035426612232,
+              "nrmse_ratio_control_over_arm": 0.046106559195574326,
+              "nrmse_ratio_after_optimal_rescale": 3.1917835962760437,
+              "verdict": "MOVED_TOWARD_TRUTH_UNCASHED"
+            },
+            "ifc_poisson": {
+              "pred_displacement_rel": 0.5618359915481816,
+              "cos_displacement_vs_control_error_mean": -0.04366729827425786,
+              "frac_samples_moved_toward_truth": 0.4453125,
+              "displacement_dc_share": 0.2599215439274569,
+              "displacement_pattern_share": 0.7400784560725432,
+              "amplitude_share_of_log_gain": 0.10711869695718235,
+              "nrmse_ratio_control_over_arm": 0.06726298978870995,
+              "nrmse_ratio_after_optimal_rescale": 0.08981383831629305,
+              "verdict": "MOVED_NOT_TOWARD_TRUTH"
+            },
+            "sharp__cahn_hilliard": {
+              "pred_displacement_rel": 0.2305034973384594,
+              "cos_displacement_vs_control_error_mean": 0.17764517080276232,
+              "frac_samples_moved_toward_truth": 0.74,
+              "displacement_dc_share": 0.018480472827648937,
+              "displacement_pattern_share": 0.9815195271723511,
+              "amplitude_share_of_log_gain": 0.8327065552304812,
+              "nrmse_ratio_control_over_arm": 0.9717202134041166,
+              "nrmse_ratio_after_optimal_rescale": 0.9952122901441904,
+              "verdict": "MOVED_TOWARD_TRUTH_UNCASHED"
+            },
+            "sharp__fisher_kpp_2d": {
+              "pred_displacement_rel": 0.19743693070682694,
+              "cos_displacement_vs_control_error_mean": 0.12482282726045427,
+              "frac_samples_moved_toward_truth": 0.92,
+              "displacement_dc_share": 0.8225832183682515,
+              "displacement_pattern_share": 0.17741678163174857,
+              "amplitude_share_of_log_gain": 1.4322754246214013,
+              "nrmse_ratio_control_over_arm": 0.8676460051810643,
+              "nrmse_ratio_after_optimal_rescale": 1.06329308882866,
+              "verdict": "MOVED_TOWARD_TRUTH_UNCASHED"
+            }
+          },
+          "alpha_median_amplitude_calibration": {
+            "helmholtz_A0": 0.39594132996311926,
+            "helmholtz_A1": 1.000223225016033,
+            "helmholtz_A4": 0.02654865480915522,
+            "note": "A0 predicts helmholtz at 0.395941 of the needed amplitude; A1 lands at 1.000223 - the per-sample scale fixed amplitude calibration essentially exactly. But only 21.02% of A1's log-gain is amplitude (amplitude_share_of_log_gain 0.210203) and corr_demeaned rose 0.420874 -> 0.880254, so ~79% of the helmholtz gain is STRUCTURE, not level. This contrasts with s5-B2 F3's finding that 91.6% of the zscore gain was amplitude calibration."
+          }
+        },
+        "instrument_3_cross_stream_comparator_s7_loss_B2": {
+          "status": "NOT EVALUABLE ON A SHARED DATASET",
+          "reason": "s7_loss-B2 (status complete) ran MFFP_S7_LOSS=rel on `sharp__allen_cahn_2d` ONLY (recipe.datasets == 'sharp__allen_cahn_2d'; its part 5 per_dataset has exactly that one key). allen_cahn is one of the two datasets THIS card dropped. There is therefore no dataset on which 'A1 minus s7-B2's rel' can be formed, and the PLACEMENT-half isolation the clause specifies cannot be executed from these two cards' results.",
+          "s7_B2_recorded_numbers_for_the_record_DIFFERENT_DATASET": {
+            "dataset": "sharp__allen_cahn_2d",
+            "nRMSE": 0.3117986421537269,
+            "skill": 19.30429928443197,
+            "reference_type": "copylf",
+            "reference_nrmse": 0.016151772077279084,
+            "arm_tag": "arm_rel_both",
+            "source": "round1/experiment_cards/s7_loss/batch_2/B2.json part 5",
+            "USE_RESTRICTION": "card part 4 (f) wording only licenses this as the decomposition comparator; it is a DIFFERENT DATASET and must never be differenced against any B3 number."
+          },
+          "nrmse_def_hash_shared": true
+        },
+        "instrument_4_A4_legal_readout_prereg_check": {
+          "prereg": "A4's legal splits.test readout is pre-registered to be WORSE than A0",
+          "per_dataset": {
+            "ext__helmholtz_2d": {
+              "A0_nrmse": 1.581878829363806,
+              "A4_legal_nrmse": 34.30919281254122,
+              "A4_worse_than_A0": true
+            },
+            "ifc_poisson": {
+              "A0_nrmse": 0.042697081822502196,
+              "A4_legal_nrmse": 0.6347782332695069,
+              "A4_worse_than_A0": true
+            },
+            "sharp__cahn_hilliard": {
+              "A0_nrmse": 0.47843708297836285,
+              "A4_legal_nrmse": 0.49236094544365683,
+              "A4_worse_than_A0": true
+            },
+            "sharp__fisher_kpp_2d": {
+              "A0_nrmse": 0.2642446276917959,
+              "A4_legal_nrmse": 0.304553500060952,
+              "A4_worse_than_A0": true
+            }
+          },
+          "verdict": "PRE-REGISTERED PREDICTION HELD on all 4 datasets"
+        },
+        "verdict": "CONFOUND NOT SEPARATED. Instruments 1, 2 and 4 all ran and point the same way - A1's helmholtz move has a large metric-realignment component (score-space n_eff 14.68 -> 1.37) AND a large genuine-structure component (corr_demeaned 0.42 -> 0.88, 79% of log-gain non-amplitude). Instrument 3, the one designed to CLEANLY split them, could not be run because s7_loss-B2 landed on a non-overlapping dataset. The placement-vs-weighting decomposition remains OPEN."
+      },
+      "g_ifc_poisson_double_count_attribution": {
+        "clause_verbatim": "(g) ifc_poisson DOUBLE-COUNT ATTRIBUTION - pre-stated for the round report. On `ifc_poisson` (HF DC energy share **0.6928**, constant-field oracle 0.51327), `s1_poisson-B3`'s gain head and this card's scaler act on the SAME level channel, and s1's head strictly dominates it: level rel-err **0.008792** (s1 head) vs **0.011486** (s5-B2 zscore), pattern-only **0.052198** vs **0.090934**. s1-B3 part 7 note (1) already rules *'The round report must NOT count them as two stackable ifc_poisson levers'*. Therefore: **(1)** part 5 MUST table `nRMSE / level rel-err / pattern-only nRMSE / DC share` for every arm via `tools/dc_pattern_split.py`, alongside the five existing rows - s1 base 0.034264/0.024023/0.058118, s1 head 0.024970/0.008792/0.052198, s1 self_only 0.021913/0.008809/0.044650, s5-B1 maxabs 0.047483/0.024773/0.090870, s5-B2 zscore 0.042664/0.011486/0.090934. **(2)** If an s5-B3 ifc_poisson move is LEVEL-dominated (>= 50% of removed squared-error energy in the DC term, or `Delta level rel-err` >= 50% relative), it is the SAME axis; the round report credits the axis **once, to `s1_poisson-B3`**, and records s5-B3 as a substrate-independent replication on an LF-blind family - never as an additive gain. **(3)** Only if the move is PATTERN-dominated (level rel-err flat within +-10% relative while pattern-only nRMSE falls) may s5-B3 be credited separately; this is the discriminator precisely because s5-B2's zscore left pattern-only flat (0.090870 -> 0.090934). **(4)** No summing: the round report quotes the single best ifc_poisson number (currently s1-B3 `self_only__none` **0.021913**, skill 0.608694, already below the ADR-0002 paper bar) with axis attributions beneath it; s5-B3 never claims progress toward success criterion 1. **(5)** A4's oracle readout is labelled LEAKED in every table.",
+        "requirement_1_table_status": "PARTIAL - emitted for 3 of 4 datasets; MISSING for ifc_poisson (the PRIMARY dataset)",
+        "ifc_poisson_table_MISSING": {
+          "why": "the in-job instrumentation call (part-3 mandatory item 3) crashed on ifc_poisson ONLY. Verbatim from slurm/r1-s5_tuning-B3-s0_66076686.err: 'File \".../round1/eval/panel_data.py\", line 59, in copylf_prediction / raise ValueError(\"no LF fidelities present\") ; ValueError: no LF fidelities present', reached from dc_pattern_split.py:146 `panel_data.copylf_prediction(panel_data.load_split(args.dataset, \"test\"))`. slurm .out logged '[warn] dc_pattern_split failed on ifc_poisson' and the script continued (no -e on that leg).",
+          "root_cause": "dc_pattern_split.py:146 is reached only under `--include-copylf`; ifc_poisson's test split ships fidelity_64 ONLY (no LF fidelity), so the copy-LF comparator row cannot be built. The copy-LF row is also meaningless for ifc_poisson, whose reference_type is `paper_bar` (0.036), not `copylf`. The five ARM rows the card actually requires do NOT depend on that flag.",
+          "exact_fix_for_the_mechanism_analyst": "re-invoke tools/dc_pattern_split.py with the same `--preds LABEL=<...>/ckpt_ifc_poisson_e200_s0/<TAG>/preds_test.npz` list and `--dataset ifc_poisson` but WITHOUT `--include-copylf`. All five arms' preds_test.npz are present on disk (verified). This is a read-only recomputation from existing artifacts; NOT run by the initial-analyzer because the card assigns instrumentation item 3 to the job script, not to the analyzer.",
+          "arms_whose_preds_test_npz_are_present_for_ifc_poisson": [
+            "A0_zscore_ctrl",
+            "A1_revin_lf",
+            "A2_zscore_noclip",
+            "A3_revin_lf_noclip",
+            "A4_ref_oracle_persample"
+          ],
+          "requirement_1_is_therefore_NOT_SATISFIED_for_ifc_poisson": true
+        },
+        "requirements_2_and_3_discriminator": {
+          "status": "MOOT - there is no ifc_poisson move to attribute",
+          "A0_ifc_poisson_nrmse": 0.042697081822502196,
+          "A1_ifc_poisson_nrmse": 0.042649474926468034,
+          "A1_vs_A0_relative": -0.0011149917980828475,
+          "A1_vs_A0_skill_delta": -0.001322413778726883,
+          "ifc_poisson_min_claimable_effect": 0.23990756041925798,
+          "skill_delta_over_floor": 0.005512180509925812,
+          "paired_arm_displacement_verdict": "INERT",
+          "paired_arm_displacement_rel": 0.0009259359412708463,
+          "reading": "A1 vs A0 on ifc_poisson is -0.111% in nRMSE and -0.001322 in skill, i.e. 181x SMALLER than the dataset's min_claimable_effect (0.239908), and paired_arm_displacement.py independently verdicts the pair INERT (displacement 0.001). There is no move, so neither the LEVEL-dominated branch (2) nor the PATTERN-dominated branch (3) can be entered: s5-B3 makes NO ifc_poisson attribution claim, additive or replicative. The missing dc_pattern_split rows are therefore a completeness gap in part 5, not a gap in any conclusion."
+        },
+        "requirement_4_no_summing": {
+          "honoured": true,
+          "statement": "s5-B3 claims NO progress toward success criterion 1. The round report's best ifc_poisson number remains s1_poisson-B3 self_only__none 0.021913 (skill 0.608694); nothing on this card is to be summed with it or with any other lever."
+        },
+        "requirement_5_oracle_labelling": {
+          "honoured": true,
+          "statement": "every A4 ref_oracle_persample readout in this part 5 carries LEAKED / ORACLE / leaderboard_eligible=false."
+        },
+        "emitted_tables": {
+          "ext__helmholtz_2d": {
+            "A0_zscore_ctrl": {
+              "nRMSE": 1.5818788293638055,
+              "level_rel_err": 2.0894558456895225,
+              "pattern_only_nRMSE": 1.6627958611470428,
+              "pattern_only_nRMSE_median": 1.1620668949697985,
+              "corr_demeaned_mean": 0.4208740882064955,
+              "frac_samples_pattern_useless": 0.7,
+              "verdict": "WEAK_PATTERN",
+              "DC_share_dataset_level": 0.6364887231816976
+            },
+            "A1_revin_lf": {
+              "nRMSE": 0.3677212855674656,
+              "level_rel_err": 0.5621498694725952,
+              "pattern_only_nRMSE": 0.3892689680440993,
+              "pattern_only_nRMSE_median": 0.14727075608063483,
+              "corr_demeaned_mean": 0.880254189909916,
+              "frac_samples_pattern_useless": 0.06,
+              "verdict": "REAL_PATTERN",
+              "DC_share_dataset_level": 0.6364887231816976
+            },
+            "A2_zscore_noclip": {
+              "nRMSE": 1.3620509614971683,
+              "level_rel_err": 2.5074909422143823,
+              "pattern_only_nRMSE": 1.3638032796044675,
+              "pattern_only_nRMSE_median": 1.1683719564497248,
+              "corr_demeaned_mean": 0.28595420440449,
+              "frac_samples_pattern_useless": 0.66,
+              "verdict": "WEAK_PATTERN",
+              "DC_share_dataset_level": 0.6364887231816976
+            },
+            "A3_revin_lf_noclip": {
+              "nRMSE": 0.5278131539124806,
+              "level_rel_err": 3.471607906778101,
+              "pattern_only_nRMSE": 0.5550093680910261,
+              "pattern_only_nRMSE_median": 0.27494933310061354,
+              "corr_demeaned_mean": 0.8177972947980359,
+              "frac_samples_pattern_useless": 0.11,
+              "verdict": "REAL_PATTERN",
+              "DC_share_dataset_level": 0.6364887231816976
+            },
+            "A4_ref_oracle_persample": {
+              "nRMSE": 34.309192812541234,
+              "level_rel_err": 71.57691802657709,
+              "pattern_only_nRMSE": 33.01980995569326,
+              "pattern_only_nRMSE_median": 33.00040131899595,
+              "corr_demeaned_mean": 0.8723403049656053,
+              "frac_samples_pattern_useless": 0.97,
+              "verdict": "REAL_PATTERN",
+              "DC_share_dataset_level": 0.6364887231816976
+            },
+            "copylf": {
+              "nRMSE": 0.3294501260438018,
+              "level_rel_err": 0.21995991639083956,
+              "pattern_only_nRMSE": 0.33116826398200516,
+              "pattern_only_nRMSE_median": 0.1275753827869896,
+              "corr_demeaned_mean": 0.9732244186055913,
+              "frac_samples_pattern_useless": 0.03,
+              "verdict": "REAL_PATTERN",
+              "DC_share_dataset_level": 0.6364887231816976
+            }
+          },
+          "sharp__cahn_hilliard": {
+            "A0_zscore_ctrl": {
+              "nRMSE": 0.4784370829783628,
+              "level_rel_err": 1.7878852025458603,
+              "pattern_only_nRMSE": 0.47567527274610066,
+              "pattern_only_nRMSE_median": 0.2356369490235497,
+              "corr_demeaned_mean": 0.7353069820853569,
+              "frac_samples_pattern_useless": 0.21,
+              "verdict": "REAL_PATTERN",
+              "DC_share_dataset_level": 0.0044618199711890325
+            },
+            "A1_revin_lf": {
+              "nRMSE": 0.48128445594084984,
+              "level_rel_err": 2.0592590111685736,
+              "pattern_only_nRMSE": 0.47760685390989194,
+              "pattern_only_nRMSE_median": 0.2345892810150184,
+              "corr_demeaned_mean": 0.7401061470647697,
+              "frac_samples_pattern_useless": 0.22,
+              "verdict": "REAL_PATTERN",
+              "DC_share_dataset_level": 0.0044618199711890325
+            },
+            "A4_ref_oracle_persample": {
+              "nRMSE": 0.4923609454436568,
+              "level_rel_err": 1.8427794980860126,
+              "pattern_only_nRMSE": 0.4896679831072593,
+              "pattern_only_nRMSE_median": 0.2742161466831551,
+              "corr_demeaned_mean": 0.7401180627076662,
+              "frac_samples_pattern_useless": 0.22,
+              "verdict": "REAL_PATTERN",
+              "DC_share_dataset_level": 0.0044618199711890325
+            },
+            "copylf": {
+              "nRMSE": 0.08765999100758841,
+              "level_rel_err": 1.0391658622279413e-08,
+              "pattern_only_nRMSE": 0.0878136191536354,
+              "pattern_only_nRMSE_median": 0.05902313616467572,
+              "corr_demeaned_mean": 0.9797207304175498,
+              "frac_samples_pattern_useless": 0.02,
+              "verdict": "REAL_PATTERN",
+              "DC_share_dataset_level": 0.0044618199711890325
+            }
+          },
+          "sharp__fisher_kpp_2d": {
+            "A0_zscore_ctrl": {
+              "nRMSE": 0.2642446276917959,
+              "level_rel_err": 0.009480886161790764,
+              "pattern_only_nRMSE": 1.0656581616767922,
+              "pattern_only_nRMSE_median": 1.0315709056629383,
+              "corr_demeaned_mean": 0.0023981803814813675,
+              "frac_samples_pattern_useless": 1.0,
+              "verdict": "LEVEL_ONLY",
+              "DC_share_dataset_level": 0.9364528429724565
+            },
+            "A1_revin_lf": {
+              "nRMSE": 0.2590497773858539,
+              "level_rel_err": 0.02585779092990549,
+              "pattern_only_nRMSE": 1.0390084026835813,
+              "pattern_only_nRMSE_median": 1.0243012545204837,
+              "corr_demeaned_mean": 0.0021446684993509002,
+              "frac_samples_pattern_useless": 1.0,
+              "verdict": "LEVEL_ONLY",
+              "DC_share_dataset_level": 0.9364528429724565
+            },
+            "A4_ref_oracle_persample": {
+              "nRMSE": 0.3045535000609519,
+              "level_rel_err": 0.17634956355189224,
+              "pattern_only_nRMSE": 1.0011562574001396,
+              "pattern_only_nRMSE_median": 1.0006404304778194,
+              "corr_demeaned_mean": 0.001963887639639023,
+              "frac_samples_pattern_useless": 0.83,
+              "verdict": "LEVEL_ONLY",
+              "DC_share_dataset_level": 0.9364528429724565
+            },
+            "copylf": {
+              "nRMSE": 0.06263229669603956,
+              "level_rel_err": 0.0013429232843403596,
+              "pattern_only_nRMSE": 0.2455699254408952,
+              "pattern_only_nRMSE_median": 0.24482484959179945,
+              "corr_demeaned_mean": 0.9692834058415001,
+              "frac_samples_pattern_useless": 0.0,
+              "verdict": "REAL_PATTERN",
+              "DC_share_dataset_level": 0.9364528429724565
+            }
+          }
+        },
+        "emitted_tables_dataset_context": {
+          "ext__helmholtz_2d": {
+            "n_samples": 100,
+            "nrmse_constant_field_oracle": 0.8536232692922051,
+            "hf_dc_energy_share": 0.6364887231816976
+          },
+          "sharp__cahn_hilliard": {
+            "n_samples": 100,
+            "nrmse_constant_field_oracle": 0.9977421822867746,
+            "hf_dc_energy_share": 0.0044618199711890325
+          },
+          "sharp__fisher_kpp_2d": {
+            "n_samples": 100,
+            "nrmse_constant_field_oracle": 0.2477900865423751,
+            "hf_dc_energy_share": 0.9364528429724565
+          }
+        },
+        "prior_ifc_poisson_rows_carried_from_the_card_for_the_eventual_table": {
+          "_format": "nRMSE / level rel-err / pattern-only nRMSE",
+          "s1_base": [
+            0.034264,
+            0.024023,
+            0.058118
+          ],
+          "s1_head": [
+            0.02497,
+            0.008792,
+            0.052198
+          ],
+          "s1_self_only": [
+            0.021913,
+            0.008809,
+            0.04465
+          ],
+          "s5_B1_maxabs": [
+            0.047483,
+            0.024773,
+            0.09087
+          ],
+          "s5_B2_zscore": [
+            0.042664,
+            0.011486,
+            0.090934
+          ],
+          "s5_B3_A0_zscore_ctrl": "PENDING (see ifc_poisson_table_MISSING)",
+          "s5_B3_A1_revin_lf": "PENDING",
+          "s5_B3_A2_zscore_noclip": "PENDING",
+          "s5_B3_A3_revin_lf_noclip": "PENDING",
+          "s5_B3_A4_ORACLE_LEAKED": "PENDING"
+        },
+        "verdict": "PARTIALLY SATISFIED. Requirements (2),(3),(4),(5) are satisfied/moot. Requirement (1) is satisfied for helmholtz, cahn_hilliard and fisher_kpp and UNSATISFIED for ifc_poisson due to a one-flag tool-invocation defect, recorded above with its exact fix. Flagged for the mechanism analyst's turn 1."
+      }
+    },
+    "n_eff_readings": {
+      "_definition": "n_eff = 1 / sum_i alpha_i^2, alpha_i = l_i / sum_j l_j (realized per-sample loss energies, normalized target space)",
+      "_source_cited_application_only": "https://alex.smola.org/posts/40-effective-sample-size/",
+      "_files": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s5_tuning/B3/instr/<ARM_TAG>/<dataset>__{LF_pretrain,HF_finetune}.json",
+      "_loss_space": "normalized target space (the optimizer's), per the instrumentation JSON's own `loss_space` field",
+      "table": {
+        "A0_zscore_ctrl": {
+          "ext__helmholtz_2d": {
+            "LF_pretrain": {
+              "n_rows": 400,
+              "n_steps": 5000,
+              "n_eff_pooled_epoch1": 3.066204786594945,
+              "n_eff_pooled_final": 3.1887841601707203,
+              "n_eff_pooled_fraction_final": 0.007971960400426801,
+              "n_eff_pooled_median_over_epochs": 3.0403613360161783,
+              "n_eff_batch_median_epoch1": 2.107982122950941,
+              "n_eff_batch_median_final": 2.3872774264403724,
+              "top1_energy_share_pooled_epoch1": 0.4910785576243548,
+              "top1_energy_share_pooled_final": 0.46298841405880575
+            },
+            "HF_finetune": {
+              "n_rows": 400,
+              "n_steps": 5000,
+              "n_eff_pooled_epoch1": 1.025626489476434,
+              "n_eff_pooled_final": 1.0101535832518702,
+              "n_eff_pooled_fraction_final": 0.0025253839581296754,
+              "n_eff_pooled_median_over_epochs": 1.0129919396618803,
+              "n_eff_batch_median_epoch1": 2.218982226871536,
+              "n_eff_batch_median_final": 3.0623422774302558,
+              "top1_energy_share_pooled_epoch1": 0.9874239241913376,
+              "top1_energy_share_pooled_final": 0.994959997711023
+            }
+          },
+          "ifc_poisson": {
+            "LF_pretrain": {
+              "n_rows": 100,
+              "n_steps": 1400,
+              "n_eff_pooled_epoch1": 57.31546976647752,
+              "n_eff_pooled_final": 70.7254773569511,
+              "n_eff_pooled_fraction_final": 0.707254773569511,
+              "n_eff_pooled_median_over_epochs": 69.16483763629601,
+              "n_eff_batch_median_epoch1": 9.550895727170651,
+              "n_eff_batch_median_final": 11.519751078425049,
+              "top1_energy_share_pooled_epoch1": 0.048757921794508836,
+              "top1_energy_share_pooled_final": 0.03618911928184919
+            },
+            "HF_finetune": {
+              "n_rows": 5,
+              "n_steps": 200,
+              "n_eff_pooled_epoch1": 3.587042154338498,
+              "n_eff_pooled_final": 4.621869976050145,
+              "n_eff_pooled_fraction_final": 0.9243739952100289,
+              "n_eff_pooled_median_over_epochs": 4.642986624792279,
+              "n_eff_batch_median_epoch1": 3.587042154338498,
+              "n_eff_batch_median_final": 4.621869976050145,
+              "top1_energy_share_pooled_epoch1": 0.3984547370220166,
+              "top1_energy_share_pooled_final": 0.28800184069786805
+            }
+          },
+          "sharp__cahn_hilliard": {
+            "LF_pretrain": {
+              "n_rows": 400,
+              "n_steps": 5000,
+              "n_eff_pooled_epoch1": 397.3591912491587,
+              "n_eff_pooled_final": 361.187643977242,
+              "n_eff_pooled_fraction_final": 0.902969109943105,
+              "n_eff_pooled_median_over_epochs": 321.0528252306908,
+              "n_eff_batch_median_epoch1": 15.902287907396778,
+              "n_eff_batch_median_final": 15.03975602463254,
+              "top1_energy_share_pooled_epoch1": 0.003097797361511183,
+              "top1_energy_share_pooled_final": 0.008909113911437515
+            },
+            "HF_finetune": {
+              "n_rows": 400,
+              "n_steps": 5000,
+              "n_eff_pooled_epoch1": 14.657716664779125,
+              "n_eff_pooled_final": 208.3073351350261,
+              "n_eff_pooled_fraction_final": 0.5207683378375653,
+              "n_eff_pooled_median_over_epochs": 200.9682360501666,
+              "n_eff_batch_median_epoch1": 7.133659888652305,
+              "n_eff_batch_median_final": 14.527339788311181,
+              "top1_energy_share_pooled_epoch1": 0.10090454064685396,
+              "top1_energy_share_pooled_final": 0.04307962340220811
+            }
+          },
+          "sharp__fisher_kpp_2d": {
+            "LF_pretrain": {
+              "n_rows": 400,
+              "n_steps": 5000,
+              "n_eff_pooled_epoch1": 372.776569414497,
+              "n_eff_pooled_final": 373.08077154873826,
+              "n_eff_pooled_fraction_final": 0.9327019288718457,
+              "n_eff_pooled_median_over_epochs": 373.23335892782256,
+              "n_eff_batch_median_epoch1": 14.972970627700098,
+              "n_eff_batch_median_final": 14.971880820588257,
+              "top1_energy_share_pooled_epoch1": 0.004486050637333219,
+              "top1_energy_share_pooled_final": 0.004223457379525208
+            },
+            "HF_finetune": {
+              "n_rows": 400,
+              "n_steps": 5000,
+              "n_eff_pooled_epoch1": 336.99985158055847,
+              "n_eff_pooled_final": 335.7911211356844,
+              "n_eff_pooled_fraction_final": 0.839477802839211,
+              "n_eff_pooled_median_over_epochs": 337.0359643377425,
+              "n_eff_batch_median_epoch1": 13.690818236431218,
+              "n_eff_batch_median_final": 13.627425809178174,
+              "top1_energy_share_pooled_epoch1": 0.005520138351418406,
+              "top1_energy_share_pooled_final": 0.0056768782929432346
+            }
+          }
+        },
+        "A1_revin_lf": {
+          "ext__helmholtz_2d": {
+            "LF_pretrain": {
+              "n_rows": 400,
+              "n_steps": 5000,
+              "n_eff_pooled_epoch1": 306.47783892910223,
+              "n_eff_pooled_final": 209.8448096848566,
+              "n_eff_pooled_fraction_final": 0.5246120242121415,
+              "n_eff_pooled_median_over_epochs": 141.78187988388052,
+              "n_eff_batch_median_epoch1": 12.287501954927595,
+              "n_eff_batch_median_final": 9.712032473372926,
+              "top1_energy_share_pooled_epoch1": 0.008961679553031739,
+              "top1_energy_share_pooled_final": 0.017059559693159733
+            },
+            "HF_finetune": {
+              "n_rows": 400,
+              "n_steps": 5000,
+              "n_eff_pooled_epoch1": 3.1867749229616686,
+              "n_eff_pooled_final": 1.0305144974065188,
+              "n_eff_pooled_fraction_final": 0.002576286243516297,
+              "n_eff_pooled_median_over_epochs": 1.1504779030200907,
+              "n_eff_batch_median_epoch1": 3.383595164896009,
+              "n_eff_batch_median_final": 9.61715919278755,
+              "top1_energy_share_pooled_epoch1": 0.4843965542400349,
+              "top1_energy_share_pooled_final": 0.9850824572717193
+            }
+          },
+          "ifc_poisson": {
+            "LF_pretrain": {
+              "n_rows": 100,
+              "n_steps": 1400,
+              "n_eff_pooled_epoch1": 57.31546976647752,
+              "n_eff_pooled_final": 70.38194587300059,
+              "n_eff_pooled_fraction_final": 0.7038194587300058,
+              "n_eff_pooled_median_over_epochs": 68.82957956876035,
+              "n_eff_batch_median_epoch1": 9.550895727170651,
+              "n_eff_batch_median_final": 11.571107812077269,
+              "top1_energy_share_pooled_epoch1": 0.048757921794508836,
+              "top1_energy_share_pooled_final": 0.03762082912933997
+            },
+            "HF_finetune": {
+              "n_rows": 5,
+              "n_steps": 200,
+              "n_eff_pooled_epoch1": 3.5871039694567726,
+              "n_eff_pooled_final": 4.636147155621317,
+              "n_eff_pooled_fraction_final": 0.9272294311242634,
+              "n_eff_pooled_median_over_epochs": 4.653847380230111,
+              "n_eff_batch_median_epoch1": 3.5871039694567726,
+              "n_eff_batch_median_final": 4.636147155621317,
+              "top1_energy_share_pooled_epoch1": 0.39838913884841126,
+              "top1_energy_share_pooled_final": 0.2864170219900917
+            }
+          },
+          "sharp__cahn_hilliard": {
+            "LF_pretrain": {
+              "n_rows": 400,
+              "n_steps": 5000,
+              "n_eff_pooled_epoch1": 396.960454992819,
+              "n_eff_pooled_final": 356.62302443423596,
+              "n_eff_pooled_fraction_final": 0.8915575610855899,
+              "n_eff_pooled_median_over_epochs": 308.28710597791144,
+              "n_eff_batch_median_epoch1": 15.894221563613254,
+              "n_eff_batch_median_final": 15.030920378418442,
+              "top1_energy_share_pooled_epoch1": 0.003122870105346963,
+              "top1_energy_share_pooled_final": 0.011776460051004606
+            },
+            "HF_finetune": {
+              "n_rows": 400,
+              "n_steps": 5000,
+              "n_eff_pooled_epoch1": 14.915923073221476,
+              "n_eff_pooled_final": 281.50741155189525,
+              "n_eff_pooled_fraction_final": 0.7037685288797381,
+              "n_eff_pooled_median_over_epochs": 267.25830093380216,
+              "n_eff_batch_median_epoch1": 6.648356329216228,
+              "n_eff_batch_median_final": 14.782018479863154,
+              "top1_energy_share_pooled_epoch1": 0.10504155249483281,
+              "top1_energy_share_pooled_final": 0.026042106600848037
+            }
+          },
+          "sharp__fisher_kpp_2d": {
+            "LF_pretrain": {
+              "n_rows": 400,
+              "n_steps": 5000,
+              "n_eff_pooled_epoch1": 141.03257269942753,
+              "n_eff_pooled_final": 378.89983500981526,
+              "n_eff_pooled_fraction_final": 0.9472495875245381,
+              "n_eff_pooled_median_over_epochs": 378.30309383159727,
+              "n_eff_batch_median_epoch1": 15.35873675264991,
+              "n_eff_batch_median_final": 15.243825267718877,
+              "top1_energy_share_pooled_epoch1": 0.022800993673272523,
+              "top1_energy_share_pooled_final": 0.003979907283351557
+            },
+            "HF_finetune": {
+              "n_rows": 400,
+              "n_steps": 5000,
+              "n_eff_pooled_epoch1": 345.1586241940156,
+              "n_eff_pooled_final": 348.40563838840023,
+              "n_eff_pooled_fraction_final": 0.8710140959710005,
+              "n_eff_pooled_median_over_epochs": 347.582855660336,
+              "n_eff_batch_median_epoch1": 13.949302569409317,
+              "n_eff_batch_median_final": 14.170748419519,
+              "top1_energy_share_pooled_epoch1": 0.005257816146550773,
+              "top1_energy_share_pooled_final": 0.005290341740641433
+            }
+          }
+        },
+        "A2_zscore_noclip": {
+          "ext__helmholtz_2d": {
+            "LF_pretrain": {
+              "n_rows": 400,
+              "n_steps": 5000,
+              "n_eff_pooled_epoch1": 3.0873797111554855,
+              "n_eff_pooled_final": 2.7925620158773397,
+              "n_eff_pooled_fraction_final": 0.006981405039693349,
+              "n_eff_pooled_median_over_epochs": 3.064128301521904,
+              "n_eff_batch_median_epoch1": 2.776874322769833,
+              "n_eff_batch_median_final": 3.06566288918643,
+              "top1_energy_share_pooled_epoch1": 0.4896917669035565,
+              "top1_energy_share_pooled_final": 0.5717409448785522
+            },
+            "HF_finetune": {
+              "n_rows": 400,
+              "n_steps": 5000,
+              "n_eff_pooled_epoch1": 2.053272230636799,
+              "n_eff_pooled_final": 8.528145303171092,
+              "n_eff_pooled_fraction_final": 0.02132036325792773,
+              "n_eff_pooled_median_over_epochs": 8.605159830840208,
+              "n_eff_batch_median_epoch1": 2.94046206666903,
+              "n_eff_batch_median_final": 2.3503987868130016,
+              "top1_energy_share_pooled_epoch1": 0.6062526680090062,
+              "top1_energy_share_pooled_final": 0.22352248593843016
+            }
+          },
+          "ifc_poisson": {
+            "LF_pretrain": {
+              "n_rows": 100,
+              "n_steps": 1400,
+              "n_eff_pooled_epoch1": 57.41272389082285,
+              "n_eff_pooled_final": 65.5209538137165,
+              "n_eff_pooled_fraction_final": 0.655209538137165,
+              "n_eff_pooled_median_over_epochs": 63.686202663751835,
+              "n_eff_batch_median_epoch1": 9.518386234194883,
+              "n_eff_batch_median_final": 11.054673776342025,
+              "top1_energy_share_pooled_epoch1": 0.04823218089044225,
+              "top1_energy_share_pooled_final": 0.04941101350064182
+            },
+            "HF_finetune": {
+              "n_rows": 5,
+              "n_steps": 200,
+              "n_eff_pooled_epoch1": 3.591702693788046,
+              "n_eff_pooled_final": 4.845909706691424,
+              "n_eff_pooled_fraction_final": 0.9691819413382848,
+              "n_eff_pooled_median_over_epochs": 4.851122945925406,
+              "n_eff_batch_median_epoch1": 3.591702693788046,
+              "n_eff_batch_median_final": 4.845909706691424,
+              "top1_energy_share_pooled_epoch1": 0.39802786495077946,
+              "top1_energy_share_pooled_final": 0.25439670638544826
+            }
+          }
+        },
+        "A3_revin_lf_noclip": {
+          "ext__helmholtz_2d": {
+            "LF_pretrain": {
+              "n_rows": 400,
+              "n_steps": 5000,
+              "n_eff_pooled_epoch1": 318.20796631519437,
+              "n_eff_pooled_final": 136.33150472020472,
+              "n_eff_pooled_fraction_final": 0.3408287618005118,
+              "n_eff_pooled_median_over_epochs": 123.59146574252239,
+              "n_eff_batch_median_epoch1": 13.095957234994431,
+              "n_eff_batch_median_final": 7.458650745115984,
+              "top1_energy_share_pooled_epoch1": 0.008334875383908275,
+              "top1_energy_share_pooled_final": 0.0310308583014654
+            },
+            "HF_finetune": {
+              "n_rows": 400,
+              "n_steps": 5000,
+              "n_eff_pooled_epoch1": 3.4926930419989377,
+              "n_eff_pooled_final": 3.7107739180676726,
+              "n_eff_pooled_fraction_final": 0.009276934795169181,
+              "n_eff_pooled_median_over_epochs": 3.320998512896039,
+              "n_eff_batch_median_epoch1": 4.060334420157653,
+              "n_eff_batch_median_final": 4.510114369873051,
+              "top1_energy_share_pooled_epoch1": 0.4716965900316669,
+              "top1_energy_share_pooled_final": 0.5096697937557492
+            }
+          },
+          "ifc_poisson": {
+            "LF_pretrain": {
+              "n_rows": 100,
+              "n_steps": 1400,
+              "n_eff_pooled_epoch1": 57.412720981164576,
+              "n_eff_pooled_final": 65.53934803284827,
+              "n_eff_pooled_fraction_final": 0.6553934803284827,
+              "n_eff_pooled_median_over_epochs": 63.674961647758686,
+              "n_eff_batch_median_epoch1": 9.518384746817178,
+              "n_eff_batch_median_final": 11.048462582448284,
+              "top1_energy_share_pooled_epoch1": 0.04823218334431493,
+              "top1_energy_share_pooled_final": 0.04935435527478069
+            },
+            "HF_finetune": {
+              "n_rows": 5,
+              "n_steps": 200,
+              "n_eff_pooled_epoch1": 3.5916690005334213,
+              "n_eff_pooled_final": 4.8458883579610506,
+              "n_eff_pooled_fraction_final": 0.9691776715922101,
+              "n_eff_pooled_median_over_epochs": 4.85072164694816,
+              "n_eff_batch_median_epoch1": 3.5916690005334213,
+              "n_eff_batch_median_final": 4.8458883579610506,
+              "top1_energy_share_pooled_epoch1": 0.3980366904449656,
+              "top1_energy_share_pooled_final": 0.254316646685031
+            }
+          }
+        },
+        "A4_ref_oracle_persample": {
+          "ext__helmholtz_2d": {
+            "LF_pretrain": {
+              "n_rows": 400,
+              "n_steps": 5000,
+              "n_eff_pooled_epoch1": 306.4779556224117,
+              "n_eff_pooled_final": 204.3312090139765,
+              "n_eff_pooled_fraction_final": 0.5108280225349412,
+              "n_eff_pooled_median_over_epochs": 142.28069710692472,
+              "n_eff_batch_median_epoch1": 12.287413053343979,
+              "n_eff_batch_median_final": 9.34761882131029,
+              "top1_energy_share_pooled_epoch1": 0.008961684374473715,
+              "top1_energy_share_pooled_final": 0.015828408333347678
+            },
+            "HF_finetune": {
+              "n_rows": 400,
+              "n_steps": 5000,
+              "n_eff_pooled_epoch1": 11.018842085723888,
+              "n_eff_pooled_final": 242.3410371808419,
+              "n_eff_pooled_fraction_final": 0.6058525929521048,
+              "n_eff_pooled_median_over_epochs": 220.35229385177644,
+              "n_eff_batch_median_epoch1": 7.063638238767625,
+              "n_eff_batch_median_final": 10.665042188047204,
+              "top1_energy_share_pooled_epoch1": 0.19129899203782189,
+              "top1_energy_share_pooled_final": 0.017383992649475363
+            }
+          },
+          "ifc_poisson": {
+            "LF_pretrain": {
+              "n_rows": 100,
+              "n_steps": 1400,
+              "n_eff_pooled_epoch1": 34.56972605181268,
+              "n_eff_pooled_final": 38.10742682176367,
+              "n_eff_pooled_fraction_final": 0.3810742682176367,
+              "n_eff_pooled_median_over_epochs": 37.53732152633517,
+              "n_eff_batch_median_epoch1": 11.4889285894073,
+              "n_eff_batch_median_final": 9.033262874431006,
+              "top1_energy_share_pooled_epoch1": 0.05863045386165143,
+              "top1_energy_share_pooled_final": 0.0941988281188004
+            },
+            "HF_finetune": {
+              "n_rows": 5,
+              "n_steps": 200,
+              "n_eff_pooled_epoch1": 4.978657792311282,
+              "n_eff_pooled_final": 4.632109653411616,
+              "n_eff_pooled_fraction_final": 0.9264219306823233,
+              "n_eff_pooled_median_over_epochs": 4.631653069500551,
+              "n_eff_batch_median_epoch1": 4.978657792311282,
+              "n_eff_batch_median_final": 4.632109653411616,
+              "top1_energy_share_pooled_epoch1": 0.21410712487508285,
+              "top1_energy_share_pooled_final": 0.2887593984383136
+            }
+          },
+          "sharp__cahn_hilliard": {
+            "LF_pretrain": {
+              "n_rows": 400,
+              "n_steps": 5000,
+              "n_eff_pooled_epoch1": 396.960454992819,
+              "n_eff_pooled_final": 356.62302443423596,
+              "n_eff_pooled_fraction_final": 0.8915575610855899,
+              "n_eff_pooled_median_over_epochs": 308.28710597791144,
+              "n_eff_batch_median_epoch1": 15.894221563613254,
+              "n_eff_batch_median_final": 15.030920378418442,
+              "top1_energy_share_pooled_epoch1": 0.003122870105346963,
+              "top1_energy_share_pooled_final": 0.011776460051004606
+            },
+            "HF_finetune": {
+              "n_rows": 400,
+              "n_steps": 5000,
+              "n_eff_pooled_epoch1": 14.90246398215561,
+              "n_eff_pooled_final": 283.6651191298814,
+              "n_eff_pooled_fraction_final": 0.7091627978247036,
+              "n_eff_pooled_median_over_epochs": 269.5410210717848,
+              "n_eff_batch_median_epoch1": 6.851687768563568,
+              "n_eff_batch_median_final": 14.787977484130716,
+              "top1_energy_share_pooled_epoch1": 0.10525304826909511,
+              "top1_energy_share_pooled_final": 0.025698608672654544
+            }
+          },
+          "sharp__fisher_kpp_2d": {
+            "LF_pretrain": {
+              "n_rows": 400,
+              "n_steps": 5000,
+              "n_eff_pooled_epoch1": 141.03257269942753,
+              "n_eff_pooled_final": 378.89983500981526,
+              "n_eff_pooled_fraction_final": 0.9472495875245381,
+              "n_eff_pooled_median_over_epochs": 378.30309383159727,
+              "n_eff_batch_median_epoch1": 15.35873675264991,
+              "n_eff_batch_median_final": 15.243825267718877,
+              "top1_energy_share_pooled_epoch1": 0.022800993673272523,
+              "top1_energy_share_pooled_final": 0.003979907283351557
+            },
+            "HF_finetune": {
+              "n_rows": 400,
+              "n_steps": 5000,
+              "n_eff_pooled_epoch1": 347.94328195816433,
+              "n_eff_pooled_final": 350.6433227634577,
+              "n_eff_pooled_fraction_final": 0.8766083069086443,
+              "n_eff_pooled_median_over_epochs": 349.9023858231481,
+              "n_eff_batch_median_epoch1": 14.119973740285142,
+              "n_eff_batch_median_final": 14.250360361545331,
+              "top1_energy_share_pooled_epoch1": 0.005125410813585732,
+              "top1_energy_share_pooled_final": 0.005239280604406528
+            }
+          }
+        }
+      },
+      "headline": "Card part 4 predicted A1 and A4 helmholtz HF-stage epoch-pooled n_eff >= 50 of 400, A0 ~1. MEASURED: A0 1.010154, A1 1.030514 (NO repair), A4 242.341037 (massive repair). The LF proxy fails where the true target scale succeeds. The card's B2-continuity prediction for A0 held exactly (B2 measured 1.0179/400 under zscore; B3's A0 measures 1.010154/400).",
+      "stage_dissociation_headline": "helmholtz LF_pretrain n_eff: A0 3.188841 -> A1 209.844800 (65.8x). The per-sample LF scale DOES de-concentrate the loss - in the stage where the target IS the LF field and the scale is exact by construction. It does nothing in the 400-row HF finetune stage. The card's single-number prediction did not distinguish the two stages; the data does.",
+      "cross_dataset_note": "the ineligible controls never had a concentration problem to fix: A0 HF-stage n_eff is 208.307335/400 on cahn_hilliard and 335.791121/400 on fisher_kpp, vs 1.010154/400 on helmholtz. ifc_poisson's HF stage has only 5 rows (n_eff 4.62/5 = 92%), so effective-N repair is structurally unavailable there - an independent reason leg (a) could not have been carried by n_eff."
+    },
+    "guard_set": {
+      "required_by_section_2d": false,
+      "why_not_required": "2d triggers only on a claimed PANEL win beyond CI. This card computes no panel geomean and claims no panel-level result, and its only large per-dataset move (helmholtz) is explicitly REPORT-ONLY and below its own noise floor. No guard run was launched by the analyzer.",
+      "prereg_screen_guard_leg_part3_item_b": {
+        "provenance": "card part 3 recipe._screen item (b): '--datasets guard (heat_local,fluid,sharp__sod_1d) with the promoted env'. Run inside screen job 66075574 at CONTRACT tier (2 epochs), seed 0. ADR-0007 screen numbers are not reportable as results; this pre-registered guard leg is recorded as a regression check only, following the s5-B2 part-5 precedent (guard_set.provenance).",
+        "tier": "contract (2 epochs)",
+        "files": [
+          "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s5_tuning/B3/screen/guard_A0_zscore_ctrl.json",
+          "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s5_tuning/B3/screen/guard_A1_revin_lf.json",
+          "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s5_tuning/B3/screen/guard_A5_revin_lf_floorq25.json"
+        ],
+        "A1_vs_A0_ratio_check": {
+          "fluid": {
+            "A0_nRMSE": 0.3548680773882436,
+            "A1_nRMSE": 0.3383417855227693,
+            "ratio_A1_over_A0": 0.9534,
+            "regressed_gt_2x": false
+          },
+          "heat_local": {
+            "A0_nRMSE": 0.115546498932794,
+            "A1_nRMSE": 0.11397483888433284,
+            "ratio_A1_over_A0": 0.9864,
+            "regressed_gt_2x": false
+          },
+          "sharp__sod_1d": {
+            "A0_nRMSE": 0.04022709020654886,
+            "A1_nRMSE": 0.03890707494282863,
+            "ratio_A1_over_A0": 0.9672,
+            "regressed_gt_2x": false
+          }
+        },
+        "verdict": "NO GUARD REGRESSION - A1 is better than A0 on all three guard datasets at contract tier"
+      },
+      "guard_flags": []
+    },
+    "guard_flags": [],
+    "fallback_verification": {
+      "claim_under_test": "card part 3 / part 4: `revin_lf` is a documented NO-OP on ifc_poisson - `_lf_per_sample_scales` returns None and the arm falls back to the D1 global scaler `zscore`, so A1 should reproduce A0 there (a plumbing proof, not a result).",
+      "source_fields_read_from_the_run_JSONs": {
+        "A1_revin_lf__ifc_poisson": {
+          "scaler_mode": "revin_lf",
+          "scaler_mode_effective": "zscore",
+          "scaler_mode_source": "env:MFFP_TARGET_SCALER",
+          "scaler_fallback": true,
+          "scaler_fallback_reason": "train LF/HF condition vectors are not row-aligned (cannot identify each HF sample's own LF solve)",
+          "scaler_fallback_mode": "zscore",
+          "scaler_per_sample_available": false,
+          "scaler_per_sample_s_source": "UNAVAILABLE -> D1 global fallback 'zscore'"
+        },
+        "A3_revin_lf_noclip__ifc_poisson": {
+          "scaler_mode": "revin_lf",
+          "scaler_mode_effective": "zscore",
+          "scaler_fallback": true,
+          "scaler_fallback_reason": "train LF/HF condition vectors are not row-aligned (cannot identify each HF sample's own LF solve)",
+          "scaler_per_sample_available": false
+        },
+        "A1_revin_lf__ext__helmholtz_2d_for_contrast": {
+          "scaler_mode": "revin_lf",
+          "scaler_mode_effective": "revin_lf",
+          "scaler_fallback": false,
+          "scaler_per_sample_available": true,
+          "scaler_per_sample_s_source": "max|LF_i| on the working grid (train LF rows; test LF rows)"
+        },
+        "in_job_knob_check_line_verbatim": "[knob-check] note: ifc_poisson: DECLARED FALLBACK -> effective 'zscore' (train LF/HF condition vectors are not row-aligned (cannot identify each HF sample's own LF solve))"
+      },
+      "verdict": "FALLBACK CONFIRMED FIRED on ifc_poisson for both revin_lf arms (A1 and A3); scaler_mode_effective == 'zscore', scaler_per_sample_available == false",
+      "bit_identity_at_200_epochs": {
+        "prediction_in_card_part_4": "bit-identical to A0",
+        "A0_ifc_poisson_nRMSE": 0.042697081822502196,
+        "A1_ifc_poisson_nRMSE": 0.042649474926468034,
+        "relative_gap": -0.0011149917980828475,
+        "A2_vs_A3_same_check_clip_off_twin": {
+          "A2_nRMSE": 0.047688180901166465,
+          "A3_nRMSE": 0.04769070210889061,
+          "relative_gap": 5.28686076194426e-05
+        },
+        "verdict": "NOT bit-identical at 200 epochs: A0 vs A1 differ by 1.115e-03 relative. This is 5.9x the 1.9e-4 GPU envelope the promotion block cites and 5170x the 2.156e-07 gap the 2-epoch screen measured, but the screen gap was over 2 epochs and this run is over 5200 optimizer steps (1400 LF + 200 HF x ... per stage) of accumulating float divergence, and the code-path identity is proven by the scaler fields above plus the reviewer's CPU bit-identity check (0.000e+00). Recorded as an observation. NOTE FOR THE MECHANISM ANALYST: the clip-off twin pair A2 vs A3 - same effective config, same job, same node - agrees to 5.287e-05, 21x TIGHTER than the A0/A1 pair. The only difference between the pairs is grad_clip on vs off. A threshold nonlinearity (clip fires or does not) amplifying float divergence is a candidate explanation; it is NOT tested here."
+      }
+    },
+    "anomalies": [
+      {
+        "id": "AN1",
+        "severity": "medium",
+        "kind": "missing_mandated_instrumentation",
+        "what": "tools/dc_pattern_split.py crashed on ifc_poisson (ValueError: no LF fidelities present, panel_data.py:59 via dc_pattern_split.py:146), so card part 4 (g)(1)'s MANDATORY per-arm nRMSE / level rel-err / pattern-only nRMSE / DC-share table is missing for the card's PRIMARY dataset. Helmholtz, cahn_hilliard and fisher_kpp tables were emitted normally.",
+        "cause": "the invocation passed --include-copylf; ifc_poisson's test split ships fidelity_64 only and its reference_type is paper_bar, so a copy-LF row is both impossible and meaningless there",
+        "blast_radius": "completeness of part 5 only - the (2)/(3) discriminator is moot because A1-vs-A0 on ifc_poisson is INERT (-0.111%, 181x below the floor)",
+        "fix": "re-run dc_pattern_split.py on the five existing ifc_poisson preds_test.npz WITHOUT --include-copylf",
+        "owner": "mechanism-analyzer turn 1",
+        "evidence": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s5_tuning/B3/slurm/r1-s5_tuning-B3-s0_66076686.err"
+      },
+      {
+        "id": "AN2",
+        "severity": "low",
+        "kind": "prediction_not_met_nonblocking",
+        "what": "A1 is not bit-identical to A0 on ifc_poisson at 200 epochs (1.115e-03 relative) despite the fallback provably firing; card part 4 predicted bit-identity",
+        "cause": "H100 cuDNN nondeterminism accumulated over the full 200-epoch two-stage schedule; the identical code path is proven by scaler_mode_effective/scaler_fallback fields and by the reviewer's CPU bit-identity check",
+        "blast_radius": "none - both numbers are far inside the ifc_poisson noise floor of 0.239908 skill",
+        "note": "the clip-off twin pair A2/A3 agrees 21x more tightly (5.287e-05); see fallback_verification.bit_identity_at_200_epochs",
+        "owner": "noted only"
+      },
+      {
+        "id": "AN3",
+        "severity": "low",
+        "kind": "cross_card_continuity",
+        "what": "B3's A0 helmholtz nRMSE 1.581879 vs s5-B2's zscore 1.899761 = -16.7%; the ifc_poisson continuity leg reproduces to 7.8e-04",
+        "cause": "helmholtz is the round's highest-variance dataset (batch-0 3-seed skill spread 9.694961 on a mean of 13.817290 = 70%); the two cards also differ in family directory name and vendored code_hash",
+        "blast_radius": "none for this card's conclusions - the declared comparison basis is the paired in-job A0, which shares node, seed and code tree with every arm",
+        "owner": "noted only"
+      },
+      {
+        "id": "AN4",
+        "severity": "info",
+        "kind": "design_limitation_surfaced_by_the_data",
+        "what": "leg (c) tested HF-stage n_eff only; revin_lf's actual effective-N repair on helmholtz happened in the LF_pretrain stage (3.188841 -> 209.844800, 65.8x) while the HF stage was untouched (1.010154 -> 1.030514)",
+        "cause": "the pre-registered threshold was written as a single HF-stage number; the instrumentation (correctly) logged both stages",
+        "blast_radius": "the leg is still falsified as written - but the mechanism it was probing is alive in a stage the clause did not name. Highest-value probe target on this card.",
+        "owner": "mechanism-analyzer"
+      },
+      {
+        "id": "AN5",
+        "severity": "info",
+        "kind": "arm_coverage",
+        "what": "A2 and A3 ran on helmholtz + ifc_poisson only (per recipe); A5_revin_lf_floorq25 was screen-only and has NO 200-epoch result. Any A5 number anywhere is contract-tier and non-reportable.",
+        "cause": "card design (recipe._arms datasets fields)",
+        "blast_radius": "none",
+        "owner": "noted only"
+      },
+      {
+        "id": "AN6",
+        "severity": "info",
+        "kind": "training_health",
+        "what": "no NaN/Inf, no preemption, no requeue, no resume event. Job 66076686 COMPLETED 0:0 in a single allocation on hpc-33-13; all 5 arms x their datasets produced finite metrics; the in-job knob-check printed VERDICT: PASS (all 12 knobs from env, leakage fence intact) for every arm.",
+        "cause": "n/a",
+        "blast_radius": "none",
+        "owner": "n/a"
+      }
+    ],
+    "wall_clock_per_seed_min": [
+      70.3
+    ],
+    "timing_ledger": {
+      "job_id": "66076686",
+      "job_name": "r1-s5_tuning-B3-s0",
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "elapsed": "01:10:18",
+      "elapsed_min": 70.3,
+      "start_utc_local": "2026-07-30T12:55:25 PDT",
+      "end_utc_local": "2026-07-30T14:05:43 PDT",
+      "node": "hpc-33-13",
+      "partition": "gpu",
+      "gres": "gpu:h100:1",
+      "requeues": 0,
+      "preemptions": 0,
+      "predicted_in_card": "~69 min (recipe._cost)",
+      "prediction_error_pct": 1.9,
+      "train_seconds_by_arm": {
+        "A0_zscore_ctrl": 1231.96,
+        "A1_revin_lf": 1220.18,
+        "A2_zscore_noclip": 208.58,
+        "A3_revin_lf_noclip": 216.54,
+        "A4_ref_oracle_persample": 1229.35
+      },
+      "train_seconds_total": 4106.62,
+      "train_min_total": 68.44,
+      "overhead_min": 1.86,
+      "screen_job": {
+        "job_id": "66075574",
+        "state": "COMPLETED",
+        "exit_code": "0:0",
+        "elapsed": "00:08:21",
+        "elapsed_min": 8.35
+      },
+      "for_the_maintainers_timing_ledger": "5-arm single-job s5 pattern: 70.3 min wall for 68.4 min of training = 2.7% overhead on an H100, matching the s5-B2 precedent (2%). Per-4-dataset-arm cost ~20.5 min; per-2-dataset (helm+poisson) arm ~3.5 min. Screen (6 arms x 4 datasets + guard + equivalence + drill, contract tier) 8.35 min."
+    },
+    "headline_for_the_mechanism_analyst": "The hypothesis is falsified on two independent legs, and the falsification is INFORMATIVE rather than empty because the arm nonetheless produced the largest single-arm move on the card. Three facts do not fit together under the card's story and are the whole job of part 6: (1) helmholtz nRMSE fell 76.75% (1.581879 -> 0.367721) while the quantity the card said would carry that gain - HF-stage epoch-pooled n_eff - did not move at all (1.010154 -> 1.030514 of 400); (2) the effective-N repair the card predicted DID happen, but one stage earlier, in LF_pretrain (3.188841 -> 209.844800), and the true-scale oracle A4 repairs the HF stage too (242.341037) yet is CATASTROPHIC on the legal readout (helmholtz 34.309193, ifc_poisson 0.634778) and only excellent when handed the leaked test scale (0.258380 / 0.078477); (3) score-space effective N moved the OPPOSITE way from train-space - helmholtz score-space n_eff collapsed 14.684980 -> 1.366555 with top-decile energy share 0.678042 -> 0.955026, i.e. A1 bought a large median gain (-87%) by concentrating the remaining error on a few samples, while paired displacement says 79% of the log-gain is genuine structure (corr_demeaned 0.420874 -> 0.880254, alpha_median 0.395941 -> 1.000223). The composite reading available from part 5 alone: the lever is REAL on helmholtz and its mechanism is NOT the one pre-registered.",
+    "cross_stream_note_s2_beyond_copy_B3": "CARRIED FORWARD, NOT VERIFIED BY ME: s2_beyond_copy-B3 reportedly moved helmholtz by -88% via a per-sample RESIDUAL lever with effective-N 1.25 -> 17.25. s5-B3's A1 moves helmholtz by -76.75% via a per-sample TARGET-SCALE lever on the RAW target with LF-blind fusion, with HF-stage effective-N 1.010154 -> 1.030514 (NO repair) but LF-stage 3.188841 -> 209.844800. Two different streams, two different output spaces, same dataset, same direction, same order of magnitude - but this card's effective-N reading does NOT converge with s2-B3's on the HF stage, which is exactly the discriminator the unified eligibility rule being drafted by s2-B3's mechanism analyst will need. I did not open s2-B3's artifacts; the mechanism analyst should confirm which stage s2-B3's 1.25 -> 17.25 refers to before treating the two as convergent evidence.",
+    "reference_conventions": {
+      "skill": "score_panel.py:210 `skill = nRMSE / baselines[ds]['test_nrmse']`; lower is better; skill < 1 beats the reference",
+      "metric_source": "per_sample_mean (mean of rel_l2_per_sample) on split test_hf for every arm and dataset",
+      "references_used": {
+        "ext__helmholtz_2d": {
+          "reference_type": "copylf",
+          "test_nrmse": 0.3294501260438018
+        },
+        "ifc_poisson": {
+          "reference_type": "paper_bar",
+          "test_nrmse": 0.036
+        },
+        "sharp__cahn_hilliard": {
+          "reference_type": "copylf",
+          "test_nrmse": 0.08765999100758841
+        },
+        "sharp__fisher_kpp_2d": {
+          "reference_type": "copylf",
+          "test_nrmse": 0.06263229669603956
+        }
+      },
+      "provisional_single_seed": "every effect on this card carries the label provisional-single-seed (ADR 0004)"
+    }
+  },
+  "6_analysis": {
+    "provenance": "Three mechanism turns, CPU-only, no training, no GPU, no worktree code edits, no card field outside parts 6-7 + reanalysis_progress. Scripts + results: worktrees/s5_tuning/B3/scratchpad/reanalysis_turn_{1,2,2b,2c,3}.py with reanalysis_turn_{1,2,3}_results.md and turn{1,2,2b,2c,3}_output.json; figures turn1_helmholtz_stage_trajectories.png, turn3_helmholtz_gradient_regime.png. Every metric goes through round1/eval/nrmse.py (NRMSE_DEF_HASH d3d0ade9191c13bacc40702f3eb26ad290e01641cacee22a1d2233b74c035850, identical to part 5's) and every field through round1/eval/panel_data.py. Seam checks: the A4 preds_test.npz target array matches panel_data's ifc_poisson test HF field (allclose 1e-4/1e-6); A4's LEGAL split is reproduced from its own LEAKED split to 5.55e-09 relative. Every A4 number is the fenced ORACLE readout and is labelled LEAKED wherever it appears.",
+    "findings": [
+      "F1 (turn 1, AN1 DISCHARGED) The mandated part-4 (g)(1) table now exists for ifc_poisson (tools/dc_pattern_split.py re-run on the five shipped preds_test.npz WITHOUT --include-copylf; turn1_dc_pattern_split_ifc_poisson.json). nRMSE / level rel-err / pattern-only nRMSE: A0_zscore_ctrl 0.042697/0.011578/0.090996; A1_revin_lf 0.042649/0.011523/0.090922; A2_zscore_noclip 0.047688/0.014372/0.102444; A3_revin_lf_noclip 0.047691/0.014369/0.102449; A4 LEGAL readout 0.634778/0.403226/0.817000. All five REAL_PATTERN, frac_samples_pattern_useless 0.0, constant-field oracle 0.513275, DC energy share 0.692817. A1-vs-A0 moves level rel-err -0.48% and pattern-only -0.08% relative: neither the LEVEL-dominated branch (g)(2) nor the PATTERN-dominated branch (g)(3) is entered, confirming part 5's INERT reading with the table it was missing. A0 reproduces s5-B2's zscore row to 8e-4 (nRMSE) / 8e-3 (level) / 7e-4 (pattern).",
+      "F2 (turn 1) THE STAGE-DISSOCIATION ANSWER, and it is stronger than 'the gain came from the pretrain': final-epoch realized-loss n_eff is not a health statistic at all. helmholtz HF stage, within-arm loss reduction over 200 epochs (own normalized space, within-arm ratios only): A0 top-1 sample 1.09x / all others 2.75x, top-1 energy share 0.98742 -> 0.99496; A1 top-1 1.57x / all others 110.68x, share 0.48440 -> 0.98508. A0 and A1 END at the same n_eff (1.0102 vs 1.0305 of 400) for opposite reasons - A0 never fits anything, A1 fits the bulk 110x and is left with one hard sample. A2 357.08x/66.76x (n_eff 8.53), A3 5.86x/6.82x (n_eff 3.71), A4 502.29x/37.57x (n_eff 242.34).",
+      "F3 (turn 1) What the pretrain hands over IS visible in the HF stage's first epoch: helmholtz LF_pretrain final n_eff -> HF epoch-1 n_eff = A0 3.1888 -> 1.0256 (top-1 share 0.9874), A1 209.8448 -> 3.1868 (0.4844), A3 136.3315 -> 3.4927 (0.4717), A4 204.3312 -> 11.0188 (0.1913). The HF stage's STARTING concentration tracks the pretrain's; its FINAL concentration does not.",
+      "F4 (turn 1) Across the 12 arm x dataset cells with an in-job A0 counterpart, Pearson(LF-stage delta log2 n_eff, delta log2 scaler-matched nRMSE) = -0.9700 (Spearman -0.7832) against -0.6693 (Spearman -0.4056) for the HF stage. Among the 4 cells where the LF-stage n_eff actually moved (|delta log2| > 0.3) the sign rule 'LF-stage n_eff up => error down' holds 4/4, including the card's one regression: A4/ifc_poisson LF n_eff 70.7255 -> 38.1074 with the LEAKED oracle nRMSE 0.042697 -> 0.078477. (Scaler-matched = the LEAKED oracle split for A4, the only readout whose train and test scalers agree.)",
+      "F5 (turn 2) A4's LEGAL ifc_poisson collapse contains no mechanism: dividing its own LEAKED prediction by the true per-sample scale and re-applying the global (mu, sd) = (2.6556e-04, 1.8622e-04) reproduces the legal nRMSE 0.63477823 to 5.55e-09 relative. It is a pure train/test scaler mismatch (median true test scale is 6.76x sd), and F1 shows it is a pure LEVEL failure: level rel-err 0.011578 -> 0.403226 (34.8x) with corr_demeaned essentially unchanged (0.993912 -> 0.991067).",
+      "F6 (turn 2) THE ORACLE REGRESSION IS A CENTERING + PLACEMENT LOSS, not an estimator or learnability loss. (a) Learnability killed: training-free 1-NN in standardized condition space over the 5 HF train rows, scored on the SAME 128-sample test split, gives raw target 0.361976 vs per-sample-normalized-then-true-rescaled 0.181810 (ratio 0.502) - normalization makes the interpolation problem EASIER here (and on the LF stage 0.164819 -> 0.075145, and on helmholtz's 400 HF rows 1.576854 -> 0.531843). (b) The regression is in the LEVEL channel: LEAKED oracle vs A0, level rel-err 0.011578 -> 0.068961 (5.96x), pattern-only 0.090996 -> 0.098522 (1.08x), nRMSE 1.84x, on a dataset with DC energy share 0.692817. (c) The uncentered GLOBAL scaler costs 1.112x there (s5-B1 maxabs 0.047483 vs zscore 0.042697), so centering alone accounts for ~11 of the 84 points.",
+      "F7 (turn 2) ONE STATISTIC UNIFIES s5-B2's G-RULE AND THE EFFECTIVE-N RULE: F = median_i(sd_i/s_i), where the typical sample's fluctuation sits inside the network's output range under the scaler in use. HF train stage: ext__helmholtz_2d F 0.010136 (zscore) / 0.000257 (global maxabs) / 0.362027 (per-sample) - ratio 35.72x, measured 1.581879 -> 0.367721 (A1) and -> 0.258380 (ORACLE, LEAKED); ifc_poisson 0.861591 / 0.087401 / 0.133538 - ratio 0.155x, measured 0.042697 -> 0.078477 (ORACLE, LEAKED); sharp__cahn_hilliard 0.988258 / 0.747444 / 0.873622 - ratio 0.884x, measured 0.478437 -> 0.481284; sharp__fisher_kpp_2d 0.899920 / 0.150053 / 0.156182 - ratio 0.174x, measured 0.264245 -> 0.259050. Pearson(log2 F-ratio, log2 nRMSE-ratio) = -0.950 over the four datasets; the sign rule holds 3/4, the miss being the LEVEL_ONLY set (corr_demeaned 0.0024), which s5-B2 F7's pattern gate already excludes.",
+      "F8 (turn 2) revin_lf is TWO different scalers, one per stage, and the arithmetic is exact. At LF_pretrain the target IS the LF field, so s_i = max|LF_i| is the sample's own target maxabs: static target-energy n_eff under the proxy and under the true-scale oracle are identical to 12 significant figures on helmholtz (376.5757175 both, vs 3.0316 under zscore). At HF_finetune the same statistic is a cross-fidelity proxy delivering 12.5327/400 against the oracle's 375.8918/400 = 3.2% of the achievable equalization (energy cv after scaling 0.8029 proxy vs 0.1294 oracle), while the per-sample PLACEMENT survives the crossing intact (F 0.364793 proxy vs 0.362027 oracle).",
+      "F9 (turn 2) The pre-registered leg-(c) threshold was refutable BEFORE the run. Static target-energy n_eff tracks realized epoch-1 n_eff across 23 arm x stage x dataset rows (median ratio 0.874, 65% within 2x, Spearman 0.655) and is near-exact where the model starts near zero (helmholtz LF zscore 3.0316 static vs 3.0662 realized; HF zscore 1.0179 vs 1.0256). The static forecast for A1's helmholtz HF stage was 12.53 of 400 against a pre-registered >= 50.",
+      "F10 (turn 2, N_hf clause) ifc_poisson's five HF train scales are {5.719e-04, 1.046e-03, 1.257e-03, 1.584e-03, 1.836e-03} (cv 0.347); the 128 test scales span 3.209e-04 to 2.154e-03 (cv 0.433) with 35.9% OUTSIDE the train range. A legal per-sample arm there must extrapolate the scale on a third of the test set - a cost the oracle never paid.",
+      "F11 (turn 3, H3 SIGN FLIP EXPLAINED) The clip threshold is not scale-invariant. helmholtz HF stage, median over epochs of the pre-clip grad-norm p50 / p95, exceedance rate over 1.0, and the (5-quantile-approximated) gradient mass retained at clip 1.0: A0 global-zscore 0.0556 / 0.635 / 0.0434 / 1.00; A2 global-zscore-noclip 0.1227 / 0.545 / 0.0990; A1 per-sample 0.5465 / 6.292 / 0.3246 / 0.362; A3 per-sample-noclip 2.0261 / 22.257 / 0.7002; A4 oracle 0.1278 / 0.284 / 0.0552 / 1.00. Switching the target scaler multiplies the TYPICAL gradient norm by 9.8x against a FIXED threshold of 1.0: in the global arm the clipper is a rare spike-killer that binds on 4% of steps and never after the early epochs; in the per-sample arm it binds on a third of steps and removes ~64% of the gradient mass at the median epoch.",
+      "F12 (turn 3) The clip's SIGN follows who owns the large gradients. Unclipping lets the dominant sample be fitted in BOTH output spaces (top-1 loss reduction 1.09x -> 357.08x global; 1.57x -> 5.86x per-sample), but in the global space that sample IS the loss (99.5% of energy) so unclipping is a net gain (-13.9%), while in the per-sample space unclipping costs the other 399 samples a factor 16 in fitted loss (110.68x -> 6.82x) and the score 43.5%. The scaler's own main effect survives the confound: per-sample vs global is -76.75% at clip ON and -61.25% at clip OFF (A3 0.527813 vs A2 1.362051).",
+      "F13 (turn 3, DRIFT CLASS - two streams, five pairs) Cross-card reproduction of a nominally identical paired control against each dataset's realized HF-stage loss concentration: ext__helmholtz_2d -16.73% (s5-B3 A0 vs s5-B2 zscore) and +24.95% (s2-B3 A0 vs s2-B2), n_eff/N = 0.25%; sharp__phase_field_crystal_2d +52.21% (s2-B3), s2-B2 audit NEAR_ZERO_TARGETS max/median 8.24e4; ifc_poisson +0.078%, n_eff/N = 92.4%; sharp__allen_cahn_2d -0.108% (s7-B2 recert vs batch-0 same arm), s7-B2 F10 effective sample fraction ~1. Two orders of magnitude separate the groups and the separator is loss concentration, not the code change. In-job same-code-path replicates on ifc_poisson agree to 1.1e-03 (A0 vs A1) and 5.3e-05 (A2 vs A3)."
+    ],
+    "interpretation": [
+      "M1 (HIGH confidence; arithmetic from within-arm trajectories, F2/F3). THE LEVER IS REAL AND ACTS AT THE PRETRAIN STAGE, AND THE PRE-REGISTERED INSTRUMENT COULD NOT HAVE SEEN IT. Realized-loss n_eff measures the concentration of the REMAINING loss, so it FALLS as a model succeeds on the bulk: A0's n_eff ~ 1 means 'nothing is learned', A1's n_eff ~ 1 means 'everything but one sample is learned'. The quantity that carries the signal is the LF-pretrain stage's n_eff (Pearson -0.970 vs the HF stage's -0.669; 4/4 on sign among moved cells), because at that stage revin_lf's statistic is the target's own maxabs EXACTLY (F8) while at the HF stage it is a 3.2%-effective cross-fidelity proxy. s7-B2's warning 'never apply a per-sample normalization to an LF-pretrain unchecked' does NOT invert into 'the pretrain is always where it works' - it becomes conditional: the pretrain is where the statistic is exact, hence where the lever is strongest in BOTH directions (helmholtz +, ifc_poisson - under the oracle).",
+      "M2 (HIGH confidence; measured, F5/F6). THE ORACLE REGRESSION IS THE G-MECHANISM RUNNING BACKWARDS. A4 did not fail because the scale was hard to estimate (it was given), nor because the normalized target is harder to learn (training-free 1-NN says it is EASIER, 0.502x), but because swapping a centered global scaler for an uncentered per-sample one on a DC-dominated dataset (DC share 0.693) throws away the centering (level channel 5.96x worse) and drops the typical sample's fluctuation from 0.862 to 0.134 of the output range - while buying nothing, because ifc_poisson's loss was never concentrated (HF n_eff 4.62/5 = 92%). This is exactly s5-B2's dynamic-range placement mechanism with the sign reversed, which is why the pre-registered NULL was wrong in the direction it was wrong.",
+      "M3 (MODERATE-TO-HIGH confidence; 4 datasets x 2 stages, single seed, F7). ONE STATISTIC SUBSUMES THE ROUND'S TWO NORMALIZATION RULES. F = median_i(sd_i/s_i) sees what G (max|Y|/sd(Y)) and effective N each see half of: a global centered scaler places the AGGREGATE well and the typical sample badly when one field sets sd(Y) (helmholtz F 0.0101); a per-sample scaler places every sample at its own ratio and de-concentrates the loss in the same act. 'Dynamic-range placement' and 'loss de-concentration' are two readings of the per-sample placement distribution, which is why the two rules kept selecting the same datasets. COROLLARY (untested, next-batch): use a per-sample CENTERED scaler (RevIN as published, (y_i - mu_i)/sd_i) rather than per-sample maxabs - it maximizes F by construction and keeps the centering that ifc_poisson's level channel needs.",
+      "M4 (HIGH confidence; measured, F11/F12). A FIXED grad_clip THRESHOLD IS NOT INVARIANT UNDER A CHANGE OF TARGET SCALER. The scaler sets the loss scale, the loss scale sets the gradient scale, and a fixed threshold therefore silently changes the effective step-size schedule (typical grad norm 0.0556 -> 0.5465, 9.8x). Its sign then depends on who owns the large gradients: killing rare spikes discards the ONLY informative sample when n_eff ~ 1 (clip HURTS the global arm by 13.9%), and damping a third of all steps stabilizes the bulk when the loss is shared (clip HELPS the per-sample arm by 43.5%). H3 is adjudicated H3-FALSE on the attribution question - the clipper cannot be credited with s5-B2's headline, since removing it IMPROVES the global arm - with the rider that the clip is not a null knob and every fixed-clip scaler comparison in this round is confounded at the 14-44% level on helmholtz.",
+      "M5 (MODERATE-TO-HIGH confidence; 5 cross-card pairs + 2 in-job pairs, F13). DRIFT CLASS: on this substrate a nominally identical control reproduces to <0.2% where the training loss is spread and drifts 17-52% where one or two samples carry it. When n_eff/N < 1% the trained function is set by the optimizer's path near a single field, so cuDNN nondeterminism, a vendored directory name entering code_hash, or a different node all produce large functional changes. OPERATIONAL RULE for the round report: on a dataset with n_eff/N < 1% (ext__helmholtz_2d, sharp__phase_field_crystal_2d) only an IN-JOB paired control is a control; cross-card continuity gates on those datasets should be advisory, not adjudicative. Both s5-B3 and s2-B3 had already declared the in-job A0 as their basis, so no conclusion on either card is affected.",
+      "M6 (MODERATE confidence; methodological, F9). PRE-REGISTER THE STATIC STATISTIC, NOT THE REALIZED ONE. Static target-energy n_eff and F are computable from the train split before any GPU time and track realized epoch-1 n_eff (median ratio 0.874); the realized FINAL n_eff is a state variable that a successful arm is not required to move. Had the card pre-registered the static forecast it would have predicted 12.53/400 for A1's helmholtz HF stage instead of >= 50, and leg (c) would have been a confirmed prediction rather than a falsification."
+    ],
+    "falsification_postmortem": "H-s5B3 was falsified on two independent legs and both misses are traceable to ONE design error plus one substrate fact. THE DESIGN ERROR (legs (c) and, indirectly, (a)): the hypothesis named a single quantity - the HF-stage epoch-pooled realized n_eff - as the mechanism, but that quantity is (i) stage-specific, and revin_lf's statistic is exact only at the LF stage (F8: identical to the oracle to 12 s.f. there, 3.2% effective at the HF stage), and (ii) non-monotone in success, since it falls as the bulk gets fitted (F2: A0 and A1 both end at ~1 for opposite reasons). Both defects were detectable pre-flight: the static target-energy forecast for A1's helmholtz HF stage was 12.53/400 against the pre-registered >= 50 (F9). THE SUBSTRATE FACT (leg (a)): the primary leg predicted a NULL for the ifc_poisson oracle on the argument that the amplitude channel there is already at 0.31x the noise floor. It regressed instead (2.31x its bar, 0.99 skill units worse than the paired A0) because the arm did not only add per-sample scaling - it also REMOVED the centering, on the panel's most DC-dominated dataset (DC share 0.693). The measured decomposition (F6): the level channel degrades 5.96x, the typical sample's fluctuation placement falls 6.5x (F 0.862 -> 0.134), and the equalization the swap was supposed to buy was unavailable because the loss was never concentrated (HF n_eff 4.62/5). The prediction missed because the card treated 'per-sample scaler' as a single axis; it is at least three - centering, placement, equalization - and on ifc_poisson two of them point the wrong way. What the falsification bought: leg (a)'s pre-registered consequence stands as written (the per-sample target-scaler branch is retired on ifc_poisson for this substrate), and leg (c)'s decisive-negative branch did NOT obtain, so 'de-concentrate the MSE' is NOT retired round-wide - it is re-specified as a PRETRAIN-stage, statistic-exactness-limited lever whose pre-flight test is the static F/n_eff pair. Leg (b) held (both ineligible controls in band), so the eligibility 2x2 survived its two negative cells; leg (d) is adjudicated H3-FALSE on attribution with the clip-is-not-null rider (M4); leg (f) remains OPEN by construction (its designated comparator, s7_loss-B2's rel arm, landed on a dataset this card dropped) - turn 2's training-free control narrows it by ruling out 'the normalized target is harder to learn', but the placement-vs-weighting split is still unmeasured.",
+    "surprises": [
+      "S1 The two arms with the most different helmholtz scores (A0 1.581879, A1 0.367721) end at the SAME realized loss concentration (n_eff 1.0102 vs 1.0305 of 400, top-1 energy share 0.995 vs 0.985). A statistic the card treated as the mechanism turned out to be blind to a 4.3x score difference.",
+      "S2 The true-scale ORACLE is the best helmholtz number on the card (LEAKED 0.258380, skill 0.784278 - the only helmholtz value below copy-LF) AND the worst ifc_poisson regression on the card (LEAKED 0.078477 vs A0 0.042697). The same intervention with the same perfect information is the round's biggest single-dataset gain and its biggest single-dataset loss.",
+      "S3 Removing gradient clipping IMPROVED the global-scaler arm by 13.9% on helmholtz - the opposite of the robustification story H3 was built to test - and the same removal degraded the per-sample arm by 43.5%. A hyper-parameter nobody varied across the round's scaler cards is worth more than the noise floor on this dataset in both directions.",
+      "S4 Per-sample normalization makes the training-free interpolation problem EASIER on every dataset tested (ratio 0.34-0.50), including the one where the trained oracle regressed. The regression is entirely about where the target sits in the network's output range, not about what the target is.",
+      "S5 A4's catastrophic LEGAL readouts (helmholtz 34.309193, ifc_poisson 0.634778) are reproducible from its own LEAKED predictions to 5.6e-09 by re-applying the global scaler - i.e. the 'catastrophe' is a 3-line arithmetic identity, and the pre-registered 'A4 legal is worse than A0' prediction was never at risk."
+    ]
+  },
+  "7_gap_and_future": {
+    "open_question": "Can a TEST-TIME-LEGAL per-sample statistic deliver the HF-stage repair that the LF proxy cannot? This card measured the gap exactly: on ext__helmholtz_2d the legal arm A1 (s_i = max|LF_i|) reaches 0.367721 while the true-scale ORACLE reaches 0.258380 (LEAKED) - a 1.42x gap that is entirely the equalisation the proxy fails to deliver at the HF stage (12.53/400 vs the oracle's 375.89/400 = 3.1%, part 6 F8), since the proxy's PLACEMENT survives the fidelity crossing intact (F 0.364793 vs 0.362027). The oracle number is also the only helmholtz value on the whole card below copy-LF (skill 0.784278). Two candidate closures exist and neither is measured: (i) a PREDICTED scale head - s2_beyond_copy-B3 built one for the residual target and got rho(s_hat, s_true) = 0.951 with a 3.2% median scale error, but its own turn 3 shows the predictor's error becomes the accuracy floor on direction-exact samples; (ii) a per-sample CENTERED scaler ((y_i - mu_i)/sd_i, RevIN as published), which maximizes F by construction (F = 1.0 at every stage of every panel dataset, tools/stage_scaler_placement_forecast.py) and would also remove the centering loss that caused this card's ifc_poisson oracle regression - but whose test-time statistic is just as unobservable as max|Y_i| unless it too is taken from the LF field. The sharp form of the question: is the per-sample scale a QUANTITY TO PREDICT (a head, s2/s1 territory) or a QUANTITY TO AVOID NEEDING (a scale-equivariant architecture, s4/s6 territory)? Nothing in round 1 separates those.",
+    "next_direction": "CLOSE the target-scaler axis for s5_tuning; a batch 4 on this axis cannot produce a claimable number. The arithmetic is complete after three batches: the scaler is a lever on exactly two panel datasets (B2 F5/F7's G >= 8 AND live pattern rule, reproduced here), and BOTH are now unavailable as claim sites - ext__helmholtz_2d is REPORT-ONLY by its own certified floor (5.766462 - 9.694961 < 0: no attainable skill clears it, so even this card's -76.75% is 0.38x one min_claimable_effect), and ifc_poisson is retired for this branch by leg (a)'s pre-registered consequence, is INERT for revin_lf by construction (no row-aligned LF; fallback confirmed), and its level axis belongs to s1_poisson-B3 under part 4 (g)(4). The other four panel datasets are SCALER_INERT or LEVEL_ONLY at high confidence (B2 F13/F14 + this card's in-band controls). If the orchestrator wants a B4 on this stream anyway, it must switch AXIS, not tune the scaler further; and the one scaler experiment that would still be scientifically informative is explicitly NOT a claim attempt: a 2x2 of {per_sample_maxabs, per_sample_zscore} x {grad_clip 1.0, off} on ext__helmholtz_2d only, to test part 6 M3's corollary (centering) and M4 (clip non-invariance) - both pre-registered against the STATIC forecast (F and target-energy n_eff), never against a realized final-epoch n_eff. WHAT SURVIVES THIS STREAM: (1) B2's G-rule, now subsumed by the F statistic (part 6 M3) and gated on dc_pattern_split; (2) B2's dynamic-range PLACEMENT mechanism, extended to per-sample scalers and shown to run in BOTH directions (helmholtz -76.75%, ifc_poisson oracle +83.8%); (3) the STAGE-DISSOCIATION finding - the lever acts where its statistic is exact, which for revin_lf is the LF pretrain (part 6 F2/F3/F8, M1); (4) the H3 verdict plus its rider - the clipper is not the source of the scaler's gain, but a fixed clip threshold is not scale-invariant and every fixed-clip scaler comparison in the round is confounded (M4); (5) the DRIFT CLASS rule for paired controls (M5); (6) two promoted tools from this stream's three batches plus this card's tools/stage_scaler_placement_forecast.py.",
+    "cross_stream_notes": "FIVE items, all round-report-facing. (1) THE UNIFIED NORMALISATION ELIGIBILITY RULE - ship ONE rule. s2_beyond_copy-B3's turn-3 draft supplies checks 1-3 (NEED: target-energy effN/N collapsed; SAFETY/SIGNAL: promoted samples above the data's numerical noise floor; SAFETY/METRIC: the denominator tracks ||y_i||, the same statement as s7_loss-B2's low-norm-tail gate). s5_tuning-B3 adds four: check 0 STAGE (run every check per stage; a single-stage threshold cannot test a two-stage family - this card's leg (c)); check 4 PLACEMENT/CENTERING (score candidates by F = median_i(sd_i/s_i); Pearson(log2 F-ratio, log2 nRMSE-ratio) = -0.950 over 4 datasets, sign 3/4 with the miss being the LEVEL_ONLY set; NEVER drop the centering on a DC-dominated target - ifc_poisson's level channel degraded 5.96x and its true-scale ORACLE regressed 83.8%); check 5 STATISTIC LEGALITY AND FIDELITY (train and test scalers must MATCH - A4's legal collapse is that mismatch, reproduced to 5.6e-09; and a foreign-fidelity proxy repairs only in proportion to its fidelity - 100% at the stage whose target IS the LF field, 3.1% at the HF stage); check 6 N_hf (35.9% of ifc_poisson's 128 test scales lie outside its 5 train scales' range). Full wording in worktrees/s5_tuning/B3/scratchpad/reanalysis_turn_3_results.md (H-T3c). (2) FOR EVERY STREAM - REALIZED EFFECTIVE N IS NOT A HEALTH STATISTIC. It falls as a model succeeds: on helmholtz A0 and A1 both end at n_eff ~ 1/400, A0 because nothing is learned (bulk loss down 2.75x) and A1 because everything but one sample is (bulk down 110.68x). Pre-register the STATIC target-energy n_eff and F (pre-flight, tools/stage_scaler_placement_forecast.py), not the final-epoch realized number. This also settles the s2-B3 <-> s5-B3 comparison the initial analyzer flagged as unverified: s2-B3's '1.246 -> 17.25' is a STATIC TRAIN-TARGET audit under a predicted scale, not a realized per-batch loss and not stage-resolved, so it is NOT the same quantity as this card's HF-stage 1.0102 -> 1.0305 and the two must not be differenced. Compared like with like (static, per stage) the two streams AGREE: helmholtz is the one panel dataset whose target energy is collapsed, and a per-sample denominator repairs it. (3) FOR s7_loss's CLOSED-STREAM RECORD and anyone reusing its rule: s7-B2's 'never apply a per-sample normalisation to an LF-pretrain unchecked' does not invert, it becomes CONDITIONAL - the LF pretrain is where a per-sample LF statistic is EXACT (equalisation delivered vs oracle = 1.00) and therefore where the lever is strongest in BOTH directions; the same knob de-concentrated helmholtz's pretrain 65.8x (score -76.75%) and CONCENTRATED ifc_poisson's 1.9x under the true-scale oracle (score +83.8%). (4) METHODOLOGY - grad_clip IS NOT SCALE-INVARIANT. Changing the output-target scaler multiplied the typical pre-clip gradient norm by 9.8x against a fixed threshold of 1.0; the clip is then worth -13.9% on the global-scaler arm and +43.5% on the per-sample arm, with opposite SIGNS because the clip removes whatever owns the large gradients (the single informative sample when n_eff ~ 1; the destabilising steps when the loss is shared). Any card comparing objectives or target spaces at fixed clip - s2, s5, s7 all did - carries this confound; the scaler's main effect survives it here (-76.75% clip-on vs -61.25% clip-off), but the size is not reliable. (5) PAIRED-CONTROL DRIFT CLASS (two streams, five pairs): a nominally identical control reproduces across cards to < 0.2% on datasets whose training loss is spread (ifc_poisson +0.078%, allen_cahn -0.108%) and drifts 17-52% where one or two samples carry it (helmholtz -16.73% s5 / +24.95% s2, pfc +52.21% s2). On a dataset with n_eff/N < 1% only an IN-JOB paired control is a control; cross-card continuity gates there should be advisory. Neither s5-B3's nor s2-B3's conclusions are affected (both declared the in-job A0 as basis), but the round report should state the rule once instead of logging three anomalies.",
+    "promoted_tools": [
+      "stage_scaler_placement_forecast.py"
+    ]
+  },
+  "reanalysis_progress": "registered",
   "promotion": {
     "utc": "2026-07-30T21:45Z",
     "screen_job": "66075574",
