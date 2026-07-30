@@ -2845,3 +2845,64 @@
   updated for the s4_hybrid_routing-B2 review+submission delta and
   stage-file lag resolution).
 ## RUN END 2026-07-30T01:39:02Z
+
+## RUN START 2026-07-30T02:16:28Z
+- Single in-flight check: last run's `RUN START` (01:36:20Z) has a matching
+  `RUN END` (01:39:02Z), ~37 min before this run's start — clear to proceed.
+- Walked all 13 experiment cards across 7 streams: `s1_poisson-B1/B2`,
+  `s2_beyond_copy-B1/B2`, `s3_testtime-B1` (retired), `s3_warp-B1`,
+  `s4_hybrid_routing-B1/B2`, `s5_tuning-B1/B2`, `s6_local-B1/B2`,
+  `s7_loss-B1`. No card status, `job_ids`, or `reopen_candidate` changed
+  since last walk (all 12 non-terminal cards identical).
+- SLURM view: same 13 r1- job-units PENDING (no state change, no
+  vanishings, no new FAILED sacct records) — confirmed by both `squeue`
+  and `sacct`. **Delta this walk (operator, not agent/card)**: TimeLimit
+  reduced on four of the shorter PENDING jobs to enable SLURM backfill,
+  per the batch-0 precedent (already logged verbatim in
+  `state/orchestrator_flow.md` under "Pulse — backfill walltime
+  reductions — 2026-07-30T02:14Z"): `66005834` (s6_local-B1 guard200)
+  01:00:00→00:40:00, `66008912` (s1_poisson-B2 seed0) 01:00:00→00:30:00,
+  `66011595` (s3_warp-B1 debug relaunch) 01:00:00→00:40:00, `66014970`
+  (s6_local-B2 screen) 01:00:00→00:30:00 — verified via `scontrol show
+  job`/`sacct` (Timelimit column matches the operator's stated values
+  exactly). All four jobs still `PENDING`/`Priority`/`0:00` elapsed, no
+  state change otherwise. `s4_hybrid_routing-B2`'s screen (02:00:00, S1
+  review override) and the three uncertain-runtime screens (`66009306`
+  s7_loss-B1, `66011965` s2_beyond_copy-B2, `66012553` s5_tuning-B2, all
+  01:00:00) were left untouched by the operator, consistent with the
+  logged rationale. No debugger-relevant delta (no job failed, no card
+  needs a fix).
+- Timing ledger: no new COMPLETED r1- jobs (all 13 live jobs still 0:00
+  elapsed PENDING). Ledger unchanged at 53 entries; re-validated as
+  parseable JSON, no write needed.
+- No abandonment trigger: no stream has 3 consecutive skip/blocked
+  batches; no stream has reached 3 batches yet. `state/streams/`
+  directory still does not exist.
+- Transcript inbox: `state/transcripts/` still does not exist — nothing
+  to archive this walk.
+- Anchors: `state/anchors/*.json` unchanged (same 5 files, same
+  certified_utc 2026-07-29T14:28:45Z) — rendered verbatim into index.md,
+  no recomputation.
+- Gates unchanged: G1-G5 all carried-over PASS, no new gate activity this
+  window (`state/gates.md` mtime unchanged).
+- DINO-key measurement integrity incident
+  (`docs/operator_notes/2026-07-30-dino-key-measurement.md`): no change
+  since last walk (file mtime unchanged) — carried over verbatim in
+  index.md Flags.
+- Stage-file (`state/s4_hybrid_routing/current_stage.txt`) and
+  `experiment_cards/s4_hybrid_routing/batch_2/B2.json` mtimes both
+  predate this walk's window (2026-07-30T01:30:09Z, before the prior
+  walk's own RUN END of 01:39:02Z) — already reflected in the prior
+  walk's index.md, no new delta here.
+- No card files modified by the maintainer this walk. `git status --short
+  experiment_cards/` is clean (no pending changes at all this walk,
+  unlike the prior walk which had a pending reviewer/submitter write).
+  The only tracked round-dir delta from the operator is
+  `state/orchestrator_flow.md` (the TimeLimit-reduction log entry,
+  already the operator's own write, not the maintainer's).
+- index.md: regenerated (fresh timestamp; Streams table and Running/
+  pending jobs table annotated with the four operator TimeLimit
+  reductions and new values; Flags updated with a new operator
+  scheduling-action entry; Completed-cards section otherwise unchanged —
+  no card-status transitions this walk).
+## RUN END 2026-07-30T02:17:58Z

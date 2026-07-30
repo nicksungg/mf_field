@@ -1834,3 +1834,22 @@ Provably nothing to walk: no card writes, no queue movement (same 13 PENDING
 units), zero agents since the last walk indexed the milestone ~20 min ago.
 Skipping this cycle to avoid a pure no-op walk; next cron resumes normally
 (and immediately if any job starts).
+
+## Pulse — 2026-07-30T02:04Z
+
+pulse: no-op. 13 PENDING, no movement.
+
+## Pulse — backfill walltime reductions — 2026-07-30T02:14Z
+
+Scheduler estimates put the oldest job ~13h out. Applied the batch-0 backfill
+lever: TimeLimit reduced on the four short jobs (guard200 → 40m, s1-B2 → 30m,
+s3_warp → 40m, s6-B2 screen → 30m; all keep >2x headroom vs measured/expected
+runtimes — guard200 analog ~6-18 min, s1-B2 ~6 min, s3_warp ~15 min, s6-B2
+screen analog 8.6 min). s4-B2 screen kept at 02:00 per reviewer S1 (dense
+path first run); s2-B2/s5-B2/s7 screens kept at 01:00 (uncertain runtimes).
+Estimated starts are pessimistic; backfill typically beats them once gaps
+open.
+
+## Pulse — 2026-07-30T02:24Z
+
+pulse: no-op. 13 PENDING, no movement.
