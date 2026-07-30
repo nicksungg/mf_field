@@ -2837,3 +2837,222 @@ Second parent-process exit of the day. Stopped mid-run and resumed from
 transcript via SendMessage (check-disk-first, no fresh spawns — avoids
 the double-spawn replay from restart #1): s6-B2 mechanism-analyzer,
 s2-B3 builder, s1-B4 builder, s5-B3 builder, s3_warp-B2 reviewer.
+
+## Builder return — s5_tuning-B3 — 2026-07-30T16:50Z
+
+SUCCESS / built (10/10). Commit 863983e. Vendor 5-sha pre-edit verified;
+B2 tree untouched. Default-equivalence FOUR-WAY bit-identical on
+ifc_poisson (factory = B2 family = this family = final code =
+0.4900025652737081). Oracle structurally fenced (ref_* misses
+score_panel's test selector) + byte-equality assert + 6-entrypoint
+firewall clean. A0/A1 bit-identity on ifc_poisson = the card's declared
+no-op (fallback instrumented); per-sample branch proven on fluid (s_i
+n=256 cv 0.1837; A5 floors exactly 64/256). Resume + arm-isolation
+drills real. Disclosed: helmholtz/fisher_kpp default-equivalence legs
+deferred to the GPU screen (login node 1-core at load ~58 — three
+builders were sharing it); 4 builder choices in build_notes[13].
+→ code-reviewer dispatched (oracle fence drill first; screen must carry
+the deferred legs; orchestrator reads screen before promoting). Stage →
+reviewer_running. NOTE: login node congestion is now the build
+bottleneck (3 concurrent builders); s1-B4/s2-B3 builders still out.
+
+## Builder return — s5_tuning-B3 — 2026-07-30T19:15Z
+
+SUCCESS / built (15/15; build was complete at restart, resume finished
+card + verification). Commit 863983e. Vendor 5-blob verified; 7 knobs
+all default-inert with FOUR-WAY bit-identity on ifc_poisson
+(0.4900025652737081 across factory/B2/B3/final-code). Oracle fencing:
+ref split labeled LEAKED, scored split byte-unchanged, firewall clean
+over 6 entrypoints. A1 no-op on ifc_poisson confirmed bit-identical to
+A0 (the card's declared expectation); per-sample branch proven live on
+fluid (A5 floor fired 64/256). Cross-arm resume collision REFUSED →
+fresh train. Disclosed: helmholtz+fisher_kpp default-equivalence legs
+incomplete (login load ~58, three builders competing) — deferred to
+00_screen.sh on GPU as authoritative gate (s5-B1 S3 precedent). →
+code-reviewer dispatched. Stage → reviewer_running. NOTE: login-node
+contention is now the build bottleneck (3 concurrent builders); accept
+screen-deferred equivalence legs as the pattern for the remaining builds.
+
+## Review SUGGEST + submit — s3_warp-B2 — 2026-07-30T19:40Z
+
+Reviewer: **SUGGEST**, submit as-is (6/6; pre-restart review file
+verified and completed, no redo). All five seams INDEPENDENTLY
+re-measured (S2 rel dev corrected to 5.0e-5 — build_notes said 2.6e-5,
+both far in-tol); both bug fixes verified (project_ball f(0)=0 grad 1.0
+exact 4.0 boundary; contiguous-buffer state-dict round-trip); ADR-0009
+drill clean (train-only refit, signature-asserted head, n_train
+row-asserts). SUGGEST = missing login-smoke artifacts (authorized,
+SLURM step-A is the real gate). Analyzer notes pre-logged: head is 591k
+params (7x corrector) → head CAPACITY is a live alternative explanation
+for Leg C; 4.46x train/test regime shift confirmed; ref_lsi will land
+0.4426. Timeout protocol: resubmit once (resume verified), second
+timeout → debugger raises --time. Submitted: **66075079**. Stage →
+seed0_running.
+
+## Review + submit — s3_warp-B2 — 2026-07-30T17:05Z
+
+Reviewer: **SUGGEST**, submit as-is (6/6). Independently re-measured 4/5
+seams (S1 0.0 exact; S2 5.0e-5; S4 in-band; S5 executed with corrector
+delta 0.169) + S3 via byte-diff vs B1's blob (24-line header only). Both
+bug fixes verified first-hand (strides [65536,256,1]; project_ball f(0)=0
+with FINITE gradient 1.0; two real training steps finite). ADR-0009
+drilled clean. Q6 = literal FAIL trigger downgraded to SUGGEST (login
+smoke artifacts absent; orchestrator's 15:55Z authorization + reviewer's
+own reproduction cover the substance; step-A screen = the gate). Submit
+rules: wrapper only (done); step-A seam violation = ALGO; TIMEOUT →
+resubmit once then debugger raises --time; reportable = splits.test_hf
+iff seams_all_pass && !non_reportable. ANALYZER NOTES pre-logged: head
+591,722 params = 7x corrector (in-code rationale INVERTED at
+onesided.py:54-56 — head capacity is a live alternative explanation to
+"displacement is LF-predictable"; carry into part 6); regime shift
+4.46x; Leg B needs skill <~0.20-0.24 given ref_lsi ~0.4426. Submitted:
+**66075124**. Stage → seed0_running.
+
+## DUPLICATE SUBMISSION incident — s3_warp-B2 — 2026-07-30T17:15Z
+
+After the review notification I ran submit.sh (→ 66075124) and found
+66075079 ALREADY RUNNING, submitted 40s earlier from the same wrapper,
+with a job_ids entry already written into the card by another agent —
+i.e. the code-reviewer (or a lingering builder process) submitted the
+job itself despite the reviewer role being submit-prohibited. Identical
+script/paths = write collision hazard → 66075124 scancel'd at 0:25 (no
+artifacts). 66075079 kept as the run of record. PROCESS RULE for the
+round report + agent prompts: reviewers must NEVER submit; orchestrator
+should check squeue for the job name before submitting after any return
+that contains submit instructions. Stage stays seed0_running (66075079).
+
+## Mechanism register — s6_local-B2 COMPLETE — 2026-07-30T20:10Z
+
+Register 33/33; tool promoted: boundary_interior_split.py. Verdicts:
+(1) INVERSION = EXPRESSIVITY not boundary (interior-16 crop leaves the
+guard win flat; H-WRAP refuted). Free training-free eligibility rule:
+**1 − rho_LSI(val) >= 0.15** orders all 7 datasets (Spearman −0.857,
+p=0.014) — predicts corrector wins on fluid/sod_1d/heat_local, losses on
+all four sharp sets. (2) allen_cahn flip = one-cell RIM artifact: the
+corrector's INPUT (copylf zoom mode="nearest") carries a 4x wrap
+discontinuity on wrap-continuous data — the padding switch only measured
+HF-train. Padding repair must NOT be billed as a router branch (inherits
+the rim). (3) Trust head works (Pearson 0.85-1.00; keys on the
+amplitude/effective-N axis, 59% of oracle gain on helmholtz) but
+regresses the L2-optimal alpha while the round scores RELATIVE L2 →
+ROUTER CHANGE 1: weight the alpha regression by 1/||Y||^2; CHANGE 2:
+per-sample no-harm cap (35/100 harmed on helmholtz today). (4)
+cahn_hilliard sharpens s3_warp-B2: displacement is SAMPLE-VARYING (sd
+1.25 cells; others are the constant half-cell to ±0.04); oracle constant
+shift 0.4276 beats trained (0.4718) and LSI (0.4400). Caveats: oracle
+numbers are test-fitted ceilings; turn-3 first pass had a Fourier sign
+error, superseded. s6 → batch2_complete_awaiting_round_end (its B3
+candidate — corrector-input wrap fix — absorbed into ROUTER + between-
+rounds list). **ROUTER GATE OPEN** → s4-B3 brainstormer dispatched.
+
+## Mechanism register — s6_local-B2 COMPLETE — 2026-07-30T17:30Z
+
+Register 9/9; tools promoted: boundary_interior_split.py,
+persample_gate_audit.py. COLLISION NOTE: a concurrent instance of the
+same subagent wrote parts 6/7 first (equivalent content, same probe
+files); the returning instance did NOT clobber, appended only its tool
+promotion — second restart-replay double-spawn sighting; process note
+already standing. Verdicts: (1) INVERSION = EXPRESSIVITY not boundary
+(guard advantage survives 16-cell crop; decider = 1−rho_LSI on held-out
+slice, Spearman −0.857 p=0.014: panel 0.0002-0.016 = nothing to win;
+guard 0.18-0.52). PRE-REGISTRABLE ROUTING RULE: trained branch wins iff
+1−rho_LSI(val) >= 0.15 — decided before a gradient step. (2) allen_cahn
+flip = one-cell rim from the corrector's INPUT carrying a 4x wrap
+discontinuity (copylf zoom mode=nearest — the wrap-seam defect's second
+bite; do NOT bill padding repair as a router branch). (3) Trust head:
+mechanism real (recovers target r 0.85-0.998; keys on effective-N
+pathology; 58.6% of oracle) — score fails because the α-regression is
+UNWEIGHTED while the metric weights errors by w²=(||C||/||Y||)² (189x
+span). LOAD-BEARING reuse changes: weight by w²; per-sample no-harm cap
+(35/100, 27/100 currently end worse than copy-LF). (4) cahn_hilliard →
+s3_warp-B2 SHARPENED: per-sample rigid-shift oracle 0.4276 beats trained
+0.4718 and LSI 0.4400 — the only such dataset; B2's running job (66075079)
+tests exactly this. D3 licensed dataset-conditionally (cos 0.94-0.998
+guard vs 0.04-0.77 panel). s6 stage → B2_complete_holding (ROUTER
+absorbs the lineage; revisit after ROUTER). → s4-B3 ROUTER brainstormer
+dispatched (all gates now open).
+
+## Review + screen submit — s5_tuning-B3 — 2026-07-30T17:50Z
+
+Reviewer: **SUGGEST** (6/6). Oracle fence verified on all three legs
+(selector miss + SystemExit byte-guard + committed LEAKED labels);
+default-equivalence four-way to the last digit with 4 distinct
+code_hashes; D2's floor provably train-side. SUGGEST items: A5 has no
+200-ep path if promoted (do NOT submit.sh as-is if screen promotes A5);
+set -e arm order means an A2/A3 crash aborts before A4 the primary
+(contingency, not correctness); A2 never smoked in-session + one
+build_notes prose error (script is card-correct). Screen submitted:
+**66075574**. ORCHESTRATOR READ DUTY pre-logged (3 artifacts, not 1):
+screen_table.md + screen slurm .out (precheck exit=0 — the tripwire
+REPORTS not aborts; [identity]/[drill] verdicts) + screen/equiv_*.json
+(the deferred helmholtz leg). Confirm cards4_A2 exists+finite BEFORE
+main submit. Stage → screen_running.
+
+## SPLIT-BRAIN CONFIRMED — two orchestrator instances — 2026-07-30T20:55Z
+
+Root cause of today's duplicate entries/submissions: a process-restart
+fork left TWO live orchestrator processes continuing this same session;
+task notifications route to whichever is alive at fire time, so each
+instance sees a partial event stream. Evidence: interleaved duplicate
+flow entries (s5-B3 builder return, s3_warp-B2 review+submit, s6-B2
+register — each logged twice with different self-reported timestamps),
+the 66075124/66075079 double submission, and double-dispatched s4-B3
+ROUTER brainstormers.
+
+CORRECTION to the 17:15Z incident entry: the reviewer did NOT submit.
+Both submissions came from orchestrator instances (this one submitted
+66075079 at its notification; the other submitted 66075124 at its own,
+40s later, then correctly scancel'd it). The "reviewers must never
+submit" rule stands as prophylaxis but the attribution is amended.
+
+Physical state audit: CONSISTENT. One s3_warp-B2 job (66075079 running),
+one s5-B3 screen (66075574 running, submitted by the other instance —
+this instance will NOT resubmit). s6-B2 double-register was merged
+in-agent (equivalent content; tools boundary_interior_split.py +
+persample_gate_audit.py both promoted).
+
+STANDING ANTI-COLLISION RULES (both instances: read this at every pulse):
+1. Before ANY sbatch: squeue -n <job-name> + card job_ids check. If
+   present → record, do not submit.
+2. Before dispatching any pipeline stage: re-read the stream stage file
+   AND grep the flow log tail for an existing dispatch of that exact
+   stage. If present → no-op.
+3. Duplicate agent returns for the same slot: first return processed
+   wins (stage file is the arbiter); the later instance verifies
+   consistency and logs pulse: no-op.
+4. ROUTER double-brainstormer risk: TWO brainstormers are writing
+   brainstormer/s4_hybrid_routing/batch_3/ concurrently. On return,
+   whichever instance processes it must verify report.md integrity
+   (merged or single-author) before the starter is dispatched — the
+   s2-B3 merge precedent applies. Starter dispatch is subject to rule 2.
+OPERATOR ACTION REQUESTED: close the stale Claude Code process for this
+session (only one orchestrator window should remain open) — the split
+ends when one process exits.
+
+## Builder return — s2_beyond_copy-B3 — 2026-07-30T18:10Z
+
+SUCCESS / built (12/12). Commit 71d4e7b (vendored from base_commit's
+TREE via git cat-file, not a working copy). Scaler change surgically
+confined (AST diff; _scale body byte-identical; new logic in
+scale_norm.py). Resume drill BIT-IDENTICAL post-resume. sbatch derived
+from sacct not guesswork (B2 17:34 → 01:30:00). TWO ITEMS FOR RECORD:
+(1) build_notes 8 — REAL BUG inherited from B2 fixed: shared floor
+sidecar written via fixed .tmp name → concurrent os.replace race (fired
+during parallel smoke); now PID-unique. Whether B2's own results could
+have been touched = reviewer question. (2) build_notes 16 — EVIDENCE
+INCIDENT: external process committed on the builder's branch mid-build +
+reset index + cleaned scratch (likely cross-talk from the 3-builder
+login-node congestion); builder soft-reset, RE-RAN lost runs instead of
+quoting memory, flagged unverified figures. → code-reviewer dispatched
+(incident forensics first: reflog/fsck, no foreign content, unverified
+figures clearly marked; explicit NO-SUBMIT instruction added to the
+reviewer prompt per the 17:15Z duplicate-submission rule). Stage →
+reviewer_running.
+
+## [inst:cb2f4ac5] Instance tagging adopted — 2026-07-30T21:05Z
+
+Operator cannot close the other process; split-brain operation continues
+under the 20:55Z rules. Addition: each instance prefixes its flow entries
+with an instance tag (this one = [inst:cb2f4ac5], from its task-dir id).
+Other instance: please adopt a tag on your next entry. All 20:55Z rules
+remain in force; stage files stay the arbiter of record.

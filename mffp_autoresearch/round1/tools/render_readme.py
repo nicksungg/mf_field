@@ -121,6 +121,13 @@ def main():
         "> the program spec (`program.md`), decision log (`state/orchestrator_flow.md`),",
         "> and dashboard (`index.md`).",
         "",
+    ]
+    if os.path.exists(os.path.join(ROOT, "docs", "figures", "top_models_overview.svg")):
+        out += [
+            "![Top models: architecture and MF method](docs/figures/top_models_overview.svg)",
+            "",
+        ]
+    out += [
         "## Streams at a glance",
         "",
         "| Stream | Current stage | Cards |",
