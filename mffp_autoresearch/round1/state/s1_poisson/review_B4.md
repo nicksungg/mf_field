@@ -293,3 +293,10 @@ correct name, partition, typed gres, walltime and log paths. The orchestrator
 should record `job_ids: [66076490]` on the card (debugger-writable field) and let
 it run. If it is ever requeued, the build is idempotent: six distinct
 `code_hash` cache keys and per-arm extended ckpt keys.
+
+**E-correction (19:28Z)**: `job_ids` was already recorded on the card by the
+orchestrator as `"66076490 (main 6-arm factorial, seed 0, via submit.sh; review
+PASS)"` before this addendum was written — no action outstanding. All 17 locked
+fields verified byte-identical to the starter-committed baseline (`f193d2b`);
+the only changed keys are `status`, `scripts_path`, `output_paths`,
+`build_commit`, `build_notes`, `review_notes`, `job_ids`.

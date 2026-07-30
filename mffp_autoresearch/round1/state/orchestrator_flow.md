@@ -3184,3 +3184,52 @@ CLAIM PROTOCOL (both instances: read before acting on any slot):
    that transition. Ties resolved by job_ids/card state, not by force.
 4. Returning duplicate agents: verify-donʼt-clobber (the pattern all
    four sightings already followed).
+
+## Duplicate s1-B4 reviewer resolved per protocol — 2026-07-30T19:35Z
+
+Second reviewer instance returned: PASS confirmed independently (B3
+continuity bit-exact from git blobs; refusal branch provably trains
+fresh; uniform_distinct digest drops exactly f_src; single-commit
+invariant holds via both reflogs; drill log internally consistent incl.
+the epoch-0002 restart tell). Gate ordering verified honoured (review
+writes 19:18-19:21Z, submit 19:21:19Z). Addenda appended, review_notes
+kept at exactly 1. New non-blocking: N5 same_cfg omits seed (harmless
+under score_panel paths), N6 shuffle gen manual_seed(0) inherited
+(matters only at seeds 1-2), N7 A4 matches A1 in expectation per epoch.
+Audit nit: first pass timestamp predates the commit it reviewed — the
+second pass's verification covers it. NO resubmit (66076490 queued,
+card recorded). All four cluster jobs healthy.
+
+## ROUTER dual-design collision — claim protocol applied — 2026-07-30T19:50Z
+
+Both orchestrator instances' brainstormers designed s4-B3. cb2f4ac5's
+variant (12:25, snapshotted as report_verified_cb2f4ac5.md, md5 39d4181d
+pinned in the stage tag) = 6-arm sweep with promotion rank (router rank
+1, corr_cleaned rank 2). This instance's variant (12:28, now report.md)
+= 5-arm selector design (no promotion; router primary; dc_raw +
+router_forced_wrong controls; rule demoted to prediction; denominator-
+invariant clauses). SAME science, DIFFERENT card mechanics. Stage says
+starter_running [inst:cb2f4ac5] → transition TAKEN, this instance
+dispatches NOTHING (protocol rule 2). HAZARD: the running starter may
+read report.md (now the 12:28 variant) against a 12:25 md5 pin.
+PRE-CONDITION for the NEXT transition (builder dispatch — either
+instance): verify the drafted B3 card is internally consistent with
+EXACTLY ONE report variant (no franken-card: arm table, falsification
+clauses, and recipe must all come from the same file); if mixed, re-run
+the starter against ONE named variant. Substantive note for the
+adjudicator: this instance's variant pre-registers that a rule-only
+router VIOLATES no-harm on fisher_kpp (63.8% self-inflicted) — whichever
+variant is kept, THAT finding must survive in part 4 (it is
+evidence-fixed, not a design choice). Both reports preserved on disk.
+
+## s5-B3 builder teardown note — self-correction on record — 2026-07-30T20:05Z
+
+Builder's returning instance confirmed no action needed (monitor
+teardown; commit intact) and corrected its own prose: A2 never smoked in
+its session (reviewer had caught it; build_notes[15] already carries the
+correction, appended by inst cb2f4ac5); DS_EQUIV is helmholtz+ifc only.
+Scripts were card-correct throughout. CAVEAT CARRIED FORWARD for the
+analyzer: the screen's GPU resume drill shows finished-ckpt reload, NOT
+mid-stage resume — the genuine mid-stage evidence for immutable #8 is
+the login-node drill (scratchpad/smoke_D.out). Main run 66076686 queued
+with A1 promoted; nothing further owed on this slot until results.

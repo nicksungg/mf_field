@@ -122,11 +122,12 @@ def main():
         "> and dashboard (`index.md`).",
         "",
     ]
-    if os.path.exists(os.path.join(ROOT, "docs", "figures", "top_models_overview.svg")):
-        out += [
-            "![Top models: architecture and MF method](docs/figures/top_models_overview.svg)",
-            "",
-        ]
+    for fig, alt in [
+        ("top_models_overview.svg", "Top models: architecture and MF method"),
+        ("error_comparison.png", "Per-dataset error vs the copy-LF reference, top models vs baseline"),
+    ]:
+        if os.path.exists(os.path.join(ROOT, "docs", "figures", fig)):
+            out += [f"![{alt}](docs/figures/{fig})", ""]
     out += [
         "## Streams at a glance",
         "",
