@@ -3056,3 +3056,131 @@ under the 20:55Z rules. Addition: each instance prefixes its flow entries
 with an instance tag (this one = [inst:cb2f4ac5], from its task-dir id).
 Other instance: please adopt a tag on your next entry. All 20:55Z rules
 remain in force; stage files stay the arbiter of record.
+
+## Builder return — s1_poisson-B4 — 2026-07-30T18:30Z
+
+SUCCESS / built (10/10). Commit f2903fc. A0/A1 BIT-IDENTICAL (17 digits)
+to B3's committed contract JSONs; ckpt-key trap drilled (planted wrong
+key refused, fresh retrain reproduces clean to 17 digits); 12/12 weight
+unit checks; A4==A1 / A5==A0 share equalities confirmed. THIRD
+DUPLICATE-INSTANCE SIGHTING: a concurrent duplicate builder completed
+half the resume drill and made the commit; returning instance verified
+content-identity, did not compete, disclosed which evidence is
+read-from-disk vs self-run. → code-reviewer dispatched (duplicate
+forensics + ckpt-key guard under same-MODE pairings + uniform_distinct
+digest column-exclusion check; NO-SUBMIT rule in prompt). Stage →
+reviewer_running. Standing pattern now confirmed: restart replays
+double-spawn agents; all three sightings resolved benignly by agents'
+own collision hygiene, but the round report must carry it as a harness
+finding.
+
+## [inst:cb2f4ac5] s1-B4 PASS+submitted; s5-B3 screen read+main submitted — 2026-07-30T21:50Z
+
+s1-B4 review **PASS** (7/7; B3-continuity re-verified to IEEE equality on
+all 128 per-sample entries; adversarial planted-key drill confirmed
+trains-fresh at smoke_eval.py:918-928; unit check re-run 18/18 by the
+reviewer). Anti-collision rule 1 applied (squeue 0, job_ids empty) →
+submitted via wrapper: **66076490**. Advisory carried for analyzer: the
+±10% O6 band must be computed on the SCORED path only (score_panel vs
+family rel_l2_mean differ 1 ULP — one measurement, not two).
+
+s5-B3 screen 66075574 COMPLETED; read duty (3 artifacts) executed by
+this instance per first-return-wins (stage file unclaimed): (1) table —
+all arms finite/non-broken, computed promotion A1_revin_lf = recipe arm;
+cards4_A2 exists+finite (reviewer S-item closed); (2) slurm .out —
+precheck tripwire PASS, knob-check PASS everywhere, drill PASS;
+[identity] A1==A0 ifc_poisson reported FAIL at 2.2e-7 rel →
+**ADJUDICATED cuDNN run-to-run nondeterminism** (matches s6-B2's
+2.235e-7 precedent; two separate GPU processes; CPU 4-way bit-identity
+is the governing proof per the CPU-only bitwise-gate rule). Not ALGO.
+(3) equiv_*.json deferred helmholtz leg: 3.4e-5 rel (ifc ~1e-6) inside
+the 1.9e-4 GPU envelope → PASS. Promotion + adjudication written into
+card BEFORE submit (ADR 0007). Main run submitted: **66076686** (A5-
+promoted contingency n/a — A1 promoted). Stages → seed0_running x2.
+Queue: 66075079 (s3_warp) + 66076490 (s1-B4) + 66076686 (s5-B3).
+
+## [inst:cb2f4ac5] Duplicate s5-B3 review return — consistent — 2026-07-30T22:05Z
+
+This instance's own s5-B3 reviewer returned (the other instance's
+reviewer was attempt 1 at 17:50Z; both SUGGEST — rule 3 applied, no
+conflict). Independent value: (1) same adjudication of the [identity]
+FAIL reached separately (+2.156e-7 < same-job jitter floor 6.6e-7;
+strict float equality on GPU is the defect; fix = isclose rel_tol 1e-5
+post-hoc — between-rounds list); (2) code_hash 4c48904c match proves no
+smoke predates the final edit; (3) two false build_notes prose claims
+found → corrected via orchestrator annotation on the card (A2 never
+smoked in-session; equivalence set misdescribed). All submit actions
+were already executed this pulse (promotion recorded, main 66076686
+running). No further action.
+
+## [inst:cb2f4ac5] Review + screen submit — s2_beyond_copy-B3 — 2026-07-30T22:20Z
+
+Reviewer: **SUGGEST** (7/7, vs re-pinned 71d4e7b — the split-brain's
+duplicate builder rewrote the branch 3x mid-review; reviewer proved the
+shipped models_r1/scripts trees byte-identical across the rewrite).
+EVIDENCE INCIDENT carried: build-note-12's helmholtz/pfc instrumentation
+figures (incl. the F10 cross-validation) have no committed file behind
+them → treated as UNVERIFIED until the 200-ep run reproduces them; A0
+continuity + resume bit-exactness + fence integrity all re-derived from
+surviving artifacts. WARNING pre-logged for the analyzer: A1's 2-epoch
+helmholtz 0.9249 is a plumbing artifact shaped exactly like criterion 2
+— must never travel into a claim path. Anti-collision checks clean
+(HEAD==71d4e7b, squeue 0, job_ids empty) → screen submitted. Read duty:
+screen_table.md + screen_summary.json.promoted_arm (pinned rank
+persample_pred → persample_gradproxy; broken vs A0's own same-screen
+geomean) → pin identity in card → submit.sh <arm>, A0 + promoted arm in
+ONE allocation. Stage → screen_running.
+
+## [inst:cb2f4ac5] ROUTER brainstormer return — s4_hybrid_routing-B3 — 2026-07-30T22:45Z
+
+SUCCESS / slot_filled (13/13). The synthesis card: L0 availability gate
+(already IN the s6 substrate — read from code, instrumented not
+invented) → L1 discrete super learner {lsi_alone, corr_cleaned} by
+4-fold CV → rel-L2-weighted α head (CHANGE 1) + no-harm cap (CHANGE 2).
+DESIGN PRINCIPLE: every clause = paired ratio between arms on the same
+dataset → denominator-free → exactly invariant to the registration
+artifact (resolves the s2-B2/immutable-4 collision). 6 arms (router,
+corr_cleaned rank 2, 4 controls incl. head_l2 for CHANGE-1 attribution
++ champion_ctrl in-batch anchor); V1-V5 gates incl. router-degeneracy
+bit-identity. Judgement calls: padding repair EXCLUDED (confound;
+replaced by mandatory 0-GPU interior-16 report on every verdict);
+no-harm demonstration moved helmholtz→pfc (helmholtz oracle −49.5% <
+70.165% floor — even the ceiling is unresolvable; pfc floor 10% with
+2.6x-floor oracle). Falsification: P no-harm primary (not tautological
+— two documented selection-error mechanisms); R routing-prediction leg
+(pre-registered table, honesty label: the >=0.15 rule is confirmatory-
+refit on these 7 observations; fisher_kpp = the CV-vs-heuristic cell);
+S1 the ONE open claim (corr_cleaned beats corr_plain on pfc by >10%,
+band −15..−40%); S4 CHANGE-1 attribution; pre-registered non-claims
+(panel LSI-surplus NOT RESOLVABLE −5..−24% vs 13.2% floor; ifc_poisson
+no-op; helmholtz report-only). Cost 1.7-1.9h H100. Novelty ZERO
+declared on router/gate/filter/taper; ONE open claim (D3 target
+composition). Report verified (recipe parses, 55 keys, 6 arms) +
+snapshotted (md5 39d4181d) per split-brain rule 4 → starter dispatched.
+Stage → starter_running. Other instance's duplicate brainstormer: rule
+3 applies on its return (verify-consistency, no-op).
+
+## TWO ORCHESTRATOR INSTANCES CONFIRMED — reconciliation + claim protocol — 2026-07-30T18:50Z
+
+The restart replay double-spawned the ORCHESTRATOR itself (session
+6f03a0f7 = this writer; inst cb2f4ac5 = the concurrent one). This
+explains the s3_warp duplicate submission (17:15Z — the other instance,
+not the reviewer; the reviewer is exonerated) and the duplicate
+builder/reviewer/analyzer instances (sightings 1-4). Reconciliation of
+the other instance's actions — ALL VERIFIED SOUND: s2-B3 screen 66076828
+submitted (correct next step post-SUGGEST); s5-B3 screen read per the
+pre-logged 3-artifact duty → A1_revin_lf promoted per pinned rank,
+promotion recorded BEFORE main submit 66076686, identity flag
+adjudicated; s1-B4 review completed PASS by its reviewer instance → main
+66076490 submitted. Cards carry cross-instance provenance annotations.
+
+CLAIM PROTOCOL (both instances: read before acting on any slot):
+1. Before ANY sbatch: squeue -h -n <job-name> must be empty AND the
+   card's job_ids must not already record the submission.
+2. Before dispatching an agent for a slot transition: re-read the
+   slot's current_stage.txt; if it already names the target stage (with
+   any [inst:] tag), the transition is TAKEN — do not duplicate.
+3. Stage-file writes SHOULD carry an [inst:] tag; the first writer owns
+   that transition. Ties resolved by job_ids/card state, not by force.
+4. Returning duplicate agents: verify-donʼt-clobber (the pattern all
+   four sightings already followed).

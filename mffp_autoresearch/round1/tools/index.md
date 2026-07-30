@@ -34,6 +34,8 @@ tool: name, what it measures, invocation, provenance card.
 | `ladder_pair_row_audit.py` | does a multi-fidelity PAIR/ladder row set add data or only REPLICATE it? distinct `(X, Y)` rows vs total, the per-level replication factor and effective loss weight it imposes, steps/epoch, and the source-indexed mismatched-pair defect | s1_poisson-B3 turn 1 |
 | `gain_calibration_ceiling.py` | the three ceilings any per-sample multiplicative calibration head can aim at on a given prediction (one global gain / X-linear law / per-sample oracle), all test-fitted and labelled, in noise-floor units | s1_poisson-B3 turn 2 |
 | `norm_tail_hedge_audit.py` | is an arm's score bought by ABSTAINING on the samples it cannot fit, and would a per-sample-normalized objective take that hedge away? the `rel < 1 iff g < 2cos` admission rule, the oracle-rescale `hedge_share_of_score`, the low-norm-tail gate (concentration x tail-hardness x amplitude shrink) and the denominator-floor counterfactual | s7_loss-B2 turns 2-3 |
+| `boundary_interior_split.py` | is a predictor's error - or a CONTRAST between two predictors - BOUNDARY-BORNE? squared-error share by distance-to-domain-edge against the pixel share, the round's nRMSE recomputed on interior crops, and a `crop_sign_flip` flag that fires when a comparison's VERDICT is decided by the edge strip | s6_local-B2 turns 1-2 |
+| `persample_gate_audit.py` | audits a SHIPPED per-sample gate / blend / router weight from predictions alone: the alpha it actually realised vs the per-sample optimum, what it captured of the oracle gain, the metric-sensitivity `w = \|\|C\|\|/\|\|Y\|\|` that explains the shortfall, and the per-sample no-harm violation rate | s6_local-B2 turn 3 |
 | `render_readme.py` | regenerates `round1/README.md` from the experiment cards (housekeeping, not a probe) | round infrastructure |
 
 ---
@@ -1314,3 +1316,111 @@ the overshoot regime, B1 F10/F11).
 **Provenance.** `worktrees/s7_loss/B2/scratchpad/reanalysis_turn_2.py` +
 `reanalysis_turn_3.py`; card `experiment_cards/s7_loss/batch_2/B2.json` part 6,
 findings F6-F11.
+
+---
+
+## `boundary_interior_split.py`
+
+**Measures.** The EDGE-DISTANCE complement to `interface_locality_profile.py` (which bins
+by |grad HF|). For every prediction file, and for every contrast against the first one:
+
+| key | meaning |
+|---|---|
+| `nrmse_full` | the round's nRMSE (`eval/nrmse.py`) on the whole field |
+| `interior_nrmse[m]` | the SAME metric recomputed on the interior crop at margin `m` cells |
+| `strip[s].frac_sq_err` / `frac_pixels` / `concentration` | share of the file's squared error inside `distance-to-edge < s`, that strip's pixel share, and their ratio (1.0 = spatially neutral) |
+| `verdict` | `BOUNDARY_BORNE` (innermost concentration >= 3) / `MILD` (>= 1.5) / `NEUTRAL` / `INTERIOR_BORNE` (<= 0.67) |
+| `contrasts[*].ratio_by_margin` | `nrmse(other)/nrmse(first)` at each crop |
+| `contrasts[*].crop_sign_flip` | **True when the ratio crosses 1.0 between the full field and the largest margin** |
+
+**Read it as.** A contrast with `crop_sign_flip = True` is a BOUNDARY-HANDLING result, not
+an operator-class result — say which one you mean before reporting it. A flat
+`ratio_by_margin` is boundary-independent and may be attributed to representation. A single
+arm with `verdict = BOUNDARY_BORNE` has an unfixed padding / extension / seam bug that is
+worth more than any capacity knob.
+
+Round 1 keeps producing wins and losses that live in a few cells at the domain edge (zero
+padding, circular padding on a non-periodic upsample, an implicitly-periodic FFT control on
+a Dirichlet domain, `copylf_prediction`'s `zoom(..., mode="nearest")` wrap seam). This is the
+one-pass test for all of them.
+
+**Invoke.**
+```bash
+source "$PROJECT_ROOT/.venv/bin/activate"
+python tools/boundary_interior_split.py \
+    --pred_npz <a.npz> [<b.npz> ...] [--labels a b] \
+    [--pred_key pred --target_key target] [--grid H W] \
+    [--strips 1 2 4 8 12 16] [--margins 0 4 8 12 16] \
+    [--out split.json] [--plot split.png]
+```
+Pure numpy (+ matplotlib only with `--plot`), seconds. Every file must carry the SAME target
+array (it refuses otherwise); square grids are inferred, 1-D layouts (`H == 1`) are handled,
+otherwise pass `--grid`.
+
+**Verified.** Run 2026-07-30 from `round1/` on `s6_local-B2`'s replayed arms:
+`heat_local` `circ_repair` **MILD** (d<1 concentration 2.58) vs `lsi_ctrl`
+**BOUNDARY_BORNE** (14.56), ratio_by_margin 11.70 -> 9.01 (`crop_sign_flip` **False** — the
+trained arm's 11.7x guard advantage is NOT a boundary artifact); `sharp__allen_cahn_2d`
+ratio_by_margin 0.8885 -> 1.0145 with `crop_sign_flip` **True** — the batch's one prediction
+miss, localized to a one-cell rim; `sharp__sod_1d` (1-D, 1x128) 17.13 -> 17.36, flip False.
+
+**Provenance.** `worktrees/s6_local/B2/scratchpad/reanalysis_turn_{1,2}.py`;
+card `experiment_cards/s6_local/batch_2/B2.json` part 6, findings F1-F4, F8.
+
+---
+
+## `persample_gate_audit.py`
+
+**Measures.** The counterpart to `trust_gate_headroom.py`: that tool prices whether a
+gate is worth BUILDING (oracle ceilings, before the fact); this one audits a gate you
+already SHIPPED, from predictions alone. It models `pred = base + alpha_i * (model - base)`
+and RECOVERS `alpha_i` by per-sample least-squares projection, so it needs no access to
+the gate's internals and works for a trust head, a router weight, a stacking coefficient
+or a copy-LF-vs-model switch.
+
+| key | meaning |
+|---|---|
+| `alpha_implied` / `alpha_star` | the blend weight actually realised, vs the per-sample optimum `<R_i,C_i>/\|\|C_i\|\|^2` (`--alpha_clip` to match the gate's own clip) |
+| `recovery.pearson` / `.spearman` | is the gate estimating the right thing at all? |
+| `scores.*` | round nRMSE of base / model at `alpha=1` / the shipped gate / the global scalar / the per-sample ORACLE, with `oracle_gain_vs_global_pct` (the headroom chased), `gate_gain_vs_global_pct` (what was delivered) and `captured_fraction_of_oracle_gain` |
+| `sensitivity.*` | `w_i = \|\|C_i\|\|/\|\|Y_i\|\|`, the SCORED metric's sensitivity to a per-sample alpha error: `p50` / `max` / `max_over_p50`, `spearman_excess_vs_w`, and the worst samples' `times_mean_excess` |
+| `no_harm.*` | fraction of samples ending WORSE than `base` under the gate, at `alpha=1`, and at the global scalar, plus the worst ratio |
+| `verdict` | `NO_PERSAMPLE_HEADROOM` / `SENSITIVITY_LIMITED` / `GATE_HELPS` / `GATE_HURTS` |
+
+**Read it as.** High `recovery` + a `gate_gain` worse than `oracle_gain` + a large
+`sensitivity.max_over_p50` -> `SENSITIVITY_LIMITED`: the gate estimates alpha well and is
+being scored on a handful of samples, so **weight its fit by `w^2`** before changing
+anything else. (The per-sample argmin of relative L2 and of squared L2 are the SAME —
+`\|\|Y_i\|\|` is constant in alpha — so "fit a different objective" is the wrong diagnosis;
+the fit's WEIGHTING is what is wrong.) `oracle_gain_vs_global_pct` inside the dataset's
+certified floor -> there is no per-sample headroom and a global scalar is the honest
+choice. `no_harm.frac_worse_than_base_gate` >> `..._global` -> the gate traded an exact
+no-harm floor for headroom; report that as a cost, because "alpha = 0 reproduces the base
+exactly" is a CONSTRUCTION claim, not a per-sample one.
+
+**Invoke.**
+```bash
+source "$PROJECT_ROOT/.venv/bin/activate"
+python tools/persample_gate_audit.py \
+    --base_npz <copylf_or_base.npz> --model_npz <ungated_model.npz> \
+    [--gated_npz <shipped_gated.npz>] [--global_alpha <the run's held-out scalar>] \
+    [--alpha_clip 0 1.5] [--pred_key pred --target_key target] \
+    [--top_k 3] [--out audit.json]
+```
+Pure numpy + scipy.stats, seconds. **Always pass `--global_alpha`**: without it the tool
+grid-searches the global scalar on the TEST split, which is an oracle reference and
+flatters the gate (it is labelled as such in `scores.global_alpha_source`).
+
+**Verified.** Run 2026-07-30 from `round1/` on `s6_local-B2`'s `trust_head_circ`
+(reconstructed from the bit-shared `circ_repair` corrector, C3 pairing sha-equal 5/5),
+with the run's own held-out scalars and `--alpha_clip 0 1.5`:
+`sharp__phase_field_crystal_2d` recovery Pearson **0.9983**, oracle gain **-25.83 %**,
+gate gain **+21.51 %** (card: +21.319 %, the gap is CPU-replay precision),
+`sensitivity.max_over_p50` **189.3**, `spearman_excess_vs_w` +0.659 -> verdict
+**SENSITIVITY_LIMITED**; `ext__helmholtz_2d` oracle gain -49.50 %, gate gain **-29.02 %**,
+`captured_fraction_of_oracle_gain` **0.586**, `no_harm` 0.35 (gate) vs 0.00 (global
+scalar), worst ratio 1.656 -> verdict **GATE_HELPS**.
+
+**Provenance.** `worktrees/s6_local/B2/scratchpad/reanalysis_turn_3.py` +
+`scratchpad/turn3_sensitivity_check.json`; card
+`experiment_cards/s6_local/batch_2/B2.json` part 6, findings F10-F13.
