@@ -1749,3 +1749,27 @@ INNOVATION: arm_env.sh generates the 35-knob env from the card (screen/sweep
 cannot drift). Deviations sane (recipe's own 04:00:00; V1/V2 adjudicated
 post-hoc by 02_verify_gates.py exit-2-ALGO so a gate failure doesn't destroy
 the sweep's numbers). Stage → review_running; dispatching reviewer.
+
+## Pulse — 2026-07-30T00:34Z
+
+pulse: no-op. 6 PENDING jobs; s4-B2 builder + s6-B2 reviewer in flight.
+
+## s6-B2 review + screen submit — 2026-07-30T00:41Z
+
+Reviewer: SUGGEST (6/6; bit-preservation re-derived 12/12; replica arm proven
+through the TRAINED path end-to-end — identical loss/alpha/nRMSE to the last
+digit with alpha!=0; V2 bit-exact re-verified). F1 applied at submit time
+(mkdir slurm dir — SLURM opens --output before the body's mkdir). F2 RECORDED
+AS BINDING POST-SWEEP RULE: read validity_gates_s0.json FIRST; all_pass==
+false with failures[] = ALGO → debugger, BEFORE reading any C1/C2/C3
+contrast (the job exits 0 even on gate miss). Screen submitted: job 66014970.
+Stage → screen_running.
+
+## Pulse — 2026-07-30T00:44Z
+
+pulse: no-op. Seven jobs PENDING; only s4-B2 builder still in the build
+phase. Queue-bound.
+
+## Pulse — 2026-07-30T00:54Z
+
+pulse: no-op. Unchanged (7 PENDING, s4-B2 builder in flight).
