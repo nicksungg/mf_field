@@ -1773,3 +1773,30 @@ phase. Queue-bound.
 ## Pulse — 2026-07-30T00:54Z
 
 pulse: no-op. Unchanged (7 PENDING, s4-B2 builder in flight).
+
+## Pulse — 2026-07-30T01:04Z
+
+pulse: no-op. Seven PENDING; s4-B2 builder still working (watch continues).
+
+## Pulse — 2026-07-30T01:14Z
+
+pulse: no-op. s4-B2 builder ALIVE (scratchpad writes 5 min ago:
+interrupt_armC resume drills + smoke_rest.log — it is in the arm-C smoke/
+resume phase, i.e. late in the build). Seven jobs PENDING. Watch cleared.
+
+## Builder return — s4_hybrid_routing-B2 — BUILD PHASE COMPLETE ROUND-WIDE — 2026-07-30T01:15Z
+
+SUCCESS / built (10/10). Commit 79b20d7. model.py byte-identical to B1 vendor;
+per-arm resume keys distinct (S4_* knobs enter recipe_hash). Four-alpha
+instrumentation live at contract tier: zero/b1 legs reproduce B1's smoke to 15
+digits; the gate defect visible directly (val_base insample 22.98 vs oof
+14.19). Arm C scored path == frozen copy-LF baseline exactly. V3 verified
+empirically (bit-identical across code_hashes). Resume drills 3-state.
+Deviations sane; V2 caveat recorded (read V2 on fisher_kpp; s6-B1 F6
+helmholtz TEXT value 7.5% off vs tool — the tool is ground truth). Stage →
+review_running; dispatching reviewer. ALL FIVE B2 BUILDS NOW DONE — the
+round's build phase is complete; everything else is SLURM + analysis.
+
+## Pulse — 2026-07-30T01:24Z
+
+pulse: no-op. Seven PENDING; s4-B2 review is the sole active agent.

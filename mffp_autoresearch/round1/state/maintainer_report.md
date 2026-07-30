@@ -2613,3 +2613,152 @@
   reviewer-dispatch; Completed-cards note-line and Flags updated for the
   s6_local-B2 delta).
 ## RUN END 2026-07-30T00:39:02Z
+## RUN START 2026-07-30T00:55:05Z
+- `s6_local-B2`: reviewer returned attempt-1 verdict `reviewed_suggest`
+  (`2026-07-30T00:40:11Z`, diff `round1-substrate..caff5c97d7365c2c
+  200daa30f67c6db3b627aee0`). Card `status`: `built` -> `reviewed_suggest`;
+  `state/s6_local/current_stage.txt`: `review_running` ->
+  `screen_running (job 66014970)`. Sections 3.1-3.7 all PASS/SUGGEST;
+  independent re-verification included re-hashed vendoring pins
+  (byte-unchanged), a bit-exact B1<->B2 `b1_replica` reproduction (identical
+  loss/alpha/nRMSE to the last digit), 4/4 zero-parameter LSI-floor
+  bit-exactness vs B1-F6, and all 6 negative knob-assertion tests firing
+  correctly. Two findings: F1 (orchestrator, RESOLVED — the missing
+  `<OUTPUTS_ROOT>/s6_local/B2/slurm/` dir now confirmed present on disk
+  pre-submit) and **F2 (orchestrator-facing, OPEN — flagging for the
+  orchestrator to read this)**: `01_train_eval.sh:109` only echoes
+  `02_verify_gates.py`'s exit code (`GATE_RC`) instead of propagating it, so
+  the screen/sweep job would exit 0 even on a V1/V2/C3/identity validity-gate
+  miss. Required mitigation: after the sweep, read
+  `<out>/eval/validity_gates_s0.json` and treat `all_pass==false` with
+  non-empty `failures[]` as ALGO -> debugger (non-empty
+  `incomplete[]`/`missing_inputs[]` with empty `failures[]` is INFRA
+  instead), or re-run `02_verify_gates.py` and treat exit code 2 as a
+  debugger trigger. Do not read any C1/C2/C3 contrast on the eventual
+  200-epoch sweep before that gate check passes. Job `66014970` (2-epoch
+  contract-tier plumbing/no-harm screen, all 5 arms) submitted this walk,
+  now PENDING — the 7th live r1- job.
+- SLURM view: seven r1- jobs now PENDING (Priority)/0:00 on H100, confirmed
+  by both `squeue` and per-job `sacct -j` lookups (State PENDING,
+  Start/End Unknown for all seven): the same six as last walk (`66005834`
+  s6_local-B1 200-ep guard, `66008912` s1_poisson-B2 seed0, `66009306`
+  s7_loss-B1 screen, `66011595` s3_warp-B1 relaunch, `66011965`
+  s2_beyond_copy-B2 screen, `66012553` s5_tuning-B2 screen) plus the new
+  `66014970` (s6_local-B2 screen). No job flagged as vanished; no new FAILED
+  sacct record needing a debugger this walk (the s3_warp verify1/2/3
+  FAILED/CANCELLED+ records remain pre-existing from ~15:50-16:26Z on
+  2026-07-29, already surfaced in earlier walks).
+- `s1_poisson-B2`, `s2_beyond_copy-B2`, `s3_warp-B1`, `s5_tuning-B2`,
+  `s7_loss-B1`: no change since last walk on any of these — statuses,
+  job states all unchanged.
+- `s4_hybrid_routing-B2`: builder still `builder_running`, unchanged on
+  card/stage; elapsed time at scan
+  (`state/s4_hybrid_routing/current_stage.txt` mtime) is now ~53 min (was
+  ~34 min last walk) — still no `job_ids` (expected pre-submission for a
+  build phase) and no other stall signal (no error log, no abandoned-worktree
+  marker) this walk; worth a closer look next walk if still unresolved, as
+  it is now the longest-running build-phase agent in the round.
+- Timing ledger: no new COMPLETED r1- jobs since last walk (all seven live
+  jobs are still 0:00 elapsed PENDING). Ledger unchanged at 53 entries;
+  re-validated as parseable JSON (`_note` + `entries` keys, 53-element
+  list), no write needed this walk.
+- No abandonment trigger: no stream has 3 consecutive skip/blocked batches;
+  no stream has reached 3 batches yet. `state/streams/` directory still does
+  not exist.
+- Transcript inbox: `state/transcripts/` still does not exist — nothing to
+  archive this walk.
+- Anchors: `state/anchors/*.json` unchanged (same 5 files, same
+  certified_utc 2026-07-29T14:28:45Z) — rendered verbatim into index.md, no
+  recomputation.
+- ADRs unchanged this walk: `docs/adr/0001`-`0012`, no new ADR since 0012.
+- Gates unchanged: G1-G5 all carried-over PASS, no new gate activity this
+  window (`state/gates.md` mtime unchanged).
+- DINO-key measurement integrity incident
+  (`docs/operator_notes/2026-07-30-dino-key-measurement.md`): no change
+  since last walk (file mtime unchanged) — carried over verbatim in
+  index.md Flags, not re-summarized in full here.
+- No card files modified by the maintainer this walk. `git status --short
+  experiment_cards/` shows only `s6_local/batch_2/B2.json` modified — that
+  write is the reviewer's (verdict + findings, `2026-07-30T00:40:11Z`), not
+  the maintainer's, and is pending the next auto-sync commit; none of the
+  maintainer's writes touch `experiment_cards/`.
+- index.md: regenerated (fresh timestamp; Streams table updated for
+  `s6_local`'s B2 `built` -> `reviewed_suggest`/`screen_running` transition
+  and F1/F2 review findings; Running/pending jobs table updated for the new
+  `66014970` PENDING job and s4-B2 elapsed; Completed-cards note-line and
+  Flags updated for the s6_local-B2 review delta).
+## RUN END 2026-07-30T00:59:38Z
+
+## RUN START 2026-07-30T01:15:11Z
+- Single in-flight check: last run's `RUN START` (00:55:05Z) has a matching
+  `RUN END` (00:59:38Z), ~20 min before this scan — not in-flight, walk
+  proceeds.
+- Card walk (13 cards, `experiment_cards/*/batch_*/B*.json`): one delta —
+  `s4_hybrid_routing-B2` `status`: `drafted` -> **`built`**. `build_commit`
+  now `79b20d78cb55a7c36b3e3485a24144f49144f2a5`; `scripts_path`/
+  `output_paths` fully populated (family `fno_transolver_seq_b2`, 3 arms:
+  `gate_repair`/`gate_repair_dense`/`attn_gap_fkpp`); `build_notes` grew
+  from `[]` to 10 detailed entries (vendoring hashes, the four card-edit
+  mechanisms, contract-smoke numbers for all three arms, four-alpha
+  instrumentation verification, validity-gate plumbing, V1-V3 checks,
+  query-chunking rationale, deviations/forced choices, hyperparameter
+  provenance, resume/interrupt drills, SLURM script inventory).
+  `job_ids` still `[]` (expected — build phase produces no SLURM job; not
+  yet submitted). This confirms the operator's tip: the arm-C resume
+  drills (`resume_gate_repair_helmholtz.json`
+  `interrupt_armC_b.json`/`interrupt_armC_c.json` in
+  `worktrees/s4_hybrid_routing/B2/scratchpad/`, mtimes 18:04-18:09 local on
+  2026-07-29) plus the full scratchpad file sequence 17:26-18:10 local show
+  the builder was actively working through the tail of the build, not
+  stalled — clearing the stall watch flagged in the prior two walks (~34
+  min, then ~53 min elapsed on `state/s4_hybrid_routing/current_stage.txt`).
+  One residual observation, not a card issue: that stage file still reads
+  `builder_running` (unchanged content, same mtime as before — now ~73 min
+  stale relative to scan time), lagging the card's `built` status; likely
+  an orchestrator-side stage-file update not yet applied. No maintainer
+  edit made (read-only for cards/state outside the maintainer's own write
+  set) — flagged in index.md Flags for awareness.
+- All 12 other cards unchanged since last walk (statuses, `job_ids`,
+  `reopen_candidate` all identical): `s1_poisson-B1/B2`,
+  `s2_beyond_copy-B1/B2`, `s3_testtime-B1`, `s3_warp-B1`,
+  `s4_hybrid_routing-B1`, `s5_tuning-B1/B2`, `s6_local-B1/B2`, `s7_loss-B1`.
+- SLURM view: the same seven r1- jobs, all still PENDING (Priority)/0:00 on
+  H100, confirmed by both `squeue` and `sacct` (State PENDING, Start/End
+  Unknown for all seven) — as the operator noted, the queue is unchanged:
+  `66005834` s6_local-B1 200-ep guard, `66008912` s1_poisson-B2 seed0,
+  `66009306` s7_loss-B1 screen, `66011595` s3_warp-B1 relaunch,
+  `66011965` s2_beyond_copy-B2 screen, `66012553` s5_tuning-B2 screen,
+  `66014970` s6_local-B2 screen. No job flagged as vanished; no new FAILED
+  sacct record needing a debugger this walk.
+- Timing ledger: no new COMPLETED r1- jobs since last walk (all seven live
+  jobs still 0:00 elapsed PENDING; the s4_hybrid_routing-B2 build produced
+  no SLURM job to time). Ledger unchanged at 53 entries; re-validated as
+  parseable JSON (`_note` + `entries` keys, 53-element list), no write
+  needed this walk.
+- No abandonment trigger: no stream has 3 consecutive skip/blocked
+  batches; no stream has reached 3 batches yet. `state/streams/` directory
+  still does not exist.
+- Transcript inbox: `state/transcripts/` still does not exist — nothing to
+  archive this walk.
+- Anchors: `state/anchors/*.json` unchanged (same 5 files, same
+  certified_utc 2026-07-29T14:28:45Z) — rendered verbatim into index.md, no
+  recomputation.
+- ADRs unchanged this walk: `docs/adr/0001`-`0012`, no new ADR since 0012.
+- Gates unchanged: G1-G5 all carried-over PASS, no new gate activity this
+  window (`state/gates.md` mtime unchanged).
+- DINO-key measurement integrity incident
+  (`docs/operator_notes/2026-07-30-dino-key-measurement.md`): no change
+  since last walk (file mtime unchanged) — carried over verbatim in
+  index.md Flags, not re-summarized in full here.
+- No card files modified by the maintainer this walk. `git status --short
+  experiment_cards/` shows only `s4_hybrid_routing/batch_2/B2.json`
+  modified — that write is the builder's (build completion,
+  `drafted`->`built`), not the maintainer's, and is pending the next
+  auto-sync commit; none of the maintainer's writes touch
+  `experiment_cards/`.
+- index.md: regenerated (fresh timestamp; Streams table updated for
+  `s4_hybrid_routing-B2`'s `drafted`->`built` transition, build_commit, and
+  stall-watch clearance; Running/pending jobs table note updated (unchanged
+  job composition); Completed-cards note-line and Flags updated for the
+  s4_hybrid_routing-B2 build-completion delta).
+## RUN END 2026-07-30T01:18:10Z
