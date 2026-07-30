@@ -2223,3 +2223,617 @@ RESOURCE/nondeterminism. → mechanism-analyzer dispatched (stage-3 OOF-flip
 + panel cost; top-band 2x failure vs chunking; cross-branch ~100% finding
 vs 2511.06294; dense-gap-as-registration question; batch-3 ROUTER
 implications). Stage → mechanism_analyzer_running.
+
+## Mechanism register — s7_loss-B1 COMPLETE — 2026-07-30T08:55Z
+
+Register 8/8; tools promoted: relative_loss_geometry.py,
+collapse_set_attribution.py. Verdicts: (1) collapse = λ-induced gradient
+SIGN pathology entered at init — origin is a stationary point of
+L_λ=(1−c²)+λ(r−c)²; escape drive 26.5x weaker at λ=4 vs λ=1; 29% of
+allen_cahn samples in the perverse-pull region (0.00% at λ=1,
+algebraically forced); never left the basin (nRMSE 1.00161→1.00138 over
+198 ep). λ=1 escape UNTESTED (M2). (2) Bimodality NOT loss-induced —
+collapse set overlaps MSE-trained 1.00/0.92; separator = known pfc
+uniform/crystal bifurcation + cahn_hilliard smoothness (LF-visible AUC
+0.102, cond-INVISIBLE best 0.067). (3) Helmholtz artifact confirmed; NEW
+CROSS-STREAM FINDING: zero predictor helmholtz skill 3.035 beats champion
+18.826; zero-substitution moves champion geomean 7.1022→5.2397. Mentor-
+note addendum written (zero-predictor floor column proposal). (4) Design
+rule: spread>=10 needs denominator floor; <=3 objective is a no-op; λ<=1
+always; never on LF-pretrain unchecked; severity tracked by effective
+sample fraction. Card COMPLETE. Part-7 next direction = one 10-min A0 λ=1
+allen_cahn run (3 pre-registered outcomes) — handed to the B2 brainstormer,
+not fired ad hoc. Relative objective on pfc/cahn_hilliard pre-falsified
+(F5+F6+F8). Batch → 2; dispatching websearcher.
+
+## Process restart — 4 agents resumed from transcript — 2026-07-30T09:20Z
+
+Parent Claude Code process exited; stopped mid-run: s3_warp-B2 builder,
+s2-B2 mechanism-analyzer, s4-B2 mechanism-analyzer, s7-B2 websearcher.
+All four resumed via SendMessage with check-disk-first instructions (no
+redo of completed work). SLURM jobs unaffected.
+
+## SLURM wave 2 landed — s1-B3 + s5-B2 mains + heat guard — 2026-07-30T09:35Z
+
+66056499 (s5-B2 main A2, 32:02), 66058189 (s1-B3 main, 2:28 — legitimate:
+only ifc_poisson trains, G1-G3 reuse G0 ckpt closed-form), 66058194 (s1-B3
+heat_local guard leg — reviewer S1 CLOSED) all COMPLETED 0:0. s1-B3 arm
+sanity-read from eval JSONs (all cached=false): base 0.9518 (replicates
+B2 0.9514; validity gate 0.0343 inside 0.0308-0.0377), hf_only 0.9512
+(literature fit: null), **ladder_level_intercept 0.6936** (gain 0.2582 >
+0.240 floor — modal F1-falsified prediction did NOT happen),
+ladder_pooled 1.5969 (hurts), **self_only__none 0.6087 = best arm,
+SURPRISE** (own trained ckpt). New ifc_poisson record pending analyzer
+confirmation (criterion-1 margin would grow 0.9514→0.61-0.69 territory).
+→ initial-analyzers dispatched for s1-B3 (reviewer obligation: in-sample
+coefficient-table ratio BEFORE mechanism-decider read; verbatim
+variance-explained condition on F1) and s5-B2 (LHO geomean cross-check;
+zscore-moves-helmholtz anomaly eye). Stages → initial_analyzer_running.
+
+## Mechanism register — s2_beyond_copy-B2 COMPLETE — 2026-07-30T09:30Z
+
+Register 9/9; tools promoted: registration_skill_split.py,
+target_scale_spread_audit.py. VERDICT: the beyond-copy win is REGISTRATION
+REPAIR, not physics. Correction∩registration 0.975-0.9987 (ac/ch), ~100%
+pfc (ladder degenerate there — loses 100/100 vs node-aligned 7.1e-6);
+fisher_kpp bounded by modes_cap (only 16.8% of the ramp below cap 12);
+helmholtz orthogonal junk. Geomean vs node-aligned denominator: 0.380 →
+10.31; free-fix geomean 0.0369; Spearman(reg share, model share)=0.90.
+Falsification postmortem: clause COULD NOT have fired (compared two
+predictors of the same artifact on 4/5 datasets). NEW scaler defects
+(amplitude theme, 6th+7th data points): helmholtz global-scaler effective
+N=1.2/400 (α=0.0224 → skill 0.995); pfc scaler 7.9e4x median per-sample
+max → emitted-noise floor 8206x truth, CPU-replay reproducibility only
+6.5%. Tail: ch median ratio 0.0329 but hardest 10% carry 90.1% of error
+mass (structure failure, not amplitude). Mentor-note Addendum 2 written.
+STANDING RULE for all future sharp-panel reads: decompose with
+registration_skill_split.py first; batch-3 falsification clauses must
+pre-register against corrected references (C/D/E), not
+copylf_baselines.json. Card COMPLETE. Batch → 3; dispatching websearcher.
+
+## Mechanism register — s2_beyond_copy-B2 COMPLETE — 2026-07-30T09:50Z
+
+Register 8/8; tools promoted: registration_skill_split.py,
+target_scale_spread_audit.py. VERDICT: the 0.380 geomean is REGISTRATION
+RE-LEARNING — model/free-fix ratios pfc 2578x, allen_cahn 2.61x (97.5%
+reg by projection), cahn_hilliard 0.979x (only dataset >= free fix, by
+2%), fisher_kpp 3.90x (95.9% reg; shortfall = modes_cap=12, only 16.8%
+of residual in-band, sqrt-law predicts 0.804 exactly), helmholtz
+orthogonal (cos 0.062). Node-aligned geomean 10.31; free fix alone
+0.0369. HELMHOLTZ ROOT CAUSE (amplitude theme proximate cause, 5th
+instance): global max|HF−LF| target scaler + 1/400 sample carrying 89.2%
+MSE energy (effective N=1.2); train-fitted α=0.0224 → 0.995. pfc mirror:
+scaler 79460x median per-sample scale → zero-init head emits 8206x needed
+correction. Tail: cahn_hilliard win is on typical samples (median ratio
+0.033); worst-8 are structure failures. Postmortem: clause held but could
+not have fired (compared two predictors of the same artifact). Mentor
+note ADDENDUM 2 written. Part-7 next direction (NO new architecture):
+re-score existing ckpts vs variants C/D/E (zero GPU), per-sample target
+norm, trust gate, then modes_cap. Batch → 3; dispatching websearcher.
+CROSS-STREAM WARNING carried: pfc same-checkpoint moves 6.5% H100 vs CPU
+(score-reproducibility; consistent with the bitwise-gates-on-CPU rule).
+
+## PULSE — s5-B2 main + s1-B3 main/guard landed — 2026-07-30T09:50Z
+
+66056499 (s5-B2 main, A2 zscore, 32:02) COMPLETED; 66058189 (s1-B3 main,
+2:28 — expected: ifc_poisson-only + closed-form head arms) COMPLETED;
+66058194 (s1-B3 heat guard, 1:04) COMPLETED — reviewer S1 closed, contract
+check 3/3. All .err empty, result JSONs verified on disk. → two
+initial-analyzers dispatched: s1-B3 (with the reviewer's MANDATORY
+coefficient-table read before the mechanism-decider table + post-hoc
+validity gate check) and s5-B2 (with the s2-B2 scaler-defect context —
+zscore changes exactly the machinery s2's analysis indicted on
+helmholtz/pfc; read those deltas with care). s6-B2 sweep 66056503 still
+RUNNING (49 min). Stages: s1_poisson, s5_tuning →
+initial_analyzer_running.
+
+## Initial-analyzer return — s5_tuning-B2 — 2026-07-30T10:10Z
+
+SUCCESS (6/6). A2 zscore, s0, 200ep. Panel geomean 5.5547 (Δ −1.148 vs
+anchor) but 75.8% is helmholtz alone → pre-registered tail-artifact shape,
+NO panel win recorded. Falsification clause NOT fired: ifc_poisson moved
+0.3805 > 0.240 on all three bases (1.5656 → 1.1851; still 18.5% above
+paper bar) → scaler NOT retired. Pre-registered sharp-2D NULLs both HELD
+(three datasets corr-unchanged at 1e-3 — normalization still not the
+sharp-2D explanation). helmholtz demeaned corr 0.0362 → 0.4021
+(LEVEL_ONLY → WEAK_PATTERN; still 2.2x worse than constant-field oracle).
+SIGN INVERSION vs pre-registered leverage model (|mu|/sigma ordering
+backwards). Guard: heat_local 48.11 flag = tier artifact (B1 twin);
+fluid/sod_1d clean. CONVERGENCE NOTED: this is the intervention side of
+s2-B2's global-scaler root cause (effective N=1.2 on helmholtz).
+→ mechanism-analyzer dispatched (effective-N decomposition, corrected
+leverage predictor, ifc_poisson mechanism, sharp-2D immunity closure, and
+whether s2-B3/s5-B3 should MERGE on per-sample target norm). Stage →
+mechanism_analyzer_running.
+
+## Initial-analyzer return — s1_poisson-B3 + s7-B2 websearch — 2026-07-30T10:30Z
+
+s1-B3 SUCCESS (6/6): **F1 + F2 both CONFIRMED** at 1.076x/1.074x floor —
+the MF gain composition works ordinally on ifc_poisson. NEW BEST claimable:
+primary 0.6936 (from 0.9514); self_only__none 0.6087 BEST but NOT
+resolvable vs primary (0.354x floor — do not rank top two; card's largest
+prediction miss). hf_only = numerical no-op (level-64 std_log_g 0.0307 —
+the literature's HF-only fit does nothing here, F2 caveat noted).
+Reviewer obligation read: all four attenuation ratios < 1; G1-null caveat
+moot (no null); under-dispersion 0.758 → F1 plausibly a LOWER bound.
+Contract check now 3/3 (heat_local closed, no regression). Validity gate
++0.041%. NOT cratered. Modal FALSIFIED prediction contradicted (honesty
+exemplar recorded as such). → mechanism-analyzer dispatched (lead: the
+self_only surprise re-scopes s1 designs + confirmation slate; gain-law
+decomposition; pooled-failure; same-axis-vs-s5-zscore question for round
+report double-count hygiene). Stage → mechanism_analyzer_running.
+
+s7-B2 websearch SUCCESS (5 its, 9 fetches ok): D2-D5 all PREEMPTED with
+citations (Neural Radiosity floored rel-loss verbatim; FACL curriculum;
+DiSOL shape/gain split; MFFM residual supervision). D1 (λ=1 one-dataset
+measurement) = preempted-as-mechanism, open as in-repo measurement, ~10
+min GPU, 3 pre-registered outcomes. THREE SNIPPET CLAIMS WITHDRAWN after
+fetch-verification failed (recorded in iterations — honesty note).
+Recommendation: run D1, then CLOSE s7_loss. → brainstormer dispatched to
+design the diagnostic closure card. Stage → brainstormer_running.
+
+## Websearch return — s7_loss-B2 — 2026-07-30T10:10Z
+
+SUCCESS (5 its, 9/9, cap hit). Verdicts: D1 preempted-as-mechanism (fine —
+in-house disambiguation, no novelty needed); D2 preempted (LpLoss default
+__call__ in the FNO authors' own library — source line FETCHED: unsquared
+rel norm, eps 1e-8, no clamp — while our champion trains global-scaler
+MSE); D3 novel but ANTI-ALIGNED with frozen metric (14 orders of weight
+spread on pfc) — websearcher recommends against; D4/D5 preempted /
+composition-open-with-caveats. By-products: (i) "add a denominator floor"
+NOT proposable — NORM_FLOOR=1e-4 already exists and provably didn't bind;
+(ii) B1's origin-stationary-point analysis appears to be an UNOCCUPIED
+negative result in the literature (claimable contribution shape).
+Recommended B2: MEASUREMENT card — objective ladder mse → rel λ=1 (reuse
+B1 impl) → unsquared LpLoss form, allen_cahn only, ~10 min GPU, settles
+normalization-vs-λ with pre-registered outcomes from B1's closed-form
+escape-rate math. → brainstormer dispatched (with DO-NOT-PROPOSE fences +
+corrected-reference pre-registration rule). Stage → brainstormer_running.
+
+## Websearch return — s2_beyond_copy-B3 — 2026-07-30T10:25Z
+
+SUCCESS (5 its, 9/9, cap hit). Verdicts: D1 per-sample residual
+normalization preempted-but-MF-composition-open (DiSOL does it on solution
+fields; RMFNN's canonical residual formulation NEVER normalizes and its
+core assumption ||F||<<||Q_HF|| is violated 4-5 orders here — fetched); D2
+trust gate preempted at protocol level (published no-harm inequality +
+conformal calibration) — only the in-house OOF alpha-gate binding open; D3
+corrected-reference column NOVEL (textbook cell-vs-node numerics cited via
+Gmunu, but NO published case of a misregistered no-learning reference
+inflating benchmark skill — mentor note gains a prior-art anchor); D4 tail
+reweighting preempted WITH fetched negative result (max error worsened);
+D5 SDF not citation-grade. Cross-cutting caution fetched: MSE corrector
+converges to E[u|u_c] — information bound means part-7's answer may
+honestly stay NO; B3 must pre-register that negative as a finding.
+Recommended: D1+D3 fused card (amplitude head from (X,LF), no new
+architecture, 2x5 pre-registered contrast from F9/F10). → brainstormer
+dispatched (fences: no D4/D5; gate only as secondary in-house arm;
+TestTargetFirewall pattern mandated). Stage → brainstormer_running.
+
+## Initial-analyzer return — s5_tuning-B2 — 2026-07-30T10:45Z
+
+SUCCESS (6/6). A2 zscore, s0, 200ep, cap 12. Panel geomean 5.5547 vs anchor
+6.7030 — but 75.8% of the gain is helmholtz and dies under LHO (5.5133 vs
+5.8420 < 0.884 floor): TAIL ARTIFACT per part 4's own pre-registration, no
+panel win claimed. Falsification clause did NOT fire (conjunct A false:
+ifc_poisson −0.3805 vs floor 0.240, confirmed on all 3 bases) — scaler not
+retired. Scorecard: ifc_poisson HIT (skill 1.1851, nRMSE 0.042664 — the
+TRANSFER-FILM LINEAGE's closest approach to the 0.036 bar; round-wide,
+s1-B2's 0.9514 still holds criterion 1), fisher_kpp MISS, nulls held.
+PERFECT ORDERING ANOMALY: max|Y_hf|/sd >= 9.9 = the two movers, <= 6.0 =
+the four nulls (parallels s7's spread rule — likely one amplitude-machinery
+statement). Helmholtz effective-N partially healed (top-1 share 22.8→11.3%,
+LEVEL_ONLY→WEAK_PATTERN) = partial overlap with s2's F9. pfc: s2's scaler
+pathology does NOT transfer to this family (F10 must not be
+overgeneralized). ifc_poisson puzzle: stage mismatch WORSENS (42→68.8x) yet
+uniform improvement. INCIDENT: concurrent/duplicate part-5 write detected
+mid-run (agent restart artifact); analyzer verified rather than clobbered —
+all numbers independently re-derived from 21 JSONs, match; additive blocks
+only. Guard: heat_local 48.11 tier artifact (screen provenance,
+unmeasured at report tier; nothing rests on it). → mechanism-analyzer
+dispatched (ordering-rule formalization + s7-rule relation; ifc_poisson
+mechanism incl. s1-composition question for batch-3 synthesis; F9 overlap;
+pfc non-transfer). Stage → mechanism_analyzer_running.
+
+## Websearch return — s2_beyond_copy-B3 (DUAL-RUN INCIDENT) — 2026-07-30T10:50Z
+
+SUCCESS with incident: TWO websearcher invocations ran concurrently on
+this stream-batch (second = replay artifact of the process restart),
+clobbering each other's iteration files. Agent detected it, preserved
+both runs (parallel_run_b_iterations.md), MERGED verdicts into report.md
++ report_merged_backup.md (verified identical md5, both with prior-art
+verdict section; all 39 URLs resolve). Verdicts: D1 per-sample residual-
+target norm = preempted-but-MF-composition-open (DiSOL amplitude
+regressor precedent; residual target with test-time-predicted scale is
+the open slice); D2 no-harm gate = preempted (conformal routing + no-harm
+selection published; only physics-free field-valued sliver open); D3
+node-aligned reference column = novel-as-hygiene, diagnostic-only; D4
+tail reweighting = preempted WITH fetched negative result (76.63→96.72 K)
+— dropped; D5 modes_cap = not searched, F22 knob territory.
+→ brainstormer dispatched (B3 = predicted-scale per-sample residual norm,
+2x5 asymmetry clause, oracle arm labeled, registration-split column
+mandatory, compose-not-collide with s5). Stage → brainstormer_running.
+PROCESS NOTE for round report: restart replays can double-spawn agents on
+the same slot; websearchers should write-through unique temp names or the
+orchestrator should check for an active sibling before dispatch.
+
+## Brainstormer return — s7_loss-B2 — 2026-07-30T11:10Z
+
+SUCCESS / slot_filled (13/14; soft miss = summary length, fidelity chosen
+over cap, disclosed). Diagnostic closure card: one 200-ep run, MFFP_S7_LOSS
+=rel (λ=1 descriptive — parse_env reads MFFP_S7_LAMBDA only for amp; B1
+proved amp(1.0) ≡ rel bit-identical), allen_cahn only, zero-edit vendor
+mf_fno_transfer_film_s7loss_b2 (5 sha pins from 990f8891; rename is
+cache-safe — code_hash uses basename only, arm_tag separates ckpts).
+THREE EXHAUSTIVE BANDS, edges = comparator ± exactly one certified floor:
+(a) <=0.290216 nRMSE → λ>1 sole cause, rule collapses to λ<=1; (c) middle
+→ both ingredients, stream stops; (b) >=0.974993 → normalization fatal at
+spread>=10 regardless of λ. Bands 526x the nondeterminism scale; sub-case
+<=0.237 = still (a), NOT an s7 win. Expected: (a) [0.24,0.29]. ADR 0007
+screen exemption (diagnostic, no pool); §4.3 training-as-instrument
+deviation disclosed with the 2-epoch triviality proof. CLOSURE: stream
+closes after this card REGARDLESS of band; three cross-stream exports
+survive. → starter dispatched. Stage → starter_running.
+
+## Starter return + builder dispatch — s7_loss-B2 — 2026-07-30T11:25Z
+
+Starter SUCCESS / drafted (14/14, zero TBDs; recipe machine-verified
+byte-equal to the proposal modulo one disclosed underscore-prefixed
+provenance key; bands + comparators transcribed to full precision).
+→ builder dispatched (vendor gate: 5 sha pins verified before AND after
+copy, zero edits; one contract-tier cache-separation check; minimal
+scripts; no screen/guard per recipe). Stage → builder_running.
+
+## s6-B2 sweep landed; gates-first rule executed — 2026-07-30T11:35Z
+
+66056503 COMPLETED 0:0 (59:53 — the 100-min estimate was sound, --time
+02:00:00 right-sized). Orchestrator read validity_gates_s0.json FIRST per
+the pre-logged rule: **all_pass TRUE** at 200 ep (C3_pairing, V1_replica,
+V2_lsi; zero failures/incomplete/missing) → contrasts legal, no debugger.
+→ initial-analyzer dispatched with the surplus-over-LSI secondary table
+duty (the registration-independent quantity, per s3_warp-B1 + s2-B2
+mechanism findings). Stage → initial_analyzer_running.
+
+## Mechanism register — s4_hybrid_routing-B2 COMPLETE — 2026-07-30T11:50Z
+
+Register 9/9; tools promoted: stage_keep_test_audit.py,
+band_phase_anatomy.py. Verdicts: (1) STAGE-3 KEEP TEST SIGN-INVERTED 5/5
+(claims +14..+85% val, delivers −5..−28% test; root = trains AND tests vs
+in-sample base, smoke_eval.py:589,645-656; joint SGD re-tunes OOF alpha);
+panel cost +0.36/+0.29 skill units, resolvable on cahn_hilliard; OOF keep
+test would DISCARD 5/5. TWO-LINE FIX identified for B3. (2) Top-band
+failure = PHASE not amplitude not chunking (correction 1.058x copy-LF
+energy at cos 0.034 in-band; chunking costs 1.25% score; unchunked is
+WORSE in-band). (3) Cross-branch: operator gap not input gap — fkpp's
+fidelity gap is a fixed |k|-dependent π/2-phase resample; content-based
+slice pooling is shift-variant/phase-destroying; inverts 2511.06294
+without contradicting it. (4) Dense gap NOT registration-recovery
+(3.5-9.8x short of free re-registration; cos 0.03-0.2 with hf−copylf) =
+copy-LF-reconstruction gain, skill-1.0 ceiling. Spectral caveat: pure
+re-registration 5.17x HARMFUL above 0.5 Nyquist — only fitted taper clean
+all-band (matters for the between-rounds benchmark fix AND any B3 use of
+node-aligned targets). B3 ROUTER directives from the card: OOF-gate every
+stage; print val_base_oof/insample trustworthiness screen; no-stage-3
+counterfactual as free leg; do NOT spend GPU on attention capacity —
+change the corrector's TARGET (node-aligned/LSI-cleaned residual);
+ride-along: permute queries before chunking. Batch → 3; websearcher
+dispatched; brainstormer will WAIT for s6-B2 closure (ROUTER composes
+s6 DC + s4 gate + s2 normalization evidence).
+
+## Mechanism register — s5_tuning-B2 COMPLETE — 2026-07-30T12:15Z
+
+Register 8/8; tools promoted: target_range_placement_audit.py,
+paired_arm_displacement.py. Verdicts: (1) effective-N repair FALSIFIED for
+this family (global scalar cannot de-concentrate; eff-N 1.01/400 both
+scalers) — real mechanism = dynamic-range PLACEMENT (rms/max 0.025 → 1.0;
+one train field 1698x median set the maxabs divisor) + 91.6% of the −70.6%
+is per-sample amplitude calibration (oracle-rescale ratio 1.108). (2)
+Corrected predictor: G = max|Y|/sd(Y) = tail x pedestal, gated on live
+pattern channel; |mu|/sd had ZERO separation (movers 0.04/1.4 vs null
+3.75); G separates 1.64x, Spearman 0.943. (3) ifc_poisson: same
+magnification channel spent differently — coherent step down error (99.2%
+samples toward truth; 98.7% of removed energy in the 99.88%-signal band);
+stage-seam refuted; N_hf=5 not the explanation. (4) Sharp-2D immunity
+CLOSED NEGATIVELY: all three at 1.04-1.44x their constant-field oracle;
+needs pattern-producing local mechanism (supports s6/s4), not target
+parameterization. ORCHESTRATOR DECISION on the merge recommendation:
+coordinated-TWIN form adopted (not single cross-stream card — scaffold is
+stream-structured): s2-B3 = residual-target/LF-consuming substrate
+(brainstormer running), s5-B3 = raw-target/LF-blind substrate with SHARED
+arm definitions, G>=8 + live-pattern eligibility pre-registered, revin_lf
+at 200ep, LF-free per-sample-scale arm, SCALER_INERT control, grad-clip
+H3 instrumentation, headline metric = effective N of realized per-batch
+loss. Batch → 3; s5-B3 websearcher dispatched (narrow: builds on s2-B3's
+merged D1 report, RevIN/raw-target side + H3 prior art). s5-B3
+brainstormer will wait for s2-B3 brainstormer return (shared arms).
+
+## Builder + brainstormer returns; 3 dispatches — 2026-07-30T12:35Z
+
+s7-B2 builder SUCCESS (10/10): zero-edit vendor, 5 pins verified 4-way
+(card/blob/vendored/live), code_hash equality PROVEN via eval's own hasher
+(manifest rename unnecessary — nothing reads manifest.json for identity),
+contract number BITWISE equal to B1's CPU A0(rel) 0.36672538257500825,
+cache/ckpt separation confirmed on disk, --env nargs trap correctly
+avoided (single-flag form; both knobs in result env). → code-reviewer
+dispatched. Stage → reviewer_running.
+
+s2-B3 brainstormer SUCCESS / slot_filled (11/11): 6-arm design (A0 paired
+global control w/ B2-continuity gate; A1 persample_pred PRIMARY; A2
+gradproxy fallback; A3 oracle fenced; A4 LF-keyed gate measurement; A5
+no-floor screen-only auditing s7's M6 floor rule). Fixed rank A1→A2. Four
+falsification legs incl. the 2x5 asymmetry (±15% bands, 4.3-173x spreads)
+and the instrumented mechanism leg (damage_share 0.098→<=0.05; neutral-3
+pct-removed <=2pts). s7-M6 near-refutation designed around (q25 floor,
+λ=1, single-stage verified at smoke_eval.py:628). Cross-stream
+discriminator: pfc moves = per-sample; helmholtz-only = s5's dataset
+channel; all-five = leg (b) fires. Honest headline = LHO geomean 0.209 →
+~0.180 target. → starter dispatched. Stage → starter_running.
+
+CORRECTION: the previous entry claimed the s5-B3 websearcher was
+dispatched — it was NOT (logged before the call was made; call never
+happened that turn). Actually dispatched NOW alongside the two above
+(narrow scope: RevIN-outside-timeseries / LF-stat de-normalization, H3
+grad-clip interaction, effective-N-of-batch-loss, scaling comparisons;
+builds on s2-B3's D1 report instead of redoing it).
+
+## Initial-analyzer return — s6_local-B2 — 2026-07-30T12:55Z
+
+SUCCESS (6/6; validity gates all green, V1 max dev 1.76e-04, C3 sha-equal
+5/5). Ranking: trust_head_circ 0.1876 < circ_repair 0.1926 < lsi_ctrl
+0.1972 < b1_replica 0.2346 << pointwise_ctrl 1.009 (collapses onto
+copy-LF — cleanest locality evidence). C1 CONFIRMED (circular padding
+repair −46.4% pfc / −28.0% allen_cahn, both = certified relative floors;
+fisher_kpp −21.2% bonus; cahn_hilliard +0.7% smallest-boundary-share as
+predicted). C2 REFUTED as pre-registered (1/4; headline = the DC target,
+not operator class); one miss: allen_cahn 1.126 vs pred 0.948. C3: OOF
+per-sample trust head SELECTABLE (3/5); helmholtz trust leg 0.7099 skill
+but < 70.165% floor → no claim. Surplus-over-LSI panel −2.36% NOT
+resolvable (consistent with registration dominance); fisher_kpp only
+resolvable surplus (−38.95%, disjoint CIs). GUARD INVERSION (key lead):
+corrector beats LSI −88.3% geomean exactly where padding is non-periodic
+— candidate registration-independent value proposition. B1's
+MISSING_200EP_GUARD debt CLOSED, no flags. → mechanism-analyzer
+dispatched (inversion boundary-strip quantification, allen_cahn flip,
+trust-head characterization for ROUTER reuse, cahn_hilliard/s3_warp
+sharpening). Stage → mechanism_analyzer_running. ROUTER brainstormer
+still gated on this register.
+
+## Mechanism register — s1_poisson-B3 COMPLETE — 2026-07-30T13:15Z
+
+Register 8/8; tools promoted: ladder_pair_row_audit.py,
+gain_calibration_ceiling.py. Verdicts: (1) self_only mechanism = ALLPAIRS
+ADDS NO DATA — all six cross blocks are exact duplicates of the self
+block (max|diff| 0.0, 6/6); allpairs is a replication schedule that
+downweights the 100-condition level 0.625x and upweights the 5-row HF
+level 2.5x; effective-N-in-condition-space explains the win (matched-
+level predictor: level-8 0.248 from 100 rows vs level-64 0.399 from 5;
+cross-level shape r>=0.95). CONFOUND OPEN: 1.64x gradient-step difference
+rides along. (2) Gain law = slope-only (intercept zeroed = control
+exactly); 91% two coords; slope transfers from ANY single aux level
+(20-row level-32 slope beats the 170-row fit); under-dispersion headroom
+QUANTIFIED DOWN to 0.045x floor (part-5 "lower bound" right in sign,
+immaterial). (3) Pooled failure = 100% intercept (stage-2 memorizes 5 HF
+rows; transferred intercept costs 3.2x floor). (4) vs s5: SAME AXIS — DO
+NOT DOUBLE-COUNT in round report (69.28% DC energy; s1 head strictly
+dominates s5's level-channel move; porting worth <=0.31x floor; only
+off-axis item = self_only's pattern gain). (5) Stacking head on self_only
+HARMFUL (dispersion over-correction 4.5x). Batch → 4; websearcher
+dispatched for the confound disambiguation card (dedup-vs-schedule A/B,
+step-matched control — decides the flagship-dataset story + confirmation
+slate arm choice). Stage → websearcher_running.
+
+## Starter return + builder dispatch — s2_beyond_copy-B3 — 2026-07-30T13:30Z
+
+Starter SUCCESS / drafted (16/16; programmatic line-slice transcription
+with anchor assertions; recipe json.loads'd from the report's fenced
+block). ONE TBD: recipe.sbatch (report had no sbatch block anywhere —
+grep-verified). Orchestrator decision: sbatch = mechanics not science —
+builder fills from ledger precedent (B2 17:34 for 5ds/200ep; B3 trains
+A0+A1 → --time 01:30:00) with derivation recorded in build_notes. Schema
+note: prior_art.verdict kept as the brainstormer's literal non-enum
+string per verbatim rule (reviewer will see). → builder dispatched (six
+arms, oracle fencing + firewall-style audit, A0 continuity gate, screen
+incl. A5, staged-cp precedent for JSON collisions). Stage →
+builder_running. Also: s1-B4 websearcher dispatched (previous entry).
+
+## Review PASS + submit — s7_loss-B2 — 2026-07-30T13:45Z
+
+Reviewer: **PASS**, submit as-is (6/6). Pins re-derived THREE ways incl.
+the committed blob (what SLURM executes); code_hash equality re-proven;
+cache key verified absent (three barriers against a B1 cache hit); both
+band edges recomputed to the last digit. Reviewer's key catch confirmed:
+the recipe _run's two-flag --env shorthand would have silently run MSE
+default = manufactured outcome (a) — build correctly used single-flag
+form, contract JSON proves both knobs land. Advisories: A-1 non-edge
+sub-case pair off by 0.028 skill (analyzer must use nRMSE form); A-2
+p100 fallback needs --time >=01:30:00; analyzer must verify cached=false
++ two-key env BEFORE reading the number. Submitted: vendor gate all 5
+pins OK → job **66064289** (~10-13 min). Stage → seed0_running. Stream
+closes after this card regardless of band (recipe._stream_closure).
+
+## Websearch return — s4_hybrid_routing-B3 (ROUTER) — 2026-07-30T14:00Z
+
+SUCCESS (5 its, 12 usable fetches, 9/9). Verdicts: D1 router = preempted-
+but-MF-composition-open (honest framing MANDATED: "discrete super learner
+over a 2-element library whose membership is set by a data property";
+availability-keyed gating = missing-modality MoE; MF's published answers
+to missing LF are imputation/acquisition, not routing); D2 OOF-gating =
+preempted outright, cite cross-fitting (Chernozhukov DML) — claimable
+delta is the SIGN FLIP (16.4x optimism, 5/5 decision inversion; the
+literature reports 10-20% inflation, never decision flips); D3 corrector-
+on-LSI-cleaned-residual = THE open surface (fetched evidence: pre-stages
+are always fixed solvers, learned deconv, or scalar correlation; canonical
+residual-MF explicitly has NO linear stage; nobody fits a |k|-dependent
+LSI to the fidelity gap, trains on ITS residual, and reports the filter
+as a scored floor); D4 tapers = textbook, nothing open; D5 controls =
+reporting standard. DESIGN DIRECTIVE from the search: pre-register a
+NO-HARM claim (s6-B1's alpha=0 on 6/6 precedent → transfer branch
+predicted to contribute nothing; router's honest prediction = "no dataset
+worse than the better of its two branches"). Brainstormer HELD until
+s6-B2 mechanism register (trust-head reuse spec + inversion boundary
+numbers are ROUTER ingredients). Stage → websearch_done_awaiting_s6.
+
+## Websearch returns — s5-B3 + s1-B4; brainstormers dispatched — 2026-07-30T14:20Z
+
+s5-B3 SUCCESS (5 its, 13 usable, 8/8; 3 honesty corrections logged —
+summariser-invented claims dropped after fetch). Verdicts: E1 revin_lf =
+preempted-but-MF-composition-open (WNE proves the wrapper exhausts the
+class; MORPH has it in PDE surrogates; OPEN = foreign-fidelity statistic
+on RAW target — the MF functional-output survey explicitly leaves it);
+E2 LF-free arm honest only as ORACLE (DAIN has no denorm module); E3
+clip-rate mechanism preempted, ATTRIBUTION open (two-sided fetched
+support — both H3 outcomes informative); E4a effective-N formula textbook,
+diagnostic-on-realized-loss open; E4b G-rule novel-narrow (predictor
+under test, not contribution). Raw-target/LF-blind delta articulated in 5
+points incl. the 2603.11869 confound (normalized-space training helps raw
+metric — must be stated). → s5-B3 brainstormer dispatched (twin
+coordination with drafted s2-B3; primary leg on ifc_poisson vs s5-B2's A2
+bar; s1-double-count attribution plan mandatory).
+
+s1-B4 SUCCESS (4 its, 10 usable, 7/7). D-A preempted-as-methodology with
+the confound stated VERBATIM in fetched 2606.10321 (whose epoch-matched
+ranking REVERSED under step-matching — live warning). Direction-3
+"importance duplication" published WITH the minibatch-bias caveat (bs=16,
+5 HF rows x4 ⇒ allpairs ≠ weighted-self_only exactly). D-C NESTED-LADDER
+DEGENERACY = NOVEL (narrow, unreported; POSEIDON's O(K^2) premise absent
+under cond_from=target — read from the family's own manifest + fetched
+source). Round-report remark licensed as "could not find reported".
+ar5iv works for 2024 papers too; second confirmation of fetch-verify rule.
+→ s1-B4 brainstormer dispatched (A/B card: dedup arm, step-matched arm,
+optional zero-GPU early-read from B3 ckpts; outcome table pre-registered
+vs confirmation-slate implications). Stages → brainstormer_running x2.
+
+## Brainstormer return — s1_poisson-B4 — 2026-07-30T14:45Z
+
+SUCCESS / slot_filled (21/21). Model card (diagnostic-purpose; §4.3
+training bar respected, ADR 0007 n/a spec-pre-directed). TWO REJECTIONS
+that reshaped the design: (1) literal dedup arm measures NOTHING (dedup
+== self_only row set exactly — B3 F-T1.1); (2) zero-GPU early read
+impossible (single last.pt overwritten; stage-1 ckpts gone) → 40s re-run
+instead. 6-arm factorial via 2 new default-inert knobs
+(MFFP_ROW_WEIGHT_MODE natural/uniform_distinct/ladder_replication,
+MFFP_STAGE1_EPOCH_SCALE): A0/A1 controls reproduce B3, A2 step-decisive
+(allpairs @122ep=2196 steps, match −0.18%), A3 mirror (self_only @327ep),
+A4 weight-decisive (self_only + replication weights), A5 closure. Outcome
+table O1-O6 pre-registered with priors (O2 weighting ~60%, O1 step ~20%
+carried by the fetched rank-reversal precedent), dead band (0.7119,
+0.8486) declared unresolvable-at-1-seed, O6 validity band ±10%. Slate
+effects stated per outcome. Cost 6.7 min GPU. LOAD-BEARING BUILD TRAP
+flagged: ckpt key must gain w_/s1x_ components + same_cfg guard else A2
+resumes A1's finished checkpoint (the B3-recert trap again). → starter
+dispatched. Stage → starter_running.
+
+## s7-B2 measurement landed — 2026-07-30T14:55Z
+
+66064289 COMPLETED 0:0 (8:22, inside the 10-13 min estimate). → initial-
+analyzer dispatched with the reviewer's read order (provenance BEFORE
+number; nRMSE-form bands per advisory A-1; exactly one band fires; stream
+closes regardless). Stage → initial_analyzer_running.
+
+## Brainstormer return — s5_tuning-B3 — 2026-07-30T15:10Z
+
+SUCCESS / slot_filled (12/12). LOAD-BEARING CORRECTION verified against
+the filesystem: revin_lf is a NO-OP on ifc_poisson by construction
+(revin_lf_available=false in B2's precheck; n_hf=5 vs n_lf=100, rows not
+aligned, test ships no LF; Xs is the 5-dim cond vector not a field) and
+~global-maxabs on the sharp sets (cv<=0.0173) — its only per-sample
+content is helmholtz. The orchestrator's "primary leg on ifc_poisson" is
+therefore carried by the ORACLE arm (predicted NULL: s1-B3 prices the
+amplitude channel at 0.31x floor). Helmholtz claim-impossibility settled
+arithmetically (A0 5.766 − floor 9.695 < 0). 6 arms, promotion A1→A5,
+4 datasets (no panel claim — stated), 69 min cost, full sbatch block
+(s2-B3 TBD not repeated). Legs (a)-(f) all strictly floor-clearing incl.
+n_eff mechanism leg (<10 falsifies; >=50 with <10% movement retires
+"de-concentrate the MSE" round-wide) and H3 both-signs. 5-point
+ifc_poisson attribution plan pre-stated (no summing; s1-B3 owns the
+axis; s5-B3 never claims criterion-1 progress). → starter dispatched.
+Stage → starter_running.
+
+## Starter return + builder dispatch — s1_poisson-B4 — 2026-07-30T15:25Z
+
+Starter SUCCESS / drafted (18/18, zero TBDs, recipe round-trip identical
+incl. full sbatch). → builder dispatched (ckpt-key extension w_/s1x_ +
+same_cfg guard = the load-bearing item, with mandatory key-separation and
+planted-wrong-key drills; nine knobs one flag; six arms one job). Stage →
+builder_running.
+
+## s7-B2 band (c) + s5-B3 drafted; 2 dispatches — 2026-07-30T15:45Z
+
+s7-B2 initial-analyzer SUCCESS (6/6, provenance-first read clean, bands
+recomputed exactly). **BAND (c) FIRED**: nRMSE 0.3117986 — λ=1 recovers
+93.5% of B1's collapse (M2 non-collapse half UPHELD, λ>1 dominant ~14x)
+but rel-vs-MSE degradation = +1.818 floors RESOLVABLE (M2 exclusivity
+half CONTRADICTED; B2's own modal prediction (a) falsified). Verbatim
+interpretation: "both ingredients contribute and the stream should stop."
+Gap is a ~5-sample tail (rel max 1.664 OVERSHOOT — new signature vs B1's
+undershoot basin). Ledger: 2 same-arm MSE runs differ 2.8e-4 nRMSE (5.7x
+assumed nondeterminism, still 76x below band margin — noted). → focused
+mechanism pass dispatched (tail attribution vs B1's low-norm set;
+overshoot (r,c) placement; final design-rule text; parts 6/7; stream
+CLOSES after register). Stage → mechanism_analyzer_running.
+
+s5-B3 starter SUCCESS / drafted (57/57, zero TBDs, verbatim fidelity
+line-checked). → builder dispatched (7 default-inert knobs with provable
+default-equivalence; oracle fencing audit; n_eff instrumentation; arm-
+keyed ckpts). Stage → builder_running.
+
+## s3_warp-B2 builder status check — 2026-07-30T15:55Z
+
+Disk shows contract_smoke.log 0 bytes since 08:46, no commit, card
+drafted — but the agent has an ACTIVE task (message queued, not
+transcript-resumed), so it is alive and slow, likely stuck around the
+smoke. Nudge sent with a concrete path: run the smoke now, or if
+login-node-infeasible, ship it as sbatch per the s5-B1 precedent and
+disclose in build_notes — do not stall.
+
+## s7_loss STREAM CLOSED — B2 register complete — 2026-07-30T16:15Z
+
+Register 12/12; tool promoted: norm_tail_hedge_audit.py (g < 2cos
+admission rule + three-condition tail gate + floor counterfactual).
+Verdicts: (1) tail attribution YES — collapsed sets STRICTLY NESTED
+(overlap 1.00, Spearman 0.997; the 5 extra samples are ||HF||-ranks
+{0,4,6,9,10}; AUC 0.96-0.99); B1's rule survives SHARPENED. (2) Overshoot
+= INVERTED HEDGE, not new pathology: MSE accidentally hedges the low-norm
+decile (g_med 0.578); rel(λ=1) learns the CORRECT amplitude law (slope
+1.036) and loses the hedge — same amplitude geometry as B1's collapse
+from the opposite side; sample 30 = full-amplitude correctly-textured
+WRONGLY-REGISTERED spinodal (registration again, 7th sighting). (3) Final
+two-gate rule in part 7: λ<=1 always + the low-norm tail gate (binds at
+any λ; three sub-conditions checkable pre-training from preds_test.npz);
+remedy = p25-median denominator floor + inference-time per-sample
+amplitude calibration (oracle rescale alone moves 0.3118 → 0.2810 =
+inside band (a); 60% of damage is the amplitude channel). Postmortem:
+B1's M2 reasoned in the single-sample (r,cos) reduction, blind to the
+between-sample 1/||y||^2 reweighting it had itself measured (F5/F13).
+STREAM CLOSED; no next direction; deliberate open question recorded
+(ifc_poisson: concentration without a hedge). Cross-stream exports: the
+three B1 exports + the sharpened rule + norm_tail_hedge_audit.py + the
+amplitude-calibration remedy (feeds s2-B3/s5-B3 directly). Streams now:
+s7 CLOSED; 6 active.
+
+## Builder return — s3_warp-B2 — 2026-07-30T16:30Z
+
+SUCCESS / built (14/14) after the long haul (login node at load ~70; the
+earlier stall was resource starvation, not a hang — the nudge landed
+mid-build). Commit d9fb501. Five seams all verified with on-disk numbers
+(S1 delta 0.0; S2 2.6e-5; S3 9.05e-7 fit-vs-fit with non_reportable
+stamp on config deviation; S4 inside s6-B1 band; S5 identity chain 0.0 +
+torch-vs-scipy sampler equality). Oracle-phi REFIT train-only (B1
+p_train not reused). TWO REAL BUGS caught in-build: stride-0 meshgrid
+broke resume; project_ball sqrt-at-zero NaN'd the zero-init warp arm's
+first backward — both fixed + re-verified; config_key now carries the
+family code hash (no cross-code resume — the round's resume-guard gap
+partially closed IN-FAMILY). Honest disclosures: login smoke incomplete
+(SLURM step-A screen is the authoritative gate), ORACLE_ITERS=8 smoke
+self-stamped non-reportable, train/test displacement regime shift 4.5x
+flagged for Leg C. TBDs: head width 24 / blocks 2; corrector 84,913
+params vs ~70-80k estimate. → code-reviewer dispatched (seams first;
+ADR-0009 legality drill; the two fixes; TBD discretion call). Stage →
+reviewer_running.
+
+## Process restart #2 — 5 agents resumed — 2026-07-30T16:45Z
+
+Second parent-process exit of the day. Stopped mid-run and resumed from
+transcript via SendMessage (check-disk-first, no fresh spawns — avoids
+the double-spawn replay from restart #1): s6-B2 mechanism-analyzer,
+s2-B3 builder, s1-B4 builder, s5-B3 builder, s3_warp-B2 reviewer.

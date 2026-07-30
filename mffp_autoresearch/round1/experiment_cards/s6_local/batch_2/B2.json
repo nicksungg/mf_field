@@ -3,7 +3,810 @@
   "2_motivation": "the batch has exactly one open surface and three preempted-but-owed controls, and\nB1's own part 7 demands this batch (\"s6-B2 should be a CONTROL-AND-REPAIR card on the same family,\nnot a new architecture, and it must carry the closed-form filter as a scored arm ... Do NOT spend a\nbatch on capacity, depth, receptive field or modes\"). The open surface is verdict row (iii): \"A\n**data-driven, physics-free, per-SAMPLE scalar, fitted out-of-fold, deciding whether a\nFIELD-VALUED defect corrector is applied at all, with the scored copy-LF field as the exact\nfallback** appears in no fetched source.\" The other three arms are written as what the verdicts say\nthey are: a *reported floor* (row (i): \"Claim **zero method novelty**; the contribution is the\n*measured floor*\"), a *cited bug fix* (row (ii): \"hygiene, not a contribution ... Only reportable:\nB1's *measurement* that zero padding held **45-81%** of a defect corrector's remaining squared\nerror in a 12-cell band ... plus the post-repair delta\"), and a *control arm* (row (v): \"**not a\nnovelty question**\"). Two new read-only measurements I made justify the repair quantitatively:\nthe defect target `R` is boundary-**uniform** (12-cell band energy density ratio 1.043 / 1.045 /\n1.041 / 1.024), so F10's 45-81% concentration is a model handicap; and `copylf_prediction`'s\n`zoom(..., mode=\"nearest\")` leaves copy-LF itself with a **4x wrap seam** (LF_up wrap ratio\n3.89-4.18 vs HF 0.99-1.02) that zero padding forbids the corrector from seeing across.",
   "3_description": "family `models_r1/s6_local_repair`, vendored from\n`models_r1/s6_local_lf_corrector` @ `3abc0e3` with sha256-16 pins verified before any edit\n(`bands.py 42b869598fcc864e`, `local_corrector.py dcf531f8207b93a3`, `model.py 80d8940d8b90a4ac`,\n`smoke_eval.py 91ee5a6459609a26`, `manifest.json f336edbecb2de3c7`,\n`INSPIRATION.md ece1c608b492dbe1`). Five env-selected arms, one SLURM chain, seed 0, 200 epochs,\n`--datasets panel` (all 6 so the geomean stays comparable with B1; ifc_poisson keeps B1's champion\nno-op fallback):\n\n| tag | padding | variant | selection | role |\n|---|---|---|---|---|\n| `b1_replica` | `zeros` | `local_pixel_gate` | held-out scalar (B1) | reproduction gate V1 + padding-contrast control |\n| `circ_repair` | `circular_if_periodic` | `local_pixel_gate` | held-out scalar | **PRIMARY** for C1 and C2 |\n| `lsi_ctrl` | n/a (FFT implicitly periodic) | `lsi_ctrl`, 0 trained params | held-out scalar switch | scored zero-parameter floor |\n| `trust_head_circ` | `circular_if_periodic` | `local_pixel_gate` | out-of-fold per-sample ridge head, 4-fold-CV selected vs {global scalar, 0} | **PRIMARY** for C3 |\n| `pointwise_ctrl_circ` | `circular_if_periodic` | `pointwise_ctrl` (K=1) | held-out scalar | owed locality-extent control |\n\nPadding is switched by a **data-driven** criterion (ADR 0009-safe, no physics): circular iff the\nHF-train wrap-continuity ratio `<= 1.25` on both axes (measured: pfc 1.015/0.991, allen_cahn\n0.991/1.021, fisher_kpp 0.999/0.987, cahn_hilliard 1.000/1.000, helmholtz 0.348/0.859 -> circular;\nheat_local 10.6/16.5, fluid 2.56/1.21 -> zeros). The trust head's features are `X` plus LF-field and\nown-output statistics only (no PDE residual \u2014 ANCHOR is ADR-0009-disqualified), it is fitted on\n`val_idx` which stages 0-2 never saw (Wolpert 1992, cited via https://arxiv.org/pdf/1106.1684), and\n`alpha_hat = 0` reproduces copy-LF exactly. The Wolpert-fixed per-**pixel** training arm is\n**dropped** (its ORACLE ceiling 4.1% / 1.2% / 0.6% / **-17%** is below every dataset's 10% relative\n`min_claimable_effect`, and B1 F2 already ran the achievable val-fitted version) and replaced by a\nfree measurement-only out-of-fold pixel-map sidecar that carries no clause. Guard legs at 200\nepochs for `circ_repair` and `lsi_ctrl`; one contract-tier (2-epoch) plumbing/no-harm screen over\nall five arms on panel+guard whose numbers are never reportable (ADR 0007).",
   "4_expected_result": " (all `provisional-single-seed`, ADR 0004; anchor = B1's geomean 0.234572):\n\n| arm | pfc | allen_cahn | fisher_kpp | cahn_hilliard | helmholtz | ifc_poisson | panel geomean |\n|---|---|---|---|---|---|---|---|\n| `b1_replica` (V1 target) | 0.030017 | 0.080532 | 0.095132 | 0.468584 | 1.000000 | 1.545326 | 0.234572 |\n| `circ_repair` (ideal-repair UB) | 0.016144 | 0.048854 | 0.077669 | 0.467453 | 1.000000 | 1.545326 | **0.188069** |\n| `lsi_ctrl` (from F6 + F14) | 0.013677 | 0.051509 | 0.122861 | 0.439981 | 1.000000 | 1.545326 | **0.197223** |\n\n(skills; nRMSE for `circ_repair` = 0.0007229 / 0.0007891 / 0.0048646 / 0.0409769.)\n`circ_repair` geomean **-19.82%** vs B1, `lsi_ctrl` **-15.92%** \u2014 both above the geomean floor\n0.8836555 / 6.703016 = **13.183%** relative. **Honest extrapolation labels**: the `circ_repair`\nrow is an *ideal-repair upper bound from energy-share arithmetic* (F10 boundary shares 0.809 /\n0.698 / 0.453 / 0.183 over pixel fractions 0.340 / 0.179 / 0.179 / 0.179, assuming the boundary\nband's error density falls to the interior density \u2014 licensed by my new measurement that the target\n`R` has 12-cell density ratio only 1.024-1.045); at half the ideal gain the geomean is ~0.21\n(-10%, *below* the geomean floor), which is exactly why C1 is a per-dataset clause, not a geomean\nclause. `trust_head_circ`: pfc **0-10%** below `circ_repair` (oracle per-sample -22.8%, F3);\n`ext__helmholtz_2d` **report-only**, in [0.25, 0.33] if the CV switches the head on, else exactly\n0.3294501. `pointwise_ctrl_circ`: **>=2x worse** than `circ_repair` on >=3 of the 4 (F7 band gain\n0.117-0.202 -> 0.960-1.000; F15 radius_50pct 1.4-3.0 cells). Paired post-repair NN/LSI nRMSE ratios:\nfisher_kpp 0.632 (NN better 36.8%), allen_cahn 0.948 (5.2%), cahn_hilliard 1.062 (LSI better 6.2%),\npfc 1.180 (LSI better 18.0%) => **1 of 4** clears the 10% margin.\n**Vs noise floor** (numbers in the self-check item 9): C1 threshold 10.000% = the certified\n`min_claimable_effect` relative on pfc and allen_cahn (13.9x / 115x their pure seed spreads\n0.718% / 0.087%); C2 the same 10.000% on the four defect datasets; C3 5% on pfc = 7.0x its pure\nseed spread, legitimate only because the contrast is paired on a bit-identical corrector.\n`ext__helmholtz_2d` (70.165%) and `ifc_poisson` (15.323%) carry **no numeric claim**.",
-  "5_actual_result": null,
+  "5_actual_result": {
+    "_provenance": {
+      "code_hash_by_arm": {
+        "b1_replica": "21feb1ed5adcb1928139dc38b175c548edc5f6e0f341d147f99d9f9489f356db",
+        "circ_repair": "836f6db581e54e9f4bc970b2f367c51295c237b54de6e8c7f8a79d703902c606",
+        "lsi_ctrl": "b3599e68cdbd429c17dbbe9528b36211d89f2398967110d4c8d10e2d12e6c450",
+        "pointwise_ctrl_circ": "5b64cc324077f391923063ef6f504b21a70f5d2f3f91c47eac01b5f1810b2276",
+        "trust_head_circ": "cdb96fb9a18d50e5cc54bbee9c86696b4cbe4ad53d66829e212ebe2671729776"
+      },
+      "code_hash_note": "code_hash differs per arm because score_panel.py's hash covers the 35-knob S6_* env block as well as the family .py files (S6_ARM/S6_SELECTOR/S6_VARIANT differ). Same benign mechanism B1 recorded. Family code is one build commit, unedited between arms.",
+      "diag_sidecars": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s6_local/B2/eval/diag_<dataset>__<arm>_e200_s0.json",
+      "frozen_reference": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round1/eval/copylf_baselines.json",
+      "guard_result_by_arm": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s6_local/B2/eval/result_guard_<arm>_s0.json",
+      "job_id": "66056503 (r1-s6_local-B2-s0, main sweep: 5 panel arms + 2 guard legs, seed 0) COMPLETED 0:0 in 59:53 on hpc-33-13, 1x H100 80GB",
+      "label": "provisional-single-seed (ADR 0004); seeds 1-2 not submitted in-round",
+      "metric_convention": "score_panel.py metric_source=per_sample_mean (rel_l2_mean over test samples), split=test_hf, cached=false on every arm x dataset (no cache reuse anywhere); skill = model nRMSE / reference nRMSE, LOWER IS BETTER",
+      "noise_floor_reference": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round1/state/noise_floor.json (certified 2026-07-29T14:28:45Z)",
+      "nrmse_def_hash": "d3d0ade9191c13bacc40702f3eb26ad290e01641cacee22a1d2233b74c035850",
+      "nrmse_def_hash_check": "IDENTICAL across all 8 result_*_s0.json in the eval dir, across all 36 per-dataset result JSONs' diag sidecars, and identical to eval/copylf_baselines.json::_nrmse_def_hash and to s6_local-B1's recorded hash. Seam assertion PASSES.",
+      "pairing_records": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s6_local/B2/eval/pair_<dataset>_e200_s0__<arm>.json",
+      "panel_result_by_arm": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s6_local/B2/eval/result_panel_<arm>_s0.json",
+      "panel_result_primary": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s6_local/B2/eval/result_panel_s0.json (md5-identical content to result_panel_circ_repair_s0.json; geomean 0.19257491364521565)",
+      "per_dataset_result_jsons": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s6_local/B2/eval/results/<arm>/s6_local_repair/<dataset>_e200_s0.json (36 files)",
+      "prior_jobs": "66014970 (2-ep screen, FAILED on its own C3 tripwire -> debug attempt 1, INFRA/cuDNN nondeterminism); 66024957 (2-ep screen re-run after the structural borrow fix, all_pass)",
+      "slurm_log": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s6_local/B2/slurm/r1-s6_local-B2-s0_66056503.out (.err is 0 bytes)",
+      "validity_gates": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s6_local/B2/eval/validity_gates_s0.json"
+    },
+    "anchor_maintenance": {
+      "note_for_maintainer": "trust_head_circ 0.187588 and circ_repair 0.192575 both beat the B1 anchor by more than the certified geomean floor, so s6_local's provisional stream best moves to trust_head_circ / circ_repair pending seed confirmation.",
+      "reason": "s6_local has no state/anchors/s6_local.json and this analyzer did not create one. Section 2e conditions the anchor file on a 3-SEED result; this is a single-seed run under ADR 0004 with no CI, matching s6_local-B1's precedent (B1 also left state/anchors/ untouched and used its own part 5 as the stream anchor via anchor_reference). The operative s6_local anchor remains s6_local-B1's part-5 geomean 0.234572, now re-verified in-batch by b1_replica at 0.23457047. If the end-of-round top-3 confirmation pass certifies this card at 3 seeds, THAT is where state/anchors/s6_local.json should be written.",
+      "state_anchors_file_updated": false
+    },
+    "anomalies": [
+      "No training anomalies. Job 66056503 exited 0:0 in 59:53; .err is 0 bytes; grep of the 25 kB .out for nan|inf|error|warn|traceback|preempt|requeue|fail|resume|retry returns ZERO matches; single H100 on hpc-33-13; no preemption or resume event; 200 epochs completed on 6 panel datasets x 5 arms + 3 guard datasets x 2 arms.",
+      "PRIOR-JOB HISTORY (report-only, do not reopen): screen job 66014970 failed on its own C3 pairing tripwire at max|dw| 2.235e-07 (~2 float32 eps). Debug attempt 1 diagnosed this as cuDNN conv-backward nondeterminism (INFRA, not a knob divergence: 43/45 corrector tensors differed uniformly at 1e-7/1e-8; both env blocks differ only in S6_ARM/S6_SELECTOR; both scalers bit-equal) and fixed it STRUCTURALLY - trust_head_circ now LOADS circ_repair's trained stages 0-2 from the donor checkpoint instead of retraining them. C3 therefore holds BY CONSTRUCTION and the tripwire certifies rather than discovers. Verified in this batch's outputs: all 5 trust_head_circ diags carry corrector_source='loaded_from_partner:circ_repair' with donor ckpt path + donor sha, and validity_gates_s0.json C3_pairing shows sha-equality on 5/5. Flow-log reference: notes/handoff_experiment_debugger_1.md; screen 66024957 all_pass after the fix.",
+      "RESIDUAL (out of scope of C3's requirement, documented by the debugger): the FORWARD passes are still GPU-nondeterministic, so the two paired arms' C_val/C_te can differ at ~1e-7 relative. Four orders below the floor the C3 threshold is quoted against.",
+      "code_hash differs per arm (21feb1ed / 836f6db5 / cdb96fb9 / b3599e68 / 5b64cc32) because score_panel.py hashes the 35-knob S6_* env block along with the family .py files. Same benign mechanism recorded in s6_local-B1. No code drift between arms.",
+      "helmholtz skill is 0.9999999999999998 rather than exactly 1.0 for b1_replica/circ_repair/lsi_ctrl/pointwise_ctrl_circ: score_panel's independent re-score differs from the frozen baseline by exactly 1 ULP (rel dev 1.685e-16). Benign float summation order; recorded because the exact no-harm seam matters here.",
+      "ifc_poisson carries no claim in this batch and behaves as such: all five arms land within 1.1e-04 relative of each other (0.05562937-0.05563559), i.e. all five re-train the identical champion fallback. lsi_ctrl is NOT zero-parameter there (champion fallback, flagged by the builder). Skill ~1.5453 vs paper bar 0.036, well above the bar and unchanged from B1's 1.545365.",
+      "sharp__cahn_hilliard remains the least robust number on the panel: per-sample rel-L2 std is 4.4x the mean on every arm (e.g. circ_repair mean 0.041361, std 0.1822, per-sample CI95 [0.01242, 0.0817]). All four trained arms' cahn_hilliard CIs mutually overlap; every cahn_hilliard contrast in this batch is inside its floor anyway.",
+      "PER-SAMPLE SAMPLING CIs (over the 100/128 test samples, NOT a seed CI - reported as a secondary robustness read only): the single resolvable C2 result, fisher_kpp, is the ONLY contrast in the batch whose sampling CIs are disjoint (circ_repair [0.004235,0.005202] vs lsi_ctrl [0.007119,0.008345]). pfc, allen_cahn, cahn_hilliard and helmholtz contrasts all have overlapping sampling CIs.",
+      "trust_head_circ's global gate alpha is 0.0 on pfc, allen_cahn and helmholtz (the head, not the scalar, carries the correction there) and 1.0 on fisher_kpp and cahn_hilliard. The PIXEL gate remains a near-no-op on every arm and dataset (g_mean 0.9971-0.9994, unchanged from B1's finding); all demonstrated trust behaviour comes from the scalar line search and now from the per-sample head, never from the pixel gate.",
+      "output_paths.training is empty as the reviewer predicted (checkpoints live under eval/results/<arm>/s6_local_repair/ckpt_*). Harmless."
+    ],
+    "contrast_verdicts": {
+      "C1": {
+        "clause_verbatim": "C1 - the padding repair is falsified if `circ_repair`'s test nRMSE is not at least 10% below `b1_replica`'s on **both** pfc and allen_cahn (predicted -46.2% / -39.3%), which would mean the 45-81% boundary error share was not the handicap it looks like",
+        "deciding_numbers": {
+          "sharp__allen_cahn_2d": {
+            "b1_replica_nrmse": 0.0013008666866190345,
+            "circ_repair_nrmse": 0.0009363332709684444,
+            "clears_10pct": true,
+            "predicted_pct": -39.3,
+            "rel_pct": -28.022
+          },
+          "sharp__phase_field_crystal_2d": {
+            "b1_replica_nrmse": 0.001344392535245594,
+            "circ_repair_nrmse": 0.0007204126530396635,
+            "clears_10pct": true,
+            "predicted_pct": -46.2,
+            "rel_pct": -46.414
+          }
+        },
+        "note": "both required datasets clear the 10% bar (which IS the certified relative floor on both, 10.000%), by 4.6x and 2.8x. pfc matched its point prediction to 0.2 points; allen_cahn realised 71% of its predicted gain. Two unclaimed extras: sharp__fisher_kpp_2d -21.164% (also clears) and sharp__cahn_hilliard +0.695% (no effect; cahn_hilliard had the smallest F10 boundary share, 0.183, so this is the predicted ordering holding).",
+        "verdict": "NOT FALSIFIED - CONFIRMED"
+      },
+      "C2": {
+        "clause_verbatim": "C2 - H2's *neural* content is supported only if `circ_repair` beats the paired zero-parameter `lsi_ctrl` by >10% relative nRMSE on **>=2 of the 4** defect datasets and is refuted at <=1 (pre-registered expectation: **refuted, 1 of 4 - fisher_kpp only**), in which case the card's headline is the defect-correction *target*, not the operator class",
+        "consequence_verbatim_from_clause": "the card's headline is the defect-correction *target*, not the operator class",
+        "deciding_numbers": {
+          "count_beating_by_10pct": 1,
+          "sharp__allen_cahn_2d": {
+            "beats_by_10pct": false,
+            "circ_repair": 0.0009363332709684444,
+            "lsi_ctrl": 0.0008318192821,
+            "predicted_ratio": 0.948,
+            "ratio": 1.1256,
+            "rel_pct": 12.565
+          },
+          "sharp__cahn_hilliard": {
+            "beats_by_10pct": false,
+            "circ_repair": 0.04136137418852845,
+            "lsi_ctrl": 0.03856875162347986,
+            "predicted_ratio": 1.062,
+            "ratio": 1.0724,
+            "rel_pct": 7.241
+          },
+          "sharp__fisher_kpp_2d": {
+            "beats_by_10pct": true,
+            "circ_repair": 0.004697840233022452,
+            "lsi_ctrl": 0.007695081137159533,
+            "predicted_ratio": 0.632,
+            "ratio": 0.6105,
+            "rel_pct": -38.95
+          },
+          "sharp__phase_field_crystal_2d": {
+            "beats_by_10pct": false,
+            "circ_repair": 0.0007204126530396635,
+            "lsi_ctrl": 0.0006124684737243416,
+            "predicted_ratio": 1.18,
+            "ratio": 1.1762,
+            "rel_pct": 17.624
+          }
+        },
+        "note": "3 of the 4 predicted paired ratios landed within 0.02-0.03 of prediction (pfc 1.176 vs 1.180, cahn_hilliard 1.072 vs 1.062, fisher_kpp 0.611 vs 0.632). The one prediction MISS is sharp__allen_cahn_2d: predicted 0.948 (NN better by 5.2%), observed 1.1256 (LSI better by 12.6%) - a SIGN FLIP, and it crosses the 10.000% floor in the direction opposite to the prediction. Flag for the mechanism-analyzer.",
+        "verdict": "REFUTED, 1 of 4 - fisher_kpp only. EXACTLY the pre-registered expectation."
+      },
+      "C3": {
+        "clause_verbatim": "C3 - the per-sample trust hypothesis is falsified if BOTH `trust_head_circ` fails to beat `circ_repair` by 5% on pfc AND the 4-fold CV inside `val_idx` does not select the head over {global scalar, 0} on >=2 of the 5 beyond-copy datasets, with helmholtz report-only, its mechanism leg binary, and a helmholtz score worse than copy-LF 0.3294501 an admissible pre-registered outcome (per-sample gating trades the exact no-harm floor for headroom)",
+        "helmholtz_report_only": "trust_head_circ scored 0.23388144 on ext__helmholtz_2d vs copy-LF 0.32945013 - skill 0.709915, i.e. it BEAT copy-LF rather than the pre-registered admissible 'worse than copy-LF' outcome, and beat the predicted [0.25,0.33] band on the low side. The head was selected (alpha* frac_zero 0.325, mean 0.0483, p90 0.0867 - a mostly-off, selectively-on gate) while the global scalar and identity both sit at exactly 0.3294501. HOWEVER: helmholtz's certified relative floor is 70.165% and this effect is -29.009%; the per-sample CI [0.1457,0.3596] contains copy-LF's 0.32945. NOT RESOLVABLE - carries no numeric claim, exactly as pre-registered.",
+        "leg_A_score": {
+          "beats_by_5pct": false,
+          "circ_repair_nrmse": 0.0007204126530396635,
+          "description": "trust_head_circ beats circ_repair by 5% on pfc?",
+          "leg_A_condition_for_falsification_met": true,
+          "rel_pct": 21.319,
+          "trust_head_circ_nrmse": 0.0008739944524622397
+        },
+        "leg_B_mechanism": {
+          "count_head_selected": 3,
+          "description": "4-fold CV inside val_idx selects persample_head over {global_scalar, zero} on >=2 of the 5 beyond-copy datasets?",
+          "head_selected_on_ge2": true,
+          "leg_B_condition_for_falsification_met": false,
+          "selection": {
+            "ext__helmholtz_2d": "persample_head",
+            "sharp__allen_cahn_2d": "persample_head",
+            "sharp__cahn_hilliard": "global_scalar",
+            "sharp__fisher_kpp_2d": "global_scalar",
+            "sharp__phase_field_crystal_2d": "persample_head"
+          },
+          "threshold": 2
+        },
+        "no_harm_cost": "on the four defect datasets trust_head_circ is bit-identical to circ_repair wherever global_scalar was selected (fisher_kpp and cahn_hilliard: rel diff 0.0000%), so the head's exact no-harm fallback held there. It cost 21.3% on pfc and gained 0.8% on allen_cahn.",
+        "score_leg_reading": "the score leg nevertheless went the WRONG way on pfc: the CV preferred persample_head (fold-mean 0.00060050 vs global_scalar 0.00062474, a 3.9% in-CV gain at lambda=1) but on TEST the head was 21.3% WORSE than the global scalar (0.00087399 vs 0.00072041). This is a CV-to-test generalization failure of the per-sample head on pfc, whose alpha* distribution is bimodal (frac_zero 0.300, p50 0.000137, p90 1.0048, std 0.481) - the head switches the corrector fully OFF on ~30% of val samples. The per-sample sampling CIs overlap ([0.000664,0.001094] vs [0.000631,0.000811]), so the reversal itself is not separated by the test-sample CI.",
+        "verdict": "NOT FALSIFIED - the clause requires BOTH legs; leg B fails to fire (head selected on 3 of 5 >= 2). The binary mechanism answer is YES: an out-of-fold per-sample trust head IS selectable over a global scalar and over zero on a majority of the beyond-copy panel."
+      },
+      "C_pointwise_control": {
+        "clause_verbatim_from_part4": "`pointwise_ctrl_circ`: **>=2x worse** than `circ_repair` on **>=3 of the 4** (F7 band gain 0.117-0.202 -> 0.960-1.000; F15 radius_50pct 1.4-3.0 cells)",
+        "deciding_numbers": {
+          "count_ge_2x": 3,
+          "sharp__allen_cahn_2d": 17.25,
+          "sharp__cahn_hilliard": 1.469,
+          "sharp__fisher_kpp_2d": 13.199,
+          "sharp__phase_field_crystal_2d": 61.862,
+          "threshold": 3
+        },
+        "note": "the 1x1 pointwise control does not merely underperform, it COLLAPSES ONTO copy-LF: ptw/identity = 0.9952 (pfc), 1.0000 (allen_cahn, gate alpha driven to exactly 0.0), 0.9900 (fisher_kpp), 0.6931 (cahn_hilliard). Panel geomean 1.009000. A receptive field of one cell buys essentially nothing over the LF field itself - the strongest available evidence that the defect corrector's work is spatially local but NOT pointwise.",
+        "verdict": "CONFIRMED - 3 of 4 at >=2x (61.9x / 17.3x / 13.2x); cahn_hilliard 1.47x falls short, and cahn_hilliard is again the dataset with the weakest local structure."
+      }
+    },
+    "cratered_verdict": "proceed_to_seeds_1_2",
+    "cratered_verdict_detail": "NOT CRATERED. (a) no crash: job 66056503 COMPLETED 0:0, .err 0 bytes, no NaN/inf/error/warning/preemption/resume in the 25 kB .out, 200 epochs on all 6 panel datasets for all 5 arms plus 2 guard legs. (b) the primary arm's panel geomean 0.19257491 is far below the cratered bar of 1.5 x 0.234572 = 0.351858 (CRATERED_SKILL_FACTOR 1.5 x the s6_local-B1 stream anchor); so are trust_head_circ (0.187588), lsi_ctrl (0.197220) and b1_replica (0.234570). (c) the falsification clause did not fire decisively against the card: C1 confirmed, C2 refuted exactly as pre-registered, C3 not falsified. EXCEPTION NOTED, NOT CRATERING: pointwise_ctrl_circ's 1.009000 exceeds the 0.351858 bar by 2.87x - it is a PRE-REGISTERED NEGATIVE CONTROL whose expected outcome was collapse onto copy-LF (part 4: '>=2x worse than circ_repair on >=3 of the 4'), so its excursion is the control working, not the card cratering. Under ADR 0004 seeds 1-2 are not submitted in-round; this card is a candidate for the end-of-round top-3 confirmation pass.",
+    "falsification_verdict": "confirmed",
+    "falsification_verdict_detail": "All three pre-registered contrasts landed where the card said they would, so the card's PREDICTION is confirmed - but note what that means substantively: C1 CONFIRMED (padding repair real: -46.414% / -28.022% vs the required -10%); C2's substantive hypothesis REFUTED at 1 of 4 (fisher_kpp only), which is itself the card's pre-registered expectation, so per the clause's own words 'the card's headline is the defect-correction *target*, not the operator class'; C3 NOT FALSIFIED because the conjunction fails - the score leg fired (trust head 21.3% worse on pfc) but the mechanism leg did not (CV selected the per-sample head on 3 of 5 >= 2). The one substantive PREDICTION MISS is the sign flip on sharp__allen_cahn_2d in C2 (predicted paired ratio 0.948, observed 1.1256). The registration-independent surplus over the closed form is NOT RESOLVABLE at the panel level (-2.355% / -4.884% vs a 13.183% floor) and resolvable on exactly one dataset.",
+    "guard_detail": {
+      "arms_not_run": [
+        "b1_replica",
+        "trust_head_circ",
+        "pointwise_ctrl_circ"
+      ],
+      "arms_run": [
+        "circ_repair",
+        "lsi_ctrl"
+      ],
+      "configuration_note": "the data-driven padding switch chose ZEROS on all three guard datasets (heat_local wrap ratio 16.55, fluid 2.56, sod_1d degenerate denominator, all vs tol 1.25), so circ_repair's guard leg is byte-for-byte B1's zero-padding configuration. The 200-ep guard evidence therefore transfers to b1_replica's config as well.",
+      "regression_check_vs_copylf_baselines": {
+        "circ_repair": {
+          "fluid": {
+            "flag": false,
+            "nrmse": 0.053137462,
+            "ratio": 0.2437,
+            "reference": 0.21805958171115042
+          },
+          "heat_local": {
+            "flag": false,
+            "nrmse": 8.6149717e-05,
+            "ratio": 0.0359,
+            "reference": 0.00240152155999517
+          },
+          "sharp__sod_1d": {
+            "flag": false,
+            "nrmse": 0.00092140755,
+            "ratio": 0.0278,
+            "reference": 0.03309017650048946
+          }
+        },
+        "lsi_ctrl": {
+          "fluid": {
+            "flag": false,
+            "nrmse": 0.16538533,
+            "ratio": 0.7584,
+            "reference": 0.21805958171115042
+          },
+          "heat_local": {
+            "flag": false,
+            "nrmse": 0.0010070049,
+            "ratio": 0.4193,
+            "reference": 0.00240152155999517
+          },
+          "sharp__sod_1d": {
+            "flag": false,
+            "nrmse": 0.015707129,
+            "ratio": 0.4747,
+            "reference": 0.03309017650048946
+          }
+        }
+      },
+      "secondary_reading": "on the guard set the trained corrector beats the closed-form LSI filter by a wide, one-sided margin (heat_local 11.7x, fluid 3.1x, sod_1d 17.0x lower nRMSE; guard geomean 0.0624 vs 0.5325, -88.3%). That is the opposite of the panel picture and is the single most informative contrast in this batch for the mechanism-analyzer: the guard set is exactly where the padding switch chose ZEROS (non-periodic data), and it is exactly where the neural corrector's registration-independent surplus is large.",
+      "tier": "200 epochs (NOT contract tier) - the guard legs ran inside the main sweep, so this batch supplies the 200-epoch guard evidence that s6_local-B1's part 5 flagged MISSING_200EP_GUARD.",
+      "verdict": "NO FLAGS. Every guard dataset is BELOW its copy-LF reference for both arms (max ratio 0.758); the >2x regression threshold is not approached. Guard geomean skill: circ_repair 0.062438, lsi_ctrl 0.532461."
+    },
+    "guard_flags": [],
+    "panel_geomean_skill": {
+      "ci95": null,
+      "ci95_note": "ADR 0004: single seed in-round, no seed CI. A CI would come from the end-of-round top-3 confirmation pass.",
+      "mean": 0.19257491364521565,
+      "per_arm": {
+        "b1_replica": 0.23457046590844713,
+        "circ_repair": 0.19257491364521565,
+        "lsi_ctrl": 0.19721982148169726,
+        "pointwise_ctrl_circ": 1.0090004249071922,
+        "trust_head_circ": 0.1875881964408575
+      },
+      "per_seed": [
+        0.19257491364521565
+      ],
+      "prediction_check": "card part 4 predicted circ_repair -19.82% and lsi_ctrl -15.92% vs B1. Observed -17.90% and -15.92%. lsi_ctrl is EXACT (it is a zero-gradient-step closed form, so this is arithmetic, not luck); circ_repair landed 1.9 points short of its ideal-repair upper bound, i.e. the repair realised ~90% of the energy-share arithmetic's ideal gain.",
+      "primary_arm": "circ_repair",
+      "ranking": "trust_head_circ 0.187588 < circ_repair 0.192575 < lsi_ctrl 0.197220 < b1_replica 0.234570 << pointwise_ctrl_circ 1.009000",
+      "rel_vs_b1_replica_pct": {
+        "circ_repair": -17.903,
+        "lsi_ctrl": -15.923,
+        "pointwise_ctrl_circ": 330.148,
+        "trust_head_circ": -20.029
+      }
+    },
+    "per_dataset": {
+      "ext__helmholtz_2d": {
+        "cached": {
+          "b1_replica": false,
+          "circ_repair": false,
+          "lsi_ctrl": false,
+          "pointwise_ctrl_circ": false,
+          "trust_head_circ": false
+        },
+        "gate_alpha": {
+          "b1_replica": 0.0,
+          "circ_repair": 0.0,
+          "lsi_ctrl": 0.0,
+          "pointwise_ctrl_circ": 0.0,
+          "trust_head_circ": 0.0
+        },
+        "head_selected_trust_head_circ": "persample_head",
+        "n_test_samples": 100,
+        "noise_floor": {
+          "certified_mean_skill": 13.817289529417906,
+          "min_claimable_effect_relative_pct": 70.165,
+          "min_claimable_effect_skill": 9.694961194291832
+        },
+        "per_arm_nrmse": {
+          "b1_replica": 0.32945012604380175,
+          "circ_repair": 0.32945012604380175,
+          "lsi_ctrl": 0.32945012604380175,
+          "pointwise_ctrl_circ": 0.32945012604380175,
+          "trust_head_circ": 0.23388143555815602
+        },
+        "per_arm_skill": {
+          "b1_replica": 0.9999999999999998,
+          "circ_repair": 0.9999999999999998,
+          "lsi_ctrl": 0.9999999999999998,
+          "pointwise_ctrl_circ": 0.9999999999999998,
+          "trust_head_circ": 0.70991454265542
+        },
+        "per_sample_rel_l2_ci95": {
+          "b1_replica": [
+            0.15104870751301017,
+            0.623771537524089
+          ],
+          "circ_repair": [
+            0.15104870751301017,
+            0.623771537524089
+          ],
+          "lsi_ctrl": [
+            0.15104870751301017,
+            0.623771537524089
+          ],
+          "pointwise_ctrl_circ": [
+            0.15104870751301017,
+            0.623771537524089
+          ],
+          "trust_head_circ": [
+            0.14568991069421375,
+            0.3595568321494153
+          ]
+        },
+        "reference_nrmse": 0.3294501260438018,
+        "reference_type": "copylf",
+        "rel_nrmse_circ_vs_b1_pct": 0.0,
+        "rel_nrmse_circ_vs_lsi_pct": 0.0,
+        "rel_nrmse_trust_vs_circ_pct": -29.0085
+      },
+      "ifc_poisson": {
+        "cached": {
+          "b1_replica": false,
+          "circ_repair": false,
+          "lsi_ctrl": false,
+          "pointwise_ctrl_circ": false,
+          "trust_head_circ": false
+        },
+        "gate_alpha": {
+          "b1_replica": null,
+          "circ_repair": null,
+          "lsi_ctrl": null,
+          "pointwise_ctrl_circ": null,
+          "trust_head_circ": null
+        },
+        "head_selected_trust_head_circ": null,
+        "n_test_samples": 128,
+        "noise_floor": {
+          "certified_mean_skill": 1.5656334312786022,
+          "min_claimable_effect_relative_pct": 15.323,
+          "min_claimable_effect_skill": 0.23990756041925798
+        },
+        "per_arm_nrmse": {
+          "b1_replica": 0.0556331235049472,
+          "circ_repair": 0.05562937038722282,
+          "lsi_ctrl": 0.055635593567078964,
+          "pointwise_ctrl_circ": 0.055630747209616395,
+          "trust_head_circ": 0.05563142634926006
+        },
+        "per_arm_skill": {
+          "b1_replica": 1.545364541804089,
+          "circ_repair": 1.5452602885339675,
+          "lsi_ctrl": 1.5454331546410824,
+          "pointwise_ctrl_circ": 1.5452985336004554,
+          "trust_head_circ": 1.5453173985905575
+        },
+        "per_sample_rel_l2_ci95": {
+          "b1_replica": [
+            0.047538937427206295,
+            0.0648051908973864
+          ],
+          "circ_repair": [
+            0.04753581171306742,
+            0.06480125902536084
+          ],
+          "lsi_ctrl": [
+            0.04754047640456655,
+            0.06481089725700444
+          ],
+          "pointwise_ctrl_circ": [
+            0.04753665987276619,
+            0.0648048962562048
+          ],
+          "trust_head_circ": [
+            0.047537254594367286,
+            0.06480569275447313
+          ]
+        },
+        "reference_nrmse": 0.036,
+        "reference_type": "paper_bar",
+        "rel_nrmse_circ_vs_b1_pct": -0.007,
+        "rel_nrmse_circ_vs_lsi_pct": -0.011,
+        "rel_nrmse_trust_vs_circ_pct": 0.0037
+      },
+      "sharp__allen_cahn_2d": {
+        "cached": {
+          "b1_replica": false,
+          "circ_repair": false,
+          "lsi_ctrl": false,
+          "pointwise_ctrl_circ": false,
+          "trust_head_circ": false
+        },
+        "gate_alpha": {
+          "b1_replica": 1.0,
+          "circ_repair": 1.0,
+          "lsi_ctrl": 0.9996859682676397,
+          "pointwise_ctrl_circ": 0.0,
+          "trust_head_circ": 0.0
+        },
+        "head_selected_trust_head_circ": "persample_head",
+        "n_test_samples": 100,
+        "noise_floor": {
+          "certified_mean_skill": 16.33407079448426,
+          "min_claimable_effect_relative_pct": 10.0,
+          "min_claimable_effect_skill": 1.633407079448426
+        },
+        "per_arm_nrmse": {
+          "b1_replica": 0.0013008666866190345,
+          "circ_repair": 0.0009363332709684444,
+          "lsi_ctrl": 0.0008318192792299753,
+          "pointwise_ctrl_circ": 0.016151772077279084,
+          "trust_head_circ": 0.0009287862235680786
+        },
+        "per_arm_skill": {
+          "b1_replica": 0.08054018347924692,
+          "circ_repair": 0.057970931393069684,
+          "lsi_ctrl": 0.05150018680613422,
+          "pointwise_ctrl_circ": 1.0,
+          "trust_head_circ": 0.05750367322695289
+        },
+        "per_sample_rel_l2_ci95": {
+          "b1_replica": [
+            0.0010512040791302787,
+            0.001591350147972612
+          ],
+          "circ_repair": [
+            0.0007556029016422165,
+            0.0011466726226190514
+          ],
+          "lsi_ctrl": [
+            0.0006798207570208068,
+            0.0009998831309758714
+          ],
+          "pointwise_ctrl_circ": [
+            0.013029789300751136,
+            0.019677086980487896
+          ],
+          "trust_head_circ": [
+            0.0007511055822984775,
+            0.0011340591144620065
+          ]
+        },
+        "reference_nrmse": 0.016151772077279084,
+        "reference_type": "copylf",
+        "rel_nrmse_circ_vs_b1_pct": -28.022,
+        "rel_nrmse_circ_vs_lsi_pct": 12.565,
+        "rel_nrmse_trust_vs_circ_pct": -0.806
+      },
+      "sharp__cahn_hilliard": {
+        "cached": {
+          "b1_replica": false,
+          "circ_repair": false,
+          "lsi_ctrl": false,
+          "pointwise_ctrl_circ": false,
+          "trust_head_circ": false
+        },
+        "gate_alpha": {
+          "b1_replica": 1.0,
+          "circ_repair": 1.0,
+          "lsi_ctrl": 1.0,
+          "pointwise_ctrl_circ": 0.9462340626903288,
+          "trust_head_circ": 1.0
+        },
+        "head_selected_trust_head_circ": "global_scalar",
+        "n_test_samples": 100,
+        "noise_floor": {
+          "certified_mean_skill": 5.533465853654415,
+          "min_claimable_effect_relative_pct": 10.0,
+          "min_claimable_effect_skill": 0.5533465853654416
+        },
+        "per_arm_nrmse": {
+          "b1_replica": 0.041075931826971834,
+          "circ_repair": 0.04136137418852845,
+          "lsi_ctrl": 0.03856875162347987,
+          "pointwise_ctrl_circ": 0.06075534096334487,
+          "trust_head_circ": 0.04136137418852845
+        },
+        "per_arm_skill": {
+          "b1_replica": 0.46858243258792986,
+          "circ_repair": 0.4718386770647506,
+          "lsi_ctrl": 0.4399812409305531,
+          "pointwise_ctrl_circ": 0.6930794797604474,
+          "trust_head_circ": 0.4718386770647506
+        },
+        "per_sample_rel_l2_ci95": {
+          "b1_replica": [
+            0.012136966213588687,
+            0.08140408441281753
+          ],
+          "circ_repair": [
+            0.01242042826843708,
+            0.0817031479217478
+          ],
+          "lsi_ctrl": [
+            0.009536707409044179,
+            0.07874054415231907
+          ],
+          "pointwise_ctrl_circ": [
+            0.03215726116146514,
+            0.10020954392829505
+          ],
+          "trust_head_circ": [
+            0.01242042826843708,
+            0.0817031479217478
+          ]
+        },
+        "reference_nrmse": 0.08765999100758841,
+        "reference_type": "copylf",
+        "rel_nrmse_circ_vs_b1_pct": 0.695,
+        "rel_nrmse_circ_vs_lsi_pct": 7.241,
+        "rel_nrmse_trust_vs_circ_pct": 0.0
+      },
+      "sharp__fisher_kpp_2d": {
+        "cached": {
+          "b1_replica": false,
+          "circ_repair": false,
+          "lsi_ctrl": false,
+          "pointwise_ctrl_circ": false,
+          "trust_head_circ": false
+        },
+        "gate_alpha": {
+          "b1_replica": 1.0015261192713574,
+          "circ_repair": 1.0,
+          "lsi_ctrl": 1.0,
+          "pointwise_ctrl_circ": 1.0154703723640643,
+          "trust_head_circ": 1.0
+        },
+        "head_selected_trust_head_circ": "global_scalar",
+        "n_test_samples": 100,
+        "noise_floor": {
+          "certified_mean_skill": 4.177354995081957,
+          "min_claimable_effect_relative_pct": 10.0,
+          "min_claimable_effect_skill": 0.41773549950819566
+        },
+        "per_arm_nrmse": {
+          "b1_replica": 0.005958968552972434,
+          "circ_repair": 0.004697840233022452,
+          "lsi_ctrl": 0.007695081137159533,
+          "pointwise_ctrl_circ": 0.062006137182101524,
+          "trust_head_circ": 0.004697840233022452
+        },
+        "per_arm_skill": {
+          "b1_replica": 0.09514210506908073,
+          "circ_repair": 0.07500667356685822,
+          "lsi_ctrl": 0.12286123203344254,
+          "pointwise_ctrl_circ": 0.9900026097242314,
+          "trust_head_circ": 0.07500667356685822
+        },
+        "per_sample_rel_l2_ci95": {
+          "b1_replica": [
+            0.005456727054635663,
+            0.00650110686025315
+          ],
+          "circ_repair": [
+            0.0042353686658905924,
+            0.005202406431376258
+          ],
+          "lsi_ctrl": [
+            0.0071188110540066395,
+            0.008344920208671783
+          ],
+          "pointwise_ctrl_circ": [
+            0.05779966995246114,
+            0.06644471506302667
+          ],
+          "trust_head_circ": [
+            0.0042353686658905924,
+            0.005202406431376258
+          ]
+        },
+        "reference_nrmse": 0.06263229669603956,
+        "reference_type": "copylf",
+        "rel_nrmse_circ_vs_b1_pct": -21.164,
+        "rel_nrmse_circ_vs_lsi_pct": -38.95,
+        "rel_nrmse_trust_vs_circ_pct": 0.0
+      },
+      "sharp__phase_field_crystal_2d": {
+        "cached": {
+          "b1_replica": false,
+          "circ_repair": false,
+          "lsi_ctrl": false,
+          "pointwise_ctrl_circ": false,
+          "trust_head_circ": false
+        },
+        "gate_alpha": {
+          "b1_replica": 1.0032785068854033,
+          "circ_repair": 1.0030562913856984,
+          "lsi_ctrl": 1.0,
+          "pointwise_ctrl_circ": 0.7388763314436013,
+          "trust_head_circ": 0.0
+        },
+        "head_selected_trust_head_circ": "persample_head",
+        "n_test_samples": 100,
+        "noise_floor": {
+          "certified_mean_skill": 11.511001428346894,
+          "min_claimable_effect_relative_pct": 10.0,
+          "min_claimable_effect_skill": 1.1511001428346894
+        },
+        "per_arm_nrmse": {
+          "b1_replica": 0.001344392535245594,
+          "circ_repair": 0.0007204126530396635,
+          "lsi_ctrl": 0.0006124684737243416,
+          "pointwise_ctrl_circ": 0.04456611210540643,
+          "trust_head_circ": 0.0008739944524622394
+        },
+        "per_arm_skill": {
+          "b1_replica": 0.030021864886626542,
+          "circ_repair": 0.016087660980817563,
+          "lsi_ctrl": 0.01367714062925196,
+          "pointwise_ctrl_circ": 0.9952136456234822,
+          "trust_head_circ": 0.01951732301064076
+        },
+        "per_sample_rel_l2_ci95": {
+          "b1_replica": [
+            0.0011680417786127835,
+            0.001521426732178708
+          ],
+          "circ_repair": [
+            0.000630927101634433,
+            0.0008113995271372555
+          ],
+          "lsi_ctrl": [
+            0.00046884194520122085,
+            0.000759158730398596
+          ],
+          "pointwise_ctrl_circ": [
+            0.034567198098657194,
+            0.0547624925013966
+          ],
+          "trust_head_circ": [
+            0.0006643931285238232,
+            0.0010941234716386947
+          ]
+        },
+        "reference_nrmse": 0.04478044719481978,
+        "reference_type": "copylf",
+        "rel_nrmse_circ_vs_b1_pct": -46.414,
+        "rel_nrmse_circ_vs_lsi_pct": 17.624,
+        "rel_nrmse_trust_vs_circ_pct": 21.3186
+      }
+    },
+    "provisional_claim": "provisional-single-seed (ADR 0004). Circular padding on data-verified-periodic panel datasets removes 46.4% / 28.0% / 21.2% of the B1 defect corrector's test nRMSE on pfc / allen_cahn / fisher_kpp and improves the panel geomean by 17.9% (0.234572 -> 0.192575), beyond the 13.183% certified geomean floor. But the same batch's zero-parameter closed-form registration filter reaches 0.197220 with ZERO gradient steps, and the trained corrector's resolvable advantage over it survives on exactly ONE of six panel datasets. The neural content of H2 is refuted on the panel, as pre-registered.",
+    "seeds_available": [
+      0
+    ],
+    "surplus_over_lsi": {
+      "definition": "registration-independent quantity per the round context: (trained arm) minus (lsi_ctrl, the zero-parameter closed-form half-cell registration filter). Reported in skill units AND in relative nRMSE, each judged against that dataset's CERTIFIED relative floor = min_claimable_effect / certified mean_skill from state/noise_floor.json (10.000% on all four defect datasets; 70.165% helmholtz; 15.323% ifc_poisson; 13.183% on the geomean). Negative = the trained model beats the closed form.",
+      "headline": "ONE dataset out of six shows a resolvable registration-independent surplus for the trained neural corrector: sharp__fisher_kpp_2d, -38.950% relative nRMSE vs the closed form (3.9x its 10.000% certified floor; the per-sample sampling CIs are also disjoint, [0.004235,0.005202] vs [0.007119,0.008345]). On sharp__phase_field_crystal_2d (+17.624%) and sharp__allen_cahn_2d (+12.565%) the surplus is resolvably NEGATIVE - the zero-parameter registration filter beats the 72k-parameter trained corrector by more than the certified floor. sharp__cahn_hilliard (+7.241%), ext__helmholtz_2d (circ_repair +0.000% / trust_head_circ -29.009%) and ifc_poisson (-0.011%) are all inside their floors and NOT RESOLVABLE. At the panel level the surplus is -2.355% (circ_repair) / -4.884% (trust_head_circ), both inside the 13.183% geomean floor: NOT RESOLVABLE.",
+      "panel_geomean": {
+        "certified_geomean_relative_floor_pct": 13.183,
+        "circ_repair_rel_vs_lsi_pct": -2.355,
+        "lsi_ctrl": 0.19721982148169726,
+        "trust_head_circ_rel_vs_lsi_pct": -4.884,
+        "verdict": "NOT RESOLVABLE at panel level: circ_repair -2.355% and trust_head_circ -4.884% over the zero-parameter LSI control are both inside the certified geomean floor of 13.183% relative."
+      },
+      "reading": "consistent with s6-B1's LSI filter accounting for 87-98% of the defect corrector and with s2-B2's 96-100% re-learned-registration result. After the padding repair, the trained corrector's advantage over pure registration remains a single-dataset, non-panel-level effect.",
+      "table": {
+        "ext__helmholtz_2d": {
+          "circ_repair": {
+            "certified_relative_floor_pct": 70.165,
+            "delta_skill_model_minus_lsi": 0.0,
+            "model_better_than_lsi": false,
+            "rel_nrmse_vs_lsi_pct": 0.0,
+            "resolvable_vs_floor": false,
+            "verdict": "below floor / not resolvable"
+          },
+          "trust_head_circ": {
+            "certified_relative_floor_pct": 70.165,
+            "delta_skill_model_minus_lsi": -0.2900854573445798,
+            "model_better_than_lsi": true,
+            "rel_nrmse_vs_lsi_pct": -29.009,
+            "resolvable_vs_floor": false,
+            "verdict": "below floor / not resolvable"
+          }
+        },
+        "ifc_poisson": {
+          "circ_repair": {
+            "certified_relative_floor_pct": 15.323,
+            "delta_skill_model_minus_lsi": -0.0001728661071149773,
+            "model_better_than_lsi": true,
+            "rel_nrmse_vs_lsi_pct": -0.011,
+            "resolvable_vs_floor": false,
+            "verdict": "below floor / not resolvable"
+          },
+          "trust_head_circ": {
+            "certified_relative_floor_pct": 15.323,
+            "delta_skill_model_minus_lsi": -0.00011575605052493998,
+            "model_better_than_lsi": true,
+            "rel_nrmse_vs_lsi_pct": -0.007,
+            "resolvable_vs_floor": false,
+            "verdict": "below floor / not resolvable"
+          }
+        },
+        "sharp__allen_cahn_2d": {
+          "circ_repair": {
+            "certified_relative_floor_pct": 10.0,
+            "delta_skill_model_minus_lsi": 0.006470744586935466,
+            "model_better_than_lsi": false,
+            "rel_nrmse_vs_lsi_pct": 12.565,
+            "resolvable_vs_floor": true,
+            "verdict": "DEFICIT resolvable"
+          },
+          "trust_head_circ": {
+            "certified_relative_floor_pct": 10.0,
+            "delta_skill_model_minus_lsi": 0.006003486420818674,
+            "model_better_than_lsi": false,
+            "rel_nrmse_vs_lsi_pct": 11.657,
+            "resolvable_vs_floor": true,
+            "verdict": "DEFICIT resolvable"
+          }
+        },
+        "sharp__cahn_hilliard": {
+          "circ_repair": {
+            "certified_relative_floor_pct": 10.0,
+            "delta_skill_model_minus_lsi": 0.0318574361341975,
+            "model_better_than_lsi": false,
+            "rel_nrmse_vs_lsi_pct": 7.241,
+            "resolvable_vs_floor": false,
+            "verdict": "below floor / not resolvable"
+          },
+          "trust_head_circ": {
+            "certified_relative_floor_pct": 10.0,
+            "delta_skill_model_minus_lsi": 0.0318574361341975,
+            "model_better_than_lsi": false,
+            "rel_nrmse_vs_lsi_pct": 7.241,
+            "resolvable_vs_floor": false,
+            "verdict": "below floor / not resolvable"
+          }
+        },
+        "sharp__fisher_kpp_2d": {
+          "circ_repair": {
+            "certified_relative_floor_pct": 10.0,
+            "delta_skill_model_minus_lsi": -0.04785455846658432,
+            "model_better_than_lsi": true,
+            "rel_nrmse_vs_lsi_pct": -38.95,
+            "resolvable_vs_floor": true,
+            "verdict": "SURPLUS resolvable"
+          },
+          "trust_head_circ": {
+            "certified_relative_floor_pct": 10.0,
+            "delta_skill_model_minus_lsi": -0.04785455846658432,
+            "model_better_than_lsi": true,
+            "rel_nrmse_vs_lsi_pct": -38.95,
+            "resolvable_vs_floor": true,
+            "verdict": "SURPLUS resolvable"
+          }
+        },
+        "sharp__phase_field_crystal_2d": {
+          "circ_repair": {
+            "certified_relative_floor_pct": 10.0,
+            "delta_skill_model_minus_lsi": 0.0024105203515656023,
+            "model_better_than_lsi": false,
+            "rel_nrmse_vs_lsi_pct": 17.624,
+            "resolvable_vs_floor": true,
+            "verdict": "DEFICIT resolvable"
+          },
+          "trust_head_circ": {
+            "certified_relative_floor_pct": 10.0,
+            "delta_skill_model_minus_lsi": 0.005840182381388798,
+            "model_better_than_lsi": false,
+            "rel_nrmse_vs_lsi_pct": 42.7,
+            "resolvable_vs_floor": true,
+            "verdict": "DEFICIT resolvable"
+          }
+        }
+      }
+    },
+    "validity_gates": {
+      "C3_pairing": "PASS 5/5 - trust_head_circ's corrector state sha256 EQUALS circ_repair's on every panel dataset (0b49e321.., c8a8de1e.., 1f41681b.., e87244e7.., 76d5c831..). True by construction via the debug-1 structural borrow (borrow_partner_stages loads the donor checkpoint) - the tripwire certifies, the borrow makes it true. corrector_provenance in every trust_head_circ diag records corrector_source='loaded_from_partner:circ_repair' + donor ckpt path + donor sha.",
+      "V1_replica": "PASS 6/6 - b1_replica reproduces s6_local-B1 seed-0 within tol 10%; max rel_dev 1.76e-04 (pfc); helmholtz 1.68e-16 (1 ULP). The B1 reference leg is genuinely re-run, not copied.",
+      "V2_lsi": "PASS 4/4 bit-exact (rel_dev 0.0) vs B1 F6 at tol 2%, n_params=0, alpha in {1.0, 0.99969}; helmholtz alpha=0.0 zero_pass=True. lsi_ctrl takes zero gradient steps so V2 is epoch-independent.",
+      "all_pass": true,
+      "consequence": "the C1/C2/C3 contrasts are LEGAL to read.",
+      "identity_floor": "PASS 31/31 (delta_init_max_abs = 0.0, identity_forward_max_abs_dev = 0.0 on every arm x dataset)",
+      "padding_decision_data_driven": "circular on all 5 panel beyond-copy datasets (max_wrap_ratio 0.859-1.021 <= tol 1.25); zeros on all 3 guard datasets (heat_local 16.55, fluid 2.56, sod_1d degenerate_denominator). The guard leg therefore runs B1's exact zero-padding configuration.",
+      "read_by": "orchestrator, pre-logged rule, BEFORE any C1/C2/C3 contrast was read (code-reviewer action 2). Re-verified by this analyzer from the JSON: failures[] empty, incomplete[] empty, missing_inputs[] empty.",
+      "source": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s6_local/B2/eval/validity_gates_s0.json"
+    },
+    "vs_anchor": {
+      "anchor_replica_check": "b1_replica re-measured the anchor in-batch at 0.23457047 (rel dev -1.1e-05 vs the recorded 0.234572). The anchor is reproduced, not assumed.",
+      "anchor_source": "s6_local-B1 card part 5 (anchor_reference = 's6_local-B1'; s6_local has no state/anchors/ file - see anchor_maintenance below)",
+      "anchor_value": 0.234572,
+      "best_arm": "trust_head_circ (0.18758820)",
+      "best_arm_delta_pct": -20.03,
+      "beyond_ci": null,
+      "beyond_ci_note": "no CI exists at 1 seed (ADR 0004). Cross-check deferred to the end-of-round top-3 confirmation pass.",
+      "beyond_noise_floor": true,
+      "beyond_noise_floor_detail": "circ_repair's -17.904% panel geomean improvement over the B1 anchor exceeds the certified geomean relative floor of 13.183% (0.8836555 / 6.703016); trust_head_circ's -20.030% clears it by 1.52x. Per dataset the improvement over b1_replica clears the 10.000% floor on pfc (-46.414%), allen_cahn (-28.022%) and fisher_kpp (-21.164%), and does NOT clear it on cahn_hilliard (+0.695%), helmholtz (0.000%, exact no-harm collapse) or ifc_poisson (-0.007%, floor 15.323%).",
+      "delta": -0.04199708635478436,
+      "delta_pct": -17.904,
+      "secondary_anchors": {
+        "copylf_bar": {
+          "note": "circ_repair goes below the copy-LF bar on 4 of the 5 beyond-copy datasets and matches it exactly on helmholtz (alpha=0 no-harm collapse). trust_head_circ goes below on ALL FIVE (helmholtz 0.709915) - the first arm in the round to do so - but see C3.helmholtz_report_only: that fifth is NOT RESOLVABLE.",
+          "source": "state/anchors/s2_beyond_copy.json",
+          "value": 1.0
+        },
+        "round_champion_panel_geomean": {
+          "circ_repair_ratio_better": 34.81,
+          "source": "state/anchors/s3_testtime.json (mf_fno_transfer_film, batch 0, 3-seed)",
+          "trust_head_circ_ratio_better": 35.73,
+          "value": 6.703016262587087
+        }
+      }
+    },
+    "wall_clock_detail": {
+      "for_the_timing_ledger": "5 panel arms + 2 guard legs, seed 0, 200 ep, 1x H100 (hpc-33-13), 59.87 min wall on a --time 04:00:00 allocation (25% utilisation; 02:00:00 would have been safe). Per-panel-leg cost 18.05-20.42 min for a fully-trained arm, matching job 66001535's 17.95 min/panel-leg. The two structurally-cheap arms cost ~1 min each: lsi_ctrl takes zero gradient steps and trust_head_circ borrows the donor's stages 0-2 (the debug-1 fix cut this arm from ~20 min to 1.22 min). The builder's ~100 min estimate was 1.7x conservative.",
+      "job_total_min": 59.87,
+      "per_leg_min": {
+        "guard_circ_repair": 5.3,
+        "guard_lsi_ctrl": 0.27,
+        "panel_b1_replica": 18.05,
+        "panel_circ_repair": 20.42,
+        "panel_lsi_ctrl": 1.02,
+        "panel_pointwise_ctrl_circ": 13.6,
+        "panel_trust_head_circ": 1.22,
+        "validity_gates": 0.0
+      },
+      "slurm_reported_elapsed": "59:53"
+    },
+    "wall_clock_per_seed_min": [
+      59.87
+    ]
+  },
   "6_analysis": null,
   "7_gap_and_future": null,
   "anchor_reference": "s6_local-B1",
@@ -104,7 +907,7 @@
     },
     "verdict_quoted": " (verbatim from `websearches/s6_local/batch_2/report.md`,\n`## Prior-art verdict`):\n- (iii) \"**`preempted-but-MF-composition-open (cite)`** ... A **data-driven, physics-free, per-SAMPLE\n  scalar, fitted out-of-fold, deciding whether a FIELD-VALUED defect corrector is applied at all,\n  with the scored copy-LF field as the exact `alpha=0` fallback** appears in no fetched source.\n  Pre-register the prize from B1's oracles (helmholtz 0.1623 vs 0.3295; pfc -22.8%) **and** the fact\n  that helmholtz's `min_claimable_effect` = 9.695 \u21d2 report-only there.\"\n  Citations: https://ar5iv.labs.arxiv.org/html/1901.09192 (fetched \u2014 SelectiveNet: \"all heads train\n  jointly on the same data end-to-end ... not on held-out data\"), https://arxiv.org/html/2602.20974\n  (fetched \u2014 MAST: \"scalar-output Gaussian process ... no involvement with ... PDE solution fields\",\n  weight \"not learned from data features\"), https://arxiv.org/html/2512.19643v2 (fetched \u2014 ANCHOR:\n  \"inherently physics-informed, being computed from the PDE residual\" \u21d2 ADR-0009-disqualified),\n  https://www.sciencedirect.com/science/article/abs/pii/S0031320314004919 (search-return \u2014 META-DES,\n  classification).\n- (i) \"**`preempted-but-MF-composition-open (cite)`** \u2014 preempted as a *method*, open as a *reported\n  baseline* ... No fetched source **solves** the coarse\u2192fine defect operator in closed form from\n  paired nested solves **and scores it beside trained neural operators on an MF field benchmark**.\n  Claim **zero method novelty**; the contribution is the *measured floor* ... A card that says 'we\n  introduce an LSI defect filter' dies on sight.\"\n  Citations: preempting https://arxiv.org/abs/2304.02117 (fetched abs),\n  https://arxiv.org/html/2103.09962v2, .../255595433_COARSE_GRID_APPROXIMATION_GOVERNED_BY_LOCAL_FOURIER_ANALYSIS,\n  https://www.sciencedirect.com/science/article/abs/pii/S0045782522001967, https://arxiv.org/pdf/2102.01010;\n  gaps https://arxiv.org/html/2411.07576v2 (fetched \u2014 \"provides no zero-parameter linear filter or\n  transfer function comparison\"), https://arxiv.org/html/2603.24143 (fetched \u2014 \"not solved in closed\n  form\"), https://arxiv.org/html/2605.07792 (fetched \u2014 \"No closed-form linear operator fitting\n  occurs\"), https://arxiv.org/html/2507.21269v1 (fetched \u2014 the under-comparison thesis / licence).\n- (ii) \"**`preempted (cite)`** \u2014 hygiene, not a contribution ... **Nothing about the fix.** Only\n  reportable: B1's *measurement* that zero padding held **45-81%** of a defect corrector's remaining\n  squared error in a 12-cell band (34%/18%/18% of pixels) while the implicitly-periodic filter showed\n  none, plus the post-repair delta. Write it as 'known bug, quantified cost'.\"\n  Citations: https://ar5iv.labs.arxiv.org/html/2403.19507 (fetched \u2014 SineNet ICLR 2024 Table 3: zero\n  1.50%/4.19% vs circular 1.02%/1.78%, \"a simple yet crucial component\"), https://arxiv.org/pdf/2106.11160\n  (search-return), https://arxiv.org/pdf/2106.14103 (search-return \u2014 PhyCRNet periodic padding).\n- (iv) \"**`preempted (cite)`** \u2014 the founding rule of stacking; file as a protocol bug fix ... Also\n  pre-register the ORACLE ceiling from `tools/trust_gate_headroom.py` (\u22644.1%, **negative on\n  cahn_hilliard**) so the arm is honestly framed as closing a mechanism claim, not moving the\n  geomean.\" Citation: https://arxiv.org/pdf/1106.1684 (fetched, cites Wolpert 1992).\n- (v) \"**not a novelty question** \u2014 a control arm ... the pre-registered expectation from B1-F15 is\n  that a 1-cell kernel captures the band-0 gain term and misses the rest.\""
   },
-  "reanalysis_progress": null,
+  "reanalysis_progress": "turn_2",
   "recipe": {
     "base_commit": "3abc0e30d56446148f5322787fbfd1d5f384cc82",
     "base_family": "s6_local_lf_corrector",
@@ -250,7 +1053,7 @@
   },
   "skipped_reason": null,
   "source_iteration": "brainstormer/s6_local/batch_2/iteration_1.md",
-  "status": "running",
+  "status": "analyzing",
   "stream": "s6_local",
   "worktree_path": "mffp_autoresearch/round1/worktrees/s6_local/B2"
 }

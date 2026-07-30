@@ -47,7 +47,7 @@
       "MFFP_MODES_CAP": "12"
     }
   },
-  "status": "running",
+  "status": "complete",
   "skipped_reason": null,
   "reopen_candidate": false,
   "scripts_path": {
@@ -143,10 +143,696 @@
       "utc": "2026-07-30T04:05:00Z"
     }
   ],
-  "5_actual_result": null,
-  "6_analysis": null,
-  "7_gap_and_future": null,
-  "reanalysis_progress": null,
+  "5_actual_result": {
+    "protocol": "ADR 0004 strict single-seed; all numbers below are provisional-single-seed point estimates (no CI). Promoted arm A2 (MFFP_TARGET_SCALER=zscore) recorded in the card's `promotion` block BEFORE submit (ADR 0007, fixed rank order). ADR-0007 screen numbers are NOT reportable and appear nowhere in this part; the ONLY screen-job artifact used here is the pre-registered card part-3 item (b) guard leg run with the promoted env (see guard_set.provenance).",
+    "seeds_available": [
+      0
+    ],
+    "nrmse_def_hash": "d3d0ade9191c13bacc40702f3eb26ad290e01641cacee22a1d2233b74c035850",
+    "nrmse_def_hash_consistent": true,
+    "nrmse_def_hash_checked_against": [
+      "eval/result_panel_zscore_s0.json (this run)",
+      "screen/guard_A2.json (guard leg, same code_hash b7f58e7a)",
+      "round1/eval/copylf_baselines.json (_nrmse_def_hash)",
+      "s5_tuning-B1 part 5 (anchor-basis card)"
+    ],
+    "code_hash": "b7f58e7aa013ddac759cb27e8e83a3cb0c0962b27cf52883b14ee9d7bea3f391",
+    "result_json_paths": {
+      "panel_seed0": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s5_tuning/B2/eval/result_panel_zscore_s0.json",
+      "per_dataset_training_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s5_tuning/B2/eval/results/scaler_zscore/mf_fno_transfer_film_scaler/<dataset>_e200_s0.json",
+      "guard_contract_promoted_env": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s5_tuning/B2/screen/guard_A2.json",
+      "preds_test_npz": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s5_tuning/B2/eval/results/scaler_zscore/mf_fno_transfer_film_scaler/ckpt_<dataset>_e200_s0/scaler_zscore/preds_test.npz",
+      "slurm_out": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s5_tuning/B2/slurm/r1-s5_tuning-B2-s0_66056499.out",
+      "anchor_basis_card": "round1/experiment_cards/s5_tuning/batch_1/B1.json (part 5 per_dataset anchor_* fields)",
+      "anchor_file": "round1/state/anchors/s5_tuning.json",
+      "noise_floor": "round1/state/noise_floor.json",
+      "constant_field_oracle_json": "analysis scratchpad (tools/dc_pattern_split.py, read-only; numbers inlined below)"
+    },
+    "knob_fired_audit": {
+      "verdict": "PASS",
+      "in_job_assertion": "scripts/check_knob_provenance.py FATAL leg printed '[knob-check] VERDICT: PASS - both knobs arrived from the env on every dataset' (slurm .out)",
+      "scaler_mode": "zscore",
+      "scaler_mode_source": "env:MFFP_TARGET_SCALER (all 6 datasets)",
+      "scaler_fallback": false,
+      "modes_cap": 12,
+      "modes_cap_source": "env:MFFP_MODES_CAP (all 6 datasets)",
+      "modes": [
+        12,
+        12
+      ],
+      "n_params_by_dataset": {
+        "ext__helmholtz_2d": 4773953,
+        "ifc_poisson": 4774465,
+        "sharp__allen_cahn_2d": 4773953,
+        "sharp__cahn_hilliard": 4778049,
+        "sharp__fisher_kpp_2d": 4773697,
+        "sharp__phase_field_crystal_2d": 4773697
+      },
+      "note": "n_params 4.774e6 == the cap-12 champion value recorded in s5-B1 part 5 (4,773,953 / 4,774,465), i.e. the capacity knob is at the champion setting and the ONLY difference from the anchor substrate is the target scaler. scaler_hf/scaler_lf recorded as {kind: affine, stat: mean/std} on every dataset with scaler_test == scaler_hf (HF test field never enters any scaler). preds_test.npz present for all six datasets."
+    },
+    "per_dataset": {
+      "ext__helmholtz_2d": {
+        "per_seed_nrmse": [
+          1.8997614943589374
+        ],
+        "per_seed_skill": [
+          5.766461580003633
+        ],
+        "mean_skill": 5.766461580003633,
+        "ci95": null,
+        "ci95_note": "single seed (ADR 0004) - no CI computable; point estimate is provisional-single-seed",
+        "reference_type": "copylf",
+        "reference_nrmse": 0.3294501260438018,
+        "cached": false,
+        "split": "test_hf",
+        "metric_source": "per_sample_mean",
+        "anchor_skill_3seed_mean": 13.817289529417906,
+        "anchor_skill_seed0_paired": 18.826116154391737,
+        "anchor_per_seed_skill": [
+          18.826116154391737,
+          9.131154960099906,
+          13.49459747376207
+        ],
+        "h100_same_hardware_cap12_seed0_skill": 19.632685882726165,
+        "min_claimable_effect": 9.694961194291832,
+        "delta_vs_anchor_mean": -8.050827949414273,
+        "delta_vs_anchor_seed0": -13.059654574388105,
+        "delta_vs_h100_same_hardware": -13.866224302722532,
+        "beyond_floor_vs_anchor_mean": false,
+        "beyond_floor_vs_anchor_seed0": true,
+        "beyond_floor_vs_h100_same_hardware": true,
+        "direction": "improved",
+        "numeric_claim_allowed": false,
+        "scaler_hf_mu_sd": [
+          0.007768823765218258,
+          0.1870429366827011
+        ],
+        "scaler_lf_mu_sd": [
+          0.0017018530052155256,
+          0.059178538620471954
+        ],
+        "abs_mu_over_sd_hf": 0.04153497535379943,
+        "train_seconds": 180.84690761566162
+      },
+      "ifc_poisson": {
+        "per_seed_nrmse": [
+          0.042663819833342574
+        ],
+        "per_seed_skill": [
+          1.1851061064817383
+        ],
+        "mean_skill": 1.1851061064817383,
+        "ci95": null,
+        "ci95_note": "single seed (ADR 0004) - no CI computable; point estimate is provisional-single-seed",
+        "reference_type": "paper_bar",
+        "reference_nrmse": 0.036,
+        "cached": false,
+        "split": "test_hf",
+        "metric_source": "per_sample_mean",
+        "anchor_skill_3seed_mean": 1.5656334312786022,
+        "anchor_skill_seed0_paired": 1.5446694124160718,
+        "anchor_per_seed_skill": [
+          1.5446694124160718,
+          1.4561616605002385,
+          1.6960692209194965
+        ],
+        "h100_same_hardware_cap12_seed0_skill": 1.5453089551423054,
+        "min_claimable_effect": 0.23990756041925798,
+        "delta_vs_anchor_mean": -0.3805273247968639,
+        "delta_vs_anchor_seed0": -0.3595633059343335,
+        "delta_vs_h100_same_hardware": -0.36020284866056707,
+        "beyond_floor_vs_anchor_mean": true,
+        "beyond_floor_vs_anchor_seed0": true,
+        "beyond_floor_vs_h100_same_hardware": true,
+        "direction": "improved",
+        "numeric_claim_allowed": true,
+        "scaler_hf_mu_sd": [
+          0.00026556040393188596,
+          0.00018621525669004768
+        ],
+        "scaler_lf_mu_sd": [
+          0.02056891657412052,
+          0.012820238247513771
+        ],
+        "abs_mu_over_sd_hf": 1.4260936974348295,
+        "train_seconds": 35.61291575431824
+      },
+      "sharp__allen_cahn_2d": {
+        "per_seed_nrmse": [
+          0.2688092482420469
+        ],
+        "per_seed_skill": [
+          16.642709354485287
+        ],
+        "mean_skill": 16.642709354485287,
+        "ci95": null,
+        "ci95_note": "single seed (ADR 0004) - no CI computable; point estimate is provisional-single-seed",
+        "reference_type": "copylf",
+        "reference_nrmse": 0.016151772077279084,
+        "cached": false,
+        "split": "test_hf",
+        "metric_source": "per_sample_mean",
+        "anchor_skill_3seed_mean": 16.334084085453636,
+        "anchor_skill_seed0_paired": 16.334668349426035,
+        "anchor_per_seed_skill": [
+          16.334668349426035,
+          16.326716760892907,
+          16.34086714604196
+        ],
+        "h100_same_hardware_cap12_seed0_skill": 16.31709644730294,
+        "min_claimable_effect": 1.633407079448426,
+        "delta_vs_anchor_mean": 0.30862526903165133,
+        "delta_vs_anchor_seed0": 0.3080410050592519,
+        "delta_vs_h100_same_hardware": 0.3256129071823466,
+        "beyond_floor_vs_anchor_mean": false,
+        "beyond_floor_vs_anchor_seed0": false,
+        "beyond_floor_vs_h100_same_hardware": false,
+        "direction": "worsened",
+        "numeric_claim_allowed": true,
+        "scaler_hf_mu_sd": [
+          -0.0004417980380821973,
+          0.09700703620910645
+        ],
+        "scaler_lf_mu_sd": [
+          -0.0004415524017531425,
+          0.09698078781366348
+        ],
+        "abs_mu_over_sd_hf": 0.004554288589230437,
+        "train_seconds": 490.2853262424469
+      },
+      "sharp__cahn_hilliard": {
+        "per_seed_nrmse": [
+          0.47843708297836285
+        ],
+        "per_seed_skill": [
+          5.457872827490323
+        ],
+        "mean_skill": 5.457872827490323,
+        "ci95": null,
+        "ci95_note": "single seed (ADR 0004) - no CI computable; point estimate is provisional-single-seed",
+        "reference_type": "copylf",
+        "reference_nrmse": 0.08765999100758841,
+        "cached": false,
+        "split": "test_hf",
+        "metric_source": "per_sample_mean",
+        "anchor_skill_3seed_mean": 5.533466294918019,
+        "anchor_skill_seed0_paired": 5.562588933882767,
+        "anchor_per_seed_skill": [
+          5.562588933882767,
+          5.614819069207008,
+          5.422990881664281
+        ],
+        "h100_same_hardware_cap12_seed0_skill": 5.562725178391981,
+        "min_claimable_effect": 0.5533465853654416,
+        "delta_vs_anchor_mean": -0.07559346742769524,
+        "delta_vs_anchor_seed0": -0.104716106392444,
+        "delta_vs_h100_same_hardware": -0.10485235090165723,
+        "beyond_floor_vs_anchor_mean": false,
+        "beyond_floor_vs_anchor_seed0": false,
+        "beyond_floor_vs_h100_same_hardware": false,
+        "direction": "improved",
+        "numeric_claim_allowed": true,
+        "scaler_hf_mu_sd": [
+          0.00021437526447698474,
+          0.8887352347373962
+        ],
+        "scaler_lf_mu_sd": [
+          0.00021437495888676494,
+          0.8841307759284973
+        ],
+        "abs_mu_over_sd_hf": 0.0002412138689880214,
+        "train_seconds": 491.63122510910034
+      },
+      "sharp__fisher_kpp_2d": {
+        "per_seed_nrmse": [
+          0.2642446276917959
+        ],
+        "per_seed_skill": [
+          4.2189835217795055
+        ],
+        "mean_skill": 4.2189835217795055,
+        "ci95": null,
+        "ci95_note": "single seed (ADR 0004) - no CI computable; point estimate is provisional-single-seed",
+        "reference_type": "copylf",
+        "reference_nrmse": 0.06263229669603956,
+        "cached": false,
+        "split": "test_hf",
+        "metric_source": "per_sample_mean",
+        "anchor_skill_3seed_mean": 4.177358579533458,
+        "anchor_skill_seed0_paired": 4.22528652075225,
+        "anchor_per_seed_skill": [
+          4.22528652075225,
+          4.133486038054026,
+          4.173303179794098
+        ],
+        "h100_same_hardware_cap12_seed0_skill": 4.116517616572251,
+        "min_claimable_effect": 0.41773549950819566,
+        "delta_vs_anchor_mean": 0.04162494224604796,
+        "delta_vs_anchor_seed0": -0.006302998972744334,
+        "delta_vs_h100_same_hardware": 0.10246590520725452,
+        "beyond_floor_vs_anchor_mean": false,
+        "beyond_floor_vs_anchor_seed0": false,
+        "beyond_floor_vs_h100_same_hardware": false,
+        "direction": "worsened",
+        "numeric_claim_allowed": true,
+        "scaler_hf_mu_sd": [
+          0.6243303418159485,
+          0.16653934121131897
+        ],
+        "scaler_lf_mu_sd": [
+          0.6174049377441406,
+          0.14415553212165833
+        ],
+        "abs_mu_over_sd_hf": 3.748845992033475,
+        "train_seconds": 496.3189468383789
+      },
+      "sharp__phase_field_crystal_2d": {
+        "per_seed_nrmse": [
+          0.5022444329619389
+        ],
+        "per_seed_skill": [
+          11.215708292882763
+        ],
+        "mean_skill": 11.215708292882763,
+        "ci95": null,
+        "ci95_note": "single seed (ADR 0004) - no CI computable; point estimate is provisional-single-seed",
+        "reference_type": "copylf",
+        "reference_nrmse": 0.04478044719481978,
+        "cached": false,
+        "split": "test_hf",
+        "metric_source": "per_sample_mean",
+        "anchor_skill_3seed_mean": 11.511001428346894,
+        "anchor_skill_seed0_paired": 11.495613563428282,
+        "anchor_per_seed_skill": [
+          11.495613563428282,
+          11.477374003225568,
+          11.560016718386832
+        ],
+        "h100_same_hardware_cap12_seed0_skill": 11.464728732939415,
+        "min_claimable_effect": 1.1511001428346894,
+        "delta_vs_anchor_mean": -0.2952931354641315,
+        "delta_vs_anchor_seed0": -0.2799052705455196,
+        "delta_vs_h100_same_hardware": -0.24902044005665225,
+        "beyond_floor_vs_anchor_mean": false,
+        "beyond_floor_vs_anchor_seed0": false,
+        "beyond_floor_vs_h100_same_hardware": false,
+        "direction": "improved",
+        "numeric_claim_allowed": true,
+        "scaler_hf_mu_sd": [
+          -0.3003194034099579,
+          0.22797328233718872
+        ],
+        "scaler_lf_mu_sd": [
+          -0.3003194034099579,
+          0.21025000512599945
+        ],
+        "abs_mu_over_sd_hf": 1.3173447358877963,
+        "train_seconds": 190.27059769630432
+      }
+    },
+    "panel_geomean_skill": {
+      "per_seed": [
+        5.554667947197018
+      ],
+      "mean": 5.554667947197018,
+      "ci95": null,
+      "ci95_note": "single seed (ADR 0004): no bootstrap CI. The anchor's own 3-seed CI is [6.2185, 7.1022]."
+    },
+    "vs_anchor": {
+      "basis": "PRIMARY, pre-registered in part 3: certified anchor 6.703016262587087 (state/anchors/s5_tuning.json) + per-dataset 3-seed means",
+      "anchor_value": 6.703016262587087,
+      "anchor_ci95": [
+        6.21853605194748,
+        7.102239525443188
+      ],
+      "anchor_per_seed": [
+        7.102239525443188,
+        6.21853605194748,
+        6.788273210370594
+      ],
+      "anchor_seed0_paired": 7.102239525443188,
+      "delta": -1.148348315390069,
+      "delta_pct": -17.131814550407405,
+      "delta_vs_anchor_seed0_paired": -1.5475715782461696,
+      "beyond_ci": true,
+      "beyond_ci_note": "5.5547 sits 0.6639 below the anchor's 3-seed CI lower bound 6.2185; that interval is the ANCHOR's seed spread, not a CI on this single-seed arm.",
+      "beyond_noise_floor": true,
+      "noise_floor_geomean": 0.884,
+      "beyond_noise_floor_note": "|delta| 1.1483 > the certified geomean floor 0.884, so the PANEL-level movement is resolvable at this round's noise floor - but see effect_decomposition: it does not survive leave-helmholtz-out, which the card pre-registers as the tail-artefact test."
+    },
+    "secondary_basis_cross_check": {
+      "what": "SECONDARY basis, pre-registered in part 3 and explicitly 'cannot flip the verdict': s5-B1's H100 same-hardware cap-12 seed-0 control (mf_fno_transfer_film retrained on H100, ADR 0005 recert job 65989241)",
+      "geomean_skill": 7.117102398598575,
+      "arm_minus_same_hardware": -1.5624344514015567,
+      "leave_helmholtz_out_same_hardware": 5.809890050224605,
+      "leave_helmholtz_out_delta_vs_same_hardware": -0.2966380685477734,
+      "note": "the secondary basis agrees with the primary in sign and in the helmholtz-dominance conclusion: panel -1.5624 (clears 0.884) but leave-helmholtz-out only -0.2966 (does not)."
+    },
+    "effect_decomposition": {
+      "leave_helmholtz_out_geomean_arm": 5.513251981676832,
+      "leave_helmholtz_out_geomean_anchor": 5.841971060140754,
+      "leave_helmholtz_out_delta": -0.328719078463922,
+      "leave_helmholtz_out_beyond_floor": false,
+      "helmholtz_share_of_panel_movement": "with the anchor's helmholtz skill (13.8173) substituted back, the arm's panel geomean would be 6.4256 (delta -0.2775 vs the anchor 6.703, inside the 0.884 floor); i.e. 75.8% of the -1.1483 panel movement is ext__helmholtz_2d alone.",
+      "note": "part 4 pre-registers verbatim: 'a geomean gain that vanishes in the leave-helmholtz-out decomposition (anchor LHO 5.842) is recorded as a tail artefact, not a win (s5-B1 precedent)'. LHO delta 0.3287 < the 0.884 geomean floor => TAIL ARTEFACT, not a panel win. Same shape as s5-B1, but roughly 4x larger in magnitude and 1 dataset (ifc_poisson) now clears its own floor on ALL THREE bases."
+    },
+    "predicted_movers_vs_part4": {
+      "sharp__fisher_kpp_2d": "PREDICTION NOT MET. Part 4: 'improves by >= 0.418 skill (4.177 -> <= 3.759; pooled |mean|/sd = 3.75 ... the largest affine change on the panel)'. Observed 4.2190, i.e. +0.0416 (very slightly WORSE), 10x inside its own floor. The largest measured affine change on the panel produced nothing.",
+      "ifc_poisson": "PREDICTION MET. Part 4: 'improves by >= 0.240 (1.566 -> <= 1.326)'. Observed 1.1851 (nRMSE 0.042664), improvement 0.3805 vs the 3-seed mean, 0.3596 vs the paired seed-0 anchor, 0.3602 vs the H100 same-hardware cap-12 control - all three > the 0.240 floor. Still 18.5% ABOVE the ADR-0002 paper bar 0.036 (skill 1.185 > 1), so the paper bar is not beaten.",
+      "sharp__phase_field_crystal_2d": "'plausible but unpredicted mover (floor 1.151)' - did not move: -0.2953, 3.9x inside its floor.",
+      "sharp__allen_cahn_2d": "PRE-REGISTERED NULL HOLDS: +0.3086 vs floor 1.633 (|mean|/sd = 0.0046 measured in-run).",
+      "sharp__cahn_hilliard": "PRE-REGISTERED NULL HOLDS: -0.0756 vs floor 0.553 (|mean|/sd = 0.00024 measured in-run).",
+      "ext__helmholtz_2d": "reported QUALITATIVELY only per part 4 (floor 9.695, no numeric claim). It moved the most on the panel: nRMSE 6.4680 (H100 same-hardware cap-12 control) -> 1.8998, a 70.6% reduction; vs the 3-seed anchor mean nRMSE 4.5521 a 58.3% reduction. Skill 13.817 -> 5.766 (delta -8.05) does NOT clear its own 9.695 floor on the primary 3-seed basis, though it does against the paired seed-0 (-13.06) and same-hardware (-13.87) references."
+    },
+    "constant_field_oracle": {
+      "provenance": "tools/dc_pattern_split.py on this run's shipped preds_test.npz, arm-alone (read-only, no copy-LF leg); card part 3 'free reporting adds' item. Oracle values are dataset properties and reproduce s5-B1 turn 3 exactly (allen_cahn 0.2591, pfc 0.3491, helmholtz 0.8536).",
+      "per_dataset": {
+        "ext__helmholtz_2d": {
+          "nrmse_constant_field_oracle": 0.8536232692922051,
+          "hf_dc_energy_share": 0.6364887231816976,
+          "arm_nrmse": 1.8997614943589374,
+          "worse_than_level_oracle": true
+        },
+        "ifc_poisson": {
+          "nrmse_constant_field_oracle": 0.5132746545925417,
+          "hf_dc_energy_share": 0.692816579234308,
+          "arm_nrmse": 0.042663819833342574,
+          "worse_than_level_oracle": false
+        },
+        "sharp__allen_cahn_2d": {
+          "nrmse_constant_field_oracle": 0.2591284359269763,
+          "hf_dc_energy_share": 0.9808307410574665,
+          "arm_nrmse": 0.2688092482420469,
+          "worse_than_level_oracle": true
+        },
+        "sharp__cahn_hilliard": {
+          "nrmse_constant_field_oracle": 0.9977421822867746,
+          "hf_dc_energy_share": 0.0044618199711890325,
+          "arm_nrmse": 0.47843708297836285,
+          "worse_than_level_oracle": false
+        },
+        "sharp__fisher_kpp_2d": {
+          "nrmse_constant_field_oracle": 0.2477900865423751,
+          "hf_dc_energy_share": 0.9364528429724565,
+          "arm_nrmse": 0.2642446276917959,
+          "worse_than_level_oracle": true
+        },
+        "sharp__phase_field_crystal_2d": {
+          "nrmse_constant_field_oracle": 0.34906618074219237,
+          "hf_dc_energy_share": 0.6289397495637917,
+          "arm_nrmse": 0.5022444329619389,
+          "worse_than_level_oracle": true
+        }
+      },
+      "verdicts": {
+        "ext__helmholtz_2d": "WEAK_PATTERN (corr_demeaned_mean 0.4021; pattern-only nRMSE mean 1.9744 / median 1.1948) - WORSE than the level oracle (1.8998 vs 0.8536)",
+        "ifc_poisson": "REAL_PATTERN (corr_demeaned_mean 0.9939; pattern-only mean 0.0909 / median 0.0569)",
+        "sharp__allen_cahn_2d": "LEVEL_ONLY (corr_demeaned_mean 0.0018; pattern-only mean 1.0377 / median 1.0259 == the value of predicting zero pattern) - WORSE than the level oracle",
+        "sharp__cahn_hilliard": "REAL_PATTERN (corr_demeaned_mean 0.7353; pattern-only mean 0.4757 / median 0.2356); note hf_dc_energy_share is only 0.0045 here, so almost none of this dataset's metric is winnable from the level",
+        "sharp__fisher_kpp_2d": "LEVEL_ONLY (corr_demeaned_mean 0.0024; pattern-only mean 1.0657 / median 1.0316) - WORSE than the level oracle",
+        "sharp__phase_field_crystal_2d": "LEVEL_ONLY (corr_demeaned_mean -0.0055; pattern-only mean 6074.7 / median 43.26) - WORSE than the level oracle"
+      },
+      "vs_s5_B1_turn3_champion": "s5-B1 turn 3 measured the champion's demeaned correlation as allen_cahn 0.0108/0.0118, pfc 0.0074/0.0110, fisher_kpp 0.0017/0.0029, helmholtz 0.1272/0.0362 (cap32/cap12). Under zscore the three LEVEL_ONLY sharp sets are UNCHANGED (0.0018 / -0.0055 / 0.0024) while ext__helmholtz_2d jumps 0.0362 -> 0.4021. No cap-12 champion comparator exists for sharp__cahn_hilliard (B1 turn 3 did not list it), so its 0.7353 is recorded without a paired reference.",
+      "nrmse_zero_predictor": 1.0
+    },
+    "cratered_verdict": "not_cratered",
+    "cratered_detail": {
+      "rule": "cratered <=> crash, OR panel geomean skill > 1.5x the stream anchor (10.05452439388063), OR the falsification clause fired decisively",
+      "observed_geomean": 5.554667947197018,
+      "threshold": 10.05452439388063,
+      "crash": false,
+      "falsification_fired": false,
+      "adr_0004_note": "seeds 1-2 are NOT launched in-round (ADR 0004 strict single seed); the schema value 'proceed_to_seeds_1_2' does not apply. scripts/submit_seeds_2_3.sh exists for the end-of-round top-3 confirmation only."
+    },
+    "falsification_verdict": "confirmed",
+    "falsification_detail": {
+      "verdict_meaning": "'confirmed' = the pre-registered falsification clause did NOT fire; the card's lever is NOT retired. It is NOT a claim that the card's part-4 predictions all landed (one of two predicted movers failed) nor that the panel improved (the panel movement is a helmholtz tail artefact).",
+      "clause_verbatim": "if the promoted arm's seed-0 200-epoch panel run moves NO non-helmholtz panel dataset beyond its own `min_claimable_effect` in either direction (`ifc_poisson` 0.240, `sharp__fisher_kpp_2d` 0.418, `sharp__cahn_hilliard` 0.553, `sharp__phase_field_crystal_2d` 1.151, `sharp__allen_cahn_2d` 1.633) AND the leave-helmholtz-out panel geomean moves by less than 0.884 vs the anchor's 5.842, then the champion's output-target scaler is NOT a lever on the panel gap - the amplitude/level channel found in s5-B1 is confined to `ext__helmholtz_2d` where the round permits no numeric claim, and normalization is retired round-wide as an explanation for the sharp-2D DC-predictor collapse.",
+      "conjunct_A_no_non_helmholtz_dataset_beyond_floor": false,
+      "conjunct_A_numbers": "FALSE - ifc_poisson moves 1.5656 -> 1.1851 = 0.3805 skill units beyond its 0.240 min_claimable_effect. Basis-ROBUST, unlike s5-B1: 0.3805 vs the certified 3-seed mean, 0.3596 vs the paired seed-0 anchor 1.5447, 0.3602 vs the H100 same-hardware cap-12 control 1.5453 - all three exceed 0.240 (margins +59%, +50%, +50% over the floor). The other four non-helmholtz datasets are all inside their floors: fisher_kpp +0.0416 (floor 0.418), cahn_hilliard -0.0756 (0.553), pfc -0.2953 (1.151), allen_cahn +0.3086 (1.633).",
+      "conjunct_B_lho_geomean_moves_less_than_0884": true,
+      "conjunct_B_numbers": "TRUE - leave-helmholtz-out geomean 5.5133 vs the anchor's 5.8420 = 0.3287 < 0.884. (Against the secondary same-hardware LHO 5.8099 it is 0.2966, also < 0.884.)",
+      "verdict_reasoning": "The clause is a CONJUNCTION and requires BOTH. Conjunct B holds but conjunct A does not, so the antecedent is false and the clause does NOT fire: the card's lever is not retired. The one dataset carrying the verdict is ifc_poisson, and unlike s5-B1 (where the identical dataset sat within one basis-choice of its floor) the movement here clears 0.240 on all three pre-registered bases at once, so it is resolvable rather than basis-dependent. What the clause's consequent asserted is therefore NOT established: the amplitude/level channel is not confined to ext__helmholtz_2d. What the data ALSO shows, and the verdict must not be read to deny: the sharp-2D side is untouched (all four sharp datasets inside their floors, the three LEVEL_ONLY ones with demeaned correlation unchanged at ~0.002-0.006), so normalization is NOT an explanation for the sharp-2D DC-predictor collapse even though it is not retired round-wide.",
+      "panel_win_adjudication": "The panel geomean improvement 1.1483 exceeds the 0.884 geomean floor and lands below the anchor's 3-seed CI, which is the letter of a panel win. It is NOT recorded as one: part 4 pre-registers that a geomean gain vanishing under leave-helmholtz-out is a tail artefact, and the LHO delta 0.3287 < 0.884. The guard set was nevertheless read (guard_set below) so the record is complete either way.",
+      "direction_note": "The prediction that FAILED is the more informative one: sharp__fisher_kpp_2d had the panel's largest design-time affine change (|mean|/sd = 3.749, confirmed in-run at 3.749 from the shipped scaler constants) and moved +0.0416, 10x inside its floor - measured evidence that on a LEVEL_ONLY predictor the target-scaler affine is a no-op regardless of how large the affine is."
+    },
+    "guard_flags": [
+      "heat_local"
+    ],
+    "guard_set": {
+      "provenance": "contract tier (2 epochs, seed 0, H100) with the PROMOTED env MFFP_TARGET_SCALER=zscore MFFP_MODES_CAP=12, run as card part-3 item (b) inside screen job 66024808; same code_hash b7f58e7a and same nrmse_def_hash as the 200-epoch panel run. This is the pre-registered guard deliverable, NOT an ADR-0007 arm-ranking screen score. No re-run was needed (the s5-B1 precedent's login-node re-run timed out at the 20-min analysis cap).",
+      "flag_rule": "program.md 2.3: flag a guard dataset whose nRMSE regressed > 2x the recorded copy-LF reference in round1/eval/copylf_baselines.json",
+      "fluid": {
+        "nrmse": 0.3548671931053884,
+        "skill": 1.6273863790835765,
+        "copylf_reference_nrmse": 0.21805958171115042,
+        "ratio_to_reference": 1.6273863790835765,
+        "flagged": false
+      },
+      "heat_local": {
+        "nrmse": 0.11554662186420434,
+        "skill": 48.11392235197619,
+        "copylf_reference_nrmse": 0.00240152155999517,
+        "ratio_to_reference": 48.11392235197619,
+        "flagged": true
+      },
+      "sharp__sod_1d": {
+        "nrmse": 0.04022688860272486,
+        "skill": 1.2156746459823153,
+        "copylf_reference_nrmse": 0.03309017650048946,
+        "ratio_to_reference": 1.2156746459823153,
+        "flagged": false
+      }
+    },
+    "guard_note": "heat_local is flagged by the letter of the >2x rule (ratio 48.11) but this is the same contract-tier artefact s5-B1 recorded (ratio 47.86 for the cap-32 arm, +0.5% here). heat_local's copy-LF reference is nRMSE 0.0024 - LF is already almost exactly HF there - so a 2-epoch model cannot approach it and the raw ratio is expected at this tier. The zscore arm is within 0.5% of the cap-32 arm's flagged value, i.e. the flag tracks the tier, not the scaler. fluid (1.627 vs B1 1.627) and sharp__sod_1d (1.216 vs B1 1.494) are clean; sod_1d actually improved. Flag noted, no auto-reject (program.md 2.3).",
+    "anomalies": [
+      "NO training pathology: job 66056499 COMPLETED 0:0 in 00:32:02 on hpc-33-13 (H100 80GB), .err 0 bytes, no NaN/inf, no preemption or resume event, single clean run; all six per-dataset metrics finite via per_sample_mean on split test_hf, all cached:false.",
+      "Knob-fired audit PASS in-job (FATAL leg): scaler_mode=zscore from env:MFFP_TARGET_SCALER and modes_cap=12 from env:MFFP_MODES_CAP on all six datasets, scaler_fallback false everywhere. n_params 4.774e6 == the cap-12 champion value, so the substrate really is the champion with ONE behavioural difference.",
+      "The card's design-time scale statistics are CONFIRMED in-run from the shipped scaler constants: |mu|/sd = 3.749 (fisher_kpp), 1.426 (ifc_poisson), 1.317 (pfc), 0.0415 (helmholtz), 0.0046 (allen_cahn), 0.00024 (cahn_hilliard). The two pre-registered NULL datasets are exactly the two with |mu|/sd ~ 0, and both nulls held - the arm's leverage model was right about WHERE it could act.",
+      "SIGN INVERSION AGAINST THE LEVERAGE MODEL: the panel's LARGEST affine change (fisher_kpp, |mu|/sd 3.749) produced the panel's SMALLEST movement (+0.042, 10x inside its floor), while the dataset with the SMALLEST affine change among the movers (helmholtz, |mu|/sd 0.0415) moved the most (nRMSE -70.6% vs the same-hardware control). Leverage measured on the target statistics does not predict where the scaler acts; the constant_field_oracle verdicts do (LEVEL_ONLY sets are inert, the WEAK/REAL_PATTERN sets move).",
+      "ext__helmholtz_2d: demeaned correlation jumps 0.0362 (s5-B1's cap-12 champion) -> 0.4021 and the verdict moves LEVEL_ONLY -> WEAK_PATTERN, i.e. zscore did not merely shrink the amplitude tail, it recovered some pattern. The model is nevertheless STILL worse than the constant-field oracle there (1.8998 vs 0.8536, 2.2x) and still 5.77x worse than copy-LF, so the round's no-numeric-claim rule on this dataset remains the right call.",
+      "sharp__phase_field_crystal_2d's per-sample rel-L2 is starkly BIMODAL (~0.008-0.03 on roughly half the test samples, ~0.9-1.4 on the rest; pattern-only nRMSE 43.26). Not new to this arm - but it means the pfc panel number is a mixture, and a mean over it is a poor summary. Flagged for the mechanism-analyzer.",
+      "ifc_poisson is the only panel dataset where reference_type is paper_bar (ADR 0002, no copy-LF on the test split). skill 1.1851 means the arm is 18.5% ABOVE the published bar 0.036 - the best panel value the stream has recorded, but success criterion 1 (skill < 1) is still not met.",
+      "ADR-0007 hygiene: attempt-0's screen numbers are VOID (device-mixed cache provenance, debug_notes attempt 1 / state/orchestrator_flow.md) and were not read. The re-run screen 66024808 supplied only the promotion decision and the part-3 item (b) guard leg used above; no screen panel score enters this part.",
+      "Hardware basis: this arm ran on H100 (ADR 0005) against a p100-certified anchor. The cross-hardware licence was established in s5-B1 part 5 (both ADR-0005 recert legs landed; every per-dataset delta inside its min_claimable_effect) and is inherited here, which is why the same-hardware H100 cap-12 control is carried as the pre-registered SECONDARY basis and agrees with the primary.",
+      "SCALE-AMPLITUDE COVARIATE (see scaler_scale_ratio_ranking): rank the panel by max|Y_hf|/sd \u2014 the factor by which zscore shrinks the target divisor \u2014 and it is helmholtz 39.5, ifc_poisson 9.9, fisher_kpp 6.0, pfc 3.8, allen_cahn 2.5, cahn_hilliard 1.3. The two datasets above 9.9 are exactly the two that moved; the four at or below 6.0 are exactly the four nulls. This is the complement of the |mu|/sd sign inversion already recorded: the centring term does not order the panel, the divisor amplitude does.",
+      "HELMHOLTZ EFFECTIVE-N (test side, paired vs the H100 cap-12 champion; see test_error_concentration_paired): the top-1 test sample's share of squared error falls 22.8% -> 11.3% and the participation ratio of the test error rises 9.4 -> 17.5 of 100 samples, while the MEDIAN also falls 3.522 -> 1.166 and the max 50.20 -> 8.87. So zscore both de-concentrates the error and shifts the bulk \u2014 it is not purely tail compression. Directly adjacent to the round's standing amplitude/effective-N theme, and the reason helmholtz is the recommended probe. ifc_poisson improves uniformly (median 0.0395 -> 0.0333, top-1 share 10.7% -> 9.1%); pfc's shape is untouched (effective N 39.6 -> 39.9), so the s2-B2 'oversized global scaler on pfc' finding does not reproduce as a scale pathology in this family, whose pfc divisor is only 3.8x the field sd."
+    ],
+    "wall_clock_per_seed_min": [
+      32.03
+    ],
+    "wall_clock_detail": {
+      "panel_seed0_job": "66056499 COMPLETED 00:32:02 (0:0) on hpc-33-13 (H100 80GB), 2026-07-30T08:01:10 -> 08:33:12",
+      "train_seconds_by_dataset": {
+        "ext__helmholtz_2d": 180.84690761566162,
+        "ifc_poisson": 35.61291575431824,
+        "sharp__allen_cahn_2d": 490.2853262424469,
+        "sharp__cahn_hilliard": 491.63122510910034,
+        "sharp__fisher_kpp_2d": 496.3189468383789,
+        "sharp__phase_field_crystal_2d": 190.27059769630432
+      },
+      "eval_seconds_by_dataset": {
+        "ext__helmholtz_2d": 0.05909895896911621,
+        "ifc_poisson": 0.035951852798461914,
+        "sharp__allen_cahn_2d": 0.12108755111694336,
+        "sharp__cahn_hilliard": 0.12008357048034668,
+        "sharp__fisher_kpp_2d": 0.12248015403747559,
+        "sharp__phase_field_crystal_2d": 0.052266597747802734
+      },
+      "ledger_note": "32.03 min/seed for a 200-epoch panel on H100 at modes_cap 12, vs s5-B1's 36.62 min/seed at modes_cap 32 on the same hardware - the 12% saving is the cap, not the scaler. For the maintainer's timing ledger: family mf_fno_transfer_film_scaler, panel@200, h100, 32.03 min."
+    },
+    "scaler_scale_ratio_ranking": {
+      "what": "the OTHER half of the zscore change, not recorded elsewhere in this part: the factor by which zscore shrinks the target divisor relative to the default maxabs, i.e. max|Y_hf_train| / sd(Y_hf_train). Source: notes/precheck_scale_ratio.json ('max_over_std', design-time, train split on the family working grid); the helmholtz value is corroborated in-run \u2014 the debugger's bitwise log records the maxabs scale as 7.382632255554199 and the run's own scaler_hf sd is 0.1870429366827011 (ratio 39.47).",
+      "ranking_desc": {
+        "ext__helmholtz_2d": 39.47025617621474,
+        "ifc_poisson": 9.85788982864604,
+        "sharp__fisher_kpp_2d": 5.9973562966961,
+        "sharp__phase_field_crystal_2d": 3.813722513079173,
+        "sharp__allen_cahn_2d": 2.5371087896540008,
+        "sharp__cahn_hilliard": 1.3221840031563272
+      },
+      "observed_alignment": "the two datasets with ratio >= 9.9 (helmholtz, ifc_poisson) are the ONLY two that moved at all (-8.05 and -0.38 skill); the four with ratio <= 6.0 are every one inside its own floor (largest |delta|/floor = 0.26). This covariate orders the panel correctly, whereas |mu|/sd (the centring term recorded in predicted_movers_vs_part4 / anomalies) puts sharp__fisher_kpp_2d first and fisher_kpp is a null.",
+      "caveat": "descriptive alignment on n=6 datasets, single seed; the DC/pattern verdicts in constant_field_oracle are a competing (and not exclusive) explanation \u2014 the two movers are also the two non-LEVEL_ONLY datasets with a workable pattern. Disentangling scale-amplitude from DC/pattern is a mechanism-analyzer job, not a claim made here."
+    },
+    "test_error_concentration_paired": {
+      "what": "per-sample test-error concentration, arm (zscore) vs the paired H100 same-hardware cap-12 seed-0 champion (maxabs). Descriptive aggregations of the rel_l2_per_sample arrays published in the per-dataset training JSONs \u2014 NOT a re-scored metric.",
+      "sources": [
+        "arm: eval/results/scaler_zscore/mf_fno_transfer_film_scaler/<ds>_e200_s0.json -> splits.test_hf.rel_l2_per_sample",
+        "paired champion: recert/training_h100/mf_fno_transfer_film/<ds>_e200_s0.json -> splits.test_hf.rel_l2_per_sample"
+      ],
+      "fields": [
+        "mean",
+        "median",
+        "p90",
+        "max",
+        "top1_share_of_squared_error",
+        "effective_N_test"
+      ],
+      "per_dataset": {
+        "ext__helmholtz_2d": {
+          "n_test": 100,
+          "arm_zscore": [
+            1.89976,
+            1.16575,
+            4.20924,
+            8.87437,
+            0.1132,
+            17.5
+          ],
+          "champion_maxabs": [
+            6.46799,
+            3.52243,
+            15.99293,
+            50.19831,
+            0.2283,
+            9.37
+          ]
+        },
+        "ifc_poisson": {
+          "n_test": 128,
+          "arm_zscore": [
+            0.04266,
+            0.03326,
+            0.08282,
+            0.18376,
+            0.0913,
+            27.47
+          ],
+          "champion_maxabs": [
+            0.05563,
+            0.03953,
+            0.11199,
+            0.27634,
+            0.1073,
+            22.31
+          ]
+        },
+        "sharp__allen_cahn_2d": {
+          "n_test": 100,
+          "arm_zscore": [
+            0.26881,
+            0.16938,
+            0.6472,
+            1.14279,
+            0.0956,
+            20.71
+          ],
+          "champion_maxabs": [
+            0.26355,
+            0.16487,
+            0.64092,
+            1.04484,
+            0.0833,
+            21.14
+          ]
+        },
+        "sharp__cahn_hilliard": {
+          "n_test": 100,
+          "arm_zscore": [
+            0.47844,
+            0.2409,
+            1.28059,
+            1.44927,
+            0.0491,
+            30.79
+          ],
+          "champion_maxabs": [
+            0.48763,
+            0.25547,
+            1.25654,
+            1.42591,
+            0.0472,
+            31.94
+          ]
+        },
+        "sharp__fisher_kpp_2d": {
+          "n_test": 100,
+          "arm_zscore": [
+            0.26424,
+            0.25431,
+            0.35069,
+            0.39993,
+            0.0217,
+            82.49
+          ],
+          "champion_maxabs": [
+            0.25783,
+            0.25286,
+            0.3425,
+            0.39547,
+            0.0224,
+            83.18
+          ]
+        },
+        "sharp__phase_field_crystal_2d": {
+          "n_test": 100,
+          "arm_zscore": [
+            0.50224,
+            0.06261,
+            1.266,
+            1.40754,
+            0.0358,
+            39.9
+          ],
+          "champion_maxabs": [
+            0.5134,
+            0.07959,
+            1.27538,
+            1.49823,
+            0.0394,
+            39.6
+          ]
+        }
+      },
+      "effective_N_definition": "1 / sum_i s_i^2 with s_i = (rel_l2_i)^2 / sum_j (rel_l2_j)^2 \u2014 the participation ratio of the TEST squared-error distribution. This is the test-side analogue of the train-side effective-N statistic the s2-B2 mechanism pass reported; the two are not the same quantity and are not directly comparable."
+    }
+  },
+  "6_analysis": {
+    "provenance": "three mechanism turns, all CPU/numpy, no re-training and no GPU: worktrees/s5_tuning/B2/scratchpad/reanalysis_turn_{1,2,3,3b}.py -> turn1_helmholtz_recovery.json, turn2_predictor.json, turn3_mechanism.json, turn3b_displacement_alignment.json, turn3_predictor_scatter.png, with reanalysis_turn_{1,2,3}_results.md. Every paired comparison is the zscore arm's shipped preds_test.npz against the maxabs cap-12 SAME-HARDWARE control regenerated in s5-B1 turn 1 (worktrees/s5_tuning/B1/scratchpad/cap12_infer/, seam-checked there to rel 2.1e-05..3.2e-05; sharp__fisher_kpp_2d only has the 24-sample paired subset and carries B1's 0.92% CPU-vs-H100 precision caveat). Target arrays asserted identical between arm and control on all six datasets (target_seam_rel_max = 0.0). All metrics via round1/eval/nrmse.py, nrmse_def_hash d3d0ade9... == part 5.",
+    "findings": [
+      "F1 (turn 1) The pre-registered cross-stream hypothesis -- that zscore repairs the outlier-dominated MF loss (s2_beyond_copy-B2's effective-N mechanism) -- is FALSIFIED for this family. On ext__helmholtz_2d's HF train stage the top-1 sample's share of MSE energy is 0.99284 under maxabs and 0.99117 under zscore; the participation-ratio effective N is 1.0145/400 vs 1.0179/400 (LF stage 3.030 vs 3.032). The reason is arithmetic: a global scalar divides every sample's energy by the same constant, so only the centring term can move relative sample weights, and helmholtz's |mu|/sd is 0.0415. The outlier domination is real and worse than reported on the raw target (per-sample RMS max/median = 1698) -- and it survives the scaler change untouched.",
+      "F2 (turn 1) What zscore changed is where the learnable population sits in the network's output range. Typical normalized train target rms(Y)/s: maxabs 0.02536 vs zscore 1.0; max|Y|/rms = 39.44; the maxabs divisor is 7.3826 against a target sd of 0.18704.",
+      "F3 (turn 1) 91.6% of helmholtz's log nRMSE gain is per-sample AMPLITUDE calibration. nRMSE 6.4680 -> 1.8998 (ratio 3.405), but after an oracle per-sample rescale the two arms are 0.8166 vs 0.7370 (ratio 1.108). The maxabs model emits 2.039x the HF RMS with alpha_median -0.0209 (its optimal rescale is a ~48x shrink AND a sign flip); the zscore model hedges quiet at 0.377x with alpha_median +0.320.",
+      "F4 (turn 1) The helmholtz pattern gain is real but population-wide, not a tail re-fit: corr_demeaned 0.0362 -> 0.4021 (median -0.0041 -> 0.5590), 75/100 samples improved, improved-fraction by target-amplitude quartile 0.60/0.88/0.80/0.72, Spearman(amplitude, gain) = -0.025. Spectrally the arm moved from 'loud garbage' to 'too quiet': predicted/HF energy in the band holding 99.997% of HF energy is 4.168 (maxabs) vs 0.134 (zscore), error/HF energy 4.500 -> 1.100 (1.00 == emitting nothing).",
+      "F5 (turn 2) The pre-registered leverage covariate |mu|/sd has ZERO separating power between the two movers and the four nulls (movers 0.0415 and 1.426; worst null 3.749 = fisher_kpp). The scale ratio separates cleanly: G = max|Y_train|/sd(Y_train) gives movers 39.47 and 9.858 vs worst null 5.997 (margin 1.64x), and the tail-only variant max/rms gives 39.44 and 5.660 vs 2.537 (margin 2.23x). Spearman of |delta skill|/min_claimable_effect against max_over_sd is 0.943, against |mu|/sd 0.714, against hf_dc_energy_share 0.257.",
+      "F6 (turn 2) The mechanism-correct decomposition: under maxabs the supervised target has pedestal mu/max and fluctuation RMS sd/max; zscore sets these to 0 and 1, so it magnifies the fluctuation by exactly G = max/sd = (max/rms) x (rms/sd) = tail-term x pedestal-term. helmholtz's G is nearly pure tail (39.44 x 1.001), sharp__fisher_kpp_2d's is nearly pure pedestal (1.55 x 3.88 -- exactly why it was mispredicted), ifc_poisson's is mixed (5.66 x 1.74).",
+      "F7 (turn 2) G is necessary but not sufficient: sharp__fisher_kpp_2d has the 3rd-largest G (5.997) and a dead pattern channel (corr_demeaned 0.0029 control -> 0.0042 arm) and moved +0.042; sharp__cahn_hilliard has the most learnable pattern on the sharp side (corr 0.733) but the smallest G (1.322) and moved -0.076. Both movers have G >= 9.86 AND a live pattern channel.",
+      "F8 (turn 2) Function displacement ||pred_arm - pred_ctrl||/||pred_ctrl|| does not track the score in either direction: helmholtz 0.993 (cosine 0.130 -- a different function), sharp__phase_field_crystal_2d 0.425, sharp__cahn_hilliard 0.244, sharp__fisher_kpp_2d 0.076, ifc_poisson 0.035, sharp__allen_cahn_2d 0.026. The panel's only claimable win came from a 3.5% move of the learned function; the two sharp sets whose functions moved 24-42% scored identically.",
+      "F9 (turn 2) ifc_poisson's gain contains NO amplitude/level/pattern-onset component: corr_demeaned 0.99372 -> 0.99393, alpha_median 0.99896 -> 0.99881, pred_rms/target_rms 1.00023 -> 1.00011; amplitude share of the log gain -9.1% (helmholtz +91.6%, the four sharp sets ~0).",
+      "F10 (turn 3) ifc_poisson's 23% is a coherent step down the error: cos(displacement, control error) mean 0.605 / median 0.639 against a random baseline of 0.0125, 99.2% of 128 test samples moved toward the truth, displacement 0.753x the control error norm, optimal step along it 0.84.",
+      "F11 (turn 3) ifc_poisson moves by the SAME magnification channel, acting on the resolved band. Under maxabs its HF train target sits at pedestal 0.1447 / fluctuation 0.1014 (G = 9.86). Band 0 (k < 7.54) carries 99.88% of HF energy and supplies 98.7% of the removed error energy, cut to 0.605x; bands >= 3 got marginally worse (1.008-1.049). Relative DC error 1.914% -> 1.149%; DC share of squared error 0.1344 -> 0.0811.",
+      "F12 (turn 3) The stage-seam explanation for ifc_poisson is REFUTED. Under maxabs its LF and HF stages are placed almost identically (pedestal 0.1556 vs 0.1447; fluctuation-RMS mismatch 1.117), so the pretrain->finetune transfer was not mis-scaled. The panel's largest maxabs stage mismatch is helmholtz at 1.357; no dataset has a stage seam that could explain its movement. (ifc_poisson does fit its HF scaler on only N_hf = 5 fields, but the placement geometry, not estimator noise, is what moved.)",
+      "F13 (turn 3) Sharp-2D: the scaler acts, but its entire available effect is an order of magnitude below the round's floor. cos(displacement, control error) / fraction of samples moved toward truth: sharp__allen_cahn_2d -0.013 / 0.46 (a coin-flip re-roll), sharp__fisher_kpp_2d 0.076 / 0.92, sharp__cahn_hilliard 0.295 / 0.82, sharp__phase_field_crystal_2d 0.539 / 0.95 -- yet the nRMSE moves are 0.2635->0.2688, 0.2521->0.2590, 0.4876->0.4784, 0.5134->0.5022, i.e. -2.2% at best against floors worth 10-22% of skill.",
+      "F14 (turn 3) The three LEVEL_ONLY sharp sets sit AT their level-only ceiling under both scalers: arm nRMSE / constant-field oracle = 1.037 (allen_cahn), 1.045 (fisher_kpp), 1.439 (pfc), with demeaned correlation 0.012->0.002, 0.003->0.004, 0.011->-0.006. Their score is the DC term, which a linear output bias reproduces for free under any affine target scaler.",
+      "F15 (turn 3) The displacement is almost entirely PATTERN everywhere except helmholtz: pattern share 0.963 (allen_cahn), 0.998 (fisher_kpp), 0.991 (pfc), 0.973 (cahn_hilliard), 0.849 (ifc_poisson), 0.399 on ext__helmholtz_2d (60.1% DC). Helmholtz is the only panel dataset where the scaler moved the predicted LEVEL -- the amplitude/level channel s5-B1 named is real and helmholtz-specific."
+    ],
+    "interpretation": [
+      "MECHANISM (high confidence; F1-F3, F6 are arithmetic-level and reproduce from the train split alone): in this LF-blind pretrain/finetune FNO family the output-target scaler is a DYNAMIC-RANGE PLACEMENT device, not a sample-weighting device. It has two separable components. The PEDESTAL (mu) is absorbed for free by the output layer's bias -- it changes nothing, which is why the card's |mu|/sd covariate inverted the ordering. The FLUCTUATION MAGNIFICATION G = max|Y_train|/sd(Y_train) is what optimization cannot absorb: under maxabs, max|Y| is set by the single most extreme train field (1698x the median sample on helmholtz), so the whole learnable population is supervised at 2.5% of the network's output range and its residual output error is re-amplified by max|Y| at denormalization.",
+      "CORRECTED PREDICTOR (moderate-to-high confidence; n = 6 datasets, single seed, two movers): a global output-target scaler is a lever on dataset D iff (1) G = max|Y_train|/sd(Y_train) is large -- observed break between 6.0 (no effect) and 9.9 (effect) -- AND (2) D's pattern channel is alive, i.e. D is not LEVEL_ONLY under tools/dc_pattern_split.py. Neither factor alone predicts anything on this panel: fisher_kpp has (1) without (2) and cahn_hilliard has (2) without (1), and both are nulls. Use G, not |mu|/sd; report its tail x pedestal decomposition, because a G that is mostly pedestal (fisher_kpp 1.55 x 3.88) is a G that will do nothing.",
+      "The two movers spend the same magnification differently, which is the useful part of the result: on a BROKEN predictor (helmholtz, corr 0.036) G buys per-sample amplitude calibration (91.6% of the log gain) and only 1.11x of real field content; on a WORKING predictor (ifc_poisson, corr 0.994) G buys a uniform ~40% cut of the error energy in the band that carries 99.9% of the signal. The panel-level lesson is that normalization repairs CALIBRATION, and calibration is worth a lot of nRMSE precisely where the model was miscalibrated, not where it was uninformed.",
+      "SHARP-2D VERDICT (high confidence): the 'normalization explains the sharp-2D DC-predictor collapse' hypothesis is CLOSED, negatively. The three LEVEL_ONLY sets are at 1.04-1.44x their own constant-field oracle with demeaned correlation ~0 under both scalers; their G (1.32-6.00) contains too little magnification to matter; and the two sharp sets whose solutions did move toward the truth (pfc cos 0.539, cahn_hilliard cos 0.295) bought about 2% of nRMSE against floors worth 10-22%. What sharp-2D lacks is a mechanism that produces PATTERN -- LF-conditioned and local, per the s6/s4 locality findings -- not a better target parameterization.",
+      "SPECULATIVE (H3, untested here): the family clips gradients at grad_clip = 1.0. Under maxabs the helmholtz loss is ~1/1558 of the zscore loss, so the clip almost certainly never binds, while under zscore the dominant sample's normalized target reaches ~39 and its batches plausibly clip. If so, whatever robustification the outlier-dominated loss received came from the CLIPPER, not from the scaler. Testing this needs training-time instrumentation (gradient-norm and clip-rate logging per batch) and is a B3 item.",
+      "SPECULATIVE (H4): pfc and cahn_hilliard displaced their functions by 24-42% at constant score. Consistent with a flat basin whose emitted content is largely orthogonal to the truth, but I have no same-arm different-seed predictions to calibrate a displacement noise floor -- any future card that dumps two seeds' preds_test.npz would close this cheaply."
+    ],
+    "falsification_postmortem": "The clause did not fire because ifc_poisson moved 0.3805 > its 0.240 floor on all three pre-registered bases, and the mechanism behind that single dataset is now identified: it is the SAME output-range magnification G = max|Y|/sd = 9.86 that drove helmholtz (G = 39.47), acting on a model whose pattern channel was already alive (corr 0.994), delivering 98.7% of its removed error energy in the band carrying 99.88% of the signal. The clause's consequent -- 'the amplitude/level channel is confined to ext__helmholtz_2d' -- is therefore false in the right way: the LEVEL channel really is helmholtz-specific (60.1% of the helmholtz displacement is DC, versus 0.2-15% everywhere else, F15), but the SCALER channel is not, because on a working predictor it acts on the pattern instead. The half of the clause that DID hold (leave-helmholtz-out geomean 0.3287 < 0.884) is explained by F13/F14: four of the six panel datasets have G <= 6.0 and/or a dead pattern channel, so there was no panel-level movement available to buy. And the card's own leverage prediction failed for a now-understood reason -- it ranked datasets by the pedestal term |mu|/sd, which a linear output bias makes free, instead of by the fluctuation magnification G. The single most consequential correction is F1: the cross-stream 'effective-N repair' story that motivated the arm is not what happened; effective N is 1.0145 -> 1.0179 out of 400, i.e. unchanged, and the outlier domination still has to be fixed in the objective.",
+    "surprises": [
+      "The effective N of the training loss is IDENTICAL under the two scalers (1.0145 vs 1.0179 of 400 on helmholtz). The mechanism the arm was designed around cannot be moved by any global scalar -- and nobody had checked, in either stream, that the two normalizations imply different sample weights. They do not.",
+      "The panel's only claimable win (ifc_poisson) came from a 3.5% displacement of the learned function, while sharp__phase_field_crystal_2d's function moved 42.5% -- and toward the truth (cos 0.539) -- for a 2.2% nRMSE change that is 4.6x inside its floor. Score movement and function movement are nearly uncorrelated on this panel.",
+      "91.6% of the big helmholtz 'pattern recovery' is per-sample amplitude calibration; after an oracle rescale the two arms differ by only 1.108x. The headline -70.6% is mostly the maxabs model being 2.04x too loud and sign-inverted (alpha_median -0.0209).",
+      "sharp__allen_cahn_2d is the panel's one genuinely inert dataset: only 46% of its samples moved toward the truth, i.e. its 2.6% displacement is a coin-flip re-roll, not a systematic effect.",
+      "ifc_poisson fits its HF target scaler on N_hf = 5 fields, and that turned out NOT to matter; the pedestal/fluctuation geometry (0.1447 / 0.1014) did."
+    ]
+  },
+  "7_gap_and_future": {
+    "open_question": "The scaler bought CALIBRATION, and calibration is exhausted: on ext__helmholtz_2d 91.6% of the gain was per-sample amplitude that an oracle rescale gives for free, and the arm is still 2.2x worse than the constant-field oracle there and 5.77x worse than copy-LF; on ifc_poisson the same G bought a uniform 40% error-energy cut but the model is still 18.5% above the paper bar. The unresolved question is therefore whether the REMAINING error on the two datasets where the scaler acted is an objective problem or an information problem: helmholtz's training loss is still one sample out of 400 (effective N 1.0145, untouched by any global scaler), so is the residual gap the outlier-dominated MSE -- fixable per-sample (RevIN-style target norm, per-sample loss weights, robust loss) -- or is it that an LF-blind conditional generator simply cannot resolve a resonant field, in which case only LF conditioning (s6/s4) helps? Those two have opposite next moves and the round has not separated them.",
+    "next_direction": "B3 should test the per-sample target normalization the round has now converged on from two directions -- s5-B2's dynamic-range finding (a global scalar cannot de-concentrate the loss; only a PER-SAMPLE scale can) and s2-B2's outlier-domination finding (one train sample = 89-99% of MSE energy) -- as the card's arm A3 `revin_lf` already implemented and ranked but never ran at 200 epochs. Concretely: arm A3 (per-sample s_i = max|LF_i|, both stages, maxabs fallback where the split ships no LF) plus a per-sample-normalized-MSE arm that needs no LF (s_i = max|Y_i| at train time, predicted scale at test time, or an equivalent scale head), on the two datasets where target scaling is a lever at all (ext__helmholtz_2d, ifc_poisson) plus one SCALER_INERT control. Pre-register `G = max|Y_train|/sd(Y_train)` (>= 8) AND a live pattern channel (not LEVEL_ONLY) as the eligibility rule, predict NULLs on the four sharp sets by that rule rather than by |mu|/sd, and instrument the per-batch gradient norm and clip rate so hypothesis H3 (that grad_clip=1.0, not the scaler, is what robustifies the dominant sample) is settled in the same run. The effective-N repair is the thing to measure directly: report effective N of the realized per-batch loss, not of the target energy. MERGE CANDIDATE: this is the same experiment s2_beyond_copy-B3 is heading for from the residual-target side; the two streams should run ONE per-sample-normalization card with a shared arm definition rather than two, with s5 owning the raw-target/LF-blind substrate and s2 owning the residual-target/LF-consuming one.",
+    "cross_stream_notes": "(1) CORRECTION to the s2_beyond_copy-B2 cross-stream mechanism as applied to global scalers: a GLOBAL target scaler cannot repair effective N. Measured on ext__helmholtz_2d's HF train stage, effective N is 1.0145/400 under maxabs and 1.0179/400 under zscore, and top-1 energy share 0.99284 vs 0.99117 -- a global scalar divides every sample's energy by the same constant, so only the mean can move relative weights. s2-B2's outlier-domination diagnosis is CONFIRMED and in fact stronger than reported (per-sample RMS max/median = 1698 on the raw HF target, not just the residual target), but the fix must be per-sample or objective-side. Any card that proposes a global rescale to fix an outlier-dominated loss is proposing a no-op. (2) NEW STANDING COVARIATE for anyone tuning normalization: use G = max|Y_train|/sd(Y_train), reported as tail (max/rms) x pedestal (rms/sd), NOT |mu|/sd -- the pedestal is absorbed by the output bias. Round-1 panel break: G 6.0 = nothing, G 9.9 = effect. Gate it on tools/dc_pattern_split.py (LEVEL_ONLY datasets are inert under any affine scaler). Tool: tools/target_range_placement_audit.py. (3) FOR s6_local / s4_hybrid_routing: the sharp-2D normalization branch is now closed negatively -- the three LEVEL_ONLY sharp sets sit at 1.04-1.44x their own constant-field oracle under both scalers with demeaned correlation ~0, so what is missing there is a PATTERN-producing mechanism (LF-conditioned, local), consistent with your locality findings. (4) METHOD NOTE for every stream: score movement and function movement are nearly uncorrelated on this panel (ifc_poisson paid from a 3.5% displacement; sharp__phase_field_crystal_2d displaced 42.5% TOWARD the truth and scored flat; sharp__allen_cahn_2d's 2.6% displacement was a coin-flip re-roll at cos -0.013). Before writing 'the knob did nothing', run tools/paired_arm_displacement.py -- 'inert knob' and 'dataset cannot cash it' are different results with different next moves. (5) FOR s7_loss: helmholtz's raw HF target, not just its residual, is outlier-dominated to effective N ~1/400 -- a relative/per-sample loss there is acting on the same pathology this card could not touch.",
+    "promoted_tools": [
+      "target_range_placement_audit.py",
+      "paired_arm_displacement.py"
+    ]
+  },
+  "reanalysis_progress": "registered",
   "promotion": {
     "utc": "2026-07-30T07:05Z",
     "screen_job": "66024808",

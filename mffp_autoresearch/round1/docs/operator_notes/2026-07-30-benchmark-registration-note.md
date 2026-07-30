@@ -59,3 +59,59 @@ internal consistency; §2.1-2.2 immutable)
 
 Round-1 practice from here: cards may carry a registration-corrected
 reference ALONGSIDE the frozen skill (as s3_warp-B2 will), never replacing it.
+
+## Addendum (2026-07-30, s7_loss-B1 mechanism analysis): the zero predictor beats the champion on helmholtz
+
+A second panel-fragility datum, independent of the registration defect.
+`tools/field_error_decomposition.py` + `tools/collapse_set_attribution.py`
+on s7-B1's artifacts show the all-zeros field has helmholtz skill 3.035 vs
+the seed-0 champion's 18.826 (6.20x better), and substituting zero for the
+champion's helmholtz prediction alone moves its seed-0 panel geomean 7.1022
+→ 5.2397 (a bigger improvement than any objective-level change tested this
+round). The champion overshoots amplitude 3.1x; s7-B1's relative-loss arm
+undershoots 21x and "wins" the same way the zero field does. Implication
+for benchmark design: a dataset where the zero predictor dominates all
+trained models contributes only amplitude-calibration noise to a geomean
+leaderboard; helmholtz should stay report-only (ADR 0002 handling) or gain
+a zero-predictor floor column in the next revision. This is the 5th
+independent amplitude/normalization data point this round.
+
+## Addendum 2 (2026-07-30, s2_beyond_copy-B2 mechanism analysis): the registration defect eats a full model win
+
+s2-B2's LF-residual model scored 5-dataset beyond-copy geomean skill
+0.380264 — and the mechanism analysis shows it is registration repair, not
+physics: learned-correction ∩ registration-field fractions 0.975-0.9987 on
+allen_cahn/cahn_hilliard, ~100% on pfc; Spearman(registration share, model
+share) = 0.90 across datasets. Against a node-aligned denominator the same
+model's geomean flips to 10.31, while the FREE zero-parameter fix achieves
+0.0369. The card's falsification clause could not have fired: on 4/5
+datasets it compared two predictors of the same artifact. Two additional
+scaler defects surfaced by the same analysis (tools/
+target_scale_spread_audit.py): (a) helmholtz — one of 400 train samples
+carries 89.2% of MSE energy under the family's global target scaler
+(effective N = 1.2); a single train-fitted scalar turns skill 4.14 into
+0.995; (b) pfc — the global scaler is 7.9e4x the median per-sample max, so
+targets are numerically zero and the model emits a noise floor 8206x the
+truth. Consequence for round-1 reads: EVERY sharp-panel win must now be
+decomposed with tools/registration_skill_split.py before interpretation,
+and batch-3 cards must pre-register falsification against corrected
+references (the C/D/E variants), not copylf_baselines.json.
+
+## Addendum 2 (2026-07-30, s2_beyond_copy-B2 mechanism analysis): trained wins on the sharp panel are re-learned registration
+
+Direct field-projection evidence (tools/registration_skill_split.py, 16
+samples/dataset, CPU replay of the scored checkpoints): the LF-residual
+model's learned correction is cos 0.987-0.999 with the analytic
+registration ramp at amplitude 0.996-1.004 on allen_cahn/cahn_hilliard.
+Per-dataset registration share of the "win": pfc ~100% (no fidelity gap
+exists), allen_cahn 97.5%, cahn_hilliard 99.9%, fisher_kpp 95.9%. Scored
+against the node-aligned reference the run's geomean flips 0.380 → 10.31,
+and the zero-parameter free fix alone scores 0.0369 — 10.3x better than
+the trained model. The round's amplitude/normalization theme now has a
+proximate cause: the family normalizes targets by one global max|HF−LF|;
+on helmholtz ONE of 400 training samples carries 89.2% of the MSE energy
+(effective N = 1.2), and a single train-fitted scalar α=0.0224 turns the
+4.14 failure into 0.995. Between-rounds fix list gains: per-sample target
+normalization alongside the reference re-registration. Round-1 metric
+stays frozen; contrasts remain valid; win claims on the sharp panel must
+be read as registration-dominated.

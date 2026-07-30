@@ -23,6 +23,17 @@ tool: name, what it measures, invocation, provenance card.
 | `correction_anatomy.py` | what a `base + alpha*correction` branch actually adds: a re-derivation of copy-LF, real fidelity-gap information, or nothing | s4_hybrid_routing-B1 turn 2 |
 | `routing_headroom.py` | ceiling of a per-sample / per-pixel gate over one scalar `alpha`, for a base that is NOT copy-LF (complements `trust_gate_headroom.py`) | s4_hybrid_routing-B1 turn 3 |
 | `registration_audit.py` | whether a dataset's copy-LF REFERENCE is misregistered (grid-convention mismatch between the solver's sampling and `copylf_prediction`'s `zoom(grid_mode=True)`), and what a zero-parameter fix buys; also flags degenerate ladders and projects a fitted LSI filter onto the half-cell phase ramp | s3_warp-B1 turns 1+3 |
+| `stage_keep_test_audit.py` | whether a multi-STAGE family's own keep/discard test is honest: base optimism (in-sample vs OOF vs test), the gain the keep test claimed vs what the test split delivered, and the panel geomean with the stage rolled back | s4_hybrid_routing-B2 turn 1 |
+| `band_phase_anatomy.py` | splits a corrector's per-band failure into AMPLITUDE vs PHASE (per-band cosine with the copy-LF error, optimal band gain, oracle-gain residual), optionally against the two zero-parameter reference directions | s4_hybrid_routing-B2 turns 2-3 |
+| `relative_loss_geometry.py` | whether a per-sample-normalized training objective `(1-cos²)+λ(g-cos)²` is safe on this dataset: the low-amplitude trap, the fraction of samples the objective actively DE-ALIGNS at each λ, and the sample-weight concentration a relative loss silently imposes | s7_loss-B1 turn 1 |
+| `collapse_set_attribution.py` | did MY change break these samples or were they already broken? paired per-sample collapse overlap between two arms, rank-AUC of every candidate separator (norm / sharpness / copy-LF / each condition coordinate), subpopulation nRMSE, and the zero-predictor skill | s7_loss-B1 turns 2+3 |
+| `registration_skill_split.py` | how much of a predictor's beyond-copy win is the `(r-1)/2`-cell REGISTRATION artifact: its skill re-expressed against every zero-parameter node-aligned denominator, per-sample beat rates, and the no-harm-gate oracle / damage share | s2_beyond_copy-B2 turns 1+3 |
+| `target_scale_spread_audit.py` | pre-flight, no model needed: will a GLOBALLY normalized residual target (`(HF-LF)/max\|HF-LF\|` + MSE) degenerate on this dataset? per-sample residual spread, energy share of the worst sample, effective N of the MSE, and how close a typical normalized target is to zero | s2_beyond_copy-B2 turn 3 |
+| `target_range_placement_audit.py` | pre-flight, no model needed: is the OUTPUT-TARGET SCALER a lever here? the fluctuation magnification `G = max\|Y\|/sd` and its tail x pedestal decomposition per stage, the effective N under both normalizations (proof a global scalar cannot de-concentrate the loss), and the LF/HF stage-placement seam | s5_tuning-B2 turns 1-3 |
+| `paired_arm_displacement.py` | did my change move the learned FUNCTION, and toward the truth? paired displacement between two arms' `preds_test.npz`, its cosine with the control's error (vs the random-direction baseline), the DC/pattern split of the move, and the amplitude share of the score gain | s5_tuning-B2 turns 2-3 |
+| `ladder_pair_row_audit.py` | does a multi-fidelity PAIR/ladder row set add data or only REPLICATE it? distinct `(X, Y)` rows vs total, the per-level replication factor and effective loss weight it imposes, steps/epoch, and the source-indexed mismatched-pair defect | s1_poisson-B3 turn 1 |
+| `gain_calibration_ceiling.py` | the three ceilings any per-sample multiplicative calibration head can aim at on a given prediction (one global gain / X-linear law / per-sample oracle), all test-fitted and labelled, in noise-floor units | s1_poisson-B3 turn 2 |
+| `norm_tail_hedge_audit.py` | is an arm's score bought by ABSTAINING on the samples it cannot fit, and would a per-sample-normalized objective take that hedge away? the `rel < 1 iff g < 2cos` admission rule, the oracle-rescale `hedge_share_of_score`, the low-norm-tail gate (concentration x tail-hardness x amplitude shrink) and the denominator-floor counterfactual | s7_loss-B2 turns 2-3 |
 | `render_readme.py` | regenerates `round1/README.md` from the experiment cards (housekeeping, not a probe) | round infrastructure |
 
 ---
@@ -713,3 +724,593 @@ half-cell phase ramp at unit amplitude). Symptom triple: a fitted displacement w
 DC is `≈ (r-1)/2` cells in BOTH axes, `decimation.node ≪ decimation.cellmean`, and a
 learned corrector whose transfer function grows linearly in |k| with phase ≈ π/2.
 The defect is not universal (`heat_local`, `fluid` are clean), so audit per dataset.
+
+---
+
+## `relative_loss_geometry.py`
+
+**Measures.** Whether a per-sample-normalized training objective is safe on
+this dataset, from any saved `(pred, target)` pair. Every objective of the form
+`L_λ = (1−cos²) + λ(g−cos)²` (λ=1 **is** the scored rel-L2 squared) reduces
+exactly to two scalars per sample, `r = ‖p‖/‖y‖` and `c = cos(p,y)`.
+
+| key | meaning |
+|---|---|
+| `identity_max_absdiff_rel2_vs_shape_plus_gain` | the reduction's own seam check (expect ~1e-15) |
+| `per_lambda[*].frac_perverse_alpha_lt_1_and_drive_lt_0` | fraction of under-shooting samples whose target-aligned component gradient descent would **shrink**. **0 by algebra at λ=1** — anything above 0 is entirely the λ>1 gain term |
+| `per_lambda[*].escape_drive_at_this_arms_g_median` | `2λ/(λ−1)·r` (λ>1, vanishes as r→0) vs `2(1−r)` (λ=1, finite): the pull that has to take an untrained net away from a near-zero output |
+| `per_lambda[*].low_amplitude_valley_cos_over_g` | `λ/(λ−1)`: the alignment ceiling the objective imposes at low amplitude |
+| `sample_weight_concentration.*` | `hf_norm_spread`, the top-decile weight share (**MSE-equivalent 0.10**), and the effective sample fraction `1/Σw²/n` with `w ∝ 1/‖y‖²` |
+
+**Read it as.** `frac_perverse > 0` at your λ → the objective de-aligns that
+fraction of the data; move λ toward 1. `escape_drive` ≪ 1 at the arm's own
+`g_median` → a network that reaches a small output cannot get back out
+(s7-B1: allen_cahn 0.073 at λ=4 vs 1.945 at λ=1, and 198 epochs produced
+2.4e-4 of nRMSE progress). Weight share far from 0.10 → you are changing
+*which* samples get fitted, not just how they are scored; s7-B1 F13, the two
+panel datasets that collapsed had spread 22.7 / 5017 and effective fraction
+0.16 / 0.45, the four that did not had spread ≤ 2.55 and 0.55–0.99.
+
+**Invoke.**
+```bash
+source "$PROJECT_ROOT/.venv/bin/activate"
+python tools/relative_loss_geometry.py \
+    --pred_npz <a.npz> [<b.npz> ...] [--labels a b] [--lambdas 1.0 4.0] \
+    [--pred_key pred --target_key target] [--plot p.png] [--out d.json]
+```
+Seconds; CPU; torch autograd on the reduced 2-D coordinates, no model needed.
+
+**Verified.** Run 2026-07-30 from the round root and again from `/tmp`
+(absolute path, no cwd dependence) on `s7_loss-B1`'s shipped
+`sharp__allen_cahn_2d` predictions and `s5_tuning-B1`'s MSE cap-32 arm:
+reproduced the card's `rel_l2_mean` 1.001375560628003 exactly, `frac_perverse`
+0.29 at λ=4 and **0.00 at λ=1**, escape drive 0.0732 vs 1.945, top-decile
+weight share 0.6909 — identical to card part 6 findings F2/F3/F5.
+
+**Provenance.** `worktrees/s7_loss/B1/scratchpad/reanalysis_turn_1{,b}.py`;
+card `experiment_cards/s7_loss/batch_1/B1.json` part 6, findings F1–F5, F13.
+
+---
+
+## `collapse_set_attribution.py`
+
+**Measures.** Whether a per-dataset regression (or gain) is attributable to
+your change at all, from two or more arms' `(pred, target)` on the same test
+split. Refuses to run if the arms' targets differ.
+
+| key | meaning |
+|---|---|
+| `attribution_vs_reference[*].frac_reference_collapsed_also_collapsed_here` | overlap of the collapsed sets. **≈1 ⇒ your lever did not create the failure** |
+| `attribution_vs_reference[*].spearman_rho_per_sample_rel` | are the arms ranking the samples the same way? |
+| `separators_AUC_for_reference_collapse` | rank-AUC of `‖y‖`, DC energy share, HF sharpness, **LF-side sharpness**, copy-LF rel-L2 and **every condition coordinate** for the collapse label |
+| `subpopulation_nrmse` | each arm's and copy-LF's nRMSE on the collapsed / surviving halves — where a dataset-level skill is exposed as a mixture statistic |
+| `trivial_predictor` | the zero field's skill `1/reference_nRMSE` (rel-L2 of `p=0` is exactly 1) and `arm_skill_over_zero_predictor_skill…` — **1.0 means the arm IS the zero field** |
+
+**Read it as.** Overlap ≈ 1 with ρ > 0.8 → do not write a mechanism for a
+failure your change did not cause (s7-B1: pfc overlap 1.00 / ρ 0.979,
+cahn_hilliard 0.92 / 0.810 against an MSE-trained arm). High |AUC−0.5| on a
+FIELD feature but ≈ 0.5 on every condition coordinate → the hard subpopulation
+is identifiable from the LF field and not from the conditioning, so a family
+that does not read LF at inference (`lf_at_inference_audit.py`) cannot route
+capacity to it. Arm skill ≈ zero-predictor skill → the arm is abstaining, not
+predicting.
+
+**Invoke.**
+```bash
+source "$PROJECT_ROOT/.venv/bin/activate"
+python tools/collapse_set_attribution.py \
+    --preds arm=<a>/preds_test.npz base=<b>/preds_test.npz \
+    [--dataset sharp__cahn_hilliard] [--reference-arm arm] \
+    [--collapse-threshold 0.9] [--grid 256 256] [--out d.json]
+```
+`--dataset` adds the copy-LF / condition-vector separators and the skill block
+(loads the test split through `round1/eval/panel_data.py`; ~20 s for a 256²
+panel dataset). Without it the arm-pairing block still runs from the npz alone.
+
+**Verified.** Run 2026-07-30 from the round root and from `/tmp` on `s7_loss-B1` vs
+`s5_tuning-B1`'s MSE cap-32 arm: `sharp__cahn_hilliard` → overlap 0.9231,
+ρ 0.8100, sharpness AUC 0.0988 / LF-side 0.1024, best of 19 condition
+coordinates |AUC−0.5| = 0.067, copy-LF recomputed vs the frozen
+`eval/copylf_baselines.json` **0.0**; `sharp__allen_cahn_2d` →
+`arm_skill_over_zero_predictor_skill` 1.0014 (A1a) vs 0.2648 (MSE) — identical
+to card part 6 findings F6/F9/F11.
+
+**Provenance.** `worktrees/s7_loss/B1/scratchpad/reanalysis_turn_2{,b,c}.py`
+and `reanalysis_turn_3.py`; card
+`experiment_cards/s7_loss/batch_1/B1.json` part 6, findings F6–F9, F11–F12.
+
+---
+
+## Standing warning `relative_loss_geometry` + `collapse_set_attribution` encode
+
+**A per-sample-normalized objective is a sample-reweighting, and an explicit
+gain weight λ>1 is a gradient sign change — check both before adopting one.**
+`s7_loss-B1` replaced `F.mse_loss` by `(1−cos²)+4(g−cos)²` on the champion
+architecture and lost `sharp__allen_cahn_2d` completely (skill 16.33 → 62.00,
+27.96× its floor; the trained prediction equals the ZERO field to four
+significant figures). The objective's algebra was correct — it decomposes the
+scored metric exactly — but λ=4 makes the near-zero-output *initialisation* a
+stationary point with a vanishing escape drive, and the arm never left it
+(2-epoch nRMSE 1.00161 → 200-epoch 1.00138). Meanwhile the two datasets the
+card targeted had `hf_norm_spread` 2.55 and 1.14, i.e. no mis-weighting to fix,
+and their apparent bimodal failure was already present under MSE on the same
+samples. Second, unrelated warning from the same card: **rel-L2 saturates at 1
+for a vanishing prediction, so any dataset where a model's nRMSE exceeds 1
+offers a free learning-free "gain"** — substituting the zero field for the
+champion's `ext__helmholtz_2d` prediction improves its seed-0 panel geomean
+7.1022 → 5.2397, 2.1× the certified geomean floor. Check `trivial_predictor`
+before believing a helmholtz-driven panel movement.
+
+---
+
+## `registration_skill_split.py`
+
+**Measures.** For any predictor on any 2-D panel dataset: its score re-expressed
+against a *registration-corrected* denominator. Rebuilds
+`tools/registration_audit.py`'s zero-parameter variants (`A` eval copy-LF · `A2`
+wrap · `B` constant `(r-1)/2` shift · `C` node-aligned bilinear · `D` node-aligned
+band-limited · `E` Dirichlet node-aligned) per sample through `eval/nrmse.py`, then
+reports `model_skill_vs_best_fix`, `pct_copylf_error_removed_{model,best_fix}`,
+per-sample beat rates, and — when the result JSON carries `rel_l2_per_sample` — the
+`no_harm_gate_oracle_skill` and the `damage_share_of_model_error`.
+
+**Read it as.** `model_skill_vs_best_fix >= 1` → the card's beyond-copy win is a
+learned re-derivation of the resampling convention, not physics; report the corrected
+geomean next to the scored one. `pct_copylf_error_removed_model` tracking
+`pct_copylf_error_removed_best_fix` across datasets is the signature of a
+registration-driven mechanism. `best_fix_skill_vs_copylf ~ 1e-5` → the ladder is
+DEGENERATE and there is no fidelity gap to correct. `damage_share > 0.5` → most of the
+predictor's error is harm inflicted on samples copy-LF already had right, and a trust
+gate is worth more than the mechanism.
+
+**Invoke.**
+```bash
+source "$PROJECT_ROOT/.venv/bin/activate"
+python tools/registration_skill_split.py \
+    --datasets sharp__phase_field_crystal_2d,ext__helmholtz_2d \
+    --result_glob '<results_dir>/{dataset}_e200_s0.json' --out split.json
+python tools/registration_skill_split.py --datasets PANEL \
+    --model_nrmse 'sharp__cahn_hilliard=0.03973' --out split.json
+# [--split test_hf] [--metric_key rel_l2_mean] [--copylf_split ref_copylf_identity]
+# [--n_test 100]
+```
+Pure numpy/scipy on the login node, ~10–40 s per 256² dataset. `--metric_key` defaults
+to the round's per-sample-mean `rel_l2_mean`; never point it at the legacy
+ratio-of-sums `nRMSE` key. Nothing it prints may become a card score.
+
+**Verified.** Run 2026-07-30 from `round1/` over the five `s2_beyond_copy-B2`
+datasets against that card's scored `lf_resid_fno` result JSONs → free-fix skills
+`7.121e-06 / 0.1103 / 0.4631 / 0.2063 / 0.9077`, `MODEL/FIX` `2578.1 / 2.606 / 0.979 /
+3.898 / 4.557`, geomeans `model_vs_copylf 0.380264` (identical to card part 5),
+`model_vs_registration_fixed_denominator 10.3148`, `no_harm_gate_oracle 0.25888` —
+reproducing turn 1 (`t1_decomposition.json`) and turn 3 (`t3_helmholtz_and_tail.json`)
+exactly.
+
+**Provenance.** `worktrees/s2_beyond_copy/B2/scratchpad/reanalysis_turn_1.py` (+ the
+gate oracle from `reanalysis_turn_3.py` block A); card
+`experiment_cards/s2_beyond_copy/batch_2/B2.json` part 6, findings F1–F3, F12.
+
+---
+
+## `target_scale_spread_audit.py`
+
+**Measures.** From the TRAIN split alone (no model, no GPU): whether a globally
+normalized additive-correction target — `target = (HF - LF_up) / max|HF - LF_up|` under
+plain MSE, which is what almost every MF family in this round trains — degenerates on
+this dataset. Reports the per-sample `||HF - LF_up||` spread, the shared scaler versus a
+typical sample's own scale, the MSE energy share of the worst sample and worst 5 %, the
+participation-ratio `effective_n_samples_of_mse`, and `median_normalised_target_max`.
+
+**Read it as.** `OUTLIER_DOMINATED` (top-1 energy share > 0.5, or effective N < 5 % of
+N) → the loss is one sample; expect a large, uncorrelated correction emitted on every
+query, and fix the objective (per-sample normalization / robust loss / sample weights)
+before blaming the architecture — cross-check `tools/relative_loss_geometry.py` before
+switching. `NEAR_ZERO_TARGETS` (a typical normalized target < 1e-3) → the family cannot
+learn to no-op; expect it to damage samples copy-LF already had exact, and pair it with
+`tools/trust_gate_headroom.py`. A `resid_norm_max_over_median` above ~1e4 usually also
+means the ladder is partly degenerate — confirm with `tools/registration_audit.py`.
+`OK` → a global scaler is fine and any failure is elsewhere.
+
+**Invoke.**
+```bash
+source "$PROJECT_ROOT/.venv/bin/activate"
+python tools/target_scale_spread_audit.py --datasets PANEL --out spread.json
+python tools/target_scale_spread_audit.py --datasets ext__helmholtz_2d --out spread.json \
+    [--split train] [--n_max 400] [--outlier_share 0.5] [--spread 100] [--near_zero 1e-3]
+```
+Pure numpy on the login node, ~2–10 s per dataset.
+
+**Verified.** Run 2026-07-30 from `round1/` over the five `s2_beyond_copy-B2` datasets →
+`ext__helmholtz_2d` **BOTH** (top-1 energy share **0.892**, effective N **1.2 / 400**,
+scaler/median-per-sample-max 6398), `sharp__phase_field_crystal_2d`
+**NEAR_ZERO_TARGETS** (norm max/median **8.24e4**, scaler ratio 7.95e4), and
+`allen_cahn / cahn_hilliard / fisher_kpp` **OK** (spread 2.1–4.0). Those are exactly the
+two datasets where B2's `lf_resid_fno` failed (skill 4.14 with 96/100 samples damaged;
+and an emitted-noise floor 8206x the truth) and the three where it behaved sanely.
+
+**Provenance.** `worktrees/s2_beyond_copy/B2/scratchpad/reanalysis_turn_3.py` (block D);
+card `experiment_cards/s2_beyond_copy/batch_2/B2.json` part 6, findings F6, F8–F10.
+
+
+---
+
+## `stage_keep_test_audit.py`
+
+**Measures.** Whether a staged family's own **keep/discard test** is honest, from
+its shipped result JSONs only (no model, no re-scoring). Per dataset:
+`optimism` (the base's val error IN-SAMPLE vs OUT-OF-SAMPLE vs on test),
+`keep_claim_pct` (what the stage's held-out test claimed), `test_delivered_pct`
+(the paired change on the test split, pre-stage applied leg -> scored value),
+`sign_inverted`, and a **panel counterfactual**: the geomean with every kept
+stage rolled back to its pre-stage leg, against `state/noise_floor.json`'s
+0.884 geomean floor and each dataset's `min_claimable_effect`.
+
+**Read it as.** `oof_over_insample > ~2` -> any keep test scored against the
+in-sample base is untrustworthy on that dataset, whatever it reports.
+`sign_inverted` on a majority of kept cells -> the stage is a net negative that
+its own protocol cannot see, and the fix is to score the stage against a base
+that is out-of-sample for the *validation* slice (Wolpert 1992), not to tune the
+stage. Panel cost inside the geomean floor but resolvable on one dataset -> the
+finding is per-dataset, and the card should say so.
+
+**Invoke.** Key paths are CLI dot paths; `{other.path}` substitutes another key's
+VALUE (for "which leg was applied" indirection), so the tool is schema-agnostic.
+```bash
+source "$PROJECT_ROOT/.venv/bin/activate"
+python tools/stage_keep_test_audit.py \
+    --results "$OUTPUTS_ROOT/<stream>/B<N>/eval/results_<arm>/<family>/*_e200_s0.json" \
+    --stage_flag stage3_joint \
+    --val_pre  s4_gate.val_rel_l2_hybrid_insample_base_at_applied \
+    --val_post val_rel_l2_hybrid \
+    --test_pre "s4_alpha_protocol_legs.legs.{s4_alpha_protocol_legs.applied_leg}.test_nrmse" \
+    --test_post splits.test_hf.rel_l2_mean \
+    --base_insample s4_gate.val_rel_l2_base_insample \
+    --base_oof s4_gate.val_rel_l2_base_oof --base_test base_only_rel_l2 \
+    [--panel a,b,c] [--geomean_floor 0.884] --out /tmp/stage_audit.json
+```
+Sub-second, pure JSON reads.
+
+**Verified.** Run 2026-07-30 from `round1/` on both s4-B2 arms: `gate_repair`
+2 of 2 kept cells **sign-inverted** (claims +63.76 %/+69.43 %, test delivers
+-25.58 %/-20.43 %), panel 5.410183 -> **5.049693** (+0.3605, inside the 0.884
+floor, RESOLVABLE on `sharp__cahn_hilliard` at +0.9317 vs floor 0.5533);
+`gate_repair_dense` 3 of 3 inverted, panel 3.740551 -> **3.451349** (+0.2892).
+Both scored geomeans reproduce the authoritative panel JSONs exactly.
+
+**Provenance.** `worktrees/s4_hybrid_routing/B2/scratchpad/reanalysis_turn_1.py`;
+card `experiment_cards/s4_hybrid_routing/batch_2/B2.json` part 6, findings F1-F5.
+
+---
+
+## `band_phase_anatomy.py`
+
+**Measures.** For `pred = copylf + correction`, per radial band:
+`E_corr/E_c`, `E_err/E_c`, the **cosine** of the correction with the copy-LF
+error, the **optimal band gain** `g*`, and the residual an ORACLE band gain would
+leave. It is the missing half of `field_error_decomposition.py`'s `band_rel_err`:
+that tool says a band is bad, this one says *why*.
+
+| pattern | verdict |
+|---|---|
+| `cos ~ 1`, `g* != 1` | **AMPLITUDE** — rescaling that band fixes it |
+| `cos ~ 0`, `E_corr/E_c ~ 1` | **PHASE** — full-amplitude, phase-random injection; `E_err/E_c -> 1 + E_corr/E_c` and no gate/gain/capacity knob can repair it |
+| `0.25 < cos < 0.9` | partial |
+
+`--with_refs` adds the two zero-parameter directions in the same bands
+(`registration_audit.build_variants` variant C, and the s6-B1 LSI transfer
+function), i.e. the honest ceiling a learned corrector competes against.
+
+**Invoke.**
+```bash
+source "$PROJECT_ROOT/.venv/bin/activate"
+python tools/band_phase_anatomy.py --from_diag <run>/diag_<arm>_<ds>_e200_s0.json
+python tools/band_phase_anatomy.py --dataset sharp__fisher_kpp_2d \
+    --pred_npz <run>/preds_test.npz --pred_key pred [--n_samples 100] \
+    [--bands 0,0.125,0.25,0.5,1.0] [--with_refs] --out band.json
+```
+`--from_diag` is instant (reads stored band energies; the identity is exact only
+where the base IS copy-LF, which the output states). The `--pred_npz` path is
+seconds; `--with_refs` adds ~1 min for the LSI fit.
+
+**Verified.** Run 2026-07-30 from `round1/` on s4-B2 arm C
+(`sharp__fisher_kpp_2d`): diag path -> top band `E_corr/E_c` **1.058**,
+`cos` **0.0336**, `g*` 0.033, oracle-gain residual 0.9989 -> verdict **PHASE**,
+bands 1-3 PARTIAL (cos 0.55/0.69/0.64). The `--pred_npz` path on the
+seam-verified 4-sample replay agrees (skill 0.774818; top band cos 0.0273) and
+`--with_refs` reproduces variant-C skill **0.310942** and LSI skill **0.112820**
+with LSI clean in all four bands (cos 0.996/0.997/0.982/0.996) while variant C
+is clean below 0.5 Nyquist and **PHASE / 5.17x worse** above it.
+
+**Provenance.** `worktrees/s4_hybrid_routing/B2/scratchpad/reanalysis_turn_2.py`
++ `reanalysis_turn_3.py`; card `experiment_cards/s4_hybrid_routing/batch_2/B2.json`
+part 6, findings F6, F9-F11.
+
+---
+
+## Standing warning these two tools encode
+
+**A stage that gates itself on held-out error is only as honest as the BASE that
+error is measured against, and a band that looks "hard" may be a band the model
+is actively poisoning.** On s4-B2 the repaired OOF gate *unlocked* a joint
+fine-tune whose keep test still used the in-sample base (16-55x optimism on
+`sharp__cahn_hilliard`); it was kept on 5 of 5 eligible cells, claimed +14…+85 %
+and delivered -5…-28 %, costing a resolvable +0.93/+0.62 skill units on
+cahn_hilliard. And in the top band (0.5-1.0 Nyquist) that card's attention
+corrector emitted 106 % of the needed energy at cosine 0.034 — doubling the
+band's error — while a zero-parameter filter reached cosine 0.996 there. Check
+`oof_over_insample` before believing any keep test, and per-band `cos` before
+believing any "needs more capacity/bandwidth" story.
+
+---
+
+## `target_range_placement_audit.py`
+
+**Measures.** From the TRAIN split alone (no model, no GPU), per stage: whether the
+family's output-TARGET SCALER is a lever on this dataset. Reports the fluctuation
+magnification `G = max|Y_train| / sd(Y_train)` that a unit-variance scaler buys, its
+decomposition `G = (max/rms) x (rms/sd)` into a TAIL and a PEDESTAL factor, where the
+target actually sits in output range under `maxabs` (`mu/max`, `sd/max`), the
+participation-ratio effective N of the per-sample MSE energy under BOTH normalizations,
+the per-sample RMS max/median, and the LF-vs-HF placement seam a two-stage
+pretrain/finetune family inherits.
+
+**Read it as.** `SCALER_IS_A_LEVER` (`G` >= `--g_lever`, default 8) -> a unit-variance
+target scaler is worth an arm — but **gate it on `tools/dc_pattern_split.py`**: a
+LEVEL_ONLY dataset has no pattern channel to magnify and will be inert regardless.
+`PEDESTAL_ONLY` -> `G` is mostly a DC offset, which the output layer's bias absorbs for
+free; expect a null (this is exactly the trap s5-B2 fell into with `|mu|/sd`).
+`SCALER_INERT` -> stop tuning normalization and look for a mechanism that produces
+PATTERN. `+STAGE_SEAM` -> the two stages are placed very differently under `maxabs`.
+If `eff_n_fraction` is tiny the loss is one sample: **a global scaler cannot fix that**
+(the tool prints `eff_n_change_from_zscore` to prove it) — go to
+`tools/target_scale_spread_audit.py` / `tools/relative_loss_geometry.py` instead.
+
+**Invoke.**
+```bash
+source "$PROJECT_ROOT/.venv/bin/activate"
+python tools/target_range_placement_audit.py --datasets PANEL --out placement.json
+python tools/target_range_placement_audit.py --datasets ext__helmholtz_2d,ifc_poisson \
+    --out placement.json [--split train] [--n_max 400] [--g_lever 8.0] \
+    [--pedestal_ratio 2.0] [--stage_seam 3.0]
+```
+Pure numpy on the login node, ~2-10 s per dataset.
+
+**Verified.** Run 2026-07-30 from `round1/` over `--datasets PANEL`:
+`ext__helmholtz_2d` **SCALER_IS_A_LEVER** (`G` 39.470 = tail 39.436 x pedestal 1.001,
+effective N **1.01/400**), `ifc_poisson` **SCALER_IS_A_LEVER** (`G` 9.858 = 5.660 x
+1.742, effective N 4.17/5), `sharp__fisher_kpp_2d` **PEDESTAL_ONLY** (`G` 5.997 =
+1.546 x **3.880**), `sharp__phase_field_crystal_2d` / `sharp__allen_cahn_2d` /
+`sharp__cahn_hilliard` **SCALER_INERT** (`G` 3.814 / 2.537 / 1.322). Those are exactly
+the two datasets that moved beyond their floors under s5-B2's `zscore` arm and the four
+that did not — including `sharp__fisher_kpp_2d`, the dataset the card's `|mu|/sd`
+covariate predicted would move most and which moved least.
+
+**Provenance.** `worktrees/s5_tuning/B2/scratchpad/reanalysis_turn_1.py` (block A),
+`reanalysis_turn_2.py` (block A), `reanalysis_turn_3.py` (block A2); card
+`experiment_cards/s5_tuning/batch_2/B2.json` part 6, findings F1, F2, F5, F6, F7, F12.
+
+---
+
+## `paired_arm_displacement.py`
+
+**Measures.** From two arms' `preds_test.npz` (the round's dump contract): how far the
+learned FUNCTION moved (`||pred_arm - pred_ctrl|| / ||pred_ctrl||`, cosine between the
+two predictions), whether it moved TOWARD THE TRUTH (per-sample cosine of the
+displacement with the control's own error, against the random-direction baseline
+`sqrt(2/(pi n))`, the fraction of samples improving in direction, and the optimal step
+along the displacement), whether the LEVEL or the PATTERN moved (DC/pattern share of the
+displacement), and how much of any score gain is calibration rather than field content
+(`amplitude_share_of_log_gain`, from an oracle per-sample rescale).
+
+**Read it as.** `INERT` -> the knob did not change the function; the null is about the
+KNOB. `MOVED_NOT_TOWARD_TRUTH` -> non-informative content was re-rolled; conclude nothing
+about direction. `MOVED_TOWARD_TRUTH_UNCASHED` -> the knob helps but the dataset's
+headroom / the round's floor is too small to show it; the null is about the DATASET and
+the knob may pay in a family that can cash it. `MOVED_AND_PAID` -> check
+`amplitude_share_of_log_gain` before claiming pattern. The `--paid_ratio` threshold is
+crude; the dataset's own `min_claimable_effect` in `state/noise_floor.json` is the real
+arbiter.
+
+**Invoke.**
+```bash
+source "$PROJECT_ROOT/.venv/bin/activate"
+python tools/paired_arm_displacement.py --out disp.json \
+    --pair ifc_poisson=/abs/arm/preds_test.npz,/abs/control/preds_test.npz
+python tools/paired_arm_displacement.py --datasets PANEL --out disp.json \
+    --arm_root  /abs/outputs/<stream>/B<N>/eval/results/<arm>/<family> \
+    --ctrl_root /abs/control/dir [--toward_truth_cos 0.1] [--inert_disp 0.05] \
+    [--paid_ratio 1.10]
+```
+Targets are asserted equal between the two files; a shorter side (a paired SUBSET regen)
+truncates the other and sets `paired_subset`. Pure numpy, CPU, seconds.
+
+**Verified.** Run 2026-07-30 from `round1/` on s5-B2's `zscore` arm vs the `maxabs`
+cap-12 control (`worktrees/s5_tuning/B1/scratchpad/cap12_infer`):
+`ext__helmholtz_2d` disp **0.993** cos **+0.764** -> MOVED_AND_PAID (6.46804 -> 1.89976);
+`ifc_poisson` disp **0.035** cos +0.605, 99 % of samples toward truth -> MOVED_AND_PAID
+(0.05563 -> 0.04266); `sharp__phase_field_crystal_2d` disp **0.425** cos +0.539 ->
+MOVED_TOWARD_TRUTH_UNCASHED (0.51341 -> 0.50224, 4.6x inside its floor);
+`sharp__cahn_hilliard` disp 0.244 cos +0.295 -> MOVED_TOWARD_TRUTH_UNCASHED;
+`sharp__allen_cahn_2d` disp 0.026 cos **-0.013** with **46 %** of samples toward truth ->
+**INERT**; the `--pair` path on the 24-sample `sharp__fisher_kpp_2d` subset ->
+MOVED_NOT_TOWARD_TRUTH (cos +0.076). A dataset whose control preds are missing is
+reported with an `error` field and does not stop the sweep.
+
+**Provenance.** `worktrees/s5_tuning/B2/scratchpad/reanalysis_turn_2.py` (block B),
+`reanalysis_turn_3.py` (block B), `reanalysis_turn_3b.py`; card
+`experiment_cards/s5_tuning/batch_2/B2.json` part 6, findings F3, F8, F9, F10, F13, F15.
+
+---
+
+## Standing warning these two s5-B2 tools encode
+
+**A global output-target scaler is a DYNAMIC-RANGE PLACEMENT device, not a
+sample-weighting device — and "the score did not move" is not the same as "the knob did
+nothing".** Measured on s5-B2: switching `max|Y|` -> `mean/std` left the effective N of
+the training MSE at 1.0145 -> 1.0179 out of 400 samples (a global scalar divides every
+sample's energy by the same constant, so it *cannot* de-concentrate an outlier-dominated
+loss); the covariate that ordered the panel was `G = max|Y|/sd`, not `|mu|/sd`, because a
+pedestal is free to an output bias; 91.6 % of the headline -70.6 % helmholtz gain was
+per-sample amplitude calibration; and the one dataset that paid did so from a 3.5 %
+function displacement while a dataset that displaced 42.5 % *toward the truth* scored
+flat. Run `target_range_placement_audit.py` BEFORE spending an arm on normalization, and
+`paired_arm_displacement.py` before writing down any null.
+
+---
+
+## `ladder_pair_row_audit.py`
+
+**Measures.** Whether a multi-fidelity family's "all ordered pairs" / "adjacent
+pairs" row set is data amplification or a **loss-weighting knob in disguise**:
+
+| field | question answered |
+|---|---|
+| `rows_total` / `rows_distinct_XY` | how many of the arm's rows are distinct `(X, Y)` content (compared within a target level, since `n_cells` differs per level) |
+| `per_level.replication_factor` | how many times each level's samples are repeated |
+| `per_level.share_ratio_vs_self_only` | the effective loss-weight shift each level takes relative to the self-rows-only baseline (exact under per-level target normalization) |
+| `steps_per_epoch` | the optimization confound that rides along with any row-count change |
+| `index_alignment` + `--cond-from source` | the older defect: source-indexed cross rows on non-aligned fidelity lists pair the wrong parameters with the wrong field |
+| `verdict` | `SELF_ROWS_ONLY` / `REPLICATION_ONLY` / `ADDS_ROWS` / `MISMATCHED_PAIRS` |
+
+**Read it as.** `REPLICATION_ONLY` → the pair set adds no supervision; whatever
+it does to the score is a **per-level reweighting** (plus more gradient steps),
+so compare against `self_only` before claiming a pairing result. Cross-reference
+`ladder_level_diagnostic.py::matched_level_predictor_on_test`: if the levels
+being **upweighted** are the sparse ones, the arm is trading condition-space
+coverage for in-sample fit at the top level. `MISMATCHED_PAIRS` → fix the
+indexing before interpreting anything.
+
+**Invoke.**
+```bash
+source "$PROJECT_ROOT/.venv/bin/activate"
+python tools/ladder_pair_row_audit.py --dataset ifc_poisson \
+    [--modes self_only adjacent allpairs two_level] \
+    [--cond-from target|source] [--batch-size 16] [--out audit.json]
+```
+Read-only, numpy only, seconds.
+
+**Verified.** Run 2026-07-30 from `round1/`. `ifc_poisson` (ifc_raw, 4 levels,
+n = 100/50/20/5): `allpairs` **280 rows / 175 distinct / 105 duplicates**, share
+ratio 0.62 / 1.25 / 1.88 / **2.50** by level, 18 vs 11 steps/epoch →
+`REPLICATION_ONLY`; `adjacent` 250/175; `two_level` 180/175; `--cond-from
+source` on `allpairs` → 280 distinct and `MISMATCHED_PAIRS` (the B1-era defect,
+`index_aligned false`). Portability: `heat_local` (npz_l, 5 levels × 1024) →
+`allpairs` 15360/5120, share ratio 0.33 … 1.67, `REPLICATION_ONLY`. The
+`ifc_poisson` numbers reproduce the card's turn-1 measurement exactly.
+
+**Provenance.** `worktrees/s1_poisson/B3/scratchpad/reanalysis_turn_1.py`
+(probes P1/P2); card `experiment_cards/s1_poisson/batch_3/B3.json` part 6,
+findings T1-F1, T1-F2.
+
+---
+
+## `gain_calibration_ceiling.py`
+
+**Measures.** Before a per-sample calibration head is designed, the three
+ceilings it could aim at on a shipped `preds_test.npz`, every one of them fitted
+on the test targets and labelled `[TEST-FITTED]`:
+
+1. **one global gain** — a single scalar for the whole split (usually ≈ 0 gain);
+2. **X-linear law** — ridge on the standardized condition vector with
+   closed-form LOO (PRESS) λ selection, plus its R², per-coordinate variance
+   share and clip fraction;
+3. **per-sample gain oracle** — one scalar per sample, the hard ceiling.
+
+with `amplitude_share_of_sq_error`, the log-gain dispersion, and (given
+`--floor`) every headroom expressed in noise-floor units.
+
+**Read it as.** `amplitude_share_of_sq_error` < ~0.2 → a calibration head has
+almost nothing to work with; go look at the pattern channel
+(`dc_pattern_split.py`). X-linear ≈ oracle → the gain is a *smooth function of
+the conditions*, i.e. a generalization error of the conditional map, and a head
+can recover most of it. Every headroom < 1 floor → do not spend a batch on a
+head. Complements `field_error_decomposition.py` (which splits the error) and
+`residual_gain_learnability.py` (which asks whether the gain is learnable
+out-of-sample); this one prices the whole ladder of ceilings in one call.
+
+**Invoke.**
+```bash
+source "$PROJECT_ROOT/.venv/bin/activate"
+python tools/gain_calibration_ceiling.py --preds /abs/preds_test.npz \
+    [--dataset ifc_poisson] [--split test] [--floor 0.008636672175093287] \
+    [--clip 0.5 2.0] [--out ceiling.json]
+```
+Without `--dataset` only ceilings 1 and 3 are reported. Read-only, numpy, seconds.
+
+**Verified.** Run 2026-07-30 from `round1/` on s1-B3's two bases with
+`--floor 0.008636672175093287`. `base__none` (allpairs): amplitude share
+**0.585**, raw 0.034264, one global gain 0.035125 (**−0.10 floors**, i.e. a
+constant rescale *hurts*), X-linear law 0.024354 (**1.15 floors**, R² 0.9184 /
+LOO 0.9093, top coord4 0.669), per-sample oracle 0.022935 (1.31 floors) — these
+independently reproduce s1-B2's 0.919 R² / 0.02431 bound / 0.022917 oracle.
+`self_only__none`: amplitude share 0.134, every ceiling within **0.14 floors**
+of raw → the same head is not worth a batch on that base (and s1-B3 measured it
+actively harmful there: 0.021913 → 0.035890).
+
+**Provenance.** `worktrees/s1_poisson/B3/scratchpad/reanalysis_turn_2.py`
+(probes Q1/Q3/Q4); card `experiment_cards/s1_poisson/batch_3/B3.json` part 6,
+findings T2-F1, T2-F2, T2-F5.
+
+---
+
+## `norm_tail_hedge_audit.py`
+
+**Measures.** Two things an nRMSE cannot show, from any saved
+`(pred, target)` on a panel test split (metrics via `round1/eval/nrmse.py`):
+
+1. **The admission rule.** Writing `g = ||p||/||y||`, `cos = <p,y>/(||p|| ||y||)`,
+   `rel^2 = 1 + g^2 - 2 g cos`, so **`rel < 1` iff `g < 2 cos`**. The zero field
+   scores exactly 1 everywhere, so on a sample whose shape the model cannot get,
+   SHRINKING beats predicting — squared error does this automatically, a
+   per-sample-normalized objective does not. Reports `frac_g_ge_2cos` (all and
+   on the low-norm tail: the share of the split the arm is scored *worse than
+   nothing* on), the margins, and `hedge_share_of_score`
+   `= 1 - mean sqrt(1-cos^2) / nRMSE` — how much of the score is amplitude
+   rather than shape.
+2. **The low-norm tail gate**, i.e. whether a per-sample-normalized loss
+   (`w ~ 1/||y||^2`) would sacrifice that tail: (i) concentration
+   (`hf_norm_spread >= 10` or effective sample fraction <= 0.20), (ii) the
+   low-norm decile at least 2x harder than the rest, (iii) the reference
+   (MSE-trained) arm *shrinking* amplitude there
+   (`g_median(tail)/g_median(all) <= 0.8`). All three -> `RISK`, two -> `WATCH`.
+   `--floors` adds the training-free denominator-floor counterfactual (what a
+   floor on `||y||` does to the weight concentration), and the amplitude law
+   slope `log||pred|| ~ log||y||`.
+
+With two or more arms it also prints the pairwise gap decomposition against the
+reference: the share of the gap that is the amplitude channel (gap after an
+oracle per-sample rescale) and the share carried by the 5 / 10 worst samples.
+Refuses to run if the arms' `target` arrays differ (the pairing seam).
+
+**Complements** `relative_loss_geometry.py` (which prices the *loss*'s own
+geometry at each lambda: perverse region, escape drive, weight concentration)
+and `collapse_set_attribution.py` (which asks *which samples* broke and what
+identifies them). This one prices the *metric*'s asymmetry and the between-sample
+reweighting channel that a per-sample (r, cos) reduction cannot see — the channel
+that cost s7_loss-B2 1.818 certified floors at lambda = 1.
+
+**Invoke.**
+```bash
+source "$PROJECT_ROOT/.venv/bin/activate"
+python tools/norm_tail_hedge_audit.py \
+    --preds mse=/abs/a/preds_test.npz [rel=/abs/b/preds_test.npz ...] \
+    [--reference-arm mse] [--decile-frac 0.1] [--floors 0.1 0.25 0.5] \
+    [--out audit.json] [--plot plane.png]
+```
+Read-only, numpy, seconds. Single-arm mode reports the gate only.
+
+**Verified.** Run 2026-07-30 from `round1/` on `sharp__allen_cahn_2d`
+(`mse` = s5_tuning-B1 `..._modes` cap-32, `rel` = s7_loss-B2 `arm_rel_both`):
+reference gate **RISK** (spread 22.0, effective sample fraction 0.163, tail
+hardness 4.29, `g_ratio` 0.587); `frac_g_ge_2cos` on the low-norm tail 0.30
+(mse) -> 0.80 (rel); amplitude law slope 1.278 -> 1.036; floors
+q0.1/q0.25/q0.5 lift the effective sample fraction 0.163 -> 0.316 / 0.631 /
+0.872; pairwise gap 0.04702 of which **0.601 is the amplitude channel** and
+0.526 sits in 5 samples (worst indices 30, 81, 66, 88, 43). Cross-checked on
+`ifc_poisson` (verdict `OK`, n=128, spread 4.32) and `ext__helmholtz_2d`
+(verdict `OK` but `hedge_share_of_score` **0.696** and `frac_g_ge_2cos` 0.99 —
+the overshoot regime, B1 F10/F11).
+
+**Provenance.** `worktrees/s7_loss/B2/scratchpad/reanalysis_turn_2.py` +
+`reanalysis_turn_3.py`; card `experiment_cards/s7_loss/batch_2/B2.json` part 6,
+findings F6-F11.
