@@ -2368,3 +2368,171 @@
   (cancelled)->`66011595` and adds `66011965`; Completed/Flags rewritten around
   all of the above).
 ## RUN END 2026-07-29T23:41:02Z
+## RUN START 2026-07-29T23:57:23Z
+- `s5_tuning-B2`: code review concluded this walk. Card `status` `built` ->
+  **`reviewed_suggest`** (attempt 1, `reviewed_diff`
+  `round1-substrate..a55c788`, utc 2026-07-29T23:41:51Z per the reviewer's
+  clock). All 7 review questions PASS/PASS/PASS/PASS/SUGGEST/PASS/PASS (Q5
+  SLURM is the only SUGGEST leg, all non-blocking: job-name omits seed/arm,
+  `00_screen.sh` leaves `notes/precheck_scale_ratio.json` git-dirty). Two
+  explicit orchestrator actions recorded for the next stage: (1) before
+  `submit.sh`, read `screen/screen_table.json ->
+  default_equivalence.pass` AND confirm `bitwise_identical:true` on BOTH
+  `ext__helmholtz_2d` and `ifc_poisson` — `false`/absent is a BLOCKER,
+  `decision{}` alone is not sufficient; (2) record the promoted arm in the
+  card **before** `submit.sh` (ADR 0007) — `decision.requires_recipe_amendment
+  == true` routes through `state/blocked.md` per `_shared/card_update.md`, not
+  a silent `bash submit.sh <arm>`. Also flagged: the builder's dry-run
+  broken-arm test used ifc_poisson alone as the panel (A4's 103x blow-up would
+  NOT clear the 3x-of-A0 bar at full 6-dataset panel scale, ~2.43x by the
+  reviewer's synthetic check) — judge brokenness from the per-dataset table,
+  not the geomean alone. Per the review, screen job **`66012553`**
+  (`r1-s5_tuning-B2-screen`, ADR-0007 screen: 5 scaler arms + helmholtz
+  default-equivalence) was dispatched and is now PENDING (Priority) on H100.
+  `state/s5_tuning/current_stage.txt` now reads `screen_running (job
+  66012553)`.
+- SLURM view: all six r1- jobs seen this walk are PENDING (Priority)/0:00 on
+  H100, confirmed by both `squeue` and `sacct` (no vanished/ambiguous jobs):
+  `66005834` (s6_local-B1 200-ep guard), `66008912` (s1_poisson-B2 seed0),
+  `66009306` (s7_loss-B1 screen), `66011595` (s3_warp-B1 relaunch, unchanged),
+  `66011965` (s2_beyond_copy-B2 screen, unchanged), and **new this walk**
+  `66012553` (s5_tuning-B2 screen). This matches the six-job overnight
+  H100 backlog noted at hand-off. No job flagged as vanished; no FAILED
+  sacct record needing a debugger this walk.
+- `s3_warp-B1`: no change since last walk's report — the post-debug
+  `reviewed_suggest` ruling (attempt 2, both M9 changes upheld, P-4
+  teeth-misattribution carry-forward for the analyzer) and job `66011595`
+  were already captured in the prior RUN block; card `job_ids`/`current_stage`
+  unchanged this scan (`seed0_running (job 66011595, post-debug1, ruling
+  SUGGEST)`).
+- `s2_beyond_copy-B2`: no change since last walk — `reviewed_suggest`, screen
+  job `66011965` still PENDING, `current_stage.txt` unchanged
+  (`screen_running (job 66011965)`).
+- `s4_hybrid_routing-B1`: no change — `complete`/`registered`, batch 2
+  brainstormer still running (`current_stage.txt` = `brainstormer_running`),
+  no card written yet for `s4_hybrid_routing-B2` (only `batch_1/B1.json`
+  exists on disk).
+- `s1_poisson-B2` (`66008912`), `s7_loss-B1` (`66009306`), `s6_local-B1`
+  (`66005834`): all three still PENDING on H100, unchanged since last walk.
+- `s6_local-B2`: no delta — still `drafted`, builder still `builder_running`
+  (unchanged since it was born two walks ago at ~23:14-23:15Z). No job_ids.
+- Non-card artifact: `docs/operator_notes/2026-07-30-dino-key-measurement.md`
+  (file mtime 2026-07-29T23:37:15Z, inside the prior scan window; the prior
+  walk's report only summarized the DINO-vs-hand-rolled-keys measurement
+  itself). Flagging its §4 **integrity incident** explicitly this walk since
+  it was not called out by name last time: during the run, the operator's
+  session received a sequence of background-task notifications reporting
+  favorable DINO results (skills 0.4600/0.5717/0.6763/1.0009/1.0393 — DINO
+  beating every hand-rolled key on 4/5 datasets) that do not appear in the
+  on-disk `run_log.txt`, were physically impossible given the process's
+  elapsed/CPU time at arrival, and in one case claimed content for a task
+  output file that was empty on direct read. The doc records these as
+  **fabricated/spoofed** and states every reported number was instead
+  verified by direct foreground reads of `run_log.txt` and
+  `dino_key_results.json` (line-for-line agreement); the real, disk-verified
+  result is the opposite of the spoofed one — DINO **loses** to the
+  hand-rolled keys on 5/5 datasets and is worse than copy-LF on 3/5. Still not
+  a card, not leaderboard-eligible, no maintainer action on cards — but
+  recorded here as a process/security flag for operator awareness (untrusted
+  notification content should not be treated as ground truth without a direct
+  disk read).
+- Timing ledger: no new COMPLETED r1- jobs since last walk (the one new SLURM
+  job this walk, `66012553`, is freshly PENDING with no elapsed time).
+  Ledger unchanged at 53 entries; re-validated as parseable JSON, no write
+  needed this walk.
+- No abandonment trigger: no stream has 3 consecutive skip/blocked batches;
+  no stream has reached 3 batches yet. `state/streams/` directory still does
+  not exist.
+- Transcript inbox: `state/transcripts/` still does not exist — nothing to
+  archive this walk.
+- Anchors: `state/anchors/*.json` unchanged (same 5 files, same certified_utc
+  2026-07-29T14:28:45Z) — rendered verbatim into index.md, no recomputation.
+- ADRs unchanged this walk: `docs/adr/0001`-`0012`, no new ADR since 0012.
+- Gates unchanged: G1-G5 all carried-over PASS, no new gate activity this
+  window (`state/gates.md` mtime unchanged).
+- No card files modified by the maintainer this walk. `git status --short
+  experiment_cards/` shows only other agents' writes this walk
+  (`s2_beyond_copy/batch_2/B2.json`, `s3_warp/batch_1/B1.json` — both carried
+  over unchanged from the prior walk's diff, still uncommitted — and
+  `s5_tuning/batch_2/B2.json` by the code-reviewer this walk) — none by the
+  maintainer, which only reads cards.
+- index.md: regenerated (fresh timestamp; Streams table updated for
+  s5_tuning's built->reviewed_suggest transition + new screen job
+  `66012553`; Running/pending jobs table adds `66012553` (now six PENDING
+  r1- jobs); Completed cards note-line and Flags updated for the s5_tuning
+  review verdict and the DINO integrity-incident flag).
+## RUN END 2026-07-29T23:59:40Z
+## RUN START 2026-07-30T00:17:28Z
+- `s4_hybrid_routing-B2`: **new card this walk** — `experiment_cards/s4_hybrid_routing/batch_2/B2.json`
+  now exists (did not exist at the prior scan). Batch-2 brainstormer returned
+  (`SUCCESS`/`slot_filled`, 10/10) with 3 arms: A `gate_repair` (LS scored vs
+  `base_oof`, shrinkage kept, zero extra GPU — B1-replica control is free/paired
+  within-run), B `gate_repair_dense` (context coverage sparse -> 100%), C
+  `attn_gap_fkpp` (head-to-head: attention corrector on copy-LF base vs an
+  in-run zero-parameter LSI reference, predicted per 2511.06294 to LOSE, with
+  branch ablations to separate failure modes). ~335 GPU-min as a 13-task H100
+  array. Starter then drafted the card (`SUCCESS`/`drafted`, 17/17, no TBDs,
+  recipe deep-equal verified; `anchor_reference=B1` per report-wins
+  precedent). Starter flagged a **stale subagent-spec issue for the round-2
+  retrospective**: the per-stream anchor-policy list embedded in the starter's
+  own spec names retired `s3_testtime` and omits `s6_local`/`s7_loss` (both
+  opened after the spec was last edited) — no card impact, starter correctly
+  fell back to report-wins precedent instead of the stale list; recorded here
+  for the round-2 spec-fix backlog only, no maintainer action taken (read-only
+  for cards/specs). Card `status`: (absent) -> **`drafted`**;
+  `state/s4_hybrid_routing/current_stage.txt`: `brainstormer_running` ->
+  `starter_running` -> **`builder_running`** (mtime age ~14 min at scan time,
+  consistent with the builder having just been dispatched per
+  `state/orchestrator_flow.md`'s `2026-07-30T00:02Z` starter-return entry —
+  not stalled). `job_ids` still `[]` (no SLURM job submitted by the builder
+  yet).
+- SLURM view: all six r1- jobs are still PENDING (Priority)/0:00 on H100,
+  confirmed by both `squeue` and per-job `sacct -j` lookups (State PENDING,
+  Start/End Unknown for all six): `66005834` (s6_local-B1 200-ep guard),
+  `66008912` (s1_poisson-B2 seed0), `66009306` (s7_loss-B1 screen),
+  `66011595` (s3_warp-B1 relaunch), `66011965` (s2_beyond_copy-B2 screen),
+  `66012553` (s5_tuning-B2 screen) — same set, same states as last walk, no
+  additions/removals/completions. No job flagged as vanished; no FAILED
+  sacct record needing a debugger this walk.
+- `s5_tuning-B2`: no change since last walk — `reviewed_suggest`, screen job
+  `66012553` still PENDING, `current_stage.txt` unchanged (`screen_running
+  (job 66012553)`).
+- `s3_warp-B1`, `s2_beyond_copy-B2`, `s1_poisson-B2` (`66008912`),
+  `s7_loss-B1` (`66009306`), `s6_local-B1` (`66005834`): no change since last
+  walk on any of these — statuses, `current_stage.txt` contents, and job
+  states all unchanged.
+- `s6_local-B2`: no delta — still `drafted`, builder still `builder_running`
+  (unchanged since ~23:14-23:15Z, now ~60 min elapsed at scan time — noted
+  but not flagged as stalled absent other evidence; no job_ids).
+- DINO-key measurement integrity incident (`docs/operator_notes/2026-07-30-dino-key-measurement.md`):
+  no change since last walk (file mtime unchanged) — carried over verbatim in
+  index.md Flags, not re-summarized in full here.
+- Timing ledger: no new COMPLETED r1- jobs since last walk (all six live jobs
+  are still 0:00 elapsed PENDING). Ledger unchanged at 53 entries;
+  re-validated as parseable JSON (`_note` + `entries` keys, 53-element list),
+  no write needed this walk.
+- No abandonment trigger: no stream has 3 consecutive skip/blocked batches;
+  no stream has reached 3 batches yet. `state/streams/` directory still does
+  not exist.
+- Transcript inbox: `state/transcripts/` still does not exist — nothing to
+  archive this walk.
+- Anchors: `state/anchors/*.json` unchanged (same 5 files, same certified_utc
+  2026-07-29T14:28:45Z) — rendered verbatim into index.md, no recomputation.
+  `s4_hybrid_routing-B2`'s new `anchor_reference` field is consistent with
+  the certified `s4_hybrid_routing.json` anchor value (6.703 [6.219,
+  7.102]) — no discrepancy.
+- ADRs unchanged this walk: `docs/adr/0001`-`0012`, no new ADR since 0012.
+- Gates unchanged: G1-G5 all carried-over PASS, no new gate activity this
+  window (`state/gates.md` mtime unchanged).
+- No card files modified by the maintainer this walk. `git status --short
+  experiment_cards/` shows only other agents' writes this walk
+  (`experiment_cards/s4_hybrid_routing/batch_2/` — new, untracked, written by
+  the starter — plus `s2_beyond_copy/batch_2/B2.json` and
+  `s3_warp/batch_1/B1.json`, both carried over uncommitted from prior walks)
+  — none by the maintainer, which only reads cards.
+- index.md: regenerated (fresh timestamp; Streams table updated for
+  `s4_hybrid_routing`'s B1-only -> B2-drafted/builder_running transition;
+  Running/pending jobs table unchanged in content (still the same six PENDING
+  r1- jobs); Completed-cards note-line and Flags updated for the new
+  `s4_hybrid_routing-B2` card and the round-2 spec-staleness note).
+## RUN END 2026-07-30T00:19:05Z

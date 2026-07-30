@@ -1715,3 +1715,37 @@ to LOSE per 2511.06294, with branch ablation to separate the failure modes).
 pfc's one-sided upward bias priced BOTH ways (worst case 7.35 < crater).
 Zero novelty claimed for A/B; routing not proposed. ~335 GPU-min as a 13-task
 array. Stage → starter_running; dispatching.
+
+## Starter return — s4_hybrid_routing-B2 — 2026-07-30T00:02Z
+
+SUCCESS / drafted (17/17, no TBDs; recipe deep-equal verified; anchor_
+reference=B1 per report-wins precedent, starter correctly flagged the stale
+subagent-spec list — noted for a round-2 spec fix: the per-stream anchor
+policy list in the starter spec names retired s3_testtime and omits s6/s7).
+Stage → builder_running; dispatching builder.
+
+## Pulse — 2026-07-30T00:04Z
+
+pulse: no-op. Six jobs PENDING (overnight H100 backlog); two builders in
+flight (s4-B2, s6-B2). Fully pipelined; queue-bound.
+
+## Pulse — 2026-07-30T00:14Z
+
+pulse: no-op. Queue unchanged (6 PENDING). Builders s4-B2/s6-B2 in flight.
+
+## Pulse — 2026-07-30T00:24Z
+
+pulse: no-op. Unchanged: 6 PENDING jobs, s4-B2/s6-B2 builders in flight.
+
+## Builder return — s6_local-B2 — 2026-07-30T00:27Z
+
+SUCCESS / built (10/10). Commit caff5c9. Pins verified pre-edit; padding
+plumbing proven BIT-PRESERVING (state-dict sha equality across padding modes
+and shapes → b1_replica has B1's exact init/forward at zeros). V2 DECIDED at
+contract tier: lsi_ctrl is epoch-independent, reproduces B1-F6 bit-exactly on
+all four defect datasets, n_params=0, helmholtz alpha=0. Identity floors 9/9
+exact; C3 pairing bit-verified; resume drilled 4 ways + 6 negative tests.
+INNOVATION: arm_env.sh generates the 35-knob env from the card (screen/sweep
+cannot drift). Deviations sane (recipe's own 04:00:00; V1/V2 adjudicated
+post-hoc by 02_verify_gates.py exit-2-ALGO so a gate failure doesn't destroy
+the sweep's numbers). Stage → review_running; dispatching reviewer.
