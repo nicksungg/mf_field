@@ -69,7 +69,15 @@ def render_card(c):
             per_arm = geo.get("per_arm")
             geo = geo.get("mean", "?")
             if per_arm:
-                geo = f"{geo} (arms: " + ", ".join(f"{k} {v:.3g}" for k, v in per_arm.items()) + ")"
+                def fmt_arm(v):
+                    if isinstance(v, (int, float)):
+                        return f"{v:.3g}"
+                    if isinstance(v, dict):
+                        for key in ("mean", "value", "geomean", "skill"):
+                            if isinstance(v.get(key), (int, float)):
+                                return f"{v[key]:.3g}"
+                    return one_line(v, 40)
+                geo = f"{geo} (arms: " + ", ".join(f"{k} {fmt_arm(v)}" for k, v in per_arm.items()) + ")"
         bits = []
         if geo is not None:
             bits.append(f"panel geomean skill {geo}")
