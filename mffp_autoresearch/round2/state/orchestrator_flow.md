@@ -196,3 +196,22 @@
   lambda blend repairs decoder damage. Lanthaler POD-failure prediction fired only on SMOOTH
   helmholtz (408x ||y|| spread — amplitude effect). -> turn 2 dispatched (H1 closed-form head
   vs H2 lambda predictor).
+
+- 2026-07-31 ~13:4x PDT r2s2-B1 panel job COMPLETED (66166237; guard 66166238 completed
+  earlier). -> initial-analyzer dispatched (unpaired-ifc + A2-A3 upper-bound caveats
+  forwarded; oracle ceiling 0.3306 context).
+
+- 2026-07-31 ~14:1x PDT r2s1-B1 mechanism turn 2 (7/7): 156-param closed-form head geomean
+  19.0553 vs shipped 15.9M-param 19.6444 — delta 0.59 = 0.52x mce -> capacity buys nothing
+  measurable (1e5 compression); tiny head's edge is allen_cahn alone (LODO sign-flip);
+  amplitude head = re-centering effect (helmholtz 3.82x from geometric centering, ratio
+  ||mean||/geomean||y|| orders it); falsification leg-1 verdict noise-decided (tiny head
+  under identical protocol would NOT have fired). -> turn 3 dispatched (pfc phase DOF).
+
+- 2026-07-31 ~14:3x PDT r2s2-B1 initial-analyzer SUCCESS (6/6): geomean 14.0756 single-seed BUT
+  artifact of degraded ifc column — on 5 paired datasets frozen 19.1843 vs emul_only 19.1863
+  (delta 0.002, 15x below floor): STACKING ADDS NOTHING beyond the emulator at seed 0; S2:
+  corrector+real-LF near-perfect vs pseudo-LF 0.24-0.46 -> all stack error is emulator error.
+  Falsification 'confirmed' only via AND-clause semantics (sub-test failed resolvably —
+  brainstormer B2 should re-clause). CALM-PDE e2e prediction inverted on panel, held on guard.
+  Guards all improve (no flags). -> mechanism-analyzer dispatched.

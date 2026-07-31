@@ -114,7 +114,7 @@
       ]
     }
   },
-  "status": "running",
+  "status": "analyzing",
   "skipped_reason": null,
   "reopen_candidate": false,
   "scripts_path": {
@@ -167,7 +167,272 @@
     }
   ],
   "debug_notes": [],
-  "5_actual_result": null,
+  "5_actual_result": {
+    "provisional_single_seed": true,
+    "seeds_available": [
+      0
+    ],
+    "scored_arm": "frozen",
+    "source_result_json": "mffp_autoresearch_outputs/round2/r2s2_stacked/B1/eval/result_panel_s0.json",
+    "source_guard_json": "mffp_autoresearch_outputs/round2/r2s2_stacked/B1/eval/result_guard_s0.json",
+    "source_diag_jsons": "mffp_autoresearch_outputs/round2/r2s2_stacked/B1/eval/diag_<dataset>_e200_s0.json (9 files: 6 panel + 3 guard)",
+    "nrmse_def_hash": "d3d0ade9191c13bacc40702f3eb26ad290e01641cacee22a1d2233b74c035850",
+    "nrmse_def_hash_consistency": "VERIFIED identical across result_panel_s0.json, result_guard_s0.json, all 9 diag_*_e200_s0.json, eval/copylf_baselines.json (_nrmse_def_hash), state/anchors/floors.json (_nrmse_def_hash) and state/noise_floor.json (_provenance.nrmse_def_hash). copylf_def_hash 9753ff24e856f595748492dec6cb6c215d748f97e8ec4a679b651f8846da907a likewise identical across panel, guard and copylf_baselines.json.",
+    "per_dataset": {
+      "ext__helmholtz_2d": {
+        "per_seed_nrmse": [
+          0.8417984791014288
+        ],
+        "per_seed_skill": [
+          2.8150663404812617
+        ],
+        "mean_skill": 2.8150663404812617,
+        "ci95": null,
+        "reference_type": "copylf",
+        "cached": false,
+        "split": "test_hf",
+        "metric_source": "per_sample_mean"
+      },
+      "sharp__phase_field_crystal_2d": {
+        "per_seed_nrmse": [
+          0.3502572436627949
+        ],
+        "per_seed_skill": [
+          47.45532476928962
+        ],
+        "mean_skill": 47.45532476928962,
+        "ci95": null,
+        "reference_type": "copylf",
+        "cached": false,
+        "split": "test_hf",
+        "metric_source": "per_sample_mean"
+      },
+      "sharp__allen_cahn_2d": {
+        "per_seed_nrmse": [
+          0.26313157457386016
+        ],
+        "per_seed_skill": [
+          147.76311458141421
+        ],
+        "mean_skill": 147.76311458141421,
+        "ci95": null,
+        "reference_type": "copylf",
+        "cached": false,
+        "split": "test_hf",
+        "metric_source": "per_sample_mean"
+      },
+      "sharp__fisher_kpp_2d": {
+        "per_seed_nrmse": [
+          0.2503430023417364
+        ],
+        "per_seed_skill": [
+          11.671272513742993
+        ],
+        "mean_skill": 11.671272513742993,
+        "ci95": null,
+        "reference_type": "copylf",
+        "cached": false,
+        "split": "test_hf",
+        "metric_source": "per_sample_mean"
+      },
+      "sharp__cahn_hilliard": {
+        "per_seed_nrmse": [
+          0.47149238241133995
+        ],
+        "per_seed_skill": [
+          11.278922643602497
+        ],
+        "mean_skill": 11.278922643602497,
+        "ci95": null,
+        "reference_type": "copylf",
+        "cached": false,
+        "split": "test_hf",
+        "metric_source": "per_sample_mean"
+      },
+      "ifc_poisson": {
+        "per_seed_nrmse": [
+          0.10773813449229344
+        ],
+        "per_seed_skill": [
+          2.9927259581192627
+        ],
+        "mean_skill": 2.9927259581192627,
+        "ci95": null,
+        "reference_type": "paper_bar",
+        "cached": false,
+        "split": "test_hf",
+        "metric_source": "per_sample_mean",
+        "semantics_degraded": true,
+        "degradation_source": "diag_ifc_poisson_e200_s0.json: pairing.paired_real_lf=false, max_abs_cond_deviation_lf_vs_hf=0.6819199770689011 (n_hf_train=5, n_lf=20); dc_fit_source='pseudo_lf(unpaired_real_lf)'; arms.frozen.arm_semantics_degraded=true; arms.condmean_lf.arm_semantics_degraded=true; attribution.valid=false. Per code-reviewer F7 the finetuned arm must ALSO be read as degraded here."
+      }
+    },
+    "ci95_note": "seeds_available=[0]; a stratified percentile bootstrap CI over seeds is undefined at n=1, so every ci95 is null. Resolvability is judged instead against the CERTIFIED per-dataset noise floor in state/noise_floor.json (r2s4_diag-B1, family r2s4_cert_min, 3 seeds), field min_claimable_effect.",
+    "panel_geomean_skill": {
+      "per_seed": [
+        14.075550841266724
+      ],
+      "mean": 14.075550841266724,
+      "ci95": null
+    },
+    "vs_anchor": {
+      "anchor_source": "state/anchors/r2s2_stacked.json (anchor_type=best_floor_panel_geomean, provisional=false)",
+      "anchor_value": 23.063616857615774,
+      "delta": -8.988066016349049,
+      "direction": "lower skill is better; negative delta = the stack beats the anchor",
+      "beyond_ci": null,
+      "beyond_ci_note": "not computable at n=1 seed",
+      "beyond_noise_floor": true,
+      "noise_floor_used": 1.1418668211296108,
+      "noise_floor_source": "state/noise_floor.json::_panel_geomean.min_claimable_effect (certified, r2s4_diag-B1)",
+      "per_dataset_delta_vs_anchor_floor": {
+        "ext__helmholtz_2d": -0.52904321824137,
+        "sharp__phase_field_crystal_2d": -12.356429725515583,
+        "sharp__allen_cahn_2d": -121.43276117737546,
+        "sharp__fisher_kpp_2d": -0.3218381193565261,
+        "sharp__cahn_hilliard": -11.901419583515017,
+        "ifc_poisson": -7.062164971490424
+      },
+      "supplementary_vs_r2s4_condition_to_hf": {
+        "note": "NOT the anchor. state/noise_floor.json's per-dataset `mean_skill` is the 3-seed mean of the r2s4_cert_min minimal condition->HF model at the same 200-epoch tier, so it is the closest available like-for-like no-LF-at-test comparator. Recorded for the mechanism-analyzer; single-seed vs 3-seed-mean, so read with the min_claimable_effect column.",
+        "panel_geomean_r2s4_cert_min": 19.817844731907492,
+        "delta_panel": -5.742293890640768,
+        "resolvable_panel": true,
+        "per_dataset": {
+          "ext__helmholtz_2d": {"r2s4": 6.943835485605, "delta": -4.128769145123738, "min_claimable_effect": 2.95299157437233, "resolvable": true},
+          "sharp__phase_field_crystal_2d": {"r2s4": 47.847203673185426, "delta": -0.391878903895806, "min_claimable_effect": 0.21302734961699343, "resolvable": true},
+          "sharp__allen_cahn_2d": {"r2s4": 147.31539352549365, "delta": 0.44772105592056, "min_claimable_effect": 0.8797047190126648, "resolvable": false},
+          "sharp__fisher_kpp_2d": {"r2s4": 11.558192892385529, "delta": 0.113079621357464, "min_claimable_effect": 0.0007136812826775696, "resolvable": true},
+          "sharp__cahn_hilliard": {"r2s4": 13.17806662874691, "delta": -1.899143985144413, "min_claimable_effect": 0.09124535322300886, "resolvable": true},
+          "ifc_poisson": {"r2s4": 8.261220201059428, "delta": -5.268494242940165, "min_claimable_effect": 0.9377041289531141, "resolvable": true}
+        }
+      },
+      "oracle_ceiling_context": "cross-card real-LF oracle ceiling for this stack = 0.3306 panel geomean (dc_cleaned under corrected denominators). Measured 14.0756 is ~42.6x short of that ceiling and 1.64x better than the 23.0636 launch anchor. Part 4 pre-registered 'panel geomean ~2-8' -- the measured 14.0756 is OUTSIDE (worse than) that pre-registered band."
+    },
+    "arms": {
+      "note": "score_panel.py scores only R2S2_ARM=frozen. The other four arms exist only in diag_<ds>_e200_s0.json::arms[<arm>].nrmse. Skills below are that nRMSE divided by the SAME recorded reference denominator score_panel.py used (eval/copylf_baselines.json::<ds>.test_nrmse); the identity was verified on the scored arm for all 6 panel datasets with max deviation 0.00e+00. No nRMSE was recomputed.",
+      "per_dataset_nrmse": {
+        "ext__helmholtz_2d": {"emul_only": 0.8417984791014286, "frozen": 0.8417984791014286, "finetuned": 0.8417984791014286, "end_to_end": 5.407676511408949, "condmean_lf": 1.7271003028004361},
+        "sharp__phase_field_crystal_2d": {"emul_only": 0.3502383347813625, "frozen": 0.35025724366279476, "finetuned": 0.3502383347813625, "end_to_end": 0.3718365193958925, "condmean_lf": 0.44249066317631497},
+        "sharp__allen_cahn_2d": {"emul_only": 0.26313828572364595, "frozen": 0.2631315745738601, "finetuned": 0.2626426953245293, "end_to_end": 0.2650734286098183, "condmean_lf": 1.0011161562704576},
+        "sharp__fisher_kpp_2d": {"emul_only": 0.25034671411427306, "frozen": 0.25034300234173623, "finetuned": 0.25034671411427306, "end_to_end": 0.25197500198416894, "condmean_lf": 0.257238754817957},
+        "sharp__cahn_hilliard": {"emul_only": 0.4717485244832725, "frozen": 0.4714923824113398, "finetuned": 0.4717485244832725, "end_to_end": 0.48317198016108953, "condmean_lf": 1.0020280550954146},
+        "ifc_poisson": {"emul_only": 3.132847742432302, "frozen": 0.10773813449229341, "finetuned": 0.09890841040476252, "end_to_end": 0.16710098480539526, "condmean_lf": 0.4122986287362145}
+      },
+      "per_dataset_skill_derived": {
+        "ext__helmholtz_2d": {"emul_only": 2.8150663, "frozen": 2.8150663, "finetuned": 2.8150663, "end_to_end": 18.0839139, "condmean_lf": 5.7756085},
+        "sharp__phase_field_crystal_2d": {"emul_only": 47.4527635, "frozen": 47.4553248, "finetuned": 47.4527635, "end_to_end": 50.3790184, "condmean_lf": 59.9517685},
+        "sharp__allen_cahn_2d": {"emul_only": 147.7668839, "frozen": 147.7631146, "finetuned": 147.4886258, "end_to_end": 148.8536490, "condmean_lf": 562.1827905},
+        "sharp__fisher_kpp_2d": {"emul_only": 11.6714455, "frozen": 11.6712725, "finetuned": 11.6714455, "end_to_end": 11.7473714, "condmean_lf": 11.9927724},
+        "sharp__cahn_hilliard": {"emul_only": 11.2850500, "frozen": 11.2789226, "finetuned": 11.2850500, "end_to_end": 11.5583040, "condmean_lf": 23.9702710},
+        "ifc_poisson": {"emul_only": 87.0235484, "frozen": 2.9927260, "finetuned": 2.7474559, "end_to_end": 4.6416940, "condmean_lf": 11.4527397}
+      },
+      "panel_geomean_skill_by_arm_all6": {
+        "emul_only": 24.684937,
+        "frozen": 14.075551,
+        "finetuned": 13.873240,
+        "end_to_end": 20.987882,
+        "condmean_lf": 29.362733
+      },
+      "panel_geomean_skill_by_arm_excl_ifc_poisson_5_paired": {
+        "emul_only": 19.186293,
+        "frozen": 19.184262,
+        "finetuned": 19.179061,
+        "end_to_end": 28.380958,
+        "condmean_lf": 35.446544
+      }
+    },
+    "attribution_terms_nrmse_units": {
+      "note": "diag_<ds>_e200_s0.json::attribution, in nRMSE units (NOT skill units). attribution.valid=false on ifc_poisson.",
+      "ext__helmholtz_2d": {"A1_minus_A2": 0.0, "A2_minus_A3": 0.0, "A2_minus_A4": -4.565878032307521, "A2_minus_A5": -0.8853018236990076, "emulator_error_term": 0.8177225776856314, "valid": true},
+      "sharp__phase_field_crystal_2d": {"A1_minus_A2": -1.89e-05, "A2_minus_A3": 1.89e-05, "A2_minus_A4": -0.021579, "A2_minus_A5": -0.092233, "emulator_error_term": 0.265403, "valid": true},
+      "sharp__allen_cahn_2d": {"A1_minus_A2": 7e-06, "A2_minus_A3": 0.000489, "A2_minus_A4": -0.001942, "A2_minus_A5": -0.737985, "emulator_error_term": 0.236933, "valid": true},
+      "sharp__fisher_kpp_2d": {"A1_minus_A2": 4e-06, "A2_minus_A3": -4e-06, "A2_minus_A4": -0.001632, "A2_minus_A5": -0.006896, "emulator_error_term": 0.257999, "valid": true},
+      "sharp__cahn_hilliard": {"A1_minus_A2": 0.000256, "A2_minus_A3": -0.000256, "A2_minus_A4": -0.01168, "A2_minus_A5": -0.530536, "emulator_error_term": 0.464909, "valid": true},
+      "ifc_poisson": {"A1_minus_A2": 3.02511, "A2_minus_A3": 0.00883, "A2_minus_A4": -0.059363, "A2_minus_A5": -0.30456, "emulator_error_term": 0.082152, "valid": false}
+    },
+    "sidecars": {
+      "S1_emulator_field_error_nrmse_lfhat_vs_lf_native": {
+        "ext__helmholtz_2d": 0.8177225776856314,
+        "sharp__phase_field_crystal_2d": 0.26540322561347757,
+        "sharp__allen_cahn_2d": 0.23693334791916537,
+        "sharp__fisher_kpp_2d": 0.2579986719794943,
+        "sharp__cahn_hilliard": 0.46490903467334743,
+        "ifc_poisson": 0.08215184408491794
+      },
+      "S2_oracle_realLF_vs_pseudoLF_on_train_heldout_slice": {
+        "note": "same frozen corrector, same held-out TRAIN slice, real LF vs pseudo-LF input. No test array touched.",
+        "ext__helmholtz_2d": {"realLF": 0.1400016486129328, "pseudoLF": 0.8175372182480235, "copylf_identity": 0.1400016486129328},
+        "sharp__phase_field_crystal_2d": {"realLF": 1.6807432731709443e-07, "pseudoLF": 0.26544549452547644, "copylf_identity": 0.005595392640498823},
+        "sharp__allen_cahn_2d": {"realLF": 0.00034220590062835455, "pseudoLF": 0.23633312428551223, "copylf_identity": 0.0018550561426099684},
+        "sharp__fisher_kpp_2d": {"realLF": 0.004430758630562695, "pseudoLF": 0.2512124992331504, "copylf_identity": 0.021565399065820345},
+        "sharp__cahn_hilliard": {"realLF": 0.005899298227070683, "pseudoLF": 0.46379424233457656, "copylf_identity": 0.008375297110233016},
+        "ifc_poisson": {"skipped": "no index-aligned real train LF on this dataset (V6b)"}
+      }
+    },
+    "validity_gates": "V1-V7 read back from all 9 diag files: V1 max_abs_dev=0.0 pass on every dataset; V2 test_lf_fids=[] pass on every dataset (stripped-view compliance); V3 frozen-corrector sha256 == real-fit sha256 pass on every dataset; V4 condmean_lf max_abs_row_deviation=0.0 pass on every dataset; V5 (pre-registered PREDICTION, recorded not raised) alpha_lsi=0.0 on ext__helmholtz_2d as predicted; V6 fallback_fired=false and pseudo-LF across-sample std > 0 on every dataset (the round-1 ifc_poisson silent no-op did NOT recur); V6b paired_real_lf=true on 5/6 panel and 3/3 guard datasets, false on ifc_poisson only.",
+    "cratered_verdict": "proceed_to_seeds_1_2",
+    "cratered_reasoning": "No crash (job 66166237 COMPLETED, empty .err, no NaN/Inf/traceback in the .out). Panel geomean skill 14.075551 vs cratered threshold CRATERED_SKILL_FACTOR 1.5 x anchor 23.063617 = 34.595425 -> 14.0756 < 34.5954, not cratered. The falsification clause did not fire (see falsification_verdict).",
+    "falsification_verdict": "confirmed",
+    "falsification_detail": {
+      "clause_verbatim": "On `sharp__cahn_hilliard` — the one panel dataset whose condition vector is IC-complete (16 of 19 dims are `ic_c*`) and hence the only one where the stacking premise is identifiable at all — the design is falsified if the best stack arm fails to improve on the in-job `emul_only` arm by at least 2.0 skill units and fails to beat the frozen NN-in-condition floor 23.180, both margins exceeding that dataset's provisional noise floor (spread 0.4023, min_claimable_effect 1.1604), since that would show the LF representation is not a useful bottleneck even where the emulator can in principle be accurate.",
+      "clause_structure": "a CONJUNCTION (falsified only if BOTH sub-conditions hold). It does not fire.",
+      "conjunct_1_fails_to_improve_on_emul_only_by_2.0_skill_units": {
+        "holds": true,
+        "best_stack_arm": "frozen",
+        "best_stack_arm_skill": 11.278922643602497,
+        "emul_only_skill": 11.28505001007303,
+        "improvement_skill_units": 0.0061273664705332465,
+        "threshold": 2.0,
+        "certified_min_claimable_effect_for_this_dataset": 0.09124535322300886,
+        "reading": "the improvement 0.0061 is 326x below the clause's 2.0 threshold AND 15x below the certified noise floor 0.0912 -- i.e. the stack's own corrector contributes NOTHING resolvable over its internal emulator floor on the claim-bearing dataset."
+      },
+      "conjunct_2_fails_to_beat_the_nn_in_condition_floor_23.180": {
+        "holds": false,
+        "best_stack_arm_skill": 11.278922643602497,
+        "floor": 23.180342227117514,
+        "floor_source": "state/anchors/r2s2_stacked.json::per_dataset.sharp__cahn_hilliard (arm nn_condition); identical value in state/anchors/floors.json",
+        "margin_skill_units": 11.901419583515017,
+        "certified_min_claimable_effect_for_this_dataset": 0.09124535322300886,
+        "reading": "beats the floor by 11.90 skill units, 130x the certified noise floor. Decisive."
+      },
+      "verdict_reading": "NOT falsified, but only because the clause is an AND. The substantive stacking premise it was written to test -- that the LF representation is a useful bottleneck -- FAILED its own sub-test by a resolvable margin: conjunct 1 holds decisively. What survives is the EMULATOR, not the STACK: the whole margin over the NN-in-condition floor is produced by the condition->pseudo-LF emulator (emul_only skill 11.2850 already beats the 23.180 floor), and the frozen defect corrector adds 0.0061 skill units on top. The mechanism-analyzer should treat 'confirmed' as 'the pre-registered clause did not fire', NOT as 'stacking works'."
+    },
+    "guard_flags": [],
+    "guard_detail": {
+      "job": "66166238 (separate --datasets guard invocation, smoke tier 200, seed 0), COMPLETED, 00:07:03",
+      "rule": "flag any guard dataset whose nRMSE regressed > 2x vs eval/copylf_baselines.json's recorded guard reference",
+      "guard_panel_geomean_skill": 0.2792056970576731,
+      "per_dataset": {
+        "fluid": {"nRMSE": 0.0818526385513545, "recorded_reference_nrmse": 0.21805958171115042, "ratio_to_reference": 0.3753682269269848, "reference_type": "copylf", "flag": false},
+        "heat_local": {"nRMSE": 0.0010879030522991148, "recorded_reference_nrmse": 0.00240152155999517, "ratio_to_reference": 0.4530057403695776, "reference_type": "copylf", "flag": false},
+        "sharp__sod_1d": {"nRMSE": 0.004235558615011481, "recorded_reference_nrmse": 0.03309017650048946, "ratio_to_reference": 0.12800048422071214, "reference_type": "copylf", "flag": false}
+      },
+      "reading": "zero regressions -- every guard dataset IMPROVES on its copy-LF reference (max ratio 0.453, i.e. all three guard datasets achieve skill < 1 with no LF at test). Note this is the opposite regime from the panel: on the guard set the defect corrector does substantial work (fluid emul_only 0.2173 -> frozen 0.0819; heat_local 0.0028 -> 0.0011; sod_1d 0.0330 -> 0.0042) and end_to_end is the BEST arm on all three (0.0397 / 0.000747 / 0.003009)."
+    },
+    "anomalies": [
+      "PRIMARY-ARM CAVEAT (code-reviewer F9, verified by opening diag_ifc_poisson_e200_s0.json): the panel result JSON carries NO degradation flag. ifc_poisson's ladder is UNPAIRED (pairing.paired_real_lf=false, max|dX|=0.6819, n_hf_train=5 vs n_lf=20), so the scored `frozen` arm's corrector there was fit on PSEUDO-LF, not real LF (dc_fit_source='pseudo_lf(unpaired_real_lf)'), and attribution.valid=false. The PRIMARY arm's panel geomean 14.0756 therefore mixes 5 real-LF-fit columns with 1 pseudo-LF-fit column.",
+      "THE ENTIRE PANEL-GEOMEAN GAIN OF THE STACK OVER ITS OWN EMULATOR FLOOR COMES FROM THAT ONE DEGRADED COLUMN. All-6 geomeans: emul_only 24.6849 -> frozen 14.0756 (a 1.75x apparent gain). Excluding ifc_poisson (the 5 paired datasets): emul_only 19.1863 -> frozen 19.1843, a gain of 0.002 skill units (0.01%), far below the certified panel min_claimable_effect 1.1419. On ifc_poisson alone emul_only 87.02 -> frozen 2.99, and there `frozen` is not frozen.",
+      "REVIEWER CAVEAT F6 CONFIRMED FALSE-AT-TIER: the two in-code strings claiming 'the A2-A3 shift estimator is identically zero' on unpaired data are FALSE at the 200-epoch tier, as the reviewer predicted. Measured on ifc_poisson: frozen 0.10773813 vs finetuned 0.09890841, attribution.shift_penalty_A2_minus_A3 = 0.00883 (nonzero). Those strings are still emitted verbatim in diag_ifc_poisson_e200_s0.json::arms.frozen.degradation and arms.condmean_lf.degradation -- DO NOT QUOTE THEM. The operative guard is attribution.valid=false.",
+      "REVIEWER CAVEAT F8 CARRIED: the arms are NOT epoch-matched on ANY dataset. A2 frozen = 100 emulator + 100 DC = 200 optimizer epochs (diag.budget: emulator 100, corrector 50, gate 50); A3 finetuned and A4 end_to_end each spend a further E_dc = 100. Therefore every A2-A3 number in this card is an UPPER BOUND on the distribution-shift penalty, confounded with a 50% larger optimization budget on the A3 side.",
+      "REVIEWER CAVEAT F7 CARRIED: on ifc_poisson the `finetuned` arm is NOT flagged arm_semantics_degraded in the diag (only frozen and condmean_lf are), but its stated role is equally void there. Read A3's flag as true on ifc_poisson.",
+      "REVIEWER CAVEAT F5 CARRIED: arm A1 emul_only uses the round-1 FNO2d backbone vendored byte-identical, predicting a coarse field plus a corrected upsample. It is a legitimate INTERNAL floor but NOT a substitute for r2s1's from-scratch direct condition->HF models in any cross-stream framing.",
+      "S2 ORACLE SIDECAR -- the single most informative measurement in the job. Fed REAL LF on the same held-out TRAIN slice, the SAME frozen corrector reaches nRMSE 1.7e-07 (pfc), 3.4e-04 (allen_cahn), 4.4e-03 (fisher_kpp), 5.9e-03 (cahn_hilliard); fed PSEUDO-LF it reaches 0.2654 / 0.2363 / 0.2512 / 0.4638 on the identical slice. The corrector is essentially exact given real LF; ~100% of the stack's error is emulator error. (helmholtz is the exception: realLF oracle 0.1400 == its copy-LF identity 0.1400 because alpha_lsi self-selected to 0 there.)",
+      "CORRECTOR GATED OFF OR NEAR-NULL ON EVERY PAIRED PANEL DATASET. helmholtz: alpha_lsi=0.0 (pre-registered V5 prediction confirmed) and emul_only/frozen/finetuned are bit-identical at nRMSE 0.8417984791014286. pfc/allen_cahn/fisher_kpp: alpha_lsi=1.0 but |A1-A2| <= 1.9e-05 nRMSE. cahn_hilliard: alpha_lsi=0.8555, |A1-A2| = 2.56e-04 nRMSE (0.0061 skill units).",
+      "CALM-PDE SEC 4.3 DIRECTION INVERTED ON THE PANEL: the card pre-registered A4 <= A2. Measured A4 is WORSE than A2 on all 6/6 panel datasets (A2-A4 negative everywhere; helmholtz most extreme, 2.8151 -> 18.0839 skill). But on the guard set the direction holds and A4 is the best arm on all 3/3. The split tracks N_train (panel 5-400, guard 256-1024) and whether the corrector does any work at all.",
+      "PART-4 ADR r2-0003 PREDICTION 'A2 - A5 ~ 0' HOLDS ONLY ON fisher_kpp (11.6713 vs 11.9928, A2-A5 = -0.0069 nRMSE). It is CONTRADICTED on allen_cahn (147.76 vs 562.18) and pfc (47.46 vs 59.95), where the emulated per-sample LF field carries large information beyond the constant train-mean LF. Note condmean_lf on allen_cahn (562.18) reproduces that dataset's train_mean floor (562.03) almost exactly, confirming A5 collapses to the conditional-mean predictor there while A2 does not.",
+      "PART-4 LANDING BAND MISSED: part 4 pre-registered 'panel geomean ~ 2-8'; measured 14.0756. The two datasets that overshot the prediction are allen_cahn (147.76, predicted 'at or near the train_mean floor' -- it is 3.8x BETTER than that floor) and pfc (47.46).",
+      "NO TRAINING ANOMALIES. Panel job 66166237 and guard job 66166238 both COMPLETED on hpc-sm-01-04 (NVIDIA H200); both .err files are 0 bytes; grep over both .out files for nan/inf/error/traceback/preempt/resume/fail returns only the literal env key R2S2_EMU_ERROR_SIDECAR. No preemption, no resume-from-checkpoint event, no NaN. All 9 per-dataset results have cached=false (fresh compute)."
+    ],
+    "wall_clock_per_seed_min": [
+      20.13
+    ],
+    "wall_clock_detail": {
+      "panel_job_66166237": {"elapsed": "00:20:08", "minutes": 20.13, "state": "COMPLETED", "start_utc_local": "2026-07-31T09:55:18", "end_utc_local": "2026-07-31T10:15:26", "node": "hpc-sm-01-04", "gpu": "NVIDIA H200", "maxrss_kb": 4326340, "requested_time": "04:00:00"},
+      "guard_job_66166238": {"elapsed": "00:07:03", "minutes": 7.05, "state": "COMPLETED", "start_utc_local": "2026-07-31T09:55:18", "end_utc_local": "2026-07-31T10:02:21", "node": "hpc-sm-01-04", "maxrss_kb": 3281160},
+      "for_the_timing_ledger": "6-dataset panel x 200 epochs x 5 arms in 20.13 min on one H200 (8.4% of the 4 h request); 3-dataset guard in 7.05 min. Seeds 1 and 2, if ever run, should be budgeted at ~21 min each."
+    },
+    "anchor_action": "state/anchors/r2s2_stacked.json NOT modified. Section 2e requires a 3-seed result to establish or beat a stream anchor; this is a single-seed (seed 0) invocation, and the standing anchor is a training-free-floor anchor (provisional=false) that is not superseded by a 1-seed model result."
+  },
   "6_analysis": null,
   "7_gap_and_future": null,
   "reanalysis_progress": null
