@@ -438,3 +438,41 @@
   (quote per_rung 32 not ref_linear_mf; 0.551 amplitude gain = first suspect on null;
   F2 instrument-not-capacity contrast; TIMEOUT = resubmit not ALGO). ORCHESTRATOR SUBMITTED
   seed 0: job 66185845 (h200, 17 serial legs). Card -> running.
+
+- 2026-08-01 ~02:0x PDT r2s2-B2 builder SUCCESS (10/10): build bd54bcb; smoke exit 0 (9 splits);
+  floor/upsampler/ladder-identity seams all 0.0; one TBD (k* statistic = argmin raw calib
+  nRMSE, alternative recorded); F1 oracle-ceiling-negative semantics flagged; free corrector-
+  fit-noise estimate via ladder identity. -> code-reviewer dispatched.
+
+- 2026-08-01 ~02:3x PDT r2s4-B2 mechanism turn 1 (6/6): I-vs-T dissociation EXPLAINED — aux-LF
+  target exactly as condition-unidentifiable as HF on 4/5 (aux head duplicates main task;
+  the certified "information gap" is an INPUT statement, transfer null a TARGET statement —
+  different channels); helmholtz lone harmful exception; ch miss = support failure (d_min
+  3.12 in 19d) vs fisher = aleatoric (two mechanisms one null); STRUCTURAL: lf[:n_hf] gave
+  aux head 5/170 ifc rows -> could not reach r2s3's win by construction. Fast float32
+  ceiling-tool variant staged for register promotion. -> turn 2 dispatched (helmholtz sign
+  flip; cross-ref r2s3-B2 as the direct null-supply test).
+
+- 2026-08-01 ~02:5x PDT r2s2-B2 code-reviewer SUGGEST (6/6): F1 survives oracle-negative
+  semantics via its max(3xspread,0.05) margin (analyzer must substitute M1b spread + say so);
+  k* selection-variance risk (helmholtz argmin picked k=1, 52% worse than k=all on test —
+  report k* stability across fold seeds); A:1≡B:1 gap = init-variance LOWER bound only.
+  ORCHESTRATOR SUBMITTED seed 0 panel 66187052 (walltime raised 2h->3h30 per reviewer
+  finding 5) + guard 66187053 (h200). Card -> running.
+
+- 2026-08-01 ~03:1x PDT r2s1-B2 builder SUCCESS (10/10, longest build ~10.1M tokens/2.8h):
+  build d844bec; smoke exit 0 (helmholtz e2 0.9327); resume both branches bit-identical;
+  3 speedups verified to 1 ulp (540s->80s); TBD: rank-statistic shipped affine+LOO with
+  r_sel divergence from tool baseline (reviewer to adjudicate L4 decidability); est 30-45
+  min runtime. LAST B2 BUILD DONE — all four batch-2 cards now built. -> code-reviewer
+  dispatched.
+
+- 2026-08-01 ~04:0x PDT r2s4-B2 mechanism turn 2 (6/6): helmholtz sign flip = unlearnable aux
+  gradient confined to fluctuation channel (60.3% of irreducible loss, 10.56x upweighted by
+  separate LF scaler; trunk UNDAMAGED — own-mean broadcast equal-or-better); helmholtz seed
+  spread 24.9x METRIC ARTIFACT (mean-of-ratios vs energy-pooled; no arm contrast decidable
+  there at 3 seeds); ifc I-leg VOID (lf[:n_hf] mispairing, 0/5 nearest — why I2/I1=0.905).
+  -> turn 3 dispatched (N-scaling law + part 6).
+
+- 2026-08-01 ~04:2x PDT r2s3-B2 seed 0 COMPLETED (66185845, ~45 min, 17 legs). -> initial-
+  analyzer dispatched (reviewer carry-forwards + r2s4-B2 cross-stream context forwarded).
