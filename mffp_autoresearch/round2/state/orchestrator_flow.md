@@ -392,3 +392,21 @@
   open as measurement. STANDING PROCESS RULE (2nd occurrence): arXiv /pdf/ fetches fabricate
   content — always /abs/ or /html/ (added to future websearcher dispatch prompts).
   -> B2 brainstormer dispatched with fork A/B/calibration/skip options.
+
+- 2026-07-31 ~22:3x PDT r2s2-B2 brainstormer SUCCESS (12/12): diagnostic card
+  r2s2_correctability — two training-free intermediate ladders (oracle spectral mix +
+  test-legal kNN-LF ladder) with DC corrector refit per rung at matched steps; calibrates
+  the coherence threshold (M1), nonlinear stress test (M1c), DPI closure w/ permutation
+  null (M2), settles option A test-side (M3). Rejected: A-generative (§5.9 logic), B
+  (r2s1-B2 duplication), skip (uncalibrated export is worst outcome). -> starter dispatched.
+
+- 2026-07-31 ~22:5x PDT r2s2-B2 starter SUCCESS (14/14): B2.json drafted, no TBDs; guard leg
+  separate invocation per _note. ALL FOUR B2 SLOTS NOW DRAFTED+IN PIPELINE. -> builder
+  dispatched.
+
+- 2026-07-31 ~23:1x PDT r2s4-B2 code-reviewer SUGGEST (6/6): 3-seed ADMISSIBLE (§12.4 + B1
+  part-7 directive + operative-threshold column); reviewer recommends NORMAL SEED-0 GATE
+  (unlike B1's parallel submit) — honored. Analyzer obligations: config-table additions
+  (WORK_CAP, transductive P_bar, 2 inert knobs); fold-fixed spread must NOT overwrite
+  state/noise_floor.json without label; read only outputs eval/ (dbg_* are 2-epoch).
+  ORCHESTRATOR SUBMITTED seed 0: job 66181609 (h200). Card -> running.
