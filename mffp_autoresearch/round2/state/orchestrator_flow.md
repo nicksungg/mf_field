@@ -122,3 +122,36 @@
 - 2026-07-31 09:13 PDT: maintainer flagged r2s2 builder-card lag; orchestrator verified worktree
   mtimes — builder ACTIVE (dbg2.log/smoke_eval.py modified <1 min ago, iterating contract
   smoke on the 5-arm stack). Not stalled; no intervention. r2s4 jobs still PENDING in queue.
+
+- 2026-07-31 ~09:4x PDT r2s1 code-reviewer SUGGEST (6/6, 8 PASS findings): certificate deviation
+  judged sound/disclosed/non-biasing but NOT converged (helmholtz cert window-sensitive
+  0.000->2.013 across windows; report-only, regenerates offline — analysis-time caveat for the
+  initial-analyzer: quote allen_cahn aleatoric as a RANGE, distrust helmholtz cert). p25 TBD
+  inert. ORCHESTRATOR SUBMITTED seed 0: job 66163572 (strict 1-seed). Card -> running.
+
+- 2026-07-31 ~09:5x PDT pulse: 4 r2 jobs PENDING (Priority) on h100 gres; p100/h200 idle but
+  NOT switching tier (single-hardware-tier comparability, r1 H100 envelope finding / ADR 0005).
+  Patience over churn; revisit only if still pending in ~2h.
+
+- 2026-07-31 ~10:2x PDT r2s3 builder SUCCESS (10/10): build 0acc7cf; contract smoke exit 0;
+  ifc_poisson contract-tier arms hf_only 0.419 vs rung_native 17.49 (single-scaler confound
+  at 2 epochs — card-specified, watch item); SIGKILL mid-stage resume verified.
+  -> code-reviewer dispatched with 3 watch items.
+
+- 2026-07-31 ~10:4x PDT r2s2 builder SUCCESS (14/14): build 6b4e1d4; all 5 arms + gates V1-V7
+  green; resume verified. DISCLOSED: ifc_poisson ladder UNPAIRED (min cond distance 0.08-0.30
+  every rung; matches r2s3's independent disjoint-rungs finding) -> A2/A5 degraded with
+  arm_semantics_degraded=true + V6b gate, no silent mispairing. NOTE cross-stream: this also
+  means round-1 copylf lf[:n_hf] truncation semantics on ifc train were never valid pairs —
+  benchmark-integrity item for the round report. -> code-reviewer dispatched.
+
+- 2026-07-31 ~11:0x PDT HARDWARE TIER SWITCH (ADR r2-0004): h100 queue estimated 2026-08-07
+  (169 backlog) while 3 h200 nodes idle; scontrol update Gres -> nvidia_h200 on all 4 pending
+  jobs (zero results existed -> uniform tier preserved); ALL 4 STARTED WITHIN MINUTES
+  (r2s4 s0/s1/s2 on hpc-sm-01-04, r2s1 s0 on hpc-sm-01-15). project.yaml gres updated with
+  ADR pointer. All future submissions: SBATCH_GRES=gpu:nvidia_h200:1.
+- 2026-07-31 ~11:0x PDT r2s3 code-reviewer SUGGEST (6/6): faithful build; card-internal
+  shared-scaler confound travels as interpretation constraint (rung-8 scaler 42x vs hf_only;
+  null F1 on ifc_poisson NOT evidence LF adds nothing; B2 = per-rung scaler variant);
+  eta_min undeclared (build_notes fix); F1 epoch- but not step-matched (2nd confound).
+  ORCHESTRATOR SUBMITTED seed 0: job 66165379 (h200, verified TresPerNode). Card -> running.
