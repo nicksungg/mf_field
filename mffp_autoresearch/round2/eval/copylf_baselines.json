@@ -1,0 +1,74 @@
+{
+  "_copylf_def_hash": "9753ff24e856f595748492dec6cb6c215d748f97e8ec4a679b651f8846da907a",
+  "_notes": {
+    "comparability": "round-2 skills are NOT comparable to round-1 skills on the corrected datasets: the round-1 denominators were inflated 2.0-8.6x by the registration defect (r1 report \u00a75). r1_frozen_nrmse is recorded per dataset.",
+    "convention": "ADR r2-0001: registration ((r-1)/2 half-cell) + wrap-seam reference fixes. Periodic nested datasets use node-aligned bilinear with periodic wrap (variant C); helmholtz uses the Dirichlet interior-node map (variant E); guards/1-D keep the round-1 convention (audit: consistent).",
+    "ifc_poisson": "ifc test ships only the HF fidelity, so copy-LF is undefined on the test split; the skill reference is the published paper bar (r1 ADR 0002). skill < 1 there means 'beats the paper'.",
+    "pfc": "under a band-limited (variant D) reference pfc has no fidelity gap at all (nRMSE 3e-07); variant C is the round convention and pfc claims carry a standing caveat until the dataset is redesigned (r1 report \u00a75 fix list)."
+  },
+  "_nrmse_def_hash": "d3d0ade9191c13bacc40702f3eb26ad290e01641cacee22a1d2233b74c035850",
+  "_split": "test",
+  "ext__helmholtz_2d": {
+    "convention": "dirichlet_node",
+    "r1_frozen_nrmse": 0.3294501260438018,
+    "ratio_to_r1": 0.907673852282418,
+    "reference_type": "copylf",
+    "test_nrmse": 0.2990332650411058
+  },
+  "fluid": {
+    "convention": "legacy_cell_centred",
+    "r1_frozen_nrmse": 0.21805958171115042,
+    "ratio_to_r1": 1.0,
+    "reference_type": "copylf",
+    "test_nrmse": 0.21805958171115042
+  },
+  "heat_local": {
+    "convention": "legacy_cell_centred",
+    "r1_frozen_nrmse": 0.00240152155999517,
+    "ratio_to_r1": 1.0,
+    "reference_type": "copylf",
+    "test_nrmse": 0.00240152155999517
+  },
+  "ifc_poisson": {
+    "convention": "paper_bar",
+    "r1_frozen_nrmse": 0.036,
+    "ratio_to_r1": 1.0,
+    "reference_type": "paper_bar",
+    "test_nrmse": 0.036
+  },
+  "sharp__allen_cahn_2d": {
+    "convention": "node_aligned_periodic",
+    "r1_frozen_nrmse": 0.016151772077279084,
+    "ratio_to_r1": 0.11025206954066319,
+    "reference_type": "copylf",
+    "test_nrmse": 0.0017807662982691156
+  },
+  "sharp__cahn_hilliard": {
+    "convention": "node_aligned_periodic",
+    "r1_frozen_nrmse": 0.08765999100758841,
+    "ratio_to_r1": 0.47687619181488217,
+    "reference_type": "copylf",
+    "test_nrmse": 0.041802962686225575
+  },
+  "sharp__fisher_kpp_2d": {
+    "convention": "node_aligned_periodic",
+    "r1_frozen_nrmse": 0.06263229669603956,
+    "ratio_to_r1": 0.3424671420002869,
+    "reference_type": "copylf",
+    "test_nrmse": 0.02144950364640668
+  },
+  "sharp__phase_field_crystal_2d": {
+    "convention": "node_aligned_periodic",
+    "r1_frozen_nrmse": 0.04478044719481978,
+    "ratio_to_r1": 0.164821457206456,
+    "reference_type": "copylf",
+    "test_nrmse": 0.00738077856100695
+  },
+  "sharp__sod_1d": {
+    "convention": "legacy_cell_centred",
+    "r1_frozen_nrmse": 0.03309017650048946,
+    "ratio_to_r1": 1.0,
+    "reference_type": "copylf",
+    "test_nrmse": 0.03309017650048946
+  }
+}

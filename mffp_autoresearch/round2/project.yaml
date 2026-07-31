@@ -1,0 +1,31 @@
+# MFFP Autoresearch Round 2 — the whole config surface (Layer-A externalization).
+# All paths are relative to the repo root; agents absolutify at runtime via
+# `git rev-parse --show-toplevel` (see subagents/_shared/universal_context.md).
+# Round 2 regime: LF at train only; condition vector only at test (stripped view).
+round: round2
+paths:
+  round_root: mffp_autoresearch/round2
+  outputs_root: mffp_autoresearch_outputs/round2
+  venv: .venv
+  factory_root: mf_field/factory_mffp
+  data_root: mf_field/factory_mffp/data            # ORIGINAL datasets: offline references/floors ONLY
+  stripped_data_root: mffp_autoresearch/round2/stripped_data  # what models are pointed at (test LF absent)
+  eval_dir: mffp_autoresearch/round2/eval
+panel:
+  - ext__helmholtz_2d
+  - sharp__phase_field_crystal_2d
+  - sharp__allen_cahn_2d
+  - sharp__fisher_kpp_2d
+  - sharp__cahn_hilliard
+  - ifc_poisson
+guard_set: [heat_local, fluid, sharp__sod_1d]
+streams:
+  - {name: r2s1_direct,          class: gap,    question: "how well can condition->HF architectures built from scratch (FiLM-FNO decoders, DeepONet branch-trunk, spectral/implicit decoders) predict the HF field with no LF at test?"}
+  - {name: r2s2_stacked,         class: lever,  question: "does a condition->pseudo-LF emulator feeding the frozen round-1 DC corrector beat direct condition->HF prediction, and how much is lost to pseudo-LF distribution shift?"}
+  - {name: r2s3_lf_train_signal, class: lever,  question: "how much does LF data, available only during training (distillation, LF-pretrain->HF-finetune, auxiliary MF losses), help a condition->HF model?"}
+  - {name: r2s4_diag,            class: diag,   question: "what is the value of LF as a training signal (matched with/without arms), what does overfitting at N_hf=5 look like, and where do the training-free floors sit?"}
+seed_protocol: {seeds: [0], end_of_round_confirm: {top_k: 3, seeds: [1, 2]}, cratered_skill_factor: 1.5}  # inherited, ADR 0004 (r1)
+tiers: {contract_epochs: 2, smoke_epochs: 200, full_epochs: 2500}
+caps: {slurm_algo_attempts: 5, review_fail_attempts: 3, consecutive_skips_for_stream_abandonment: 3}
+crons: {orchestrator_pulse_min: 10, maintainer_min: 20}
+sbatch: {partition: gpu, gres: "gpu:h100:1", account: null, time_default: "02:00:00"}  # carried from r1 ADR 0005
