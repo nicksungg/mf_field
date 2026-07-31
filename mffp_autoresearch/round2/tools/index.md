@@ -63,6 +63,9 @@ tool: name, what it measures, invocation, provenance card.
 | `posthoc_repair_ladder.py` | ROUND-2: how much of a trained arm's error is LEGITIMATELY repairable without retraining — a 5-rung ladder (raw / global scale / radial low-pass / affine residual / low-pass+residual, every choice fitted on the HF TRAIN rows, each with its ORACLE twin) plus optional network AFFINE-ISATION: non-affinity remainder on a random condition design, the arm's implicit law vs the ORACLE law, the null-direction cos/gain, and ORACLE row-space-vs-null coefficient surgery | r2s3_lf_train_signal-B1 turn 3 |
 | `reachable_set_rank_audit.py` | ROUND-2: how many dimensions a TRAINED MODEL'S OUTPUT FAMILY spans (on real AND synthetic conditions), against the truth's rank and against the condition-learnable rank on the same split — plus the per-band fixed-pattern test, dictionary-vs-coefficient ORACLE projections, and the nearest-condition-neighbour band continuity that separates a STRUCTURAL ceiling from a LEARNING gap. Third axis of the identifiability triad with `condition_identifiable_rank.py` (field basis) and `affine_ladder_voi.py` (condition-side design) | r2s2_stacked-B1 turn 2 |
 | `surrogate_coherence_eligibility.py` | ROUND-2: is a stage-1 surrogate field worth feeding to a downstream corrector at all? per-band energy-weighted coherence with the target + the IN-SAMPLE ORACLE Wiener ceiling (an upper bound on ANY spatially-invariant linear stage) converted to skill units, with an ELIGIBLE / FUTILE / UNDETERMINED verdict on the r2s2-B1-measured gamma_band1 thresholds | r2s2_stacked-B1 turn 3 |
+| `ladder_pair_alignment_audit.py` | ROUND-2: are the fidelity rungs PAIRED BY CONDITION or only by ROW INDEX? training-free pre-flight for every `lf = lf[:n_hf]` construction (copy-LF reference, aux LF target, LF teacher input, residual target): paired-vs-nearest condition distance, fraction of rows paired to their nearest, and the disjoint-condition SUPPLY count the truncation discards; `--fail-on` makes it a build gate | r2s4_diag-B2 turn 2 |
+| `shrinkage_curve_anatomy.py` | ROUND-2: decomposes any shipped shrinkage curve into its LEVEL (own-mean broadcast) and its FLUCTUATION (condition response: amplitude, effective alignment, λ_opt), and reports whether an arm contrast SIGN-FLIPS between the two — schema-free curve discovery, works on any card that ships `grid` + `*_curve` | r2s4_diag-B2 turns 2-3 |
+| `condition_predictability_ceiling_fast.py` | ROUND-2: `condition_predictability_ceiling.py` with a float32 / capped-pair estimator path (imports the frozen tool unmodified; same schema), plus a `--validate` mode that runs BOTH paths and prints the difference. Use when the exact path will not finish inside a turn budget | r2s4_diag-B2 turn 1 |
 
 ---
 
@@ -2471,3 +2474,158 @@ gamma_band1 thresholds 0.95 / 0.52 are the two clusters r2s2-B1 actually
 observed, on ONE corrector family (closed-form Wiener + gated local CNN) at one
 tier; the region between them is unmeasured, and `oracle_lsi_relative_gain`
 converted to skill units is the number to act on, not the label.
+
+---
+
+## `ladder_pair_alignment_audit.py`
+
+**Measures.** Whether a dataset's fidelity rungs are paired by CONDITION or only
+by ROW INDEX, on the TRAIN split, from condition vectors alone (no fields, no
+model, seconds). Per dataset x LF rung: `max_abs_cond_mismatch_paired` (0 <=>
+index-aligned), `paired_cond_distance_mean` vs `nearest_cond_distance_mean`,
+`paired_row_is_nearest_frac`, `lf_rows_at_conditions_without_hf` (the
+disjoint-condition supply), `lf_rows_discarded_by_truncation`, and a verdict
+`PAIRED_ALIGNED | MISPAIRED | DISJOINT_SUPPLY_TRUNCATED | TOO_FEW_ROWS`.
+
+**Why.** `eval/panel_data.py::copylf_prediction` — and every family that vendors
+it — pairs rungs with `lf = lf[:n_hf]`. That is true on the five aligned/nested
+npz datasets and FALSE on the `ifc_raw` ladder. r2s4-B2's ifc arms trained
+against coarse fields belonging to unrelated parameter vectors, and the card's
+own seam check (`max_abs_diff = 0.0` against the eval layer) PASSED because both
+implementations share the same assumption. A seam check between two
+implementations of one assumption certifies nothing; this tool interrogates the
+DATA.
+
+**Read it as.** `MISPAIRED` -> no `hf - lf`, LF-target, LF-teacher or copy-LF
+number on that dataset is evidence about the value of LF in either direction;
+pair by nearest condition, gate the arm off, or drop the dataset from the
+contrast. `DISJOINT_SUPPLY_TRUNCATED` -> the rungs carry conditions the HF rung
+does not and the truncation rule discards them; that supply is the only channel
+by which LF adds DESIGN ROWS rather than a smoothed copy of the HF target
+(r2s3-B2 measured A0_nolf 8.1344 -> A2_lf_cov_null 3.4550 skill, +4.68, on ifc_poisson at N_hf = 5, single training seed).
+
+**Complements, does not duplicate.** `ladder_pair_row_audit.py` (s1_poisson-B3)
+asks whether an all-pairs ROW SET replicates data and only flags
+`MISMATCHED_PAIRS` under `--cond-from source`; r2s2-B1's `V6b` answers the same
+question INSIDE a training job (sets `paired_real_lf` /
+`arm_semantics_degraded`). Run this BEFORE the build; use a V6b-style in-job gate
+to degrade gracefully where it says MISPAIRED.
+
+**Invoke.**
+```bash
+source "$PROJECT_ROOT/.venv/bin/activate"
+python tools/ladder_pair_alignment_audit.py --datasets PANEL --out pair_audit.json
+python tools/ladder_pair_alignment_audit.py --datasets ifc_poisson \
+    --split train --fail-on mispaired      # exit 2 => usable as a build gate
+```
+
+**Verified.** Run 2026-08-01 on the stripped view, `--datasets PANEL`: five
+panel datasets `PAIRED_ALIGNED` (max|dcond| 0.0, 100% paired-to-nearest, 0
+disjoint rows); `ifc_poisson` `MISPAIRED` with rung 32 giving max|dcond|
+**0.6819**, paired distance **0.7435** vs nearest **0.2703**, **0%**
+paired-to-nearest, and **170** LF rows at conditions with no HF row (100/50/20 at
+rungs 8/16/32) — reproducing r2s4-B2 findings T2-F6 and T2-F7 and the T1-F5 row
+counts exactly.
+
+**Provenance.** `worktrees/r2s4_diag/B2/scratchpad/reanalysis_turn_2.py` block F
+(+ block E's supply counter); card
+`experiment_cards/r2s4_diag/batch_2/B2.json` part 6, findings T2-F6 / T2-F7 /
+T1-F5 and falsification postmortem section (2).
+
+---
+
+## `shrinkage_curve_anatomy.py`
+
+**Measures.** For every shrinkage curve `f(lambda) = nRMSE(Pbar + lambda(P -
+Pbar))` a card ships: the LEVEL `f(0)` (own-mean broadcast — what the trunk
+learned that is identical for every condition), the RAW `f(1)`, `min`,
+`lambda_argmin`, the model-free fluctuation amplitude (top-of-grid slope), and an
+effective sqrt-quadratic fit giving `eff_fluct_over_level`, `eff_alignment`
+(cos of the condition response with the truth) and `eff_lambda_opt`, with
+`fit_r2` always reported next to the model-free columns. With `--contrast A:B`
+it reports `level_delta`, `raw_delta` and a `sign_flip` flag per file.
+
+**Why.** The level and the fluctuation are two different questions averaged into
+one nRMSE, and they can point opposite ways. r2s4-B2's helmholtz arms tied at the
+level (T0 - T1 = +0.4179 skill, T1 better on 2/3 seeds) and separated with the
+opposite sign at lambda = 1 (-0.8980): reported as one number that reads as a
+paradox ("the contrast flips sign between the raw and the shrunk column");
+decomposed it is one sentence — same mean field, different and anti-aligned
+condition response.
+
+**Read it as.** `|level_delta| << |raw_delta|` -> the change did not move the
+mean field, it rescaled/reaimed the condition response; check `eff_alignment` and
+the seed spread of `slope_top` before claiming anything. `eff_alignment <= 0`
+with `lambda_argmin = 0` -> the arm's condition-dependent part is
+worthless-to-harmful on this split. `lambda_argmin > 1` -> the fitted deviation
+from the mean field is too SMALL (MSE over-smoothing); across an N-sweep,
+lambda* crossing 1 is the sample-limited signature (r2s4-B2 T3-F6: cahn_hilliard
+0.767 -> 1.117 as N_fit goes 20 -> 320).
+
+Curve discovery is schema-free — it walks the JSON for any object holding a
+`grid` plus `*_curve` arrays of matching length — so it runs on any card that
+ships a shrinkage column, whatever the surrounding key names.
+
+**Invoke.**
+```bash
+source "$PROJECT_ROOT/.venv/bin/activate"
+python tools/shrinkage_curve_anatomy.py \
+    --json '<outputs>/r2s4_diag/B2/eval/arms_ext__helmholtz_2d_e200_s*.json' \
+    --curves test --contrast T0_cond_only:T1_lf_aux --skill --out anatomy.json
+```
+`--skill` divides by `eval/copylf_baselines.json` using the `dataset` key inside
+each JSON.
+
+**Verified.** Run 2026-08-01 on r2s4-B2's three helmholtz arms JSONs: levels T0
+3.7996 / 4.0676 / 4.8507 and T1 3.9134 / 3.6654 / 3.8853 skill, mean level delta
+**+0.4179** against mean raw delta **-0.8980**, sign flips **3/3**, T1 argmin
+0.00 on all seeds with alignment -0.184 / -0.188 / -0.032 and T0 +0.114 / -0.019
+/ +0.119 — reproducing findings T2-F1 and T2-F2 exactly.
+
+**Provenance.** `worktrees/r2s4_diag/B2/scratchpad/reanalysis_turn_2.py` block A
+(`curve_anatomy`) and turn 3's lambda*(N) reading; card
+`experiment_cards/r2s4_diag/batch_2/B2.json` part 6, findings T2-F1 / T2-F2 /
+T3-F6.
+
+---
+
+## `condition_predictability_ceiling_fast.py`
+
+**Measures.** Exactly what `condition_predictability_ceiling.py` measures — it
+IMPORTS the frozen tool and swaps in a float32 / capped-pair estimator path, so
+the schema, the printed line and the definitions stay in the original file
+(untouched, byte-for-byte). Output gains `_estimator_path` and `_max_pairs`.
+
+**Why.** The frozen tool's float64 all-pairs path did not finish one 256^2
+dataset inside a 20-minute cap on the round's login node (killed at >20 min on
+`sharp__allen_cahn_2d` during r2s4-B2 turn 1), which makes it unusable in a
+mechanism turn — the place a training-free ceiling is most often wanted.
+
+**Read it as.** Identical to the frozen tool. One caveat the `--validate` mode
+exists to make unmissable: the float32 swap costs ~1e-11, but the DEFAULT pair
+cap (20 000 vs the frozen tool's 200 000) changes the pair intercept at the
+1e-2 level. If you quote a pair intercept, match `--max_pairs` or report the cap;
+the k-NN bound is unaffected.
+
+**Invoke.**
+```bash
+source "$PROJECT_ROOT/.venv/bin/activate"
+python tools/condition_predictability_ceiling_fast.py --datasets PANEL --out ceiling.json
+python tools/condition_predictability_ceiling_fast.py --validate \
+    --datasets ext__helmholtz_2d --out validation.json     # both paths, side by side
+```
+All other flags of the frozen tool (`--ks --n_bins --preds --data_root`) are
+accepted and forwarded unchanged.
+
+**Verified.** Run 2026-08-01. `--validate` on `ext__helmholtz_2d`: k-NN bound
+1.1150040817905758 vs 1.1150040817905758, |diff| **0.0**, same k*; pair intercept
+|diff| **2.1e-11** at matched `--max_pairs 200000` and **2.1e-2** at the default
+20 000 (subsampling, not precision). Full fast run on `sharp__allen_cahn_2d`
+(400 x 256^2): **35 s** end-to-end, k-NN ceiling **176.2813** at k* = 8, which
+reproduces r2s4-B1's float64 value 176.28128331491402 computed by a different
+script on the same split.
+
+**Provenance.** `worktrees/r2s4_diag/B2/scratchpad/reanalysis_turn_1.py`
+(`loo_knn_curve_fast` / `pair_extrapolation_fast`, validation artefact
+`scratchpad/t1_fast_helmholtz_validation.json`); the estimators are
+r2s4_diag-B1's (card part 6, T2-F1...T2-F6).

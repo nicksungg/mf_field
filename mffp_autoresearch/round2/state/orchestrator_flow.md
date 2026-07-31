@@ -476,3 +476,40 @@
 
 - 2026-08-01 ~04:2x PDT r2s3-B2 seed 0 COMPLETED (66185845, ~45 min, 17 legs). -> initial-
   analyzer dispatched (reviewer carry-forwards + r2s4-B2 cross-stream context forwarded).
+
+- 2026-08-01 ~05:0x PDT r2s4-B2 mechanism turn 3 (6/6): 4/5 datasets AT N->inf ASYMPTOTE at
+  N=320 (ch the only sample-limited, slope 0.233 accelerating); lambda*(N) crosses 1 on ch
+  (0.767->1.117: over-amplified starved, over-smoothed fed) — the §12.4 overfitting anatomy;
+  F3 = certified null on sensitive instrument (N-effects resolved 7.4-101x floor while all
+  15 transfer cells below); support-not-identifiability predicts regime 5/5 training-free.
+  LICENSED: aux-LF-TARGET head worth nothing at any N (certified). NOT licensed: "LF doesn't
+  help" (input-side + disjoint-supply channels untouched — r2s3-B2 running the latter).
+  -> register turn dispatched (3 promotions incl. pair-alignment pre-flight).
+
+- 2026-08-01 ~05:2x PDT r2s3-B2 initial-analyzer SUCCESS (6/6): F1 CONFIRMED SIGN-FLIPPED —
+  A0-A2 = +4.6794 on ifc (4.99x certified floor; B1 was -7.35): NEURAL CHANNEL CAN CONSUME
+  DISJOINT-CONDITION LF. Twist: A1 (no null penalty) BEATS primary A2 (penalty hurts, 1.37x
+  floor); fisher_kpp +1.22 resolvable DESPITE m=0 (contradicts pre-registered null; coverage
+  as condition-completion?); ch A3_paired worse than no-LF (coverage not curriculum).
+  F5 wording-ambiguous on fisher (both readings recorded). Answers r2s4-B2's open question.
+  Wall 41.6 min. -> mechanism-analyzer dispatched.
+
+- 2026-08-01 ~05:4x PDT r2s2-B2 panel job COMPLETED (66187052, 33:35, exit 0:0; guard done
+  earlier). ALL FOUR B2 SLURM RUNS COMPLETE. -> initial-analyzer dispatched (oracle-negative
+  F1 semantics + k*-stability + init-variance-bound carry-forwards).
+
+- 2026-08-01 ~06:0x PDT r2s3-B2 mechanism turn 1 (8/8): null penalty aimed RIGHT (cos 0.98-
+  0.99) but amplitude 1.72-1.79x too large — exactly the reported-not-applied 0.551 gain;
+  A1 had already recovered the direction to 1.8% -> penalty could only push away (0.665 =
+  51.7% of A1->A2 regression via that one direction); value-of-LF +5.97 decomposes ~57-60%
+  direction-supply + ~40% row-space fit (NOT just identifiability). -> turn 2 dispatched
+  (fisher m=0 channel; coarsest-rung selection cost).
+
+- 2026-08-01 ~06:2x PDT r2s4-B2 COMPLETE (register 6/6; disk-verified; 3 tools promoted:
+  ladder_pair_alignment_audit [pre-flight, --fail-on gate works], shrinkage_curve_anatomy,
+  ceiling_fast [frozen original untouched]). Part 7: last untouched channel = INPUT-SIDE
+  privileged info; teacher-projection diagnostic named (Option A recommended for B3, needs
+  preds dumped); support-not-identifiability = round-rule CANDIDATE pending 2nd card;
+  benchmark-integrity item (ifc_raw eval assumption failed 4 independent places) for Eloise.
+  Reporting instruction: B2 + r2s3-B2 reported as a pair. -> B3 websearcher dispatched
+  (batch counter -> 3).
