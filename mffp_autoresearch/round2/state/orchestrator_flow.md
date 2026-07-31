@@ -237,3 +237,26 @@
   suspect). Wall 77 min. Anchor untouched. -> mechanism-analyzer dispatched. NOTE for B2
   brainstormer: per-rung scaler variant is the obvious follow-up; batch-2 planning begins
   when this card completes.
+
+- 2026-07-31 ~15:2x PDT maintainer flags: (1) ahead-of-clock self-declared header timestamps in
+  two subagent handoffs (code-reviewer r2s1, mechanism-analyzer r2s4) — systemic cosmetic
+  issue, note for round report; (2) r2s4 mechanism handoff claims parts 6/7 + tool promotions
+  not yet on disk (7_gap_and_future null; tools not in index) — agent has NOT returned yet,
+  ORCHESTRATOR OWES verification of part 7 + tools/index.md on its completion notification
+  before advancing r2s4 to complete.
+
+- 2026-07-31 ~16:1x PDT r2s4-B1 COMPLETE (first terminal card; mechanism turns 1-3 + register
+  in one invocation, 9/9; disk-verified parts 6/7 + 2 tools promoted+indexed). ROUND-REPORT
+  finding: criterion 2 (skill<1) EXCLUDED by information argument on fisher_kpp (barrier
+  ~11.44), pfc (~38.6-42.1), allen_cahn (~132.7) for ANY condition->HF model; certifier is
+  1.01-1.14x the barrier on those (nearly optimal) and 1.655x on helmholtz (fixable);
+  noise-floor constants are a LOWER bound for less-collapsed successors — B2 should
+  re-certify on the compared arm. -> B2 websearcher dispatched (batch counter -> 2).
+
+- 2026-07-31 ~16:3x PDT r2s3-B1 mechanism turn 1 (5/5): C1 does NOT explain inversion (LF arms
+  3.8x structurally worse after per-sample gain oracle — genuine negative transfer); ifc is
+  the ONLY mesh-scaled ladder (p=+2.09; shared-scaler deflation 1772x; all other datasets
+  inflation 1.000); rung_upsampled "divergence" = ONE amplitude scalar (23.31 -> 0.564 with
+  global gain; never overfit). F2's credit = amplitude switch, no structural info. -> turn 2
+  dispatched (spectral attribution + LF-info-after-n^2 test; r2s2's ifc-affine finding
+  cross-referenced).

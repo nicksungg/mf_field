@@ -55,6 +55,8 @@ tool: name, what it measures, invocation, provenance card.
 | `stage_scaler_placement_forecast.py` | pre-flight, model-free, PER STAGE: which output-target scaler this dataset should be trained under — the typical-sample placement `F = median_i(sd_i/s_i)`, the target-energy effective N, the equalisation a FOREIGN-FIDELITY per-sample statistic actually delivers, and a centering-risk flag on DC-dominated targets | s5_tuning-B3 turns 2-3 |
 | `spectral_prestage_bc_audit.py` | training-free: does a global-FFT stage (LSI defect filter / Wiener transfer function / spectral pre-stage) impose the RIGHT boundary condition on this dataset? the data-driven wrap-continuity test, the same closed form refit under a periodic vs a mirror (non-periodic) extension and scored, and the residual left by each binned by distance-to-boundary | s4_hybrid_routing-B3 turns 1-2 |
 | `library_dominance_audit.py` | is a router / discrete super learner / MoE LICENSED at all? weak-dominance matrix over the library at each dataset's certified floor, degenerate ties where two members are the SAME object, and the geomean of every constant router vs the per-dataset oracle (`routing_headroom_pct`) | s4_hybrid_routing-B3 turn 3 |
+| `condition_predictability_ceiling.py` | ROUND-2: how much of a dataset's HF field the CONDITION VECTOR determines at all — a training-free aleatoric ceiling in skill units (noise-debiased LOO k-NN upper bound + matched-pair `d->0` extrapolation), with an explicit `no_support` verdict | r2s4_diag-B1 turn 2 |
+| `conditional_mean_collapse.py` | ROUND-2: has a condition->field model collapsed to a constant field, and is its condition-driven variation worth its amplitude? own-mean-broadcast arm, fluctuation energy/alignment, shrinkage oracle, per-sample tail attribution, seed same-function test | r2s4_diag-B1 turns 1+3 |
 
 ---
 
@@ -1870,3 +1872,92 @@ Pure JSON parsing, < 1 s.
 **Provenance.** `worktrees/s4_hybrid_routing/B3/scratchpad/reanalysis_turn_3.py`; card
 `experiment_cards/s4_hybrid_routing/batch_3/B3.json` part 6, findings F10 / F11 and
 interpretation H6.
+
+---
+
+## `condition_predictability_ceiling.py`  *(round 2)*
+
+**Measures.** Training-free, TRAIN-split only: how much of the HF field the
+condition vector determines at all, i.e. the aleatoric barrier a condition->HF
+model cannot cross — with or without LF as a training signal. Two independent
+estimators, both reported in the round's per-sample rel-L2 form and in copy-LF
+skill units: (1) `loo_knn` — `E||y_i - m_k(i)||^2 = S(1+1/k) + B(k)` so
+`S_hat = min_k R(k)/(1+1/k)` is an UPPER bound on the aleatoric energy;
+(2) `pair` — bin all train pairs by condition distance `d`, fit the two lowest
+bins and extrapolate to `d = 0`. Optional `--preds` places a model against the
+ceiling (`over_knn_bound`, `over_pair_bound`).
+
+**Read it as.** `over_knn_bound ~ 1` -> the predictor is AT the barrier; its
+residual error is information the condition does not carry and no lever can
+recover it (a null result there is uninformative, not a failure).
+`over_knn_bound >> 1` -> real headroom. `support.verdict == "no_support"` ->
+the nearest train pair is far or there are too few train samples, BOTH estimators
+are extrapolations and no aleatoric claim may be made. A predictor scoring BELOW
+the k-NN bound only means the bound is loose there.
+
+**Invoke.**
+```bash
+source "$PROJECT_ROOT/.venv/bin/activate"
+python tools/condition_predictability_ceiling.py --datasets PANEL --out ceiling.json
+python tools/condition_predictability_ceiling.py \
+    --datasets sharp__fisher_kpp_2d \
+    --preds sharp__fisher_kpp_2d=/path/preds_s0.npy --out ceiling.json
+```
+Pure numpy on the login node; ~1-4 min per 256^2 dataset (memory-safe: the naive
+`(n,k,D)` neighbour tensor is 26 GB at 256^2 and was OOM-killed in the source
+probe before the running-mean rewrite). Defaults to the STRIPPED view.
+
+**Verified.** Run 2026-07-31 from `round2/` on `ext__helmholtz_2d,ifc_poisson`
+with the r2s4-B1 certifier's seed-0 predictions -> helmholtz knn ceiling
+**3.7287** (k=1), pair ceiling **2.6383**, `support=supported`, prediction skill
+6.1725 = **x1.655** the knn bound; ifc_poisson knn 4.8946, pair `n/a`,
+`support=no_support` (5 train samples). Identical to the source probe.
+
+**Provenance.** `worktrees/r2s4_diag/B1/scratchpad/reanalysis_turn_2.py`; card
+`experiment_cards/r2s4_diag/batch_1/B1.json` part 6, findings T2-F1 - T2-F6.
+
+---
+
+## `conditional_mean_collapse.py`  *(round 2)*
+
+**Measures.** For one or more prediction files per dataset (`.npy`,
+`(n_test, n_cells)` in loader order): the model's skill next to
+**its own mean field broadcast to every test sample** (the model with its
+condition-dependence surgically removed - the decisive, metric-consistent
+collapse test, scored through `round2/eval/nrmse.py`); the pooled fluctuation
+energy ratio `R` and alignment `A` with `useful = 2A*sqrt(R) - R`; a
+**TEST-FITTED, labelled** shrinkage oracle `Pbar + lambda*(P - Pbar)` with its
+`lambda*`; per-sample rel-L2 quantiles, cosine(pred, hf), amplitude ratio, the
+Spearman rho of the error against `||hf||` / the amplitude ratio / the distance
+to the nearest TRAIN condition, and the count of samples with per-sample skill
+< 1; and, with >= 2 files, the pairwise seed/arm agreement (relative distance,
+fluctuation cosine, worst-10 overlap) that separates "same function" from
+"same score".
+
+**Read it as.** `skill ~ skill_of_own_mean_field_broadcast` with `R << 1` ->
+COLLAPSED (check `condition_predictability_ceiling.py` before calling it a
+failure - on `sharp__fisher_kpp_2d` the collapse is the correct answer).
+`useful < 0`, `lambda* ~ 0`, low per-sample cosine -> the model is a noise
+generator whose only contribution to the error is its own amplitude, and
+post-hoc shrinkage calibrated on a held-out TRAIN fold is a mandatory guardrail.
+Seed-pair `fluct_cosine ~ 1` -> a small certified seed spread is reproducibility
+of ONE solution, not resolving power.
+
+**Invoke.**
+```bash
+source "$PROJECT_ROOT/.venv/bin/activate"
+python tools/conditional_mean_collapse.py \
+    --preds "sharp__fisher_kpp_2d=/path/s0.npy:/path/s1.npy:/path/s2.npy" \
+    --preds "ext__helmholtz_2d=/path/s0.npy" --out collapse.json
+```
+Pure numpy on the login node; seconds to ~1 min per dataset.
+
+**Verified.** Run 2026-07-31 from `round2/` on the r2s4-B1 certifier's cached
+predictions -> `sharp__fisher_kpp_2d` skill 11.5585 / own-mean **11.9810** /
+R 0.0590 / A 0.2521 / lambda* 1.0 (all three seeds within 1e-3), and
+`ext__helmholtz_2d` skill 6.1725 / own-mean **3.5214** / R 0.0304 / A 0.0451 /
+useful **-0.0147** / lambda* **0.0**. Identical to the source probes.
+
+**Provenance.** `worktrees/r2s4_diag/B1/scratchpad/reanalysis_turn_{1,3}.py`;
+card `experiment_cards/r2s4_diag/batch_1/B1.json` part 6, findings T1-F1 - T1-F5
+and T3-F1 - T3-F5.
