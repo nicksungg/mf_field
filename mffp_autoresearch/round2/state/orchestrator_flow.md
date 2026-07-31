@@ -371,3 +371,24 @@
 - 2026-07-31 ~23:4x PDT r2s3-B2 starter SUCCESS (12/12): B2.json drafted, verdict novel (E5);
   17-leg matrix; env-key count discrepancy (note says 25, lists 30) transcribed verbatim +
   flagged -> builder told: 30 listed keys authoritative. -> builder dispatched.
+
+- 2026-07-31 ~20:4x PDT r2s4-B2 builder SUCCESS (14/14): build a1f3da4; smoke exit 0
+  (helmholtz e2 2.007); floors reproduce exactly on 4 extra datasets incl. ifc 22-leg LOO
+  path; builder FOUND+FIXED resume summary bug via its own all-legs-complete test; 3-seed
+  scope flagged for reviewer adjudication. -> code-reviewer dispatched.
+
+- 2026-07-31 ~21:1x PDT r2s2-B1 COMPLETE (register 5/5; disk-verified; 2 tools promoted with
+  triad table — field-basis/condition-side/model-output axes). BATCH 1 FULLY CLOSED: 4/4
+  cards complete (2 confirmed incl. 1 certified-3-seed; 1 falsified-with-caveat; 1 cratered-
+  but-informative). B2 fork for brainstormer: A) realisation-aware emulator on ch (~1.6 skill
+  units max, pre-registered in gamma units) vs B) pivot to helmholtz/ifc learning-failure
+  gaps (would be a condition->HF card — near r2s1 turf). -> B2 websearcher dispatched
+  (batch counter -> 2).
+
+- 2026-07-31 ~21:5x PDT r2s2-B2 websearcher SUCCESS (8/9, honest summary-length deviation):
+  D1 realisation-aware open but predicted negative x3; D2a thin-novel; D2b preempted-baseline
+  (Hesthaven-Ubbiali); D3 coherence-threshold CALIBRATION open (FreqNO-DPS ships the check,
+  nobody calibrates it); D4 I8-closure preempted-as-principle (data-processing inequality),
+  open as measurement. STANDING PROCESS RULE (2nd occurrence): arXiv /pdf/ fetches fabricate
+  content — always /abs/ or /html/ (added to future websearcher dispatch prompts).
+  -> B2 brainstormer dispatched with fork A/B/calibration/skip options.

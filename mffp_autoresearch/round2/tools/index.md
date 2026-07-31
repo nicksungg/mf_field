@@ -61,6 +61,8 @@ tool: name, what it measures, invocation, provenance card.
 | `condition_identifiable_rank.py` | ROUND-2: how many degrees of freedom of the HF field the CONDITION VECTOR determines — per-POD-mode out-of-fold R^2 (identifiable rank), condition-predictable variance fraction and implied floor, a scoreable closed-form rank-r arm vs the ORACLE rank-r truncation (COEFFICIENT_UNIDENTIFIABLE vs BASIS_INADEQUATE verdict), the condition-predicted DC-only arm, the additive-field/centering trap, and a bimodal pattern-gate AUC | r2s1_direct-B1 turns 1+3 |
 | `affine_ladder_voi.py` | ROUND-2: training-free value-of-LF certificate in CONDITION-side coordinates — how affine the task is per rung (exact-LOO), how many affine directions the few HF TRAIN rows cannot determine and what share of the true law lives there, the resulting HF-only information limit (min-norm pinv), what each LF rung + one HF-row scalar + an HF-row residual actually scores, and whether the LF rungs recover the unidentifiable direction. Complements `condition_identifiable_rank.py` (field-basis coordinates, no LF rungs) | r2s3_lf_train_signal-B1 turns 2+3 |
 | `posthoc_repair_ladder.py` | ROUND-2: how much of a trained arm's error is LEGITIMATELY repairable without retraining — a 5-rung ladder (raw / global scale / radial low-pass / affine residual / low-pass+residual, every choice fitted on the HF TRAIN rows, each with its ORACLE twin) plus optional network AFFINE-ISATION: non-affinity remainder on a random condition design, the arm's implicit law vs the ORACLE law, the null-direction cos/gain, and ORACLE row-space-vs-null coefficient surgery | r2s3_lf_train_signal-B1 turn 3 |
+| `reachable_set_rank_audit.py` | ROUND-2: how many dimensions a TRAINED MODEL'S OUTPUT FAMILY spans (on real AND synthetic conditions), against the truth's rank and against the condition-learnable rank on the same split — plus the per-band fixed-pattern test, dictionary-vs-coefficient ORACLE projections, and the nearest-condition-neighbour band continuity that separates a STRUCTURAL ceiling from a LEARNING gap. Third axis of the identifiability triad with `condition_identifiable_rank.py` (field basis) and `affine_ladder_voi.py` (condition-side design) | r2s2_stacked-B1 turn 2 |
+| `surrogate_coherence_eligibility.py` | ROUND-2: is a stage-1 surrogate field worth feeding to a downstream corrector at all? per-band energy-weighted coherence with the target + the IN-SAMPLE ORACLE Wiener ceiling (an upper bound on ANY spatially-invariant linear stage) converted to skill units, with an ELIGIBLE / FUTILE / UNDETERMINED verdict on the r2s2-B1-measured gamma_band1 thresholds | r2s2_stacked-B1 turn 3 |
 
 ---
 
@@ -2272,3 +2274,200 @@ means the surrogate law explains only part of the arm, and the surgery numbers
 should then be read as a coarse localisation, not an accounting identity. Every
 `_ORACLE` key in either tool is fitted on the test split; they exist to say WHERE
 an arm is wrong and must never be quoted as an arm score.
+
+---
+
+## `reachable_set_rank_audit.py`  *(round 2)*
+
+**Measures.** For a TRAINED model whose outputs you can dump: the dimension of
+the reachable set it actually emits, placed between the dimension of the true
+field family and the dimension the condition can select. (A) singular-value
+anatomy (participation-ratio effective rank, r90, r99, top-1 energy share,
+uncentered and centered) of the truth's train rows and of the model's outputs on
+the fit conditions, on synthetic conditions over the train box, and on synthetic
+conditions 3 sd around the train mean — the last is an architecture/weights probe
+independent of the data distribution; (B) the per-band FIXED-PATTERN test (mean
+pairwise |cos| and effective rank of the per-sample Fourier coefficient vectors,
+s2-B1 dyadic band grid: 1.0 = one fixed pattern rescaled per sample), model
+against truth; (C) dictionary-vs-coefficients — ORACLE projection of the held-out
+TRUE fields onto the model's own rank-r output subspace and onto the truth's own
+rank-r subspace; (D) the condition-learnable rank on the SAME split (out-of-fold
+R^2 of each truth-PC coefficient from ridge and 5-NN, the count above 0.5, and
+the nRMSE of basis + LEARNED coefficients at each rank = the training-free
+condition-only ceiling in the model's own target space); (E) the
+nearest-condition-neighbour continuity test band by band (median relative field
+difference and median cosine between a held-out sample and its nearest fit
+sample in standardised condition space). Verdict: `RANK_MATCHES_LEARNABLE` /
+`RANK_BELOW_LEARNABLE` / `RANK_MATCHES_TRUTH` / `MIXED`, plus
+`structural_discontinuity` (band>=1 nn cosine < 0.10 while band0 > 0.90).
+
+**The identifiability TRIAD — this is the third axis, not a duplicate.**
+Three round-2 tools ask "is this task information-limited?" in three different
+coordinate systems, and a dataset can look limited in one and healthy in another:
+
+| tool | axis | needs a model? | question |
+|---|---|---|---|
+| `condition_identifiable_rank.py` (r2s1-B1) | FIELD basis (POD modes of the true fields) | no | how many coefficient knobs EXIST for the condition to turn |
+| `affine_ladder_voi.py` (r2s3-B1) | CONDITION-side design (rank/null space of the HF training rows) | no | can the DESIGN identify those knobs, and are LF rows at other conditions the fix |
+| `reachable_set_rank_audit.py` (this one) | TRAINED-MODEL OUTPUT family | **yes** | how many knobs the fitted weights actually turn — the only one that can say "the model is UNDER the ceiling" rather than "the ceiling is low" |
+
+Order of use: one of the first two for the ceiling, this one for the gap to it.
+Section D deliberately re-derives a learnable rank on the model's own split so
+the model/ceiling comparison is apples-to-apples;
+`condition_identifiable_rank.py` stays the better-regularised standalone (K-fold
+alpha, RFF features) when no model is in hand.
+
+**Read it as.** `RANK_MATCHES_LEARNABLE` + `structural_discontinuity = true` ->
+rank collapse is the CORRECT response to a target the condition cannot select;
+capacity, epochs and richer conditioning paths all buy nothing and the
+conditional mean is the answer (r2s2-B1 pfc / allen_cahn / fisher_kpp).
+`RANK_BELOW_LEARNABLE` -> the one shape of result that justifies more training
+work on the same data (r2s2-B1 found exactly one such panel column,
+`ext__helmholtz_2d`). `model_dict_oracle[r]` far above `truth_dict_oracle[r]` ->
+the model's SPAN is the bottleneck and a richer output head is worth trying;
+equal -> it is not. `pc_learnability.best_learned_reconstruction_nrmse` WORSE
+than `verdict.model_heldout_nrmse` (ratio < 1) -> the model is already at or past
+the training-free condition-only ceiling; quote that before proposing any better
+condition->field design.
+
+**Invoke.** Two steps; the tool never imports or runs your family.
+```bash
+source "$PROJECT_ROOT/.venv/bin/activate"
+# 1. emit the condition design (fit rows, val rows, 2 synthetic draws)
+python tools/reachable_set_rank_audit.py --dataset sharp__phase_field_crystal_2d \
+    --target lf --gen_conds --conds_out conds.npz --out plan.json
+# 2. run YOUR model on conds.npz's X_fit / X_val / X_synth_box / X_synth_wide3sd
+#    (same row order), then feed the outputs back
+python tools/reachable_set_rank_audit.py --dataset sharp__phase_field_crystal_2d \
+    --target lf --conds conds.npz \
+    --pred_fit preds.npz:fit --pred_val preds.npz:val \
+    --pred_synth_box preds.npz:box --pred_synth_wide preds.npz:wide \
+    --out reachable.json
+# training-free half only (sections D + E, no model needed)
+python tools/reachable_set_rank_audit.py --dataset ifc_poisson --target lf \
+    --out ceiling_only.json
+```
+`--fit_idx/--val_idx` take `.npy` index files when you need YOUR family's exact
+split (that is how the r2s2-B1 digits below are reproduced); otherwise a
+`--holdout_frac/--seed` split is used and emitted. `--pred_*` accept `path.npy`
+or `path.npz:key`, shapes `(N,H,W)` or `(N,n_cells)`. `--target lf|hf` picks the
+train-split field family the model imitates (`--rung` for a specific LF rung).
+Pure numpy on the login node; 1.5 s on `sharp__phase_field_crystal_2d`
+(64^2, 200 fit / 80 val / 160 synthetic rows), 0.2 s on `ifc_poisson`. Defaults
+to the STRIPPED view and asserts the test split carries no LF fidelity.
+
+**Verified.** Run 2026-07-31 from `round2/` against the r2s2-B1 emulator on its
+OWN split (dumped by `worktrees/r2s2_stacked/B1/scratchpad/register_dump_preds.py
+--mode split|preds`; outputs kept at `.../scratchpad/register_toolcheck/`):
+`sharp__phase_field_crystal_2d` truth r99 **26**, model r99 **1** (top-1 energy
+share **0.9999999670**), model r99 **1** on synthetic box conditions and **1** at
+3 sd (top-1 0.9999996597), band>=1 |cos| truth **0.0668** (eff rank **35.60**) vs
+model **0.7542** (eff rank **1.55**), model-dict ORACLE r=1 **0.264211** vs
+truth-dict ORACLE r=32 **0.039691**, learnable PCs **1**, best learned
+reconstruction **0.287300**, nn condition distance **0.1316** with band0
+rel-diff 0.0166 / cosine **+1.0000** and band>=1 rel-diff **1.4194** / cosine
+**-0.00177**, verdict **RANK_MATCHES_LEARNABLE** with
+`structural_discontinuity = true`. Every one of these matches the source probe
+(turn-2 F7/F9/F10/F11) to the digits reported there. The model's held-out nRMSE
+comes out **0.2653962** against the card's S1 sidecar 0.2654032 — a 2.6e-05
+relative deviation from float32 batch-composition nondeterminism in the emulator
+forward pass, the same effect turn 3 recorded. The synthetic-condition draws use
+this tool's own RNG (one `default_rng(20260731)` per dataset) where turn 2 shared
+one generator across eight datasets, so the synthetic columns agree in rank and
+top-1 share but are not the same draw. Ceiling-only mode smoke: `ifc_poisson`
+truth r99 **2** (turn-2 F7's value) on this tool's default 0.2 holdout, 14
+learnable PCs (turn 2 reported 13 of 15 on the family's split — a different
+split and a different `r_max`, so qualitative agreement only).
+
+**Provenance.** `worktrees/r2s2_stacked/B1/scratchpad/reanalysis_turn_2.py`
+(P1-P4); card `experiment_cards/r2s2_stacked/batch_1/B1.json` part 6, findings
+3, 4, 5 and interpretation I2' + the ceiling taxonomy.
+
+---
+
+## `surrogate_coherence_eligibility.py`  *(round 2)*
+
+**Measures.** Training-free, from a dumped surrogate field family and its paired
+target on the same grid: the energy-weighted **coherence** gamma of the surrogate
+with the target inside each dyadic band (s2-B1 band grid), each band's target
+energy share, the input/target amplitude ratio, and the **IN-SAMPLE ORACLE Wiener
+transfer T(k)** fitted on the very rows being scored — a strict UPPER BOUND on
+what ANY spatially-invariant linear stage (LSI filter, band-gain calibration,
+ideal low-pass) could add on that input. Reports `identity_nrmse`,
+`oracle_lsi_nrmse_insample`, `oracle_lsi_relative_gain`, and with
+`--arm_nrmse/--reference_nrmse` the multiplicative transfer of that gain to a
+scored arm in **skill units**. Verdict `CORRECTOR_ELIGIBLE` (gamma_band1 >= 0.95)
+/ `CORRECTOR_FUTILE` (<= 0.52) / `UNDETERMINED` in the bracket r2s2-B1 left open.
+
+**Read it as.** This is the PRECONDITION test for any `stage-1 surrogate ->
+stage-2 corrector` design, and it is decidable before stage 2 exists. r2s2-B1
+measured the same frozen corrector removing 32-100% of the remaining error at
+gamma_band1 ~ 1.0 and <= 0.08% at gamma_band1 <= 0.52, with the correction vector
+rotating from cos +0.98 to cos ~0 against the residual it must remove; a 10%
+admixture of the emulated field into a real LF input already cost 7-48x of the
+corrector's value. `CORRECTOR_FUTILE` -> fix stage 1 or change the class; a
+corrector cannot restore a realisation its input does not carry. High gamma with
+`input_over_target_amp` far from 1 is the GOOD case (right realisation, wrong
+gain — exactly what an LSI stage fixes). Low gamma in band0 as well (r2s2-B1
+helmholtz 0.139) means the surrogate is not tracking the target anywhere.
+Neighbours: `spectral_prestage_bc_audit.py` asks whether a spectral stage is
+APPLICABLE (BC/wrap-seam match), this asks whether the input is worth filtering;
+`posthoc_repair_ladder.py` rung L2 is the train-fitted ideal-low-pass member of
+the same class and this is its unconstrained ceiling; `band_gain_counterfactual.py`
+is the held-out-fitted version to run only if this ceiling is worth having.
+
+**Invoke.**
+```bash
+source "$PROJECT_ROOT/.venv/bin/activate"
+python tools/surrogate_coherence_eligibility.py \
+    --dataset sharp__cahn_hilliard \
+    --pred pseudo_lf_upsampled.npy --target hf_train_rows.npy \
+    --arm_nrmse 0.47149238 --reference_nrmse 0.04180296 --out coh.json
+# target straight from the dataset's TRAIN split at given rows
+python tools/surrogate_coherence_eligibility.py --dataset sharp__cahn_hilliard \
+    --pred preds.npz:val --target_from_train --rows val_idx.npy --out coh.json
+```
+`--pred/--target` accept `path.npy` or `path.npz:key`, shapes `(N,H,W)` or
+`(N,n_cells)`; both must be on the same (corrector working) grid in the same row
+order. Pure numpy, ~1 s for 80 rows at 128^2. Producing the surrogate on the
+working grid is the caller's job (it is the upsampled stage-1 output).
+
+**Verified.** Run 2026-07-31 from `round2/` on the r2s2-B1 emulator's own
+pseudo-LF, upsampled through the family's convention-keyed upsampler and scored
+against the paired TRAIN HF rows (dump script + outputs at
+`worktrees/r2s2_stacked/B1/scratchpad/register_toolcheck{,_ch}/`):
+`sharp__phase_field_crystal_2d` (80 rows) gamma band0 **0.829** / band1 **0.128**,
+identity **0.265395**, oracle LSI **0.301885**, gain **-13.75%** (the oracle
+filter is HARMFUL), verdict CORRECTOR_FUTILE; `sharp__cahn_hilliard` (turn-3's
+20-row slice) gamma band0 **0.933** / band1 **0.5164**, identity **0.289310**,
+gain **+14.07%**, and with the card's scored arm 0.47149238 against the recorded
+0.04180296 reference: implied arm nRMSE **0.4051685**, implied skill **9.69234**
+from **11.27892**, i.e. **1.5866 skill units** — reproducing the card's
+load-bearing "~1.59 skill units, below the clause's own 2.0 threshold" exactly.
+All of these match the source probe (turn-3 F15 and the falsification postmortem)
+to the digits reported there.
+
+**Provenance.** `worktrees/r2s2_stacked/B1/scratchpad/reanalysis_turn_3.py`
+(P6); card `experiment_cards/r2s2_stacked/batch_1/B1.json` part 6, findings 6-8,
+interpretations I7/I10 and the falsification postmortem.
+
+---
+
+## Standing warning `reachable_set_rank_audit` + `surrogate_coherence_eligibility` encode
+
+Both tools take the CONDITIONAL MEAN seriously as the reference answer, because
+that is what r2s2-B1 measured the panel to be pinned at. Consequences to keep in
+mind. (1) `reachable_set_rank_audit` scores a DETERMINISTIC output family: a
+stochastic or realisation-sampling emulator will legitimately show a reachable
+rank far above its own learnable rank, and the `RANK_MATCHES_LEARNABLE` label
+must not be read as a defect there — read the per-band diversity statistics (B)
+against the truth's instead. (2) Its `n_pcs_learnable` count uses a fixed
+ridge/5-NN pair at lambda 1e-6 and k=5 on the given split; it is a floor on
+learnability, not a proof of unlearnability, and `condition_identifiable_rank.py`
+with RFF features is the stronger test when the answer matters. (3) Every
+`*_oracle` key in either tool (basis projections; the Wiener transfer) is fitted
+on the rows being scored and is a CEILING — never an arm value. (4) The
+gamma_band1 thresholds 0.95 / 0.52 are the two clusters r2s2-B1 actually
+observed, on ONE corrector family (closed-form Wiener + gated local CNN) at one
+tier; the region between them is unmeasured, and `oracle_lsi_relative_gain`
+converted to skill units is the number to act on, not the label.
