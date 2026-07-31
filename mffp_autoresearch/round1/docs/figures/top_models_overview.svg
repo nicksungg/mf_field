@@ -46,8 +46,8 @@
   </g>
   <line x1="30" y1="272" x2="1130" y2="272" stroke="#E5E7EB" stroke-width="1"/>
 
-  <!-- ================= P1 s6 ================= -->
-  <g>
+  <!-- ================= P1 s6 (shifted down; champion renders in the 272-496 band) ================= -->
+  <g transform="translate(0,224)">
     <text x="30" y="302" font-size="15" font-weight="bold" fill="#1F2937">2–4 · s6 lineage: defect correction — superseded by s4's dc_cleaned (−34.3%)</text>
     <text x="640" y="302" font-size="13" fill="#6B7280">trust head 0.188 · circ_repair 0.193 · B1 0.235 (6-dataset panel)</text>
 
@@ -82,10 +82,10 @@
     <text x="30" y="412" font-size="11.5" font-style="italic" fill="#6B7280">MF method: Richardson-style defect correction — the network only models the fidelity gap HF−LF; the LF field does the bulk of the work.</text>
     <text x="30" y="430" font-size="11.5" font-style="italic" fill="#6B7280">Caveat: on the sharp panel most of the learned "defect" is the benchmark's half-cell registration artifact; the genuine edge is on data whose defect is not shift-invariant.</text>
   </g>
-  <line x1="30" y1="450" x2="1130" y2="450" stroke="#E5E7EB" stroke-width="1"/>
+  <line x1="30" y1="496" x2="1130" y2="496" stroke="#E5E7EB" stroke-width="1"/>
 
   <!-- ================= P2 s2 ================= -->
-  <g>
+  <g transform="translate(0,224)">
     <text x="30" y="480" font-size="15" font-weight="bold" fill="#1F2937">5 · s2: lf_resid_fno — global residual operator</text>
     <text x="640" y="480" font-size="13" fill="#6B7280">geomean 0.380 (5-dataset beyond-copy set)</text>
 
@@ -115,10 +115,10 @@
     <text x="30" y="590" font-size="11.5" font-style="italic" fill="#6B7280">MF method: residual learning — the global-spectral cousin of s6's local corrector. Mechanism analysis: ~96–100% of the sharp-panel win is the re-learned registration ramp</text>
     <text x="30" y="608" font-size="11.5" font-style="italic" fill="#6B7280">(cosine 0.99 with the analytic half-cell fix); its global scaler is the round's amplitude-pathology root cause (one sample = 89% of the loss on helmholtz).</text>
   </g>
-  <line x1="30" y1="628" x2="1130" y2="628" stroke="#E5E7EB" stroke-width="1"/>
+  <line x1="30" y1="674" x2="1130" y2="674" stroke="#E5E7EB" stroke-width="1"/>
 
   <!-- ================= P3 s1 ================= -->
-  <g>
+  <g transform="translate(0,224)">
     <text x="30" y="658" font-size="15" font-weight="bold" fill="#1F2937">6–7 · s1: fidelity-ladder FNO + closed-form gain head — flagship few-shot dataset (ifc_poisson)</text>
     <text x="815" y="658" font-size="13" fill="#6B7280">self_only 0.609 · gain head 0.694</text>
 
@@ -156,10 +156,10 @@
     <text x="30" y="800" font-size="11.5" font-style="italic" fill="#6B7280">MF method: the true few-shot composition (no test-time LF exists here — registration issue does not apply). Cheap levels teach how the correction scales with parameters;</text>
     <text x="30" y="818" font-size="11.5" font-style="italic" fill="#6B7280">the 5 HF samples anchor the level. Surprise: dropping duplicated cross-level pairs (self_only) beats the head — B4 confirmed it and exposed the f_src fragility (0.107 ↔ 0.022).</text>
   </g>
-  <line x1="30" y1="838" x2="1130" y2="838" stroke="#E5E7EB" stroke-width="1"/>
+  <line x1="30" y1="852" x2="1130" y2="852" stroke="#E5E7EB" stroke-width="1"/>
 
-  <!-- ================= P4 s4-B3 CHAMPION ================= -->
-  <g>
+  <!-- ================= P4 s4-B3 CHAMPION (shifted up to render right after the baseline) ================= -->
+  <g transform="translate(0,-566)">
     <text x="30" y="868" font-size="15" font-weight="bold" fill="#1F2937">1 · s4-B3 dc_cleaned — ROUND CHAMPION: BC-matched spectral cleaning, then a local corrector</text>
     <text x="915" y="868" font-size="13" fill="#6B7280">panel geomean 0.123 (−34.3%)</text>
 

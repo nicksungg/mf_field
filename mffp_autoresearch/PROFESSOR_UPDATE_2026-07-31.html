@@ -99,6 +99,30 @@
            font-size: 14.5px; margin: 18px 0; max-width: 68ch; }
   .footer { margin-top: 60px; padding-top: 18px; border-top: 1px solid var(--line);
             color: var(--ink-3); font-size: 13px; }
+  /* streams/batches grid (poster style: one row per stream, one box per experiment) */
+  .gridwrap { overflow-x: auto; margin: 18px 0 6px; }
+  .tracks { display: flex; flex-direction: column; gap: 11px; min-width: 860px; }
+  .track { display: flex; align-items: center; gap: 9px; }
+  .tname { flex: 0 0 168px; font-size: 13px; font-weight: 650; text-align: right;
+           line-height: 1.3; }
+  .tname .sub { display: block; font-weight: 400; color: var(--ink-2); font-size: 11.5px; }
+  .tarrow { color: var(--ink-3); flex: 0 0 auto; font-size: 13px; }
+  .expbox { flex: 0 0 auto; width: 118px; background: var(--card);
+            border: 1.5px solid var(--ink-3); border-radius: 6px; padding: 6px 8px;
+            font-size: 12px; line-height: 1.3; text-align: center; color: var(--ink); }
+  .expbox.diag { border-style: dashed; }
+  .expbox.wide { width: 200px; }
+  .expbox.champ { border-color: var(--accent); border-width: 2px; font-weight: 650;
+                  color: var(--accent-ink); }
+  .tmark { flex: 0 0 auto; font-size: 15px; font-weight: 700; }
+  .tmark.dead { color: #C2410C; }
+  .tmark.star { color: var(--accent-ink); }
+  .tout { margin-left: auto; flex: 0 0 auto; text-align: right; font-size: 12.5px;
+          color: var(--ink-2); max-width: 200px; line-height: 1.35; }
+  .tout .num { font-family: var(--mono); font-variant-numeric: tabular-nums;
+               font-weight: 650; color: var(--ink); font-size: 13.5px; }
+  .tout .num.champ { color: var(--accent-ink); }
+  .gridkey { font-size: 12.5px; color: var(--ink-2); margin: 2px 0 18px; }
 </style>
 
 <div class="wrap">
@@ -107,12 +131,18 @@
   <div class="meta">2026-07-31 · Eloise Zeng · sources: <code>round1/docs/round1_report.md</code>, <code>round2/program.md</code>, per-experiment cards</div>
 
   <div class="prose lead">
+    <p>The program runs in two regimes. <strong>Round 1: the physics solver is allowed at test time</strong> —
+    a model receives the cheap coarse-grid solve (the LF field) plus a small condition vector, and its job is
+    to correct that solve toward the fine-grid truth. <strong>Round 2 removes the solver at test time</strong> —
+    the model gets the condition vector alone and must predict the fine-grid field directly; LF fields exist
+    only as a training signal. Round 2 is the deployment case where a company hands over historical simulation
+    data but no callable solver.</p>
     <p><strong>Round 1 is closed and both success criteria were met.</strong> The champion model beats
     copying the low-fidelity field by <strong>8.1×</strong> on the sharp-dataset panel, and the round surfaced
     benchmark-integrity defects that change how every prior skill number should be read. The top-3 slate's
-    seed-confirmation runs are in the SLURM queue. <strong>Round 2 launched this morning</strong> — the harder
-    condition-vector-only regime — with floors re-certified before any model ran, and its first mechanism
-    analysis already produced the round's defining finding.</p>
+    seed-confirmation runs are in the SLURM queue. <strong>Round 2 launched this morning</strong> with floors
+    re-certified before any model ran, and its first mechanism analysis already produced the round's defining
+    finding.</p>
   </div>
 
   <div class="statrow">
@@ -151,8 +181,76 @@
   </div>
 
   <h2>2 · Round 1 results (condition + test-time LF → HF)</h2>
+
+  <h3>The campaign: 21 experiments across 8 streams</h3>
+  <div class="gridwrap"><div class="tracks">
+    <div class="track">
+      <span class="tname">s4_hybrid_routing<span class="sub">routing &amp; synthesis</span></span>
+      <span class="expbox">composition measurement</span><span class="tarrow">→</span>
+      <span class="expbox">OOF keep-test repair</span><span class="tarrow">→</span>
+      <span class="expbox champ">router over cleaned library</span>
+      <span class="tmark star">★</span>
+      <span class="tout"><span class="num champ">0.123</span> champion — the cleaning stage alone; router null</span>
+    </div>
+    <div class="track">
+      <span class="tname">s6_local<span class="sub">local defect correction</span></span>
+      <span class="expbox">Richardson DC + trust gate</span><span class="tarrow">→</span>
+      <span class="expbox">circular-padding repair</span>
+      <span class="tout"><span class="num">0.188</span> first criterion-2 pass; superseded by s4</span>
+    </div>
+    <div class="track">
+      <span class="tname">s2_beyond_copy<span class="sub">beating copy-LF where it's hard</span></span>
+      <span class="expbox diag">copy-LF error forensics</span><span class="tarrow">→</span>
+      <span class="expbox">LF-residual FNO</span><span class="tarrow">→</span>
+      <span class="expbox">per-sample norm repair</span>
+      <span class="tout"><span class="num">0.380</span> + normalization eligibility rule</span>
+    </div>
+    <div class="track">
+      <span class="tname">s1_poisson<span class="sub">few-shot fidelity ladder</span></span>
+      <span class="expbox">all-pairs ladder</span><span class="tarrow">→</span>
+      <span class="expbox">per-level-norm factorial</span><span class="tarrow">→</span>
+      <span class="expbox">closed-form gain head</span><span class="tarrow">→</span>
+      <span class="expbox">self_only attribution</span>
+      <span class="tout"><span class="num">0.609</span> criterion 1 met (5 HF samples)</span>
+    </div>
+    <div class="track">
+      <span class="tname">s5_tuning<span class="sub">backbone tuning axes</span></span>
+      <span class="expbox">spectral bandwidth</span><span class="tarrow">→</span>
+      <span class="expbox">target scaler</span><span class="tarrow">→</span>
+      <span class="expbox">per-sample scaler</span>
+      <span class="tmark dead">✕</span>
+      <span class="tout">axis fully mapped — no claimable win exists</span>
+    </div>
+    <div class="track">
+      <span class="tname">s7_loss<span class="sub">objective design</span></span>
+      <span class="expbox">relative-loss reparam</span><span class="tarrow">→</span>
+      <span class="expbox diag">two-gate disambiguation</span>
+      <span class="tmark dead">✕</span>
+      <span class="tout">levers falsified; two-gate rule shipped</span>
+    </div>
+    <div class="track">
+      <span class="tname">s3_warp<span class="sub">warp / advection premise</span></span>
+      <span class="expbox diag">warp-opportunity oracle</span><span class="tarrow">→</span>
+      <span class="expbox">warp-then-correct</span>
+      <span class="tmark dead">✕</span>
+      <span class="tout">premise absent 100×; registration fix derived instead</span>
+    </div>
+    <div class="track">
+      <span class="tname">s3_testtime<span class="sub">test-time adaptation</span></span>
+      <span class="expbox diag">feasibility diagnostic</span>
+      <span class="tmark dead">✕</span>
+      <span class="tout">retired by operator (ADR 0010)</span>
+    </div>
+  </div></div>
+  <p class="gridkey">Each box is one experiment (card); rows iterate left → right and are ordered best to worst.
+  Dashed border = diagnostic card · ✕ = lever falsified or stream retired · ★ = champion.
+  Numbers are panel-geomean skill except s1 (ifc_poisson vs paper bar).</p>
+
+  <h3>Top models, baseline first then best to worst</h3>
   <div class="tablewrap"><table>
     <tr><th>Rank</th><th>Model</th><th>Skill ↓</th><th>What it is</th></tr>
+    <tr><td class="num">—</td><td>baseline <code>mf_fno_transfer_film</code></td><td class="num">6.70 panel geomean</td>
+        <td>FNO + FiLM transfer learning (LF-pretrain → HF-finetune); never reads LF at test, so it loses to copy-LF wherever LF exists</td></tr>
     <tr><td class="num">1</td><td><code>dc_cleaned</code> (s4-B3)</td><td class="num"><strong>0.1233</strong> panel geomean</td>
         <td>BC-matched spectral cleaning stage, then a small local CNN corrector trained on the <em>cleaned</em> residual</td></tr>
     <tr><td class="num">2</td><td>s6-B2 DC lineage</td><td class="num">0.188–0.193 panel geomean</td>
@@ -213,8 +311,8 @@
   </g>
   <line x1="30" y1="272" x2="1130" y2="272" stroke="#E5E7EB" stroke-width="1"/>
 
-  <!-- ================= P1 s6 ================= -->
-  <g>
+  <!-- ================= P1 s6 (shifted down; champion renders in the 272-496 band) ================= -->
+  <g transform="translate(0,224)">
     <text x="30" y="302" font-size="15" font-weight="bold" fill="#1F2937">2–4 · s6 lineage: defect correction — superseded by s4's dc_cleaned (−34.3%)</text>
     <text x="640" y="302" font-size="13" fill="#6B7280">trust head 0.188 · circ_repair 0.193 · B1 0.235 (6-dataset panel)</text>
 
@@ -249,10 +347,10 @@
     <text x="30" y="412" font-size="11.5" font-style="italic" fill="#6B7280">MF method: Richardson-style defect correction — the network only models the fidelity gap HF−LF; the LF field does the bulk of the work.</text>
     <text x="30" y="430" font-size="11.5" font-style="italic" fill="#6B7280">Caveat: on the sharp panel most of the learned "defect" is the benchmark's half-cell registration artifact; the genuine edge is on data whose defect is not shift-invariant.</text>
   </g>
-  <line x1="30" y1="450" x2="1130" y2="450" stroke="#E5E7EB" stroke-width="1"/>
+  <line x1="30" y1="496" x2="1130" y2="496" stroke="#E5E7EB" stroke-width="1"/>
 
   <!-- ================= P2 s2 ================= -->
-  <g>
+  <g transform="translate(0,224)">
     <text x="30" y="480" font-size="15" font-weight="bold" fill="#1F2937">5 · s2: lf_resid_fno — global residual operator</text>
     <text x="640" y="480" font-size="13" fill="#6B7280">geomean 0.380 (5-dataset beyond-copy set)</text>
 
@@ -282,10 +380,10 @@
     <text x="30" y="590" font-size="11.5" font-style="italic" fill="#6B7280">MF method: residual learning — the global-spectral cousin of s6's local corrector. Mechanism analysis: ~96–100% of the sharp-panel win is the re-learned registration ramp</text>
     <text x="30" y="608" font-size="11.5" font-style="italic" fill="#6B7280">(cosine 0.99 with the analytic half-cell fix); its global scaler is the round's amplitude-pathology root cause (one sample = 89% of the loss on helmholtz).</text>
   </g>
-  <line x1="30" y1="628" x2="1130" y2="628" stroke="#E5E7EB" stroke-width="1"/>
+  <line x1="30" y1="674" x2="1130" y2="674" stroke="#E5E7EB" stroke-width="1"/>
 
   <!-- ================= P3 s1 ================= -->
-  <g>
+  <g transform="translate(0,224)">
     <text x="30" y="658" font-size="15" font-weight="bold" fill="#1F2937">6–7 · s1: fidelity-ladder FNO + closed-form gain head — flagship few-shot dataset (ifc_poisson)</text>
     <text x="815" y="658" font-size="13" fill="#6B7280">self_only 0.609 · gain head 0.694</text>
 
@@ -323,10 +421,10 @@
     <text x="30" y="800" font-size="11.5" font-style="italic" fill="#6B7280">MF method: the true few-shot composition (no test-time LF exists here — registration issue does not apply). Cheap levels teach how the correction scales with parameters;</text>
     <text x="30" y="818" font-size="11.5" font-style="italic" fill="#6B7280">the 5 HF samples anchor the level. Surprise: dropping duplicated cross-level pairs (self_only) beats the head — B4 confirmed it and exposed the f_src fragility (0.107 ↔ 0.022).</text>
   </g>
-  <line x1="30" y1="838" x2="1130" y2="838" stroke="#E5E7EB" stroke-width="1"/>
+  <line x1="30" y1="852" x2="1130" y2="852" stroke="#E5E7EB" stroke-width="1"/>
 
-  <!-- ================= P4 s4-B3 CHAMPION ================= -->
-  <g>
+  <!-- ================= P4 s4-B3 CHAMPION (shifted up to render right after the baseline) ================= -->
+  <g transform="translate(0,-566)">
     <text x="30" y="868" font-size="15" font-weight="bold" fill="#1F2937">1 · s4-B3 dc_cleaned — ROUND CHAMPION: BC-matched spectral cleaning, then a local corrector</text>
     <text x="915" y="868" font-size="13" fill="#6B7280">panel geomean 0.123 (−34.3%)</text>
 
@@ -395,7 +493,7 @@
   </g>
 </svg>
 </div>
-  <p class="figcap"><strong>Figure 2 — what each top model actually is.</strong> Architecture and multi-fidelity method for the baseline and each leaderboard entry, with the champion's pipeline at the bottom.</p>
+  <p class="figcap"><strong>Figure 2 — what each top model actually is.</strong> Architecture and multi-fidelity method, ordered baseline first, then leaderboard best to worst; the score strip at the bottom places them all on one axis.</p>
 
   <h3>What mechanistically worked</h3>
   <div class="prose">
@@ -425,17 +523,29 @@
     the LF solver and copying its output</strong>, under corrected denominators (registration and wrap-seam
     fixes landed in <code>round2/eval/</code> before any experiment ran; r1 and r2 numbers are not comparable).</p>
   </div>
-  <div class="tablewrap"><table>
-    <tr><th>Stream</th><th>Question</th><th>Batch-1 status</th></tr>
-    <tr><td><code>r2s4_diag</code></td><td>Certify the noise floor and seed spreads before any model claims</td>
-        <td><span class="chip done">DONE · 3-seed</span> certified floor geomean <strong>19.82</strong>; claimable-effect bounds 10–1700× tighter than provisional</td></tr>
-    <tr><td><code>r2s1_direct</code></td><td>Direct condition→HF decoding</td>
-        <td><span class="chip done">SEED 0 DONE</span> geomean 19.64; beats floors resolvably on 4/6 datasets; one falsification leg fired inside seed noise — seeds 1–2 decide. Mechanism turns running</td></tr>
-    <tr><td><code>r2s2_stacked</code></td><td>FiLM-FNO pseudo-LF feeding the frozen round-1 corrector</td>
-        <td><span class="chip run">RUNNING</span> seed 0 on H200</td></tr>
-    <tr><td><code>r2s3_lf_train_signal</code></td><td>Value of LF as a pure training signal (matched with/without contrast)</td>
-        <td><span class="chip run">RUNNING</span> seed 0 on H200</td></tr>
-  </table></div>
+  <div class="gridwrap"><div class="tracks">
+    <div class="track">
+      <span class="tname">r2s4_diag<span class="sub">floors before claims</span></span>
+      <span class="expbox diag wide">noise-floor certification (3-seed)</span>
+      <span class="tout"><span class="chip done">DONE</span> floor geomean <span class="num">19.82</span>; claimable-effect bounds 10–1700× tighter</span>
+    </div>
+    <div class="track">
+      <span class="tname">r2s1_direct<span class="sub">direct condition→HF</span></span>
+      <span class="expbox">direct decoder panel</span>
+      <span class="tout"><span class="chip done">SEED 0</span> geomean <span class="num">19.64</span>; beats floors on 4/6; one clause fired inside seed noise — seeds 1–2 decide; mechanism turns running</span>
+    </div>
+    <div class="track">
+      <span class="tname">r2s2_stacked<span class="sub">pseudo-LF stack</span></span>
+      <span class="expbox wide">FiLM-FNO pseudo-LF → frozen r1 corrector</span>
+      <span class="tout"><span class="chip run">RUNNING</span> seed 0 on H200</span>
+    </div>
+    <div class="track">
+      <span class="tname">r2s3_lf_train_signal<span class="sub">value of LF in training</span></span>
+      <span class="expbox wide">matched with/without-LF contrast</span>
+      <span class="tout"><span class="chip run">RUNNING</span> seed 0 on H200</span>
+    </div>
+  </div></div>
+  <p class="gridkey">Batch 1 of a planned multi-batch round; each stream iterates left → right as later batches land, exactly as in round 1.</p>
 
   <div class="aside">
     <strong>Early round-defining finding</strong> (r2s1 mechanism turn 1): per dataset, only
