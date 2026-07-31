@@ -103,3 +103,22 @@
   (helmholtz e2 nRMSE 2.589); floors reproduce rel-diff 0.0; SIGKILL resume at epoch 90
   verified; scripts incl. 03_certify.sh (ORCHESTRATOR runs post-3-seeds, then installs
   noise_floor_candidate.json over state/noise_floor.json). -> code-reviewer dispatched.
+
+- 2026-07-31 ~18:1x r2s4 code-reviewer SUGGEST (6/6): non-blocking findings (record eta_min etc.
+  in part 5; submit via wrappers only; certify must read results ONLY from outputs_root eval/,
+  never the committed synthetic scratchpad files). ORCHESTRATOR SUBMITTED seeds 0+1+2 (card's
+  §12.4 pre-directed 3-seed protocol; deep build verification justified parallel submit):
+  jobs 66161480/66161481/66161482, 04:00:00, first r2 SLURM jobs. Card -> running.
+  On completion: initial-analyzer, then orchestrator runs scripts/03_certify.sh and installs
+  noise_floor_candidate.json over state/noise_floor.json.
+
+- 2026-07-31 ~18:4x r2s1 builder SUCCESS (12/12): build 0af8b38; contract smoke exit 0
+  (helmholtz e2 nRMSE 0.930 — amplitude head already below zero floor at 2 epochs);
+  floors seam 0.0 on 9/9; resume verified both branches; leakage tripwire asserts
+  stripped view. One TBD (denominator floor p25 vs median knob-selectable); one
+  documented deviation (closest-pair D3 certificate fit) -> reviewer told to judge it.
+  -> code-reviewer dispatched.
+
+- 2026-07-31 09:13 PDT: maintainer flagged r2s2 builder-card lag; orchestrator verified worktree
+  mtimes — builder ACTIVE (dbg2.log/smoke_eval.py modified <1 min ago, iterating contract
+  smoke on the 5-arm stack). Not stalled; no intervention. r2s4 jobs still PENDING in queue.
