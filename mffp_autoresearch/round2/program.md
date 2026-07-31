@@ -324,8 +324,14 @@ block; floor arms mandatory on model cards (§2.2).
 - Design priors (spec §6): FiLM-conditioned FNO **decoders** (condition →
   spectral latent → field), DeepONet-style branch–trunk (branch on condition,
   trunk on coordinates), spectral/implicit decoders (SIREN/modulated INR
-  class). Condition vectors are 2–19 dims (each sharp `meta.json` certifies
-  the field is a learnable function of them); ifc_poisson's is 5-dim.
+  class). Condition vectors are 2–19 dims; ifc_poisson's is 5-dim.
+- **ADR r2-0003 (corrects a spec §4 grounding fact)**: on pfc, fisher_kpp
+  and allen_cahn the condition vector is NOT complete — per-sample random
+  ICs live only in the fields, so condition→HF is a stochastic map and
+  deterministic models are bounded by the conditional-mean floor
+  (train_mean > NN on those floors is the symptom). Skill→1 is unreachable
+  there; design and falsify against the conditional-mean floor, and treat
+  bare FiLM-decoders as declared baselines (prior-art verdict: preempted).
 - **Helmholtz lesson** (r1 report §5): the zero field is the floor to beat
   there — any helmholtz claim must show the zero-floor column.
 - **pfc caveat** (§2.3): denominator 0.007381 under variant C; no
@@ -417,9 +423,11 @@ block; floor arms mandatory on model cards (§2.2).
 
 Multi-Fidelity Field Prediction with **no LF at test**: predict a
 high-fidelity PDE solution field from a small condition vector (2–19
-scalars; complete by construction — each dataset's `meta.json` certifies the
-field is a learnable function of it), with few HF samples and LF coarse-solve
-fields available at training time only. Fields are 2-D `(H, W)` (ifc_raw) or
+scalars), with few HF samples and LF coarse-solve fields available at
+training time only. CAVEAT (ADR r2-0003): the condition vector is complete
+only on some datasets — on pfc/fisher_kpp/allen_cahn the realized random IC
+is absent from it (and present in the train LF fields), making condition→HF
+stochastic there. Fields are 2-D `(H, W)` (ifc_raw) or
 flat `(n_cells,)` (npz); `round2/eval/panel_data.py` handles both (offline
 reference computation only — models get the stripped view).
 
