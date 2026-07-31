@@ -57,6 +57,8 @@ tool: name, what it measures, invocation, provenance card.
 | `library_dominance_audit.py` | is a router / discrete super learner / MoE LICENSED at all? weak-dominance matrix over the library at each dataset's certified floor, degenerate ties where two members are the SAME object, and the geomean of every constant router vs the per-dataset oracle (`routing_headroom_pct`) | s4_hybrid_routing-B3 turn 3 |
 | `condition_predictability_ceiling.py` | ROUND-2: how much of a dataset's HF field the CONDITION VECTOR determines at all — a training-free aleatoric ceiling in skill units (noise-debiased LOO k-NN upper bound + matched-pair `d->0` extrapolation), with an explicit `no_support` verdict | r2s4_diag-B1 turn 2 |
 | `conditional_mean_collapse.py` | ROUND-2: has a condition->field model collapsed to a constant field, and is its condition-driven variation worth its amplitude? own-mean-broadcast arm, fluctuation energy/alignment, shrinkage oracle, per-sample tail attribution, seed same-function test | r2s4_diag-B1 turns 1+3 |
+| `band_gain_counterfactual.py` | ROUND-2: is an arm-vs-arm advantage just BAND CALIBRATION? one scalar per radial Fourier band fitted out of fold on a train-side calibration fold, applied to the losing arm's test prediction and re-scored (optionally with the floor blend re-selected), plus `frac_of_gap_closed` against a reference arm. Complements `band_weight_counterfactual.py` (which LOCATES a gap; this one decides whether it SURVIVES recalibration) | r2s1_direct-B1 turn 3 |
+| `condition_identifiable_rank.py` | ROUND-2: how many degrees of freedom of the HF field the CONDITION VECTOR determines — per-POD-mode out-of-fold R^2 (identifiable rank), condition-predictable variance fraction and implied floor, a scoreable closed-form rank-r arm vs the ORACLE rank-r truncation (COEFFICIENT_UNIDENTIFIABLE vs BASIS_INADEQUATE verdict), the condition-predicted DC-only arm, the additive-field/centering trap, and a bimodal pattern-gate AUC | r2s1_direct-B1 turns 1+3 |
 
 ---
 
@@ -1961,3 +1963,135 @@ useful **-0.0147** / lambda* **0.0**. Identical to the source probes.
 **Provenance.** `worktrees/r2s4_diag/B1/scratchpad/reanalysis_turn_{1,3}.py`;
 card `experiment_cards/r2s4_diag/batch_1/B1.json` part 6, findings T1-F1 - T1-F5
 and T3-F1 - T3-F5.
+
+---
+
+## `band_gain_counterfactual.py`  *(round 2)*
+
+**Measures.** Whether an arm-vs-arm advantage is REPRESENTATION or merely
+per-band amplitude CALIBRATION. Fits one scalar gain per radial Fourier band by
+coordinate descent on a TRAIN-side calibration fold (`--fold_seed/--model_frac/
+--blend_frac` reproduce the round-2 `common.make_folds` split, or pass
+`--cal_idx`), applies the gains to the arm's test prediction, optionally
+re-selects the floor blend `(base, lambda)` over {zero, train_mean,
+nn_condition} on the same fold, and re-scores through `round2/eval/nrmse.py`.
+With `--ref_test` it reports the A-vs-B gap before and after and
+`frac_of_gap_closed`. Also prints each band's share of the TEST HF energy (the
+most a band can ever be worth). `--fit_on test` is an explicitly labelled
+ORACLE mode and its numbers may never enter a card as an arm score.
+
+**Not the same tool as `band_weight_counterfactual.py`** (round 1, s3_warp-B2),
+which attributes an EXISTING gap to bands by swapping arm A's per-band error for
+arm B's. Use that one to locate a gap, this one to decide whether the gap
+survives letting the losing arm rescale its own bands out of fold. No shared
+code; either order works.
+
+**Read it as.** `frac_of_gap_closed >= ~0.9` -> the difference was calibration,
+and any capacity/architecture claim must be re-made against the calibrated
+competitor. Near-uniform gains `< 1` -> a pure global amplitude shrink (the arm
+is mis-scaled, not mis-structured). All non-DC gains driven to 0 -> the only
+scoreable content is the spatial mean (go to `condition_identifiable_rank.py` /
+`dc_pattern_split.py`). Non-monotone gains including a value `> 1` -> the arm
+genuinely under-predicts a band; the one signature that does not reduce to
+shrinkage.
+
+**Invoke.**
+```bash
+source "$PROJECT_ROOT/.venv/bin/activate"
+python tools/band_gain_counterfactual.py \
+    --dataset sharp__phase_field_crystal_2d \
+    --pred_train tiny_train.npy --pred_test tiny_test.npy \
+    --ref_test decoder_test.npy --blend --out bandgain_pfc.json
+# 256^2 / large calibration folds: trade calibration quality for wall time
+python tools/band_gain_counterfactual.py --dataset sharp__cahn_hilliard \
+    --pred_train t_tr.npz:pred --pred_test t_te.npz:pred \
+    --gains 11 --passes 1 --max_cal 200 --blend --out bandgain_ch.json
+```
+Pure numpy on the login node. The calibration set is Fourier-decomposed into
+per-band components ONCE, so a coordinate-descent trial is a weighted sum and
+not an FFT: the full 31-gain x 2-pass grid runs in **9.3 s** on a 128^2 dataset
+and **75.5 s** on 256^2 `sharp__cahn_hilliard`, where the FFT-in-the-loop source
+probe blew the 20-minute script cap and had to fall back to 11 gains x 1 pass.
+Memory is `n_bands x n_cal x n_cells x 8 B` (1.3 GB at 256^2 x 400) — use
+`--max_cal`.
+
+**Verified.** Run 2026-07-31 from `round2/` against the r2s1-B1 arms
+(predictions dumped by `worktrees/r2s1_direct/B1/scratchpad/register_dump_preds.py`;
+outputs kept at `.../scratchpad/register_toolcheck_bandgain_*.json`):
+`sharp__phase_field_crystal_2d` gains **[1.0, 0, 0, 0.05, 0, 1.0]**, tiny head
+0.41455 raw / 0.41051 blended -> **0.38425** calibrated+blended against the
+shipped decoder's 0.38396 raw, `frac_of_gap_closed` **0.989** — identical to
+turn-3 F8 (0.38425). `sharp__cahn_hilliard` at the FULL grid (which turn 3 could
+not afford): gains [0, 0.9, 0, 1.5, 0.25, 0], 0.58195 raw -> **0.55990**
+calibrated+blended vs the shipped 0.53686, only **12.1 %** of the gap closed —
+tightening turn-3 F8's coarse-grid upper bound 0.56297 and leaving the decoder a
+**+4.3 %** advantage there.
+
+**Provenance.** `worktrees/r2s1_direct/B1/scratchpad/turn3_followup.py`; card
+`experiment_cards/r2s1_direct/batch_1/B1.json` part 6, findings T3-F3, T3-F4,
+T3-F8.
+
+---
+
+## `condition_identifiable_rank.py`  *(round 2)*
+
+**Measures.** For a condition->HF task, training-free and TRAIN-split only
+(except two rows explicitly suffixed `ORACLE`): the per-POD-mode out-of-fold
+R^2 of the coefficient predicted from the condition (bias + standardized
+condition + `--cond_rff` random Fourier features, ridge with K-fold alpha), the
+identifiable rank (`n_r2_gt_0.10/0.50`), the condition-predictable share of the
+centered field variance and the `implied_floor_nrmse` of ANY
+`mean_field + f(cond).V` model; a rank sweep giving both a SCOREABLE closed-form
+rank-r arm and the ORACLE rank-r truncation of the test fields; the DC anatomy
+(HF DC energy share, DC oracle, out-of-fold R^2 of the per-sample spatial mean,
+and the condition-predicted DC-ONLY arm with its parameter count); the centering
+diagnostic `||mean field|| / geometric-mean ||y||` with both constant
+predictors; and (2-D) an auto-detected dominant ring, the bimodality of its
+energy share and the out-of-fold AUC of predicting "has the pattern nucleated?"
+from the condition, with the DC arm scored per class.
+
+**Read it as.** `verdict = COEFFICIENT_UNIDENTIFIABLE` (ORACLE at `--ref_rank`
+under 0.25x the arm, <= 5 identifiable modes) -> the model is
+INFORMATION-limited: the basis holds the answer, the condition cannot select the
+coefficients, and decoder capacity buys nothing. `BASIS_INADEQUATE` (ORACLE >=
+0.8x the arm) -> genuinely high-rank fields; representation is the lever.
+`ratio_meanfield_over_geoamp >> 1` -> a fixed ADDITIVE field is a trap under the
+per-sample relative metric and a (unit direction x amplitude) factorization is
+free money; `<< 1` -> the fields cancel in the mean and factorizing costs you.
+`gate.oof_auc ~ 1` with a bimodal ring share -> two problems in one dataset;
+score per class before believing a pooled number. Complements
+`condition_predictability_ceiling.py` (how much energy is unexplainable) and
+`dc_pattern_split.py` (level vs pattern, oracle only).
+
+**Invoke.**
+```bash
+source "$PROJECT_ROOT/.venv/bin/activate"
+python tools/condition_identifiable_rank.py \
+    --datasets sharp__phase_field_crystal_2d,sharp__allen_cahn_2d \
+    --arm_nrmse "sharp__phase_field_crystal_2d=0.38403,sharp__allen_cahn_2d=0.43527" \
+    --out identrank.json
+python tools/condition_identifiable_rank.py --datasets ifc_poisson \
+    --ranks 1,2,3,4 --max_modes 50 --no_gate --out ip.json   # small-N / cheap
+```
+Pure numpy on the login node; 5-30 s per panel dataset (dominated by the SVD and
+the rank sweep — trim `--ranks` / `--max_modes`). Defaults to the STRIPPED view
+and asserts the test split carries no LF fidelity.
+
+**Verified.** Run 2026-07-31 from `round2/` (outputs kept at
+`worktrees/r2s1_direct/B1/scratchpad/register_toolcheck_identrank_*.json`):
+`sharp__phase_field_crystal_2d` identifiable rank **2**, predictable variance
+**0.0536**, rank-50 arm **0.41422** vs ORACLE-50 **0.02844**, DC share 0.7225,
+DC out-of-fold R^2 **0.99972**, DC-only arm **0.35017**, dominant ring k=**5**,
+patterned fraction 0.375, gate AUC 0.9992 (RFF) / 0.9997 (linear), per-class DC
+arm 0.78830 patterned / 0.00593 unpatterned, verdict
+**COEFFICIENT_UNIDENTIFIABLE**; `sharp__allen_cahn_2d` rank **1**, predictable
+variance **0.9604**, rank-1 arm **0.34086**, rank-50 arm **0.34752**, ORACLE-50
+**0.20505**, verdict MIXED; `ifc_poisson` (5 train samples) rank 1, predictable
+variance **0.4654**. Every one of these matches the source probes (turn-1 F2/F3/
+F5 and turn-3 F6/F7) to the digits reported there; the `centering` block is
+computed on the FULL train split where turn-2 F5 used the fitting fold, so those
+numbers agree qualitatively but not to the digit.
+
+**Provenance.** `worktrees/r2s1_direct/B1/scratchpad/reanalysis_turn_1.py` and
+`.../turn3_followup_b.py`; card `experiment_cards/r2s1_direct/batch_1/B1.json`
+part 6, findings T1-F2, T1-F4, T1-F5, T2-F5, T3-F5, T3-F6, T3-F7.

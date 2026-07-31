@@ -260,3 +260,64 @@
   global gain; never overfit). F2's credit = amplitude switch, no structural info. -> turn 2
   dispatched (spectral attribution + LF-info-after-n^2 test; r2s2's ifc-affine finding
   cross-referenced).
+
+- 2026-07-31 ~17:0x PDT r2s1-B1 mechanism turn 3 (5/5): H3 FALSIFIED — no phase/registration
+  DOF anywhere (ring phase cos ~0 all arms); pfc win = 100x amplitude shrinkage of the
+  unpredictable ring; 6 fitted band gains close tiny-head deficit to 0.06%; pfc "is two
+  datasets" (44/100 patterned, class OOF AUC 0.9998 from 2-dim condition; scoreable content
+  = spatial mean, DC OOF R2 0.9997; 35-param DC-only arm 0.3502 beats shipped 0.3840).
+  ch's +4.6% = only surviving capacity claim. -> register turn dispatched (3 tool promotions,
+  name-collision warning given).
+
+- 2026-07-31 ~17:2x PDT r2s4-B2 websearcher SUCCESS (7/7, cap hit): D2 CORRECTION — B1's
+  ceiling estimators are published objects (differogram + difference-based variance class;
+  19-dim no-support is theorem-level; N_hf=5 ceiling claims indefensible per 2410.23440);
+  D1 value-of-LF open as composition (DOPD privilege-illusion advantage-gap ablation +
+  pre-registered nulls from training-free ceiling); D3 sell lambda* diagnostic (James-Stein;
+  FALCON warns few-point calibration needs UQ); no PDE n_eff estimator exists (define
+  locally). -> B2 brainstormer dispatched.
+
+- 2026-07-31 ~17:5x PDT r2s3-B1 mechanism turn 2 (6/6): ROUND HEADLINE — ifc_poisson EXACTLY
+  affine in condition (3.2e-08 at every rung + test HF); 5 HF rows rank-deficient by ONE
+  affine direction (18.83% of law energy); LF rungs transfer slope fields at cos 0.9995;
+  linear probe (rung-32 affine + 1 scalar + 5-row residual) reaches SKILL 0.2427 vs shipped
+  16.80 — value-of-LF = +3.23 units = 13.5x floor, in the ARCHITECTURE-not-information
+  direction. B1 family failure = mode clipping + 1772x loss deflation (per-rung scaler
+  necessary but plausibly insufficient; pin mode clipping at HF Nyquist). BENCHMARK-INTEGRITY:
+  ifc criterion-2 claims measure rank recovery, not operator learning (report §5 item).
+  -> turn 3 dispatched.
+
+- 2026-07-31 ~18:2x PDT r2s2-B1 mechanism turn 2 (6/6): I2 FALSIFIED in strong form — emulator
+  emits rank-22 (cahn_hilliard) / rank-6 (fluid) matching truth rank; rank-1 collapse on
+  pfc/allen_cahn/fisher = TRAINED response to unlearnable targets (nn band>=1 cosine ~0 —
+  pattern not a function of X; emulator within 0.002 of its oracle rank-1 bound there).
+  Three-way ceiling taxonomy: structural (pfc/ac/fk) / sampling (ch, 3.91 sd nn distance) /
+  learning (helmholtz continuous but FiLM code collapsed; ifc affine reachable 6.2e-08).
+  -> turn 3 dispatched (part 6 + postmortem).
+
+- 2026-07-31 ~18:5x PDT r2s4-B2 brainstormer SUCCESS (10/10): diagnostic-with-training =
+  DOPD advantage-gap value-of-LF (transfer leg cond-only test; information leg on inner
+  train fold where LF legal — positive control via ADR r2-0003; capability leg free) +
+  N_fit sweep {20,80,320}; LF pinned to copy-LF's own rung/convention; thresholds
+  max(certified mce, in-job paired spread); seeds [0,1,2]; ceiling work deliberately NOT
+  attempted (D2 verdict binding). Honest prediction: claimable transfer on 1-2 datasets
+  (criterion-1 adjudication reserved). -> starter dispatched.
+
+- 2026-07-31 ~19:1x PDT r2s1-B1 COMPLETE (register 6/6; disk-verified part 7 + 2 tools
+  promoted/indexed; capacity-audit tool deliberately NOT promoted — family-coupled).
+  Register-turn bonus measurement: full 31-gain calibration on ch in 75.5s -> decoder
+  advantage narrowed to 4.29% but = 6.0x certified mce (REAL candidate; B2's question).
+  next_direction: spend on identification/calibration not capacity; DC-only arm mandatory
+  floor. Cross-stream: identifiable-rank convergence 1/1/1 pfc-ac-fk, 3 ch across three
+  independent probes. -> B2 websearcher dispatched (batch counter -> 2).
+
+- 2026-07-31 ~19:3x PDT r2s3-B1 mechanism turn 3 (8/8): LF gain does NOT survive the network
+  channel (inverts to -6.12 under identical repairs; architecture tax 60x with-LF, 2.72x
+  no-LF); inductive-bias finding: net puts 27.7% of affine-law energy ANTI-ALIGNED in the
+  unconstrained direction (min-norm linear puts 0); H7 low-pass repair minor (+1.6 of 7.35);
+  rung_upsampled = pointwise memorisation, train-row diagnostics blind to it. Postmortem:
+  F1 falsified-as-architecture / confirmed-as-information. -> register turn dispatched
+  (overlap check vs r2s1's condition_identifiable_rank tool flagged).
+
+- 2026-07-31 ~19:5x PDT r2s4-B2 starter SUCCESS (13/13): B2.json drafted, no TBDs; 3-seed
+  §12.4 exception flagged for reviewer adjudication. -> builder dispatched.
