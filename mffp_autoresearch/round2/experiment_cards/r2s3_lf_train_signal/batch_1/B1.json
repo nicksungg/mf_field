@@ -91,7 +91,7 @@
   "brainstormer_immutables_self_check": "**pass (11/11)**, with positive evidence per item\nrecorded in [iteration_1.md](iteration_1.md) (\"Immutables self-check\"). Two\nitems worth surfacing here: (9) F1/F2's 0.23990756 threshold is the\nifc_poisson `min_claimable_effect` from `state/noise_floor.json` and the\npredicted effect is ~42x it; (10) the nearest pre-falsified lever is **LF\nlow-mode freezing** (`mf_fno_spectral`, r1 \u00a75) \u2014 that lever substituted the\nLF field's low modes into the *test-time* prediction, whereas here nothing is\nfrozen or substituted, no LF tensor exists at test, and the low-mode\ninformation enters only as a training loss at conditions the HF rung does not\ncontain.",
   "brainstormer_anchor_reference_note": "`null` (program.md \u00a74.5 \u2014 round-2 lever stream; the own-stream anchor 23.0636 is implicit and quoted throughout).",
   "brainstormer_source_iteration_note": "[iteration_1.md](iteration_1.md)",
-  "status": "running",
+  "status": "analyzing",
   "skipped_reason": null,
   "reopen_candidate": false,
   "scripts_path": {
@@ -150,7 +150,1734 @@
     }
   ],
   "debug_notes": [],
-  "5_actual_result": null,
+  "5_actual_result": {
+    "seeds_available": [
+      0
+    ],
+    "labeling": "provisional-single-seed (round-2 strict 1-seed in-round protocol, project.yaml seed_protocol.seeds=[0]; seeds 1-2 only at round end for the top 3)",
+    "job_ids": [
+      "66165379"
+    ],
+    "family": "r2s3_rung_supervised",
+    "epochs": 200,
+    "primary_arm": "rung_native",
+    "result_jsons": {
+      "hf_only": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B1/eval/result_panel_hf_only_s0.json",
+      "rung_native": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B1/eval/result_panel_rung_native_s0.json",
+      "rung_upsampled": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B1/eval/result_ifc_poisson+sharp__cahn_hilliard+sharp__phase_field_crystal_2d_rung_upsampled_s0.json",
+      "guard": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B1/eval/result_guard_rung_native_e2_s0.json",
+      "baseline_gate": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B1/eval/result_ifc_poisson_baseline_mf_fno_transfer_film_s0.json"
+    },
+    "per_arm_detail_dirs": {
+      "hf_only": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B1/eval/results_hf_only/r2s3_rung_supervised/",
+      "rung_native": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B1/eval/results_rung_native/r2s3_rung_supervised/",
+      "rung_upsampled": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B1/eval/results_rung_upsampled/r2s3_rung_supervised/",
+      "rung_native_guard": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B1/eval/results_rung_native_guard/r2s3_rung_supervised/",
+      "baseline_transfer_film": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B1/eval/results_baseline_transfer_film/mf_fno_transfer_film/"
+    },
+    "hash_seam": {
+      "nrmse_def_hash": "d3d0ade9191c13bacc40702f3eb26ad290e01641cacee22a1d2233b74c035850",
+      "copylf_def_hash": "9753ff24e856f595748492dec6cb6c215d748f97e8ec4a679b651f8846da907a",
+      "consistent_across_parsed_jsons": true,
+      "checked": [
+        "result_guard_rung_native_e2_s0.json",
+        "result_ifc_poisson+sharp__cahn_hilliard+sharp__phase_field_crystal_2d_rung_upsampled_s0.json",
+        "result_ifc_poisson_baseline_mf_fno_transfer_film_s0.json",
+        "result_panel_hf_only_s0.json",
+        "result_panel_rung_native_s0.json",
+        "eval/copylf_baselines.json",
+        "state/anchors/floors.json",
+        "state/noise_floor.json (_provenance)"
+      ],
+      "note": "all 5 result JSONs plus the 3 reference/state files carry nrmse_def_hash d3d0ade9... and copylf_def_hash 9753ff24...; single seed, so no cross-seed hash comparison was possible. Per-leg code_hash differs by design (env is hashed): hf_only 01f7a09f..., rung_native / guard d78fcb17..., rung_upsampled c676784d..., baseline 7a7d001f... \u2014 the arms cannot collide in the score cache."
+    },
+    "code_hash_per_leg": {
+      "hf_only": "01f7a09ff1f81d5c775f6d01c4c127888c0754d91495e65486af39c19994091d",
+      "rung_native": "d78fcb176945f5fe5292c1562438ebc94cf8889f405da326fd4561a01f308374",
+      "rung_upsampled": "c676784d5b62bfdaefa438dc6fffe7fa509f63a9ce59560dbb12c754a49f9ec7",
+      "guard": "d78fcb176945f5fe5292c1562438ebc94cf8889f405da326fd4561a01f308374",
+      "baseline_gate": "7a7d001f6dde16c66a06b81093e50a0dac1103a724226011546968f21d780727"
+    },
+    "per_dataset": {
+      "ext__helmholtz_2d": {
+        "per_seed_nrmse": [
+          2.950778058264071
+        ],
+        "per_seed_skill": [
+          9.867725110309886
+        ],
+        "mean_skill": 9.867725110309886,
+        "ci95": null,
+        "ci95_note": "single seed (round-2 strict 1-seed in-round protocol, project.yaml seed_protocol.seeds=[0]): no bootstrap CI computable; value is provisional-single-seed",
+        "reference_type": "copylf",
+        "reference_nrmse": 0.2990332650411058,
+        "cached": false,
+        "split": "test_hf",
+        "metric_source": "per_sample_mean",
+        "arm_hf_only_nrmse": 8.080828955236754,
+        "arm_hf_only_skill": 27.023177351609846,
+        "value_of_lf_delta_skill_hf_minus_rung": 17.15545224129996,
+        "value_of_lf_sign": "LF helps (rung_native better)",
+        "floor_arms_skill": {
+          "nn_condition": 4.385306254533589,
+          "train_mean": 14.610657760631902,
+          "zero": 3.3441095587226317
+        },
+        "best_floor": {
+          "arm": "zero",
+          "skill": 3.3441095587226317
+        },
+        "beats_best_floor_rung_native": false,
+        "beats_best_floor_hf_only": false,
+        "min_claimable_effect_card_quoted_provisional": 10.681106622068137,
+        "min_claimable_effect_certified": 2.95299157437233,
+        "train_test_gap_rung_native": {
+          "train_nrmse": 2.6469411423479197,
+          "test_nrmse": 2.95077805826407,
+          "gap": 0.3038369159161505
+        },
+        "train_test_gap_hf_only": {
+          "train_nrmse": 7.041921153501094,
+          "test_nrmse": 8.080828955236756,
+          "gap": 1.0389078017356619
+        },
+        "shared_scaler_max_abs": {
+          "rung_native": 7.382632255554199,
+          "hf_only": 7.382632255554199
+        },
+        "scaler_ratio_rung_over_hf": 1.0
+      },
+      "sharp__phase_field_crystal_2d": {
+        "per_seed_nrmse": [
+          0.47823822210286165
+        ],
+        "per_seed_skill": [
+          64.7950914866109
+        ],
+        "mean_skill": 64.7950914866109,
+        "ci95": null,
+        "ci95_note": "single seed (round-2 strict 1-seed in-round protocol, project.yaml seed_protocol.seeds=[0]): no bootstrap CI computable; value is provisional-single-seed",
+        "reference_type": "copylf",
+        "reference_nrmse": 0.00738077856100695,
+        "cached": false,
+        "split": "test_hf",
+        "metric_source": "per_sample_mean",
+        "arm_hf_only_nrmse": 0.5113190819023764,
+        "arm_hf_only_skill": 69.27711997806065,
+        "value_of_lf_delta_skill_hf_minus_rung": 4.4820284914497535,
+        "value_of_lf_sign": "LF helps (rung_native better)",
+        "floor_arms_skill": {
+          "nn_condition": 68.55554386549396,
+          "train_mean": 59.8117544948052,
+          "zero": 135.48706166081905
+        },
+        "best_floor": {
+          "arm": "train_mean",
+          "skill": 59.8117544948052
+        },
+        "beats_best_floor_rung_native": false,
+        "beats_best_floor_hf_only": false,
+        "min_claimable_effect_card_quoted_provisional": 6.983921646759966,
+        "min_claimable_effect_certified": 0.21302734961699343,
+        "train_test_gap_rung_native": {
+          "train_nrmse": 0.04797614816079486,
+          "test_nrmse": 0.4782382221028616,
+          "gap": 0.4302620739420667
+        },
+        "train_test_gap_hf_only": {
+          "train_nrmse": 0.16194023412908998,
+          "test_nrmse": 0.5113190819023764,
+          "gap": 0.3493788477732864
+        },
+        "shared_scaler_max_abs": {
+          "rung_native": 0.8694268465042114,
+          "hf_only": 0.8694268465042114
+        },
+        "scaler_ratio_rung_over_hf": 1.0,
+        "arm_rung_upsampled_nrmse": 0.4766741541979397,
+        "arm_rung_upsampled_skill": 64.58318052193502
+      },
+      "sharp__allen_cahn_2d": {
+        "per_seed_nrmse": [
+          0.3029630469383997
+        ],
+        "per_seed_skill": [
+          170.13071689018167
+        ],
+        "mean_skill": 170.13071689018167,
+        "ci95": null,
+        "ci95_note": "single seed (round-2 strict 1-seed in-round protocol, project.yaml seed_protocol.seeds=[0]): no bootstrap CI computable; value is provisional-single-seed",
+        "reference_type": "copylf",
+        "reference_nrmse": 0.0017807662982691156,
+        "cached": false,
+        "split": "test_hf",
+        "metric_source": "per_sample_mean",
+        "arm_hf_only_nrmse": 0.26456841863193803,
+        "arm_hf_only_skill": 148.56998298378372,
+        "value_of_lf_delta_skill_hf_minus_rung": -21.560733906397957,
+        "value_of_lf_sign": "LF hurts (rung_native worse)",
+        "floor_arms_skill": {
+          "nn_condition": 269.19587575878967,
+          "train_mean": 562.0295274675294,
+          "zero": 561.5560003420935
+        },
+        "best_floor": {
+          "arm": "nn_condition",
+          "skill": 269.19587575878967
+        },
+        "beats_best_floor_rung_native": true,
+        "beats_best_floor_hf_only": true,
+        "min_claimable_effect_card_quoted_provisional": 14.815205612498659,
+        "min_claimable_effect_certified": 0.8797047190126648,
+        "train_test_gap_rung_native": {
+          "train_nrmse": 0.20400242824107095,
+          "test_nrmse": 0.30296304693839976,
+          "gap": 0.0989606186973288
+        },
+        "train_test_gap_hf_only": {
+          "train_nrmse": 0.24939283744276888,
+          "test_nrmse": 0.26456841863193803,
+          "gap": 0.015175581189169146
+        },
+        "shared_scaler_max_abs": {
+          "rung_native": 0.2462458610534668,
+          "hf_only": 0.24611739814281464
+        },
+        "scaler_ratio_rung_over_hf": 1.0005219578608482
+      },
+      "sharp__fisher_kpp_2d": {
+        "per_seed_nrmse": [
+          0.2788595760926068
+        ],
+        "per_seed_skill": [
+          13.000747275535332
+        ],
+        "mean_skill": 13.000747275535332,
+        "ci95": null,
+        "ci95_note": "single seed (round-2 strict 1-seed in-round protocol, project.yaml seed_protocol.seeds=[0]): no bootstrap CI computable; value is provisional-single-seed",
+        "reference_type": "copylf",
+        "reference_nrmse": 0.02144950364640668,
+        "cached": false,
+        "split": "test_hf",
+        "metric_source": "per_sample_mean",
+        "arm_hf_only_nrmse": 0.2604913668135145,
+        "arm_hf_only_skill": 12.144400686733523,
+        "value_of_lf_delta_skill_hf_minus_rung": -0.8563465888018094,
+        "value_of_lf_sign": "LF hurts (rung_native worse)",
+        "floor_arms_skill": {
+          "nn_condition": 16.337946591223936,
+          "train_mean": 11.99311063309952,
+          "zero": 46.62112543417874
+        },
+        "best_floor": {
+          "arm": "train_mean",
+          "skill": 11.99311063309952
+        },
+        "beats_best_floor_rung_native": false,
+        "beats_best_floor_hf_only": false,
+        "min_claimable_effect_card_quoted_provisional": 1.2197827127831309,
+        "min_claimable_effect_certified": 0.0007136812826775696,
+        "train_test_gap_rung_native": {
+          "train_nrmse": 0.21852932533186756,
+          "test_nrmse": 0.27885957609260686,
+          "gap": 0.06033025076073931
+        },
+        "train_test_gap_hf_only": {
+          "train_nrmse": 0.2344239692682329,
+          "test_nrmse": 0.2604913668135145,
+          "gap": 0.02606739754528159
+        },
+        "shared_scaler_max_abs": {
+          "rung_native": 0.998795747756958,
+          "hf_only": 0.998795747756958
+        },
+        "scaler_ratio_rung_over_hf": 1.0
+      },
+      "sharp__cahn_hilliard": {
+        "per_seed_nrmse": [
+          0.47169083214292473
+        ],
+        "per_seed_skill": [
+          11.283669908361562
+        ],
+        "mean_skill": 11.283669908361562,
+        "ci95": null,
+        "ci95_note": "single seed (round-2 strict 1-seed in-round protocol, project.yaml seed_protocol.seeds=[0]): no bootstrap CI computable; value is provisional-single-seed",
+        "reference_type": "copylf",
+        "reference_nrmse": 0.041802962686225575,
+        "cached": false,
+        "split": "test_hf",
+        "metric_source": "per_sample_mean",
+        "arm_hf_only_nrmse": 0.492922844522274,
+        "arm_hf_only_skill": 11.791576788998645,
+        "value_of_lf_delta_skill_hf_minus_rung": 0.5079068806370834,
+        "value_of_lf_sign": "LF helps (rung_native better)",
+        "floor_arms_skill": {
+          "nn_condition": 23.180342227117514,
+          "train_mean": 23.96905448527446,
+          "zero": 23.92174945843033
+        },
+        "best_floor": {
+          "arm": "nn_condition",
+          "skill": 23.180342227117514
+        },
+        "beats_best_floor_rung_native": true,
+        "beats_best_floor_hf_only": true,
+        "min_claimable_effect_card_quoted_provisional": 1.1603569120520159,
+        "min_claimable_effect_certified": 0.09124535322300886,
+        "train_test_gap_rung_native": {
+          "train_nrmse": 0.0057619913772302585,
+          "test_nrmse": 0.4716908321429246,
+          "gap": 0.46592884076569435
+        },
+        "train_test_gap_hf_only": {
+          "train_nrmse": 0.006237554752170882,
+          "test_nrmse": 0.4929228445222742,
+          "gap": 0.48668528977010334
+        },
+        "shared_scaler_max_abs": {
+          "rung_native": 1.1750714778900146,
+          "hf_only": 1.1750714778900146
+        },
+        "scaler_ratio_rung_over_hf": 1.0,
+        "arm_rung_upsampled_nrmse": 0.47235896537856503,
+        "arm_rung_upsampled_skill": 11.2996528242294
+      },
+      "ifc_poisson": {
+        "per_seed_nrmse": [
+          0.6046654311825017
+        ],
+        "per_seed_skill": [
+          16.796261977291717
+        ],
+        "mean_skill": 16.796261977291717,
+        "ci95": null,
+        "ci95_note": "single seed (round-2 strict 1-seed in-round protocol, project.yaml seed_protocol.seeds=[0]): no bootstrap CI computable; value is provisional-single-seed",
+        "reference_type": "paper_bar",
+        "reference_nrmse": 0.036,
+        "cached": false,
+        "split": "test_hf",
+        "metric_source": "per_sample_mean",
+        "arm_hf_only_nrmse": 0.34007774157398873,
+        "arm_hf_only_skill": 9.446603932610799,
+        "value_of_lf_delta_skill_hf_minus_rung": -7.349658044680918,
+        "value_of_lf_sign": "LF hurts (rung_native worse)",
+        "floor_arms_skill": {
+          "nn_condition": 10.054890929609687,
+          "train_mean": 11.206332455369639,
+          "zero": 27.77777777777778
+        },
+        "best_floor": {
+          "arm": "nn_condition",
+          "skill": 10.054890929609687
+        },
+        "beats_best_floor_rung_native": false,
+        "beats_best_floor_hf_only": true,
+        "min_claimable_effect_card_quoted_provisional": 0.23990756041925798,
+        "min_claimable_effect_certified": 0.9377041289531141,
+        "train_test_gap_rung_native": {
+          "train_nrmse": 0.17236870280822575,
+          "test_nrmse": 0.6046654311825017,
+          "gap": 0.43229672837427596
+        },
+        "train_test_gap_hf_only": {
+          "train_nrmse": 0.021737741196447752,
+          "test_nrmse": 0.3400777415739889,
+          "gap": 0.3183400003775412
+        },
+        "shared_scaler_max_abs": {
+          "rung_native": 0.07727370411157608,
+          "hf_only": 0.0018356895307078958
+        },
+        "scaler_ratio_rung_over_hf": 42.095192470688154,
+        "arm_rung_upsampled_nrmse": 23.310351267015612,
+        "arm_rung_upsampled_skill": 647.5097574171003
+      }
+    },
+    "panel_geomean_skill": {
+      "per_seed": [
+        25.39191964999074
+      ],
+      "mean": 25.39191964999074,
+      "ci95": null,
+      "ci95_note": "single seed: no bootstrap CI computable",
+      "source": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B1/eval/result_panel_rung_native_s0.json",
+      "arm": "rung_native (PRIMARY)",
+      "hf_only_control": {
+        "per_seed": [
+          26.868710955032423
+        ],
+        "mean": 26.868710955032423,
+        "source": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B1/eval/result_panel_hf_only_s0.json"
+      },
+      "lf_effect_on_panel_geomean_hf_minus_rung": 1.476791305041683,
+      "lf_effect_note": "on the PANEL GEOMEAN the LF arm is 1.4768 units better than the no-LF control (25.3919 vs 26.8687), which is above the certified panel min_claimable_effect 1.1419 \u2014 but the entire margin comes from ext__helmholtz_2d (report-only; both arms lose to the zero floor) and it coexists with the -7.3497 ifc_poisson inversion. No panel win is claimed: 25.3919 is WORSE than the 23.0636 anchor."
+    },
+    "vs_anchor": {
+      "anchor_value": 23.063616857615774,
+      "anchor_type": "best_floor_panel_geomean",
+      "anchor_source": "state/anchors/r2s3_lf_train_signal.json (training-free floors, certified 2026-07-31T14:20:17Z)",
+      "delta": 2.3283027923749664,
+      "delta_pct": 10.095132982605648,
+      "direction": "model WORSE than anchor (lower skill is better): 25.3919 vs 23.0636",
+      "beyond_ci": false,
+      "beyond_ci_note": "no CI at 1 seed; recorded False for schema conformance, NOT a negative finding",
+      "beyond_noise_floor": true,
+      "noise_floor_min_claimable_effect": 1.1418668211296108,
+      "noise_floor_source": "state/noise_floor.json (CERTIFIED r2s4_diag-B1, 3 seeds, family r2s4_cert_min, 2026-07-31T16:49:04Z)",
+      "reading": "the 2.3283-unit shortfall vs the best training-free floor anchor is 2.04x the certified panel-level min_claimable_effect 1.1419, so the primary arm is RESOLVABLY worse than the anchor. The hf_only control (26.8687) is worse still. Neither arm clears program.md \u00a71 criterion 2's minimum bar.",
+      "declared_baseline_panel_geomean_cited": 19.0433,
+      "declared_baseline_note": "cited from the card recipe (round-1 result files restated under corrected denominators); not re-run on the panel this batch. Both arms are worse than it."
+    },
+    "floor_arms_summary": {
+      "rule": "program.md \u00a72.2 \u2014 floor arms are mandatory on every model card",
+      "rung_native_beats_best_floor_on": [
+        "sharp__allen_cahn_2d",
+        "sharp__cahn_hilliard"
+      ],
+      "hf_only_beats_best_floor_on": [
+        "sharp__allen_cahn_2d",
+        "sharp__cahn_hilliard",
+        "ifc_poisson"
+      ],
+      "note": "rung_native beats the best training-free floor on 2/6 (allen_cahn 170.13 < 269.20 NN, cahn_hilliard 11.28 < 23.18 NN); hf_only on 3/6 (the same two plus ifc_poisson 9.4466 < 10.0549 NN). The sharpest form of the F1 inversion: the no-LF control clears the ifc_poisson NN floor and the LF arm does not."
+    },
+    "contrasts": {
+      "F1_value_of_LF_ifc_poisson": {
+        "rung_native": 16.796261977291717,
+        "hf_only": 9.446603932610799,
+        "delta_hf_minus_rung": -7.349658044680918
+      },
+      "F2_native_vs_upsampled_ifc_poisson": {
+        "rung_native": 16.796261977291717,
+        "rung_upsampled": 647.5097574171003,
+        "delta_ru_minus_rn": 630.7134954398086
+      },
+      "F3_aligned5": [
+        {
+          "dataset": "ext__helmholtz_2d",
+          "rung_native_skill": 9.867725110309886,
+          "hf_only_skill": 27.023177351609846,
+          "improvement_skill_units_hf_minus_rung": 17.15545224129996,
+          "card_quoted_threshold_provisional": 10.681106622068137,
+          "exceeds_card_quoted_threshold": true,
+          "certified_min_claimable_effect": 2.95299157437233,
+          "exceeds_certified_threshold": true,
+          "scaler_matched_between_arms": true,
+          "scaler_ratio_rung_over_hf": 1.0
+        },
+        {
+          "dataset": "sharp__phase_field_crystal_2d",
+          "rung_native_skill": 64.7950914866109,
+          "hf_only_skill": 69.27711997806065,
+          "improvement_skill_units_hf_minus_rung": 4.4820284914497535,
+          "card_quoted_threshold_provisional": 6.983921646759966,
+          "exceeds_card_quoted_threshold": false,
+          "certified_min_claimable_effect": 0.21302734961699343,
+          "exceeds_certified_threshold": true,
+          "scaler_matched_between_arms": true,
+          "scaler_ratio_rung_over_hf": 1.0
+        },
+        {
+          "dataset": "sharp__allen_cahn_2d",
+          "rung_native_skill": 170.13071689018167,
+          "hf_only_skill": 148.56998298378372,
+          "improvement_skill_units_hf_minus_rung": -21.560733906397957,
+          "card_quoted_threshold_provisional": 14.815205612498659,
+          "exceeds_card_quoted_threshold": false,
+          "certified_min_claimable_effect": 0.8797047190126648,
+          "exceeds_certified_threshold": false,
+          "scaler_matched_between_arms": true,
+          "scaler_ratio_rung_over_hf": 1.0005219578608482
+        },
+        {
+          "dataset": "sharp__fisher_kpp_2d",
+          "rung_native_skill": 13.000747275535332,
+          "hf_only_skill": 12.144400686733523,
+          "improvement_skill_units_hf_minus_rung": -0.8563465888018094,
+          "card_quoted_threshold_provisional": 1.2197827127831309,
+          "exceeds_card_quoted_threshold": false,
+          "certified_min_claimable_effect": 0.0007136812826775696,
+          "exceeds_certified_threshold": false,
+          "scaler_matched_between_arms": true,
+          "scaler_ratio_rung_over_hf": 1.0
+        },
+        {
+          "dataset": "sharp__cahn_hilliard",
+          "rung_native_skill": 11.283669908361562,
+          "hf_only_skill": 11.791576788998645,
+          "improvement_skill_units_hf_minus_rung": 0.5079068806370834,
+          "card_quoted_threshold_provisional": 1.1603569120520159,
+          "exceeds_card_quoted_threshold": false,
+          "certified_min_claimable_effect": 0.09124535322300886,
+          "exceeds_certified_threshold": true,
+          "scaler_matched_between_arms": true,
+          "scaler_ratio_rung_over_hf": 1.0
+        }
+      ]
+    },
+    "cratered_verdict": "cratered",
+    "cratered_detail": {
+      "rule": "cratered <=> crash OR panel geomean > CRATERED_SKILL_FACTOR (1.5) x stream anchor OR the pre-registered falsification clause already fired decisively (program.md \u00a74.2)",
+      "crash": false,
+      "geomean_test": {
+        "panel_geomean": 25.39191964999074,
+        "threshold_1p5x_anchor": 34.59542528642366,
+        "fired": false,
+        "note": "25.3919 < 34.5954 \u2014 the geomean clause did NOT fire"
+      },
+      "falsification_test": {
+        "fired": true,
+        "which": "F1 (primary)",
+        "note": "F1 is falsified with a 7.3497-skill-unit INVERSION on ifc_poisson = 30.6x the card-quoted floor and 7.8x the re-certified floor. That is \"decisively\" by any reading."
+      },
+      "verdict_basis": "the falsification OR-branch, not a crash and not the geomean branch",
+      "operational_meaning": "under the round-2 strict 1-seed protocol no seeds 1-2 are spent in-round anyway; \"cratered\" here means the card must NOT be promoted to the end-of-round top-3 confirmation on the strength of its primary claim, and the stream should treat B2 as a redesign rather than an extension.",
+      "what_cratered_does_NOT_mean_here": "the run itself is clean and complete (all 5 legs, no NaNs, no preemption, declared-baseline gate PASS). It produced a full matched with/without-LF contrast on all 6 panel datasets \u2014 the round-2 success-criterion-1 SHAPE \u2014 with a negative sign, plus a decisive F2 mechanism result. The scientific yield is high; only the pre-registered directional claim died. Both reviewer confounds (C1, C2) attach to the deciding measurement."
+    },
+    "falsification_verdict": "falsified",
+    "falsification_verdict_note": "top-level value refers to the PRIMARY clause F1. Per-clause: F1 FALSIFIED, F2 NOT FALSIFIED, F3 NOT FALSIFIED as written / would be FALSIFIED under the re-certified noise floor. See falsification_detail.",
+    "falsification_detail": {
+      "judged_on": "seed-0 point estimates (provisional-single-seed); round-2 protocol runs 1 seed in-round",
+      "F1_primary": {
+        "clause_verbatim": "*F1 (primary)* \u2014 falsified if `rung_native` fails to beat `hf_only` on `ifc_poisson` by more than the certified floor **0.23990756** skill units, i.e. if 170 disjoint LF conditions add nothing a condition\u2192HF operator can use.",
+        "rung_native_skill": 16.796261977291717,
+        "hf_only_skill": 9.446603932610799,
+        "rung_native_nrmse": 0.6046654311825017,
+        "hf_only_nrmse": 0.34007774157398873,
+        "required_improvement": 0.23990756041925798,
+        "observed_improvement_hf_minus_rung": -7.349658044680918,
+        "verdict": "FALSIFIED",
+        "decisiveness": {
+          "inversion_magnitude_skill_units": 7.349658044680918,
+          "x_card_quoted_floor": 30.635374857869394,
+          "x_certified_floor_0p9377": 7.837928636281399,
+          "note": "the effect is not merely absent, it is INVERTED: rung_native is 7.3497 skill units WORSE than the matched no-LF control (30.6x the card-quoted floor, 7.8x the re-certified floor 0.93770413)."
+        },
+        "confounds_that_qualify_this_verdict": [
+          "C1_shared_scaler_not_normalization_matched",
+          "C2_epoch_matched_not_step_matched"
+        ]
+      },
+      "F2_mechanism": {
+        "clause_verbatim": "*F2 (mechanism)* \u2014 falsified if `rung_native` fails to beat `rung_upsampled` on `ifc_poisson` by more than the same 0.23990756 skill units (the native-resolution pathway is then not the differentiator and the round-1/zoo upsample convention was already optimal).",
+        "rung_native_skill": 16.796261977291717,
+        "rung_upsampled_skill": 647.5097574171003,
+        "rung_native_nrmse": 0.6046654311825017,
+        "rung_upsampled_nrmse": 23.310351267015612,
+        "required_improvement": 0.23990756041925798,
+        "observed_improvement_ru_minus_rn": 630.7134954398086,
+        "verdict": "NOT FALSIFIED (clause survives; native-rung pathway beats the upsample convention)",
+        "degeneracy_caveat": "the margin is 630.71 skill units only because rung_upsampled DIVERGED on ifc_poisson: test nRMSE 23.310351 is 23.3x the zero-predictor nRMSE (1.0) and 100x its own train nRMSE 0.232655. This is an arm blow-up, not a graded comparison; F2 survives against a broken comparator. Both arms share the same scaler RULE (rung_native 0.07727370 vs rung_upsampled 0.07714622, ratio 1.0017), so F2 is normalization-matched \u2014 the reviewer's clean-contrast call is confirmed on disk.",
+        "off_clause_datasets": {
+          "sharp__cahn_hilliard": {
+            "rung_native": 11.283669908361562,
+            "rung_upsampled": 11.2996528242294
+          },
+          "sharp__phase_field_crystal_2d": {
+            "rung_native": 64.7950914866109,
+            "rung_upsampled": 64.58318052193502
+          }
+        },
+        "off_clause_note": "on the two condition-ALIGNED mechanism-control datasets native vs upsampled is a wash (cahn_hilliard 11.2837 vs 11.2997; pfc 64.7951 vs 64.5832) \u2014 the native-resolution pathway matters only where the rungs sit at DISJOINT conditions with a 42x amplitude ladder."
+      },
+      "F3_degeneracy_prediction": {
+        "clause_verbatim": "*F3 (degeneracy prediction, pre-registered in both directions)* \u2014 the design predicts NO LF effect on the 5 condition-aligned datasets; falsified if `rung_native` beats `hf_only` on >= 2 of the 5 by more than each dataset's `min_claimable_effect` (helmholtz 10.68110662, pfc 6.98392165, allen_cahn 14.81520561, fisher_kpp 1.21978271, cahn_hilliard 1.16035691), which would establish LF as a resolution curriculum independent of parameter coverage.",
+        "per_dataset": [
+          {
+            "dataset": "ext__helmholtz_2d",
+            "rung_native_skill": 9.867725110309886,
+            "hf_only_skill": 27.023177351609846,
+            "improvement_skill_units_hf_minus_rung": 17.15545224129996,
+            "card_quoted_threshold_provisional": 10.681106622068137,
+            "exceeds_card_quoted_threshold": true,
+            "certified_min_claimable_effect": 2.95299157437233,
+            "exceeds_certified_threshold": true,
+            "scaler_matched_between_arms": true,
+            "scaler_ratio_rung_over_hf": 1.0
+          },
+          {
+            "dataset": "sharp__phase_field_crystal_2d",
+            "rung_native_skill": 64.7950914866109,
+            "hf_only_skill": 69.27711997806065,
+            "improvement_skill_units_hf_minus_rung": 4.4820284914497535,
+            "card_quoted_threshold_provisional": 6.983921646759966,
+            "exceeds_card_quoted_threshold": false,
+            "certified_min_claimable_effect": 0.21302734961699343,
+            "exceeds_certified_threshold": true,
+            "scaler_matched_between_arms": true,
+            "scaler_ratio_rung_over_hf": 1.0
+          },
+          {
+            "dataset": "sharp__allen_cahn_2d",
+            "rung_native_skill": 170.13071689018167,
+            "hf_only_skill": 148.56998298378372,
+            "improvement_skill_units_hf_minus_rung": -21.560733906397957,
+            "card_quoted_threshold_provisional": 14.815205612498659,
+            "exceeds_card_quoted_threshold": false,
+            "certified_min_claimable_effect": 0.8797047190126648,
+            "exceeds_certified_threshold": false,
+            "scaler_matched_between_arms": true,
+            "scaler_ratio_rung_over_hf": 1.0005219578608482
+          },
+          {
+            "dataset": "sharp__fisher_kpp_2d",
+            "rung_native_skill": 13.000747275535332,
+            "hf_only_skill": 12.144400686733523,
+            "improvement_skill_units_hf_minus_rung": -0.8563465888018094,
+            "card_quoted_threshold_provisional": 1.2197827127831309,
+            "exceeds_card_quoted_threshold": false,
+            "certified_min_claimable_effect": 0.0007136812826775696,
+            "exceeds_certified_threshold": false,
+            "scaler_matched_between_arms": true,
+            "scaler_ratio_rung_over_hf": 1.0
+          },
+          {
+            "dataset": "sharp__cahn_hilliard",
+            "rung_native_skill": 11.283669908361562,
+            "hf_only_skill": 11.791576788998645,
+            "improvement_skill_units_hf_minus_rung": 0.5079068806370834,
+            "card_quoted_threshold_provisional": 1.1603569120520159,
+            "exceeds_card_quoted_threshold": false,
+            "certified_min_claimable_effect": 0.09124535322300886,
+            "exceeds_certified_threshold": true,
+            "scaler_matched_between_arms": true,
+            "scaler_ratio_rung_over_hf": 1.0
+          }
+        ],
+        "n_datasets_beating_card_quoted_thresholds": 1,
+        "verdict_as_written": "NOT FALSIFIED (1 of 5 \u2014 only ext__helmholtz_2d, 17.1555 > 10.6811 \u2014 so the pre-registered null prediction SURVIVES on the thresholds the card quotes)",
+        "THRESHOLD_PROVENANCE_ALERT": {
+          "issue": "the five thresholds quoted verbatim in expected_falsification are the PROVISIONAL (round-1-rescaled) min_claimable_effect values. state/noise_floor.json was RE-CERTIFIED by r2s4_diag-B1 at 2026-07-31T16:49:04Z (after this card was created at 15:14:14Z and after the reviewer signed off at 16:41:06Z), and the certified condition->HF spreads are 3.6x-1709x TIGHTER: helmholtz 2.95299157, pfc 0.21302735, allen_cahn 0.87970472, fisher_kpp 0.00071368, cahn_hilliard 0.09124535.",
+          "n_datasets_beating_certified_thresholds": 3,
+          "verdict_under_certified_floors": "FALSIFIED (3 of 5 \u2014 helmholtz 17.1555 > 2.9530, pfc 4.4820 > 0.2130, cahn_hilliard 0.5079 > 0.0912; allen_cahn -21.5607 and fisher_kpp -0.8563 move the WRONG way)",
+          "both_verdicts_are_recorded_deliberately": "program.md \u00a712 requires clauses be judged as written AND cross-checked against the noise floor; \u00a74.3 says a provisional floor is not a numeric threshold. The two verdicts DISAGREE and the disagreement is itself the finding: the nested-ladder degeneracy prediction survives only under the obsolete (loose) provisional thresholds.",
+          "directional_caveat": "even under the certified floors the picture is not \"LF helps as a resolution curriculum\": the 3 qualifying datasets improve while 2 degrade, i.e. rung supervision is a variance-shuffler on aligned ladders, not a uniform gain. helmholtz's 17.1555-unit improvement is the only large one and helmholtz is REPORT-ONLY (best floor = the zero field, 3.3441; both arms, 9.8677 and 27.0232, lose to it)."
+        }
+      }
+    },
+    "confounds": [
+      {
+        "id": "C1_shared_scaler_not_normalization_matched",
+        "severity": "HIGH \u2014 qualifies the PRIMARY F1 verdict",
+        "source": "notes/handoff_code_reviewer.md \"What to watch for\" item 1 (verdict SUGGEST), re-verified by this analyzer against the 200-epoch result JSONs",
+        "evidence_on_disk": {
+          "ifc_poisson_rung_table_max_abs_y": {
+            "fid8": 0.07727370411157608,
+            "fid16": 0.023740751668810844,
+            "fid32": 0.006943425163626671,
+            "fid64_HF": 0.0018356895307078958
+          },
+          "amplitude_spread": 42.09,
+          "shared_scaler_max_abs_rung_native": 0.07727370411157608,
+          "shared_scaler_max_abs_hf_only": 0.0018356895307078958,
+          "ratio": 42.0956,
+          "stage1_final_loss_per_rung_scaled_units_rung_native": {
+            "8": 6.114285042713163e-06,
+            "16": 1.3909427423186571e-06,
+            "32": 3.038888962691999e-06,
+            "64": 4.0253630686493125e-06
+          },
+          "stage1_final_loss_hf_only": 3.637922782218084e-05,
+          "stage2_final_loss_scaled_units": {
+            "rung_native": 4.120979610888753e-07,
+            "hf_only": 1.2803941899619531e-05
+          },
+          "derived_stage2_final_loss_in_PHYSICAL_units_loss_times_scaler_sq": {
+            "rung_native": 2.460729790751769e-09,
+            "hf_only": 4.314616072043118e-11,
+            "ratio_rung_over_hf": 57.032416086711734,
+            "note": "DERIVED instrumentation (unit conversion of the family-reported training MSE), NOT a score. It says the rung_native model still fits its 5 HF training rows ~57x more loosely in physical units after the HF-only stage 2, consistent with the reported train_nrmse 0.172369 vs 0.021738."
+          }
+        },
+        "reading_rule_verbatim_from_reviewer": "a null or negative F1 on `ifc_poisson` is NOT by itself evidence that 170 disjoint LF conditions add nothing \u2014 it is confounded with the shared-scaler defect.",
+        "scope": "ifc_poisson ONLY. On all 5 condition-aligned panel datasets the shared max|y| is set by the HF rung anyway, so the two arms are normalization-matched to within 0.05% (ratios: helmholtz 1.000000, pfc 1.000000, allen_cahn 1.000522, fisher_kpp 1.000000, cahn_hilliard 1.000000) \u2014 F3 is NOT affected by C1, and neither is F2 (ratio 1.0017).",
+        "card_directive_that_caused_it": "recipe.env R2S3_SCALER=shared_max_all_rungs (locked field); the declared baseline mf_fno_transfer_film uses PER-STAGE scalers, and program.md \u00a712.3 directs this stream to reuse the r1 s5 two-scaler finding.",
+        "b2_followup_named_by_reviewer": "identical design with a per-rung / per-stage scaler."
+      },
+      {
+        "id": "C2_epoch_matched_not_step_matched",
+        "severity": "MEDIUM \u2014 qualifies F1 (and F3 only trivially, since aligned rungs multiply steps uniformly)",
+        "source": "notes/handoff_code_reviewer.md \"What to watch for\" item 2",
+        "evidence_on_disk": {
+          "ifc_poisson_stage1_rows_per_epoch": {
+            "rung_native": "100+50+20+5 = 175 rows -> ~14 optimizer steps/epoch at batch 16",
+            "hf_only": "5 rows -> 1 optimizer step/epoch"
+          },
+          "stage1_rungs_rung_native": [
+            {
+              "fid": 8,
+              "grid": [
+                8,
+                8
+              ],
+              "n_rows": 100
+            },
+            {
+              "fid": 16,
+              "grid": [
+                16,
+                16
+              ],
+              "n_rows": 50
+            },
+            {
+              "fid": 32,
+              "grid": [
+                32,
+                32
+              ],
+              "n_rows": 20
+            },
+            {
+              "fid": 64,
+              "grid": [
+                64,
+                64
+              ],
+              "n_rows": 5
+            }
+          ],
+          "stage1_rungs_hf_only": [
+            {
+              "fid": 64,
+              "grid": [
+                64,
+                64
+              ],
+              "n_rows": 5
+            }
+          ],
+          "train_seconds": {
+            "rung_native": 37.843841314315796,
+            "hf_only": 12.618681907653809
+          }
+        },
+        "note": "F1 therefore confounds parameter coverage with optimizer-step count; the confound runs in FAVOUR of rung_native (more steps) yet rung_native still lost by 7.35 skill units."
+      }
+    ],
+    "declared_baseline_validity_gate": {
+      "family": "mf_fno_transfer_film",
+      "role": "program.md \u00a712.3 mandatory declared baseline; validity GATE, not a falsification clause",
+      "required": "nRMSE 0.055604 +/- 10% relative",
+      "observed_nrmse": 0.055637439592454,
+      "observed_skill": 1.5454844331237223,
+      "relative_deviation_pct": 0.06013882536148253,
+      "verdict": "PASS",
+      "result_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B1/eval/result_ifc_poisson_baseline_mf_fno_transfer_film_s0.json",
+      "headline_context": "the declared baseline reaches ifc_poisson skill 1.5455 (nRMSE 0.055637) on the SAME eval layer and seed, i.e. 10.9x better than this card's primary arm (16.7963) and 6.1x better than its no-LF control (9.4466). The baseline is itself an LF-pretrain->HF-finetune condition->HF model and it uses PER-STAGE scalers \u2014 a fact that bears directly on confound C1 and belongs to the mechanism analyzer, not to this part.",
+      "cited_card_value": 1.5446
+    },
+    "expected_vs_actual": [
+      {
+        "quantity": "hf_only ifc_poisson skill",
+        "predicted": "~11 (8-17)",
+        "actual": 9.446603932610799,
+        "verdict": "IN RANGE"
+      },
+      {
+        "quantity": "rung_native ifc_poisson skill",
+        "predicted": "~1.0 (0.5-3.0)",
+        "actual": 16.796261977291717,
+        "verdict": "FAR OUTSIDE (5.6x above the upper bound; does not even beat the NN-in-condition floor 10.0549)"
+      },
+      {
+        "quantity": "value-of-LF effect, ifc_poisson",
+        "predicted": "~+10 skill units in favour of rung_native",
+        "actual": -7.349658044680918,
+        "verdict": "SIGN INVERSION (-7.3497; predicted +10)"
+      },
+      {
+        "quantity": "5 condition-aligned datasets",
+        "predicted": "null within each min_claimable_effect",
+        "actual": "1/5 exceed the card-quoted thresholds; 3/5 exceed the re-certified thresholds",
+        "verdict": "HELD as written (helmholtz is the single exception); would NOT hold under the certified floors"
+      },
+      {
+        "quantity": "rung_native panel geomean",
+        "predicted": "~17-19",
+        "actual": 25.39191964999074,
+        "verdict": "WORSE THAN PREDICTED (25.3919; also worse than the 23.0636 anchor and the 19.0433 declared baseline)"
+      },
+      {
+        "quantity": "hf_only panel geomean",
+        "predicted": "~26-27",
+        "actual": 26.868710955032423,
+        "verdict": "IN RANGE (26.8687)"
+      }
+    ],
+    "guard_set": {
+      "fluid": {
+        "nRMSE": 0.32220036625179405,
+        "skill": 1.477579493290014,
+        "reference_nrmse": 0.21805958171115042,
+        "ratio_vs_reference": 1.477579493290014,
+        "reference_type": "copylf",
+        "floor_arms_skill": {
+          "nn_condition": 0.20480301494412487,
+          "train_mean": 1.8671034787108531,
+          "zero": 4.585902587507648
+        },
+        "best_floor": {
+          "arm": "nn_condition",
+          "skill": 0.20480301494412487
+        },
+        "cached": false
+      },
+      "heat_local": {
+        "nRMSE": 0.02142400026295588,
+        "skill": 8.921011003956579,
+        "reference_nrmse": 0.00240152155999517,
+        "ratio_vs_reference": 8.921011003956579,
+        "reference_type": "copylf",
+        "floor_arms_skill": {
+          "nn_condition": 6.423036639215027,
+          "train_mean": 52.533824782063355,
+          "zero": 416.40267431203546
+        },
+        "best_floor": {
+          "arm": "nn_condition",
+          "skill": 6.423036639215027
+        },
+        "cached": false
+      },
+      "sharp__sod_1d": {
+        "nRMSE": 0.02776962870807807,
+        "skill": 0.839210655393975,
+        "reference_nrmse": 0.03309017650048946,
+        "ratio_vs_reference": 0.839210655393975,
+        "reference_type": "copylf",
+        "floor_arms_skill": {
+          "nn_condition": 0.2440277309576757,
+          "train_mean": 3.5029047082272746,
+          "zero": 30.220449261889197
+        },
+        "best_floor": {
+          "arm": "nn_condition",
+          "skill": 0.2440277309576757
+        },
+        "cached": false
+      }
+    },
+    "guard_flags": [
+      {
+        "dataset": "heat_local",
+        "nRMSE": 0.02142400026295588,
+        "reference_nrmse": 0.00240152155999517,
+        "ratio": 8.921011003956579,
+        "rule": "nRMSE regressed > 2x vs eval/copylf_baselines.json recorded reference (program.md \u00a72.3)",
+        "context": "condition-only regime with NO LF at test: a copy-LF-referenced \"regression\" on heat_local is structural (copy-LF there is nRMSE 0.0024, i.e. the coarse solve is nearly exact), not a code defect. The guard leg ran at CONTRACT tier (2 epochs, recipe.env._guard_leg), so this is a plumbing check, not a trained number. The arm is also below heat_local's NN-in-condition floor (0.021424 vs 0.015425 -> it does NOT beat that floor). No panel win is claimed by this card (\u00a72d guard-set re-run at contract tier was therefore not required; the leg was run by card design). Flag recorded, no auto-reject."
+      }
+    ],
+    "instrumentation": {
+      "note": "score-neutral probes emitted by the family into the per-dataset detail JSONs (card part 3 \"Score-neutral instrumentation\"); reproduced here verbatim from those files.",
+      "rung_table_per_dataset": {
+        "ext__helmholtz_2d": [
+          {
+            "fid": 1,
+            "n_rows": 400,
+            "grid": [
+              24,
+              24
+            ],
+            "max_abs_y": 1.732347846031189,
+            "mean_abs_y": 0.0088103933133793,
+            "cond_rows_also_in_hf": 400,
+            "hf_rows": 400
+          },
+          {
+            "fid": 2,
+            "n_rows": 400,
+            "grid": [
+              96,
+              96
+            ],
+            "max_abs_y": 7.382632255554199,
+            "mean_abs_y": 0.01238553776928283,
+            "cond_rows_also_in_hf": 400,
+            "hf_rows": 400
+          }
+        ],
+        "sharp__phase_field_crystal_2d": [
+          {
+            "fid": 1,
+            "n_rows": 400,
+            "grid": [
+              32,
+              32
+            ],
+            "max_abs_y": 0.8563871383666992,
+            "mean_abs_y": 0.35249142601204136,
+            "cond_rows_also_in_hf": 400,
+            "hf_rows": 400
+          },
+          {
+            "fid": 2,
+            "n_rows": 400,
+            "grid": [
+              64,
+              64
+            ],
+            "max_abs_y": 0.8555784821510315,
+            "mean_abs_y": 0.3527364058183899,
+            "cond_rows_also_in_hf": 400,
+            "hf_rows": 400
+          },
+          {
+            "fid": 3,
+            "n_rows": 400,
+            "grid": [
+              128,
+              128
+            ],
+            "max_abs_y": 0.8694268465042114,
+            "mean_abs_y": 0.3527390259695342,
+            "cond_rows_also_in_hf": 400,
+            "hf_rows": 400
+          }
+        ],
+        "sharp__allen_cahn_2d": [
+          {
+            "fid": 1,
+            "n_rows": 400,
+            "grid": [
+              64,
+              64
+            ],
+            "max_abs_y": 0.24603766202926636,
+            "mean_abs_y": 0.08323396037592942,
+            "cond_rows_also_in_hf": 400,
+            "hf_rows": 400
+          },
+          {
+            "fid": 2,
+            "n_rows": 400,
+            "grid": [
+              128,
+              128
+            ],
+            "max_abs_y": 0.2462458610534668,
+            "mean_abs_y": 0.08322209963481804,
+            "cond_rows_also_in_hf": 400,
+            "hf_rows": 400
+          },
+          {
+            "fid": 3,
+            "n_rows": 400,
+            "grid": [
+              256,
+              256
+            ],
+            "max_abs_y": 0.24611739814281464,
+            "mean_abs_y": 0.08321946881269891,
+            "cond_rows_also_in_hf": 400,
+            "hf_rows": 400
+          }
+        ],
+        "sharp__fisher_kpp_2d": [
+          {
+            "fid": 1,
+            "n_rows": 400,
+            "grid": [
+              64,
+              64
+            ],
+            "max_abs_y": 0.9935495853424072,
+            "mean_abs_y": 0.6174049541687009,
+            "cond_rows_also_in_hf": 400,
+            "hf_rows": 400
+          },
+          {
+            "fid": 2,
+            "n_rows": 400,
+            "grid": [
+              128,
+              128
+            ],
+            "max_abs_y": 0.9974454641342163,
+            "mean_abs_y": 0.6234751353069811,
+            "cond_rows_also_in_hf": 400,
+            "hf_rows": 400
+          },
+          {
+            "fid": 3,
+            "n_rows": 400,
+            "grid": [
+              256,
+              256
+            ],
+            "max_abs_y": 0.998795747756958,
+            "mean_abs_y": 0.624330362992647,
+            "cond_rows_also_in_hf": 400,
+            "hf_rows": 400
+          }
+        ],
+        "sharp__cahn_hilliard": [
+          {
+            "fid": 1,
+            "n_rows": 400,
+            "grid": [
+              64,
+              64
+            ],
+            "max_abs_y": 1.1696964502334595,
+            "mean_abs_y": 0.8593670561098825,
+            "cond_rows_also_in_hf": 400,
+            "hf_rows": 400
+          },
+          {
+            "fid": 2,
+            "n_rows": 400,
+            "grid": [
+              128,
+              128
+            ],
+            "max_abs_y": 1.174353837966919,
+            "mean_abs_y": 0.8549295605422056,
+            "cond_rows_also_in_hf": 400,
+            "hf_rows": 400
+          },
+          {
+            "fid": 3,
+            "n_rows": 400,
+            "grid": [
+              256,
+              256
+            ],
+            "max_abs_y": 1.1750714778900146,
+            "mean_abs_y": 0.854353485121844,
+            "cond_rows_also_in_hf": 400,
+            "hf_rows": 400
+          }
+        ],
+        "ifc_poisson": [
+          {
+            "fid": 8,
+            "n_rows": 100,
+            "grid": [
+              8,
+              8
+            ],
+            "max_abs_y": 0.07727370411157608,
+            "mean_abs_y": 0.02056891654205174,
+            "cond_rows_also_in_hf": 0,
+            "hf_rows": 5
+          },
+          {
+            "fid": 16,
+            "n_rows": 50,
+            "grid": [
+              16,
+              16
+            ],
+            "max_abs_y": 0.023740751668810844,
+            "mean_abs_y": 0.004594323447922761,
+            "cond_rows_also_in_hf": 0,
+            "hf_rows": 5
+          },
+          {
+            "fid": 32,
+            "n_rows": 20,
+            "grid": [
+              32,
+              32
+            ],
+            "max_abs_y": 0.006943425163626671,
+            "mean_abs_y": 0.001080272281691208,
+            "cond_rows_also_in_hf": 0,
+            "hf_rows": 5
+          },
+          {
+            "fid": 64,
+            "n_rows": 5,
+            "grid": [
+              64,
+              64
+            ],
+            "max_abs_y": 0.0018356895307078958,
+            "mean_abs_y": 0.00026556040162710736,
+            "cond_rows_also_in_hf": 5,
+            "hf_rows": 5
+          }
+        ]
+      },
+      "stage1_rungs_per_arm": {
+        "ext__helmholtz_2d": {
+          "hf_only": [
+            {
+              "fid": 2,
+              "grid": [
+                96,
+                96
+              ],
+              "n_rows": 400
+            }
+          ],
+          "rung_native": [
+            {
+              "fid": 1,
+              "grid": [
+                24,
+                24
+              ],
+              "n_rows": 400
+            },
+            {
+              "fid": 2,
+              "grid": [
+                96,
+                96
+              ],
+              "n_rows": 400
+            }
+          ]
+        },
+        "sharp__phase_field_crystal_2d": {
+          "hf_only": [
+            {
+              "fid": 3,
+              "grid": [
+                128,
+                128
+              ],
+              "n_rows": 400
+            }
+          ],
+          "rung_native": [
+            {
+              "fid": 1,
+              "grid": [
+                32,
+                32
+              ],
+              "n_rows": 400
+            },
+            {
+              "fid": 2,
+              "grid": [
+                64,
+                64
+              ],
+              "n_rows": 400
+            },
+            {
+              "fid": 3,
+              "grid": [
+                128,
+                128
+              ],
+              "n_rows": 400
+            }
+          ]
+        },
+        "sharp__allen_cahn_2d": {
+          "hf_only": [
+            {
+              "fid": 3,
+              "grid": [
+                256,
+                256
+              ],
+              "n_rows": 400
+            }
+          ],
+          "rung_native": [
+            {
+              "fid": 1,
+              "grid": [
+                64,
+                64
+              ],
+              "n_rows": 400
+            },
+            {
+              "fid": 2,
+              "grid": [
+                128,
+                128
+              ],
+              "n_rows": 400
+            },
+            {
+              "fid": 3,
+              "grid": [
+                256,
+                256
+              ],
+              "n_rows": 400
+            }
+          ]
+        },
+        "sharp__fisher_kpp_2d": {
+          "hf_only": [
+            {
+              "fid": 3,
+              "grid": [
+                256,
+                256
+              ],
+              "n_rows": 400
+            }
+          ],
+          "rung_native": [
+            {
+              "fid": 1,
+              "grid": [
+                64,
+                64
+              ],
+              "n_rows": 400
+            },
+            {
+              "fid": 2,
+              "grid": [
+                128,
+                128
+              ],
+              "n_rows": 400
+            },
+            {
+              "fid": 3,
+              "grid": [
+                256,
+                256
+              ],
+              "n_rows": 400
+            }
+          ]
+        },
+        "sharp__cahn_hilliard": {
+          "hf_only": [
+            {
+              "fid": 3,
+              "grid": [
+                256,
+                256
+              ],
+              "n_rows": 400
+            }
+          ],
+          "rung_native": [
+            {
+              "fid": 1,
+              "grid": [
+                64,
+                64
+              ],
+              "n_rows": 400
+            },
+            {
+              "fid": 2,
+              "grid": [
+                128,
+                128
+              ],
+              "n_rows": 400
+            },
+            {
+              "fid": 3,
+              "grid": [
+                256,
+                256
+              ],
+              "n_rows": 400
+            }
+          ]
+        },
+        "ifc_poisson": {
+          "hf_only": [
+            {
+              "fid": 64,
+              "grid": [
+                64,
+                64
+              ],
+              "n_rows": 5
+            }
+          ],
+          "rung_native": [
+            {
+              "fid": 8,
+              "grid": [
+                8,
+                8
+              ],
+              "n_rows": 100
+            },
+            {
+              "fid": 16,
+              "grid": [
+                16,
+                16
+              ],
+              "n_rows": 50
+            },
+            {
+              "fid": 32,
+              "grid": [
+                32,
+                32
+              ],
+              "n_rows": 20
+            },
+            {
+              "fid": 64,
+              "grid": [
+                64,
+                64
+              ],
+              "n_rows": 5
+            }
+          ]
+        }
+      },
+      "condition_overlap_headline": "ifc_poisson is the ONLY panel dataset with disjoint rung conditions: cond_rows_also_in_hf = 0 for fid 8/16/32 (100+50+20 = 170 disjoint LF conditions) vs 5 HF rows. On all 5 sharp/helmholtz datasets every rung shares all 400 conditions with the HF rung (cond_rows_also_in_hf = 400) \u2014 the nested-ladder degeneracy setting.",
+      "resolution_consistency": {
+        "ext__helmholtz_2d": {
+          "before": {
+            "1": {
+              "grid": [
+                24,
+                24
+              ],
+              "rel_l2_direct_vs_restricted": 0.1031055773088204
+            }
+          },
+          "after_rung_native": {
+            "1": {
+              "grid": [
+                24,
+                24
+              ],
+              "rel_l2_direct_vs_restricted": 0.6159364716946485
+            }
+          },
+          "after_hf_only": {
+            "1": {
+              "grid": [
+                24,
+                24
+              ],
+              "rel_l2_direct_vs_restricted": 0.14071454491371294
+            }
+          }
+        },
+        "sharp__phase_field_crystal_2d": {
+          "before": {
+            "1": {
+              "grid": [
+                32,
+                32
+              ],
+              "rel_l2_direct_vs_restricted": 0.11392899148598189
+            },
+            "2": {
+              "grid": [
+                64,
+                64
+              ],
+              "rel_l2_direct_vs_restricted": 0.035539332161959654
+            }
+          },
+          "after_rung_native": {
+            "1": {
+              "grid": [
+                32,
+                32
+              ],
+              "rel_l2_direct_vs_restricted": 0.08259966836173693
+            },
+            "2": {
+              "grid": [
+                64,
+                64
+              ],
+              "rel_l2_direct_vs_restricted": 0.03371831742917515
+            }
+          },
+          "after_hf_only": {
+            "1": {
+              "grid": [
+                32,
+                32
+              ],
+              "rel_l2_direct_vs_restricted": 0.11992088076391229
+            },
+            "2": {
+              "grid": [
+                64,
+                64
+              ],
+              "rel_l2_direct_vs_restricted": 0.042654889916123144
+            }
+          }
+        },
+        "sharp__allen_cahn_2d": {
+          "before": {
+            "1": {
+              "grid": [
+                64,
+                64
+              ],
+              "rel_l2_direct_vs_restricted": 0.040693556655976064
+            },
+            "2": {
+              "grid": [
+                128,
+                128
+              ],
+              "rel_l2_direct_vs_restricted": 0.01871614081189877
+            }
+          },
+          "after_rung_native": {
+            "1": {
+              "grid": [
+                64,
+                64
+              ],
+              "rel_l2_direct_vs_restricted": 0.02473756885827176
+            },
+            "2": {
+              "grid": [
+                128,
+                128
+              ],
+              "rel_l2_direct_vs_restricted": 0.008952819916875165
+            }
+          },
+          "after_hf_only": {
+            "1": {
+              "grid": [
+                64,
+                64
+              ],
+              "rel_l2_direct_vs_restricted": 0.009762306477249513
+            },
+            "2": {
+              "grid": [
+                128,
+                128
+              ],
+              "rel_l2_direct_vs_restricted": 0.0038186284086519622
+            }
+          }
+        },
+        "sharp__fisher_kpp_2d": {
+          "before": {
+            "1": {
+              "grid": [
+                64,
+                64
+              ],
+              "rel_l2_direct_vs_restricted": 0.05458832608547465
+            },
+            "2": {
+              "grid": [
+                128,
+                128
+              ],
+              "rel_l2_direct_vs_restricted": 0.017294747717627023
+            }
+          },
+          "after_rung_native": {
+            "1": {
+              "grid": [
+                64,
+                64
+              ],
+              "rel_l2_direct_vs_restricted": 0.08387439509445305
+            },
+            "2": {
+              "grid": [
+                128,
+                128
+              ],
+              "rel_l2_direct_vs_restricted": 0.04147228320177512
+            }
+          },
+          "after_hf_only": {
+            "1": {
+              "grid": [
+                64,
+                64
+              ],
+              "rel_l2_direct_vs_restricted": 0.055852827819721174
+            },
+            "2": {
+              "grid": [
+                128,
+                128
+              ],
+              "rel_l2_direct_vs_restricted": 0.025764759276027192
+            }
+          }
+        },
+        "sharp__cahn_hilliard": {
+          "before": {
+            "1": {
+              "grid": [
+                64,
+                64
+              ],
+              "rel_l2_direct_vs_restricted": 0.022887744946754662
+            },
+            "2": {
+              "grid": [
+                128,
+                128
+              ],
+              "rel_l2_direct_vs_restricted": 0.008759218567220445
+            }
+          },
+          "after_rung_native": {
+            "1": {
+              "grid": [
+                64,
+                64
+              ],
+              "rel_l2_direct_vs_restricted": 0.1388716327582275
+            },
+            "2": {
+              "grid": [
+                128,
+                128
+              ],
+              "rel_l2_direct_vs_restricted": 0.048023361614085686
+            }
+          },
+          "after_hf_only": {
+            "1": {
+              "grid": [
+                64,
+                64
+              ],
+              "rel_l2_direct_vs_restricted": 0.1512422653346715
+            },
+            "2": {
+              "grid": [
+                128,
+                128
+              ],
+              "rel_l2_direct_vs_restricted": 0.05068746946549881
+            }
+          }
+        },
+        "ifc_poisson": {
+          "before": {
+            "8": {
+              "grid": [
+                8,
+                8
+              ],
+              "rel_l2_direct_vs_restricted": 0.10893147634700502
+            },
+            "16": {
+              "grid": [
+                16,
+                16
+              ],
+              "rel_l2_direct_vs_restricted": 0.04290079665858083
+            },
+            "32": {
+              "grid": [
+                32,
+                32
+              ],
+              "rel_l2_direct_vs_restricted": 0.013718987887627817
+            }
+          },
+          "after_rung_native": {
+            "8": {
+              "grid": [
+                8,
+                8
+              ],
+              "rel_l2_direct_vs_restricted": 61.72696766603103
+            },
+            "16": {
+              "grid": [
+                16,
+                16
+              ],
+              "rel_l2_direct_vs_restricted": 12.764832626373714
+            },
+            "32": {
+              "grid": [
+                32,
+                32
+              ],
+              "rel_l2_direct_vs_restricted": 1.7724302407246448
+            }
+          },
+          "after_hf_only": {
+            "8": {
+              "grid": [
+                8,
+                8
+              ],
+              "rel_l2_direct_vs_restricted": 0.15987206372288768
+            },
+            "16": {
+              "grid": [
+                16,
+                16
+              ],
+              "rel_l2_direct_vs_restricted": 0.1489595815394234
+            },
+            "32": {
+              "grid": [
+                32,
+                32
+              ],
+              "rel_l2_direct_vs_restricted": 0.012694911833622608
+            }
+          }
+        }
+      },
+      "resolution_consistency_headline": "ifc_poisson rung_native AFTER training: rel_l2(direct coarse output vs restriction of the HF output) = 61.727 / 12.765 / 1.772 at fid 8/16/32, up from 0.109 / 0.043 / 0.014 BEFORE training. The trained rung_native model is grossly resolution-INCONSISTENT there \u2014 it learned rung-specific amplitudes (it can infer the rung from the condition, since the rung condition sets are disjoint), which is exactly the mechanism the norm=\"forward\" design was meant to prevent. On the condition-aligned datasets the same probe stays O(0.01-0.6).",
+      "ifc_poisson_loss_curves_endpoints": {
+        "hf_only": {
+          "stage1_per_rung": {
+            "64": {
+              "n_epochs": 200,
+              "first": 0.04240444302558899,
+              "last": 3.637922782218084e-05,
+              "min": 3.6378944059833884e-05
+            }
+          },
+          "stage2": {
+            "64": {
+              "n_epochs": 200,
+              "first": 3.637828922364861e-05,
+              "last": 1.2803941899619531e-05
+            }
+          }
+        },
+        "rung_native": {
+          "stage1_per_rung": {
+            "8": {
+              "n_epochs": 200,
+              "first": 0.06482828275433608,
+              "last": 6.114285042713163e-06,
+              "min": 5.7156325315840406e-06
+            },
+            "16": {
+              "n_epochs": 200,
+              "first": 0.019567557726986706,
+              "last": 1.3909427423186571e-06,
+              "min": 1.2015912531637696e-06
+            },
+            "32": {
+              "n_epochs": 200,
+              "first": 0.02937669213861227,
+              "last": 3.038888962691999e-06,
+              "min": 2.5948455686375382e-06
+            },
+            "64": {
+              "n_epochs": 200,
+              "first": 0.05266380310058594,
+              "last": 4.0253630686493125e-06,
+              "min": 4.02477689931402e-06
+            }
+          },
+          "stage2": {
+            "64": {
+              "n_epochs": 200,
+              "first": 4.024486315756803e-06,
+              "last": 4.120979610888753e-07
+            }
+          }
+        },
+        "rung_upsampled": {
+          "stage1_per_rung": {
+            "8": {
+              "n_epochs": 200,
+              "first": 0.06714958564511367,
+              "last": 0.010744248383811541,
+              "min": 0.008964933471621148
+            },
+            "16": {
+              "n_epochs": 200,
+              "first": 0.020168761839158833,
+              "last": 0.01001832477049902,
+              "min": 0.0044023049413226545
+            },
+            "32": {
+              "n_epochs": 200,
+              "first": 0.0297523383051157,
+              "last": 0.008237227331846952,
+              "min": 0.006286472664214671
+            },
+            "64": {
+              "n_epochs": 200,
+              "first": 0.05502691492438316,
+              "last": 0.005618189461529255,
+              "min": 0.004647547844797373
+            }
+          },
+          "stage2": {
+            "64": {
+              "n_epochs": 200,
+              "first": 0.005622635129839182,
+              "last": 8.594844871367968e-07
+            }
+          }
+        }
+      },
+      "train_test_gap_headline": "ifc_poisson (N_hf=5): hf_only train 0.021738 / test 0.340078 (gap 0.318340); rung_native train 0.172369 / test 0.604665 (gap 0.432297); rung_upsampled train 0.232655 / test 23.310351 (gap 23.077696 \u2014 divergence at test, not overfitting in the usual sense). cahn_hilliard is the worst aligned-dataset overfit: train 0.005762 / test 0.471691 at N=400. Feeds r2s4 overfitting anatomy."
+    },
+    "anomalies": [
+      "NO training anomalies in the SLURM logs: .err is 0 bytes; .out has no NaN/Inf/OOM/CUDA-error/warning line and no resume-after-preemption event; job 66165379 COMPLETED in a single allocation (NVIDIA H200, hpc-sm-01-15), sacct Elapsed 01:17:03, ExitCode 0:0, MaxRSS 2057020K. All 5 legs ran and all 5 result JSONs were written with cached=false everywhere.",
+      "ARM DIVERGENCE (rung_upsampled, ifc_poisson): test nRMSE 23.310351 \u2014 23.3x the zero predictor (nRMSE 1.0) and 100x its own train nRMSE 0.232655; its stage-1 losses also plateau ~1e-2 (vs ~4e-6 for rung_native) and only stage 2 drives them to 8.6e-7. Reading: after upsampling, all 4 rungs live on the same 64x64 grid with a 42x amplitude ladder and DISJOINT condition sets, so the grid argument can no longer disambiguate the rung and the model must infer amplitude from the condition; at the 128 unseen test conditions it emits coarse-rung-scale fields. No such divergence on the two condition-ALIGNED control datasets (cahn_hilliard 0.472359, pfc 0.476674).",
+      "THE PRIMARY ARM IS RESOLUTION-INCONSISTENT AFTER TRAINING on ifc_poisson (61.73 / 12.76 / 1.77 vs 0.109 / 0.043 / 0.014 before) \u2014 the norm=\"forward\" \"same mode weights act identically at every rung\" premise, which card part 3 calls \"the enabling detail of the design\", does not survive training on a disjoint-condition ladder.",
+      "SIGN-INVERTED PRIMARY EFFECT: predicted +10 skill units for LF on ifc_poisson, observed -7.3497 (rung_native 16.7963 vs hf_only 9.4466). rung_native fails to beat even the NN-in-condition floor (10.0549) and the train-mean floor (11.2063) there, while hf_only beats both. Both reviewer confounds (C1 42x scaler mismatch, C2 ~14x step mismatch) attach to this measurement; C2 runs in rung_native's favour.",
+      "NOISE-FLOOR PROVENANCE DRIFT: the card's F1/F3 thresholds are the PROVISIONAL round-1-rescaled min_claimable_effect values; state/noise_floor.json was re-certified 2h35m after card creation (r2s4_diag-B1, 3-seed condition->HF spread) with thresholds 3.6x-1709x tighter. F1 is falsified under both; F3 flips verdict (not falsified as written -> falsified under the certified floors). Recorded, not resolved \u2014 the clause was judged as written per program.md \u00a712.",
+      "DECLARED BASELINE OUTPERFORMS BOTH ARMS BY 6-11x ON ifc_poisson: mf_fno_transfer_film 1.5455 vs rung_native 16.7963 / hf_only 9.4466, same eval layer, same seed, same 200 epochs, validity gate PASS (0.055637 vs required 0.055604, 0.06% relative). The baseline is also an LF-pretrain->HF-finetune condition->HF model; it differs in using per-stage scalers and an upsampled LF representation.",
+      "ext__helmholtz_2d is the only dataset where the LF arm helps largely (27.0232 -> 9.8677, a 17.1555-unit improvement, 5.8x the certified threshold), but helmholtz is REPORT-ONLY: its best floor is the zero field (3.3441) and both arms lose to it by 3-8x."
+    ],
+    "wall_clock_per_seed_min": [
+      77.05
+    ],
+    "wall_clock_detail": {
+      "job": "66165379",
+      "sacct_elapsed": "01:17:03",
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "node": "hpc-sm-01-15",
+      "gpu": "NVIDIA H200 (ADR r2-0004 tier)",
+      "maxrss_kb": 2057020,
+      "card_budget": "04:00:00 (recipe.env._slurm.time); builder estimate ~2.5h on h100 \u2014 actual 1.28h on H200, 32% of the wall",
+      "per_leg_min": {
+        "hf_only_panel_e200": 24.83,
+        "rung_native_panel_e200": 33.1,
+        "rung_upsampled_3ds_e200": 18.3,
+        "guard_rung_native_e2": 0.48,
+        "declared_baseline_gate_ifc_e200": 0.33
+      },
+      "per_leg_source": "timestamps in slurm/r2-r2s3_lf_train_signal-B1-s0_66165379.out (lines 1, 70, 71, 139, 140, 184, 185, 229, 230, 251)",
+      "per_dataset_train_seconds_rung_native": {
+        "ext__helmholtz_2d": 154.92414903640747,
+        "sharp__phase_field_crystal_2d": 226.57870030403137,
+        "sharp__allen_cahn_2d": 513.7247874736786,
+        "sharp__fisher_kpp_2d": 513.6929488182068,
+        "sharp__cahn_hilliard": 513.609742641449,
+        "ifc_poisson": 37.843841314315796
+      },
+      "per_dataset_train_seconds_hf_only": {
+        "ext__helmholtz_2d": 109.07292461395264,
+        "sharp__phase_field_crystal_2d": 129.980046749115,
+        "sharp__allen_cahn_2d": 404.2527062892914,
+        "sharp__fisher_kpp_2d": 403.8272511959076,
+        "sharp__cahn_hilliard": 403.73529076576233,
+        "ifc_poisson": 12.618681907653809
+      },
+      "for_the_timing_ledger": "r2s3_rung_supervised, 200 epochs, H200, 3 arms + guard + baseline gate serial in ONE job = 77.05 min/seed. Panel-only single arm: hf_only 24.83 min, rung_native 33.10 min. A 04:00:00 request is ~3x oversized for this family."
+    },
+    "anchor_action": {
+      "updated": false,
+      "reason": "the primary arm's panel geomean 25.3919 is WORSE than the stream anchor 23.0636 (best_floor_panel_geomean), and \u00a72e also requires a 3-seed result to establish or beat an anchor. state/anchors/r2s3_lf_train_signal.json left untouched."
+    }
+  },
   "6_analysis": null,
   "7_gap_and_future": null,
   "reanalysis_progress": null

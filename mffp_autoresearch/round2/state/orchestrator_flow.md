@@ -215,3 +215,25 @@
   Falsification 'confirmed' only via AND-clause semantics (sub-test failed resolvably —
   brainstormer B2 should re-clause). CALM-PDE e2e prediction inverted on panel, held on guard.
   Guards all improve (no flags). -> mechanism-analyzer dispatched.
+
+- 2026-07-31 ~15:0x PDT r2s2-B1 mechanism turn 1 (5/5): emulator NEVER FIT cond->LF on 5/6
+  panel (in-sample==held-out); closed-form ridge matches/beats it (ifc: ridge EXACT 0.0000 —
+  LF affine in condition); emulator IS the linear law on ADR r2-0003 datasets; spectral
+  signature hard low-pass with band-1 null INSIDE mode budget -> I2 architectural hypothesis
+  (coords-only FNO + spatially-constant FiLM = global-rescale-of-fixed-patterns class);
+  cahn_hilliard the ONLY genuine info ceiling (I3). Guard inversion explained (pseudo-LF
+  accurate there). -> turn 2 dispatched (test I2 reachable set).
+
+- 2026-07-31 ~15:2x PDT r2s3-B1 seed 0 COMPLETED (66165379, ~1h13m, all legs). Mid-run signal:
+  rung_native WORSE than hf_only on ifc_poisson by 7.35 skill units (inversion of predicted
+  +10; reviewer's shared-scaler confound the prime suspect). LAST BATCH-1 JOB DONE.
+  -> initial-analyzer dispatched with confound caveats.
+
+- 2026-07-31 ~15:5x PDT r2s3-B1 initial-analyzer SUCCESS (6/6): CRATERED + FALSIFIED (F1
+  sign-inverted, -7.35 units on ifc, 7.8x certified floor; C2 confound ran IN FAVOR of the
+  losing arm). F2 survives vs diverged comparator (rung_upsampled test 23.3 vs train 0.23).
+  F3 threshold-dependent (provisional 1/5 vs certified 3/5 — both recorded). Declared
+  baseline transfer_film ifc skill 1.5455 (best r2 ifc number; per-stage scalers decisive
+  suspect). Wall 77 min. Anchor untouched. -> mechanism-analyzer dispatched. NOTE for B2
+  brainstormer: per-rung scaler variant is the obvious follow-up; batch-2 planning begins
+  when this card completes.
