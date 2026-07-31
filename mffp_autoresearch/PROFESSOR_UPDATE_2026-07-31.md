@@ -4,6 +4,11 @@ Date: 2026-07-31. Author: Eloise (with the autoresearch orchestrator).
 Authoritative sources: `round1/docs/round1_report.md`, `round2/program.md`,
 per-experiment cards under `round{1,2}/experiment_cards/`.
 
+Rendered versions of this update (figures embedded):
+[Claude artifact](https://claude.ai/code/artifact/47cb0e44-05ae-4e0f-a6ec-ded0d4106cc3)
+(private until shared from its share menu) ·
+[`PROFESSOR_UPDATE_2026-07-31.html`](PROFESSOR_UPDATE_2026-07-31.html) (same page, in-repo).
+
 ## TL;DR
 
 - **Round 1 is closed; both success criteria were met.** Best sharp-panel geomean
