@@ -513,3 +513,50 @@
   benchmark-integrity item (ifc_raw eval assumption failed 4 independent places) for Eloise.
   Reporting instruction: B2 + r2s3-B2 reported as a pair. -> B3 websearcher dispatched
   (batch counter -> 3).
+
+- 2026-08-01 ~06:5x PDT r2s1-B2 code-reviewer SUGGEST (6/6): strongest-evidenced build;
+  L4 decidability verified intact (rank reading cancels as common factor); card's
+  illustrative r_sel/param counts unreachable under the card's own mandate (recording item);
+  decoder shuffle RNG not checkpointed (minimal fix noted for B3); reviewer ran the never-
+  exercised pfc_class_split itself (exit 0, AUC 0.9996). ORCHESTRATOR SUBMITTED seed 0:
+  job 66189580 (h200, walltime 2h->3h per reviewer). Card -> running. ALL FOUR B2 CARDS
+  NOW SUBMITTED-OR-BEYOND.
+
+- 2026-08-01 ~07:1x PDT r2s2-B2 initial-analyzer SUCCESS (6/6): geomean 19.3868 (band met);
+  FALSIFIED 3/4 clauses — BUT all F1-firing cells are B:all LOO-ARTIFACT cells (train side
+  = exact scaled copy of own real LF; test side = train_mean; excluding them F1 -> 0 cells,
+  F3 survives on 2). F2 INVERTED (k=1 beats k=all — empirical posterior sample beats
+  conditional mean). k* unstable 3/6 (helmholtz flips B:1<->B:4, blend contains). Reviewer
+  carry-forwards discharged. -> mechanism-analyzer dispatched (artifact-vs-substance is THE
+  question).
+
+- 2026-08-01 ~07:4x PDT USAGE-LIMIT INCIDENT: three agents killed early by weekly API limit
+  (r2s2-B2 mech t1, r2s3-B2 mech t2, r2s4-B3 websearch); operator re-logged-in; all three
+  RE-DISPATCHED with partial-file-distrust instructions. SLURM jobs unaffected.
+
+- 2026-08-01 ~08:1x PDT r2s3-B2 mechanism turn 2 (7/7): fisher m=0 gain = conditional-mean
+  VARIANCE REDUCTION (level-swap reproduces 76.8%; LF adds no condition info; alignment
+  unchanged) — r2s4's barrier claim NOT overturned (LF affine 1.0133x barrier); F5 sharp
+  limb = task property (all condition-response arms lose to constant, useful share negative);
+  H8: penalty over-amplitude monotone in rung coarseness, in_rung_loo picked worst on 1e-8
+  tie (cost 0.64 = 0.68x floor, not individually claimable). -> turn 3 dispatched (H9 ch
+  channel decomposition + part 6).
+
+- 2026-08-01 ~08:3x PDT r2s1-B2 seed 0 COMPLETED (66189580, 16:50, exit 0:0 — well under the
+  3h budget). -> initial-analyzer dispatched (per-dataset legs L1-L4; realized-not-
+  illustrative r_sel values; ch decision leg at 3x mce).
+
+- 2026-08-01 ~09:0x PDT r2s2-B2 mechanism turn 1 (6/6, redo after limit kill): F1 fired on
+  STATISTIC MIS-SPECIFICATION — uncentered cross-spectra + bias-free ceiling vs affine
+  corrector class; centred repair flips B:all gamma to 0.99-1.00 (== real-LF rung) and
+  F1 -> 0 cells. The COHERENCE RULE SURVIVES; the calibration card caught its own
+  instrument's spec error (this IS the calibration deliverable working). Bonus: Fourier-
+  energy oracle not a bound under rel-L2 (corrector beats it at real-LF rungs). -> turn 2
+  dispatched (real closure question = 2 non-B:all F3 cells; F2 restatement).
+
+- 2026-08-01 ~09:2x PDT r2s4-B3 websearcher PARTIAL-ACCEPTED (7/8; sole failure = 1-iteration
+  cap overrun, self-reported; content complete, 16/16 citations traced, 2 attributions
+  actively REFUTED, prior killed attempt quarantined). D1 teacher-projection diagnostic =
+  the unpublished composition; D2 selection preempted (gating open); mean-of-ratios artifact
+  must be presented PROJECT-LOCAL. -> B3 brainstormer dispatched (strict-1-seed operator
+  note included per Eloise's structure question).

@@ -136,7 +136,7 @@
       ]
     }
   },
-  "status": "running",
+  "status": "analyzing",
   "skipped_reason": null,
   "reopen_candidate": false,
   "scripts_path": {
@@ -191,8 +191,3538 @@
     }
   ],
   "debug_notes": [],
-  "5_actual_result": null,
+  "5_actual_result": {
+    "seeds_available": [
+      0
+    ],
+    "protocol_note": "Strict single-seed diagnostic. project.yaml seed_protocol.seeds=[0]; seeds 1-2 only at the end-of-round top-3 confirmation, so every point estimate here is provisional-single-seed and carries NO CI. All numbers are PARSED from mffp_autoresearch_outputs/round2/r2s2_stacked/B2/eval/; no nRMSE or skill was recomputed. The only derived quantities are (a) nRMSE->skill unit conversions using the seam-checked ref_zero arm's frozen_skill/frozen_nrmse ratio, (b) the F1/F2/F3/F4 comparisons the job emits components for but never computes (code-reviewer review_notes[0] S5), and (c) the k* fold-seed stability proxy (carry-forward 2). Reference splits are read from `round_nrmse`, NEVER from the contract's backward-compat `nRMSE` key (S4 transcription trap).",
+    "per_dataset": {
+      "ext__helmholtz_2d": {
+        "per_seed_nrmse": [
+          1.2698452614105487
+        ],
+        "per_seed_skill": [
+          4.246501676781655
+        ],
+        "mean_skill": 4.246501676781655,
+        "ci95": null,
+        "ci95_note": "single seed (round-2 protocol seeds:[0]); no CI computable from one run",
+        "reference_type": "copylf",
+        "cached": false,
+        "split": "test_hf",
+        "metric_source": "per_sample_mean",
+        "anchor_skill": 3.3441095587226317,
+        "anchor_arm": "zero",
+        "delta_vs_anchor": 0.902392,
+        "min_claimable_effect": 2.95299157437233,
+        "delta_beyond_noise_floor": false,
+        "scored_rung": "B:1",
+        "lambda_star": 0.7000000000000001,
+        "blend_base": "zero",
+        "kstar_emitted": "1",
+        "kstar_alternative_agrees": true,
+        "reference_splits_round_nrmse": {
+          "ref_k1_corrected": 1.44877067,
+          "ref_k1_raw": 2.27357982,
+          "ref_kall_corrected": 1.49309758,
+          "ref_kall_raw": 1.49309758,
+          "ref_nn_condition": 1.31135245,
+          "ref_rule_selected": 2.27357982,
+          "ref_train_mean": 4.36907269,
+          "ref_zero": 1.0
+        },
+        "rule_selected_verdict": "CORRECTOR_FUTILE",
+        "rule_selected_corrector_applied": false,
+        "report_only": true,
+        "semantics_degraded": false,
+        "low_n": false,
+        "diagnostic_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s2_stacked/B2/eval/diagnostic_ext__helmholtz_2d_e200_s0.json"
+      },
+      "sharp__phase_field_crystal_2d": {
+        "per_seed_nrmse": [
+          0.35760997911222375
+        ],
+        "per_seed_skill": [
+          48.451525290502076
+        ],
+        "mean_skill": 48.451525290502076,
+        "ci95": null,
+        "ci95_note": "single seed (round-2 protocol seeds:[0]); no CI computable from one run",
+        "reference_type": "copylf",
+        "cached": false,
+        "split": "test_hf",
+        "metric_source": "per_sample_mean",
+        "anchor_skill": 59.8117544948052,
+        "anchor_arm": "train_mean",
+        "delta_vs_anchor": -11.360229,
+        "min_claimable_effect": 0.21302734961699343,
+        "delta_beyond_noise_floor": true,
+        "scored_rung": "B:16",
+        "lambda_star": 1.0,
+        "blend_base": "zero",
+        "kstar_emitted": "16",
+        "kstar_alternative_agrees": false,
+        "reference_splits_round_nrmse": {
+          "ref_k1_corrected": 0.35451852,
+          "ref_k1_raw": 0.5020231,
+          "ref_kall_corrected": 0.35938086,
+          "ref_kall_raw": 0.44136285,
+          "ref_nn_condition": 0.50599329,
+          "ref_rule_selected": 0.37139906,
+          "ref_train_mean": 0.44145732,
+          "ref_zero": 1.0
+        },
+        "rule_selected_verdict": "CORRECTOR_FUTILE",
+        "rule_selected_corrector_applied": false,
+        "report_only": false,
+        "semantics_degraded": false,
+        "low_n": false,
+        "diagnostic_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s2_stacked/B2/eval/diagnostic_sharp__phase_field_crystal_2d_e200_s0.json"
+      },
+      "sharp__allen_cahn_2d": {
+        "per_seed_nrmse": [
+          0.3028801588157535
+        ],
+        "per_seed_skill": [
+          170.08417056755258
+        ],
+        "mean_skill": 170.08417056755258,
+        "ci95": null,
+        "ci95_note": "single seed (round-2 protocol seeds:[0]); no CI computable from one run",
+        "reference_type": "copylf",
+        "cached": false,
+        "split": "test_hf",
+        "metric_source": "per_sample_mean",
+        "anchor_skill": 269.19587575878967,
+        "anchor_arm": "nn_condition",
+        "delta_vs_anchor": -99.111705,
+        "min_claimable_effect": 0.8797047190126648,
+        "delta_beyond_noise_floor": true,
+        "scored_rung": "B:16",
+        "lambda_star": 0.9,
+        "blend_base": "nn_condition",
+        "kstar_emitted": "16",
+        "kstar_alternative_agrees": true,
+        "reference_splits_round_nrmse": {
+          "ref_k1_corrected": 0.40364265,
+          "ref_k1_raw": 0.47922493,
+          "ref_kall_corrected": 0.90509388,
+          "ref_kall_raw": 1.00084296,
+          "ref_nn_condition": 0.47937494,
+          "ref_rule_selected": 0.33712315,
+          "ref_train_mean": 1.00084324,
+          "ref_zero": 1.0
+        },
+        "rule_selected_verdict": "CORRECTOR_FUTILE",
+        "rule_selected_corrector_applied": false,
+        "report_only": false,
+        "semantics_degraded": false,
+        "low_n": false,
+        "diagnostic_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s2_stacked/B2/eval/diagnostic_sharp__allen_cahn_2d_e200_s0.json"
+      },
+      "sharp__fisher_kpp_2d": {
+        "per_seed_nrmse": [
+          0.2482250349010557
+        ],
+        "per_seed_skill": [
+          11.572530488025514
+        ],
+        "mean_skill": 11.572530488025514,
+        "ci95": null,
+        "ci95_note": "single seed (round-2 protocol seeds:[0]); no CI computable from one run",
+        "reference_type": "copylf",
+        "cached": false,
+        "split": "test_hf",
+        "metric_source": "per_sample_mean",
+        "anchor_skill": 11.99311063309952,
+        "anchor_arm": "train_mean",
+        "delta_vs_anchor": -0.42058,
+        "min_claimable_effect": 0.0007136812826775696,
+        "delta_beyond_noise_floor": true,
+        "scored_rung": "B:64",
+        "lambda_star": 1.0,
+        "blend_base": "zero",
+        "kstar_emitted": "64",
+        "kstar_alternative_agrees": false,
+        "reference_splits_round_nrmse": {
+          "ref_k1_corrected": 0.2485844,
+          "ref_k1_raw": 0.34443589,
+          "ref_kall_corrected": 0.24883516,
+          "ref_kall_raw": 0.25723092,
+          "ref_nn_condition": 0.35044084,
+          "ref_rule_selected": 0.25000302,
+          "ref_train_mean": 0.25724627,
+          "ref_zero": 1.0
+        },
+        "rule_selected_verdict": "CORRECTOR_FUTILE",
+        "rule_selected_corrector_applied": false,
+        "report_only": false,
+        "semantics_degraded": false,
+        "low_n": false,
+        "diagnostic_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s2_stacked/B2/eval/diagnostic_sharp__fisher_kpp_2d_e200_s0.json"
+      },
+      "sharp__cahn_hilliard": {
+        "per_seed_nrmse": [
+          0.6482256642393665
+        ],
+        "per_seed_skill": [
+          15.506691932458706
+        ],
+        "mean_skill": 15.506691932458706,
+        "ci95": null,
+        "ci95_note": "single seed (round-2 protocol seeds:[0]); no CI computable from one run",
+        "reference_type": "copylf",
+        "cached": false,
+        "split": "test_hf",
+        "metric_source": "per_sample_mean",
+        "anchor_skill": 23.180342227117514,
+        "anchor_arm": "nn_condition",
+        "delta_vs_anchor": -7.67365,
+        "min_claimable_effect": 0.09124535322300886,
+        "delta_beyond_noise_floor": true,
+        "scored_rung": "B:16",
+        "lambda_star": 1.0,
+        "blend_base": "zero",
+        "kstar_emitted": "16",
+        "kstar_alternative_agrees": false,
+        "reference_splits_round_nrmse": {
+          "ref_k1_corrected": 0.83245903,
+          "ref_k1_raw": 0.96822175,
+          "ref_kall_corrected": 0.69817963,
+          "ref_kall_raw": 1.00197775,
+          "ref_nn_condition": 0.96900698,
+          "ref_rule_selected": 0.76101316,
+          "ref_train_mean": 1.00197749,
+          "ref_zero": 1.0
+        },
+        "rule_selected_verdict": "CORRECTOR_FUTILE",
+        "rule_selected_corrector_applied": false,
+        "report_only": false,
+        "semantics_degraded": false,
+        "low_n": false,
+        "diagnostic_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s2_stacked/B2/eval/diagnostic_sharp__cahn_hilliard_e200_s0.json"
+      },
+      "ifc_poisson": {
+        "per_seed_nrmse": [
+          0.3043646064365275
+        ],
+        "per_seed_skill": [
+          8.454572401014653
+        ],
+        "mean_skill": 8.454572401014653,
+        "ci95": null,
+        "ci95_note": "single seed (round-2 protocol seeds:[0]); no CI computable from one run",
+        "reference_type": "paper_bar",
+        "cached": false,
+        "split": "test_hf",
+        "metric_source": "per_sample_mean",
+        "anchor_skill": 10.054890929609687,
+        "anchor_arm": "nn_condition",
+        "delta_vs_anchor": -1.600319,
+        "min_claimable_effect": 0.9377041289531141,
+        "delta_beyond_noise_floor": true,
+        "scored_rung": "B:2",
+        "lambda_star": 1.0,
+        "blend_base": "zero",
+        "kstar_emitted": "2",
+        "kstar_alternative_agrees": true,
+        "reference_splits_round_nrmse": {
+          "ref_k1_corrected": 0.317308,
+          "ref_k1_raw": 3.26502699,
+          "ref_kall_corrected": 0.32944653,
+          "ref_kall_raw": 3.62048716,
+          "ref_nn_condition": 0.36197607,
+          "ref_rule_selected": 0.30436461,
+          "ref_train_mean": 0.40342797,
+          "ref_zero": 1.0
+        },
+        "rule_selected_verdict": "CORRECTOR_ELIGIBLE",
+        "rule_selected_corrector_applied": true,
+        "report_only": true,
+        "semantics_degraded": true,
+        "low_n": true,
+        "diagnostic_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s2_stacked/B2/eval/diagnostic_ifc_poisson_e200_s0.json"
+      }
+    },
+    "panel_geomean_skill": {
+      "per_seed": [
+        19.386837273921486
+      ],
+      "mean": 19.386837273921486,
+      "ci95": null,
+      "ci95_note": "not computable from one seed; the round's certified panel-level resolution constant is state/noise_floor.json _panel_geomean.min_claimable_effect = 1.1418668211296108",
+      "source_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s2_stacked/B2/eval/result_panel_s0.json",
+      "consistency_check": "the geomean of the 6 reported per-dataset skills reproduces the reported panel_geomean_skill to <1e-9 (parse check only)"
+    },
+    "guard_panel_geomean_skill": {
+      "per_seed": [
+        0.5739128547347212
+      ],
+      "tier": "contract (epochs=2)",
+      "source_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s2_stacked/B2/eval/result_guard_s0.json"
+    },
+    "guard_per_dataset": {
+      "heat_local": {
+        "per_seed_nrmse": [
+          0.009098637099131992
+        ],
+        "per_seed_skill": [
+          3.788696820673262
+        ],
+        "reference_type": "copylf",
+        "cached": false,
+        "recorded_guard_reference_nrmse": 0.00240152155999517,
+        "ratio_to_reference": 3.788697,
+        "regressed_more_than_2x": true,
+        "tier": "contract (epochs=2)"
+      },
+      "fluid": {
+        "per_seed_nrmse": [
+          0.045262005551977715
+        ],
+        "per_seed_skill": [
+          0.20756714837660012
+        ],
+        "reference_type": "copylf",
+        "cached": false,
+        "recorded_guard_reference_nrmse": 0.21805958171115042,
+        "ratio_to_reference": 0.207567,
+        "regressed_more_than_2x": false,
+        "tier": "contract (epochs=2)"
+      },
+      "sharp__sod_1d": {
+        "per_seed_nrmse": [
+          0.007954052777437397
+        ],
+        "per_seed_skill": [
+          0.2403750483869357
+        ],
+        "reference_type": "copylf",
+        "cached": false,
+        "recorded_guard_reference_nrmse": 0.03309017650048946,
+        "ratio_to_reference": 0.240375,
+        "regressed_more_than_2x": false,
+        "tier": "contract (epochs=2)"
+      }
+    },
+    "vs_anchor": {
+      "anchor_source": "state/anchors/r2s2_stacked.json (best_floor_panel_geomean, training-free floors, provisional=false)",
+      "anchor_value": 23.063616857615774,
+      "value": 19.386837273921486,
+      "delta": -3.67678,
+      "delta_sign_note": "lower skill is better; delta < 0 means the card BEATS (sits below) the stream launch anchor",
+      "beyond_ci": null,
+      "beyond_ci_note": "single-seed card: no CI exists; judged instead against the certified panel min_claimable_effect",
+      "beyond_noise_floor": true,
+      "panel_min_claimable_effect": 1.1418668211296108,
+      "crater_bound_1p5x_anchor": 34.5954,
+      "part4_expected_band": "15-25 scored panel geomean (MET: 19.386837)",
+      "part4_expected_delta": "-0 to -8 skill units vs anchor (MET: -3.676780)"
+    },
+    "cratered_verdict": "n/a",
+    "cratered_note": "card_type=diagnostic -> no cratered rule (analyzer contract 2b); the measurement against the falsification clause is the deliverable. For the record: no crash (both jobs COMPLETED, ExitCode 0:0, empty .err) and the scored panel geomean 19.386837 is far below the 1.5x crater bound 34.5954.",
+    "falsification_verdict": "falsified",
+    "falsification_detail": {
+      "hypothesis_verbatim": "H-r2s2-B2 -- \"correctability of an intermediate is governed by its coherence with the target after the condition-predictable component is removed, so on this panel no condition-only intermediate is worth correcting and the exported training-free coherence rule is safe for nonlinear correctors\"",
+      "verdict": "FALSIFIED -- three of the four pre-registered clauses fired (F1, F2, F3); F4 did not.",
+      "F1": {
+        "clause_verbatim": "(F1, rule safety) a refit `LocalCorrector`'s realised value-add on any rung the promoted rule labels `CORRECTOR_FUTILE` (gamma_band1 <= 0.52) exceeds that rung's training-free in-sample oracle-LSI ceiling by more than `max(3x in-job fold-seed paired spread, 0.05 relative error reduction)` on >= 3 ladder cells",
+        "fires": true,
+        "threshold_needed": ">= 3 ladder cells",
+        "n_cells_firing_readingA_literal": 3,
+        "n_cells_firing_readingB_conservative": 3,
+        "deciding_cells": [
+          {
+            "dataset": "sharp__allen_cahn_2d",
+            "rung": "B:all",
+            "gamma_band1_fold_seed0": 0.161515,
+            "value_add_nonlinear": 0.730829,
+            "value_add_lsi": 0.024049,
+            "value_add_nonlinear_beyond_lsi": 0.724197,
+            "oracle_lsi_ceiling_relative_gain": -0.223341,
+            "oracle_ceiling_negative": true,
+            "m1b_value_add_lsi_spread_3foldseeds": 0.023048,
+            "threshold": 0.069144,
+            "excess_readingA_fullstack_vs_emitted_ceiling": 0.95417,
+            "excess_readingB_beyondLSI_vs_ceiling_clipped_at_0": 0.724197,
+            "fires_readingA": true,
+            "fires_readingB": true
+          },
+          {
+            "dataset": "sharp__cahn_hilliard",
+            "rung": "B:all",
+            "gamma_band1_fold_seed0": 0.148074,
+            "value_add_nonlinear": 0.400743,
+            "value_add_lsi": 0.0,
+            "value_add_nonlinear_beyond_lsi": 0.400743,
+            "oracle_lsi_ceiling_relative_gain": 0.021543,
+            "oracle_ceiling_negative": false,
+            "m1b_value_add_lsi_spread_3foldseeds": 0.008581,
+            "threshold": 0.05,
+            "excess_readingA_fullstack_vs_emitted_ceiling": 0.3792,
+            "excess_readingB_beyondLSI_vs_ceiling_clipped_at_0": 0.3792,
+            "fires_readingA": true,
+            "fires_readingB": true
+          },
+          {
+            "dataset": "sharp__phase_field_crystal_2d",
+            "rung": "B:all",
+            "gamma_band1_fold_seed0": 0.116978,
+            "value_add_nonlinear": 0.163292,
+            "value_add_lsi": 0.002556,
+            "value_add_nonlinear_beyond_lsi": 0.161148,
+            "oracle_lsi_ceiling_relative_gain": -0.043192,
+            "oracle_ceiling_negative": true,
+            "m1b_value_add_lsi_spread_3foldseeds": 0.001884,
+            "threshold": 0.05,
+            "excess_readingA_fullstack_vs_emitted_ceiling": 0.206485,
+            "excess_readingB_beyondLSI_vs_ceiling_clipped_at_0": 0.161148,
+            "fires_readingA": true,
+            "fires_readingB": true
+          }
+        ],
+        "carry_forward_1_handling": "REQUIRED SUBSTITUTION MADE AND STATED HERE: M1c runs at a single fold seed (R2S2B2_NONLINEAR_FOLD_SEED=0, card-mandated), so the artifacts contain NO nonlinear fold-seed paired spread; the clause's `3x in-job fold-seed paired spread` term was instantiated with the SAME RUNG's M1b 3-fold-seed `value_add_lsi_spread`, per code-reviewer review_notes[0] BUILDER ITEM (2)(a). This is an analyst decision the artifacts do not assert. Per the same carry-forward the bare `exceeds_oracle_lsi_ceiling` boolean was NOT used as evidence (27/50 M1c cells carry it; 9/50 carry oracle_ceiling_negative=true, where the Fourier-energy oracle gain is negative in nRMSE terms and the flag fires almost automatically). BOTH readings were computed: reading A = the literal clause (full refit stack `value_add_nonlinear` vs the emitted, possibly negative, ceiling); reading B = conservative (strictly nonlinear `value_add_nonlinear_beyond_lsi` vs the ceiling clipped at 0). They give the SAME 3 firing cells, so F1's firing does not rest on the negative-ceiling artifact.",
+        "all_futile_labelled_cells": [
+          {
+            "dataset": "ext__helmholtz_2d",
+            "rung": "A:1",
+            "gamma_band1_fold_seed0": 0.293195,
+            "value_add_nonlinear": 0.017418,
+            "value_add_lsi": 0.017418,
+            "value_add_nonlinear_beyond_lsi": 0.0,
+            "oracle_lsi_ceiling_relative_gain": -0.262078,
+            "oracle_ceiling_negative": true,
+            "m1b_value_add_lsi_spread_3foldseeds": 0.222796,
+            "threshold": 0.668387,
+            "excess_readingA_fullstack_vs_emitted_ceiling": 0.279496,
+            "excess_readingB_beyondLSI_vs_ceiling_clipped_at_0": 0.0,
+            "fires_readingA": false,
+            "fires_readingB": false
+          },
+          {
+            "dataset": "ext__helmholtz_2d",
+            "rung": "B:1",
+            "gamma_band1_fold_seed0": 0.293195,
+            "value_add_nonlinear": 0.017418,
+            "value_add_lsi": 0.017418,
+            "value_add_nonlinear_beyond_lsi": 0.0,
+            "oracle_lsi_ceiling_relative_gain": -0.262078,
+            "oracle_ceiling_negative": true,
+            "m1b_value_add_lsi_spread_3foldseeds": 0.222796,
+            "threshold": 0.668387,
+            "excess_readingA_fullstack_vs_emitted_ceiling": 0.279496,
+            "excess_readingB_beyondLSI_vs_ceiling_clipped_at_0": 0.0,
+            "fires_readingA": false,
+            "fires_readingB": false
+          },
+          {
+            "dataset": "ext__helmholtz_2d",
+            "rung": "B:all",
+            "gamma_band1_fold_seed0": 0.092385,
+            "value_add_nonlinear": 0.0,
+            "value_add_lsi": 0.0,
+            "value_add_nonlinear_beyond_lsi": 0.0,
+            "oracle_lsi_ceiling_relative_gain": 0.123236,
+            "oracle_ceiling_negative": false,
+            "m1b_value_add_lsi_spread_3foldseeds": 0.084508,
+            "threshold": 0.253523,
+            "excess_readingA_fullstack_vs_emitted_ceiling": -0.123236,
+            "excess_readingB_beyondLSI_vs_ceiling_clipped_at_0": -0.123236,
+            "fires_readingA": false,
+            "fires_readingB": false
+          },
+          {
+            "dataset": "sharp__allen_cahn_2d",
+            "rung": "A:1",
+            "gamma_band1_fold_seed0": 0.439772,
+            "value_add_nonlinear": 0.144999,
+            "value_add_lsi": 0.144999,
+            "value_add_nonlinear_beyond_lsi": 0.0,
+            "oracle_lsi_ceiling_relative_gain": 0.156703,
+            "oracle_ceiling_negative": false,
+            "m1b_value_add_lsi_spread_3foldseeds": 0.043248,
+            "threshold": 0.129744,
+            "excess_readingA_fullstack_vs_emitted_ceiling": -0.011704,
+            "excess_readingB_beyondLSI_vs_ceiling_clipped_at_0": -0.156703,
+            "fires_readingA": false,
+            "fires_readingB": false
+          },
+          {
+            "dataset": "sharp__allen_cahn_2d",
+            "rung": "B:1",
+            "gamma_band1_fold_seed0": 0.439772,
+            "value_add_nonlinear": 0.144999,
+            "value_add_lsi": 0.144999,
+            "value_add_nonlinear_beyond_lsi": 0.0,
+            "oracle_lsi_ceiling_relative_gain": 0.156703,
+            "oracle_ceiling_negative": false,
+            "m1b_value_add_lsi_spread_3foldseeds": 0.043248,
+            "threshold": 0.129744,
+            "excess_readingA_fullstack_vs_emitted_ceiling": -0.011704,
+            "excess_readingB_beyondLSI_vs_ceiling_clipped_at_0": -0.156703,
+            "fires_readingA": false,
+            "fires_readingB": false
+          },
+          {
+            "dataset": "sharp__allen_cahn_2d",
+            "rung": "B:16",
+            "gamma_band1_fold_seed0": 0.353234,
+            "value_add_nonlinear": 0.044696,
+            "value_add_lsi": 0.017138,
+            "value_add_nonlinear_beyond_lsi": 0.028038,
+            "oracle_lsi_ceiling_relative_gain": -0.000137,
+            "oracle_ceiling_negative": true,
+            "m1b_value_add_lsi_spread_3foldseeds": 0.022904,
+            "threshold": 0.068712,
+            "excess_readingA_fullstack_vs_emitted_ceiling": 0.044833,
+            "excess_readingB_beyondLSI_vs_ceiling_clipped_at_0": 0.028038,
+            "fires_readingA": false,
+            "fires_readingB": false
+          },
+          {
+            "dataset": "sharp__allen_cahn_2d",
+            "rung": "B:all",
+            "gamma_band1_fold_seed0": 0.161515,
+            "value_add_nonlinear": 0.730829,
+            "value_add_lsi": 0.024049,
+            "value_add_nonlinear_beyond_lsi": 0.724197,
+            "oracle_lsi_ceiling_relative_gain": -0.223341,
+            "oracle_ceiling_negative": true,
+            "m1b_value_add_lsi_spread_3foldseeds": 0.023048,
+            "threshold": 0.069144,
+            "excess_readingA_fullstack_vs_emitted_ceiling": 0.95417,
+            "excess_readingB_beyondLSI_vs_ceiling_clipped_at_0": 0.724197,
+            "fires_readingA": true,
+            "fires_readingB": true
+          },
+          {
+            "dataset": "sharp__cahn_hilliard",
+            "rung": "A:1",
+            "gamma_band1_fold_seed0": 0.146466,
+            "value_add_nonlinear": 0.101868,
+            "value_add_lsi": 0.105321,
+            "value_add_nonlinear_beyond_lsi": -0.003859,
+            "oracle_lsi_ceiling_relative_gain": 0.116819,
+            "oracle_ceiling_negative": false,
+            "m1b_value_add_lsi_spread_3foldseeds": 0.034198,
+            "threshold": 0.102594,
+            "excess_readingA_fullstack_vs_emitted_ceiling": -0.014951,
+            "excess_readingB_beyondLSI_vs_ceiling_clipped_at_0": -0.120678,
+            "fires_readingA": false,
+            "fires_readingB": false
+          },
+          {
+            "dataset": "sharp__cahn_hilliard",
+            "rung": "B:1",
+            "gamma_band1_fold_seed0": 0.146466,
+            "value_add_nonlinear": 0.109424,
+            "value_add_lsi": 0.105321,
+            "value_add_nonlinear_beyond_lsi": 0.004586,
+            "oracle_lsi_ceiling_relative_gain": 0.116819,
+            "oracle_ceiling_negative": false,
+            "m1b_value_add_lsi_spread_3foldseeds": 0.034198,
+            "threshold": 0.102594,
+            "excess_readingA_fullstack_vs_emitted_ceiling": -0.007396,
+            "excess_readingB_beyondLSI_vs_ceiling_clipped_at_0": -0.112234,
+            "fires_readingA": false,
+            "fires_readingB": false
+          },
+          {
+            "dataset": "sharp__cahn_hilliard",
+            "rung": "B:16",
+            "gamma_band1_fold_seed0": 0.091382,
+            "value_add_nonlinear": 0.170624,
+            "value_add_lsi": 0.165742,
+            "value_add_nonlinear_beyond_lsi": 0.005852,
+            "oracle_lsi_ceiling_relative_gain": 0.167819,
+            "oracle_ceiling_negative": false,
+            "m1b_value_add_lsi_spread_3foldseeds": 0.007548,
+            "threshold": 0.05,
+            "excess_readingA_fullstack_vs_emitted_ceiling": 0.002805,
+            "excess_readingB_beyondLSI_vs_ceiling_clipped_at_0": -0.161967,
+            "fires_readingA": false,
+            "fires_readingB": false
+          },
+          {
+            "dataset": "sharp__cahn_hilliard",
+            "rung": "B:all",
+            "gamma_band1_fold_seed0": 0.148074,
+            "value_add_nonlinear": 0.400743,
+            "value_add_lsi": 0.0,
+            "value_add_nonlinear_beyond_lsi": 0.400743,
+            "oracle_lsi_ceiling_relative_gain": 0.021543,
+            "oracle_ceiling_negative": false,
+            "m1b_value_add_lsi_spread_3foldseeds": 0.008581,
+            "threshold": 0.05,
+            "excess_readingA_fullstack_vs_emitted_ceiling": 0.3792,
+            "excess_readingB_beyondLSI_vs_ceiling_clipped_at_0": 0.3792,
+            "fires_readingA": true,
+            "fires_readingB": true
+          },
+          {
+            "dataset": "sharp__fisher_kpp_2d",
+            "rung": "A:1",
+            "gamma_band1_fold_seed0": 0.14236,
+            "value_add_nonlinear": 0.277723,
+            "value_add_lsi": 0.277723,
+            "value_add_nonlinear_beyond_lsi": 0.0,
+            "oracle_lsi_ceiling_relative_gain": 0.28561,
+            "oracle_ceiling_negative": false,
+            "m1b_value_add_lsi_spread_3foldseeds": 0.00201,
+            "threshold": 0.05,
+            "excess_readingA_fullstack_vs_emitted_ceiling": -0.007887,
+            "excess_readingB_beyondLSI_vs_ceiling_clipped_at_0": -0.28561,
+            "fires_readingA": false,
+            "fires_readingB": false
+          },
+          {
+            "dataset": "sharp__fisher_kpp_2d",
+            "rung": "B:1",
+            "gamma_band1_fold_seed0": 0.14236,
+            "value_add_nonlinear": 0.277723,
+            "value_add_lsi": 0.277723,
+            "value_add_nonlinear_beyond_lsi": 0.0,
+            "oracle_lsi_ceiling_relative_gain": 0.28561,
+            "oracle_ceiling_negative": false,
+            "m1b_value_add_lsi_spread_3foldseeds": 0.00201,
+            "threshold": 0.05,
+            "excess_readingA_fullstack_vs_emitted_ceiling": -0.007887,
+            "excess_readingB_beyondLSI_vs_ceiling_clipped_at_0": -0.28561,
+            "fires_readingA": false,
+            "fires_readingB": false
+          },
+          {
+            "dataset": "sharp__fisher_kpp_2d",
+            "rung": "B:64",
+            "gamma_band1_fold_seed0": 0.140428,
+            "value_add_nonlinear": 0.007387,
+            "value_add_lsi": 0.005838,
+            "value_add_nonlinear_beyond_lsi": 0.001558,
+            "oracle_lsi_ceiling_relative_gain": 0.016056,
+            "oracle_ceiling_negative": false,
+            "m1b_value_add_lsi_spread_3foldseeds": 0.000108,
+            "threshold": 0.05,
+            "excess_readingA_fullstack_vs_emitted_ceiling": -0.008669,
+            "excess_readingB_beyondLSI_vs_ceiling_clipped_at_0": -0.014498,
+            "fires_readingA": false,
+            "fires_readingB": false
+          },
+          {
+            "dataset": "sharp__fisher_kpp_2d",
+            "rung": "B:all",
+            "gamma_band1_fold_seed0": 0.165091,
+            "value_add_nonlinear": 0.036776,
+            "value_add_lsi": 0.004508,
+            "value_add_nonlinear_beyond_lsi": 0.032415,
+            "oracle_lsi_ceiling_relative_gain": 0.01465,
+            "oracle_ceiling_negative": false,
+            "m1b_value_add_lsi_spread_3foldseeds": 0.000432,
+            "threshold": 0.05,
+            "excess_readingA_fullstack_vs_emitted_ceiling": 0.022126,
+            "excess_readingB_beyondLSI_vs_ceiling_clipped_at_0": 0.017764,
+            "fires_readingA": false,
+            "fires_readingB": false
+          },
+          {
+            "dataset": "sharp__phase_field_crystal_2d",
+            "rung": "A:1",
+            "gamma_band1_fold_seed0": 0.13162,
+            "value_add_nonlinear": 0.270547,
+            "value_add_lsi": 0.270547,
+            "value_add_nonlinear_beyond_lsi": 0.0,
+            "oracle_lsi_ceiling_relative_gain": 0.283636,
+            "oracle_ceiling_negative": false,
+            "m1b_value_add_lsi_spread_3foldseeds": 0.020035,
+            "threshold": 0.060105,
+            "excess_readingA_fullstack_vs_emitted_ceiling": -0.013089,
+            "excess_readingB_beyondLSI_vs_ceiling_clipped_at_0": -0.283636,
+            "fires_readingA": false,
+            "fires_readingB": false
+          },
+          {
+            "dataset": "sharp__phase_field_crystal_2d",
+            "rung": "B:1",
+            "gamma_band1_fold_seed0": 0.13162,
+            "value_add_nonlinear": 0.270547,
+            "value_add_lsi": 0.270547,
+            "value_add_nonlinear_beyond_lsi": 0.0,
+            "oracle_lsi_ceiling_relative_gain": 0.283636,
+            "oracle_ceiling_negative": false,
+            "m1b_value_add_lsi_spread_3foldseeds": 0.020035,
+            "threshold": 0.060105,
+            "excess_readingA_fullstack_vs_emitted_ceiling": -0.013089,
+            "excess_readingB_beyondLSI_vs_ceiling_clipped_at_0": -0.283636,
+            "fires_readingA": false,
+            "fires_readingB": false
+          },
+          {
+            "dataset": "sharp__phase_field_crystal_2d",
+            "rung": "B:16",
+            "gamma_band1_fold_seed0": 0.202041,
+            "value_add_nonlinear": 0.027944,
+            "value_add_lsi": 0.027944,
+            "value_add_nonlinear_beyond_lsi": 0.0,
+            "oracle_lsi_ceiling_relative_gain": 0.041424,
+            "oracle_ceiling_negative": false,
+            "m1b_value_add_lsi_spread_3foldseeds": 0.014854,
+            "threshold": 0.05,
+            "excess_readingA_fullstack_vs_emitted_ceiling": -0.01348,
+            "excess_readingB_beyondLSI_vs_ceiling_clipped_at_0": -0.041424,
+            "fires_readingA": false,
+            "fires_readingB": false
+          },
+          {
+            "dataset": "sharp__phase_field_crystal_2d",
+            "rung": "B:all",
+            "gamma_band1_fold_seed0": 0.116978,
+            "value_add_nonlinear": 0.163292,
+            "value_add_lsi": 0.002556,
+            "value_add_nonlinear_beyond_lsi": 0.161148,
+            "oracle_lsi_ceiling_relative_gain": -0.043192,
+            "oracle_ceiling_negative": true,
+            "m1b_value_add_lsi_spread_3foldseeds": 0.001884,
+            "threshold": 0.05,
+            "excess_readingA_fullstack_vs_emitted_ceiling": 0.206485,
+            "excess_readingB_beyondLSI_vs_ceiling_clipped_at_0": 0.161148,
+            "fires_readingA": true,
+            "fires_readingB": true
+          }
+        ],
+        "sensitivity": "All 3 firing cells are the ladder-B `B:all` rung (allen_cahn, cahn_hilliard, pfc). Excluding that single rung drops F1 to 0 firing cells. See anomalies A1: on the TRAIN side with LOO, `B:all` is (S - x_i)/(n-1), an exact negatively-scaled copy of the row's OWN real LF, so the corrector there is recovering real LF, not condition-only information. The clause fired as written; the mechanism-analyzer owns whether the exported rule is genuinely unsafe."
+      },
+      "F2": {
+        "clause_verbatim": "(F2, realisation-aware branch) the k = 1 sample arm beats the k = all conditional-mean arm on the TEST split by more than that dataset's certified `min_claimable_effect` (pfc 0.2130273 / allen_cahn 0.8797047 / fisher_kpp 0.0007137 / cahn_hilliard 0.0912454 / ifc_poisson 0.9377041; helmholtz report-only at 2.9529916) on >= 2 panel datasets",
+        "fires": true,
+        "threshold_needed": ">= 2 panel datasets",
+        "n_panel_datasets_firing": 3,
+        "firing_datasets": [
+          "sharp__phase_field_crystal_2d",
+          "sharp__allen_cahn_2d",
+          "sharp__fisher_kpp_2d"
+        ],
+        "per_dataset": {
+          "ext__helmholtz_2d": {
+            "ref_k1_corrected_nrmse": 1.44877067,
+            "ref_kall_corrected_nrmse": 1.49309758,
+            "ref_k1_raw_nrmse": 2.27357982,
+            "ref_kall_raw_nrmse": 1.49309758,
+            "skill_units_per_nrmse": 3.34411,
+            "k1_advantage_skill_units": 0.148234,
+            "min_claimable_effect": 2.95299157437233,
+            "fires": false,
+            "report_only": true
+          },
+          "sharp__phase_field_crystal_2d": {
+            "ref_k1_corrected_nrmse": 0.35451852,
+            "ref_kall_corrected_nrmse": 0.35938086,
+            "ref_k1_raw_nrmse": 0.5020231,
+            "ref_kall_raw_nrmse": 0.44136285,
+            "skill_units_per_nrmse": 135.487062,
+            "k1_advantage_skill_units": 0.658784,
+            "min_claimable_effect": 0.21302734961699343,
+            "fires": true,
+            "report_only": false
+          },
+          "sharp__allen_cahn_2d": {
+            "ref_k1_corrected_nrmse": 0.40364265,
+            "ref_kall_corrected_nrmse": 0.90509388,
+            "ref_k1_raw_nrmse": 0.47922493,
+            "ref_kall_raw_nrmse": 1.00084296,
+            "skill_units_per_nrmse": 561.556,
+            "k1_advantage_skill_units": 281.592946,
+            "min_claimable_effect": 0.8797047190126648,
+            "fires": true,
+            "report_only": false
+          },
+          "sharp__fisher_kpp_2d": {
+            "ref_k1_corrected_nrmse": 0.2485844,
+            "ref_kall_corrected_nrmse": 0.24883516,
+            "ref_k1_raw_nrmse": 0.34443589,
+            "ref_kall_raw_nrmse": 0.25723092,
+            "skill_units_per_nrmse": 46.621125,
+            "k1_advantage_skill_units": 0.011691,
+            "min_claimable_effect": 0.0007136812826775696,
+            "fires": true,
+            "report_only": false
+          },
+          "sharp__cahn_hilliard": {
+            "ref_k1_corrected_nrmse": 0.83245903,
+            "ref_kall_corrected_nrmse": 0.69817963,
+            "ref_k1_raw_nrmse": 0.96822175,
+            "ref_kall_raw_nrmse": 1.00197775,
+            "skill_units_per_nrmse": 23.921749,
+            "k1_advantage_skill_units": -3.212198,
+            "min_claimable_effect": 0.09124535322300886,
+            "fires": false,
+            "report_only": false
+          },
+          "ifc_poisson": {
+            "ref_k1_corrected_nrmse": 0.317308,
+            "ref_kall_corrected_nrmse": 0.32944653,
+            "ref_k1_raw_nrmse": 3.26502699,
+            "ref_kall_raw_nrmse": 3.62048716,
+            "skill_units_per_nrmse": 27.777778,
+            "k1_advantage_skill_units": 0.337181,
+            "min_claimable_effect": 0.9377041289531141,
+            "fires": false,
+            "report_only": false
+          }
+        },
+        "margins_over_the_floor": {
+          "sharp__allen_cahn_2d": "281.59 vs mce 0.8797 (320x)",
+          "sharp__fisher_kpp_2d": "0.01169 vs mce 0.0007137 (16.4x)",
+          "sharp__phase_field_crystal_2d": "0.65878 vs mce 0.2130 (3.1x)"
+        },
+        "note": "Arms compared are ref_k1_corrected vs ref_kall_corrected on the TEST split, read from `round_nrmse`. This INVERTS the card's part-4 M3 prediction (\"after correction, k = 1 WORSE than k = all on >= 5/6 datasets\"): k=1 is better on 5/6 panel datasets and resolvably better on 3. Only sharp__cahn_hilliard has k=1 worse (-3.21 skill units)."
+      },
+      "F3": {
+        "clause_verbatim": "(F3, closure) any ladder-B rung's partial coherence given the condition exceeds its own permutation-null 95th percentile by > 0.10 on >= 2 datasets under both conditioners",
+        "fires": true,
+        "threshold_needed": ">= 2 datasets",
+        "band": "band1 (named as the F3 statistic by card part-4 M2 and by the in-job M2 `_note`)",
+        "n_panel_datasets_firing": 5,
+        "firing_panel_datasets": [
+          "ext__helmholtz_2d",
+          "sharp__phase_field_crystal_2d",
+          "sharp__allen_cahn_2d",
+          "sharp__fisher_kpp_2d",
+          "sharp__cahn_hilliard"
+        ],
+        "per_dataset": {
+          "ext__helmholtz_2d": {
+            "worst_rung_per_conditioner": {
+              "knn_oof": {
+                "rung": "B:all",
+                "excess_over_null_p95": 0.200534,
+                "partial_gamma": 0.591856,
+                "null_p95": 0.391322
+              },
+              "ridge_pod16": {
+                "rung": "B:all",
+                "excess_over_null_p95": 0.282021,
+                "partial_gamma": 0.472567,
+                "null_p95": 0.190545
+              }
+            },
+            "fires": true
+          },
+          "sharp__phase_field_crystal_2d": {
+            "worst_rung_per_conditioner": {
+              "knn_oof": {
+                "rung": "B:all",
+                "excess_over_null_p95": 0.783275,
+                "partial_gamma": 0.985864,
+                "null_p95": 0.202589
+              },
+              "ridge_pod16": {
+                "rung": "B:all",
+                "excess_over_null_p95": 0.797673,
+                "partial_gamma": 1.0,
+                "null_p95": 0.202327
+              }
+            },
+            "fires": true
+          },
+          "sharp__allen_cahn_2d": {
+            "worst_rung_per_conditioner": {
+              "knn_oof": {
+                "rung": "B:all",
+                "excess_over_null_p95": 0.722276,
+                "partial_gamma": 0.982221,
+                "null_p95": 0.259945
+              },
+              "ridge_pod16": {
+                "rung": "B:all",
+                "excess_over_null_p95": 0.733836,
+                "partial_gamma": 0.999671,
+                "null_p95": 0.265836
+              }
+            },
+            "fires": true
+          },
+          "sharp__fisher_kpp_2d": {
+            "worst_rung_per_conditioner": {
+              "knn_oof": {
+                "rung": "B:all",
+                "excess_over_null_p95": 0.858706,
+                "partial_gamma": 0.999703,
+                "null_p95": 0.140997
+              },
+              "ridge_pod16": {
+                "rung": "B:all",
+                "excess_over_null_p95": 0.858214,
+                "partial_gamma": 0.999695,
+                "null_p95": 0.141482
+              }
+            },
+            "fires": true
+          },
+          "sharp__cahn_hilliard": {
+            "worst_rung_per_conditioner": {
+              "knn_oof": {
+                "rung": "B:all",
+                "excess_over_null_p95": 0.826951,
+                "partial_gamma": 0.99038,
+                "null_p95": 0.163429
+              },
+              "ridge_pod16": {
+                "rung": "B:all",
+                "excess_over_null_p95": 0.817009,
+                "partial_gamma": 0.99049,
+                "null_p95": 0.173482
+              }
+            },
+            "fires": true
+          },
+          "ifc_poisson": {
+            "worst_rung_per_conditioner": {
+              "knn_oof": {
+                "rung": "B:1",
+                "excess_over_null_p95": 0.0,
+                "partial_gamma": 0.0,
+                "null_p95": 0.0
+              },
+              "ridge_pod16": {
+                "rung": "B:2",
+                "excess_over_null_p95": 0.057132,
+                "partial_gamma": 0.794338,
+                "null_p95": 0.737207
+              }
+            },
+            "fires": false
+          },
+          "heat_local": {
+            "worst_rung_per_conditioner": {
+              "knn_oof": {
+                "rung": "B:all",
+                "excess_over_null_p95": 0.853094,
+                "partial_gamma": 0.999948,
+                "null_p95": 0.146854
+              },
+              "ridge_pod16": {
+                "rung": "B:all",
+                "excess_over_null_p95": 0.855828,
+                "partial_gamma": 0.999955,
+                "null_p95": 0.144127
+              }
+            },
+            "fires": true
+          },
+          "fluid": {
+            "worst_rung_per_conditioner": {
+              "knn_oof": {
+                "rung": "B:all",
+                "excess_over_null_p95": 0.445292,
+                "partial_gamma": 0.659616,
+                "null_p95": 0.214324
+              },
+              "ridge_pod16": {
+                "rung": "B:4",
+                "excess_over_null_p95": 0.666383,
+                "partial_gamma": 0.871816,
+                "null_p95": 0.205433
+              }
+            },
+            "fires": true
+          },
+          "sharp__sod_1d": {
+            "worst_rung_per_conditioner": {},
+            "fires": false
+          }
+        },
+        "sensitivity_excluding_B_all": {
+          "n_panel_datasets_firing": 2,
+          "firing_panel_datasets": [
+            "sharp__phase_field_crystal_2d",
+            "sharp__fisher_kpp_2d"
+          ],
+          "per_dataset": {
+            "ext__helmholtz_2d": {
+              "worst_rung_per_conditioner": {
+                "knn_oof": {
+                  "rung": "B:2",
+                  "excess_over_null_p95": 0.195,
+                  "partial_gamma": 0.585184,
+                  "null_p95": 0.390184
+                },
+                "ridge_pod16": {
+                  "rung": "B:1",
+                  "excess_over_null_p95": 0.052272,
+                  "partial_gamma": 0.518117,
+                  "null_p95": 0.465845
+                }
+              },
+              "fires": false
+            },
+            "sharp__phase_field_crystal_2d": {
+              "worst_rung_per_conditioner": {
+                "knn_oof": {
+                  "rung": "B:64",
+                  "excess_over_null_p95": 0.316656,
+                  "partial_gamma": 0.480168,
+                  "null_p95": 0.163512
+                },
+                "ridge_pod16": {
+                  "rung": "B:256",
+                  "excess_over_null_p95": 0.13972,
+                  "partial_gamma": 0.297621,
+                  "null_p95": 0.157901
+                }
+              },
+              "fires": true
+            },
+            "sharp__allen_cahn_2d": {
+              "worst_rung_per_conditioner": {
+                "knn_oof": {
+                  "rung": "B:16",
+                  "excess_over_null_p95": 0.269271,
+                  "partial_gamma": 0.532602,
+                  "null_p95": 0.263331
+                },
+                "ridge_pod16": {
+                  "rung": "B:1",
+                  "excess_over_null_p95": 0.087066,
+                  "partial_gamma": 0.415986,
+                  "null_p95": 0.32892
+                }
+              },
+              "fires": false
+            },
+            "sharp__fisher_kpp_2d": {
+              "worst_rung_per_conditioner": {
+                "knn_oof": {
+                  "rung": "B:8",
+                  "excess_over_null_p95": 0.329254,
+                  "partial_gamma": 0.464955,
+                  "null_p95": 0.135702
+                },
+                "ridge_pod16": {
+                  "rung": "B:256",
+                  "excess_over_null_p95": 0.113685,
+                  "partial_gamma": 0.246607,
+                  "null_p95": 0.132922
+                }
+              },
+              "fires": true
+            },
+            "sharp__cahn_hilliard": {
+              "worst_rung_per_conditioner": {
+                "knn_oof": {
+                  "rung": "B:16",
+                  "excess_over_null_p95": 0.16695,
+                  "partial_gamma": 0.331577,
+                  "null_p95": 0.164627
+                },
+                "ridge_pod16": {
+                  "rung": "B:256",
+                  "excess_over_null_p95": 0.091955,
+                  "partial_gamma": 0.269881,
+                  "null_p95": 0.177927
+                }
+              },
+              "fires": false
+            },
+            "ifc_poisson": {
+              "worst_rung_per_conditioner": {
+                "knn_oof": {
+                  "rung": "B:1",
+                  "excess_over_null_p95": 0.0,
+                  "partial_gamma": 0.0,
+                  "null_p95": 0.0
+                },
+                "ridge_pod16": {
+                  "rung": "B:2",
+                  "excess_over_null_p95": 0.057132,
+                  "partial_gamma": 0.794338,
+                  "null_p95": 0.737207
+                }
+              },
+              "fires": false
+            },
+            "heat_local": {
+              "worst_rung_per_conditioner": {
+                "knn_oof": {
+                  "rung": "B:16",
+                  "excess_over_null_p95": 0.573353,
+                  "partial_gamma": 0.73415,
+                  "null_p95": 0.160797
+                },
+                "ridge_pod16": {
+                  "rung": "B:4",
+                  "excess_over_null_p95": 0.798214,
+                  "partial_gamma": 0.93942,
+                  "null_p95": 0.141207
+                }
+              },
+              "fires": true
+            },
+            "fluid": {
+              "worst_rung_per_conditioner": {
+                "knn_oof": {
+                  "rung": "B:4",
+                  "excess_over_null_p95": 0.426641,
+                  "partial_gamma": 0.637178,
+                  "null_p95": 0.210538
+                },
+                "ridge_pod16": {
+                  "rung": "B:4",
+                  "excess_over_null_p95": 0.666383,
+                  "partial_gamma": 0.871816,
+                  "null_p95": 0.205433
+                }
+              },
+              "fires": true
+            },
+            "sharp__sod_1d": {
+              "worst_rung_per_conditioner": {},
+              "fires": false
+            }
+          },
+          "note": "Excluding the leak-contaminated B:all rung (anomalies A1), F3 STILL FIRES -- on exactly 2 panel datasets (pfc, fisher_kpp), i.e. exactly at the clause threshold: pfc knn_oof B:64 +0.3167 / ridge_pod16 B:256 +0.1397; fisher_kpp knn_oof B:8 +0.3293 / ridge_pod16 B:256 +0.1137. Guards fluid and heat_local also fire at contract tier. So unlike F1, F3's firing survives removal of the LOO artifact -- but only just."
+        }
+      },
+      "F4": {
+        "clause_verbatim": "(F4, calibration validity) the scored blended arm loses to its own out-of-fold-selected floor base by more than the certified `min_claimable_effect` on >= 2 panel datasets",
+        "fires": false,
+        "n_panel_datasets_firing": 0,
+        "firing_datasets": [],
+        "per_dataset": {
+          "ext__helmholtz_2d": {
+            "scored_test_nrmse": 1.26984526,
+            "blend_base": "zero",
+            "base_nrmse": 1.0,
+            "loss_to_base_skill_units": 0.902392,
+            "min_claimable_effect": 2.95299157437233,
+            "fires": false
+          },
+          "sharp__phase_field_crystal_2d": {
+            "scored_test_nrmse": 0.35760998,
+            "blend_base": "zero",
+            "base_nrmse": 1.0,
+            "loss_to_base_skill_units": -87.035536,
+            "min_claimable_effect": 0.21302734961699343,
+            "fires": false
+          },
+          "sharp__allen_cahn_2d": {
+            "scored_test_nrmse": 0.30288016,
+            "blend_base": "nn_condition",
+            "base_nrmse": 0.47937494,
+            "loss_to_base_skill_units": -99.111705,
+            "min_claimable_effect": 0.8797047190126648,
+            "fires": false
+          },
+          "sharp__fisher_kpp_2d": {
+            "scored_test_nrmse": 0.24822503,
+            "blend_base": "zero",
+            "base_nrmse": 1.0,
+            "loss_to_base_skill_units": -35.048595,
+            "min_claimable_effect": 0.0007136812826775696,
+            "fires": false
+          },
+          "sharp__cahn_hilliard": {
+            "scored_test_nrmse": 0.64822566,
+            "blend_base": "zero",
+            "base_nrmse": 1.0,
+            "loss_to_base_skill_units": -8.415058,
+            "min_claimable_effect": 0.09124535322300886,
+            "fires": false
+          },
+          "ifc_poisson": {
+            "scored_test_nrmse": 0.30436461,
+            "blend_base": "zero",
+            "base_nrmse": 1.0,
+            "loss_to_base_skill_units": -19.323205,
+            "min_claimable_effect": 0.9377041289531141,
+            "fires": false
+          }
+        },
+        "note": "The only positive (worse-than-base) delta is report-only helmholtz, +0.9024 skill units against its mce 2.9530 -- not resolvable. Every other panel column beats its selected base (ifc_poisson by 19.32, pfc by 87.04, allen_cahn by 99.11 skill units), so the out-of-fold blend calibration is validated."
+      },
+      "noise_floor_cross_check": {
+        "file": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round2/state/noise_floor.json",
+        "provisional": false,
+        "source": "r2s4_diag-B1 condition->HF 3-seed spread (family r2s4_cert_min, smoke tier, seeds 0,1,2)",
+        "test_split_clauses": "F2 and F4 are judged in skill units against the certified per-dataset min_claimable_effect. All three F2 firings clear their floor by 3.1x-320x, so the F2 effect is RESOLVABLE, not floor-limited.",
+        "train_side_clauses": "F1 and F3 are train-side dimensionless quantities, judged per card part 4 by the in-job 3-fold-seed paired spread with the absolute floors 0.05 (relative gain) and 0.10 (coherence over a 200-draw permutation null); the certified per-dataset skill-unit floors do not apply to them."
+      }
+    },
+    "reviewer_carry_forwards": {
+      "1_oracle_ceiling_negative_and_F1_threshold": "See falsification_detail.F1.carry_forward_1_handling (substitution made and stated; both readings computed and in agreement).",
+      "2_kstar_stability": {
+        "note": "Emitted k* is a fold-seed-0 calib statistic ONLY (review_notes[0] BUILDER ITEM (1), smoke_eval.py:896-897). Stability proxy: argmin over ladder-B rungs of M1b's raw `nrmse_intermediate` on the held-out ladder-eval fold, recomputed at fold seeds 0/1/2 -- the same statistic type as the k* rule, on a different held-out fold. No k*-conditioned claim in this card is quoted without this table.",
+        "panel_datasets_unstable": [
+          "ext__helmholtz_2d",
+          "sharp__allen_cahn_2d",
+          "sharp__cahn_hilliard"
+        ],
+        "panel_datasets_stable": [
+          "sharp__phase_field_crystal_2d",
+          "sharp__fisher_kpp_2d",
+          "ifc_poisson"
+        ],
+        "helmholtz_confirmation": "The reviewer's helmholtz warning reproduces at 200 epochs: the calib curve is non-monotone, argmin picks k=1, the proxy flips to B:4 at fold seed 1, and on the TEST raw split k=1 (2.27358) is 52.3% worse than k=all (1.49310). Damage contained by the blend exactly as the reviewer predicted: base=zero, lambda*=0.70, scored 1.26985 < both raw rungs.",
+        "per_dataset": {
+          "ext__helmholtz_2d": {
+            "emitted_kstar": "1",
+            "rule": "argmin raw nRMSE of the intermediate on the calib fold",
+            "alternative_kstar": "B:1",
+            "alternative_agrees": true,
+            "raw_calib_nrmse_fold_seed0": {
+              "1": 0.992421,
+              "16": 2.252847,
+              "2": 1.057428,
+              "256": 1.537298,
+              "4": 1.530316,
+              "64": 2.03923,
+              "8": 1.402947,
+              "all": 1.426171
+            },
+            "proxy_argmin_per_fold_seed": {
+              "0": {
+                "argmin": "B:1",
+                "curve": {
+                  "B:1": 0.712407,
+                  "B:2": 1.296605,
+                  "B:4": 1.40065,
+                  "B:8": 2.839393,
+                  "B:16": 3.105833,
+                  "B:64": 2.25841,
+                  "B:256": 1.667026,
+                  "B:all": 1.459137
+                }
+              },
+              "1": {
+                "argmin": "B:4",
+                "curve": {
+                  "B:1": 1.422932,
+                  "B:2": 1.20225,
+                  "B:4": 1.085306,
+                  "B:8": 2.762277,
+                  "B:16": 3.430354,
+                  "B:64": 2.4967,
+                  "B:256": 1.702504,
+                  "B:all": 1.517011
+                }
+              },
+              "2": {
+                "argmin": "B:1",
+                "curve": {
+                  "B:1": 0.647539,
+                  "B:2": 3.876921,
+                  "B:4": 3.357433,
+                  "B:8": 4.386154,
+                  "B:16": 4.304954,
+                  "B:64": 2.587873,
+                  "B:256": 1.824218,
+                  "B:all": 1.642515
+                }
+              }
+            },
+            "proxy_picks": [
+              "B:1",
+              "B:4"
+            ],
+            "stable_across_fold_seeds": false
+          },
+          "sharp__phase_field_crystal_2d": {
+            "emitted_kstar": "16",
+            "rule": "argmin raw nRMSE of the intermediate on the calib fold",
+            "alternative_kstar": "B:1",
+            "alternative_agrees": false,
+            "raw_calib_nrmse_fold_seed0": {
+              "1": 0.394839,
+              "16": 0.291449,
+              "2": 0.350143,
+              "256": 0.34667,
+              "4": 0.321597,
+              "64": 0.302947,
+              "8": 0.299964,
+              "all": 0.385794
+            },
+            "proxy_argmin_per_fold_seed": {
+              "0": {
+                "argmin": "B:16",
+                "curve": {
+                  "B:1": 0.531601,
+                  "B:2": 0.461409,
+                  "B:4": 0.432897,
+                  "B:8": 0.408141,
+                  "B:16": 0.400305,
+                  "B:64": 0.405487,
+                  "B:256": 0.437042,
+                  "B:all": 0.467365
+                }
+              },
+              "1": {
+                "argmin": "B:16",
+                "curve": {
+                  "B:1": 0.326614,
+                  "B:2": 0.290836,
+                  "B:4": 0.268698,
+                  "B:8": 0.253947,
+                  "B:16": 0.246073,
+                  "B:64": 0.259961,
+                  "B:256": 0.311747,
+                  "B:all": 0.358249
+                }
+              },
+              "2": {
+                "argmin": "B:16",
+                "curve": {
+                  "B:1": 0.364442,
+                  "B:2": 0.314345,
+                  "B:4": 0.29231,
+                  "B:8": 0.271623,
+                  "B:16": 0.268736,
+                  "B:64": 0.280379,
+                  "B:256": 0.315117,
+                  "B:all": 0.351498
+                }
+              }
+            },
+            "proxy_picks": [
+              "B:16"
+            ],
+            "stable_across_fold_seeds": true
+          },
+          "sharp__allen_cahn_2d": {
+            "emitted_kstar": "16",
+            "rule": "argmin raw nRMSE of the intermediate on the calib fold",
+            "alternative_kstar": "B:16",
+            "alternative_agrees": true,
+            "raw_calib_nrmse_fold_seed0": {
+              "1": 0.582975,
+              "16": 0.371189,
+              "2": 0.462784,
+              "256": 0.736313,
+              "4": 0.413662,
+              "64": 0.404043,
+              "8": 0.378936,
+              "all": 1.002033
+            },
+            "proxy_argmin_per_fold_seed": {
+              "0": {
+                "argmin": "B:16",
+                "curve": {
+                  "B:1": 0.528523,
+                  "B:2": 0.412304,
+                  "B:4": 0.40098,
+                  "B:8": 0.369293,
+                  "B:16": 0.355279,
+                  "B:64": 0.389779,
+                  "B:256": 0.721929,
+                  "B:all": 1.002391
+                }
+              },
+              "1": {
+                "argmin": "B:8",
+                "curve": {
+                  "B:1": 0.476593,
+                  "B:2": 0.399836,
+                  "B:4": 0.353832,
+                  "B:8": 0.316254,
+                  "B:16": 0.32403,
+                  "B:64": 0.370072,
+                  "B:256": 0.711445,
+                  "B:all": 1.002768
+                }
+              },
+              "2": {
+                "argmin": "B:8",
+                "curve": {
+                  "B:1": 0.506361,
+                  "B:2": 0.383472,
+                  "B:4": 0.351358,
+                  "B:8": 0.328183,
+                  "B:16": 0.334601,
+                  "B:64": 0.368535,
+                  "B:256": 0.724309,
+                  "B:all": 1.002468
+                }
+              }
+            },
+            "proxy_picks": [
+              "B:16",
+              "B:8"
+            ],
+            "stable_across_fold_seeds": false
+          },
+          "sharp__fisher_kpp_2d": {
+            "emitted_kstar": "64",
+            "rule": "argmin raw nRMSE of the intermediate on the calib fold",
+            "alternative_kstar": "B:8",
+            "alternative_agrees": false,
+            "raw_calib_nrmse_fold_seed0": {
+              "1": 0.335387,
+              "16": 0.247415,
+              "2": 0.291357,
+              "256": 0.245406,
+              "4": 0.266803,
+              "64": 0.242733,
+              "8": 0.253841,
+              "all": 0.251304
+            },
+            "proxy_argmin_per_fold_seed": {
+              "0": {
+                "argmin": "B:64",
+                "curve": {
+                  "B:1": 0.332783,
+                  "B:2": 0.290693,
+                  "B:4": 0.266371,
+                  "B:8": 0.253392,
+                  "B:16": 0.246579,
+                  "B:64": 0.241815,
+                  "B:256": 0.243421,
+                  "B:all": 0.24815
+                }
+              },
+              "1": {
+                "argmin": "B:64",
+                "curve": {
+                  "B:1": 0.327382,
+                  "B:2": 0.285143,
+                  "B:4": 0.261286,
+                  "B:8": 0.248752,
+                  "B:16": 0.242181,
+                  "B:64": 0.23747,
+                  "B:256": 0.240313,
+                  "B:all": 0.246771
+                }
+              },
+              "2": {
+                "argmin": "B:64",
+                "curve": {
+                  "B:1": 0.338873,
+                  "B:2": 0.294868,
+                  "B:4": 0.270481,
+                  "B:8": 0.257359,
+                  "B:16": 0.250756,
+                  "B:64": 0.245564,
+                  "B:256": 0.247189,
+                  "B:all": 0.25171
+                }
+              }
+            },
+            "proxy_picks": [
+              "B:64"
+            ],
+            "stable_across_fold_seeds": true
+          },
+          "sharp__cahn_hilliard": {
+            "emitted_kstar": "16",
+            "rule": "argmin raw nRMSE of the intermediate on the calib fold",
+            "alternative_kstar": "B:64",
+            "alternative_agrees": false,
+            "raw_calib_nrmse_fold_seed0": {
+              "1": 1.069622,
+              "16": 0.762252,
+              "2": 0.891721,
+              "256": 0.929994,
+              "4": 0.802215,
+              "64": 0.816026,
+              "8": 0.766098,
+              "all": 1.000606
+            },
+            "proxy_argmin_per_fold_seed": {
+              "0": {
+                "argmin": "B:8",
+                "curve": {
+                  "B:1": 0.953081,
+                  "B:2": 0.822265,
+                  "B:4": 0.743341,
+                  "B:8": 0.714319,
+                  "B:16": 0.740815,
+                  "B:64": 0.795796,
+                  "B:256": 0.926112,
+                  "B:all": 1.004782
+                }
+              },
+              "1": {
+                "argmin": "B:8",
+                "curve": {
+                  "B:1": 0.915507,
+                  "B:2": 0.842049,
+                  "B:4": 0.757896,
+                  "B:8": 0.736278,
+                  "B:16": 0.750909,
+                  "B:64": 0.804714,
+                  "B:256": 0.922035,
+                  "B:all": 1.004069
+                }
+              },
+              "2": {
+                "argmin": "B:16",
+                "curve": {
+                  "B:1": 0.975555,
+                  "B:2": 0.827024,
+                  "B:4": 0.772349,
+                  "B:8": 0.745316,
+                  "B:16": 0.742622,
+                  "B:64": 0.797423,
+                  "B:256": 0.924576,
+                  "B:all": 0.999995
+                }
+              }
+            },
+            "proxy_picks": [
+              "B:16",
+              "B:8"
+            ],
+            "stable_across_fold_seeds": false
+          },
+          "ifc_poisson": {
+            "emitted_kstar": "2",
+            "rule": "argmin raw nRMSE of the intermediate on the calib fold",
+            "alternative_kstar": "B:2",
+            "alternative_agrees": true,
+            "raw_calib_nrmse_fold_seed0": {
+              "1": 2.770412,
+              "16": 3.42049,
+              "2": 2.624328,
+              "4": 2.958513,
+              "8": 3.370739,
+              "all": 3.366335
+            },
+            "proxy_argmin_per_fold_seed": {
+              "0": {
+                "argmin": "B:2",
+                "curve": {
+                  "B:1": 2.770412,
+                  "B:2": 2.624328,
+                  "B:4": 2.958513,
+                  "B:8": 3.370739,
+                  "B:16": 3.42049,
+                  "B:all": 3.366335
+                }
+              },
+              "1": {
+                "argmin": "B:2",
+                "curve": {
+                  "B:1": 2.770412,
+                  "B:2": 2.624328,
+                  "B:4": 2.958513,
+                  "B:8": 3.370739,
+                  "B:16": 3.42049,
+                  "B:all": 3.366335
+                }
+              },
+              "2": {
+                "argmin": "B:2",
+                "curve": {
+                  "B:1": 2.770412,
+                  "B:2": 2.624328,
+                  "B:4": 2.958513,
+                  "B:8": 3.370739,
+                  "B:16": 3.42049,
+                  "B:all": 3.366335
+                }
+              }
+            },
+            "proxy_picks": [
+              "B:2"
+            ],
+            "stable_across_fold_seeds": true
+          },
+          "heat_local": {
+            "emitted_kstar": "8",
+            "rule": "argmin raw nRMSE of the intermediate on the calib fold",
+            "alternative_kstar": "B:4",
+            "alternative_agrees": false,
+            "raw_calib_nrmse_fold_seed0": {
+              "1": 0.01862,
+              "16": 0.011097,
+              "2": 0.013523,
+              "256": 0.046603,
+              "4": 0.011454,
+              "64": 0.020857,
+              "8": 0.010341,
+              "all": 0.127441
+            },
+            "proxy_argmin_per_fold_seed": {
+              "0": {
+                "argmin": "B:4",
+                "curve": {
+                  "B:1": 0.019604,
+                  "B:2": 0.014444,
+                  "B:4": 0.012242,
+                  "B:8": 0.012461,
+                  "B:16": 0.012852,
+                  "B:64": 0.023396,
+                  "B:256": 0.049853,
+                  "B:all": 0.132934
+                }
+              },
+              "1": {
+                "argmin": "B:8",
+                "curve": {
+                  "B:1": 0.01688,
+                  "B:2": 0.01405,
+                  "B:4": 0.011537,
+                  "B:8": 0.010314,
+                  "B:16": 0.011092,
+                  "B:64": 0.020069,
+                  "B:256": 0.044823,
+                  "B:all": 0.122325
+                }
+              },
+              "2": {
+                "argmin": "B:8",
+                "curve": {
+                  "B:1": 0.018421,
+                  "B:2": 0.01335,
+                  "B:4": 0.012083,
+                  "B:8": 0.010876,
+                  "B:16": 0.011246,
+                  "B:64": 0.022066,
+                  "B:256": 0.046245,
+                  "B:all": 0.123959
+                }
+              }
+            },
+            "proxy_picks": [
+              "B:4",
+              "B:8"
+            ],
+            "stable_across_fold_seeds": false
+          },
+          "fluid": {
+            "emitted_kstar": "8",
+            "rule": "argmin raw nRMSE of the intermediate on the calib fold",
+            "alternative_kstar": "B:16",
+            "alternative_agrees": false,
+            "raw_calib_nrmse_fold_seed0": {
+              "1": 0.228334,
+              "16": 0.226939,
+              "2": 0.225899,
+              "4": 0.225208,
+              "64": 0.256658,
+              "8": 0.224905,
+              "all": 0.408337
+            },
+            "proxy_argmin_per_fold_seed": {
+              "0": {
+                "argmin": "B:4",
+                "curve": {
+                  "B:1": 0.232913,
+                  "B:2": 0.226866,
+                  "B:4": 0.223813,
+                  "B:8": 0.225038,
+                  "B:16": 0.225239,
+                  "B:64": 0.251039,
+                  "B:all": 0.402075
+                }
+              },
+              "1": {
+                "argmin": "B:8",
+                "curve": {
+                  "B:1": 0.222031,
+                  "B:2": 0.219088,
+                  "B:4": 0.214796,
+                  "B:8": 0.213393,
+                  "B:16": 0.216352,
+                  "B:64": 0.254765,
+                  "B:all": 0.427373
+                }
+              },
+              "2": {
+                "argmin": "B:8",
+                "curve": {
+                  "B:1": 0.227593,
+                  "B:2": 0.223317,
+                  "B:4": 0.221505,
+                  "B:8": 0.219492,
+                  "B:16": 0.223406,
+                  "B:64": 0.256649,
+                  "B:all": 0.429641
+                }
+              }
+            },
+            "proxy_picks": [
+              "B:4",
+              "B:8"
+            ],
+            "stable_across_fold_seeds": false
+          },
+          "sharp__sod_1d": {
+            "emitted_kstar": "4",
+            "rule": "argmin raw nRMSE of the intermediate on the calib fold",
+            "alternative_kstar": "B:4",
+            "alternative_agrees": true,
+            "raw_calib_nrmse_fold_seed0": {
+              "1": 0.033804,
+              "16": 0.034268,
+              "2": 0.033725,
+              "256": 0.08892,
+              "4": 0.033441,
+              "64": 0.040604,
+              "8": 0.033751,
+              "all": 0.137122
+            },
+            "proxy_argmin_per_fold_seed": {
+              "0": {
+                "argmin": "B:4",
+                "curve": {
+                  "B:1": 0.033868,
+                  "B:2": 0.033774,
+                  "B:4": 0.033694,
+                  "B:8": 0.034029,
+                  "B:16": 0.034732,
+                  "B:64": 0.040267,
+                  "B:256": 0.08094,
+                  "B:all": 0.121424
+                }
+              },
+              "1": {
+                "argmin": "B:1",
+                "curve": {
+                  "B:1": 0.033576,
+                  "B:2": 0.033615,
+                  "B:4": 0.033788,
+                  "B:8": 0.033981,
+                  "B:16": 0.034594,
+                  "B:64": 0.039659,
+                  "B:256": 0.081039,
+                  "B:all": 0.121558
+                }
+              },
+              "2": {
+                "argmin": "B:4",
+                "curve": {
+                  "B:1": 0.033397,
+                  "B:2": 0.033425,
+                  "B:4": 0.033295,
+                  "B:8": 0.033331,
+                  "B:16": 0.0341,
+                  "B:64": 0.040968,
+                  "B:256": 0.085514,
+                  "B:all": 0.130215
+                }
+              }
+            },
+            "proxy_picks": [
+              "B:1",
+              "B:4"
+            ],
+            "stable_across_fold_seeds": false
+          }
+        }
+      },
+      "3_A1_equals_B1_gap": {
+        "note": "Recorded strictly as an INIT-ONLY, SINGLE-FOLD-SEED lower bound at fixed folds and fixed batch order. NOT substituted for F1's fold-seed paired spread (that came from M1b -- see carry-forward 1).",
+        "summary": "The A:1 and B:1 fields are identical to <= 4.4e-15 on every dataset. Realised value-add is bit-identical on 7/8 (gap 0.0, alpha_nn=0 on both arms). The single non-zero gap is sharp__cahn_hilliard: 0.10187 vs 0.10942 (gap +0.00756), caused by the calib line search choosing alpha_nn 0.2934 vs 0.5567 from identical inputs -- an init-RNG-only effect. This bounds init variance from BELOW at ~0.008 relative-gain units on cahn_hilliard and says nothing about fold-seed variance.",
+        "per_dataset": {
+          "ext__helmholtz_2d": {
+            "value_add_A1": 0.017418,
+            "value_add_B1": 0.017418,
+            "gap": 0.0,
+            "alpha_nn_A1": 0.0,
+            "alpha_nn_B1": 0.0,
+            "field_identity_max_abs_dev": 1.5543122344752192e-15
+          },
+          "fluid": {
+            "value_add_A1": 0.242909,
+            "value_add_B1": 0.242909,
+            "gap": 0.0,
+            "alpha_nn_A1": 0.0,
+            "alpha_nn_B1": 0.0,
+            "field_identity_max_abs_dev": 4.440892098500626e-15
+          },
+          "heat_local": {
+            "value_add_A1": 0.010423,
+            "value_add_B1": 0.010423,
+            "gap": -0.0,
+            "alpha_nn_A1": 0.0,
+            "alpha_nn_B1": 0.0,
+            "field_identity_max_abs_dev": 1.1102230246251565e-15
+          },
+          "sharp__allen_cahn_2d": {
+            "value_add_A1": 0.144999,
+            "value_add_B1": 0.144999,
+            "gap": 0.0,
+            "alpha_nn_A1": 0.0,
+            "alpha_nn_B1": 0.0,
+            "field_identity_max_abs_dev": 5.551115123125783e-17
+          },
+          "sharp__cahn_hilliard": {
+            "value_add_A1": 0.101868,
+            "value_add_B1": 0.109424,
+            "gap": 0.007555,
+            "alpha_nn_A1": 0.293377,
+            "alpha_nn_B1": 0.556723,
+            "field_identity_max_abs_dev": 2.220446049250313e-15
+          },
+          "sharp__fisher_kpp_2d": {
+            "value_add_A1": 0.277723,
+            "value_add_B1": 0.277723,
+            "gap": 0.0,
+            "alpha_nn_A1": 0.0,
+            "alpha_nn_B1": 0.0,
+            "field_identity_max_abs_dev": 4.440892098500626e-16
+          },
+          "sharp__phase_field_crystal_2d": {
+            "value_add_A1": 0.270547,
+            "value_add_B1": 0.270547,
+            "gap": -0.0,
+            "alpha_nn_A1": 0.0,
+            "alpha_nn_B1": 0.0,
+            "field_identity_max_abs_dev": 8.881784197001252e-16
+          },
+          "sharp__sod_1d": {
+            "value_add_A1": 0.48395,
+            "value_add_B1": 0.48395,
+            "gap": 0.0,
+            "alpha_nn_A1": 0.0,
+            "alpha_nn_B1": 0.0,
+            "field_identity_max_abs_dev": 4.440892098500626e-16
+          }
+        }
+      }
+    },
+    "measurements": {
+      "M1_ladder_A_real_to_mismatched_LF": {
+        "ext__helmholtz_2d": [
+          {
+            "rung": "A:0",
+            "gamma_band1_all_train": 0.148994,
+            "label": "CORRECTOR_FUTILE",
+            "identity_nrmse": 0.265058,
+            "oracle_lsi_relative_gain": -6.189563,
+            "value_add_lsi_mean_3foldseeds": 0.0,
+            "value_add_lsi_spread": 0.0
+          },
+          {
+            "rung": "A:0.1",
+            "gamma_band1_all_train": 0.148482,
+            "label": "CORRECTOR_FUTILE",
+            "identity_nrmse": 0.406917,
+            "oracle_lsi_relative_gain": -4.335029,
+            "value_add_lsi_mean_3foldseeds": 0.0,
+            "value_add_lsi_spread": 0.0
+          },
+          {
+            "rung": "A:0.25",
+            "gamma_band1_all_train": 0.143927,
+            "label": "CORRECTOR_FUTILE",
+            "identity_nrmse": 0.658733,
+            "oracle_lsi_relative_gain": -3.22107,
+            "value_add_lsi_mean_3foldseeds": 0.0,
+            "value_add_lsi_spread": 0.0
+          },
+          {
+            "rung": "A:0.5",
+            "gamma_band1_all_train": 0.116449,
+            "label": "CORRECTOR_FUTILE",
+            "identity_nrmse": 1.116132,
+            "oracle_lsi_relative_gain": -2.725713,
+            "value_add_lsi_mean_3foldseeds": 0.0,
+            "value_add_lsi_spread": 0.0
+          },
+          {
+            "rung": "A:0.75",
+            "gamma_band1_all_train": 0.061356,
+            "label": "CORRECTOR_FUTILE",
+            "identity_nrmse": 1.59013,
+            "oracle_lsi_relative_gain": -2.04347,
+            "value_add_lsi_mean_3foldseeds": 0.0,
+            "value_add_lsi_spread": 0.0
+          },
+          {
+            "rung": "A:0.9",
+            "gamma_band1_all_train": 0.025444,
+            "label": "CORRECTOR_FUTILE",
+            "identity_nrmse": 1.877288,
+            "oracle_lsi_relative_gain": -0.505793,
+            "value_add_lsi_mean_3foldseeds": 0.0,
+            "value_add_lsi_spread": 0.0
+          },
+          {
+            "rung": "A:1",
+            "gamma_band1_all_train": 0.004359,
+            "label": "CORRECTOR_FUTILE",
+            "identity_nrmse": 2.080316,
+            "oracle_lsi_relative_gain": 0.53791,
+            "value_add_lsi_mean_3foldseeds": 0.087945,
+            "value_add_lsi_spread": 0.222796
+          }
+        ],
+        "fluid": [
+          {
+            "rung": "A:0",
+            "gamma_band1_all_train": 0.952422,
+            "label": "CORRECTOR_ELIGIBLE",
+            "identity_nrmse": 0.215763,
+            "oracle_lsi_relative_gain": 0.238427,
+            "value_add_lsi_mean_3foldseeds": 0.24898,
+            "value_add_lsi_spread": 0.022067
+          },
+          {
+            "rung": "A:0.1",
+            "gamma_band1_all_train": 0.952722,
+            "label": "CORRECTOR_ELIGIBLE",
+            "identity_nrmse": 0.215582,
+            "oracle_lsi_relative_gain": 0.238373,
+            "value_add_lsi_mean_3foldseeds": 0.248944,
+            "value_add_lsi_spread": 0.021926
+          },
+          {
+            "rung": "A:0.25",
+            "gamma_band1_all_train": 0.952813,
+            "label": "CORRECTOR_ELIGIBLE",
+            "identity_nrmse": 0.215761,
+            "oracle_lsi_relative_gain": 0.237272,
+            "value_add_lsi_mean_3foldseeds": 0.247874,
+            "value_add_lsi_spread": 0.023315
+          },
+          {
+            "rung": "A:0.5",
+            "gamma_band1_all_train": 0.952006,
+            "label": "CORRECTOR_ELIGIBLE",
+            "identity_nrmse": 0.217249,
+            "oracle_lsi_relative_gain": 0.232894,
+            "value_add_lsi_mean_3foldseeds": 0.243541,
+            "value_add_lsi_spread": 0.025538
+          },
+          {
+            "rung": "A:0.75",
+            "gamma_band1_all_train": 0.950012,
+            "label": "CORRECTOR_ELIGIBLE",
+            "identity_nrmse": 0.220143,
+            "oracle_lsi_relative_gain": 0.225862,
+            "value_add_lsi_mean_3foldseeds": 0.236513,
+            "value_add_lsi_spread": 0.027326
+          },
+          {
+            "rung": "A:0.9",
+            "gamma_band1_all_train": 0.94826,
+            "label": "UNDETERMINED",
+            "identity_nrmse": 0.222493,
+            "oracle_lsi_relative_gain": 0.220693,
+            "value_add_lsi_mean_3foldseeds": 0.231311,
+            "value_add_lsi_spread": 0.028049
+          },
+          {
+            "rung": "A:1",
+            "gamma_band1_all_train": 0.946866,
+            "label": "UNDETERMINED",
+            "identity_nrmse": 0.224295,
+            "oracle_lsi_relative_gain": 0.216963,
+            "value_add_lsi_mean_3foldseeds": 0.227541,
+            "value_add_lsi_spread": 0.028354
+          }
+        ],
+        "heat_local": [
+          {
+            "rung": "A:0",
+            "gamma_band1_all_train": 0.999976,
+            "label": "CORRECTOR_ELIGIBLE",
+            "identity_nrmse": 0.002408,
+            "oracle_lsi_relative_gain": 0.585071,
+            "value_add_lsi_mean_3foldseeds": 0.58553,
+            "value_add_lsi_spread": 0.015576
+          },
+          {
+            "rung": "A:0.1",
+            "gamma_band1_all_train": 0.999961,
+            "label": "CORRECTOR_ELIGIBLE",
+            "identity_nrmse": 0.003165,
+            "oracle_lsi_relative_gain": 0.323654,
+            "value_add_lsi_mean_3foldseeds": 0.336211,
+            "value_add_lsi_spread": 0.04017
+          },
+          {
+            "rung": "A:0.25",
+            "gamma_band1_all_train": 0.999883,
+            "label": "CORRECTOR_ELIGIBLE",
+            "identity_nrmse": 0.005359,
+            "oracle_lsi_relative_gain": 0.113493,
+            "value_add_lsi_mean_3foldseeds": 0.12214,
+            "value_add_lsi_spread": 0.017156
+          },
+          {
+            "rung": "A:0.5",
+            "gamma_band1_all_train": 0.999607,
+            "label": "CORRECTOR_ELIGIBLE",
+            "identity_nrmse": 0.009653,
+            "oracle_lsi_relative_gain": 0.034875,
+            "value_add_lsi_mean_3foldseeds": 0.038305,
+            "value_add_lsi_spread": 0.003603
+          },
+          {
+            "rung": "A:0.75",
+            "gamma_band1_all_train": 0.999148,
+            "label": "CORRECTOR_ELIGIBLE",
+            "identity_nrmse": 0.014148,
+            "oracle_lsi_relative_gain": 0.015916,
+            "value_add_lsi_mean_3foldseeds": 0.01719,
+            "value_add_lsi_spread": 0.000887
+          },
+          {
+            "rung": "A:0.9",
+            "gamma_band1_all_train": 0.998784,
+            "label": "CORRECTOR_ELIGIBLE",
+            "identity_nrmse": 0.016879,
+            "oracle_lsi_relative_gain": 0.011095,
+            "value_add_lsi_mean_3foldseeds": 0.011623,
+            "value_add_lsi_spread": 0.001957
+          },
+          {
+            "rung": "A:1",
+            "gamma_band1_all_train": 0.998506,
+            "label": "CORRECTOR_ELIGIBLE",
+            "identity_nrmse": 0.018707,
+            "oracle_lsi_relative_gain": 0.009046,
+            "value_add_lsi_mean_3foldseeds": 0.009171,
+            "value_add_lsi_spread": 0.002635
+          }
+        ],
+        "sharp__allen_cahn_2d": [
+          {
+            "rung": "A:0",
+            "gamma_band1_all_train": 0.999655,
+            "label": "CORRECTOR_ELIGIBLE",
+            "identity_nrmse": 0.001943,
+            "oracle_lsi_relative_gain": 0.569063,
+            "value_add_lsi_mean_3foldseeds": 0.553273,
+            "value_add_lsi_spread": 0.103847
+          },
+          {
+            "rung": "A:0.1",
+            "gamma_band1_all_train": 0.994605,
+            "label": "CORRECTOR_ELIGIBLE",
+            "identity_nrmse": 0.048789,
+            "oracle_lsi_relative_gain": 0.1265,
+            "value_add_lsi_mean_3foldseeds": 0.120597,
+            "value_add_lsi_spread": 0.021587
+          },
+          {
+            "rung": "A:0.25",
+            "gamma_band1_all_train": 0.956796,
+            "label": "CORRECTOR_ELIGIBLE",
+            "identity_nrmse": 0.121595,
+            "oracle_lsi_relative_gain": 0.060851,
+            "value_add_lsi_mean_3foldseeds": 0.057781,
+            "value_add_lsi_spread": 0.007997
+          },
+          {
+            "rung": "A:0.5",
+            "gamma_band1_all_train": 0.742501,
+            "label": "UNDETERMINED",
+            "identity_nrmse": 0.242988,
+            "oracle_lsi_relative_gain": -0.00098,
+            "value_add_lsi_mean_3foldseeds": 0.0,
+            "value_add_lsi_spread": 0.0
+          },
+          {
+            "rung": "A:0.75",
+            "gamma_band1_all_train": 0.371511,
+            "label": "CORRECTOR_FUTILE",
+            "identity_nrmse": 0.36439,
+            "oracle_lsi_relative_gain": 0.060675,
+            "value_add_lsi_mean_3foldseeds": 0.052788,
+            "value_add_lsi_spread": 0.019345
+          },
+          {
+            "rung": "A:0.9",
+            "gamma_band1_all_train": 0.201013,
+            "label": "CORRECTOR_FUTILE",
+            "identity_nrmse": 0.437232,
+            "oracle_lsi_relative_gain": 0.124703,
+            "value_add_lsi_mean_3foldseeds": 0.114055,
+            "value_add_lsi_spread": 0.034502
+          },
+          {
+            "rung": "A:1",
+            "gamma_band1_all_train": 0.164825,
+            "label": "CORRECTOR_FUTILE",
+            "identity_nrmse": 0.485793,
+            "oracle_lsi_relative_gain": 0.164968,
+            "value_add_lsi_mean_3foldseeds": 0.152785,
+            "value_add_lsi_spread": 0.043248
+          }
+        ],
+        "sharp__cahn_hilliard": [
+          {
+            "rung": "A:0",
+            "gamma_band1_all_train": 0.995379,
+            "label": "CORRECTOR_ELIGIBLE",
+            "identity_nrmse": 0.00937,
+            "oracle_lsi_relative_gain": 0.366345,
+            "value_add_lsi_mean_3foldseeds": 0.363842,
+            "value_add_lsi_spread": 0.164361
+          },
+          {
+            "rung": "A:0.1",
+            "gamma_band1_all_train": 0.989834,
+            "label": "CORRECTOR_ELIGIBLE",
+            "identity_nrmse": 0.103283,
+            "oracle_lsi_relative_gain": 0.100656,
+            "value_add_lsi_mean_3foldseeds": 0.090596,
+            "value_add_lsi_spread": 0.011816
+          },
+          {
+            "rung": "A:0.25",
+            "gamma_band1_all_train": 0.94877,
+            "label": "UNDETERMINED",
+            "identity_nrmse": 0.251251,
+            "oracle_lsi_relative_gain": 0.037219,
+            "value_add_lsi_mean_3foldseeds": 0.035487,
+            "value_add_lsi_spread": 0.016082
+          },
+          {
+            "rung": "A:0.5",
+            "gamma_band1_all_train": 0.730154,
+            "label": "UNDETERMINED",
+            "identity_nrmse": 0.49947,
+            "oracle_lsi_relative_gain": 0.002454,
+            "value_add_lsi_mean_3foldseeds": 0.0,
+            "value_add_lsi_spread": 0.0
+          },
+          {
+            "rung": "A:0.75",
+            "gamma_band1_all_train": 0.362439,
+            "label": "CORRECTOR_FUTILE",
+            "identity_nrmse": 0.748152,
+            "oracle_lsi_relative_gain": 0.035792,
+            "value_add_lsi_mean_3foldseeds": 0.034282,
+            "value_add_lsi_spread": 0.017206
+          },
+          {
+            "rung": "A:0.9",
+            "gamma_band1_all_train": 0.160592,
+            "label": "CORRECTOR_FUTILE",
+            "identity_nrmse": 0.897445,
+            "oracle_lsi_relative_gain": 0.089815,
+            "value_add_lsi_mean_3foldseeds": 0.084603,
+            "value_add_lsi_spread": 0.025463
+          },
+          {
+            "rung": "A:1",
+            "gamma_band1_all_train": 0.056582,
+            "label": "CORRECTOR_FUTILE",
+            "identity_nrmse": 0.996993,
+            "oracle_lsi_relative_gain": 0.133119,
+            "value_add_lsi_mean_3foldseeds": 0.118828,
+            "value_add_lsi_spread": 0.034198
+          }
+        ],
+        "sharp__fisher_kpp_2d": [
+          {
+            "rung": "A:0",
+            "gamma_band1_all_train": 0.999674,
+            "label": "CORRECTOR_ELIGIBLE",
+            "identity_nrmse": 0.02086,
+            "oracle_lsi_relative_gain": 0.664684,
+            "value_add_lsi_mean_3foldseeds": 0.659939,
+            "value_add_lsi_spread": 0.022914
+          },
+          {
+            "rung": "A:0.1",
+            "gamma_band1_all_train": 0.993585,
+            "label": "CORRECTOR_ELIGIBLE",
+            "identity_nrmse": 0.04387,
+            "oracle_lsi_relative_gain": 0.361533,
+            "value_add_lsi_mean_3foldseeds": 0.352995,
+            "value_add_lsi_spread": 0.015894
+          },
+          {
+            "rung": "A:0.25",
+            "gamma_band1_all_train": 0.948589,
+            "label": "UNDETERMINED",
+            "identity_nrmse": 0.091531,
+            "oracle_lsi_relative_gain": 0.149422,
+            "value_add_lsi_mean_3foldseeds": 0.144473,
+            "value_add_lsi_spread": 0.00648
+          },
+          {
+            "rung": "A:0.5",
+            "gamma_band1_all_train": 0.707755,
+            "label": "UNDETERMINED",
+            "identity_nrmse": 0.17431,
+            "oracle_lsi_relative_gain": 0.003985,
+            "value_add_lsi_mean_3foldseeds": 0.001226,
+            "value_add_lsi_spread": 0.000724
+          },
+          {
+            "rung": "A:0.75",
+            "gamma_band1_all_train": 0.320249,
+            "label": "CORRECTOR_FUTILE",
+            "identity_nrmse": 0.257808,
+            "oracle_lsi_relative_gain": 0.096981,
+            "value_add_lsi_mean_3foldseeds": 0.093739,
+            "value_add_lsi_spread": 0.001531
+          },
+          {
+            "rung": "A:0.9",
+            "gamma_band1_all_train": 0.123966,
+            "label": "CORRECTOR_FUTILE",
+            "identity_nrmse": 0.308011,
+            "oracle_lsi_relative_gain": 0.208211,
+            "value_add_lsi_mean_3foldseeds": 0.205432,
+            "value_add_lsi_spread": 0.001836
+          },
+          {
+            "rung": "A:1",
+            "gamma_band1_all_train": 0.056605,
+            "label": "CORRECTOR_FUTILE",
+            "identity_nrmse": 0.341502,
+            "oracle_lsi_relative_gain": 0.281386,
+            "value_add_lsi_mean_3foldseeds": 0.278934,
+            "value_add_lsi_spread": 0.00201
+          }
+        ],
+        "sharp__phase_field_crystal_2d": [
+          {
+            "rung": "A:0",
+            "gamma_band1_all_train": 1.0,
+            "label": "CORRECTOR_ELIGIBLE",
+            "identity_nrmse": 0.006433,
+            "oracle_lsi_relative_gain": 0.999955,
+            "value_add_lsi_mean_3foldseeds": 0.999955,
+            "value_add_lsi_spread": 1.3e-05
+          },
+          {
+            "rung": "A:0.1",
+            "gamma_band1_all_train": 0.994112,
+            "label": "CORRECTOR_ELIGIBLE",
+            "identity_nrmse": 0.047007,
+            "oracle_lsi_relative_gain": 0.278217,
+            "value_add_lsi_mean_3foldseeds": 0.275721,
+            "value_add_lsi_spread": 0.044374
+          },
+          {
+            "rung": "A:0.25",
+            "gamma_band1_all_train": 0.950555,
+            "label": "CORRECTOR_ELIGIBLE",
+            "identity_nrmse": 0.1117,
+            "oracle_lsi_relative_gain": 0.12807,
+            "value_add_lsi_mean_3foldseeds": 0.114892,
+            "value_add_lsi_spread": 0.034846
+          },
+          {
+            "rung": "A:0.5",
+            "gamma_band1_all_train": 0.716029,
+            "label": "UNDETERMINED",
+            "identity_nrmse": 0.219772,
+            "oracle_lsi_relative_gain": 0.006097,
+            "value_add_lsi_mean_3foldseeds": -0.001694,
+            "value_add_lsi_spread": 0.005082
+          },
+          {
+            "rung": "A:0.75",
+            "gamma_band1_all_train": 0.325489,
+            "label": "CORRECTOR_FUTILE",
+            "identity_nrmse": 0.327888,
+            "oracle_lsi_relative_gain": 0.103726,
+            "value_add_lsi_mean_3foldseeds": 0.094619,
+            "value_add_lsi_spread": 0.018209
+          },
+          {
+            "rung": "A:0.9",
+            "gamma_band1_all_train": 0.124236,
+            "label": "CORRECTOR_FUTILE",
+            "identity_nrmse": 0.392764,
+            "oracle_lsi_relative_gain": 0.216183,
+            "value_add_lsi_mean_3foldseeds": 0.206622,
+            "value_add_lsi_spread": 0.017358
+          },
+          {
+            "rung": "A:1",
+            "gamma_band1_all_train": 0.065745,
+            "label": "CORRECTOR_FUTILE",
+            "identity_nrmse": 0.436016,
+            "oracle_lsi_relative_gain": 0.289387,
+            "value_add_lsi_mean_3foldseeds": 0.278963,
+            "value_add_lsi_spread": 0.020035
+          }
+        ],
+        "sharp__sod_1d": [
+          {
+            "rung": "A:0",
+            "gamma_band1_all_train": null,
+            "label": "UNDETERMINED",
+            "identity_nrmse": 0.032904,
+            "oracle_lsi_relative_gain": 0.533418,
+            "value_add_lsi_mean_3foldseeds": 0.528375,
+            "value_add_lsi_spread": 0.013243
+          },
+          {
+            "rung": "A:0.1",
+            "gamma_band1_all_train": null,
+            "label": "UNDETERMINED",
+            "identity_nrmse": 0.032912,
+            "oracle_lsi_relative_gain": 0.532627,
+            "value_add_lsi_mean_3foldseeds": 0.52775,
+            "value_add_lsi_spread": 0.01316
+          },
+          {
+            "rung": "A:0.25",
+            "gamma_band1_all_train": null,
+            "label": "UNDETERMINED",
+            "identity_nrmse": 0.032967,
+            "oracle_lsi_relative_gain": 0.5292,
+            "value_add_lsi_mean_3foldseeds": 0.524826,
+            "value_add_lsi_spread": 0.01293
+          },
+          {
+            "rung": "A:0.5",
+            "gamma_band1_all_train": null,
+            "label": "UNDETERMINED",
+            "identity_nrmse": 0.033167,
+            "oracle_lsi_relative_gain": 0.518418,
+            "value_add_lsi_mean_3foldseeds": 0.515464,
+            "value_add_lsi_spread": 0.012563
+          },
+          {
+            "rung": "A:0.75",
+            "gamma_band1_all_train": null,
+            "label": "UNDETERMINED",
+            "identity_nrmse": 0.033498,
+            "oracle_lsi_relative_gain": 0.502999,
+            "value_add_lsi_mean_3foldseeds": 0.501972,
+            "value_add_lsi_spread": 0.012377
+          },
+          {
+            "rung": "A:0.9",
+            "gamma_band1_all_train": null,
+            "label": "UNDETERMINED",
+            "identity_nrmse": 0.033756,
+            "oracle_lsi_relative_gain": 0.492244,
+            "value_add_lsi_mean_3foldseeds": 0.492506,
+            "value_add_lsi_spread": 0.012323
+          },
+          {
+            "rung": "A:1",
+            "gamma_band1_all_train": null,
+            "label": "UNDETERMINED",
+            "identity_nrmse": 0.03395,
+            "oracle_lsi_relative_gain": 0.484635,
+            "value_add_lsi_mean_3foldseeds": 0.485781,
+            "value_add_lsi_spread": 0.012295
+          }
+        ]
+      },
+      "M1_ladder_B_condition_only_rungs": {
+        "ext__helmholtz_2d": [
+          {
+            "rung": "B:1",
+            "gamma_band1_all_train": 0.004359,
+            "label": "CORRECTOR_FUTILE",
+            "identity_nrmse": 2.080316,
+            "oracle_lsi_relative_gain": 0.53791,
+            "value_add_lsi_mean_3foldseeds": 0.087945,
+            "value_add_lsi_spread": 0.222796
+          },
+          {
+            "rung": "B:2",
+            "gamma_band1_all_train": 0.004069,
+            "label": "CORRECTOR_FUTILE",
+            "identity_nrmse": 2.314133,
+            "oracle_lsi_relative_gain": 0.548531,
+            "value_add_lsi_mean_3foldseeds": 0.22014,
+            "value_add_lsi_spread": 0.285544
+          },
+          {
+            "rung": "B:4",
+            "gamma_band1_all_train": 0.00377,
+            "label": "CORRECTOR_FUTILE",
+            "identity_nrmse": 2.651101,
+            "oracle_lsi_relative_gain": 0.604633,
+            "value_add_lsi_mean_3foldseeds": 0.30753,
+            "value_add_lsi_spread": 0.368923
+          },
+          {
+            "rung": "B:8",
+            "gamma_band1_all_train": 0.003229,
+            "label": "CORRECTOR_FUTILE",
+            "identity_nrmse": 3.264672,
+            "oracle_lsi_relative_gain": 0.674702,
+            "value_add_lsi_mean_3foldseeds": 0.652775,
+            "value_add_lsi_spread": 0.107034
+          },
+          {
+            "rung": "B:16",
+            "gamma_band1_all_train": 0.003641,
+            "label": "CORRECTOR_FUTILE",
+            "identity_nrmse": 3.172974,
+            "oracle_lsi_relative_gain": 0.680073,
+            "value_add_lsi_mean_3foldseeds": 0.705023,
+            "value_add_lsi_spread": 0.081338
+          },
+          {
+            "rung": "B:64",
+            "gamma_band1_all_train": 0.107109,
+            "label": "CORRECTOR_FUTILE",
+            "identity_nrmse": 2.519636,
+            "oracle_lsi_relative_gain": -0.529768,
+            "value_add_lsi_mean_3foldseeds": 0.057209,
+            "value_add_lsi_spread": 0.011355
+          },
+          {
+            "rung": "B:256",
+            "gamma_band1_all_train": 0.066718,
+            "label": "CORRECTOR_FUTILE",
+            "identity_nrmse": 1.65027,
+            "oracle_lsi_relative_gain": -1.145389,
+            "value_add_lsi_mean_3foldseeds": 0.057145,
+            "value_add_lsi_spread": 0.092206
+          },
+          {
+            "rung": "B:all",
+            "gamma_band1_all_train": 0.047815,
+            "label": "CORRECTOR_FUTILE",
+            "identity_nrmse": 1.500766,
+            "oracle_lsi_relative_gain": -1.030551,
+            "value_add_lsi_mean_3foldseeds": 0.050968,
+            "value_add_lsi_spread": 0.084508
+          }
+        ],
+        "fluid": [
+          {
+            "rung": "B:1",
+            "gamma_band1_all_train": 0.946866,
+            "label": "UNDETERMINED",
+            "identity_nrmse": 0.224295,
+            "oracle_lsi_relative_gain": 0.216963,
+            "value_add_lsi_mean_3foldseeds": 0.227541,
+            "value_add_lsi_spread": 0.028354
+          },
+          {
+            "rung": "B:2",
+            "gamma_band1_all_train": 0.951051,
+            "label": "CORRECTOR_ELIGIBLE",
+            "identity_nrmse": 0.220162,
+            "oracle_lsi_relative_gain": 0.230219,
+            "value_add_lsi_mean_3foldseeds": 0.242393,
+            "value_add_lsi_spread": 0.030663
+          },
+          {
+            "rung": "B:4",
+            "gamma_band1_all_train": 0.954656,
+            "label": "CORRECTOR_ELIGIBLE",
+            "identity_nrmse": 0.217311,
+            "oracle_lsi_relative_gain": 0.240646,
+            "value_add_lsi_mean_3foldseeds": 0.251427,
+            "value_add_lsi_spread": 0.030134
+          },
+          {
+            "rung": "B:8",
+            "gamma_band1_all_train": 0.956344,
+            "label": "CORRECTOR_ELIGIBLE",
+            "identity_nrmse": 0.217881,
+            "oracle_lsi_relative_gain": 0.242181,
+            "value_add_lsi_mean_3foldseeds": 0.257406,
+            "value_add_lsi_spread": 0.028815
+          },
+          {
+            "rung": "B:16",
+            "gamma_band1_all_train": 0.95691,
+            "label": "CORRECTOR_ELIGIBLE",
+            "identity_nrmse": 0.221487,
+            "oracle_lsi_relative_gain": 0.241984,
+            "value_add_lsi_mean_3foldseeds": 0.259597,
+            "value_add_lsi_spread": 0.030458
+          },
+          {
+            "rung": "B:64",
+            "gamma_band1_all_train": 0.93834,
+            "label": "UNDETERMINED",
+            "identity_nrmse": 0.259563,
+            "oracle_lsi_relative_gain": 0.204085,
+            "value_add_lsi_mean_3foldseeds": 0.219417,
+            "value_add_lsi_spread": 0.03824
+          },
+          {
+            "rung": "B:all",
+            "gamma_band1_all_train": 0.716774,
+            "label": "UNDETERMINED",
+            "identity_nrmse": 0.43579,
+            "oracle_lsi_relative_gain": 0.067967,
+            "value_add_lsi_mean_3foldseeds": 0.065054,
+            "value_add_lsi_spread": 0.014774
+          }
+        ],
+        "heat_local": [
+          {
+            "rung": "B:1",
+            "gamma_band1_all_train": 0.998506,
+            "label": "CORRECTOR_ELIGIBLE",
+            "identity_nrmse": 0.018707,
+            "oracle_lsi_relative_gain": 0.009046,
+            "value_add_lsi_mean_3foldseeds": 0.009171,
+            "value_add_lsi_spread": 0.002635
+          },
+          {
+            "rung": "B:2",
+            "gamma_band1_all_train": 0.999096,
+            "label": "CORRECTOR_ELIGIBLE",
+            "identity_nrmse": 0.013805,
+            "oracle_lsi_relative_gain": 0.017961,
+            "value_add_lsi_mean_3foldseeds": 0.016932,
+            "value_add_lsi_spread": 0.012953
+          },
+          {
+            "rung": "B:4",
+            "gamma_band1_all_train": 0.999246,
+            "label": "CORRECTOR_ELIGIBLE",
+            "identity_nrmse": 0.011737,
+            "oracle_lsi_relative_gain": 0.01529,
+            "value_add_lsi_mean_3foldseeds": 0.023893,
+            "value_add_lsi_spread": 0.01321
+          },
+          {
+            "rung": "B:8",
+            "gamma_band1_all_train": 0.999242,
+            "label": "CORRECTOR_ELIGIBLE",
+            "identity_nrmse": 0.010991,
+            "oracle_lsi_relative_gain": -0.006962,
+            "value_add_lsi_mean_3foldseeds": 0.019095,
+            "value_add_lsi_spread": 0.009415
+          },
+          {
+            "rung": "B:16",
+            "gamma_band1_all_train": 0.999017,
+            "label": "CORRECTOR_ELIGIBLE",
+            "identity_nrmse": 0.011622,
+            "oracle_lsi_relative_gain": -0.066095,
+            "value_add_lsi_mean_3foldseeds": 0.008752,
+            "value_add_lsi_spread": 0.000218
+          },
+          {
+            "rung": "B:64",
+            "gamma_band1_all_train": 0.997434,
+            "label": "CORRECTOR_ELIGIBLE",
+            "identity_nrmse": 0.020892,
+            "oracle_lsi_relative_gain": -0.130938,
+            "value_add_lsi_mean_3foldseeds": 0.0,
+            "value_add_lsi_spread": 0.0
+          },
+          {
+            "rung": "B:256",
+            "gamma_band1_all_train": 0.99222,
+            "label": "CORRECTOR_ELIGIBLE",
+            "identity_nrmse": 0.046867,
+            "oracle_lsi_relative_gain": -0.071284,
+            "value_add_lsi_mean_3foldseeds": 0.0,
+            "value_add_lsi_spread": 0.0
+          },
+          {
+            "rung": "B:all",
+            "gamma_band1_all_train": 0.951508,
+            "label": "CORRECTOR_ELIGIBLE",
+            "identity_nrmse": 0.124903,
+            "oracle_lsi_relative_gain": 0.000646,
+            "value_add_lsi_mean_3foldseeds": 0.0,
+            "value_add_lsi_spread": 0.0
+          }
+        ],
+        "ifc_poisson": [
+          {
+            "rung": "B:1",
+            "gamma_band1_all_train": 0.951301,
+            "label": "CORRECTOR_ELIGIBLE",
+            "identity_nrmse": 2.770412,
+            "oracle_lsi_relative_gain": 0.934553,
+            "value_add_lsi_mean_3foldseeds": 0.934553,
+            "value_add_lsi_spread": 0.0
+          },
+          {
+            "rung": "B:2",
+            "gamma_band1_all_train": 0.959411,
+            "label": "CORRECTOR_ELIGIBLE",
+            "identity_nrmse": 2.624328,
+            "oracle_lsi_relative_gain": 0.941735,
+            "value_add_lsi_mean_3foldseeds": 0.941735,
+            "value_add_lsi_spread": 0.0
+          },
+          {
+            "rung": "B:4",
+            "gamma_band1_all_train": 0.968216,
+            "label": "CORRECTOR_ELIGIBLE",
+            "identity_nrmse": 2.958513,
+            "oracle_lsi_relative_gain": 0.941689,
+            "value_add_lsi_mean_3foldseeds": 0.941689,
+            "value_add_lsi_spread": 0.0
+          },
+          {
+            "rung": "B:8",
+            "gamma_band1_all_train": 0.947849,
+            "label": "UNDETERMINED",
+            "identity_nrmse": 3.370739,
+            "oracle_lsi_relative_gain": 0.935572,
+            "value_add_lsi_mean_3foldseeds": 0.935572,
+            "value_add_lsi_spread": 0.0
+          },
+          {
+            "rung": "B:16",
+            "gamma_band1_all_train": 0.895045,
+            "label": "UNDETERMINED",
+            "identity_nrmse": 3.42049,
+            "oracle_lsi_relative_gain": 0.922722,
+            "value_add_lsi_mean_3foldseeds": 0.922722,
+            "value_add_lsi_spread": 0.0
+          },
+          {
+            "rung": "B:all",
+            "gamma_band1_all_train": 0.842697,
+            "label": "UNDETERMINED",
+            "identity_nrmse": 3.366335,
+            "oracle_lsi_relative_gain": 0.909712,
+            "value_add_lsi_mean_3foldseeds": 0.909712,
+            "value_add_lsi_spread": 0.0
+          }
+        ],
+        "sharp__allen_cahn_2d": [
+          {
+            "rung": "B:1",
+            "gamma_band1_all_train": 0.164825,
+            "label": "CORRECTOR_FUTILE",
+            "identity_nrmse": 0.485793,
+            "oracle_lsi_relative_gain": 0.164968,
+            "value_add_lsi_mean_3foldseeds": 0.152785,
+            "value_add_lsi_spread": 0.043248
+          },
+          {
+            "rung": "B:2",
+            "gamma_band1_all_train": 0.153831,
+            "label": "CORRECTOR_FUTILE",
+            "identity_nrmse": 0.401002,
+            "oracle_lsi_relative_gain": 0.111086,
+            "value_add_lsi_mean_3foldseeds": 0.117651,
+            "value_add_lsi_spread": 0.005464
+          },
+          {
+            "rung": "B:4",
+            "gamma_band1_all_train": 0.15703,
+            "label": "CORRECTOR_FUTILE",
+            "identity_nrmse": 0.354144,
+            "oracle_lsi_relative_gain": 0.06417,
+            "value_add_lsi_mean_3foldseeds": 0.057462,
+            "value_add_lsi_spread": 0.015215
+          },
+          {
+            "rung": "B:8",
+            "gamma_band1_all_train": 0.14994,
+            "label": "CORRECTOR_FUTILE",
+            "identity_nrmse": 0.33293,
+            "oracle_lsi_relative_gain": 0.033267,
+            "value_add_lsi_mean_3foldseeds": 0.031541,
+            "value_add_lsi_spread": 0.0283
+          },
+          {
+            "rung": "B:16",
+            "gamma_band1_all_train": 0.137246,
+            "label": "CORRECTOR_FUTILE",
+            "identity_nrmse": 0.324123,
+            "oracle_lsi_relative_gain": 0.028719,
+            "value_add_lsi_mean_3foldseeds": 0.025318,
+            "value_add_lsi_spread": 0.022904
+          },
+          {
+            "rung": "B:64",
+            "gamma_band1_all_train": 0.108784,
+            "label": "CORRECTOR_FUTILE",
+            "identity_nrmse": 0.372248,
+            "oracle_lsi_relative_gain": 0.051993,
+            "value_add_lsi_mean_3foldseeds": 0.104199,
+            "value_add_lsi_spread": 0.05917
+          },
+          {
+            "rung": "B:256",
+            "gamma_band1_all_train": 0.074249,
+            "label": "CORRECTOR_FUTILE",
+            "identity_nrmse": 0.717157,
+            "oracle_lsi_relative_gain": 0.412383,
+            "value_add_lsi_mean_3foldseeds": 0.416246,
+            "value_add_lsi_spread": 0.071117
+          },
+          {
+            "rung": "B:all",
+            "gamma_band1_all_train": 0.101137,
+            "label": "CORRECTOR_FUTILE",
+            "identity_nrmse": 1.002327,
+            "oracle_lsi_relative_gain": -0.105049,
+            "value_add_lsi_mean_3foldseeds": 0.028977,
+            "value_add_lsi_spread": 0.023048
+          }
+        ],
+        "sharp__cahn_hilliard": [
+          {
+            "rung": "B:1",
+            "gamma_band1_all_train": 0.056582,
+            "label": "CORRECTOR_FUTILE",
+            "identity_nrmse": 0.996993,
+            "oracle_lsi_relative_gain": 0.133119,
+            "value_add_lsi_mean_3foldseeds": 0.118828,
+            "value_add_lsi_spread": 0.034198
+          },
+          {
+            "rung": "B:2",
+            "gamma_band1_all_train": 0.048644,
+            "label": "CORRECTOR_FUTILE",
+            "identity_nrmse": 0.861462,
+            "oracle_lsi_relative_gain": 0.070429,
+            "value_add_lsi_mean_3foldseeds": 0.06628,
+            "value_add_lsi_spread": 0.001805
+          },
+          {
+            "rung": "B:4",
+            "gamma_band1_all_train": 0.036671,
+            "label": "CORRECTOR_FUTILE",
+            "identity_nrmse": 0.779838,
+            "oracle_lsi_relative_gain": 0.060903,
+            "value_add_lsi_mean_3foldseeds": 0.069618,
+            "value_add_lsi_spread": 0.000559
+          },
+          {
+            "rung": "B:8",
+            "gamma_band1_all_train": 0.062849,
+            "label": "CORRECTOR_FUTILE",
+            "identity_nrmse": 0.745659,
+            "oracle_lsi_relative_gain": 0.088838,
+            "value_add_lsi_mean_3foldseeds": 0.111032,
+            "value_add_lsi_spread": 0.004859
+          },
+          {
+            "rung": "B:16",
+            "gamma_band1_all_train": 0.037808,
+            "label": "CORRECTOR_FUTILE",
+            "identity_nrmse": 0.755418,
+            "oracle_lsi_relative_gain": 0.145989,
+            "value_add_lsi_mean_3foldseeds": 0.16847,
+            "value_add_lsi_spread": 0.007548
+          },
+          {
+            "rung": "B:64",
+            "gamma_band1_all_train": 0.044853,
+            "label": "CORRECTOR_FUTILE",
+            "identity_nrmse": 0.810584,
+            "oracle_lsi_relative_gain": 0.275675,
+            "value_add_lsi_mean_3foldseeds": 0.304783,
+            "value_add_lsi_spread": 0.006194
+          },
+          {
+            "rung": "B:256",
+            "gamma_band1_all_train": 0.060281,
+            "label": "CORRECTOR_FUTILE",
+            "identity_nrmse": 0.927294,
+            "oracle_lsi_relative_gain": 0.355878,
+            "value_add_lsi_mean_3foldseeds": 0.380181,
+            "value_add_lsi_spread": 0.055752
+          },
+          {
+            "rung": "B:all",
+            "gamma_band1_all_train": 0.06564,
+            "label": "CORRECTOR_FUTILE",
+            "identity_nrmse": 1.001552,
+            "oracle_lsi_relative_gain": 0.004355,
+            "value_add_lsi_mean_3foldseeds": 0.000182,
+            "value_add_lsi_spread": 0.008581
+          }
+        ],
+        "sharp__fisher_kpp_2d": [
+          {
+            "rung": "B:1",
+            "gamma_band1_all_train": 0.056605,
+            "label": "CORRECTOR_FUTILE",
+            "identity_nrmse": 0.341502,
+            "oracle_lsi_relative_gain": 0.281386,
+            "value_add_lsi_mean_3foldseeds": 0.278934,
+            "value_add_lsi_spread": 0.00201
+          },
+          {
+            "rung": "B:2",
+            "gamma_band1_all_train": 0.056251,
+            "label": "CORRECTOR_FUTILE",
+            "identity_nrmse": 0.297473,
+            "oracle_lsi_relative_gain": 0.175154,
+            "value_add_lsi_mean_3foldseeds": 0.172828,
+            "value_add_lsi_spread": 0.000757
+          },
+          {
+            "rung": "B:4",
+            "gamma_band1_all_train": 0.054566,
+            "label": "CORRECTOR_FUTILE",
+            "identity_nrmse": 0.272831,
+            "oracle_lsi_relative_gain": 0.100676,
+            "value_add_lsi_mean_3foldseeds": 0.09767,
+            "value_add_lsi_spread": 0.000607
+          },
+          {
+            "rung": "B:8",
+            "gamma_band1_all_train": 0.053361,
+            "label": "CORRECTOR_FUTILE",
+            "identity_nrmse": 0.259527,
+            "oracle_lsi_relative_gain": 0.054551,
+            "value_add_lsi_mean_3foldseeds": 0.051869,
+            "value_add_lsi_spread": 0.00018
+          },
+          {
+            "rung": "B:16",
+            "gamma_band1_all_train": 0.053701,
+            "label": "CORRECTOR_FUTILE",
+            "identity_nrmse": 0.252779,
+            "oracle_lsi_relative_gain": 0.029143,
+            "value_add_lsi_mean_3foldseeds": 0.026147,
+            "value_add_lsi_spread": 0.001304
+          },
+          {
+            "rung": "B:64",
+            "gamma_band1_all_train": 0.055976,
+            "label": "CORRECTOR_FUTILE",
+            "identity_nrmse": 0.247811,
+            "oracle_lsi_relative_gain": 0.008563,
+            "value_add_lsi_mean_3foldseeds": 0.005781,
+            "value_add_lsi_spread": 0.000108
+          },
+          {
+            "rung": "B:256",
+            "gamma_band1_all_train": 0.057647,
+            "label": "CORRECTOR_FUTILE",
+            "identity_nrmse": 0.249821,
+            "oracle_lsi_relative_gain": 0.003511,
+            "value_add_lsi_mean_3foldseeds": 0.001359,
+            "value_add_lsi_spread": 0.000158
+          },
+          {
+            "rung": "B:all",
+            "gamma_band1_all_train": 0.114073,
+            "label": "CORRECTOR_FUTILE",
+            "identity_nrmse": 0.254881,
+            "oracle_lsi_relative_gain": 0.00726,
+            "value_add_lsi_mean_3foldseeds": 0.004776,
+            "value_add_lsi_spread": 0.000432
+          }
+        ],
+        "sharp__phase_field_crystal_2d": [
+          {
+            "rung": "B:1",
+            "gamma_band1_all_train": 0.065745,
+            "label": "CORRECTOR_FUTILE",
+            "identity_nrmse": 0.436016,
+            "oracle_lsi_relative_gain": 0.289387,
+            "value_add_lsi_mean_3foldseeds": 0.278963,
+            "value_add_lsi_spread": 0.020035
+          },
+          {
+            "rung": "B:2",
+            "gamma_band1_all_train": 0.081617,
+            "label": "CORRECTOR_FUTILE",
+            "identity_nrmse": 0.380973,
+            "oracle_lsi_relative_gain": 0.190846,
+            "value_add_lsi_mean_3foldseeds": 0.175225,
+            "value_add_lsi_spread": 0.02886
+          },
+          {
+            "rung": "B:4",
+            "gamma_band1_all_train": 0.109162,
+            "label": "CORRECTOR_FUTILE",
+            "identity_nrmse": 0.356375,
+            "oracle_lsi_relative_gain": 0.130991,
+            "value_add_lsi_mean_3foldseeds": 0.114045,
+            "value_add_lsi_spread": 0.021917
+          },
+          {
+            "rung": "B:8",
+            "gamma_band1_all_train": 0.119969,
+            "label": "CORRECTOR_FUTILE",
+            "identity_nrmse": 0.33627,
+            "oracle_lsi_relative_gain": 0.07831,
+            "value_add_lsi_mean_3foldseeds": 0.055035,
+            "value_add_lsi_spread": 0.021393
+          },
+          {
+            "rung": "B:16",
+            "gamma_band1_all_train": 0.123605,
+            "label": "CORRECTOR_FUTILE",
+            "identity_nrmse": 0.328358,
+            "oracle_lsi_relative_gain": 0.04915,
+            "value_add_lsi_mean_3foldseeds": 0.02895,
+            "value_add_lsi_spread": 0.014854
+          },
+          {
+            "rung": "B:64",
+            "gamma_band1_all_train": 0.09595,
+            "label": "CORRECTOR_FUTILE",
+            "identity_nrmse": 0.332742,
+            "oracle_lsi_relative_gain": 0.017756,
+            "value_add_lsi_mean_3foldseeds": 0.028843,
+            "value_add_lsi_spread": 0.016751
+          },
+          {
+            "rung": "B:256",
+            "gamma_band1_all_train": 0.061021,
+            "label": "CORRECTOR_FUTILE",
+            "identity_nrmse": 0.37094,
+            "oracle_lsi_relative_gain": -0.001764,
+            "value_add_lsi_mean_3foldseeds": 0.009303,
+            "value_add_lsi_spread": 0.011182
+          },
+          {
+            "rung": "B:all",
+            "gamma_band1_all_train": 0.137598,
+            "label": "CORRECTOR_FUTILE",
+            "identity_nrmse": 0.408318,
+            "oracle_lsi_relative_gain": -0.007512,
+            "value_add_lsi_mean_3foldseeds": 0.003256,
+            "value_add_lsi_spread": 0.001884
+          }
+        ],
+        "sharp__sod_1d": [
+          {
+            "rung": "B:1",
+            "gamma_band1_all_train": null,
+            "label": "UNDETERMINED",
+            "identity_nrmse": 0.03395,
+            "oracle_lsi_relative_gain": 0.484635,
+            "value_add_lsi_mean_3foldseeds": 0.485781,
+            "value_add_lsi_spread": 0.012295
+          },
+          {
+            "rung": "B:2",
+            "gamma_band1_all_train": null,
+            "label": "UNDETERMINED",
+            "identity_nrmse": 0.033873,
+            "oracle_lsi_relative_gain": 0.488503,
+            "value_add_lsi_mean_3foldseeds": 0.48557,
+            "value_add_lsi_spread": 0.022893
+          },
+          {
+            "rung": "B:4",
+            "gamma_band1_all_train": null,
+            "label": "UNDETERMINED",
+            "identity_nrmse": 0.033882,
+            "oracle_lsi_relative_gain": 0.489801,
+            "value_add_lsi_mean_3foldseeds": 0.486718,
+            "value_add_lsi_spread": 0.007586
+          },
+          {
+            "rung": "B:8",
+            "gamma_band1_all_train": null,
+            "label": "UNDETERMINED",
+            "identity_nrmse": 0.034096,
+            "oracle_lsi_relative_gain": 0.484839,
+            "value_add_lsi_mean_3foldseeds": 0.479382,
+            "value_add_lsi_spread": 0.004111
+          },
+          {
+            "rung": "B:16",
+            "gamma_band1_all_train": null,
+            "label": "UNDETERMINED",
+            "identity_nrmse": 0.034668,
+            "oracle_lsi_relative_gain": 0.467463,
+            "value_add_lsi_mean_3foldseeds": 0.460089,
+            "value_add_lsi_spread": 0.011779
+          },
+          {
+            "rung": "B:64",
+            "gamma_band1_all_train": null,
+            "label": "UNDETERMINED",
+            "identity_nrmse": 0.040523,
+            "oracle_lsi_relative_gain": 0.342999,
+            "value_add_lsi_mean_3foldseeds": 0.332565,
+            "value_add_lsi_spread": 0.055209
+          },
+          {
+            "rung": "B:256",
+            "gamma_band1_all_train": null,
+            "label": "UNDETERMINED",
+            "identity_nrmse": 0.08199,
+            "oracle_lsi_relative_gain": 0.09151,
+            "value_add_lsi_mean_3foldseeds": 0.080975,
+            "value_add_lsi_spread": 0.006273
+          },
+          {
+            "rung": "B:all",
+            "gamma_band1_all_train": null,
+            "label": "UNDETERMINED",
+            "identity_nrmse": 0.123879,
+            "oracle_lsi_relative_gain": 0.03786,
+            "value_add_lsi_mean_3foldseeds": 0.031914,
+            "value_add_lsi_spread": 0.007711
+          }
+        ]
+      },
+      "M1c_cells": "falsification_detail.F1.all_futile_labelled_cells holds every FUTILE-labelled cell; the ELIGIBLE/UNDETERMINED cells are in the diagnostic JSONs' M1c block",
+      "M2_partial_coherence": "falsification_detail.F3.per_dataset holds the worst rung per conditioner; the full rung x conditioner x band grid is in the diagnostic JSONs' M2 block",
+      "M3_scored_arm": {
+        "ext__helmholtz_2d": {
+          "scored_rung": "B:1",
+          "lambda_star": 0.7000000000000001,
+          "blend_base": "zero",
+          "kstar_emitted": "1"
+        },
+        "sharp__phase_field_crystal_2d": {
+          "scored_rung": "B:16",
+          "lambda_star": 1.0,
+          "blend_base": "zero",
+          "kstar_emitted": "16"
+        },
+        "sharp__allen_cahn_2d": {
+          "scored_rung": "B:16",
+          "lambda_star": 0.9,
+          "blend_base": "nn_condition",
+          "kstar_emitted": "16"
+        },
+        "sharp__fisher_kpp_2d": {
+          "scored_rung": "B:64",
+          "lambda_star": 1.0,
+          "blend_base": "zero",
+          "kstar_emitted": "64"
+        },
+        "sharp__cahn_hilliard": {
+          "scored_rung": "B:16",
+          "lambda_star": 1.0,
+          "blend_base": "zero",
+          "kstar_emitted": "16"
+        },
+        "ifc_poisson": {
+          "scored_rung": "B:2",
+          "lambda_star": 1.0,
+          "blend_base": "zero",
+          "kstar_emitted": "2"
+        }
+      },
+      "lambda_star_summary": "lambda* IS the card's deliverable (out-of-fold value of the realisation-carrying intermediate beyond the training-free floors). Panel: helmholtz 0.70 (base zero), pfc 1.00 (zero), allen_cahn 0.90 (nn_condition), fisher_kpp 1.00 (zero), cahn_hilliard 1.00 (zero), ifc_poisson 1.00 (zero). The part-4 prediction `lambda* -> 0 on pfc / allen_cahn / fisher_kpp` is NOT borne out: lambda* is at or near the grid maximum on all three.",
+      "rule_label_robustness": {
+        "n_rungs_checked": 125,
+        "n_label_disagreements": 8,
+        "disagreements": [
+          {
+            "dataset": "ext__helmholtz_2d",
+            "rung": "A:0",
+            "all_train_label": "CORRECTOR_FUTILE",
+            "all_train_gamma_band1": 0.148994,
+            "fold_seed0_label": "UNDETERMINED",
+            "fold_seed0_gamma_band1": 0.641749
+          },
+          {
+            "dataset": "ext__helmholtz_2d",
+            "rung": "A:0.1",
+            "all_train_label": "CORRECTOR_FUTILE",
+            "all_train_gamma_band1": 0.148482,
+            "fold_seed0_label": "UNDETERMINED",
+            "fold_seed0_gamma_band1": 0.641339
+          },
+          {
+            "dataset": "ext__helmholtz_2d",
+            "rung": "A:0.25",
+            "all_train_label": "CORRECTOR_FUTILE",
+            "all_train_gamma_band1": 0.143927,
+            "fold_seed0_label": "UNDETERMINED",
+            "fold_seed0_gamma_band1": 0.640331
+          },
+          {
+            "dataset": "ext__helmholtz_2d",
+            "rung": "A:0.5",
+            "all_train_label": "CORRECTOR_FUTILE",
+            "all_train_gamma_band1": 0.116449,
+            "fold_seed0_label": "UNDETERMINED",
+            "fold_seed0_gamma_band1": 0.636044
+          },
+          {
+            "dataset": "ext__helmholtz_2d",
+            "rung": "A:0.75",
+            "all_train_label": "CORRECTOR_FUTILE",
+            "all_train_gamma_band1": 0.061356,
+            "fold_seed0_label": "UNDETERMINED",
+            "fold_seed0_gamma_band1": 0.617524
+          },
+          {
+            "dataset": "ext__helmholtz_2d",
+            "rung": "A:0.9",
+            "all_train_label": "CORRECTOR_FUTILE",
+            "all_train_gamma_band1": 0.025444,
+            "fold_seed0_label": "UNDETERMINED",
+            "fold_seed0_gamma_band1": 0.560059
+          },
+          {
+            "dataset": "heat_local",
+            "rung": "B:all",
+            "all_train_label": "CORRECTOR_ELIGIBLE",
+            "all_train_gamma_band1": 0.951508,
+            "fold_seed0_label": "UNDETERMINED",
+            "fold_seed0_gamma_band1": 0.947806
+          },
+          {
+            "dataset": "sharp__allen_cahn_2d",
+            "rung": "A:0.75",
+            "all_train_label": "CORRECTOR_FUTILE",
+            "all_train_gamma_band1": 0.371511,
+            "fold_seed0_label": "UNDETERMINED",
+            "fold_seed0_gamma_band1": 0.586469
+          }
+        ],
+        "note": "The promoted rule's verdict is emitted twice per rung -- from all train rows (M1a.all_train) and from the 60-row fold-seed-0 slice (M1[rung].verdict). They disagree on 8/125 rungs, 6 of them on report-only ext__helmholtz_2d where gamma_band1 is 0.149 over 400 rows but 0.642 over 60 (finite-sample coherence inflation). The three F1-deciding cells carry a FUTILE label under BOTH pools."
+      }
+    },
+    "guard_flags": [
+      {
+        "dataset": "heat_local",
+        "flag": "nrmse_regressed_more_than_2x_vs_recorded_guard_reference",
+        "nrmse": 0.009098637099131992,
+        "recorded_guard_reference_nrmse": 0.00240152155999517,
+        "ratio": 3.788697,
+        "severity": "note only, no auto-reject (analyzer contract 2d)",
+        "context": "Trigger not formally engaged: 2d fires only when the card claims a 3-seed panel win beyond the CI, and this is a single-seed diagnostic. The guard leg ran because card part 3 mandates it, at CONTRACT tier (2 epochs). Standing caveat: the recorded guard reference is the copy-LF nRMSE, i.e. a reference that CONSUMES the LF field at test, which a round-2 condition-only model does not have -- exceeding it on heat_local (a dataset whose copy-LF is 0.0024) is structural. fluid (0.208x) and sharp__sod_1d (0.240x) both beat copy-LF."
+      }
+    ],
+    "anomalies": [
+      {
+        "id": "A1_ladder_B_kall_LOO_leaks_the_rows_own_real_LF",
+        "severity": "decisive for F1, material for F3",
+        "what": "On the TRAIN side, ladder-B rung `B:all` is built with leave-one-out (ladder_b.loo_applied=true, 'each train query excludes its own paired LF row'), so the intermediate is (S - x_i)/(n-1) -- an exact affine, negatively-scaled copy of the row's OWN real LF. Band coherence is scale- and sign-invariant, so B:all's partial band-1 coherence is numerically IDENTICAL to ladder-A t=0 (the real paired LF): |difference| <= 2.7e-15 on 5 of 7 dataset x conditioner pairs (helmholtz, fluid, heat_local, cahn_hilliard, fisher_kpp, plus pfc/allen_cahn under ridge_pod16; the two knn_oof outliers differ by 1.4e-2 and 1.7e-2). The conditioner residual of B:all is ~1/(n-1) of A:0's: heat_local 966.8x with n-1=1023, fisher_kpp 383.9x with n-1=399, pfc 275.6-280.9x, fluid 232.0-239.3x. At TEST there is no self row, so the k=all intermediate collapses to the train mean -- ref_kall_raw vs ref_train_mean agree to 2.8e-07 relative on allen_cahn and cahn_hilliard, 6.0e-05 on fisher_kpp, 2.1e-04 on pfc.",
+        "consequence": "All 3 F1-firing cells and 3 of the 5 F3-firing panel datasets are the B:all rung. F1 drops to 0 cells and F3 to exactly 2 panel datasets when B:all is excluded. On the train side B:all is therefore NOT a condition-only intermediate, and its correctability/closure numbers describe a real-LF pathway with no test analogue. This is a measurement-construction issue, not a leak into a scored number: the tripwires confirm no test-side LF (test_lf_fids == [] on all 9 datasets) and the scored test arm never uses the train-side LOO field.",
+        "evidence": {
+          "ext__helmholtz_2d": {
+            "train_side": {
+              "n_pool": 400,
+              "n_pool_minus_1": 399,
+              "loo_applied": true,
+              "per_conditioner": {
+                "knn_oof": {
+                  "partial_gamma_A0_real_paired_lf": 0.591856,
+                  "partial_gamma_Ball": 0.591856,
+                  "abs_diff": 0.0,
+                  "residual_ratio_A0_over_Ball": 78.52
+                },
+                "ridge_pod16": {
+                  "partial_gamma_A0_real_paired_lf": 0.472567,
+                  "partial_gamma_Ball": 0.472567,
+                  "abs_diff": 2.72e-15,
+                  "residual_ratio_A0_over_Ball": 71.63
+                }
+              }
+            },
+            "test_side": {
+              "ref_kall_raw_nrmse": 1.49309758,
+              "ref_train_mean_nrmse": 4.36907269,
+              "rel_dev": 0.65825756
+            }
+          },
+          "fluid": {
+            "train_side": {
+              "n_pool": 256,
+              "n_pool_minus_1": 255,
+              "loo_applied": true,
+              "per_conditioner": {
+                "knn_oof": {
+                  "partial_gamma_A0_real_paired_lf": 0.659616,
+                  "partial_gamma_Ball": 0.659616,
+                  "abs_diff": 3.3e-16,
+                  "residual_ratio_A0_over_Ball": 232.03
+                },
+                "ridge_pod16": {
+                  "partial_gamma_A0_real_paired_lf": 0.866069,
+                  "partial_gamma_Ball": 0.866069,
+                  "abs_diff": 7.8e-16,
+                  "residual_ratio_A0_over_Ball": 239.29
+                }
+              }
+            },
+            "test_side": {
+              "ref_kall_raw_nrmse": 0.43543746,
+              "ref_train_mean_nrmse": 0.4071398,
+              "rel_dev": 0.06950353
+            }
+          },
+          "heat_local": {
+            "train_side": {
+              "n_pool": 1024,
+              "n_pool_minus_1": 1023,
+              "loo_applied": true,
+              "per_conditioner": {
+                "knn_oof": {
+                  "partial_gamma_A0_real_paired_lf": 0.999948,
+                  "partial_gamma_Ball": 0.999948,
+                  "abs_diff": 0.0,
+                  "residual_ratio_A0_over_Ball": 966.81
+                },
+                "ridge_pod16": {
+                  "partial_gamma_A0_real_paired_lf": 0.999955,
+                  "partial_gamma_Ball": 0.999955,
+                  "abs_diff": 1.55e-15,
+                  "residual_ratio_A0_over_Ball": 1001.26
+                }
+              }
+            },
+            "test_side": {
+              "ref_kall_raw_nrmse": 0.12622146,
+              "ref_train_mean_nrmse": 0.12616111,
+              "rel_dev": 0.00047836
+            }
+          },
+          "ifc_poisson": {
+            "test_side": {
+              "ref_kall_raw_nrmse": 3.62048716,
+              "ref_train_mean_nrmse": 0.40342797,
+              "rel_dev": 7.97430879
+            }
+          },
+          "sharp__allen_cahn_2d": {
+            "train_side": {
+              "n_pool": 400,
+              "n_pool_minus_1": 399,
+              "loo_applied": true,
+              "per_conditioner": {
+                "knn_oof": {
+                  "partial_gamma_A0_real_paired_lf": 0.999673,
+                  "partial_gamma_Ball": 0.982221,
+                  "abs_diff": 0.01745208364062578,
+                  "residual_ratio_A0_over_Ball": 5.81
+                },
+                "ridge_pod16": {
+                  "partial_gamma_A0_real_paired_lf": 0.999671,
+                  "partial_gamma_Ball": 0.999671,
+                  "abs_diff": 0.0,
+                  "residual_ratio_A0_over_Ball": 5.86
+                }
+              }
+            },
+            "test_side": {
+              "ref_kall_raw_nrmse": 1.00084296,
+              "ref_train_mean_nrmse": 1.00084324,
+              "rel_dev": 2.8e-07
+            }
+          },
+          "sharp__cahn_hilliard": {
+            "train_side": {
+              "n_pool": 400,
+              "n_pool_minus_1": 399,
+              "loo_applied": true,
+              "per_conditioner": {
+                "knn_oof": {
+                  "partial_gamma_A0_real_paired_lf": 0.99038,
+                  "partial_gamma_Ball": 0.99038,
+                  "abs_diff": 1.1e-16,
+                  "residual_ratio_A0_over_Ball": 17.14
+                },
+                "ridge_pod16": {
+                  "partial_gamma_A0_real_paired_lf": 0.99049,
+                  "partial_gamma_Ball": 0.99049,
+                  "abs_diff": 0.0,
+                  "residual_ratio_A0_over_Ball": 16.92
+                }
+              }
+            },
+            "test_side": {
+              "ref_kall_raw_nrmse": 1.00197775,
+              "ref_train_mean_nrmse": 1.00197749,
+              "rel_dev": 2.6e-07
+            }
+          },
+          "sharp__fisher_kpp_2d": {
+            "train_side": {
+              "n_pool": 400,
+              "n_pool_minus_1": 399,
+              "loo_applied": true,
+              "per_conditioner": {
+                "knn_oof": {
+                  "partial_gamma_A0_real_paired_lf": 0.999703,
+                  "partial_gamma_Ball": 0.999703,
+                  "abs_diff": 0.0,
+                  "residual_ratio_A0_over_Ball": 383.94
+                },
+                "ridge_pod16": {
+                  "partial_gamma_A0_real_paired_lf": 0.999695,
+                  "partial_gamma_Ball": 0.999695,
+                  "abs_diff": 0.0,
+                  "residual_ratio_A0_over_Ball": 383.93
+                }
+              }
+            },
+            "test_side": {
+              "ref_kall_raw_nrmse": 0.25723092,
+              "ref_train_mean_nrmse": 0.25724627,
+              "rel_dev": 5.968e-05
+            }
+          },
+          "sharp__phase_field_crystal_2d": {
+            "train_side": {
+              "n_pool": 400,
+              "n_pool_minus_1": 399,
+              "loo_applied": true,
+              "per_conditioner": {
+                "knn_oof": {
+                  "partial_gamma_A0_real_paired_lf": 1.0,
+                  "partial_gamma_Ball": 0.985864,
+                  "abs_diff": 0.01413594925089401,
+                  "residual_ratio_A0_over_Ball": 275.57
+                },
+                "ridge_pod16": {
+                  "partial_gamma_A0_real_paired_lf": 1.0,
+                  "partial_gamma_Ball": 1.0,
+                  "abs_diff": 0.0,
+                  "residual_ratio_A0_over_Ball": 280.88
+                }
+              }
+            },
+            "test_side": {
+              "ref_kall_raw_nrmse": 0.44136285,
+              "ref_train_mean_nrmse": 0.44145732,
+              "rel_dev": 0.00021399
+            }
+          },
+          "sharp__sod_1d": {
+            "test_side": {
+              "ref_kall_raw_nrmse": 0.12094505,
+              "ref_train_mean_nrmse": 0.11591174,
+              "rel_dev": 0.04342373
+            }
+          }
+        }
+      },
+      {
+        "id": "A2_value_add_is_non_monotone_in_gamma_along_ladder_A",
+        "severity": "contradicts the part-4 M1 expectation (\"value-add(gamma) monotone ... crossing located within one ladder step\")",
+        "what": "On every sharp panel dataset the LSI value-add falls to ~0 mid-ladder and RISES again as coherence collapses: fisher_kpp value_add_lsi_mean 0.6599 (t=0, gamma_b1 0.9997) -> 0.0012 (t=0.5, 0.7078) -> 0.0937 (t=0.75, 0.3202) -> 0.2789 (t=1, 0.0566); pfc 0.99995 -> -0.0017 -> 0.0946 -> 0.2790; cahn_hilliard 0.3638 -> 0.0000 -> 0.0343 -> 0.1188; allen_cahn 0.5533 -> 0.0000 -> 0.0528 -> 0.1528. Value-add is measured RELATIVE TO THE INTERMEDIATE, whose identity_nrmse degrades monotonically along the same ladder (fisher_kpp 0.0209 -> 0.1743 -> 0.2578 -> 0.3415), so the low-gamma end is a large relative gain over a bad baseline (shrinkage toward the floor), not restored signal. A single monotone gamma* crossing was NOT located, and the card's predicted gamma* in [0.80, 0.95] is not identifiable from this curve.",
+        "evidence": "measurements.M1_ladder_A_real_to_mismatched_LF"
+      },
+      {
+        "id": "A3_promoted_rule_label_depends_on_the_row_pool",
+        "severity": "note",
+        "what": "8/125 rungs get a different rule label from all train rows than from the 60-row fold-seed-0 slice; 6 of the 8 are on report-only ext__helmholtz_2d (gamma_band1 0.149 over 400 rows vs 0.642 over 60 -- finite-sample coherence inflation ~1/sqrt(N)). The F1-deciding cells are unaffected: all three are FUTILE under both pools (allen_cahn B:all 0.1011/0.1615; cahn_hilliard 0.0656/0.1481; pfc 0.1376/0.1170).",
+        "evidence": "measurements.rule_label_robustness"
+      },
+      {
+        "id": "A4_no_training_or_infrastructure_anomalies",
+        "severity": "clean",
+        "what": "Both jobs COMPLETED, ExitCode 0:0, both .err files 0 bytes, no requeue/preemption/resume (single sacct Start/End per job); zero NaN/Inf across all 20 result/diagnostic/prereg JSONs; every seam exact -- floor arms max|dev| 0.0 at tol 1e-9 on all 9 datasets, vendored upsampler vs eval/panel_data.py max|dev| 0.0 at tol 1e-9, ladder-A t=1 == ladder-B k=1 to <= 4.4e-15; both tripwires pass on all 9 datasets (test_lf_fids == [], no ladder-A rung test-reachable); the in-job pre-registration (prereg_*.json, written before any fit) carries verdict labels identical to the final diagnostic M1 labels on every rung of every dataset."
+      },
+      {
+        "id": "A5_ifc_poisson_low_n_branch_exercised_as_designed",
+        "severity": "note (carried caveat, not new)",
+        "what": "ifc_poisson took the documented unpaired/low-n branch: paired_real_lf=false (max_abs_cond_deviation_lf_vs_hf 0.6819, n_hf_train=5 vs n_lf=20), ladder A skipped, LOO impossible, fit=calib=ladder_eval (calib_is_fit=true, disjoint=false), rungs above the 20-row pool dropped, semantics_degraded=true, report_only_for_the_law=true. It is still SCORED: skill 8.4546, beating its 10.0549 nn_condition anchor column by 1.6003 > mce 0.9377. Its M1c value-adds (0.993-0.996) are low-n in-sample numbers and are not evidence."
+      }
+    ],
+    "wall_clock_per_seed_min": [
+      33.58
+    ],
+    "timing_ledger_feed": {
+      "source": "sacct -j 66187052,66187053 + the .out header/footer timestamps",
+      "panel_job": {
+        "job_id": "66187052",
+        "elapsed": "00:33:35",
+        "minutes": 33.58,
+        "state": "COMPLETED 0:0",
+        "node": "hpc-sm-01-04",
+        "gpu": "NVIDIA H200",
+        "max_rss_kb": 5012736,
+        "requeues": 0,
+        "budget": "03:30:00 after the reviewer's S1 walltime raise -> 16% used"
+      },
+      "guard_job": {
+        "job_id": "66187053",
+        "elapsed": "00:02:24",
+        "minutes": 2.4,
+        "state": "COMPLETED 0:0",
+        "node": "hpc-sm-01-04",
+        "gpu": "NVIDIA H200",
+        "max_rss_kb": 3889932,
+        "requeues": 0,
+        "budget": "01:00:00 -> 4% used"
+      },
+      "for_builders": "family r2s2_correctability: panel leg 200 epochs / 6 datasets (15 ladder rungs x 3 fold seeds of closed-form LSI + 5-6 refit correctors + a 200-draw permutation null per rung x 2 conditioners) = 33.58 min on h200; guard leg 3 datasets at contract tier = 2.40 min. Both legs were submitted concurrently and shared a node."
+    },
+    "seams_verified": {
+      "nrmse_def_hash": "d3d0ade9191c13bacc40702f3eb26ad290e01641cacee22a1d2233b74c035850",
+      "identical_across_all_20_eval_jsons": true,
+      "matches_noise_floor_provenance": true,
+      "matches_copylf_baselines": true,
+      "copylf_def_hash": "9753ff24e856f595748492dec6cb6c215d748f97e8ec4a679b651f8846da907a",
+      "copylf_def_hash_matches_baselines": true,
+      "code_hash": "c5aa970fbef93958ca907816df494ef5c008c85bff35e63a8294c90ce543cea3",
+      "code_hash_panel_equals_guard": true,
+      "per_dataset": {
+        "ext__helmholtz_2d": {
+          "floor_seam_max_abs_dev": 0.0,
+          "upsample_seam_max_abs_dev": 0.0,
+          "upsample_convention": "dirichlet_node",
+          "tripwire_no_test_lf_pass": true,
+          "tripwire_oracle_ladder_train_only_pass": true,
+          "test_reachable_rungs": [
+            "B:1",
+            "B:all"
+          ],
+          "padding_decision": "circular",
+          "ladder_a_constructible": true,
+          "a_t1_equals_b_k1_max_abs_dev": 1.5543122344752192e-15,
+          "paired_real_lf": true
+        },
+        "fluid": {
+          "floor_seam_max_abs_dev": 0.0,
+          "upsample_seam_max_abs_dev": 0.0,
+          "upsample_convention": "legacy_cell_centred",
+          "tripwire_no_test_lf_pass": true,
+          "tripwire_oracle_ladder_train_only_pass": true,
+          "test_reachable_rungs": [
+            "B:1",
+            "B:8",
+            "B:all"
+          ],
+          "padding_decision": "zeros",
+          "ladder_a_constructible": true,
+          "a_t1_equals_b_k1_max_abs_dev": 4.440892098500626e-15,
+          "paired_real_lf": true
+        },
+        "heat_local": {
+          "floor_seam_max_abs_dev": 0.0,
+          "upsample_seam_max_abs_dev": 0.0,
+          "upsample_convention": "legacy_cell_centred",
+          "tripwire_no_test_lf_pass": true,
+          "tripwire_oracle_ladder_train_only_pass": true,
+          "test_reachable_rungs": [
+            "B:1",
+            "B:8",
+            "B:all"
+          ],
+          "padding_decision": "zeros",
+          "ladder_a_constructible": true,
+          "a_t1_equals_b_k1_max_abs_dev": 1.1102230246251565e-15,
+          "paired_real_lf": true
+        },
+        "ifc_poisson": {
+          "floor_seam_max_abs_dev": 0.0,
+          "upsample_seam_max_abs_dev": 0.0,
+          "upsample_convention": "legacy_cell_centred",
+          "tripwire_no_test_lf_pass": true,
+          "tripwire_oracle_ladder_train_only_pass": true,
+          "test_reachable_rungs": [
+            "B:1",
+            "B:2",
+            "B:all"
+          ],
+          "padding_decision": "zeros",
+          "ladder_a_constructible": false,
+          "a_t1_equals_b_k1_max_abs_dev": null,
+          "paired_real_lf": false
+        },
+        "sharp__allen_cahn_2d": {
+          "floor_seam_max_abs_dev": 0.0,
+          "upsample_seam_max_abs_dev": 0.0,
+          "upsample_convention": "node_aligned_periodic",
+          "tripwire_no_test_lf_pass": true,
+          "tripwire_oracle_ladder_train_only_pass": true,
+          "test_reachable_rungs": [
+            "B:1",
+            "B:16",
+            "B:all"
+          ],
+          "padding_decision": "circular",
+          "ladder_a_constructible": true,
+          "a_t1_equals_b_k1_max_abs_dev": 5.551115123125783e-17,
+          "paired_real_lf": true
+        },
+        "sharp__cahn_hilliard": {
+          "floor_seam_max_abs_dev": 0.0,
+          "upsample_seam_max_abs_dev": 0.0,
+          "upsample_convention": "node_aligned_periodic",
+          "tripwire_no_test_lf_pass": true,
+          "tripwire_oracle_ladder_train_only_pass": true,
+          "test_reachable_rungs": [
+            "B:1",
+            "B:16",
+            "B:all"
+          ],
+          "padding_decision": "circular",
+          "ladder_a_constructible": true,
+          "a_t1_equals_b_k1_max_abs_dev": 2.220446049250313e-15,
+          "paired_real_lf": true
+        },
+        "sharp__fisher_kpp_2d": {
+          "floor_seam_max_abs_dev": 0.0,
+          "upsample_seam_max_abs_dev": 0.0,
+          "upsample_convention": "node_aligned_periodic",
+          "tripwire_no_test_lf_pass": true,
+          "tripwire_oracle_ladder_train_only_pass": true,
+          "test_reachable_rungs": [
+            "B:1",
+            "B:64",
+            "B:all"
+          ],
+          "padding_decision": "circular",
+          "ladder_a_constructible": true,
+          "a_t1_equals_b_k1_max_abs_dev": 4.440892098500626e-16,
+          "paired_real_lf": true
+        },
+        "sharp__phase_field_crystal_2d": {
+          "floor_seam_max_abs_dev": 0.0,
+          "upsample_seam_max_abs_dev": 0.0,
+          "upsample_convention": "node_aligned_periodic",
+          "tripwire_no_test_lf_pass": true,
+          "tripwire_oracle_ladder_train_only_pass": true,
+          "test_reachable_rungs": [
+            "B:1",
+            "B:16",
+            "B:all"
+          ],
+          "padding_decision": "circular",
+          "ladder_a_constructible": true,
+          "a_t1_equals_b_k1_max_abs_dev": 8.881784197001252e-16,
+          "paired_real_lf": true
+        },
+        "sharp__sod_1d": {
+          "floor_seam_max_abs_dev": 0.0,
+          "upsample_seam_max_abs_dev": 0.0,
+          "upsample_convention": "legacy_cell_centred_1d",
+          "tripwire_no_test_lf_pass": true,
+          "tripwire_oracle_ladder_train_only_pass": true,
+          "test_reachable_rungs": [
+            "B:1",
+            "B:4",
+            "B:all"
+          ],
+          "padding_decision": "zeros",
+          "ladder_a_constructible": true,
+          "a_t1_equals_b_k1_max_abs_dev": 4.440892098500626e-16,
+          "paired_real_lf": true
+        }
+      }
+    },
+    "anchor_action": {
+      "anchor_updated": false,
+      "reason": "Analyzer contract 2e requires a 3-SEED result to establish or beat a stream anchor. This is a strict single-seed diagnostic (project.yaml seed_protocol.seeds=[0]). Its scored 19.386837 beats the r2s2_stacked launch anchor 23.063617 by 3.676780 (> the certified panel mce 1.141867), but as a provisional-single-seed point estimate it cannot certify an anchor. If this family reaches the end-of-round top-3 confirmation it is an anchor candidate at anchor_type certified_3seed_panel_geomean (the pattern used by state/anchors/r2s4_diag.json, which superseded its launch floor anchor that way).",
+      "anchor_file_left_untouched": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round2/state/anchors/r2s2_stacked.json",
+      "noise_floor_action": "state/noise_floor.json NOT written (this analyzer does not write state/)"
+    },
+    "provenance": {
+      "result_jsons": [
+        "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s2_stacked/B2/eval/result_panel_s0.json",
+        "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s2_stacked/B2/eval/result_guard_s0.json"
+      ],
+      "diagnostic_jsons": [
+        "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s2_stacked/B2/eval/diagnostic_ext__helmholtz_2d_e200_s0.json",
+        "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s2_stacked/B2/eval/diagnostic_fluid_e2_s0.json",
+        "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s2_stacked/B2/eval/diagnostic_heat_local_e2_s0.json",
+        "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s2_stacked/B2/eval/diagnostic_ifc_poisson_e200_s0.json",
+        "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s2_stacked/B2/eval/diagnostic_sharp__allen_cahn_2d_e200_s0.json",
+        "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s2_stacked/B2/eval/diagnostic_sharp__cahn_hilliard_e200_s0.json",
+        "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s2_stacked/B2/eval/diagnostic_sharp__fisher_kpp_2d_e200_s0.json",
+        "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s2_stacked/B2/eval/diagnostic_sharp__phase_field_crystal_2d_e200_s0.json",
+        "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s2_stacked/B2/eval/diagnostic_sharp__sod_1d_e2_s0.json"
+      ],
+      "prereg_jsons": [
+        "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s2_stacked/B2/eval/prereg_ext__helmholtz_2d_e200_s0.json",
+        "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s2_stacked/B2/eval/prereg_fluid_e2_s0.json",
+        "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s2_stacked/B2/eval/prereg_heat_local_e2_s0.json",
+        "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s2_stacked/B2/eval/prereg_ifc_poisson_e200_s0.json",
+        "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s2_stacked/B2/eval/prereg_sharp__allen_cahn_2d_e200_s0.json",
+        "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s2_stacked/B2/eval/prereg_sharp__cahn_hilliard_e200_s0.json",
+        "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s2_stacked/B2/eval/prereg_sharp__fisher_kpp_2d_e200_s0.json",
+        "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s2_stacked/B2/eval/prereg_sharp__phase_field_crystal_2d_e200_s0.json",
+        "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s2_stacked/B2/eval/prereg_sharp__sod_1d_e2_s0.json"
+      ],
+      "slurm_logs": [
+        "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s2_stacked/B2/slurm/r2-r2s2_stacked-B2-guard-s0_66187053.err",
+        "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s2_stacked/B2/slurm/r2-r2s2_stacked-B2-guard-s0_66187053.out",
+        "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s2_stacked/B2/slurm/r2-r2s2_stacked-B2-s0_66187052.err",
+        "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s2_stacked/B2/slurm/r2-r2s2_stacked-B2-s0_66187052.out"
+      ],
+      "anchor": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round2/state/anchors/r2s2_stacked.json",
+      "noise_floor": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round2/state/noise_floor.json",
+      "copylf_baselines": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round2/eval/copylf_baselines.json"
+    }
+  },
   "6_analysis": null,
   "7_gap_and_future": null,
-  "reanalysis_progress": null
+  "reanalysis_progress": "turn_1"
 }

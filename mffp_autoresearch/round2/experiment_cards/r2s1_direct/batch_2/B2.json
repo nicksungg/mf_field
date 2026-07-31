@@ -96,7 +96,7 @@
       "_note": "keys prefixed _ are card directives, NOT passed to --env"
     }
   },
-  "status": "reviewed_suggest",
+  "status": "analyzing",
   "skipped_reason": null,
   "reopen_candidate": false,
   "scripts_path": {
@@ -110,7 +110,9 @@
     "slurm": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s1_direct/B2/slurm"
   },
   "build_commit": "d844becb4e3c3c16bf0c9f07a5dc1b80f9e13241",
-  "job_ids": [],
+  "job_ids": [
+    "66189580"
+  ],
   "logs": {},
   "build_notes": [
     "Family `models_r2/r2s1_selected_form` built from scratch in the worktree (13 files: config/common/ridge/heads/wiener/blend/floors/decoder/train/diagnostics/smoke_eval + manifest.json + INSPIRATION.md). Condition-only forward signature at every stage; no round-1 and no factory model code vendored; the sole factory contact is a read-only import of `mf_field/factory_mffp/data_adapters/loaders.py`. Base commit 9e10d414e35a96398f7b091bc84ddf936d88acc7 (= recipe.base_commit).",
@@ -131,11 +133,11 @@
       "reviewer_handoff": "mffp_autoresearch/round2/worktrees/r2s1_direct/B2/notes/handoff_code_reviewer.md",
       "reviewed_commit": "d844becb4e3c3c16bf0c9f07a5dc1b80f9e13241",
       "findings": [
-        "F1 (Q3.1 card-implementation alignment) SUGGEST: every part-3 element traces to code (80/10/10 disjoint folds with disjointness asserted common.make_folds:215-218; LOO+fixed-epoch below N=20 smoke_eval.py:192-196, exercised on ifc_poisson; stage S on fit+model folds only heads.selection_stage:176-183; exact-LOO ridge; 6 Wiener bands / 41-point [0,2] grid / 2 passes on the calibration fold; 21-point blend over 4 bases; the full ref_/sel_ arm ladder; 1e-9 RAISING floor seam check). TBD 1 (rank-statistic feature map = affine + exact-LOO) ACCEPTED: the card's env fixes R2S1B2_RANK_STAT and K=5 but never the feature map, and the choice is documented in heads.rank_statistic:127-150 with the alternative measured. I recomputed r_sel independently: shipped gives helmholtz 3 / cahn_hilliard 4 / ifc_poisson 2 (= build_notes exactly), and a tool-shaped reading (RFF-16 + K-fold-CV penalty, FULL train split) gives helmholtz 9 / cahn_hilliard 3 -- so the card's expected counts (5,2,1,1,3,1, from tools/condition_identifiable_rank.py defaults --cond_rff 16 --max_modes 200 on the full train split) are unreachable by ANY faithful in-family reading, foreclosed by the card's own stage-S mandate (50-mode FIT-FOLD basis, fit+selection folds). MANDATORY ANALYSIS CAVEAT: the realized pfc head is 9 params ((d+1)*r_sel = 3*3), not the card's '12 on pfc'; cahn_hilliard will be 80, not '60'; the card's named cahn_hilliard repair 'r_sel = 3' realizes as 4. No falsification leg cites those parentheticals -- quote the run's selection_stage block, not the card.",
+        "F1 (Q3.1 card-implementation alignment) SUGGEST: every part-3 element traces to code (80/10/10 disjoint folds with disjointness asserted common.make_folds:215-218; LOO+fixed-epoch below N=20 smoke_eval.py:192-196, exercised on ifc_poisson; stage S on fit+model folds only heads.selection_stage:176-183; exact-LOO ridge; 6 Wiener bands / 41-point [0,2] grid / 2 passes on the calibration fold; 21-point blend over 4 bases; the full ref_/sel_ arm ladder; 1e-9 RAISING floor seam check). TBD 1 (rank-statistic feature map = affine + exact-LOO) ACCEPTED: the card's env fixes R2S1B2_RANK_STAT and K=5 but never the feature map, and the choice is documented in heads.rank_statistic:127-150 with the alternative measured. I recomputed r_sel independently: shipped gives helmholtz 3 / cahn_hilliard 4 / ifc_poisson 2 (= build_notes exactly), and a tool-shaped reading (RFF-16 + K-fold-CV penalty, FULL train split) gives helmholtz 9 / cahn_hilliard 3 -- so the card's expected counts (5,2,1,1,3,1, from tools/condition_identifiable_rank.py defaults --cond_rff 16 --max_modes 200 on the full train split) are unreachable by ANY faithful in-family reading, foreclosed by the card's own stage-S mandate (50-mode FIT-FOLD basis, fit+selection folds). MANDATORY ANALYSIS CAVEAT: the realized pfc head is 9 params ((d+1)*r_sel = 3*3), not the card's '12 on pfc'; cahn_hilliard realizes 80, not '60' (CONFIRMED by my own contract-tier run: ratio 0.0416 -> `add`, r_sel 4, scored head 80 params); the card's named cahn_hilliard repair 'r_sel = 3' realizes as 4. No falsification leg cites those parentheticals -- quote the run's selection_stage block, not the card.",
         "F2 (Q3.2 recipe fidelity) PASS: my own programmatic 4-way diff of the 49 non-underscore knobs (card recipe.env <-> scripts/01_train_eval.sh ENV_ARGS <-> config.RECIPE_ENV <-> scratchpad/contract_smoke.json env) shows 0 missing, 0 extra, 0 mismatched; config.load_config RAISES on 17 card-fixed values rather than defaulting. The five underscore directives are correctly excluded and honoured structurally (the realized pfc run emits exactly one test* split, test_hf). epochs 200 -> panel leg; seeds [0] -> submit.sh seed 0 only; family_dir and base_commit match. Every unfixed hyperparameter is declared: Wiener band edges 4,8,16,32 (I confirmed these are tools/band_gain_counterfactual.py's --bands default), DEC_COND_RFF=16, the rank feature map, p25. Residual nits are in the NON-SCORED diagnostics path only: logreg_fit(l2=1e-2, iters=100), pfc_class_split(share_tau=0.1) (traced in-code to B1's promoted label definition), train.SAVE_EVERY=10.",
         "F3 (Q3.3 section-5 immutables) PASS: nothing written under round2/eval, project.yaml, program.md, subagents/, or any guarded factory surface (main-tree git status empty for all; only orchestrator-owned state/ files differ). No data regeneration, no extra HF samples. All numbers routed through score_panel.py -- all three committed evidence JSONs are score_panel outputs at one code_hash -- and the round metric is IMPORTED from eval/nrmse.py (common.py:79-81) with a runtime assert_metric_seam equality check, closing B1's F3. Epochs 200 = smoke tier, guard leg 2 = contract tier, seeds [0] per protocol. No pre-falsified lever re-proposed (FNO-style spectral not WNO; no LF low-mode freezing -- no LF is read at all; no diffusion prior). Stripped-view compliance airtight: common.Panel raises unless dataset_dir is under stripped_data AND the test split exposes zero LF fidelities (verified firing on real data: test_lf_fids [], under_stripped_view 1); hf_test/cond_test are used only for prediction and scoring, never in a fit, selection or calibration.",
         "F4 (Q3.4 contract compliance) PASS: manifest.json has name/description/supports/frozen; smoke_eval.py exposes the exact 6-arg CLI; INSPIRATION.md cites every E1-E4 citation from prior_art verbatim including the 'presumed prior art, do not claim' thread. Checkpoint-resume from <ckpt_dir>/last.pt implemented (train.Ckpt, atomic tmp->replace, meta-keyed so a stale checkpoint is ignored) and verified both ways in the committed scratchpad/test_resume.log (finished-run reload reproduces test_hf bit-identically 0.008074920688403445 twice; SIGKILLed run resumes at epoch 30). Seeding covers python/numpy/torch/cuda from --seed.",
-        "F5 (Q3.5 SLURM correctness) SUGGEST: I ran bash -n on all three scripts -- all clean. Partition gpu and typed gres gpu:nvidia_h200:1 match project.yaml sbatch: (ADR r2-0004); --output/--error absolute under outputs_root/r2s1_direct/B2/slurm/%x_%j and both wrappers mkdir -p that dir BEFORE sbatch; 01_train_eval.sh takes SEED=$1; submit.sh = seed 0 only; submit_seeds_2_3.sh = seeds 1,2; --time 02:00:00 present; set -euo pipefail + venv activation present; all #SBATCH lines precede the first executable line. THREE ITEMS: (a) the in-file --job-name lacks the -s{seed} suffix -- correct only because both wrappers override it (a seed cannot be interpolated into an #SBATCH directive); never call sbatch 01_train_eval.sh directly or the maintainer's name match degrades. (b) WALLTIME: I measured contract-tier login-node runs -- pfc (128^2) 47 s, but cahn_hilliard (256^2) had burned 15 min of CPU and was still running at 19 min elapsed; that box is cgroup-limited to ONE contended core (nproc=1, load 25.8) vs the job's 4 dedicated CPUs + H200, so it is an upper bound, but it shows the 21-arm numpy ladder is CPU/FFT-bound on the three 256^2 datasets and will NOT be GPU-accelerated. The builder's 30-45 min estimate is plausible; the claimed ~3x headroom may be closer to 2x. MITIGATION VERIFIED (eval/score_panel.py:203-228): the script does not pass --no_cache and score_panel writes a per-dataset cache entry immediately after each dataset, so a walltime kill + resubmit resumes at dataset granularity and the family's diag JSONs persist independently. Recommend watching the first job and raising to 03:00:00 on a timeout (r2s2_stacked-B2 precedent in state/timing_ledger.json). (c) The decoder shuffle generator (train.fit:145-151) is seeded from (seed, run_key) but is NOT saved in the checkpoint (only the global torch_rng is), so a preempted-and-resumed decoder replays epoch-0 batch orders from start_epoch onward. The scored test_hf is unaffected (closed-form, touches no torch RNG) but ref_decoder_big is the comparator in L1 and L2. Minimal fix: store gen.get_state() in ckpt.state['cur'] and restore it alongside torch_rng.",
+        "F5 (Q3.5 SLURM correctness) SUGGEST: I ran bash -n on all three scripts -- all clean. Partition gpu and typed gres gpu:nvidia_h200:1 match project.yaml sbatch: (ADR r2-0004); --output/--error absolute under outputs_root/r2s1_direct/B2/slurm/%x_%j and both wrappers mkdir -p that dir BEFORE sbatch; 01_train_eval.sh takes SEED=$1; submit.sh = seed 0 only; submit_seeds_2_3.sh = seeds 1,2; --time 02:00:00 present; set -euo pipefail + venv activation present; all #SBATCH lines precede the first executable line. THREE ITEMS: (a) the in-file --job-name lacks the -s{seed} suffix -- correct only because both wrappers override it (a seed cannot be interpolated into an #SBATCH directive); never call sbatch 01_train_eval.sh directly or the maintainer's name match degrades. (b) WALLTIME: I measured contract-tier login-node runs -- pfc (128^2) 47 s, but cahn_hilliard (256^2) took 21m26s wall (7m36 user + 8m34 sys, peak RSS ~2.8 GB -- the near-equal sys time is allocation churn on the 400x65536 float64 arrays, not compute; --mem=32G is comfortable); that box is cgroup-limited to ONE contended core (nproc=1, load 25.8) vs the job's 4 dedicated CPUs + H200, so it is an upper bound, but it shows the 21-arm numpy ladder is CPU/FFT-bound on the three 256^2 datasets and will NOT be GPU-accelerated. The builder's 30-45 min estimate is plausible; the claimed ~3x headroom may be closer to 2x. MITIGATION VERIFIED (eval/score_panel.py:203-228): the script does not pass --no_cache and score_panel writes a per-dataset cache entry immediately after each dataset, so a walltime kill + resubmit resumes at dataset granularity and the family's diag JSONs persist independently. Recommend watching the first job and raising to 03:00:00 on a timeout (r2s2_stacked-B2 precedent in state/timing_ledger.json). (c) The decoder shuffle generator (train.fit:145-151) is seeded from (seed, run_key) but is NOT saved in the checkpoint (only the global torch_rng is), so a preempted-and-resumed decoder replays epoch-0 batch orders from start_epoch onward. The scored test_hf is unaffected (closed-form, touches no torch RNG) but ref_decoder_big is the comparator in L1 and L2. Minimal fix: store gen.get_state() in ckpt.state['cur'] and restore it alongside torch_rng.",
         "F6 (Q3.6 smoke evidence) PASS: build_notes #2 cites the contract-tier score_panel.py command and scratchpad/contract_smoke.json exists and is committed (helmholtz, 2 epochs, seed 0, split test_hf, nRMSE 0.9326785905159782, skill 3.118979389760434, metric_source per_sample_mean, floor seam 0.0); two further committed score_panel JSONs cover the small-N LOO branch (ifc_poisson), the 1-D path (sod_1d) and the whole guard leg (fluid, heat_local). I RECOMPUTED score_panel.py::code_hash over the committed family dir and got 0208903a6ee2... matching all three JSONs, and nrmse_def_hash matches the current eval layer -- the evidence is not stale. I also closed the one coverage gap myself: no 2-D sharp dataset had been smoked, leaving diagnostics.pfc_class_split (pfc-only, un-try/excepted, on a PANEL dataset) never executed. I ran it at contract tier: exit 0 in 47 s, AUC 0.99957, 150/400 patterned train, 44/100 patterned test predicted, ring k=5, 13 arms scored per class, floor seam max|delta| exactly 0.0, 19 splits with exactly one test*, resample spread n=5. Path is now known-good.",
         "F7 (Q3.7 blast radius) PASS: git diff round2-substrate..HEAD --stat = 26 files, 3056 insertions, 0 deletions, confined to models_r2/r2s1_selected_form/ (13), scripts/ (3), notes/ (2), scratchpad/ (8). Nothing else; no substrate-fix commit; worktree clean at the reviewed commit.",
         "F8 (Q3.8 round-2 novelty) PASS: not a rebadge of any round-1 family -- new family dir, new INSPIRATION.md, new forward signature (cond -> field through a SELECTED closed-form POD/ridge parameterization), no field of any fidelity as input at any stage, no LF pretraining, no fidelity embedding (so not mf_fno_transfer_film), no round-1 or factory model code vendored (grep-confirmed; sole factory contact is the read-only data_adapters/loaders.py import). TBD 3 VERIFIED INDEPENDENTLY: I re-ran scratchpad/test_wiener_equivalence.py from the committed code and it reproduced the committed log line-for-line -- Parseval band gains IDENTICAL to the spatial-domain brute force, gained fields agreeing to exactly 0.000e+00, band decomposition exact to 3.5e-18/4.4e-16, POD method-of-snapshots |cos| = 1.000000000000 / 0.999999999988 vs np.linalg.svd, algebraic lambda-scan agreeing with the literal nrmse to 4.3e-15/8.3e-16 -- and I diffed the test's spatial_fit against tools/band_gain_counterfactual.py::fit_band_gains line-for-line: a faithful transcription. '1 ulp' is right for the gains and gained fields; the blend table is a few ulp, immaterial at the 1e-4 scale of any card threshold. NOTE FOR THE ANALYZER: ref_decoder_big is B1-SCALE but not B1-IDENTICAL -- decoder.py:20-25 deliberately drops B1's amplitude/direction factorization because the `fact` centering IS that factorization on the closed-form side and would confound the card's own question. L1/L2 are worded against 'the in-job Wiener-calibrated ref_decoder_big' so both legs stay self-contained and decidable; only part 4's cross-run reference to 'B1's measured 0.5511-unit gap' compares across two different decoders. Declared in the module docstring but NOT in build_notes -- record it in part 5.",
@@ -146,7 +148,846 @@
     }
   ],
   "debug_notes": [],
-  "5_actual_result": null,
+  "5_actual_result": {
+    "labelling": "ALL numbers below are provisional-single-seed (seed 0 only, recipe.seeds=[0]). No CI is definable from one seed; nothing here is a 3-seed claim.",
+    "seeds_available": [
+      0
+    ],
+    "per_dataset": {
+      "ext__helmholtz_2d": {
+        "per_seed_nrmse": [
+          0.9326785905159781
+        ],
+        "per_seed_skill": [
+          3.1189793897604337
+        ],
+        "mean_skill": 3.1189793897604337,
+        "ci95": null,
+        "ci95_note": "single seed (recipe.seeds=[0]) - no bootstrap CI is definable; all values provisional-single-seed",
+        "reference_type": "copylf",
+        "split": "test_hf",
+        "cached": false,
+        "metric_source": "per_sample_mean",
+        "certified_mce": 2.95299157437233,
+        "best_floor_skill": 3.3441095587226317,
+        "best_floor_arm": "zero",
+        "vs_best_floor_ratio": 0.9326785905159781
+      },
+      "sharp__phase_field_crystal_2d": {
+        "per_seed_nrmse": [
+          0.3500859265312266
+        ],
+        "per_seed_skill": [
+          47.43211351452127
+        ],
+        "mean_skill": 47.43211351452127,
+        "ci95": null,
+        "ci95_note": "single seed (recipe.seeds=[0]) - no bootstrap CI is definable; all values provisional-single-seed",
+        "reference_type": "copylf",
+        "split": "test_hf",
+        "cached": false,
+        "metric_source": "per_sample_mean",
+        "certified_mce": 0.21302734961699343,
+        "best_floor_skill": 59.8117544948052,
+        "best_floor_arm": "train_mean",
+        "vs_best_floor_ratio": 0.793023276363526
+      },
+      "sharp__allen_cahn_2d": {
+        "per_seed_nrmse": [
+          0.3091906435331594
+        ],
+        "per_seed_skill": [
+          173.62786112567895
+        ],
+        "mean_skill": 173.62786112567895,
+        "ci95": null,
+        "ci95_note": "single seed (recipe.seeds=[0]) - no bootstrap CI is definable; all values provisional-single-seed",
+        "reference_type": "copylf",
+        "split": "test_hf",
+        "cached": false,
+        "metric_source": "per_sample_mean",
+        "certified_mce": 0.8797047190126648,
+        "best_floor_skill": 269.19587575878967,
+        "best_floor_arm": "nn_condition",
+        "vs_best_floor_ratio": 0.6449870772955545
+      },
+      "sharp__fisher_kpp_2d": {
+        "per_seed_nrmse": [
+          0.24789820433350734
+        ],
+        "per_seed_skill": [
+          11.557293279140117
+        ],
+        "mean_skill": 11.557293279140117,
+        "ci95": null,
+        "ci95_note": "single seed (recipe.seeds=[0]) - no bootstrap CI is definable; all values provisional-single-seed",
+        "reference_type": "copylf",
+        "split": "test_hf",
+        "cached": false,
+        "metric_source": "per_sample_mean",
+        "certified_mce": 0.0007136812826775696,
+        "best_floor_skill": 11.99311063309952,
+        "best_floor_arm": "train_mean",
+        "vs_best_floor_ratio": 0.9636610244587756
+      },
+      "sharp__cahn_hilliard": {
+        "per_seed_nrmse": [
+          0.554039683441779
+        ],
+        "per_seed_skill": [
+          13.253598497322288
+        ],
+        "mean_skill": 13.253598497322288,
+        "ci95": null,
+        "ci95_note": "single seed (recipe.seeds=[0]) - no bootstrap CI is definable; all values provisional-single-seed",
+        "reference_type": "copylf",
+        "split": "test_hf",
+        "cached": false,
+        "metric_source": "per_sample_mean",
+        "certified_mce": 0.09124535322300886,
+        "best_floor_skill": 23.180342227117514,
+        "best_floor_arm": "nn_condition",
+        "vs_best_floor_ratio": 0.5717602599420457
+      },
+      "ifc_poisson": {
+        "per_seed_nrmse": [
+          0.3507204000919534
+        ],
+        "per_seed_skill": [
+          9.742233335887594
+        ],
+        "mean_skill": 9.742233335887594,
+        "ci95": null,
+        "ci95_note": "single seed (recipe.seeds=[0]) - no bootstrap CI is definable; all values provisional-single-seed",
+        "reference_type": "paper_bar",
+        "split": "test_hf",
+        "cached": false,
+        "metric_source": "per_sample_mean",
+        "certified_mce": 0.9377041289531141,
+        "best_floor_skill": 10.054890929609687,
+        "best_floor_arm": "nn_condition",
+        "vs_best_floor_ratio": 0.9689049243884508
+      }
+    },
+    "panel_geomean_skill": {
+      "per_seed": [
+        18.36223232957283
+      ],
+      "mean": 18.36223232957283,
+      "ci95": null,
+      "note": "Read verbatim from result_panel_s0.json::panel_geomean_skill. The card pre-registers NO panel-geomean falsification leg (part 4: 'reported with no falsification weight and explicitly NOT claimable as an improvement over B1's 19.6444'). Recorded for the cratered rule and the anchor check only."
+    },
+    "vs_anchor": {
+      "anchor_source": "state/anchors/r2s1_direct.json",
+      "anchor_type": "best_floor_panel_geomean",
+      "anchor_value": 23.063616857615774,
+      "delta": -4.701384528042944,
+      "beyond_ci": false,
+      "beyond_ci_reason": "single seed - no CI exists, so nothing can be declared beyond a CI",
+      "beyond_noise_floor": true,
+      "noise_floor_used": 1.1418668211296108,
+      "multiples_of_panel_mce": 4.117279214218713,
+      "vs_B1_scored_arm": {
+        "B1_panel_geomean": 19.6444,
+        "delta": -1.282167670427171,
+        "claimable": false,
+        "reason": "|delta| 1.2822 vs certified panel min_claimable_effect 1.1419 (1.12x) and single-seed; the card itself pre-declares this comparison non-claimable (part 4 / B1 part-7 item 4)"
+      },
+      "anchor_updated": false,
+      "anchor_update_reason": "S2e requires a 3-SEED result to establish or beat a stream anchor. This is one seed, and the card disclaims its panel geomean as a claim. state/anchors/r2s1_direct.json left untouched."
+    },
+    "cratered_verdict": "proceed_to_seeds_1_2",
+    "cratered_detail": {
+      "rule": "cratered iff crash OR panel geomean skill > CRATERED_SKILL_FACTOR (1.5) x stream anchor skill",
+      "threshold": 34.59542528642366,
+      "measured": 18.36223232957283,
+      "crashed": false,
+      "fired": false,
+      "note": "Not cratered (18.3622 <= 34.5954), so the rule's non-cratered branch is 'proceed_to_seeds_1_2'. NOTE FOR THE ORCHESTRATOR: recipe.seeds is [0] - this card is pre-registered strict single-seed; scripts/submit_seeds_2_3.sh exists but spending seeds 1-2 is an orchestrator decision, not a consequence of this verdict."
+    },
+    "falsification_verdict": "falsified",
+    "falsification_detail": {
+      "hypothesis": "H-r2s1-B2 - 'the condition->HF map on this panel is identification-limited, not capacity-limited, and a pre-registered training-free selection of output parameterization plus out-of-fold Wiener band gains lets a ~10^2-parameter closed-form head match a 10^7-parameter trained decoder everywhere, including the one cell (sharp__cahn_hilliard) where B1's capacity advantage survived'",
+      "verdict": "FALSIFIED - two independent pre-registered legs fired (L1 and L2); L3 and L4 did not fire. Both firing effects sit far above their certified noise floors (6.99x and 14.21x mce), so this is a resolvable falsification, not 'not_resolvable'.",
+      "L1": {
+        "clause_verbatim": "(L1) the scored arm loses to the in-job Wiener-calibrated `ref_decoder_big` by more than that dataset's certified `min_claimable_effect` on >= 2 of {pfc 0.21303, allen_cahn 0.87970, fisher_kpp 0.00071, cahn_hilliard 0.09125, ifc_poisson 0.93770}",
+        "fires": true,
+        "n_datasets_firing": 2,
+        "threshold_n": 2,
+        "deciding_numbers": "sharp__allen_cahn_2d: test_hf 173.62786 vs ref_decoder_big 167.47677, delta +6.15109 = 6.99x mce 0.87970. sharp__cahn_hilliard: test_hf 13.25360 vs ref_decoder_big 11.95728, delta +1.29632 = 14.21x mce 0.09125.",
+        "cells": {
+          "sharp__phase_field_crystal_2d": {
+            "test_hf_skill": 47.43211351452127,
+            "ref_decoder_big_skill": 47.43211351452127,
+            "delta_scored_minus_decoder": 0.0,
+            "mce": 0.21302734961699343,
+            "multiples_of_mce": 0.0,
+            "scored_arm_loses_by_gt_mce": false
+          },
+          "sharp__allen_cahn_2d": {
+            "test_hf_skill": 173.62786112567892,
+            "ref_decoder_big_skill": 167.47677313965733,
+            "delta_scored_minus_decoder": 6.151087986021594,
+            "mce": 0.8797047190126648,
+            "multiples_of_mce": 6.992218926511225,
+            "scored_arm_loses_by_gt_mce": true
+          },
+          "sharp__fisher_kpp_2d": {
+            "test_hf_skill": 11.557293279140119,
+            "ref_decoder_big_skill": 11.5572562561442,
+            "delta_scored_minus_decoder": 3.702299591878955e-05,
+            "mce": 0.0007136812826775696,
+            "multiples_of_mce": 0.051876092055949265,
+            "scored_arm_loses_by_gt_mce": false
+          },
+          "sharp__cahn_hilliard": {
+            "test_hf_skill": 13.253598497322294,
+            "ref_decoder_big_skill": 11.95727790313294,
+            "delta_scored_minus_decoder": 1.2963205941893534,
+            "mce": 0.09124535322300886,
+            "multiples_of_mce": 14.2069765571631,
+            "scored_arm_loses_by_gt_mce": true
+          },
+          "ifc_poisson": {
+            "test_hf_skill": 9.742233335887592,
+            "ref_decoder_big_skill": 9.824427416027959,
+            "delta_scored_minus_decoder": -0.08219408014036667,
+            "mce": 0.9377041289531141,
+            "multiples_of_mce": 0.08765459978525533,
+            "scored_arm_loses_by_gt_mce": false
+          }
+        },
+        "caveat": "The three non-firing cells are weak evidence, not matches. On sharp__phase_field_crystal_2d ALL 21 arms are byte-identical (0.3500859265312266) because every blend collapsed to lambda=0 on the dc_only base; on sharp__fisher_kpp_2d the arms differ by <5e-5 skill for the same reason (lambda in {0, 0.05}); on ifc_poisson the fit fold is N=5 with the calibration fold = all of N. L1 therefore fires on 2 of the 3 cells where the arms are distinguishable at all."
+      },
+      "L2": {
+        "clause_verbatim": "(L2) on `sharp__cahn_hilliard` the out-of-fold-selected closed-form arm still loses to `ref_decoder_big` by > 0.27374 skill units (3x the certified cahn_hilliard mce 0.09125, against B1's measured 0.5511-unit gap)",
+        "fires": true,
+        "measured_gap": 1.2963205941893534,
+        "threshold": 0.27374,
+        "multiples_of_threshold": 4.735590685282945,
+        "multiples_of_mce": 14.2069765571631,
+        "deciding_numbers": "test_hf 13.253598497322288 vs ref_decoder_big 11.957275639731958; gap +1.296322857590330 skill units = 4.736x the 0.27374 threshold = 14.21x mce 0.09125.",
+        "stability": "The 5-resample paired fold spread of (test_hf - ref_decoder_big) on cahn_hilliard is mean +1.16601, min +1.10119, max +1.29632 skill units - every resample exceeds the 0.27374 threshold by more than 4x, so the leg is not a fold-draw artifact.",
+        "rank_sweep_does_not_rescue_it": "No rank in the pre-registered sweep closes the gap. The best rank chosen ON TEST (an ORACLE operation, NOT a quotable arm score) is r=2 at 12.84760, still +0.89032 above ref_decoder_big = 9.76x mce = 3.25x the L2 threshold. r_sel=4 (the training-free pick) yields the scored 13.25360. Full sweep: r1 18.24280, r2 12.84760, r3 12.99340, r5 13.13440, r8 13.11960, r12 13.25560, r20 13.16040, r32 13.17450.",
+        "vs_B1": "B1's gap was 0.5511 skill units; this card's gap is 1.29632, i.e. 2.35x LARGER, not closed. The card's named repair ('add centering with r_sel = 3') was realized as add centering with r_sel = 4 and did not close it; nor would r_sel = 3 (12.99340, still +1.03612 = 3.79x the L2 threshold).",
+        "cross_run_caveat": "The '0.5511-unit gap' in the clause is B1's number against B1's decoder. Per code-review F8, this card's ref_decoder_big is B1-SCALE but not B1-IDENTICAL (decoder.py deliberately drops B1's amplitude/direction factorization, because the `fact` centering IS that factorization on the closed-form side). L2 is worded against 'the in-job Wiener-calibrated ref_decoder_big', so the leg is self-contained and decidable; only the parenthetical cross-run comparison spans two different decoders."
+      },
+      "L3": {
+        "clause_verbatim": "(L3) the scored arm is worse than 1.05x the best frozen floor on any scored panel dataset (pfc > 62.80, allen_cahn > 282.66, fisher_kpp > 12.593, cahn_hilliard > 24.339) or worse than 1.15x on `ifc_poisson` (> 11.563)",
+        "fires": false,
+        "cells": {
+          "sharp__phase_field_crystal_2d": {
+            "test_hf_skill": 47.43211351452127,
+            "threshold": 62.8,
+            "fires": false,
+            "ratio_to_best_floor": 0.793023276363526
+          },
+          "sharp__allen_cahn_2d": {
+            "test_hf_skill": 173.62786112567892,
+            "threshold": 282.66,
+            "fires": false,
+            "ratio_to_best_floor": 0.6449870772955544
+          },
+          "sharp__fisher_kpp_2d": {
+            "test_hf_skill": 11.557293279140119,
+            "threshold": 12.593,
+            "fires": false,
+            "ratio_to_best_floor": 0.9636610244587757
+          },
+          "sharp__cahn_hilliard": {
+            "test_hf_skill": 13.253598497322294,
+            "threshold": 24.339,
+            "fires": false,
+            "ratio_to_best_floor": 0.5717602599420459
+          },
+          "ifc_poisson": {
+            "test_hf_skill": 9.742233335887592,
+            "threshold": 11.563,
+            "fires": false,
+            "ratio_to_best_floor": 0.9689049243884507
+          }
+        },
+        "note": "The scored arm beats the best training-free floor on all 5 scored panel datasets (0.5718x to 0.9689x of floor). Part 4's floors expectation is CONFIRMED - the card clears the floor bar everywhere while losing the capacity question."
+      },
+      "L4": {
+        "clause_verbatim": "(L4) the pre-registered selection rule is beaten on test by its own non-selected alternative (`ref_selrule_alt`) by more than that dataset's mce on >= 2 panel datasets",
+        "fires": false,
+        "n_datasets_firing": 1,
+        "threshold_n": 2,
+        "cells": {
+          "ext__helmholtz_2d": {
+            "test_hf_skill": 3.1189793897604345,
+            "ref_selrule_alt_skill": 3.1995129824991038,
+            "delta_scored_minus_alt": -0.08053359273866922,
+            "mce": 2.95299157437233,
+            "multiples_of_mce": 0.02727186675288329,
+            "alt_beats_scored_by_gt_mce": false,
+            "counts_toward_leg": false
+          },
+          "sharp__phase_field_crystal_2d": {
+            "test_hf_skill": 47.43211351452127,
+            "ref_selrule_alt_skill": 47.43211351452127,
+            "delta_scored_minus_alt": 0.0,
+            "mce": 0.21302734961699343,
+            "multiples_of_mce": 0.0,
+            "alt_beats_scored_by_gt_mce": false,
+            "counts_toward_leg": true
+          },
+          "sharp__allen_cahn_2d": {
+            "test_hf_skill": 173.62786112567892,
+            "ref_selrule_alt_skill": 175.60883010445696,
+            "delta_scored_minus_alt": -1.9809689787780371,
+            "mce": 0.8797047190126648,
+            "multiples_of_mce": 2.251856715059315,
+            "alt_beats_scored_by_gt_mce": false,
+            "counts_toward_leg": true
+          },
+          "sharp__fisher_kpp_2d": {
+            "test_hf_skill": 11.557293279140119,
+            "ref_selrule_alt_skill": 11.557293279140119,
+            "delta_scored_minus_alt": 0.0,
+            "mce": 0.0007136812826775696,
+            "multiples_of_mce": 0.0,
+            "alt_beats_scored_by_gt_mce": false,
+            "counts_toward_leg": true
+          },
+          "sharp__cahn_hilliard": {
+            "test_hf_skill": 13.253598497322294,
+            "ref_selrule_alt_skill": 13.731782789783846,
+            "delta_scored_minus_alt": -0.4781842924615525,
+            "mce": 0.09124535322300886,
+            "multiples_of_mce": 5.240642680102764,
+            "alt_beats_scored_by_gt_mce": false,
+            "counts_toward_leg": true
+          },
+          "ifc_poisson": {
+            "test_hf_skill": 9.742233335887592,
+            "ref_selrule_alt_skill": 7.249436757323079,
+            "delta_scored_minus_alt": 2.492796578564513,
+            "mce": 0.9377041289531141,
+            "multiples_of_mce": 2.658404182721856,
+            "alt_beats_scored_by_gt_mce": true,
+            "counts_toward_leg": true
+          }
+        },
+        "note": "Fires on exactly 1 cell: ifc_poisson (selrule_alt 7.24944 vs scored 9.74223 - the alternative is better by 2.49280 = 2.66x mce 0.93770), the N=5 LOO dataset. The rule is VINDICATED on allen_cahn (2.25x mce in its favour) and cahn_hilliard (5.24x mce in its favour) and is a numerical tie on pfc and fisher_kpp (both collapsed to dc_only). The selection rule itself survives."
+      },
+      "report_only_column": {
+        "clause_verbatim": "`ext__helmholtz_2d` is report-only with the zero-floor column and carries no falsification weight (its certified mce 2.9530 exceeds any effect available against a floor of 3.3441)",
+        "test_hf_skill": 3.1189793897604345,
+        "zero_floor_skill": 3.3441095587226317,
+        "ref_decoder_big_skill": 3.05534533965969,
+        "ref_decoder_small_skill": 2.97848187100603,
+        "ref_selrule_alt_skill": 3.1995129824991038,
+        "B1_scored_arm": 3.1043,
+        "certified_mce": 2.95299157437233,
+        "note": "Every helmholtz contrast (largest 0.2251 vs the zero floor 3.3441) is <0.08x the certified mce 2.9530 - not resolvable, exactly as pre-registered. Carries no falsification weight."
+      }
+    },
+    "guard_flags": [
+      {
+        "dataset": "heat_local",
+        "flag": "nRMSE 0.014703474287570045 is 6.12x the recorded copy-LF guard reference 0.00240152155999517 (>2x rule)",
+        "auto_reject": false,
+        "context": "STRUCTURAL, not a regression: this card is condition-only (no LF at test; stripped view enforced; lf_used_at_any_stage=0) and heat_local's copy-LF reference is near-exact (nRMSE 0.0024). No condition-only arm can approach it - the best training-free condition floor (nn_condition) is 6.4230 and the scored arm at 6.1226 BEATS that floor. Note also that S2d's guard trigger (a 3-seed panel win beyond the CI) was never met, so this guard run is informational."
+      },
+      {
+        "dataset": "fluid",
+        "flag": null,
+        "nrmse_ratio_to_reference": 0.21837454472080203,
+        "note": "0.218x the reference - no flag. Minor observation: skill 0.218375 vs the nn_condition floor 0.204803 (6.6% worse than the floor); the only guard where the arm sits above its best condition floor."
+      },
+      {
+        "dataset": "sharp__sod_1d",
+        "flag": null,
+        "nrmse_ratio_to_reference": 0.2440277309576758,
+        "note": "0.244x the reference - no flag. The arm is EXACTLY the nn_condition floor (0.2440277309576758 vs floors.json 0.2440277309576757): the blend selected nn_condition at lambda=0.00, i.e. the scored arm degenerated onto the floor."
+      }
+    ],
+    "guard_table": {
+      "heat_local": {
+        "nRMSE": 0.014703474287570045,
+        "skill": 6.122566015022417,
+        "cached": true,
+        "copylf_reference_nrmse": 0.00240152155999517,
+        "nrmse_ratio_to_reference": 6.122566015022417,
+        "regressed_gt_2x_vs_reference": true
+      },
+      "fluid": {
+        "nRMSE": 0.047618661878181,
+        "skill": 0.21837454472080203,
+        "cached": true,
+        "copylf_reference_nrmse": 0.21805958171115042,
+        "nrmse_ratio_to_reference": 0.21837454472080203,
+        "regressed_gt_2x_vs_reference": false
+      },
+      "sharp__sod_1d": {
+        "nRMSE": 0.008074920688403448,
+        "skill": 0.2440277309576758,
+        "cached": true,
+        "copylf_reference_nrmse": 0.03309017650048946,
+        "nrmse_ratio_to_reference": 0.2440277309576758,
+        "regressed_gt_2x_vs_reference": false
+      }
+    },
+    "guard_tier": "contract (2 epochs) on heat_local, fluid, sharp__sod_1d; guard-trio geomean skill 0.6884275209515978",
+    "anomalies": [
+      "DEGENERATE ARM COLLAPSE on sharp__phase_field_crystal_2d: all 21 arms (test_hf, both decoders, selrule_alt, head_rff16, the entire rank sweep) return the byte-identical nRMSE 0.3500859265312266 because every blend selected lambda=0.00 on the dc_only base - every arm was overridden by the condition->spatial-mean ridge. diagnostics.pfc_class_split confirms it arm-for-arm (flat 0.020567 / patterned 0.769474 / pooled 0.350086, identical across all 13 scored arms). The pfc L1 and L4 cells are ties by construction and carry no evidence either way. The standing variant-C denominator caveat (pfc has no fidelity gap under a band-limited reference) applies on top.",
+      "NEAR-COLLAPSE on sharp__fisher_kpp_2d: blends chose lambda in {0.00, 0.05} on dc_only and all arms lie within 4e-5 skill units (test_hf 11.5572933 vs ref_decoder_big 11.5572570). Same non-informativeness class as pfc.",
+      "WIENER GRID STILL BINDING on sharp__cahn_hilliard: the scored arm's band-3 (8<k<=16) gain sits ON the widened [0,2] grid's upper edge at 2.0 (gains [0.0, 1.15, 0.0, 2.0, 0.75, 0.0]) - exactly the recurrence the code-reviewer predicted from the contract-tier run. ref_decoder_big's gains on the same dataset are all strictly interior ([0.95, 0.95, 0.65, 0.9, 0.6, 0.05]). The closed-form arm needs more than 2x amplification in an intermediate band that the decoder reproduces natively - the sharpest available mechanism pointer for the L2 loss.",
+      "ifc_poisson ran the small-N LOO branch: n_fit=5, n_model_fold=0, n_calib_fold=5 - the calibration fold IS all of N, so the Wiener gains and the blend were fitted on the same 5 samples that fitted the head. fold_resample_paired_spread was SKIPPED ('leave-one-out protocol: the calibration fold is all of N'). This is the single L4-firing cell and the card already labels it anecdote-grade (N_hf = 5).",
+      "GUARD LEGS CAME FROM CACHE (cached:true on all 3): they were computed 14:48-15:28 by the code-reviewer's pre-job contract-tier runs and hit the score_panel cache at the identical code_hash 0208903a6ee29a3db03fea5dd3c81566434d95df3c23ef852906616edd61dcd2. Legitimate under the caching contract (same code, same env, same nrmse/copylf def hashes), but the guard numbers were not produced inside job 66189580. All 6 panel legs are cached:false, i.e. computed in-job.",
+      "ref_decoder_big is B1-SCALE (13.6M-15.9M params depending on dataset) but NOT B1-IDENTICAL - it drops B1's amplitude/direction factorization by design (code-review F8; declared in decoder.py's docstring but not in build_notes). Recorded in part 5 as F8 requested.",
+      "REVIEWER CARRY-FORWARD APPLIED (review_notes[0] / F1): the card's illustrative r_sel values and parameter counts in parts 3-4 are unreachable under the card's own stage-S mandate and were NOT scored against. Realized, citable values: helmholtz form=fact ratio=3.7849 r_sel=3 head=12 params; pfc add 0.8375 r_sel=3 head=9; allen_cahn add 0.0324 r_sel=1 head=4; fisher_kpp add 0.9697 r_sel=1 head=3; cahn_hilliard add 0.0416 r_sel=4 head=80; ifc_poisson fact 1.0292 r_sel=2 head=12. Every scored head is 3-80 parameters, i.e. 10^0.5-10^1.9, even smaller than the card's '~10^2' framing; the decoders are 10^7.1-10^7.2. No falsification leg references the card's parentheticals.",
+      "DECODER SHUFFLE RNG NOT CHECKPOINTED (code-review F5c) is MOOT for this run: job 66189580 ran to completion in a single allocation (00:16:50, ExitCode 0:0, node hpc-sm-01-04); the .err file is 0 bytes; the .out contains no resume, preemption, NaN, inf or traceback line; output_paths.training is empty. No resume occurred, so ref_decoder_big's batch order was uninterrupted and the L1/L2 comparator is clean.",
+      "Clean-run confirmations: floor seam status 'ok' with max_abs_delta EXACTLY 0.0 on all 6 panel and all 3 guard datasets (tol 1e-9); leakage tripwire lf_used_at_any_stage=0 and under_stripped_view=1 on all 9; Wiener band decomposition max_abs_error 4.3e-19 to 1.6e-15; no NaN or inf anywhere.",
+      "SEAM ASSERTION PASSES: nrmse_def_hash d3d0ade9191c13bacc40702f3eb26ad290e01641cacee22a1d2233b74c035850 is identical across ALL 15 JSONs in the eval dir and equals the live eval/nrmse.py NRMSE_DEF_HASH; copylf_def_hash 9753ff24e856f595748492dec6cb6c215d748f97e8ec4a679b651f8846da907a matches eval/copylf_baselines.json's _copylf_def_hash.",
+      "Three extra diag JSONs in the eval dir (diag_sharp__sod_1d_e4_s0.json, diag_sharp__sod_1d_e60_s0.json, diag_heat_local_e2_s0.json, timestamped 15:26-15:28) are code-reviewer exploration artifacts, not job output. They carry the same hashes and were not used for any number above."
+    ],
+    "wall_clock_per_seed_min": [
+      16.833333333333332
+    ],
+    "wall_clock_detail": {
+      "job_id": "66189580",
+      "sacct_state": "COMPLETED",
+      "sacct_exit": "0:0",
+      "sacct_elapsed": "00:16:50",
+      "start": "2026-07-31T16:16:09",
+      "end": "2026-07-31T16:32:59",
+      "node": "hpc-sm-01-04",
+      "gpu": "NVIDIA H200",
+      "budget": "03:00:00 (raised from 02:00:00 on the reviewer's F5b recommendation) - used 9.4% of it",
+      "per_dataset_seconds_in_family": {
+        "ext__helmholtz_2d": 79.6799521446228,
+        "sharp__phase_field_crystal_2d": 80.30009126663208,
+        "sharp__allen_cahn_2d": 254.64591145515442,
+        "sharp__fisher_kpp_2d": 396.51816606521606,
+        "sharp__cahn_hilliard": 110.1526951789856,
+        "ifc_poisson": 70.20758199691772
+      },
+      "note": "Panel legs (200 epochs) summed to ~991 s inside the family; the guard legs cost 0 s in-job (cache hits). The reviewer's login-node fear (21 m for one 256^2 dataset at contract tier) did not materialise on 4 dedicated cores + an H200: the slowest 200-epoch panel dataset was sharp__fisher_kpp_2d at 396.5 s. For the maintainer's timing ledger: 16.83 min, one leg, both panel+guard in one job."
+    },
+    "arm_skill_table": {
+      "ext__helmholtz_2d": {
+        "ref_dc_only": 19.897296101583166,
+        "ref_decoder_big": 3.05534533965969,
+        "ref_decoder_small": 2.97848187100603,
+        "ref_head_rff16": 3.131881924566961,
+        "ref_nn_condition": 4.385306254533589,
+        "ref_rank_1": 3.110907335468663,
+        "ref_rank_12": 3.0565745709359144,
+        "ref_rank_2": 3.133193413724587,
+        "ref_rank_20": 3.0565696453353937,
+        "ref_rank_3": 3.1189793897604345,
+        "ref_rank_32": 3.0565589814839504,
+        "ref_rank_5": 3.106655318954934,
+        "ref_rank_8": 3.109055128089931,
+        "ref_raw_decoder_big": 3.1150672236765145,
+        "ref_raw_head": 4.915999422822804,
+        "ref_selrule_alt": 3.1995129824991038,
+        "ref_train_mean": 14.610657760631902,
+        "ref_zero": 3.3441095587226317,
+        "test_hf": 3.1189793897604345
+      },
+      "sharp__phase_field_crystal_2d": {
+        "ref_dc_only": 47.43211351452127,
+        "ref_decoder_big": 47.43211351452127,
+        "ref_decoder_small": 47.43211351452127,
+        "ref_head_rff16": 47.43211351452127,
+        "ref_nn_condition": 68.55554386549396,
+        "ref_rank_1": 47.43211351452127,
+        "ref_rank_12": 47.43211351452127,
+        "ref_rank_2": 47.43211351452127,
+        "ref_rank_20": 47.43211351452127,
+        "ref_rank_3": 47.43211351452127,
+        "ref_rank_32": 47.43211351452127,
+        "ref_rank_5": 47.43211351452127,
+        "ref_rank_8": 47.43211351452127,
+        "ref_raw_decoder_big": 48.893251749244655,
+        "ref_raw_head": 55.42589299803185,
+        "ref_selrule_alt": 47.43211351452127,
+        "ref_train_mean": 59.8117544948052,
+        "ref_zero": 135.48706166081905,
+        "test_hf": 47.43211351452127
+      },
+      "sharp__allen_cahn_2d": {
+        "ref_dc_only": 175.60883010445696,
+        "ref_decoder_big": 167.47677313965733,
+        "ref_decoder_small": 167.24531920009747,
+        "ref_head_rff16": 175.60883010445696,
+        "ref_nn_condition": 269.19587575878967,
+        "ref_rank_1": 173.62786112567892,
+        "ref_rank_12": 173.6274180685652,
+        "ref_rank_2": 173.63496365745826,
+        "ref_rank_20": 173.62862816939946,
+        "ref_rank_3": 173.64435253422675,
+        "ref_rank_32": 173.60628172627895,
+        "ref_rank_5": 173.6504098697406,
+        "ref_rank_8": 173.66225400908812,
+        "ref_raw_decoder_big": 202.1589800473486,
+        "ref_raw_head": 175.46241282552018,
+        "ref_selrule_alt": 175.60883010445696,
+        "ref_train_mean": 562.0295274675294,
+        "ref_zero": 561.5560003420935,
+        "test_hf": 173.62786112567892
+      },
+      "sharp__fisher_kpp_2d": {
+        "ref_dc_only": 11.557293279140119,
+        "ref_decoder_big": 11.5572562561442,
+        "ref_decoder_small": 11.557331297123513,
+        "ref_head_rff16": 11.556907791972524,
+        "ref_nn_condition": 16.337946591223936,
+        "ref_rank_1": 11.557293279140119,
+        "ref_rank_12": 11.557293279140119,
+        "ref_rank_2": 11.557293279140119,
+        "ref_rank_20": 11.557293279140119,
+        "ref_rank_3": 11.557293279140119,
+        "ref_rank_32": 11.557293279140119,
+        "ref_rank_5": 11.557293279140119,
+        "ref_rank_8": 11.557293279140119,
+        "ref_raw_decoder_big": 11.58185702581301,
+        "ref_raw_head": 11.595813946324432,
+        "ref_selrule_alt": 11.557293279140119,
+        "ref_train_mean": 11.99311063309952,
+        "ref_zero": 46.62112543417874,
+        "test_hf": 11.557293279140119
+      },
+      "sharp__cahn_hilliard": {
+        "ref_dc_only": 23.867738508771748,
+        "ref_decoder_big": 11.95727790313294,
+        "ref_decoder_small": 11.730586158817612,
+        "ref_head_rff16": 13.80404697561051,
+        "ref_nn_condition": 23.180342227117514,
+        "ref_rank_1": 18.242785974990557,
+        "ref_rank_12": 13.2556043954584,
+        "ref_rank_2": 12.847612901883481,
+        "ref_rank_20": 13.160437496554543,
+        "ref_rank_3": 12.993398923053208,
+        "ref_rank_32": 13.174476403296106,
+        "ref_rank_5": 13.134428601786198,
+        "ref_rank_8": 13.119579967896497,
+        "ref_raw_decoder_big": 12.063572641645942,
+        "ref_raw_head": 13.155230843560918,
+        "ref_selrule_alt": 13.731782789783846,
+        "ref_train_mean": 23.96905448527446,
+        "ref_zero": 23.92174945843033,
+        "test_hf": 13.253598497322294
+      },
+      "ifc_poisson": {
+        "ref_dc_only": 15.547214176454354,
+        "ref_decoder_big": 9.824427416027959,
+        "ref_decoder_small": 9.458940443310004,
+        "ref_head_rff16": 9.739360693236348,
+        "ref_nn_condition": 10.054890929609687,
+        "ref_rank_1": 9.751800034014877,
+        "ref_rank_12": 9.705150832227776,
+        "ref_rank_2": 9.742233335887592,
+        "ref_rank_20": 9.705150832227776,
+        "ref_rank_3": 9.725022265270663,
+        "ref_rank_32": 9.705150832227776,
+        "ref_rank_5": 9.705150832227776,
+        "ref_rank_8": 9.705150832227776,
+        "ref_raw_decoder_big": 20.11772363014165,
+        "ref_raw_head": 10.608180107802681,
+        "ref_selrule_alt": 7.249436757323079,
+        "ref_train_mean": 11.206332455369639,
+        "ref_zero": 27.77777777777778,
+        "test_hf": 9.742233335887592
+      }
+    },
+    "selection_stage_realized": {
+      "ext__helmholtz_2d": {
+        "selected_form": "fact",
+        "alt_form": "add",
+        "centering_ratio": 3.7849093515007692,
+        "tau": 1.0,
+        "r_sel": 3,
+        "n_modes_r2_gt_tau": 3,
+        "scored_head_n_params": 12,
+        "ref_head_rff16_n_params": 108,
+        "ref_decoder_big_n_params": 14018049,
+        "ref_decoder_small_n_params": 1019457,
+        "blend_base": "nn_condition",
+        "blend_lambda": 0.9500000000000001,
+        "wiener_gains": [
+          0.2,
+          0.1,
+          0.15000000000000002,
+          0.15000000000000002,
+          0.1,
+          0.0
+        ],
+        "wiener_gains_on_grid_edge_bands": [
+          5
+        ],
+        "protocol": "disjoint_folds",
+        "n_fit": 320,
+        "n_model_fold": 40,
+        "n_calib_fold": 40,
+        "floor_seam_status": "ok",
+        "floor_seam_max_abs_delta": 0.0,
+        "lf_used_at_any_stage": 0,
+        "under_stripped_view": 1,
+        "total_seconds": 79.6799521446228
+      },
+      "sharp__phase_field_crystal_2d": {
+        "selected_form": "add",
+        "alt_form": "fact",
+        "centering_ratio": 0.8374562778758708,
+        "tau": 1.0,
+        "r_sel": 3,
+        "n_modes_r2_gt_tau": 3,
+        "scored_head_n_params": 9,
+        "ref_head_rff16_n_params": 105,
+        "ref_decoder_big_n_params": 14427521,
+        "ref_decoder_small_n_params": 1265153,
+        "blend_base": "dc_only",
+        "blend_lambda": 0.0,
+        "wiener_gains": [
+          1.0,
+          0.0,
+          0.0,
+          0.0,
+          0.05,
+          1.0
+        ],
+        "wiener_gains_on_grid_edge_bands": [
+          1,
+          2,
+          3
+        ],
+        "protocol": "disjoint_folds",
+        "n_fit": 320,
+        "n_model_fold": 40,
+        "n_calib_fold": 40,
+        "floor_seam_status": "ok",
+        "floor_seam_max_abs_delta": 0.0,
+        "lf_used_at_any_stage": 0,
+        "under_stripped_view": 1,
+        "total_seconds": 80.30009126663208
+      },
+      "sharp__allen_cahn_2d": {
+        "selected_form": "add",
+        "alt_form": "fact",
+        "centering_ratio": 0.032378650320829525,
+        "tau": 1.0,
+        "r_sel": 1,
+        "n_modes_r2_gt_tau": 1,
+        "scored_head_n_params": 4,
+        "ref_head_rff16_n_params": 36,
+        "ref_decoder_big_n_params": 15853057,
+        "ref_decoder_small_n_params": 1265217,
+        "blend_base": "nn_condition",
+        "blend_lambda": 0.9500000000000001,
+        "wiener_gains": [
+          1.0,
+          0.15000000000000002,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "wiener_gains_on_grid_edge_bands": [
+          2,
+          3,
+          4,
+          5
+        ],
+        "protocol": "disjoint_folds",
+        "n_fit": 320,
+        "n_model_fold": 40,
+        "n_calib_fold": 40,
+        "floor_seam_status": "ok",
+        "floor_seam_max_abs_delta": 0.0,
+        "lf_used_at_any_stage": 0,
+        "under_stripped_view": 1,
+        "total_seconds": 254.64591145515442
+      },
+      "sharp__fisher_kpp_2d": {
+        "selected_form": "add",
+        "alt_form": "fact",
+        "centering_ratio": 0.9696989856215241,
+        "tau": 1.0,
+        "r_sel": 1,
+        "n_modes_r2_gt_tau": 1,
+        "scored_head_n_params": 3,
+        "ref_head_rff16_n_params": 35,
+        "ref_decoder_big_n_params": 15852929,
+        "ref_decoder_small_n_params": 1265153,
+        "blend_base": "dc_only",
+        "blend_lambda": 0.0,
+        "wiener_gains": [
+          1.0,
+          0.05,
+          0.0,
+          0.0,
+          0.0,
+          0.05
+        ],
+        "wiener_gains_on_grid_edge_bands": [
+          2,
+          3,
+          4
+        ],
+        "protocol": "disjoint_folds",
+        "n_fit": 320,
+        "n_model_fold": 40,
+        "n_calib_fold": 40,
+        "floor_seam_status": "ok",
+        "floor_seam_max_abs_delta": 0.0,
+        "lf_used_at_any_stage": 0,
+        "under_stripped_view": 1,
+        "total_seconds": 396.51816606521606
+      },
+      "sharp__cahn_hilliard": {
+        "selected_form": "add",
+        "alt_form": "fact",
+        "centering_ratio": 0.041559631981683026,
+        "tau": 1.0,
+        "r_sel": 4,
+        "n_modes_r2_gt_tau": 4,
+        "scored_head_n_params": 80,
+        "ref_head_rff16_n_params": 208,
+        "ref_decoder_big_n_params": 15855105,
+        "ref_decoder_small_n_params": 1266241,
+        "blend_base": "train_mean",
+        "blend_lambda": 1.0,
+        "wiener_gains": [
+          0.0,
+          1.1500000000000001,
+          0.0,
+          2.0,
+          0.75,
+          0.0
+        ],
+        "wiener_gains_on_grid_edge_bands": [
+          0,
+          2,
+          3,
+          5
+        ],
+        "protocol": "disjoint_folds",
+        "n_fit": 320,
+        "n_model_fold": 40,
+        "n_calib_fold": 40,
+        "floor_seam_status": "ok",
+        "floor_seam_max_abs_delta": 0.0,
+        "lf_used_at_any_stage": 0,
+        "under_stripped_view": 1,
+        "total_seconds": 110.1526951789856
+      },
+      "ifc_poisson": {
+        "selected_form": "fact",
+        "alt_form": "add",
+        "centering_ratio": 1.029248696721435,
+        "tau": 1.0,
+        "r_sel": 2,
+        "n_modes_r2_gt_tau": 2,
+        "scored_head_n_params": 12,
+        "ref_head_rff16_n_params": 76,
+        "ref_decoder_big_n_params": 13641473,
+        "ref_decoder_small_n_params": 712385,
+        "blend_base": "nn_condition",
+        "blend_lambda": 0.15000000000000002,
+        "wiener_gains": [
+          0.9,
+          0.9500000000000001,
+          0.9,
+          0.8500000000000001,
+          0.8,
+          0.9
+        ],
+        "wiener_gains_on_grid_edge_bands": [],
+        "protocol": "leave_one_out",
+        "n_fit": 5,
+        "n_model_fold": 0,
+        "n_calib_fold": 5,
+        "floor_seam_status": "ok",
+        "floor_seam_max_abs_delta": 0.0,
+        "lf_used_at_any_stage": 0,
+        "under_stripped_view": 1,
+        "total_seconds": 70.20758199691772
+      }
+    },
+    "fold_resample_paired_spread_skill_units": {
+      "ext__helmholtz_2d": {
+        "n": 5,
+        "mean_skill_units": 0.06531059569611393,
+        "min_skill_units": 0.05308456791454044,
+        "max_skill_units": 0.08940252661205655,
+        "std_skill_units": 0.01464707425100379,
+        "sign": "scored arm WORSE than ref_decoder_big on all 5 resamples"
+      },
+      "sharp__phase_field_crystal_2d": {
+        "n": 5,
+        "mean_skill_units": -0.0037490245558186824,
+        "min_skill_units": -0.0062693770412892424,
+        "max_skill_units": 0.0,
+        "std_skill_units": 0.0034224721974076126,
+        "sign": "mixed or better"
+      },
+      "sharp__allen_cahn_2d": {
+        "n": 5,
+        "mean_skill_units": 5.570966810055382,
+        "min_skill_units": 4.858709229805093,
+        "max_skill_units": 6.151087986021609,
+        "std_skill_units": 0.6155033811546401,
+        "sign": "scored arm WORSE than ref_decoder_big on all 5 resamples"
+      },
+      "sharp__fisher_kpp_2d": {
+        "n": 5,
+        "mean_skill_units": 5.892007667657368e-05,
+        "min_skill_units": 3.233009743611774e-05,
+        "max_skill_units": 0.00013960019180965516,
+        "std_skill_units": 4.539278670788336e-05,
+        "sign": "scored arm WORSE than ref_decoder_big on all 5 resamples"
+      },
+      "sharp__cahn_hilliard": {
+        "n": 5,
+        "mean_skill_units": 1.1660065649533564,
+        "min_skill_units": 1.101190486018933,
+        "max_skill_units": 1.2963205941893536,
+        "std_skill_units": 0.07881592681522105,
+        "sign": "scored arm WORSE than ref_decoder_big on all 5 resamples"
+      },
+      "ifc_poisson": {
+        "skipped": "leave-one-out protocol: the calibration fold is all of N"
+      }
+    },
+    "panel_geomean_by_arm_informational": {
+      "note": "Panel geomean over the same 6 datasets for each arm, via eval/nrmse.py::panel_geomean over the arm nRMSE in the diag JSONs with the same copylf_baselines denominators score_panel used. INFORMATIONAL ONLY - only test_hf is a scored arm and the card pre-registers no panel-geomean leg.",
+      "test_hf": 18.362232329572834,
+      "ref_decoder_big": 17.905179583480656,
+      "ref_decoder_small": 17.656625457861583,
+      "ref_selrule_alt": 17.691504086216877,
+      "ref_head_rff16": 18.533941268286103,
+      "ref_dc_only": 29.873737452380148,
+      "ref_raw_head": 20.642291447800908,
+      "ref_raw_decoder_big": 21.031707352972106
+    },
+    "provenance": {
+      "scored_result_jsons": [
+        "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s1_direct/B2/eval/result_panel_s0.json",
+        "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s1_direct/B2/eval/result_guard_s0.json"
+      ],
+      "diag_jsons": [
+        "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s1_direct/B2/eval/diag_ext__helmholtz_2d_e200_s0.json",
+        "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s1_direct/B2/eval/diag_sharp__phase_field_crystal_2d_e200_s0.json",
+        "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s1_direct/B2/eval/diag_sharp__allen_cahn_2d_e200_s0.json",
+        "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s1_direct/B2/eval/diag_sharp__fisher_kpp_2d_e200_s0.json",
+        "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s1_direct/B2/eval/diag_sharp__cahn_hilliard_e200_s0.json",
+        "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s1_direct/B2/eval/diag_ifc_poisson_e200_s0.json"
+      ],
+      "slurm_log": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s1_direct/B2/slurm/r2-r2s1_direct-B2-s0_66189580.out",
+      "anchor_file": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round2/state/anchors/r2s1_direct.json",
+      "noise_floor_file": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round2/state/noise_floor.json",
+      "floors_file": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round2/state/anchors/floors.json",
+      "code_hash": "0208903a6ee29a3db03fea5dd3c81566434d95df3c23ef852906616edd61dcd2",
+      "nrmse_def_hash": "d3d0ade9191c13bacc40702f3eb26ad290e01641cacee22a1d2233b74c035850",
+      "copylf_def_hash": "9753ff24e856f595748492dec6cb6c215d748f97e8ec4a679b651f8846da907a",
+      "skill_derivation": "test_hf skill and nRMSE are VERBATIM from result_panel_s0.json (score_panel.py output). Reference-arm skills are the arm nRMSE recorded in the diag JSONs passed through eval/nrmse.py::skill() with the identical copylf_baselines.json denominators score_panel.py itself uses - the eval layer's own definition applied to the layer's own recorded values, not a hand recomputation. Every diag test_hf value was asserted equal to the scored value to 1e-12 before any leg was judged."
+    }
+  },
   "6_analysis": null,
   "7_gap_and_future": null,
   "reanalysis_progress": null
