@@ -1,13 +1,13 @@
-# MFFP Autoresearch Round 2 — Dashboard (updated 2026-07-31T21:00:26Z)
+# MFFP Autoresearch Round 2 — Dashboard (updated 2026-07-31T21:32:56Z)
 
 ## Streams
 
 | Stream | Anchor (skill) | Current batch | Card | Status | Jobs | Last change |
 |---|---|---|---|---|---|---|
-| r2s1_direct | 23.0636 (best_floor_panel_geomean) | **2** | r2s1_direct-B1 **complete**; B2 in progress | **B1: unchanged, still COMPLETE.** **B2 builder continues self-testing**: new module `models_r2/r2s1_selected_form/wiener.py` plus a spectral/spatial equivalence self-test (`scratchpad/test_wiener_equivalence.py`/`.log`, all bands `identical=True`, max error ~1e-15 to 1e-18 — clean pass). Checkpoint-resume correctness now under active test (`scratchpad/_resume_tmp/a1.json`/`a2.json`, 2 vs 4 epochs on `sharp__sod_1d`). **Live PIDs confirmed**: `smoke_eval.py --dataset_name sharp__sod_1d --epochs 4 --out scratchpad/_resume_tmp/a2.json` and `scratchpad/test_resume.py` running at check time. Card itself unchanged on disk (`status: drafted`, `job_ids: []`, no builder handoff note yet) | 0 live (no B2 jobs submitted yet) | `models_r2/r2s1_selected_form/wiener.py` + resume self-test new this run |
-| r2s2_stacked | 23.0636 (best_floor_panel_geomean) | **2** | r2s2_stacked-B1 **complete**; r2s2_stacked-B2 **drafted** (new this run) | **B1: unchanged, still COMPLETE.** **B2 is a new card this run**: starter SUCCESS (14/14, no TBDs) drafted `r2s2_correctability`, a diagnostic calibrating the coherence threshold + DPI closure measurement via two training-free intermediate ladders (oracle spectral mix, test-legal kNN-LF ladder) with the frozen DC corrector refit per rung. Builder dispatched; worktree `worktrees/r2s2_stacked/B2/` freshly checked out (full repo tree materialized, no `models_r2/` yet — earliest-stage B2 of any stream) | 0 live (no B2 jobs submitted yet) | `experiment_cards/r2s2_stacked/batch_2/B2.json` new this run (untracked, other-subagent write) |
-| r2s3_lf_train_signal | 23.0636 (best_floor_panel_geomean) | **2** | r2s3_lf_train_signal-B1 **complete**; B2 in progress | **B1: unchanged, still COMPLETE.** **B2 builder wrote its handoff this run, then kept working**: `notes/handoff_experiment_builder.md` (21:10:00Z) validates the from-scratch family bit-for-bit against B1's published `ifc_poisson` numbers (`ref_linear_hfonly` 3.4744, rung-32 ladder 0.2427, oracle null-energy 0.18828 — all exact matches); flags for the reviewer: `ref_linear_mf` ties to rung 8 not rung 32 on ifc (all rungs affine to ~3e-8), penalty amplitude gain 0.551 reported-not-applied. **After** the handoff, builder continued running guard-dataset debug legs (`dbg_sod_A2`, `dbg_ch_A2`, `dbg_ch_A3`, `dbg_fk_A2`). **Live PID confirmed**: `smoke_eval.py --dataset_name sharp__cahn_hilliard --out scratchpad/dbg_ch_A2.json` (arm `A2_lf_cov_null`) running at check time. Worktree branch still uncommitted (only the launch commit `9e10d41`). Card itself unchanged on disk (`status: drafted`, `job_ids: []`, `build_commit: null`) | 0 live (no B2 jobs submitted yet) | `notes/handoff_experiment_builder.md` new this run |
-| r2s4_diag | **19.8178** (certified_3seed_panel_geomean, CI95 [19.385, 20.527]) | **2** | r2s4_diag-B1 **complete**; r2s4_diag-B2 **running** (seed 0) | **B1: unchanged, still COMPLETE.** **B2 advanced fully through code-review and into SLURM this run**: code-reviewer verdict **SUGGEST (6/6)** — all sub-checks PASS/SUGGEST, no FAIL; headline adjudication ruled the card's 3-seed design **ADMISSIBLE** under program.md §12.4's standing training-diagnostic exception, and recommended the normal seed-0 gate (not B1's parallel 3-seed submit) — honored. **Orchestrator then submitted seed 0**: job **66181609** (`r2-r2s4_diag-B2-s0`, h200), now `status: running` on the card (`job_ids: ['66181609']`) | **1 live**: `66181609` RUNNING on `hpc-sm-01-04`, ~26s elapsed at check | card `status` → `reviewed_suggest` → `running`, `job_ids` set this run (git-diff confirmed, not this maintainer's write) |
+| r2s1_direct | 23.0636 (best_floor_panel_geomean) | **2** | r2s1_direct-B1 **complete**; B2 in progress | **B1: unchanged, still COMPLETE.** **B2 builder still self-testing, new leg**: the `--datasets guard` sweep continues — now running `smoke_eval.py` directly on `heat_local` (2 epochs) via a fresh `score_panel.py` wrapper invocation (PID 128608/129675, ~3:37 CPU time, `R` state, confirmed live via `ps aux`). Card itself unchanged on disk (`status: drafted`, `job_ids: []`, no builder handoff note yet) | 0 live (no B2 jobs submitted yet) | Guard-dataset debug sweep continuing on `heat_local` |
+| r2s2_stacked | 23.0636 (best_floor_panel_geomean) | **2** | r2s2_stacked-B1 **complete**; r2s2_stacked-B2 **drafted** | **B1: unchanged, still COMPLETE.** **B2 builder's contract is now complete**: `models_r2/r2s2_correctability/manifest.json` and `smoke_eval.py` landed this run (both absent last check) — the family now has all 9 mechanism modules + `manifest.json` + `smoke_eval.py` + `INSPIRATION.md`. **Live PID confirmed**: PID 129751 (~2:16 CPU time, `R` state) running `smoke_eval.py --dataset_name ext__helmholtz_2d --epochs 2 --seed 0` directly (not via `score_panel.py`), log shows M1/M1c coherence-threshold-calibration mechanism probes in progress (`gamma_b1`, `oracle_gain`, `CORRECTOR_FUTILE`/`UNDETERMINED` verdicts being computed per amplitude/bandwidth sweep point). Still no build commit on the worktree branch (only launch commit `9e10d41`) | 0 live (no B2 jobs submitted yet) | Contract now complete (manifest.json + smoke_eval.py landed); first direct smoke run in progress |
+| r2s3_lf_train_signal | 23.0636 (best_floor_panel_geomean) | **2** | r2s3_lf_train_signal-B1 **complete**; B2 in progress | **B1: unchanged, still COMPLETE.** **B2 builder advanced two more debug legs**: the cahn_hilliard `A2_lf_cov_null` leg (same PID 121353 from last check) completed (`dbg_ch_A2.json` full split table written, `gate m=15 rank=5 null_active=True`), then `A3_lf_paired` also completed (`dbg_ch_A3.json` written, `null_active=False` as expected for the paired arm), and the driver moved on to `sharp__fisher_kpp_2d` `A2_lf_cov_null` — **live PID confirmed**: PID 130232 (new PID, ~1:27 CPU time, `R` state) running `smoke_eval.py --dataset_name sharp__fisher_kpp_2d --out scratchpad/dbg_fk_A2.json`. Worktree branch still uncommitted. Card unchanged (`status: drafted`, `job_ids: []`, `build_commit: null`) | 0 live (no B2 jobs submitted yet) | cahn_hilliard A2 + A3 legs completed; now mid-run on fisher_kpp A2 |
+| r2s4_diag | **19.8178** (certified_3seed_panel_geomean, CI95 [19.385, 20.527]) | **2** | r2s4_diag-B1 **complete**; r2s4_diag-B2 **running** (seeds 0,1,2) | **B1: unchanged, still COMPLETE.** **B2's seed-0 SLURM job COMPLETED this run**: `66181609` (`r2-r2s4_diag-B2-s0`) finished at 21:16:51Z, elapsed 17:15, exit 0:0, `orchestrator_flow.md` records geomean 19.2799 finite on 6/6 datasets — the seed-0 gate passed. **Orchestrator then submitted seeds 1-2** (`66182923`/`66182924`, started 21:18:39Z) per the reviewer-adjudicated 3-seed exception (SS12.4 + B1 part-7 directive); card `job_ids` now `['66181609','66182923','66182924']`, `status: running`, unchanged otherwise | **2 live**: `66182923`/`66182924` RUNNING on `hpc-sm-01-04`, ~14:03 elapsed each | Seed 0 COMPLETED (17:15, first B2 completion); seeds 1-2 submitted and now running |
 
 **Anchor note**: r2s4_diag remains the only stream with a *certified* anchor
 (`certified_3seed_panel_geomean`, 19.8178, replacing the training-free floor)
@@ -16,29 +16,34 @@
 unchanged). No anchor deltas this run. All anchors rendered verbatim from
 `state/anchors/*.json`.
 
-**This run's headline**: **the round's 8th card drafted** (`r2s2_stacked-B2`,
-all four streams now have a live B2 slot in the pipeline) and **the round's
-first new SLURM submission since batch 1** — `r2s4_diag-B2` cleared code
-review with a SUGGEST verdict (3-seed design ruled admissible under program
-§12.4) and its seed-0 job (`66181609`) is now running, ending an 8-run streak
-of zero live `r2-*` jobs. r2s1_direct-B2 and r2s3_lf_train_signal-B2 both
-continue active builder self-test/debug with fresh live PIDs; r2s3's builder
-also produced its handoff note this run (validated exactly against B1's
-published numbers) but kept working past it and has not yet committed or
-flipped card status.
+**This run's headline**: r2s4_diag-B2's seed 0 SLURM job **COMPLETED**
+(the round's first B2 job completion, elapsed 17:15, geomean 19.2799 per
+`orchestrator_flow.md`), triggering the seed-0 gate pass and submission of
+seeds 1-2 (both now RUNNING) — the only card-file delta this run
+(`job_ids` grew from 1 to 3 entries, `status` unchanged at `running`).
+Sub-card progress on the other three streams: r2s2_stacked-B2's contract
+completed (`manifest.json` + `smoke_eval.py` landed) and its first direct
+smoke run is in progress (mechanism-calibration probes M1/M1c); r2s3's
+builder finished 2 more debug legs (cahn_hilliard A2 + A3) and moved to
+fisher_kpp; r2s1's builder continues its guard-dataset debug sweep on
+`heat_local`. Timing ledger upserted with the newly COMPLETED job
+(66181609, 17.25 min, h200) — the round's first B2-scale timing datum.
 
 ## Running / pending jobs
 
 | Job | Card | State | Elapsed | Node/Reason |
 |---|---|---|---|---|
-| 66181609 | r2s4_diag-B2 (seed 0) | RUNNING | ~26s | hpc-sm-01-04 |
+| 66182923 | r2s4_diag-B2 (seed 1) | RUNNING | ~14:03 | hpc-sm-01-04 |
+| 66182924 | r2s4_diag-B2 (seed 2) | RUNNING | ~14:03 | hpc-sm-01-04 |
 
-2 local (non-SLURM) self-test/debug processes confirmed live via `ps aux`:
-r2s1_direct-B2 checkpoint-resume test (`sharp__sod_1d`, epochs 4) + its
-driver `test_resume.py`; r2s3_lf_train_signal-B2 post-handoff debug run on
-`sharp__cahn_hilliard` (arm `A2_lf_cov_null`). Unrelated interactive `bash`
-jobs and round-1 `r1-*` jobs also visible in the queue — out of this
-maintainer's scope, not itemized here.
+66181609 (r2s4_diag-B2 seed 0) COMPLETED this run (17:15 elapsed, exit 0:0) —
+moved out of this table into the timing ledger. 3 local (non-SLURM)
+self-test/debug processes confirmed live via `ps aux`: r2s1_direct-B2 guard
+debug on `heat_local` (PID 128608/129675), r2s2_stacked-B2's first direct
+smoke run on `ext__helmholtz_2d` (PID 129751), r2s3_lf_train_signal-B2 debug
+leg on `sharp__fisher_kpp_2d` (PID 130232). Unrelated interactive `bash` jobs
+and round-1 `r1-*` jobs also visible in the queue — out of this maintainer's
+scope, not itemized here.
 
 ## Completed cards
 
@@ -49,47 +54,56 @@ maintainer's scope, not itemized here.
 | r2s3_lf_train_signal-B1 | model | 25.3919 (`rung_native`, single seed 0) | **falsified in a split reading**: F1 (primary, architecture) FALSIFIED with a 7.35-skill-unit sign inversion on `ifc_poisson`, traced to a shared-scaler confound; but the motivating INFORMATION claim is CONFIRMED — an architecture-free estimator recovers +3.2317 skill units from the same 170 disjoint LF rows (18.83% of the law's coefficient energy at cos 0.9993). F2 (native vs upsampled) survived; F3 (degeneracy) verdict depends on provisional vs re-certified floor thresholds (both recorded) | 2 tools, both correctly indexed: `tools/affine_ladder_voi.py`, `tools/posthoc_repair_ladder.py` |
 | r2s2_stacked-B1 | model | 14.0756 (single seed 0, no CI yet; scored arm `frozen`; ~all margin from the unpaired `ifc_poisson` column) | clean negative with a measured mechanism, not a raw binary: the falsification clause was a conjunction that did **not** fire — conjunct 1 ("improve on `emul_only` by ≥2.0 skill units") **held** (measured improvement 0.0061, 326x below threshold) but conjunct 2 ("beat the NN-in-condition floor") **failed to hold** (beat it by 11.90 skill units, 130x the noise floor). Round-level headline (I8): a stacked intermediate representation is a re-parameterisation of the condition→HF hypothesis class, not a new information channel | 2 tools, both correctly indexed and register-confirmed: `tools/reachable_set_rank_audit.py`, `tools/surrogate_coherence_eligibility.py` |
 
+r2s4_diag-B2's seed 0 has a finite result (geomean 19.2799 per
+`orchestrator_flow.md`) but the card is not `complete` — awaiting seeds 1-2
+(both RUNNING) for the mandatory 3-seed paired spread before analysis. Not
+listed here until the card itself closes.
+
 ## Flags
 
-- **Card `status`/count deltas this run (both by other subagents — no card
-  writes by this maintainer)**: **new card** `r2s2_stacked-B2` drafted
-  (round's 8th card, all 4 streams now have a B2 slot in the pipeline);
-  `r2s4_diag-B2` advanced `built` → `reviewed_suggest` → **`running`**
-  (`job_ids: ['66181609']`) — code-review SUGGEST (6/6), 3-seed design ruled
-  admissible, seed-0 job submitted. All other 6 cards unchanged: `r2s1_direct-B1`
-  `complete`, `r2s1_direct-B2` `drafted`, `r2s2_stacked-B1` `complete`,
-  `r2s3_lf_train_signal-B1` `complete`, `r2s3_lf_train_signal-B2` `drafted`,
-  `r2s4_diag-B1` `complete`. `reopen_candidate` is `false` on all 8 cards.
-- **First new SLURM submission since batch 1**: job `66181609`
-  (`r2-r2s4_diag-B2-s0`) RUNNING on `hpc-sm-01-04` — ends an 8-consecutive-check
-  streak of zero live `r2-*` jobs. Code-reviewer's adjudication: the card's
-  in-job 3-seed spread is admissible as a paired-control estimate under
-  program.md §12.4's drift-class rule, but B1's certified `min_claimable_effect`
-  constants used a DIFFERENT randomization scope (seed varies init + batch
-  order + the val split; B2 fixes the val split by `R2S3B2_SPLIT_SEED`) —
-  flagged as an analyzer obligation (do not silently overwrite
-  `state/noise_floor.json` with B2's spread without labeling the scope
-  difference).
-- **r2s1_direct-B2 builder progress**: new `wiener.py` module + a clean
-  spectral/spatial equivalence self-test; checkpoint-resume correctness now
-  under active live test (2 vs 4 epoch comparison on `sharp__sod_1d`). Card
-  itself still `drafted`, `job_ids: []`, no builder handoff yet.
-- **r2s3_lf_train_signal-B2 builder handoff written, then continued working**:
-  handoff validates the family exactly against B1's published `ifc_poisson`
-  numbers; two open watch-items flagged for the reviewer (rung-8-vs-32 tie,
-  unapplied 0.551 penalty-amplitude gain). Worktree branch still uncommitted
-  (only the launch commit present) — builder is still debugging guard
-  datasets past its own handoff. The starter's forwarded env-key-count
-  discrepancy (card says "23/25", lists 30 keys, carried forward several
-  runs, unresolved) remains unaffected — key list stays authoritative.
+- **Only card-file delta this run**: `r2s4_diag-B2` `job_ids` grew from
+  `['66181609']` to `['66181609','66182923','66182924']` (seed 0 COMPLETED,
+  seeds 1-2 submitted and RUNNING); `status` unchanged at `running`. All
+  other 7 cards' `status`/`job_ids` byte-identical to last run:
+  `r2s1_direct-B1`/`r2s2_stacked-B1`/`r2s3_lf_train_signal-B1`/`r2s4_diag-B1`
+  `complete`; `r2s1_direct-B2`/`r2s2_stacked-B2`/`r2s3_lf_train_signal-B2`
+  `drafted`. `reopen_candidate` is `false` on all 8 cards.
+- **r2s4_diag-B2 seed 0 COMPLETED**: `66181609` (`r2-r2s4_diag-B2-s0`),
+  17:15 elapsed, exit 0:0, ended 2026-07-31T21:16:51Z (right at the boundary
+  of the prior maintainer run's window, which last saw it RUNNING at ~12:37
+  elapsed). `orchestrator_flow.md` records the seed-0 result as finite
+  (geomean 19.2799, 6/6 datasets) and the gate as passed. Seeds 1-2
+  (`66182923`/`66182924`) submitted 2026-07-31T21:18:39Z, both RUNNING on
+  `hpc-sm-01-04`, ~14:03 elapsed at this check — steady progress, no state
+  transitions yet.
+- **r2s2_stacked-B2 builder's contract now complete**: `manifest.json` and
+  `smoke_eval.py` landed this run (both absent at last check) alongside the
+  9 mechanism modules from before. First direct smoke run in progress
+  (`ext__helmholtz_2d`, 2 epochs, PID 129751 live) — mechanism-calibration
+  probes (M1 coherence threshold sweep, M1c nonlinear stress test) producing
+  `CORRECTOR_FUTILE`/`UNDETERMINED` verdicts per amplitude/bandwidth point.
+  No build commit on the worktree branch yet (only launch commit `9e10d41`).
+- **r2s1_direct-B2 builder progress**: guard-dataset debug sweep continues,
+  now inside `smoke_eval.py` on `heat_local` (fresh PID 128608/129675, 2
+  epochs). Card itself still `drafted`, `job_ids: []`, no builder handoff yet.
+- **r2s3_lf_train_signal-B2 builder progress**: cahn_hilliard `A2_lf_cov_null`
+  and `A3_lf_paired` legs both completed cleanly this run (full split tables
+  written); driver moved on to `sharp__fisher_kpp_2d` `A2_lf_cov_null` (new
+  PID 130232 live). Worktree branch still uncommitted. The starter's
+  forwarded env-key-count discrepancy (card says "23/25", lists 30 keys,
+  carried forward several runs, unresolved) remains unaffected — key list
+  stays authoritative.
 - **Timestamp anomaly (r2s1_direct-B1, unchanged, carried forward)**:
   `review_notes[0].utc` still reads `2026-07-31T17:05:00Z` (ahead-of-clock
   relative to the review file's actual write time, first flagged several
   runs ago). No scored quantity affected. Remains the card's only
   unresolved caveat since it closed `complete`.
-- **Timing ledger**: no new upsert this run (`66181609` is RUNNING, not yet
-  COMPLETED; all 7 existing entries re-validated against current `sacct`
-  output, still parseable JSON, no changes needed).
+- **Timing ledger**: **upserted this run** — new entry for `66181609`
+  (r2s4_diag batch 2 seed 0, family `r2s4_b2_lfvalue`, 17.25 min, h200,
+  COMPLETED, 2026-07-31T20:59:36Z→21:16:51Z), the round's first B2-scale
+  timing datum. All 7 prior entries re-validated unchanged. JSON re-validated
+  as parseable (2 top-level keys: `_note`, `entries`; now 8 entries). Seeds
+  1-2 not yet upserted (still RUNNING).
 - **Analyzer caveat carried forward (r2s1_direct-B1, from code-review)**: the
   D3 certificate's aleatoric-floor estimate is window-sensitive — at the
   recipe's window (1000 closest pairs), `ext__helmholtz_2d` reads 1.200,
@@ -111,6 +125,13 @@ maintainer's scope, not itemized here.
   step-matched (confound C2, ran IN FAVOR of the losing arm — does not
   explain away the inversion). r2s3-B2's card explicitly ships a
   step-matched, per-rung-scaled repair of both confounds this round.
+- **r2s4_diag-B2 review finding 3.2b (carried forward)**: B2's in-job 3-seed
+  spread randomizes init + batch order ONLY (folds fixed by
+  `R2S4B2_SPLIT_SEED=0`) — narrower than B1's constants, which also
+  randomized the val split. `operative_threshold = max(certified MCE, in-job
+  spread)` stays conservative regardless; if B2's spread is ever installed
+  into `state/noise_floor.json` it must be labelled "fold-fixed spread", not
+  a drop-in replacement for B1's constants.
 - **Gates**: G1-r2 PASS, G2-r2 PASS, G3-r2 PASS (all 2026-07-31,
   `state/gates.md`) — round cleared for stream launch. Unchanged this run.
 - **Round-1 top-3 seed confirms**: NOT this maintainer's scope (round-1 jobs
@@ -120,18 +141,16 @@ maintainer's scope, not itemized here.
   (all 4 streams are batch 2 as of this run, all with clean B1 closes, no
   skip/block history anywhere). `state/streams/` directory still does not
   exist — consistent with no abandonments ever being needed.
-- Repo hygiene: `git status --short` on
-  `mffp_autoresearch/round2/experiment_cards/` shows exactly 2 entries this
-  run — `r2s4_diag/batch_2/B2.json` modified (the `built`→`reviewed_suggest`→
-  `running` chain) and `r2s2_stacked/batch_2/` untracked (the new B2 card) —
-  both other-subagent writes, neither touched by this maintainer. Non-card
-  writes seen in the broader round2 tree, all other subagents' legitimate
-  in-progress work: `state/orchestrator_flow.md`,
-  `state/r2s2_stacked/current_stage.txt`, `state/r2s4_diag/current_stage.txt`,
-  `brainstormer/r2s2_stacked/batch_2/` (new),
-  `worktrees/{r2s1_direct/B2,r2s2_stacked/B2,r2s3_lf_train_signal/B2,r2s4_diag/B2}/{scratchpad,notes,scripts,models_r2,probes}/`.
-  Confirmed no Write call this maintainer run touched `experiment_cards/`.
-  `index.md` and `state/maintainer_report.md` are this maintainer's own
-  writes. Most recent `round2: auto-sync` commit `5f74072`
-  (2026-07-31T20:14:17Z), unchanged since last run — this run's deltas
-  (including the new B2 card and the SLURM submission) not yet auto-synced.
+- Repo hygiene: `git status --short` on `mffp_autoresearch/round2/` shows
+  exactly 1 experiment_cards entry this run — `r2s4_diag/batch_2/B2.json`
+  modified (the `job_ids` growth from seed-0 completion + seeds-1-2
+  submission, other-subagent/orchestrator write, not touched by this
+  maintainer); `git diff --stat` confirms 3 insertions/1 deletion, all
+  inside the `job_ids` array. Broader tree: `state/orchestrator_flow.md`,
+  `state/r2s4_diag/current_stage.txt` modified (orchestrator/stream-state
+  owned, outside this maintainer's scope). `index.md`,
+  `state/maintainer_report.md`, `state/timing_ledger.json` are this
+  maintainer's own writes this run. Most recent `round2: auto-sync` commit
+  `7761e6d` (2026-07-31T21:14:16Z) — this run's deltas (seed-0 completion,
+  seeds-1-2 submission, timing-ledger upsert) postdate it and are not yet
+  auto-synced.

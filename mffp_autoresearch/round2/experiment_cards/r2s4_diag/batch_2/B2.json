@@ -78,7 +78,7 @@
     },
     "_brainstormer_recipe_notes": "`base_commit` = `round2-substrate` HEAD, verified by `git rev-parse round2-substrate`.\n  Cost: ~44 trainings/seed of a ~1M-param FNO against B1's 6 at **4.13-4.42 min** total per\n  seed (`state/timing_ledger.json`, h200), most on smaller fit folds -> **~30-45 min/seed**;\n  request `--time 02:00:00`. The orchestrator may submit seed 0 via `submit.sh` and seeds\n  1-2 via `submit_seeds_2_3.sh` \u2014 seed 0 answers the direction, seeds 1-2 deliver the\n  re-certification B1 part 7 item (4) owes."
   },
-  "status": "running",
+  "status": "analyzing",
   "skipped_reason": null,
   "reopen_candidate": false,
   "scripts_path": {
@@ -98,7 +98,9 @@
   },
   "build_commit": "a1f3da4dd7873d668b434a279e7958c50c37477d",
   "job_ids": [
-    "66181609"
+    "66181609",
+    "66182923",
+    "66182924"
   ],
   "logs": {},
   "build_notes": [
@@ -135,7 +137,1253 @@
     }
   ],
   "debug_notes": [],
-  "5_actual_result": null,
+  "5_actual_result": {
+    "seeds_available": [
+      0,
+      1,
+      2
+    ],
+    "protocol_note": "3-seed diagnostic-with-training card under the program.md \u00a712.4 standing exception (code-reviewer adjudication: ADMISSIBLE, handoff_code_reviewer.md \u00a7'Adjudication'). All numbers are PARSED from mffp_autoresearch_outputs/round2/r2s4_diag/B2/eval/ only; nothing recomputed by hand. The worktree scratchpad/dbg_*.json and scratchpad/smoke_arms/ are 2-EPOCH debug artifacts and are cited nowhere here (code-reviewer finding 3.7). Panel geomean and per-dataset CIs use eval/nrmse.py::bootstrap_ci (percentile bootstrap, n_boot=10000, rng seed 0) over the 3 per-seed values; per-seed values are always published.",
+    "sources": {
+      "result_jsons": [
+        "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s4_diag/B2/eval/result_panel_s0.json",
+        "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s4_diag/B2/eval/result_panel_s1.json",
+        "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s4_diag/B2/eval/result_panel_s2.json"
+      ],
+      "guard_jsons": [
+        "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s4_diag/B2/eval/result_guard_s0.json",
+        "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s4_diag/B2/eval/result_guard_s1.json",
+        "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s4_diag/B2/eval/result_guard_s2.json"
+      ],
+      "per_dataset_arms": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s4_diag/B2/eval/arms_{dataset}_e{200|2}_s{0,1,2}.json (27 files)",
+      "accounting_probe": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s4_diag/B2/eval/diagnostic.json",
+      "slurm_logs": "mffp_autoresearch_outputs/round2/r2s4_diag/B2/slurm/r2-r2s4_diag-B2-s{0,1,2}_{66181609,66182923,66182924}.{out,err}",
+      "anchor": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round2/state/anchors/r2s4_diag.json",
+      "noise_floor": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round2/state/noise_floor.json",
+      "guard_reference": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round2/eval/copylf_baselines.json"
+    },
+    "hash_seam_check": {
+      "nrmse_def_hash": "d3d0ade9191c13bacc40702f3eb26ad290e01641cacee22a1d2233b74c035850",
+      "copylf_def_hash": "9753ff24e856f595748492dec6cb6c215d748f97e8ec4a679b651f8846da907a",
+      "code_hash_all_runs": "28e44ba2a024b1bd8fd6e1aa597bc948ccc72f678c903017a891dde8ebe699dc",
+      "identical_across_seeds": true,
+      "identical_across_panel_and_guard": true,
+      "matches_live_eval_layer_NRMSE_DEF_HASH": true,
+      "diagnostic_json_carries_same_hashes": true,
+      "mce_source_check_all_agree": true
+    },
+    "config_table": {
+      "family": "models_r2/r2s4_b2_lfvalue",
+      "epochs": 200,
+      "guard_epochs": 2,
+      "seeds": [
+        0,
+        1,
+        2
+      ],
+      "n_params_T0": 1059649,
+      "scored_arm": "T0_cond_only",
+      "split": "test_hf",
+      "recipe_env_knobs_in_result_json": 35,
+      "undeclared_or_out_of_recipe_items_REVIEWER_OBLIGATION_3_2": {
+        "WORK_CAP": {
+          "value": 256,
+          "where": "models_r2/r2s4_b2_lfvalue/smoke_eval.py:83",
+          "status": "undeclared grid cap, INERT on this panel and guard set \u2014 max HF work grid observed is 256 (grids seen: (1,128), (64,64), (96,96), (128,128), (256,256)); silent if a future dataset exceeds it"
+        },
+        "P_bar_shrinkage_broadcast": {
+          "value": "own-mean broadcast: P_bar = mean over the EVALUATED split's own predictions (transductive)",
+          "where": "models_r2/r2s4_b2_lfvalue/smoke_eval.py:288",
+          "status": "named 'own-mean-broadcast' in the probe docstring but NOWHERE in the card recipe or part 3; it is transductive over the evaluated split and applies to every shrunk column reported here"
+        },
+        "inert_env_knobs": {
+          "R2S4B2_FLOORS_JSON": "carded but read by nothing in the family; scripts/03_accounting.sh:29-30 passes the same path as --floors_json",
+          "R2S4B2_NOISE_FLOOR_JSON": "carded but read by nothing in the family; scripts/03_accounting.sh:29-30 passes the same path as --noise_floor_json",
+          "status": "values agree with the CLI args, so plumbing not drift"
+        }
+      },
+      "hf_and_lf_zscore_scope": "global over the FULL train split (inner fold included); identical for every arm and every N level, so all contrasts stay paired (builder handoff (c))",
+      "model_selection": "HF-head val MSE for EVERY arm (matched); ifc_poisson has val+inner disabled (VAL_MIN_N/INNER_MIN_N=20) and uses final-epoch weights",
+      "folds": "fixed by R2S4B2_SPLIT_SEED=0, identical across arms / N levels / training seeds: fit 0.8 (320) / val 0.1 / inner 0.1 (40)",
+      "lf_definition_verified": "lf_reference.py vendored copylf; max_abs_diff vs eval/panel_data.py::copylf_prediction on the TRAIN split = 0.0 on ALL 9 datasets x 3 seeds (27/27 arms JSONs)",
+      "stripped_view": "lf_read_at_test=false and field_input_at_test=false in all 27 arms JSONs"
+    },
+    "per_dataset": {
+      "ext__helmholtz_2d": {
+        "per_seed_nrmse": [
+          1.7500097236647758,
+          2.1807577138939744,
+          2.239327221760235
+        ],
+        "per_seed_skill": [
+          5.852224244764928,
+          7.292692716290954,
+          7.488555567396196
+        ],
+        "mean_skill": 6.877824176150693,
+        "ci95": [
+          5.852224244764929,
+          7.488555567396195
+        ],
+        "mean_nrmse": 2.0566982197729953,
+        "ci95_nrmse": [
+          1.7500097236647758,
+          2.239327221760235
+        ],
+        "reference_type": "copylf",
+        "cached": [
+          false,
+          false,
+          false
+        ],
+        "split": "test_hf (PRIMARY arm T0_cond_only only; every other arm is a merged arm_*/ref_* split)",
+        "certified_min_claimable_effect": 2.95299157437233,
+        "floor_arms_skill": {
+          "nn_condition": 4.385306254533589,
+          "train_mean": 14.610657760631902,
+          "zero": 3.3441095587226317
+        },
+        "best_floor": {
+          "arm": "zero",
+          "skill": 3.3441095587226317
+        },
+        "delta_vs_best_floor": 3.533714617428061,
+        "primary_beats_best_floor": false,
+        "floor_arms_reproduce_frozen": true,
+        "t0_same_model_seed_spread_maxmin_FOLD_FIXED": 1.6363313226312677,
+        "arms_mean_test_skill": {
+          "T0_cond_only": 6.87782417615069,
+          "T1_lf_aux": 7.775867989047309,
+          "I1_lf_teacher": null,
+          "I2_lf_ablated": null
+        },
+        "arms_mean_test_skill_shrunk": {
+          "T0_cond_only": 4.225851138202748,
+          "T1_lf_aux": 3.8241754578045692,
+          "I1_lf_teacher": null,
+          "I2_lf_ablated": null
+        },
+        "arms_mean_inner_skill": {
+          "T0_cond_only": 6.829038754012288,
+          "T1_lf_aux": 7.608234122304789,
+          "I1_lf_teacher": 2.756365541231441,
+          "I2_lf_ablated": 8.709389930192586
+        },
+        "lambda_star_per_seed": {
+          "T0_cond_only": [
+            0.2,
+            0.05,
+            0.1
+          ],
+          "T1_lf_aux": [
+            0.0,
+            0.05,
+            0.05
+          ],
+          "I1_lf_teacher": [
+            0.75,
+            0.65,
+            0.75
+          ],
+          "I2_lf_ablated": [
+            0.2,
+            0.05,
+            0.05
+          ]
+        },
+        "transfer_T0_minus_T1_test_raw": {
+          "paired_deltas": [
+            1.4072625839837984,
+            -1.2846946839566584,
+            -2.8166993387169965
+          ],
+          "effect_mean_delta": -0.8980438128966188,
+          "in_job_paired_spread_FOLD_FIXED": 4.223961922700795,
+          "operative_threshold": 4.223961922700795,
+          "claimable": false,
+          "sign": "negative"
+        },
+        "transfer_T0_minus_T1_test_shrunk": {
+          "effect_mean_delta": 0.4016756803981785,
+          "in_job_paired_spread_FOLD_FIXED": 0.9889519856985798,
+          "operative_threshold": 2.95299157437233,
+          "claimable": false,
+          "sign": "positive"
+        },
+        "information_gap_I2_minus_I1_inner": {
+          "effect_mean_delta": 5.953024388961146,
+          "operative_threshold": 2.95299157437233,
+          "claimable": true,
+          "ratio_I2_over_I1": 3.1597369071380697
+        },
+        "capability_gap_T0_minus_I2_inner": {
+          "effect_mean_delta": -1.880351176180299,
+          "operative_threshold": 2.95299157437233,
+          "claimable": false,
+          "sign": "negative"
+        },
+        "transfer_efficiency": {
+          "value": -0.15085505353579362,
+          "defined": true,
+          "reason": null
+        },
+        "n_fit_sweep_abs_effect": {
+          "20": {
+            "effect_abs": 1.222871706875477,
+            "operative_threshold": 7.557608929860516,
+            "claimable": false
+          },
+          "80": {
+            "effect_abs": 2.397121029604588,
+            "operative_threshold": 4.5266350167368445,
+            "claimable": false
+          },
+          "320": {
+            "effect_abs": 0.8980438128966188,
+            "operative_threshold": 4.223961922700795,
+            "claimable": false
+          }
+        },
+        "n_fit_scaling_check_F3": {
+          "abs_effect_at_20": 1.222871706875477,
+          "abs_effect_at_full": 0.8980438128966188,
+          "full_level": "320",
+          "operative_threshold": 7.557608929860516,
+          "exceeds": false
+        },
+        "lf_rung_and_convention": {
+          "rung_fid": 1,
+          "convention": "dirichlet_node",
+          "max_abs_diff_vs_eval_copylf": 0.0
+        },
+        "fold_mode": "standard",
+        "n_fit": 320,
+        "n_inner": 40,
+        "anecdote_grade": false
+      },
+      "sharp__phase_field_crystal_2d": {
+        "per_seed_nrmse": [
+          0.35382440831795364,
+          0.3517302776083417,
+          0.3518458205116465
+        ],
+        "per_seed_skill": [
+          47.938629426877405,
+          47.65490181029839,
+          47.67055637876292
+        ],
+        "mean_skill": 47.75469587197957,
+        "ci95": [
+          47.65490181029839,
+          47.938629426877405
+        ],
+        "mean_nrmse": 0.3524668354793139,
+        "ci95_nrmse": [
+          0.3517302776083417,
+          0.35382440831795364
+        ],
+        "reference_type": "copylf",
+        "cached": [
+          false,
+          false,
+          false
+        ],
+        "split": "test_hf (PRIMARY arm T0_cond_only only; every other arm is a merged arm_*/ref_* split)",
+        "certified_min_claimable_effect": 0.21302734961699343,
+        "floor_arms_skill": {
+          "nn_condition": 68.55554386549396,
+          "train_mean": 59.8117544948052,
+          "zero": 135.48706166081905
+        },
+        "best_floor": {
+          "arm": "train_mean",
+          "skill": 59.8117544948052
+        },
+        "delta_vs_best_floor": -12.057058622825629,
+        "primary_beats_best_floor": true,
+        "floor_arms_reproduce_frozen": true,
+        "t0_same_model_seed_spread_maxmin_FOLD_FIXED": 0.28372761657901435,
+        "arms_mean_test_skill": {
+          "T0_cond_only": 47.75469587197957,
+          "T1_lf_aux": 47.74461211268018,
+          "I1_lf_teacher": null,
+          "I2_lf_ablated": null
+        },
+        "arms_mean_test_skill_shrunk": {
+          "T0_cond_only": 47.75469587197958,
+          "T1_lf_aux": 47.74461211268019,
+          "I1_lf_teacher": null,
+          "I2_lf_ablated": null
+        },
+        "arms_mean_inner_skill": {
+          "T0_cond_only": 36.3632043463375,
+          "T1_lf_aux": 36.32673371687515,
+          "I1_lf_teacher": 0.3839573208901532,
+          "I2_lf_ablated": 36.59692458752219
+        },
+        "lambda_star_per_seed": {
+          "T0_cond_only": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "T1_lf_aux": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "I1_lf_teacher": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "I2_lf_ablated": [
+            1.05,
+            1.0,
+            1.0
+          ]
+        },
+        "transfer_T0_minus_T1_test_raw": {
+          "paired_deltas": [
+            0.057569722169688475,
+            -0.054465032292732474,
+            0.027146588021246032
+          ],
+          "effect_mean_delta": 0.010083759299400677,
+          "in_job_paired_spread_FOLD_FIXED": 0.11203475446242095,
+          "operative_threshold": 0.21302734961699343,
+          "claimable": false,
+          "sign": "positive"
+        },
+        "transfer_T0_minus_T1_test_shrunk": {
+          "effect_mean_delta": 0.010083759299388836,
+          "in_job_paired_spread_FOLD_FIXED": 0.11203475446245648,
+          "operative_threshold": 0.21302734961699343,
+          "claimable": false,
+          "sign": "positive"
+        },
+        "information_gap_I2_minus_I1_inner": {
+          "effect_mean_delta": 36.212967266632035,
+          "operative_threshold": 0.3311653227675819,
+          "claimable": true,
+          "ratio_I2_over_I1": 95.3150847669141
+        },
+        "capability_gap_T0_minus_I2_inner": {
+          "effect_mean_delta": -0.23372024118468696,
+          "operative_threshold": 0.2553289268990184,
+          "claimable": false,
+          "sign": "negative"
+        },
+        "transfer_efficiency": {
+          "value": 0.00027845714009446074,
+          "defined": true,
+          "reason": null
+        },
+        "n_fit_sweep_abs_effect": {
+          "20": {
+            "effect_abs": 0.024987543684813335,
+            "operative_threshold": 0.2942565388542562,
+            "claimable": false
+          },
+          "80": {
+            "effect_abs": 0.0670875687484956,
+            "operative_threshold": 0.32811832222802906,
+            "claimable": false
+          },
+          "320": {
+            "effect_abs": 0.010083759299400677,
+            "operative_threshold": 0.21302734961699343,
+            "claimable": false
+          }
+        },
+        "n_fit_scaling_check_F3": {
+          "abs_effect_at_20": 0.024987543684813335,
+          "abs_effect_at_full": 0.010083759299400677,
+          "full_level": "320",
+          "operative_threshold": 0.2942565388542562,
+          "exceeds": false
+        },
+        "lf_rung_and_convention": {
+          "rung_fid": 2,
+          "convention": "node_aligned_periodic",
+          "max_abs_diff_vs_eval_copylf": 0.0
+        },
+        "fold_mode": "standard",
+        "n_fit": 320,
+        "n_inner": 40,
+        "anecdote_grade": false
+      },
+      "sharp__allen_cahn_2d": {
+        "per_seed_nrmse": [
+          0.26400942031651836,
+          0.2623726251948305,
+          0.2633514653035443
+        ],
+        "per_seed_skill": [
+          148.2560741255787,
+          147.3369220036642,
+          147.88659554008794
+        ],
+        "mean_skill": 147.8265305564436,
+        "ci95": [
+          147.3369220036642,
+          148.2560741255787
+        ],
+        "mean_nrmse": 0.2632445036049644,
+        "ci95_nrmse": [
+          0.2623726251948305,
+          0.26400942031651836
+        ],
+        "reference_type": "copylf",
+        "cached": [
+          false,
+          false,
+          false
+        ],
+        "split": "test_hf (PRIMARY arm T0_cond_only only; every other arm is a merged arm_*/ref_* split)",
+        "certified_min_claimable_effect": 0.8797047190126648,
+        "floor_arms_skill": {
+          "nn_condition": 269.19587575878967,
+          "train_mean": 562.0295274675294,
+          "zero": 561.5560003420935
+        },
+        "best_floor": {
+          "arm": "nn_condition",
+          "skill": 269.19587575878967
+        },
+        "delta_vs_best_floor": -121.36934520234607,
+        "primary_beats_best_floor": true,
+        "floor_arms_reproduce_frozen": true,
+        "t0_same_model_seed_spread_maxmin_FOLD_FIXED": 0.9191521219144931,
+        "arms_mean_test_skill": {
+          "T0_cond_only": 147.8265305564436,
+          "T1_lf_aux": 147.76943886291107,
+          "I1_lf_teacher": null,
+          "I2_lf_ablated": null
+        },
+        "arms_mean_test_skill_shrunk": {
+          "T0_cond_only": 147.8265305564436,
+          "T1_lf_aux": 147.7694388629111,
+          "I1_lf_teacher": null,
+          "I2_lf_ablated": null
+        },
+        "arms_mean_inner_skill": {
+          "T0_cond_only": 120.15572714137966,
+          "T1_lf_aux": 119.97823687186379,
+          "I1_lf_teacher": 5.65340938565834,
+          "I2_lf_ablated": 120.11183753875481
+        },
+        "lambda_star_per_seed": {
+          "T0_cond_only": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "T1_lf_aux": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "I1_lf_teacher": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "I2_lf_ablated": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "transfer_T0_minus_T1_test_raw": {
+          "paired_deltas": [
+            0.3325451261696628,
+            -0.030975711745185208,
+            -0.13029433382692446
+          ],
+          "effect_mean_delta": 0.057091693532517716,
+          "in_job_paired_spread_FOLD_FIXED": 0.46283945999658727,
+          "operative_threshold": 0.8797047190126648,
+          "claimable": false,
+          "sign": "positive"
+        },
+        "transfer_T0_minus_T1_test_shrunk": {
+          "effect_mean_delta": 0.05709169353250824,
+          "in_job_paired_spread_FOLD_FIXED": 0.46283945999658727,
+          "operative_threshold": 0.8797047190126648,
+          "claimable": false,
+          "sign": "positive"
+        },
+        "information_gap_I2_minus_I1_inner": {
+          "effect_mean_delta": 114.45842815309646,
+          "operative_threshold": 0.9218496652548254,
+          "claimable": true,
+          "ratio_I2_over_I1": 21.245911863990685
+        },
+        "capability_gap_T0_minus_I2_inner": {
+          "effect_mean_delta": 0.04388960262483484,
+          "operative_threshold": 0.8797047190126648,
+          "claimable": false,
+          "sign": "positive"
+        },
+        "transfer_efficiency": {
+          "value": 0.000498798510985608,
+          "defined": true,
+          "reason": null
+        },
+        "n_fit_sweep_abs_effect": {
+          "20": {
+            "effect_abs": 1.640792276200737,
+            "operative_threshold": 1.7021012444208736,
+            "claimable": false
+          },
+          "80": {
+            "effect_abs": 0.18149463055486117,
+            "operative_threshold": 0.8797047190126648,
+            "claimable": false
+          },
+          "320": {
+            "effect_abs": 0.057091693532517716,
+            "operative_threshold": 0.8797047190126648,
+            "claimable": false
+          }
+        },
+        "n_fit_scaling_check_F3": {
+          "abs_effect_at_20": 1.640792276200737,
+          "abs_effect_at_full": 0.057091693532517716,
+          "full_level": "320",
+          "operative_threshold": 1.7021012444208736,
+          "exceeds": false
+        },
+        "lf_rung_and_convention": {
+          "rung_fid": 2,
+          "convention": "node_aligned_periodic",
+          "max_abs_diff_vs_eval_copylf": 0.0
+        },
+        "fold_mode": "standard",
+        "n_fit": 320,
+        "n_inner": 40,
+        "anecdote_grade": false
+      },
+      "sharp__fisher_kpp_2d": {
+        "per_seed_nrmse": [
+          0.24791255343424967,
+          0.24790606714327576,
+          0.24790270284432736
+        ],
+        "per_seed_skill": [
+          11.557962250365692,
+          11.557659852180596,
+          11.557503004777324
+        ],
+        "mean_skill": 11.557708369107871,
+        "ci95": [
+          11.557503004777324,
+          11.557962250365692
+        ],
+        "mean_nrmse": 0.24790710780728428,
+        "ci95_nrmse": [
+          0.24790270284432736,
+          0.24791255343424967
+        ],
+        "reference_type": "copylf",
+        "cached": [
+          false,
+          false,
+          false
+        ],
+        "split": "test_hf (PRIMARY arm T0_cond_only only; every other arm is a merged arm_*/ref_* split)",
+        "certified_min_claimable_effect": 0.0007136812826775696,
+        "floor_arms_skill": {
+          "nn_condition": 16.337946591223936,
+          "train_mean": 11.99311063309952,
+          "zero": 46.62112543417874
+        },
+        "best_floor": {
+          "arm": "train_mean",
+          "skill": 11.99311063309952
+        },
+        "delta_vs_best_floor": -0.43540226399164794,
+        "primary_beats_best_floor": true,
+        "floor_arms_reproduce_frozen": true,
+        "t0_same_model_seed_spread_maxmin_FOLD_FIXED": 0.0004592455883685176,
+        "arms_mean_test_skill": {
+          "T0_cond_only": 11.55770836910787,
+          "T1_lf_aux": 11.558108311488512,
+          "I1_lf_teacher": null,
+          "I2_lf_ablated": null
+        },
+        "arms_mean_test_skill_shrunk": {
+          "T0_cond_only": 11.55770836910787,
+          "T1_lf_aux": 11.558108311488512,
+          "I1_lf_teacher": null,
+          "I2_lf_ablated": null
+        },
+        "arms_mean_inner_skill": {
+          "T0_cond_only": 11.32304928808619,
+          "T1_lf_aux": 11.323173830474163,
+          "I1_lf_teacher": 0.8376398880998032,
+          "I2_lf_ablated": 11.323673667961222
+        },
+        "lambda_star_per_seed": {
+          "T0_cond_only": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "T1_lf_aux": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "I1_lf_teacher": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "I2_lf_ablated": [
+            1.0,
+            0.95,
+            0.95
+          ]
+        },
+        "transfer_T0_minus_T1_test_raw": {
+          "paired_deltas": [
+            -0.0006405932556496907,
+            -0.0002565537701180176,
+            -0.0003026801161656323
+          ],
+          "effect_mean_delta": -0.00039994238064444687,
+          "in_job_paired_spread_FOLD_FIXED": 0.0003840394855316731,
+          "operative_threshold": 0.0007136812826775696,
+          "claimable": false,
+          "sign": "negative"
+        },
+        "transfer_T0_minus_T1_test_shrunk": {
+          "effect_mean_delta": -0.00039994238064444687,
+          "in_job_paired_spread_FOLD_FIXED": 0.0003840394855316731,
+          "operative_threshold": 0.0007136812826775696,
+          "claimable": false,
+          "sign": "negative"
+        },
+        "information_gap_I2_minus_I1_inner": {
+          "effect_mean_delta": 10.486033779861417,
+          "operative_threshold": 0.01494513629828731,
+          "claimable": true,
+          "ratio_I2_over_I1": 13.518546369191085
+        },
+        "capability_gap_T0_minus_I2_inner": {
+          "effect_mean_delta": -0.0006243798750323511,
+          "operative_threshold": 0.0020808624738268833,
+          "claimable": false,
+          "sign": "negative"
+        },
+        "transfer_efficiency": {
+          "value": -3.8140481810438386e-05,
+          "defined": true,
+          "reason": null
+        },
+        "n_fit_sweep_abs_effect": {
+          "20": {
+            "effect_abs": 0.0014560472420601656,
+            "operative_threshold": 0.009224497618316008,
+            "claimable": false
+          },
+          "80": {
+            "effect_abs": 8.433200335862996e-05,
+            "operative_threshold": 0.002111125544564274,
+            "claimable": false
+          },
+          "320": {
+            "effect_abs": 0.00039994238064444687,
+            "operative_threshold": 0.0007136812826775696,
+            "claimable": false
+          }
+        },
+        "n_fit_scaling_check_F3": {
+          "abs_effect_at_20": 0.0014560472420601656,
+          "abs_effect_at_full": 0.00039994238064444687,
+          "full_level": "320",
+          "operative_threshold": 0.009224497618316008,
+          "exceeds": false
+        },
+        "lf_rung_and_convention": {
+          "rung_fid": 2,
+          "convention": "node_aligned_periodic",
+          "max_abs_diff_vs_eval_copylf": 0.0
+        },
+        "fold_mode": "standard",
+        "n_fit": 320,
+        "n_inner": 40,
+        "anecdote_grade": false
+      },
+      "sharp__cahn_hilliard": {
+        "per_seed_nrmse": [
+          0.5624033865582313,
+          0.5555483096378045,
+          0.5632712424601449
+        ],
+        "per_seed_skill": [
+          13.453672907818754,
+          13.289687475210037,
+          13.474433539270352
+        ],
+        "mean_skill": 13.405931307433049,
+        "ci95": [
+          13.289687475210037,
+          13.474433539270352
+        ],
+        "mean_nrmse": 0.560407646218727,
+        "ci95_nrmse": [
+          0.5555483096378045,
+          0.5632712424601449
+        ],
+        "reference_type": "copylf",
+        "cached": [
+          false,
+          false,
+          false
+        ],
+        "split": "test_hf (PRIMARY arm T0_cond_only only; every other arm is a merged arm_*/ref_* split)",
+        "certified_min_claimable_effect": 0.09124535322300886,
+        "floor_arms_skill": {
+          "nn_condition": 23.180342227117514,
+          "train_mean": 23.96905448527446,
+          "zero": 23.92174945843033
+        },
+        "best_floor": {
+          "arm": "nn_condition",
+          "skill": 23.180342227117514
+        },
+        "delta_vs_best_floor": -9.774410919684465,
+        "primary_beats_best_floor": true,
+        "floor_arms_reproduce_frozen": true,
+        "t0_same_model_seed_spread_maxmin_FOLD_FIXED": 0.1847460640603149,
+        "arms_mean_test_skill": {
+          "T0_cond_only": 13.405931307433049,
+          "T1_lf_aux": 13.644164814168242,
+          "I1_lf_teacher": null,
+          "I2_lf_ablated": null
+        },
+        "arms_mean_test_skill_shrunk": {
+          "T0_cond_only": 13.329764427656876,
+          "T1_lf_aux": 13.605632557417087,
+          "I1_lf_teacher": null,
+          "I2_lf_ablated": null
+        },
+        "arms_mean_inner_skill": {
+          "T0_cond_only": 11.916466604300917,
+          "T1_lf_aux": 12.298142373576816,
+          "I1_lf_teacher": 0.29444476624908705,
+          "I2_lf_ablated": 11.643880576947678
+        },
+        "lambda_star_per_seed": {
+          "T0_cond_only": [
+            1.15,
+            1.1,
+            1.1
+          ],
+          "T1_lf_aux": [
+            1.0,
+            1.1,
+            1.1
+          ],
+          "I1_lf_teacher": [
+            1.0,
+            1.0,
+            1.0
+          ],
+          "I2_lf_ablated": [
+            1.05,
+            1.0,
+            1.05
+          ]
+        },
+        "transfer_T0_minus_T1_test_raw": {
+          "paired_deltas": [
+            -0.7645495330354919,
+            -0.006045961944094458,
+            0.055894974774000517
+          ],
+          "effect_mean_delta": -0.23823350673519528,
+          "in_job_paired_spread_FOLD_FIXED": 0.8204445078094924,
+          "operative_threshold": 0.8204445078094924,
+          "claimable": false,
+          "sign": "negative"
+        },
+        "transfer_T0_minus_T1_test_shrunk": {
+          "effect_mean_delta": -0.2758681297602106,
+          "in_job_paired_spread_FOLD_FIXED": 0.9176815884671594,
+          "operative_threshold": 0.9176815884671594,
+          "claimable": false,
+          "sign": "negative"
+        },
+        "information_gap_I2_minus_I1_inner": {
+          "effect_mean_delta": 11.349435810698592,
+          "operative_threshold": 0.8759500345962543,
+          "claimable": true,
+          "ratio_I2_over_I1": 39.54521156982454
+        },
+        "capability_gap_T0_minus_I2_inner": {
+          "effect_mean_delta": 0.27258602735323895,
+          "operative_threshold": 0.7093857061469269,
+          "claimable": false,
+          "sign": "positive"
+        },
+        "transfer_efficiency": {
+          "value": -0.02099077969238114,
+          "defined": true,
+          "reason": null
+        },
+        "n_fit_sweep_abs_effect": {
+          "20": {
+            "effect_abs": 0.08805660721099311,
+            "operative_threshold": 0.4072452654220662,
+            "claimable": false
+          },
+          "80": {
+            "effect_abs": 0.07116915102382038,
+            "operative_threshold": 0.16610025768062187,
+            "claimable": false
+          },
+          "320": {
+            "effect_abs": 0.23823350673519528,
+            "operative_threshold": 0.8204445078094924,
+            "claimable": false
+          }
+        },
+        "n_fit_scaling_check_F3": {
+          "abs_effect_at_20": 0.08805660721099311,
+          "abs_effect_at_full": 0.23823350673519528,
+          "full_level": "320",
+          "operative_threshold": 0.8204445078094924,
+          "exceeds": false
+        },
+        "lf_rung_and_convention": {
+          "rung_fid": 2,
+          "convention": "node_aligned_periodic",
+          "max_abs_diff_vs_eval_copylf": 0.0
+        },
+        "fold_mode": "standard",
+        "n_fit": 320,
+        "n_inner": 40,
+        "anecdote_grade": false
+      },
+      "ifc_poisson": {
+        "per_seed_nrmse": [
+          0.2858818273168609,
+          0.319639175959173,
+          0.28669077843838425
+        ],
+        "per_seed_skill": [
+          7.941161869912803,
+          8.878865998865917,
+          7.963632734399563
+        ],
+        "mean_skill": 8.261220201059428,
+        "ci95": [
+          7.941161869912803,
+          8.878865998865917
+        ],
+        "mean_nrmse": 0.2974039272381394,
+        "ci95_nrmse": [
+          0.2858818273168609,
+          0.319639175959173
+        ],
+        "reference_type": "paper_bar",
+        "cached": [
+          false,
+          false,
+          false
+        ],
+        "split": "test_hf (PRIMARY arm T0_cond_only only; every other arm is a merged arm_*/ref_* split)",
+        "certified_min_claimable_effect": 0.9377041289531141,
+        "floor_arms_skill": {
+          "nn_condition": 10.054890929609687,
+          "train_mean": 11.206332455369637,
+          "zero": 27.77777777777778
+        },
+        "best_floor": {
+          "arm": "nn_condition",
+          "skill": 10.054890929609687
+        },
+        "delta_vs_best_floor": -1.7936707285502589,
+        "primary_beats_best_floor": true,
+        "floor_arms_reproduce_frozen": true,
+        "t0_same_model_seed_spread_maxmin_FOLD_FIXED": 0.9377041289531141,
+        "arms_mean_test_skill": {
+          "T0_cond_only": 8.261220201059428,
+          "T1_lf_aux": 8.547484048506687,
+          "I1_lf_teacher": null,
+          "I2_lf_ablated": null
+        },
+        "arms_mean_test_skill_shrunk": {
+          "T0_cond_only": null,
+          "T1_lf_aux": null,
+          "I1_lf_teacher": null,
+          "I2_lf_ablated": null
+        },
+        "arms_mean_inner_skill": {
+          "T0_cond_only": 4.629050359659745,
+          "T1_lf_aux": 4.233689839076839,
+          "I1_lf_teacher": 5.36378447418011,
+          "I2_lf_ablated": 4.855751256619601
+        },
+        "lambda_star_per_seed": {
+          "T0_cond_only": [
+            null,
+            null,
+            null
+          ],
+          "T1_lf_aux": [
+            null,
+            null,
+            null
+          ],
+          "I1_lf_teacher": [
+            null,
+            null,
+            null
+          ],
+          "I2_lf_ablated": [
+            null,
+            null,
+            null
+          ]
+        },
+        "transfer_T0_minus_T1_test_raw": {
+          "paired_deltas": [
+            -0.3032816103577902,
+            -0.43949040496772795,
+            -0.1160195270162534
+          ],
+          "effect_mean_delta": -0.2862638474472572,
+          "in_job_paired_spread_FOLD_FIXED": 0.32347087795147456,
+          "operative_threshold": 0.9377041289531141,
+          "claimable": false,
+          "sign": "negative"
+        },
+        "transfer_T0_minus_T1_test_shrunk": {
+          "effect_mean_delta": null,
+          "in_job_paired_spread_FOLD_FIXED": 0.0,
+          "operative_threshold": 0.9377041289531141,
+          "claimable": null,
+          "sign": null
+        },
+        "information_gap_I2_minus_I1_inner": {
+          "effect_mean_delta": -0.5080332175605102,
+          "operative_threshold": 0.9377041289531141,
+          "claimable": false,
+          "ratio_I2_over_I1": 0.9052845579448519
+        },
+        "capability_gap_T0_minus_I2_inner": {
+          "effect_mean_delta": -0.22670089695985526,
+          "operative_threshold": 0.9377041289531141,
+          "claimable": false,
+          "sign": "negative"
+        },
+        "transfer_efficiency": {
+          "value": null,
+          "defined": false,
+          "reason": "denominator |I2 - I1| does not exceed its own in-job null (operative_threshold); the ratio is reported UNDEFINED"
+        },
+        "n_fit_sweep_abs_effect": {},
+        "n_fit_scaling_check_F3": null,
+        "lf_rung_and_convention": {
+          "rung_fid": 32,
+          "convention": "legacy_cell_centred",
+          "max_abs_diff_vs_eval_copylf": 0.0
+        },
+        "fold_mode": "loo_anecdote",
+        "n_fit": 5,
+        "n_inner": 0,
+        "anecdote_grade": true
+      }
+    },
+    "panel_geomean_skill": {
+      "per_seed": [
+        19.2798747771884,
+        20.292779863232237,
+        20.075997853989296
+      ],
+      "mean": 19.88288416480331,
+      "ci95": [
+        19.2798747771884,
+        20.292779863232237
+      ],
+      "spread_maxmin_FOLD_FIXED": 1.0129050860438369,
+      "probe_reported_mean": 19.88288416480331,
+      "arm": "T0_cond_only (primary; test_hf)"
+    },
+    "vs_anchor": {
+      "anchor_source": "state/anchors/r2s4_diag.json (certified_3seed_panel_geomean, source_card r2s4_diag-B1)",
+      "anchor_value": 19.817844731907492,
+      "anchor_ci95": [
+        19.38527533084317,
+        20.527142151972782
+      ],
+      "delta": 0.06503943289581926,
+      "delta_sign_note": "lower skill is better; delta > 0 means B2's T0 is WORSE than the anchor",
+      "beyond_ci": false,
+      "beyond_noise_floor": false,
+      "panel_min_claimable_effect": 1.1418668211296108,
+      "note": "B2's T0_cond_only is the SAME condition-only design as B1's certifier but on a 320-sample fit fold (B1 used 360: val_frac 0.1, no inner fold). |delta| = 0.065039 is 5.7% of the certified panel min_claimable_effect 1.141867 and the 3-seed CI [19.2799, 20.2928] contains the anchor \u2014 a re-measurement, not a move."
+    },
+    "in_job_seed_spread_FOLD_FIXED": {
+      "label": "FOLD-FIXED spread \u2014 B2 fixes folds by SPLIT_SEED=0, so --seed randomizes init + batch order ONLY, a STRICTLY NARROWER randomization than B1's certified min_claimable_effect constants, which also randomized the val split (code-reviewer finding 3.2b, B1 smoke_eval.py:314).",
+      "do_not_install_unlabelled": "MUST NOT replace state/noise_floor.json without this label; this analyzer did not write state/noise_floor.json.",
+      "panel_geomean_spread_maxmin": 1.0129050860438369,
+      "panel_certified_min_claimable_effect_B1": 1.1418668211296108,
+      "panel_narrower_than_certified": true,
+      "per_dataset_T0_same_model_spread_vs_certified_mce": {
+        "ext__helmholtz_2d": {
+          "t0_spread_maxmin_fold_fixed": 1.6363313226312677,
+          "certified_mce_B1": 2.95299157437233,
+          "narrower": true
+        },
+        "sharp__phase_field_crystal_2d": {
+          "t0_spread_maxmin_fold_fixed": 0.28372761657901435,
+          "certified_mce_B1": 0.21302734961699343,
+          "narrower": false
+        },
+        "sharp__allen_cahn_2d": {
+          "t0_spread_maxmin_fold_fixed": 0.9191521219144931,
+          "certified_mce_B1": 0.8797047190126648,
+          "narrower": false
+        },
+        "sharp__fisher_kpp_2d": {
+          "t0_spread_maxmin_fold_fixed": 0.0004592455883685176,
+          "certified_mce_B1": 0.0007136812826775696,
+          "narrower": true
+        },
+        "sharp__cahn_hilliard": {
+          "t0_spread_maxmin_fold_fixed": 0.1847460640603149,
+          "certified_mce_B1": 0.09124535322300886,
+          "narrower": false
+        },
+        "ifc_poisson": {
+          "t0_spread_maxmin_fold_fixed": 0.9377041289531141,
+          "certified_mce_B1": 0.9377041289531141,
+          "narrower": false
+        }
+      },
+      "per_dataset_T0_minus_T1_paired_spread": {
+        "ext__helmholtz_2d": 4.223961922700795,
+        "sharp__phase_field_crystal_2d": 0.11203475446242095,
+        "sharp__allen_cahn_2d": 0.46283945999658727,
+        "sharp__fisher_kpp_2d": 0.0003840394855316731,
+        "sharp__cahn_hilliard": 0.8204445078094924,
+        "ifc_poisson": 0.32347087795147456
+      }
+    },
+    "cratered_verdict": "n/a",
+    "cratered_note": "Diagnostic card \u2014 no cratered rule (subagent \u00a72b). Recorded anyway for the record: all three jobs COMPLETED exit 0:0, no crash; T0 panel geomean 19.882884 is far below the cratered bound 1.5 x 19.817845 = 29.726767.",
+    "falsification_verdict": "falsified",
+    "falsification_detail": {
+      "clause_verbatim": "falsified if ANY of: (F1, instrument) the inner-fold information-gap ratio nRMSE(I2)/nRMSE(I1) is < 2.0 on >= 2 of {fisher_kpp, pfc, allen_cahn}; (F2, barrier) at full N_fit |T1 - T0| exceeds max(certified min_claimable_effect, in-job 3-seed paired spread) on >= 2 of {fisher_kpp 0.0007136812826775696, pfc 0.21302734961699343, allen_cahn 0.8797047190126648}; (F3, scaling) |T1 - T0| at N_fit=20 fails to exceed its N_fit=320 value by more than the operative threshold on >= 3 of the 5 sweepable datasets; or (F4, calibration) the inner-fold lambda* bootstrap CI (B=2000, n <= 40) admits a skill range exceeding the operative threshold on >= 4 of the 5 shrinkable panel datasets, or the raw and shrunk columns give different claimable/not-claimable verdicts on >= 2 panel datasets.",
+      "deciding_clause": "F3 (scaling) FIRED \u2014 5 of 5 sweepable datasets, threshold >= 3.",
+      "F3_deciding_numbers": {
+        "ext__helmholtz_2d": {
+          "abs_effect_at_N20": 1.222871706875477,
+          "abs_effect_at_N320": 0.8980438128966188,
+          "difference": 0.32482789397885825,
+          "operative_threshold": 7.557608929860516,
+          "exceeds": false
+        },
+        "sharp__phase_field_crystal_2d": {
+          "abs_effect_at_N20": 0.024987543684813335,
+          "abs_effect_at_N320": 0.010083759299400677,
+          "difference": 0.014903784385412658,
+          "operative_threshold": 0.2942565388542562,
+          "exceeds": false
+        },
+        "sharp__allen_cahn_2d": {
+          "abs_effect_at_N20": 1.640792276200737,
+          "abs_effect_at_N320": 0.057091693532517716,
+          "difference": 1.5837005826682193,
+          "operative_threshold": 1.7021012444208736,
+          "exceeds": false
+        },
+        "sharp__fisher_kpp_2d": {
+          "abs_effect_at_N20": 0.0014560472420601656,
+          "abs_effect_at_N320": 0.00039994238064444687,
+          "difference": 0.0010561048614157187,
+          "operative_threshold": 0.009224497618316008,
+          "exceeds": false
+        },
+        "sharp__cahn_hilliard": {
+          "abs_effect_at_N20": 0.08805660721099311,
+          "abs_effect_at_N320": 0.23823350673519528,
+          "difference": -0.15017689952420216,
+          "operative_threshold": 0.8204445078094924,
+          "exceeds": false
+        }
+      },
+      "F1_instrument": {
+        "fired": false,
+        "ratios": {
+          "sharp__fisher_kpp_2d": 13.518546369191085,
+          "sharp__phase_field_crystal_2d": 95.3150847669141,
+          "sharp__allen_cahn_2d": 21.245911863990685
+        },
+        "note": "all three >= 2.0 (13.52 / 95.32 / 21.25); the pre-registered prediction was >= 10 and all three meet it"
+      },
+      "F2_barrier": {
+        "fired": false,
+        "effects": {
+          "sharp__fisher_kpp_2d": {
+            "abs_effect": 0.00039994238064444687,
+            "threshold": 0.0007136812826775696
+          },
+          "sharp__phase_field_crystal_2d": {
+            "abs_effect": 0.010083759299400677,
+            "threshold": 0.21302734961699343
+          },
+          "sharp__allen_cahn_2d": {
+            "abs_effect": 0.057091693532517716,
+            "threshold": 0.8797047190126648
+          }
+        },
+        "note": "all three |T1-T0| are 1.8x-21x BELOW their operative thresholds"
+      },
+      "F4_calibration": {
+        "fired": false,
+        "a_hits": [
+          "sharp__fisher_kpp_2d"
+        ],
+        "b_hits": [],
+        "note": "a: 1 of 5 (sharp__fisher_kpp_2d), threshold >= 4; b: 0 of 6, threshold >= 2"
+      },
+      "resolvability_cross_check": "F3 is a NON-exceedance clause: it fires because |T1-T0| at N_fit=20 is not larger than at N_fit=320 by more than the operative threshold. On every sweepable dataset BOTH endpoints are themselves below their operative thresholds (max |T1-T0| over all 15 dataset x N-level cells is helmholtz's 2.397 at N=80 vs its 4.527 threshold), so no N-scaling of the transfer effect is RESOLVABLE at 3 seeds. The clause fired as written; the underlying measurement is a null, not a resolved opposite effect. The mechanism-analyzer owns that distinction.",
+      "criterion_1_reading": "program.md \u00a71 criterion 1 asks for a claimable matched with/without-LF-training effect on >= 3 panel datasets. Measured: 0 of 6 claimable on the raw column and 0 of 6 on the shrunk column. The instrument's sensitivity IS demonstrated (information gap claimable on 5 of 5 non-anecdote datasets, ratios 3.16-95.3)."
+    },
+    "guard_flags": [
+      "heat_local",
+      "fluid",
+      "sharp__sod_1d"
+    ],
+    "guard_detail": {
+      "trigger_status": "Subagent \u00a72d guard trigger DID NOT fire (no panel win: 3-seed geomean 19.882884 vs anchor 19.817845 is WORSE by 0.065, well inside the CI). The guard leg ran anyway because card part 3 mandates it at contract tier; results are reported for completeness.",
+      "tier": "contract (2 epochs) \u2014 NOT science-grade; these are plumbing numbers",
+      "rule": "flag if mean nRMSE regressed > 2x vs eval/copylf_baselines.json test_nrmse",
+      "standing_caveat": "the recorded guard reference is the copy-LF nRMSE, i.e. a reference that CONSUMES the LF field at test. A round-2 condition-only model has no LF at test, so exceeding it is structural, not a regression signal; program.md \u00a72.3 further notes the NN floor already beats copy-LF on fluid and sod_1d. Flag is informational; no auto-reject.",
+      "per_dataset": {
+        "heat_local": {
+          "per_seed_nrmse": [
+            0.04020312792178112,
+            0.047460582409759144,
+            0.04706869641011325
+          ],
+          "per_seed_skill": [
+            16.740689982338523,
+            19.762713439830456,
+            19.599531061552458
+          ],
+          "mean_nrmse": 0.044910802247217836,
+          "recorded_guard_reference_nrmse": 0.00240152155999517,
+          "ratio_mean_to_reference": 18.700978161240478,
+          "regressed_more_than_2x": true,
+          "epochs": 2
+        },
+        "fluid": {
+          "per_seed_nrmse": [
+            0.49025285965918386,
+            0.4880258089329726,
+            0.5504184818972355
+          ],
+          "per_seed_skill": [
+            2.2482518576440746,
+            2.2380388199562318,
+            2.5241655403445638
+          ],
+          "mean_nrmse": 0.5095657168297973,
+          "recorded_guard_reference_nrmse": 0.21805958171115042,
+          "ratio_mean_to_reference": 2.336818739314957,
+          "regressed_more_than_2x": true,
+          "epochs": 2
+        },
+        "sharp__sod_1d": {
+          "per_seed_nrmse": [
+            0.06302353344959308,
+            0.06785396145997585,
+            0.07284849794369708
+          ],
+          "per_seed_skill": [
+            1.9045994949184042,
+            2.050577199519385,
+            2.201514335912337
+          ],
+          "mean_nrmse": 0.06790866428442201,
+          "recorded_guard_reference_nrmse": 0.03309017650048946,
+          "ratio_mean_to_reference": 2.0522303434500424,
+          "regressed_more_than_2x": true,
+          "epochs": 2
+        }
+      }
+    },
+    "anomalies": [
+      "No training anomalies: all three SLURM jobs COMPLETED with ExitCode 0:0 (sacct); all three .err files are 0 bytes; no NaN/Inf/error/traceback/preemption/requeue/resume string in any .out (grep -inE 'nan|inf|error|traceback|preempt|resum|warn|fail|requeue' returns nothing).",
+      "No preemption and no checkpoint resume occurred: partition gpu, gres gpu:nvidia_h200:1, --time=02:00:00 vs 17.2 min actual.",
+      "REPRODUCIBILITY, notable: on ifc_poisson B2's T0_cond_only is BIT-IDENTICAL to B1's certifier on all three seeds (nRMSE 0.2858818273168609 / 0.319639175959173 / 0.28669077843838425 and skill 7.941161869912803 / 8.878865998865917 / 7.963632734399563, byte-equal to state/noise_floor.json ifc_poisson per_seed_*). Expected: ifc has val+inner disabled so the fit set is all 5 samples in both cards, and the backbone/optimizer/seeding are matched. This is an independent re-implementation reproducing B1 exactly.",
+      "The other five panel datasets differ slightly from B1 by construction (B2 fit fold 320 vs B1 360) \u2014 e.g. allen_cahn mean skill 147.826531 (B2) vs 147.315394 (B1); this is a fit-size difference, not a seed difference.",
+      "CARD PREDICTION NOT BORNE OUT (part 4, not a falsification clause): the card predicted the information-gap ratio would be SMALLEST on sharp__cahn_hilliard (1.2-3, 'the 16 ic_c* dims put the IC in the condition'). Measured cahn_hilliard 39.55; the smallest ratio on the panel is ext__helmholtz_2d 3.16. The structural ranking prediction fails.",
+      "CARD PREDICTION NOT BORNE OUT (part 4): ifc_poisson was the 'one predicted claimable full-N effect, sign NEGATIVE, magnitude 0.5-5 vs floor 0.93770'. Measured sign IS negative but |effect| = 0.286264 < threshold 0.937704 \u2014 not claimable.",
+      "helmholtz is the only panel dataset where the primary arm does NOT beat its best training-free floor: T0 mean skill 6.877824 vs the zero-field floor 3.344110 (standing report-only discipline, program.md \u00a72.3). Shrinkage helps a lot there (lambda* 0.05-0.2, shrunk T0 4.225851) but still does not reach the zero floor.",
+      "helmholtz is also the only dataset where the raw and shrunk transfer columns FLIP SIGN (raw T0-T1 = -0.898044, shrunk = +0.401676); neither is claimable, so F4(b) does not fire, but the sign instability is worth the mechanism-analyzer's attention.",
+      "transfer_efficiency is UNDEFINED on ifc_poisson (denominator |I2-I1| = 0.508 does not exceed its own in-job null 0.938) and is 3e-04 to 2e-02 in magnitude on the five standard datasets \u2014 i.e. essentially zero transfer of an information gap that is demonstrably present.",
+      "All ifc_poisson inner-fold numbers carry anecdote_grade: true (5-fold LOO, n_inner reported as 0) and are excluded from F1/F2/F3/F4 by the probe and by hand.",
+      "Floor arms reproduce state/anchors/floors.json on all 6 panel datasets (reproduces_frozen true on 18/18 arm x dataset cells).",
+      "LF-definition seam: max_abs_diff vs eval/panel_data.py::copylf_prediction is 0.0 on all 27 (dataset x seed) arms JSONs; lf_read_at_test false and field_input_at_test false on all 27."
+    ],
+    "wall_clock_per_seed_min": [
+      17.25,
+      17.2,
+      17.17
+    ],
+    "timing_ledger_feed": {
+      "source": "sacct -j 66181609,66182923,66182924 (Elapsed) + arms_*.json train_seconds",
+      "job_ids": {
+        "0": "66181609",
+        "1": "66182923",
+        "2": "66182924"
+      },
+      "elapsed": {
+        "0": "00:17:15",
+        "1": "00:17:12",
+        "2": "00:17:10"
+      },
+      "state": {
+        "0": "COMPLETED 0:0",
+        "1": "COMPLETED 0:0",
+        "2": "COMPLETED 0:0"
+      },
+      "node": "hpc-sm-01-04 (h200); seeds 1 and 2 ran concurrently on the same node",
+      "sum_train_seconds_per_seed": {
+        "0": 990.3,
+        "1": 984.5,
+        "2": 983.3
+      },
+      "per_dataset_train_seconds_seed0": {
+        "ext__helmholtz_2d": 121.4,
+        "sharp__phase_field_crystal_2d": 125.2,
+        "sharp__allen_cahn_2d": 228.9,
+        "sharp__fisher_kpp_2d": 228.9,
+        "sharp__cahn_hilliard": 229.1,
+        "ifc_poisson": 47.8,
+        "heat_local(guard,2ep)": 4.1,
+        "fluid(guard,2ep)": 2.6,
+        "sharp__sod_1d(guard,2ep)": 2.3
+      },
+      "legs_per_dataset": "8 on each N=400 dataset and on each guard dataset, 22 on ifc_poisson",
+      "peak_mem_mb_max": 1456.15,
+      "vs_estimate": "brainstormer estimated ~30-45 min/seed and requested 02:00:00; actual 17.2 min/seed (44 trainings/seed of a ~1.06M-param FiLM-FNO)."
+    },
+    "anchor_action": {
+      "updated": false,
+      "reason": "\u00a72e criteria not met: B2's 3-seed panel geomean 19.882884 does not beat the stream anchor 19.817845 (lower is better); the delta +0.065039 is inside both the 3-seed CI [19.279875, 20.292780] and the certified panel min_claimable_effect 1.141867. state/anchors/r2s4_diag.json left untouched.",
+      "noise_floor_action": "state/noise_floor.json NOT written (code-reviewer finding 3.2b: B2's spread is FOLD-FIXED and must never replace the certified constants unlabelled)."
+    }
+  },
   "6_analysis": null,
   "7_gap_and_future": null,
   "reanalysis_progress": null

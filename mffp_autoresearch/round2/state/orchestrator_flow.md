@@ -410,3 +410,13 @@
   (WORK_CAP, transductive P_bar, 2 inert knobs); fold-fixed spread must NOT overwrite
   state/noise_floor.json without label; read only outputs eval/ (dbg_* are 2-epoch).
   ORCHESTRATOR SUBMITTED seed 0: job 66181609 (h200). Card -> running.
+
+- 2026-07-31 ~23:5x PDT r2s4-B2 seed 0 COMPLETED (66181609, 17:15, exit 0:0, geomean 19.2799
+  finite on 6/6). Seed-0 gate passed -> seeds 1-2 submitted: 66182923/66182924 (h200).
+  Initial-analyzer dispatches after all three (card needs the 3-seed paired spread).
+
+- 2026-08-01 ~00:1x PDT r2s4-B2 ALL SEEDS COMPLETED (~17 min each, h200). Orchestrator ran
+  03_accounting.sh: T0 3-seed geomean 19.8829 (matches B1 certifier band); T1-T0 transfer
+  deltas below MCE on all datasets (predicted value-of-LF NULL with sensitivity-proven
+  instrument); F3_scaling FIRED, F1/F2/F4 not. -> initial-analyzer dispatched (fold-fixed
+  spread labeling obligation forwarded).
