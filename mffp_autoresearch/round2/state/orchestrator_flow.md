@@ -82,3 +82,24 @@
 - 2026-07-31 ~16:4x r2s4 starter SUCCESS: B1.json drafted (diagnostic WITH training per §12.4,
   seeds [0,1,2], epochs 200; base_commit == round2-substrate verified; per-row prior-art
   verdicts preserved verbatim). -> builder dispatched.
+
+- 2026-07-31 ~16:5x r2s1 brainstormer SUCCESS (12/12): B1 model card = amplitude(log||y||)/
+  direction split decoder + OOF blend onto best floor + training-free identifiability
+  certificate; prior_art verdict preempted-pivoted (D1 baseline, D2 control-with-predicted-
+  failure, D3 scored). ADR r2-0003 REFINED: allen_cahn rising profile => maybe deterministic-
+  undersampled (addendum appended); helmholtz cv(||y||)=12.27 explains r1 scaler failures;
+  helmholtz report-only. Builder constraint: extra arms named ref_*/cert_*, never test*.
+  -> starter dispatched.
+
+- 2026-07-31 ~17:0x r2s3 starter SUCCESS (13/13): B1.json drafted, no TBDs; recipe env mixes 6
+  real knobs + underscore card directives (not passed to --env, per brainstormer note).
+  -> builder dispatched.
+
+- 2026-07-31 ~17:1x r2s1 starter SUCCESS (20/20): B1.json drafted, verbatim-verified; _-prefixed
+  env directives must be filtered by builder before score_panel. -> builder dispatched.
+  ALL FOUR STREAMS NOW AT BUILD STAGE.
+
+- 2026-07-31 ~17:4x r2s4 builder SUCCESS (10/10): build 870b62b; contract smoke exit 0
+  (helmholtz e2 nRMSE 2.589); floors reproduce rel-diff 0.0; SIGKILL resume at epoch 90
+  verified; scripts incl. 03_certify.sh (ORCHESTRATOR runs post-3-seeds, then installs
+  noise_floor_candidate.json over state/noise_floor.json). -> code-reviewer dispatched.

@@ -30,26 +30,26 @@ methods, barred by 5.11; Lanthaler (2210.01074, via the in-repo sharp report)
 proves linear-reconstruction architectures (DeepONet, PCA-Net, fixed-POD) are
 provably inefficient for *discontinuous* operators — 4 of 6 panel datasets.
 
-## 2. Section 12 conventions (program.md 12.1, verbatim)
+## 2. program.md §12.1 conventions (VERBATIM, program.md lines 319-346)
 
-> - **Bar**: the per-dataset floor table (2.3). Beating NN-in-condition with 400
->   train samples is necessary but nowhere near sufficient; the interesting
->   question is how close a from-scratch condition->HF surrogate gets to skill 1.0
->   on each dataset.
-> - Design priors (spec 6): FiLM-conditioned FNO **decoders** (condition ->
->   spectral latent -> field), DeepONet-style branch-trunk (branch on condition,
+> - **Bar**: the per-dataset floor table (§2.3). Beating NN-in-condition with
+>   400 train samples is necessary but nowhere near sufficient; the interesting
+>   question is how close a from-scratch condition→HF surrogate gets to
+>   skill 1.0 on each dataset.
+> - Design priors (spec §6): FiLM-conditioned FNO **decoders** (condition →
+>   spectral latent → field), DeepONet-style branch–trunk (branch on condition,
 >   trunk on coordinates), spectral/implicit decoders (SIREN/modulated INR
->   class). Condition vectors are 2-19 dims; ifc_poisson's is 5-dim.
-> - **ADR r2-0003 (corrects a spec 4 grounding fact)**: on pfc, fisher_kpp
+>   class). Condition vectors are 2–19 dims; ifc_poisson's is 5-dim.
+> - **ADR r2-0003 (corrects a spec §4 grounding fact)**: on pfc, fisher_kpp
 >   and allen_cahn the condition vector is NOT complete — per-sample random
->   ICs live only in the fields, so condition->HF is a stochastic map and
+>   ICs live only in the fields, so condition→HF is a stochastic map and
 >   deterministic models are bounded by the conditional-mean floor
->   (train_mean > NN on those floors is the symptom). Skill -> 1 is unreachable
+>   (train_mean > NN on those floors is the symptom). Skill→1 is unreachable
 >   there; design and falsify against the conditional-mean floor, and treat
 >   bare FiLM-decoders as declared baselines (prior-art verdict: preempted).
-> - **Helmholtz lesson** (r1 report 5): the zero field is the floor to beat
+> - **Helmholtz lesson** (r1 report §5): the zero field is the floor to beat
 >   there — any helmholtz claim must show the zero-floor column.
-> - **pfc caveat** (2.3): denominator 0.007381 under variant C; no
+> - **pfc caveat** (§2.3): denominator 0.007381 under variant C; no
 >   fidelity gap under band-limited. State it on every pfc claim.
 > - N_hf on ifc_poisson is 5 — every claim there is anecdote-grade; prefer
 >   variance-reducing designs (r1 s1 lesson: ensembling, physics residuals are
@@ -64,7 +64,8 @@ Anchor (`state/anchors/r2s1_direct.json`): `best_floor_panel_geomean` =
 helmholtz 3.3441 (zero), pfc 59.812 (train_mean), allen_cahn 269.196 (NN),
 fisher_kpp 11.993 (train_mean), cahn_hilliard 23.180 (NN), ifc_poisson 10.055 (NN).
 `state/noise_floor.json` is `_provisional: true` (round-1 batch-0 rescaled, from
-LF-**consuming** families) -> judged directly per 4.3 until r2s4-B1 certifies.
+LF-**consuming** families) -> judged directly per program.md §4.3 until r2s4-B1
+certifies a condition→HF 3-seed spread.
 
 ## 3. Within-stream prior cards
 

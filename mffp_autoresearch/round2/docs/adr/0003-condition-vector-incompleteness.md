@@ -46,3 +46,16 @@ this for three datasets:
    document the stochastic-map semantics; spec §4's grounding fact needs the
    same correction. Program §12.1/§13.1 corrected at launch+0 (no card had
    been designed yet).
+
+## Addendum (2026-07-31, r2s1-B1 brainstormer measurement)
+
+The three datasets are not homogeneous: pfc and fisher_kpp show a FLAT
+pair-difference-vs-condition-distance profile (stochastic; aleatoric ceiling
+≈0.30/0.235 → max achievable skill ≈41/11 — fisher_kpp is nearly exhausted
+before training), but allen_cahn's profile RISES with condition distance
+(slope +1.195, zero-distance intercept 0.062) — the signature of a
+deterministic, under-sampled map. r2s1-B1 is designed to decide allen_cahn's
+class; treat this ADR's "stochastic" label for allen_cahn as provisional
+until that card reports. Also measured: helmholtz cv(||y||)=12.27 (the
+round-1 global-scaler failure mode), cahn_hilliard has no near-neighbour
+support in 19-dim condition space (min standardized pair distance 2.82).

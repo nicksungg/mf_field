@@ -1,0 +1,109 @@
+{
+  "id": "r2s3_lf_train_signal-B1",
+  "stream": "r2s3_lf_train_signal",
+  "batch": 1,
+  "category": "lf_train_signal / multi-rung native-resolution supervision (auxiliary MF loss, D2 x D3 composition)",
+  "card_type": "model",
+  "created_utc": "2026-07-31T15:14:14Z",
+  "worktree_path": "mffp_autoresearch/round2/worktrees/r2s3_lf_train_signal/B1",
+  "source_iteration": "brainstormer/r2s3_lf_train_signal/batch_1/iteration_1.md",
+  "reopened_from": null,
+  "1_id_category": "r2s3_lf_train_signal-B1 — lf_train_signal / multi-rung native-resolution supervision (auxiliary MF loss, D2 x D3 composition)",
+  "2_motivation": "The websearcher's prior-art verdict scores the two live directions as follows\n(verbatim, `websearches/r2s3_lf_train_signal/batch_1/report.md` \"## Prior-art\nverdict\"):\n\n> **D2** — nested multi-resolution auxiliary target heads: shared\n> condition→latent trunk with extra heads regressing the l1/l2 coarse-solve\n> fields, heads discarded at test | **preempted-but-MF-composition-open** |\n> ... | The published composites put LF **inside the test-time prediction\n> path**; keeping the LF heads strictly out of that path, as a pure\n> representation regularizer on a **fully nested** ladder (identical\n> conditions, differing only by grid truncation), was not retrieved.\n\n> **D3** — LF-as-parameter-coverage on ifc_poisson: use the 100/50/20 LF\n> samples at conditions **disjoint** from the 5 HF conditions, with a matched\n> with/without-LF ablation | **novel** (nearest neighbors named) | ... Both\n> nearest neighbors are *resolution hierarchies of the same problem* aimed at\n> *cost*. Neither covers a coarse level at **different parameter values** than\n> the fine level. Also, iteration 3 term 3 found **no** matched\n> with/without-LF value-of-information ablation at N_hf ~ 5 for field\n> prediction anywhere — that measurement (round-2 success criterion 1) is\n> itself unclaimed.\n\nThe card executes exactly the two open surfaces in one matched design,\nbecause the on-disk ladder asymmetry (verified by me in `summary_so_far.md`\n§6.2: the 5 sharp/helmholtz datasets carry **bit-identical** condition arrays\nacross rungs, while ifc_poisson's four rungs are at **pairwise disjoint**\nconditions — exact overlap counts 0) forces a per-dataset answer to the\nstream's question, and one architecture with a matched no-LF control is the\nonly way to get it. Program.md §12.3's demand — \"LF-as-signal designs must\nstate what information the LF rungs add that the HF rung does not already\ncontain\" — is answered concretely: **170 disjoint conditions on ifc_poisson;\nnothing but spectral truncation elsewhere.**",
+  "3_description": "new family `models_r2/r2s3_rung_supervised`.\n- **Model** `CondFieldDecoder(cond_dim, hidden=64, n_blocks=4,\n  modes_cap=12)` with **`forward(cond, out_hw) -> (B,H,W)`** (new signature:\n  the output grid is a forward argument, not bound at construction).\n  Coordinate channels built at forward time; lift conv 2->64; 4 blocks of\n  [SpectralConv2d with modes clipped to the requested grid's Nyquist + 1x1\n  conv + FiLM(cond) affine after GroupNorm + GELU]; projection 1x1\n  64->128->1. **FFTs use `norm=\"forward\"`** (not `\"ortho\"`) so that the same\n  mode weights act identically at every rung resolution — the enabling\n  detail of the design.\n- **Training** — two stages, matching the declared baseline's structure:\n  stage 1 = `--epochs` (200) on the arm's rung row set, AdamW lr 1e-3, wd\n  1e-5, cosine, grad-clip 1.0, batch 16, minibatches grouped by rung (one\n  forward per rung per step), MSE in scaled units; stage 2 = 200 epochs on\n  HF rows only at lr 3e-4. ONE shared scaler `s = max|y|` over all stage-1\n  rung fields. No early stopping, no validation-based selection, therefore no\n  validation split is consumed (§12.1 train/val discipline; the round-1 D3\n  `val_idx` double-consumption caveat cannot arise).\n- **Test path**: `S(cond, HF_work_grid)` only. No LF tensor is constructed at\n  test; the LF signal has zero parameters, so it cannot leak into inference.\n- **Arms** (each its own `ROUND2_EVAL_RESULTS`, hence its own `ckpt_dir`):\n  | arm | stage-1 rows | datasets | role |\n  |---|---|---|---|\n  | `hf_only` | HF rung only | panel | matched no-LF control (identical arch/budget/optimizer) |\n  | `rung_native` | all rungs, each at its **native** grid | panel | **PRIMARY / scored** |\n  | `rung_upsampled` | all rungs bilinearly upsampled to the HF working grid (the `_to_grid` convention of `mf_fno_transfer_film` and every round-1 ladder family) | `ifc_poisson, sharp__cahn_hilliard, sharp__phase_field_crystal_2d` | mechanism control |\n- **Declared baseline** (`mf_fno_transfer_film`, §12.3 mandatory): **cited**,\n  with its seed-0/200-epoch panel restated under corrected denominators from\n  `round1/eval/results/mf_fno_transfer_film/*_e200_s0.json` — helmholtz\n  20.7413, pfc 69.7455, allen_cahn 148.1626, fisher_kpp 12.3501,\n  cahn_hilliard 11.6650, ifc_poisson 1.5446, **panel geomean 19.0433** — plus\n  a **validity gate**: re-run it on `ifc_poisson` only under the round-2 eval\n  layer (0.78 min on p100) and require nRMSE 0.055604 +/- 10% relative.\n  Gate, not a clause.\n- **Guard leg**: primary arm on `--datasets guard` at contract tier\n  (2 epochs), per §2.3.\n- **Checkpointing**: `<ckpt_dir>/last.pt` every 10 epochs with\n  `{stage, epoch, model, opt, sched, rng, epochs_target, arm, grid}`; exact\n  resume; `done` marker keyed on `(epochs_target, arm, grid)`.\n- **Score-neutral instrumentation**: per-rung row/grid/`max|y|`/`mean|y|`\n  table with exact condition-overlap counts against the HF rung; a\n  resolution-consistency probe (rel-L2 between `S(cond, coarse)` and the ADR\n  r2-0001 restriction of `S(cond, HF)`) before and after training; per-arm\n  train-vs-test nRMSE gap (feeds r2s4's overfitting anatomy); per-rung\n  stage-1 loss curves.",
+  "4_expected_result": "| quantity | prediction | vs anchor / floor |\n|---|---|---|\n| `hf_only` ifc_poisson skill | ~11 (8-17) | at/above the train-mean floor 11.2063 — 5 samples cannot cover a 5-D condition space |\n| `rung_native` ifc_poisson skill | **~1.0 (0.5-3.0)** | bracketed by transfer_film 1.5446 and round-1 `self_only` 0.6087; beats NN 10.0549 / mean 11.2063 / zero 27.7778 floors by ~10x; possibly < 1 (round-2 criterion 2) |\n| **value-of-LF effect, ifc_poisson** | **~10 skill units** | noise-floor `min_claimable_effect` **0.23990756** -> **~42x the floor** |\n| 5 condition-aligned datasets | `rung_native` ~ `hf_only` within each dataset's `min_claimable_effect` (predicted null, nested-ladder degeneracy) | thresholds 10.6811 / 6.9839 / 14.8152 / 1.2198 / 1.1604 |\n| `rung_native` panel geomean | ~17-19 | anchor **23.0636**; declared baseline **19.0433** |\n| `hf_only` panel geomean | ~26-27 | worse than the anchor — that is the point of the control |\nThe card is not expected to move the panel geomean much; its deliverable is\nthe certified value-of-LF contrast (round-2 criterion 1's shape) plus a\npossible ifc_poisson skill < 1. Standing caveats carried: helmholtz stays\nreport-only (best floor = zero field, 3.3441); pfc claims carry the\nband-limited-denominator caveat (`eval/copylf_baselines.json _notes.pfc`).",
+  "expected_falsification": "*F1 (primary)* — falsified if `rung_native` fails\nto beat `hf_only` on `ifc_poisson` by more than the certified floor\n**0.23990756** skill units, i.e. if 170 disjoint LF conditions add nothing a\ncondition→HF operator can use.\n*F2 (mechanism)* — falsified if `rung_native` fails to beat `rung_upsampled`\non `ifc_poisson` by more than the same 0.23990756 skill units (the\nnative-resolution pathway is then not the differentiator and the round-1/zoo\nupsample convention was already optimal).\n*F3 (degeneracy prediction, pre-registered in both directions)* — the design\npredicts NO LF effect on the 5 condition-aligned datasets; falsified if\n`rung_native` beats `hf_only` on >= 2 of the 5 by more than each dataset's\n`min_claimable_effect` (helmholtz 10.68110662, pfc 6.98392165, allen_cahn\n14.81520561, fisher_kpp 1.21978271, cahn_hilliard 1.16035691), which would\nestablish LF as a resolution curriculum independent of parameter coverage.\nPre-registered 2x2 reading of (F1, F2) is recorded in\n[iteration_1.md](iteration_1.md).",
+  "anchor_reference": null,
+  "prior_art": {
+    "verdict": "D2 — **preempted-but-MF-composition-open**; D3 — **novel** (nearest\nneighbors named). Quoted verbatim by the brainstormer from\n`websearches/r2s3_lf_train_signal/batch_1/report.md` \"## Prior-art verdict\"\n(see `2_motivation` for the full quoted rows):\n\n> **D2** — nested multi-resolution auxiliary target heads: shared\n> condition→latent trunk with extra heads regressing the l1/l2 coarse-solve\n> fields, heads discarded at test | **preempted-but-MF-composition-open** |\n> ... | The published composites put LF **inside the test-time prediction\n> path**; keeping the LF heads strictly out of that path, as a pure\n> representation regularizer on a **fully nested** ladder (identical\n> conditions, differing only by grid truncation), was not retrieved.\n\n> **D3** — LF-as-parameter-coverage on ifc_poisson: use the 100/50/20 LF\n> samples at conditions **disjoint** from the 5 HF conditions, with a matched\n> with/without-LF ablation | **novel** (nearest neighbors named) | ... Both\n> nearest neighbors are *resolution hierarchies of the same problem* aimed at\n> *cost*. Neither covers a coarse level at **different parameter values** than\n> the fine level. Also, iteration 3 term 3 found **no** matched\n> with/without-LF value-of-information ablation at N_hf ~ 5 for field\n> prediction anywhere — that measurement (round-2 success criterion 1) is\n> itself unclaimed.",
+    "citations": [
+      "https://arxiv.org/abs/1903.00104 (composite MFNN — LF net from the parameter input, LF train-only, no LF solve at inference: the D2 preemption)",
+      "https://dl.acm.org/doi/10.1016/j.jcp.2023.112462 (MF-DeepONet)",
+      "https://arxiv.org/html/2604.20061v1 (coarse-graining = irreversible information loss — the honest bound on what the rungs can add)",
+      "https://arxiv.org/abs/2505.12940 (MLMC / multiscale training — a D3 nearest neighbour, cost-oriented, same parameters per level)",
+      "https://arxiv.org/abs/2501.12739 (MLMC / multiscale training — a D3 nearest neighbour, cost-oriented, same parameters per level)",
+      "https://arxiv.org/pdf/2304.06972 (published LF-pretrain->HF-finetune FNO = the declared baseline's external preemption)"
+    ]
+  },
+  "recipe": {
+    "base_family": "none (new from-scratch family; NOT vendored from mf_fno_transfer_film or mf_fno_ladder* — see the differentiator table in iteration_1.md 'Alternatives weighed and rejected' D)",
+    "base_commit": "9e10d414e35a96398f7b091bc84ddf936d88acc7",
+    "family_dir": "models_r2/r2s3_rung_supervised",
+    "datasets": "panel",
+    "epochs": 200,
+    "seeds": [
+      0
+    ],
+    "env": {
+      "R2S3_ARM": "rung_native",
+      "R2S3_RUNGS": "all",
+      "R2S3_SCALER": "shared_max_all_rungs",
+      "R2S3_SPECTRAL_NORM": "forward",
+      "R2S3_LAMBDA": "1.0",
+      "R2S3_RESCONSIST_PROBE": "1",
+      "_note": "keys prefixed _ are card directives, NOT passed to --env. The --env set for the primary arm is exactly {R2S3_ARM=rung_native, R2S3_RUNGS=all, R2S3_SCALER=shared_max_all_rungs, R2S3_SPECTRAL_NORM=forward, R2S3_LAMBDA=1.0, R2S3_RESCONSIST_PROBE=1}.",
+      "_primary_arm": "rung_native",
+      "_arms": [
+        {
+          "tag": "hf_only",
+          "R2S3_ARM": "hf_only",
+          "R2S3_RUNGS": "hf",
+          "datasets": "panel"
+        },
+        {
+          "tag": "rung_native",
+          "R2S3_ARM": "rung_native",
+          "R2S3_RUNGS": "all",
+          "datasets": "panel"
+        },
+        {
+          "tag": "rung_upsampled",
+          "R2S3_ARM": "rung_upsampled",
+          "R2S3_RUNGS": "all",
+          "datasets": "ifc_poisson,sharp__cahn_hilliard,sharp__phase_field_crystal_2d"
+        }
+      ],
+      "_sweep": "ONE SLURM job per seed runs the three arms serially: for each arm, export ROUND2_EVAL_RESULTS=<OUT_DIR>/eval/results_<tag> (so out_json and ckpt_dir cannot collide across arms), then call score_panel.py --family_dir <worktree>/models_r2/r2s3_rung_supervised --datasets <arm datasets> --epochs 200 --seed $SEED --env R2S3_ARM=<...> --env R2S3_RUNGS=<...> --env R2S3_SCALER=shared_max_all_rungs --env R2S3_SPECTRAL_NORM=forward --env R2S3_LAMBDA=1.0 --env R2S3_RESCONSIST_PROBE=1 --out <OUT_DIR>/eval/result_<datasets>_<tag>_s${SEED}.json. score_panel caches per (family,dataset,epochs,seed,code_hash incl. env), so resubmission after preemption skips finished (arm,dataset) pairs — the script is idempotent.",
+      "_declared_baseline": {
+        "family": "mf_fno_transfer_film",
+        "role": "program.md 12.3 mandatory declared baseline (LF-pretrain -> HF-finetune from the condition vector); cited, not re-trained on the panel, per the websearcher's instruction 6",
+        "cited_numbers_source": "mffp_autoresearch/round1/eval/results/mf_fno_transfer_film/{ext__helmholtz_2d,sharp__phase_field_crystal_2d,sharp__allen_cahn_2d,sharp__fisher_kpp_2d,sharp__cahn_hilliard,ifc_poisson}_e200_s0.json, mean of rel_l2_per_sample (= the round-2 metric)",
+        "cited_skills_corrected_refs": {
+          "ext__helmholtz_2d": 20.7413,
+          "sharp__phase_field_crystal_2d": 69.7455,
+          "sharp__allen_cahn_2d": 148.1626,
+          "sharp__fisher_kpp_2d": 12.3501,
+          "sharp__cahn_hilliard": 11.665,
+          "ifc_poisson": 1.5446,
+          "panel_geomean": 19.0433
+        },
+        "validity_gate": "re-run read-only via --family_dir <factory_root>/models/mf_fno_transfer_film --datasets ifc_poisson --epochs 200 --seed 0 (0.78 min on p100); must reproduce nRMSE 0.055604 within 10% relative. Validity gate, NOT a falsification clause; no factory file is edited."
+      },
+      "_guard_leg": "primary arm only: score_panel.py --datasets guard --epochs 2 --seed 0 (contract tier, program.md 2.3)",
+      "_slurm": {
+        "gres": "gpu:h100:1",
+        "partition": "gpu",
+        "time": "04:00:00",
+        "budget_note": "~450 min on p100 / ~2.5 h on h100, extrapolated from round1/state/timing_ledger.json (mf_fno_transfer_film, 200 epochs, p100: helmholtz 7.73, pfc 12.35, allen_cahn 44.50, fisher_kpp 44.35, cahn_hilliard 44.35, ifc_poisson 0.78 min)"
+      }
+    }
+  },
+  "brainstormer_immutables_self_check": "**pass (11/11)**, with positive evidence per item\nrecorded in [iteration_1.md](iteration_1.md) (\"Immutables self-check\"). Two\nitems worth surfacing here: (9) F1/F2's 0.23990756 threshold is the\nifc_poisson `min_claimable_effect` from `state/noise_floor.json` and the\npredicted effect is ~42x it; (10) the nearest pre-falsified lever is **LF\nlow-mode freezing** (`mf_fno_spectral`, r1 §5) — that lever substituted the\nLF field's low modes into the *test-time* prediction, whereas here nothing is\nfrozen or substituted, no LF tensor exists at test, and the low-mode\ninformation enters only as a training loss at conditions the HF rung does not\ncontain.",
+  "brainstormer_anchor_reference_note": "`null` (program.md §4.5 — round-2 lever stream; the own-stream anchor 23.0636 is implicit and quoted throughout).",
+  "brainstormer_source_iteration_note": "[iteration_1.md](iteration_1.md)",
+  "status": "drafted",
+  "skipped_reason": null,
+  "reopen_candidate": false,
+  "scripts_path": {},
+  "output_paths": {},
+  "build_commit": null,
+  "job_ids": [],
+  "logs": {},
+  "build_notes": [],
+  "review_notes": [],
+  "debug_notes": [],
+  "5_actual_result": null,
+  "6_analysis": null,
+  "7_gap_and_future": null,
+  "reanalysis_progress": null
+}
