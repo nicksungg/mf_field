@@ -2,58 +2,42 @@
   "id": "s4_hybrid_routing-B3",
   "stream": "s4_hybrid_routing",
   "batch": 3,
-  "category": "mf_composition_router_superlearner_lsi_cleaned_target",
+  "category": "mf_composition / per-dataset discrete super learner over a 2-element library (closed-form LSI branch vs corrector-on-LSI-cleaned-residual), library membership set by test-time LF availability, with OOF selection at every stage and a per-sample no-harm layer",
   "card_type": "model",
-  "created_utc": "2026-07-30T19:30:39Z",
+  "created_utc": "2026-07-30T22:03:47Z",
   "worktree_path": "mffp_autoresearch/round1/worktrees/s4_hybrid_routing/B3",
   "source_iteration": "brainstormer/s4_hybrid_routing/batch_3/iteration_1.md",
   "reopened_from": null,
-  "1_id_category": "s4_hybrid_routing-B3 / mf_composition_router_superlearner_lsi_cleaned_target",
-  "2_motivation": "  The round's synthesis slot takes the ONE form the prior-art verdict leaves open and\n  claims nothing else. On the router itself the verdict is explicit \u2014\n  **D1: `preempted-but-MF-composition-open (cite)`** \u2014 *\"The **selection rule is not open**\n  (discrete super learner) and **availability-keyed gating is not open** (missing-modality\n  MoE). Open: no fetched source routes on **fidelity availability inside a multi-fidelity\n  PDE surrogate**, and none routes between a **defect-correction** path and a\n  **transfer-learning** path. **Claim zero novelty for the router.** The card's\n  contribution is the composition + its controls; the honest framing is \"the discrete\n  super learner applied per dataset over a 2-element library, where library membership is\n  itself determined by a data property (does the test split ship LF?)\".\"*\n  The card's single open claim is the TARGET \u2014\n  **D3: `preempted-but-MF-composition-open (cite)` \u2014 the card's strongest open surface** \u2014\n  *\"In **every** fetched source the pre-stage is a *fixed classical solver*, a *learned*\n  deconvolution layer, or a *scalar/affine* fidelity correlation. **Nobody fits a\n  |k|-dependent LSI transfer function to the fidelity gap and then trains a corrector on\n  ITS residual**, and nobody reports the zero-parameter filter as a scored floor beside the\n  trained model.\"*\n  The gate is cited, not claimed (**D2 `preempted (cite)` \u2014 outright**,\n  https://arxiv.org/abs/1608.00060 *\"K-fold sample splitting, which we call\n  cross-fitting\"*); the fitted taper is inherited, not claimed (**D4 `preempted (cite)` \u2014\n  textbook, twice; nothing open**); and the LSI-alone / corrector-alone controls ship in\n  the same JSON because **D5** says the *practice of reporting them* is the transferable\n  output. The claim shape follows the verdict's own instruction: *\"the router's honest\n  predicted gain is 'no dataset is worse than the better of its two branches', a\n  **no-harm** claim, and the falsification clause should be written against that.\"*",
-  "3_description": "  A single family `models_r1/s4_router`, vendored from `models_r1/s6_local_repair`\n  @ `d083d44` (s6_local-B2), implementing **two nested discrete super learners** plus one\n  target change, run as a **6-arm sweep with a fixed promotion rank**.\n\n  1. **L0 \u2014 availability gate (zero training, a data property).** `test[\"lf_fids\"]` empty\n     \u2192 champion transfer branch (`ifc_poisson` only, the substrate's existing\n     `run_champion` path, `S6_FALLBACK_NO_TEST_LF=champion`); non-empty \u2192 the DC library\n     (all 5 other panel datasets and all 3 guard datasets).\n  2. **L1 \u2014 discrete super learner over a 2-element library** `{lsi_alone, corr_cleaned}`,\n     selected by **cross-validated risk in the scored metric** (per-sample relative L2,\n     4-fold inside the held-out slice `val_idx`, `S6_GATE_HOLDOUT_FRAC=0.2`).\n  3. **The open claim (D3).** `corr_cleaned` retargets the stage-1 corrector onto the\n     **fitted-LSI-cleaned residual**: fit `T(k) = \u03a3_n R\u0302_n conj(L\u0302F_n) / \u03a3_n |L\u0302F_n|\u00b2` on\n     `fit_idx` only (the existing `lsi_filter.fit_transfer`), form\n     `R' = R \u2212 irfft2(rfft2(LF)\u00b7T)`, train the corrector on `R'`, and predict\n     `pred = LF + C_LSI + \u03b1\u00b7\u0394_NN`. `\u03b1 = 0` reproduces the zero-parameter LSI branch\n     **bit-exactly**, so the LSI floor is a structural lower bound of the trained branch.\n  4. **\u03b1 level \u2014 trust head, reused per the s6-B2 register spec.** KEEP: out-of-fold\n     fitting on a slice the corrector never saw, ridge on standardized features,\n     `{persample_head, global_scalar, zero}` by k-fold CV, `\u03b1\u0302 = 0` bit-exact fallback, the\n     own-correction band fractions (67\u201383 % of the head's weight mass), and\n     `borrow_partner_stages` pairing. **CHANGE 1 (load-bearing)**: regress the \u03b1 that\n     minimises the **SCORED** metric \u2014 weight the per-sample regression by `1/\u2016Y_i\u2016\u00b2` \u2014\n     not the raw L2 optimum `\u27e8R,C\u27e9/\u2016C\u2016\u00b2`. **CHANGE 2**: a per-sample no-harm cap that\n     shrinks \u03b1\u0302 toward 0 whenever the predicted relative gain is inside the dataset's\n     certified floor.\n  5. **OOF instrumentation (D2, cited not claimed).** Every stage prints\n     `val_rel_l2_base_oof / val_rel_l2_base_insample`; no joint SGD may re-tune a\n     selector-fitted \u03b1 (enforced by freezing the corrector before any \u03b1 stage, as the\n     substrate already does); the **no-stage-3\u2032 counterfactual is a free within-run leg**\n     (it is the `corr_cleaned` arm itself).\n  6. **Deliberately excluded**: the corrector-input wrap-continuity repair (it would break\n     the `corr_plain` replica gate that makes the D3 contrast paired, and s6-B2 part 7\n     files it as s6_local-B3 hygiene) \u2014 replaced by a mandatory **0-GPU**\n     `tools/boundary_interior_split.py` interior-16 report on every per-dataset verdict.\n     Also excluded: any attention path (s4-B2 register), so the\n     permute-queries-before-chunking ride-along is **not applicable** here and stays a\n     standing note on `tools/pooling_support_invariance.py`.\n\n  **Arm table (ADR 0007: sweep with promotion rank fixed pre-submit; controls never\n  promotable; screen numbers never reportable).**\n\n  | tag | role | promotable | GPU |\n  |---|---|---|---|\n  | `router` | **PRIMARY** \u2014 L0 + L1 + `persample_head_rel` (CHANGE 1) + no-harm cap (CHANGE 2) | **rank 1** | borrows `corr_cleaned` stages 0\u20132 (~0) |\n  | `corr_cleaned` | D3 branch alone (`heldout_scalar` \u03b1); **also the no-stage-3\u2032 counterfactual** | **rank 2** | trains |\n  | `corr_plain` | CONTROL \u2014 s6-B2 `circ_repair` replica (raw-residual target); paired denominator for the D3 claim + gate V1 | never | trains |\n  | `lsi_ctrl` | CONTROL \u2014 zero-parameter fitted-LSI floor, scored beside the trained model (D5) | never | ~0 (except the ifc_poisson champion leg) |\n  | `head_l2` | CONTROL for CHANGE 1 \u2014 raw-L2 \u03b1 head on the same `corr_cleaned` substrate | never | borrows (~0) |\n  | `champion_ctrl` | CONTROL \u2014 champion transfer path forced on the 5 LF-bearing panel sets; re-measures the stream anchor in-batch | never | trains |\n\n  **Clause-design principle**: every clause is a **paired ratio between two arms on the\n  same dataset**, hence denominator-free, hence exactly invariant to the `(r\u22121)/2`\n  registration artifact \u2014 honouring s2-B2's standing rule without touching the frozen\n  metric (immutable 4). `tools/registration_skill_split.py` is a MANDATORY analysis\n  obligation on every sharp-set number reported, but decides no clause.\n\n  **FULL sbatch block** \u2014 `<worktree>/scripts/01_train_eval.sh` (the orchestrator submits;\n  the builder never does): [the FULL sbatch bash block is carried verbatim in recipe.env._sbatch_script_01_train_eval]\n\n  The contract-tier screen is the same script with `--epochs 2`,\n  `--time=01:00:00`, `--job-name=r1-s4_hybrid_routing-B3-screen-s0`, results written under\n  `$OUT_DIR/screen/` and **never** read into parts 5\u20137 (ADR 0007).",
-  "4_expected_result": "  | quantity | predicted | comparator | floor | resolvable? |\n  |---|---|---|---|---|\n  | panel geomean skill, `router` | **0.150 \u2013 0.190** | anchor 6.703016 (`state/anchors/s4_hybrid_routing.json`) | 13.183 % | trivially (\u2248 \u221297 %) \u2014 REPORTED, **no clause** |\n  | panel geomean, `router` vs `lsi_ctrl` (\u2248 0.1972) | **\u22125 % to \u221224 %** | in-batch zero-parameter floor | 13.183 % | **pre-registered NOT RESOLVABLE** (s6-B2 measured \u22122.355 % / \u22124.884 %) |\n  | `corr_cleaned / corr_plain` on **pfc** | **0.60 \u2013 0.85** (\u221215 % to \u221240 %) | 7.2041e-04 \u2192 4.3e-04\u20266.1e-04 | 10.000 % | **YES \u2014 1.5\u20134.0\u00d7 the floor** |\n  | `router` vs `min(branches)`, all 6 panel | **\u2264 1.00**, exact equality on \u2265 3 | in-batch branches | 10.000 / 15.323 / 70.165 % | the no-harm clause |\n  | pfc `router` vs `head_l2` global-scalar fallback | **0.75 \u2013 1.00** | +21.51 % measured for the raw-L2 head (F11) | 10.000 % | **YES \u2014 the effect tested is 2.15\u00d7 the floor** |\n  | worse-than-base sample fraction (CHANGE 2) | 0.27 \u2192 **\u2264 0.10** (pfc), 0.35 \u2192 **\u2264 0.10** (helmholtz) | F13 | n/a | report-only |\n  | `val_base_oof / val_base_insample`, all stages | **0.90 \u2013 1.15** | s4-B2's 16.4\u00d7 / 2.9\u00d7 pathological, 0.82\u20131.09\u00d7 benign | n/a | free instrumentation |\n  | `ifc_poisson`, every arm | 0.055632 \u00b1 0.1 % (skill \u2248 1.5453) | paper bar 0.036 | 15.323 % | **pre-registered no-op** |\n  | guard geomean, `router` | **\u2264 0.0624** | `corr_plain` 0.062438, `lsi_ctrl` 0.532461 | none certified | report-only |\n\n  **Why**: the D3 target removes the corrector's obligation to re-derive the |k|-dependent\n  transfer function it already fails at the rim (F3: 7.1\u00d7 over-concentration on pfc,\n  22.04 % of its squared error), leaving it only the F6-aligned surplus (cos 0.7630 on\n  pfc). The router then cannot do worse than either branch except through selection error,\n  and CHANGE 1 removes the one diagnosed cause of selection error at the \u03b1 level (F11's\n  norm mismatch, Pearson 0.9983 to an oracle worth \u221225.83 %).\n\n  **Pre-registered routing table** (verbatim, the recipe's `S4_PREREG_ROUTE`):\n  `ifc_poisson=champion,ext__helmholtz_2d=alpha_zero,sharp__phase_field_crystal_2d=corr_cleaned_or_lsi,sharp__allen_cahn_2d=lsi_alone,sharp__fisher_kpp_2d=corr_cleaned,sharp__cahn_hilliard=lsi_alone,fluid=corr_cleaned,sharp__sod_1d=corr_cleaned,heat_local=corr_cleaned`\n\n  Its enforcement and its non-claims, quoted verbatim from the brainstormer's falsification clause: *\"the pre-registered routing table is falsified if the router's realised branch selection differs from the pre-registration on \u2265 2 of the four sharp panel datasets, or if on any dataset whose two branches differ by more than its floor the router selects the worse branch (`sharp__cahn_hilliard`, gap 7.24 % < 10.000 %, and `ext__helmholtz_2d` are declared **not resolvable in advance** and carry no clause; the guard rows are report-only because the guard set is not scored \u2014 immutable 2)\"*.\n\n  Guard-row routing-prediction inputs, quoted verbatim from the recipe's `_guard_spec`: *\"the guard cells also carry the routing-prediction leg's three most informative rows (fluid / sod_1d / heat_local, 1-rho_LSI 0.51943 / 0.25016 / 0.18007) as REPORT-ONLY (immutable 2: the guard set is not promoted to scored status)\"*.\n\n  **Pre-registered non-claims and the helmholtz/pfc arithmetic**, quoted verbatim from the brainstormer's falsification clause: *\"with `ext__helmholtz_2d` **report-only by arithmetic** (its 70.165 % floor exceeds even the per-sample oracle's \u221249.50 %), the panel geomean surplus over the zero-parameter floor pre-registered as **NOT RESOLVABLE** (predicted \u22125 % to \u221224 % vs a 13.183 % floor), and `ifc_poisson` pre-registered as a **no-op** (all arms reach the champion fallback; predicted spread \u2264 0.1 % around 0.055632 ...)\"*; and for pfc: *\"`corr_cleaned / corr_plain` on **pfc** | **0.60 \u2013 0.85** (\u221215 % to \u221240 %) | 7.2041e-04 \u2192 4.3e-04\u20266.1e-04 | 10.000 % | **YES \u2014 1.5\u20134.0\u00d7 the floor**\"* and *\"pfc `router` vs `head_l2` global-scalar fallback | **0.75 \u2013 1.00** | +21.51 % measured for the raw-L2 head (F11) | 10.000 % | **YES \u2014 the effect tested is 2.15\u00d7 the floor**\"* (both rows verbatim from the table above).\n\n  **Interior-16 obligation** (verbatim, recipe `_analysis_obligations` item 2, and part 3 item 6): *\"tools/boundary_interior_split.py on every per-dataset verdict (s6-B2 part 7 item 4 \u2014 a crop_sign_flip verdict is decided by a one-cell rim)\"*, *\"a mandatory **0-GPU** `tools/boundary_interior_split.py` interior-16 report on every per-dataset verdict\"*.\n\n  [ [resolved by operator amendment 2026-07-30T23:10Z - see operator_amendments; honesty label inserted verbatim from the brainstormer return]: brainstormer did not specify \u2014 the orchestrator's dispatch asks part 4 to carry \"the honesty label on the >=0.15 rule (confirmatory-refit)\". Neither the string `confirmatory-refit` nor a `1 - rho_LSI >= 0.15` decision rule appears anywhere in the verified brainstormer report (`report_verified_cb2f4ac5.md`, md5 39d4181d4d64f3ea4725bce138173d1c); the report's final recipe carries no `*_RULE_THRESH` key and routes by 4-fold CV per-sample-relative-L2 risk (`S4_ROUTER_RISK`), not by a rho threshold. The recovery rule (consult the linked Source iteration) could not be applied: `iteration_1.md` was OVERWRITTEN on disk at 2026-07-30 12:26 UTC-local by a concurrent duplicate brainstormer run, so its contents no longer correspond to this verified report and are not a citable source. The transcriber has NOT invented a substitute label.]",
-  "expected_falsification": "  **PRIMARY (no-harm)** \u2014 the card is falsified if `router`'s test nRMSE exceeds the lower\n  of its own two in-batch branches (`min(lsi_ctrl, corr_cleaned)` on the five LF-bearing\n  panel datasets; `champion_ctrl` on `ifc_poisson`) by more than that dataset's certified\n  relative floor (10.000 % on pfc / allen_cahn / fisher_kpp / cahn_hilliard, 15.323 % on\n  ifc_poisson, 70.165 % on helmholtz) on **any** panel dataset \u2014 a violation is possible\n  only through selection error, for which two mechanisms are already documented\n  (cahn_hilliard's val\u2192test `rho` collapse 0.8998 \u2192 0.0839, s6-B2 F9; the pfc head's\n  +21.51 % val-selected loss, F11);\n  **AND (routing-prediction leg)** the pre-registered routing table is falsified if the\n  router's realised branch selection differs from the pre-registration on \u2265 2 of the four\n  sharp panel datasets, or if on any dataset whose two branches differ by more than its\n  floor the router selects the worse branch (`sharp__cahn_hilliard`, gap 7.24 % < 10.000 %,\n  and `ext__helmholtz_2d` are declared **not resolvable in advance** and carry no clause;\n  the guard rows are report-only because the guard set is not scored \u2014 immutable 2);\n  **AND (secondary S1, the one open claim)** D3 is falsified if `corr_cleaned` fails to\n  beat `corr_plain` on `sharp__phase_field_crystal_2d` by more than 10.000 % relative test\n  nRMSE (predicted \u221215 % to \u221240 %; `sharp__fisher_kpp_2d`, `sharp__allen_cahn_2d` and\n  `sharp__cahn_hilliard` are pre-registered **not resolvable**, |\u0394| < 10 %, and a > 10 %\n  move on cahn_hilliard in either direction is recorded in advance as a surprise requiring\n  mechanism attention rather than as support);\n  **AND (secondary S4, CHANGE 1)** the objective-mismatch diagnosis is falsified if the\n  rel-L2-weighted \u03b1 head is still more than 10.000 % worse than the global-scalar fallback\n  on `sharp__phase_field_crystal_2d`;\n  with `ext__helmholtz_2d` **report-only by arithmetic** (its 70.165 % floor exceeds even\n  the per-sample oracle's \u221249.50 %), the panel geomean surplus over the zero-parameter\n  floor pre-registered as **NOT RESOLVABLE** (predicted \u22125 % to \u221224 % vs a 13.183 % floor),\n  and `ifc_poisson` pre-registered as a **no-op** (all arms reach the champion fallback;\n  predicted spread \u2264 0.1 % around 0.055632 \u2014 s6-B1 part 7 item 4: the identical held-out \u03b1\n  machinery chose \u03b1 = 0 on **6/6** on a champion-generated base).",
+  "1_id_category": "s4_hybrid_routing-B3 \u2014 mf_composition / per-dataset discrete super learner over a 2-element library (closed-form LSI branch vs corrector-on-LSI-cleaned-residual), library membership set by test-time LF availability, with OOF selection at every stage and a per-sample no-harm layer",
+  "2_motivation": "The round's synthesis slot composes three already-measured\npieces \u2014 s6-B2's training-free eligibility statistic, s6-B2's closed-form LSI\nbranch and repaired trust head, and s4-B2's OOF-gate discipline \u2014 into the one\nobject the websearch says is still open as a *composition*, while claiming\n**zero** novelty for the router itself. Verdict D1 verbatim:\n*\"The **selection rule is not open** (discrete super learner) and\n**availability-keyed gating is not open** (missing-modality MoE). Open: no\nfetched source routes on **fidelity availability inside a multi-fidelity PDE\nsurrogate**, and none routes between a **defect-correction** path and a\n**transfer-learning** path. **Claim zero novelty for the router.** The card's\ncontribution is the composition + its controls; the honest framing is \"the\ndiscrete super learner applied per dataset over a 2-element library, where\nlibrary membership is itself determined by a data property (does the test\nsplit ship LF?)\"*. The card's one genuinely open surface is D3, verbatim:\n*\"**the card's strongest open surface** ... In **every** fetched source the\npre-stage is a *fixed classical solver*, a *learned* deconvolution layer, or a\n*scalar/affine* fidelity correlation. **Nobody fits a |k|-dependent LSI\ntransfer function to the fidelity gap and then trains a corrector on ITS\nresidual**, and nobody reports the zero-parameter filter as a scored floor\nbeside the trained model.\"* D2 fixes the gate's status \u2014\n*\"Only the **measurement** ... The card cites the estimator and claims only\nthe number\"* \u2014 and D5 makes the LSI-alone / corrector-alone controls\nmandatory: *\"no fetched MF source reports a zero-parameter fitted-filter floor\nnext to its trained model ... The transferable output is the *reporting\nstandard*.\"*",
+  "3_description": "New family `models_r1/s4_router`, vendored sha256-verified\nfrom `models_r1/s6_local_repair` @ `caff5c9` (the `circ_repair` lineage) with\nall `S6_*` semantics preserved. Four additions: (1) the fitted `T(k)` LSI\nfilter promoted from sidecar to an optional **pre-stage** so the corrector is\ntrained on `R - C_LSI` (`S4R_TARGET=lsi_cleaned`, D3); (2) `router.py` \u2014 the\navailability key (`test_lf_present`; where false, the champion transfer branch,\ni.e. `ifc_poisson` only), the **discrete super learner** decision\n(`S4R_ROUTER_DECIDER=oof_val_risk`: pick the library member with the lower\nout-of-fold validation risk on a slice neither was fitted on, tie-band = the\ndataset's certified relative floor, ties go to the zero-parameter branch), and\nthe **recorded-but-not-deciding** rho rule\n(`1 - rho_LSI(val) >= 0.15` -> DC, pre-registered as a *prediction*); (3) the\nrepaired trust head as a per-sample no-harm layer \u2014 CHANGE 1\n`S4R_HEAD_WEIGHTING=relative_l2` (weight the alpha-regression by\n`w^2 = (||C_i||/||Y_i||)^2`) and CHANGE 2 `S4R_HEAD_NOHARM_CAP=floor`; (4) free\nsidecars \u2014 no-selection counterfactual, in-sample-selection counterfactual\n(s4-B2's sign-inversion measurement transplanted at zero GPU), per-stage\n`val_base_oof / val_base_insample`, branch-oracle ceiling, interior-16 crop\nwith `crop_sign_flip`, and a registration-corrected-reference sidecar.\n**Why the rule does not decide**: a rule-only router is *already known* to\nviolate no-harm on `sharp__fisher_kpp_2d` by 63.8 % (rule says LSI 0.0076951,\nDC gets 0.0046978) \u2014 pre-registering no-harm on it would pre-register a known\nfailure. Five arms, two of them trained:\n\n| tag | branch / target | selector | head | trained? | role |\n|---|---|---|---|---|---|\n| `lsi_alone` | LSI, closed form | off | off | **no** (0 gradient steps) | mandatory D5 floor + gate V2 |\n| `dc_raw` | DC on raw `R` | off | off | **YES** | D3 control + gate V1 (reproduces s6-B2 `circ_repair`) |\n| `dc_cleaned` | DC on `R - C_LSI` | off | off | **YES** | D3 novelty leg; donor for both router arms |\n| `router` | availability -> {LSI, DC-cleaned} | `oof_val_risk` | on | **no** (borrows) | **PRIMARY** \u2014 no-harm claim + rule table |\n| `router_forced_wrong` | rule-inverted branch | `rule_inverted` | on | **no** (borrows) | the rule's information-content control |\n\nAll five run `panel` (6) and `guard` (3) at 200 epochs, seed 0. Guard legs are\n**report-only** (program.md \u00a72.3: the guard set is *\"not part of the\nobjective\"*, and `state/noise_floor.json` has no guard entry, so no certified\nfloor exists to clear). Every claim is a **within-dataset ratio between arms**,\nso the frozen registration-inflated copy-LF denominator cancels exactly.\n\n---\n\nImmutables self-check (verbatim from the brainstormer report):\n**pass (10/10)** \u2014 full positive evidence per item\nin [iteration_1.md](iteration_1.md) \u00a7\"Immutables self-check\". Headlines: data\nread-only via the inherited `dataset_lf_fidelity` / `copylf_prediction` path\n(item 1); panel + guard untouched, and the tempting alternative \u2014 promoting\nguard datasets to scored status, which is s6-B2's own next_direction item 1 \u2014\nwas **rejected** as an immutable-2 violation (item 2); the D3 change is to the\n**training target**, never to the scored metric (item 4); every new knob is an\nenv var listed in the recipe (item 5); seed 0 / 200 epochs / 2-epoch screen\nonly (item 6); every falsification threshold is the dataset's **certified**\nrelative floor with the numbers quoted, guard legs carry **no** threshold\nbecause no floor exists for them, and helmholtz + the panel geomean are\ndeclared non-claiming (item 9); nearest pre-falsified lever is **LF low-mode\nfreezing (`mf_fno_spectral`)** \u2014 the difference is that nothing here is frozen\nand no band is cut: a full-band train-fitted `T(k)` is a separately scored\npre-stage, falsifiable against its own `dc_raw` control (item 10).\n\n---\n\nNotes carried to the starter / builder (verbatim from the brainstormer report):\n## Notes carried to the starter / builder\n\n1. **Two prior cards' lesson**: the recipe above is complete and includes the\n   `_sbatch` block (main `--time=03:00:00`, screen `--time=01:00:00`, partition\n   `gpu`, `--gres=gpu:h100:1`, job name `r1-s4_hybrid_routing-B3-s0`). Transcribe\n   it verbatim.\n2. **Cost**: genuinely trained = `dc_raw` + `dc_cleaned` only (~52 min of the\n   ~63 min estimate). `lsi_alone` takes zero gradient steps; `router` and\n   `router_forced_wrong` borrow `dc_cleaned`'s stages via\n   `borrow_partner_stages` (s6-B2 measured borrowed arms at 1.22 min/panel-leg);\n   all six diagnostic legs are free within-run measurements.\n3. **Explicitly NOT in this card** (each with its reason): the attention\n   corrector's capacity / bandwidth / gate (s4-B2 part 7 directive); therefore\n   also **not** the permute-queries chunking fix \u2014 that family is not touched,\n   and the fix is handed to the between-rounds list; the padding repair as a\n   billed router branch (s6-B2: inherits the one-cell rim); the corrector-input\n   wrap-seam fix (would confound the D3 contrast \u2014 first next-batch item);\n   promoting guard datasets to scored status (immutable 2).\n4. **Registration**: the sharp panel's denominators are frozen and inflated\n   2.0-8.6x. Expect the router to sit at **parity with LSI** on the sharp panel\n   and say so in advance; every clause is a within-dataset arm ratio so the\n   denominator cancels, and the corrected-reference sidecar (`C,D`) is emitted\n   beside the frozen score as a sidecar only, never as a score.",
+  "4_expected_result": "1. **NO-HARM primary (panel).** `nRMSE(router) <= min(nRMSE(lsi_alone),\n   nRMSE(dc_cleaned)) x (1 + floor_d)` on all four sharp panel datasets, with\n   `floor_d = 10.000 %` each. Predicted realised branch: **LSI** on pfc /\n   allen_cahn / cahn_hilliard, **DC** on fisher_kpp. `ext__helmholtz_2d`\n   report-only (floor 70.165 %); `ifc_poisson` = champion path to 1e-6\n   relative, **no claim** (s6-B1: `alpha = 0` on 6/6 on a champion base;\n   s6-B2 measured 1.5453 +/- 0.0002 skill across five arms).\n2. **Panel geomean**: predicted [0.165, 0.200] versus the stream anchor\n   **6.703016** (s6-B2 reference points: `lsi_ctrl` 0.19722, `circ_repair`\n   0.19258, `trust_head_circ` 0.18759). **Explicitly NOT the claim** \u2014 it is\n   inherited from the s6/DC lineage and s2-B2 showed the beyond-copy win is\n   registration repair (overlap 0.975-0.9987). The router-vs-branch-oracle gap\n   is predicted at **+8.6 %**, *inside* the 13.183 % geomean floor, i.e.\n   pre-registered as unmeasurable.\n3. **Routing-rule prediction table** (`1 - rho_LSI(val)` from s6-B2 F5;\n   realized best counted only where the branch gap is resolvable):\n\n   | dataset | 1 - rho_LSI(val) | rule predicts | predicted realized best | agree? |\n   |---|---|---|---|---|\n   | `fluid` (guard) | 0.51943 | DC | DC (3.1x) | agree |\n   | `sharp__sod_1d` (guard) | 0.25016 | DC | DC (17.0x) | agree |\n   | `heat_local` (guard) | 0.18007 | DC | DC (11.7x) | agree |\n   | `sharp__cahn_hilliard` | 0.10017 | LSI | tie (+7.2 % < 10.000 % floor) | untestable |\n   | `sharp__fisher_kpp_2d` | 0.01575 | LSI | **DC (-38.95 %)** | **DISAGREE (known; predicted to reproduce)** |\n   | `sharp__allen_cahn_2d` | 0.00342 | LSI | LSI (+12.6 %) | agree |\n   | `sharp__phase_field_crystal_2d` | 0.00018 | LSI | LSI (+17.6 %) | agree |\n\n   Pre-registered: **exactly 1 disagreement** among 6 testable cells, and\n   Spearman(`1 - rho_LSI(val)`, realized DC/LSI ratio) over all 7 stays\n   **<= -0.714** (s6-B2 measured -0.857, p = 0.0137).\n4. **D3 leg (the novelty leg).** Guard (report-only, no floor exists):\n   `dc_cleaned` better than `dc_raw` on **>= 2 of 3**, 0-15 % relative\n   (s6-B2 cos(C_NN - C_LSI, R - C_LSI) = 0.9984 / 0.9960 / 0.9441 on\n   sod_1d / heat_local / fluid). Panel, **claimable on\n   `sharp__fisher_kpp_2d`** (cos 0.767; the only panel dataset with a\n   resolvable trained surplus): point prediction **-12 %** vs `dc_raw`, band\n   [-25 %, 0 %], against the **10.000 %** certified floor \u2014 a null is an\n   admissible pre-registered outcome and would confine D3's demonstrated value\n   to the guard set. Panel **NULL** on pfc / allen_cahn / cahn_hilliard\n   (cos 0.763 / 0.274 / 0.037): `|delta| < 10.000 %` on >= 2 of 3.\n5. **OOF protocol (measurement only, no panel claim \u2014 D2's instruction).** The\n   in-sample-selection counterfactual changes the decision on >= 1 of 6 panel\n   datasets, with `val_base_oof / val_base_insample > 2x` wherever it does\n   (s4-B2: 16.4x / 2.9x where its stage hurt, 0.82-1.09x where it did not).\n6. **Forced-wrong control**: resolvably worse than `router` on the three guard\n   sets (report-only) and on pfc / allen_cahn (+17.6 % / +12.6 %, both above\n   the 10.000 % floor), and *better* on fisher_kpp \u2014 the rule's known\n   inversion, shown rather than hidden.",
+  "expected_falsification": "The card is falsified if **any** of: (i) the\nrouter's test nRMSE exceeds the better of its two branches by more than that\ndataset's certified relative floor (10.000 % on each of\n`sharp__phase_field_crystal_2d`, `sharp__allen_cahn_2d`,\n`sharp__fisher_kpp_2d`, `sharp__cahn_hilliard`) on **>= 1** of those four, or\nthe `ifc_poisson` availability leg deviates from the champion path by more than\n1e-6 relative; (ii) the routing rule disagrees with the realized best branch on\n**>= 3** of the resolvable cells (against exactly 1 predicted), or\nSpearman(`1 - rho_LSI(val)`, realized DC/LSI ratio) over the 7 LF-bearing\ndatasets rises above **-0.714** (n = 7, one-tailed alpha = 0.05 critical value;\ns6-B2 measured -0.857, p = 0.0137); or (iii) the D3 leg inverts, i.e.\n`dc_cleaned` is **worse** than `dc_raw` by more than 10.000 % on\n`sharp__fisher_kpp_2d`, or the pre-registered panel NULL breaks with\n`|dc_cleaned - dc_raw| > 10.000 %` on **>= 2** of {pfc, allen_cahn,\ncahn_hilliard}, or the guard-set direction (report-only) is negative on all\nthree.\n\n---\n\nRouting-rule prediction table (verbatim from the brainstormer report, part 3 of Expected outcome; clause (ii) is scored against it):\n\n| dataset | 1 - rho_LSI(val) | rule predicts | predicted realized best | agree? |\n|---|---|---|---|---|\n| `fluid` (guard) | 0.51943 | DC | DC (3.1x) | agree |\n| `sharp__sod_1d` (guard) | 0.25016 | DC | DC (17.0x) | agree |\n| `heat_local` (guard) | 0.18007 | DC | DC (11.7x) | agree |\n| `sharp__cahn_hilliard` | 0.10017 | LSI | tie (+7.2 % < 10.000 % floor) | untestable |\n| `sharp__fisher_kpp_2d` | 0.01575 | LSI | **DC (-38.95 %)** | **DISAGREE (known; predicted to reproduce)** |\n| `sharp__allen_cahn_2d` | 0.00342 | LSI | LSI (+12.6 %) | agree |\n| `sharp__phase_field_crystal_2d` | 0.00018 | LSI | LSI (+17.6 %) | agree |\n\nPre-registered: **exactly 1 disagreement** among 6 testable cells, and\nSpearman(`1 - rho_LSI(val)`, realized DC/LSI ratio) over all 7 stays\n**<= -0.714** (s6-B2 measured -0.857, p = 0.0137).",
   "anchor_reference": null,
   "prior_art": {
-    "verdict": "preempted-pivoted",
+    "verdict": "preempted-but-MF-composition-open (cite)",
+    "verdict_by_row": {
+      "D1_router_selection_rule_and_availability_gating": "preempted-but-MF-composition-open (cite)",
+      "D2_oof_cross_fitting_gate": "preempted (cite)",
+      "D3_lsi_pre_stage_then_corrector_on_its_residual": "preempted-but-MF-composition-open (cite) \u2014 \"the card's strongest open surface\"",
+      "D5_zero_parameter_fitted_filter_floor_reported_beside_the_trained_model": "preempted (cite) \u2014 as methodology"
+    },
+    "verdict_quoted": "(verbatim from the brainstormer report; the brainstormer states these are quoted verbatim from `websearches/s4_hybrid_routing/batch_3/report.md`)\n\n--- D1 / D3 / D2 / D5 verdicts, verbatim as the report's Motivation quotes them ---\nobject the websearch says is still open as a *composition*, while claiming\n**zero** novelty for the router itself. Verdict D1 verbatim:\n*\"The **selection rule is not open** (discrete super learner) and\n**availability-keyed gating is not open** (missing-modality MoE). Open: no\nfetched source routes on **fidelity availability inside a multi-fidelity PDE\nsurrogate**, and none routes between a **defect-correction** path and a\n**transfer-learning** path. **Claim zero novelty for the router.** The card's\ncontribution is the composition + its controls; the honest framing is \"the\ndiscrete super learner applied per dataset over a 2-element library, where\nlibrary membership is itself determined by a data property (does the test\nsplit ship LF?)\"*. The card's one genuinely open surface is D3, verbatim:\n*\"**the card's strongest open surface** ... In **every** fetched source the\npre-stage is a *fixed classical solver*, a *learned* deconvolution layer, or a\n*scalar/affine* fidelity correlation. **Nobody fits a |k|-dependent LSI\ntransfer function to the fidelity gap and then trains a corrector on ITS\nresidual**, and nobody reports the zero-parameter filter as a scored floor\nbeside the trained model.\"* D2 fixes the gate's status \u2014\n*\"Only the **measurement** ... The card cites the estimator and claims only\nthe number\"* \u2014 and D5 makes the LSI-alone / corrector-alone controls\nmandatory: *\"no fetched MF source reports a zero-parameter fitted-filter floor\nnext to its trained model ... The transferable output is the *reporting\nstandard*.\"*\n\n--- Prior-art verdict quoted (report section, verbatim) ---\nsee the Motivation above \u2014 D1\n(`preempted-but-MF-composition-open (cite)`), D3\n(`preempted-but-MF-composition-open (cite)`, *\"the card's strongest open\nsurface\"*), D2 (`preempted (cite)` outright), D5 (`preempted (cite)` as\nmethodology) are each quoted verbatim from\n`websearches/s4_hybrid_routing/batch_3/report.md`. Citations to carry into the\ncard's `prior_art`: https://tlverse.org/csp2020-workshop/sl3.html (fetched \u2014\nthe *\"cross-validation selector\"*, *\"proven to be asymptotically as accurate as\nthe best possible prediction algorithm in the library\"*);\nhttps://arxiv.org/html/2511.11460v2 (fetched \u2014 routing gated on *\"the\nmodality-missing type\"*); https://arxiv.org/abs/1608.00060 (fetched \u2014\n*\"K-fold sample splitting, which we call cross-fitting\"*);\nhttps://ar5iv.labs.arxiv.org/html/2102.01010 (fetched \u2014 `u_t = u_t* +\nLC(u_t*)`; *\"LI performs best, although learned correction (LC) is not far\nbehind\"*); https://arxiv.org/html/2310.03572 (fetched \u2014 the canonical\nresidual-MF method has **no** linear stage);\nhttps://pmc.ncbi.nlm.nih.gov/articles/PMC4915073/ and\nhttps://vincmazet.github.io/bip/restoration/deconvolution.html (fetched \u2014 D4's\nfitted-taper-not-hard-cutoff design constraint, inherited, never claimed);\nhttps://arxiv.org/pdf/2605.15179 (fetched \u2014 MoE's stated benefit is avoiding\n*\"negative transfer\"*, which is why the primary is a **no-harm** claim).",
+    "honest_framing": "the discrete super learner applied per dataset over a 2-element library, where library membership is itself determined by a data property (does the test split ship LF?)",
     "citations": [
       "https://tlverse.org/csp2020-workshop/sl3.html",
       "https://arxiv.org/html/2511.11460v2",
-      "https://arxiv.org/pdf/2605.15179",
-      "https://arxiv.org/abs/2509.24814",
       "https://arxiv.org/abs/1608.00060",
       "https://ar5iv.labs.arxiv.org/html/2102.01010",
       "https://arxiv.org/html/2310.03572",
-      "https://arxiv.org/pdf/2005.05655",
       "https://pmc.ncbi.nlm.nih.gov/articles/PMC4915073/",
       "https://vincmazet.github.io/bip/restoration/deconvolution.html",
-      "https://mcpanalytics.ai/articles/stacking-ensemble-practical-guide-for-data-driven-decisions"
-    ],
-    "verdict_note": "The brainstormer states no single-token verdict; it quotes five per-direction verdicts (D1-D5). The SCHEMA enum field `verdict` is set to the value matching the brainstormer's own stated posture -- zero novelty claimed on four directions, one open surface (D3) -- and is NOT a transcriber judgement about the science. The per-direction verdicts and quotes below are the authoritative verbatim record.",
-    "verdict_by_direction": {
-      "D1_router": "preempted-but-MF-composition-open (cite)",
-      "D2_oof_gate": "preempted (cite) -- outright",
-      "D3_lsi_cleaned_target": "preempted-but-MF-composition-open (cite) -- the card's strongest open surface",
-      "D4_fitted_taper": "preempted (cite) -- textbook, twice; nothing open",
-      "D5_lsi_alone_corrector_alone_controls": "preempted (cite) as methodology; the practice of reporting them is what is open"
-    },
-    "verdict_quotes_verbatim": {
-      "D1_router": "The **selection rule is not open** (discrete super learner) and **availability-keyed gating is not open** (missing-modality MoE). Open: no fetched source routes on **fidelity availability inside a multi-fidelity PDE surrogate**, and none routes between a **defect-correction** path and a **transfer-learning** path. **Claim zero novelty for the router.** The card's contribution is the composition + its controls; the honest framing is \"the discrete super learner applied per dataset over a 2-element library, where library membership is itself determined by a data property (does the test split ship LF?)\".",
-      "D3_lsi_cleaned_target": "In **every** fetched source the pre-stage is a *fixed classical solver*, a *learned* deconvolution layer, or a *scalar/affine* fidelity correlation. **Nobody fits a |k|-dependent LSI transfer function to the fidelity gap and then trains a corrector on ITS residual**, and nobody reports the zero-parameter filter as a scored floor beside the trained model.",
-      "D2_oof_gate": "The gate is cited, not claimed (**D2 `preempted (cite)` \u2014 outright**, https://arxiv.org/abs/1608.00060 *\"K-fold sample splitting, which we call cross-fitting\"*)",
-      "D4_fitted_taper": "the fitted taper is inherited, not claimed (**D4 `preempted (cite)` \u2014 textbook, twice; nothing open**)",
-      "D5_controls": "the LSI-alone / corrector-alone controls ship in the same JSON because **D5** says the *practice of reporting them* is the transferable output.",
-      "claim_shape_instruction": "The claim shape follows the verdict's own instruction: *\"the router's honest predicted gain is 'no dataset is worse than the better of its two branches', a **no-harm** claim, and the falsification clause should be written against that.\"*"
-    },
-    "novelty_zero_declaration_verbatim": "**Novelty claimed: ZERO on the router, ZERO on the OOF gate, ZERO on the LSI filter, ZERO on the fitted taper; the single open claim is the D3 target composition.**",
-    "one_open_claim_posture_verbatim": "The card's single open claim is the TARGET \u2014 **D3: `preempted-but-MF-composition-open (cite)` \u2014 the card's strongest open surface**.",
-    "prior_art_block_verbatim": "- **Prior-art verdict quoted**: see **Motivation** above \u2014 D1 and D3 rows quoted verbatim\n  from `websearches/s4_hybrid_routing/batch_3/report.md`, with D2, D4 and D5 quoted for the\n  gate, the taper and the controls. Fetched citations carried into the card's `prior_art`:\n  https://tlverse.org/csp2020-workshop/sl3.html \u00b7 https://arxiv.org/html/2511.11460v2 \u00b7\n  https://arxiv.org/pdf/2605.15179 \u00b7 https://arxiv.org/abs/2509.24814 \u00b7\n  https://arxiv.org/abs/1608.00060 \u00b7 https://ar5iv.labs.arxiv.org/html/2102.01010 \u00b7\n  https://arxiv.org/html/2310.03572 \u00b7 https://arxiv.org/pdf/2005.05655 \u00b7\n  https://pmc.ncbi.nlm.nih.gov/articles/PMC4915073/ \u00b7\n  https://vincmazet.github.io/bip/restoration/deconvolution.html \u00b7\n  https://mcpanalytics.ai/articles/stacking-ensemble-practical-guide-for-data-driven-decisions\n  (non-peer-reviewed, usable only for the statement of the leakage artifact).\n  **Novelty claimed: ZERO on the router, ZERO on the OOF gate, ZERO on the LSI filter,\n  ZERO on the fitted taper; the single open claim is the D3 target composition.**",
-    "citation_caveat_verbatim": "https://mcpanalytics.ai/articles/stacking-ensemble-practical-guide-for-data-driven-decisions (non-peer-reviewed, usable only for the statement of the leakage artifact).",
-    "source": "brainstormer/s4_hybrid_routing/batch_3/report_verified_cb2f4ac5.md, quoting websearches/s4_hybrid_routing/batch_3/report.md (D1-D5 verdict table)"
+      "https://arxiv.org/pdf/2605.15179"
+    ]
   },
   "recipe": {
     "base_family": "s6_local_repair",
-    "base_commit": "d083d44b09cd6ea2152212d7d7c0e2a0876d3255",
+    "base_commit": "caff5c97d7365c2c200daa30f67c6db3b627aee0",
     "family_dir": "models_r1/s4_router",
     "datasets": "panel",
     "epochs": 200,
@@ -61,165 +45,2253 @@
       0
     ],
     "env": {
-      "S6_ARM": "router",
+      "S4R_ARM": "router",
+      "S4R_LIBRARY": "lsi,dc",
+      "S4R_AVAILABILITY_KEY": "test_lf_present",
+      "S4R_ROUTER_DECIDER": "oof_val_risk",
+      "S4R_SELECTOR_TIEBAND": "floor",
+      "S4R_RULE_STAT": "one_minus_rho_lsi_val",
+      "S4R_RULE_THRESH": "0.15",
+      "S4R_TARGET": "lsi_cleaned",
+      "S4R_HEAD": "on",
+      "S4R_HEAD_WEIGHTING": "relative_l2",
+      "S4R_HEAD_NOHARM_CAP": "floor",
+      "S4R_BORROW_FROM": "dc_cleaned",
+      "S4R_OOF_SCREEN": "1",
+      "S4R_INSAMPLE_COUNTERFACTUAL": "1",
+      "S4R_NOSEL_LEG": "1",
+      "S4R_BRANCH_ORACLE_SIDECAR": "1",
+      "S4R_BOUNDARY_SPLIT": "1",
+      "S4R_CORRECTED_REF_SIDECAR": "C,D",
+      "S4R_DIAG_OUT": "mffp_autoresearch_outputs/round1/s4_hybrid_routing/B3/eval",
+      "S6_FALLBACK_NO_TEST_LF": "champion",
       "S6_VARIANT": "local_pixel_gate",
       "S6_SELECTOR": "oof_persample_head",
-      "S6_KERNEL": "7",
-      "S6_DEPTH": "4",
-      "S6_WIDTH": "32",
       "S6_PAD_MODE": "circular_if_periodic",
       "S6_PERIODIC_TEST": "wrap_continuity_ratio_hf_train",
       "S6_PERIODIC_TOL": "1.25",
-      "S6_LF_FID": "max",
       "S6_LF_SOURCE": "dataset_lf_fidelity",
+      "S6_LF_FID": "max",
+      "S6_KERNEL": "7",
+      "S6_DEPTH": "4",
+      "S6_WIDTH": "32",
       "S6_GATE_HOLDOUT_FRAC": "0.2",
       "S6_GATE_INIT": "zero",
       "S6_GATE_LINESEARCH_INCLUDES_ZERO": "1",
-      "S6_LSI_RIDGE": "0",
-      "S6_LSI_SIDECAR": "1",
-      "S6_LSI_F6_TOL": "0.02",
-      "S6_BAND_EDGES_FRAC": "0,0.125,0.25,0.5,1.0",
       "S6_HEAD_MODEL": "ridge",
       "S6_HEAD_CANDIDATES": "persample_head,global_scalar,zero",
       "S6_HEAD_CV_FOLDS": "4",
-      "S6_HEAD_RIDGE_GRID": "1e-3,1e-2,1e-1,1,10",
       "S6_HEAD_FEATURES": "X,log_lf_l2,log_lf_grad_ratio,log_lf_band_frac4,log_corr_l2_ratio,log_corr_band_frac4",
+      "S6_HEAD_RIDGE_GRID": "1e-3,1e-2,1e-1,1,10",
       "S6_HEAD_ALPHA_CLIP": "0,1.5",
       "S6_HEAD_MIN_GAIN": "1e-3",
+      "S6_LSI_SIDECAR": "1",
+      "S6_LSI_RIDGE": "0",
+      "S6_LSI_F6_TOL": "0.02",
+      "S6_BAND_EDGES_FRAC": "0,0.125,0.25,0.5,1.0",
+      "S6_ASSERT_PAIRED_CORRECTOR": "1",
       "S6_LEAKAGE_TRIPWIRE": "1",
       "S6_REPLICA_TOL": "0.10",
-      "S6_ASSERT_PAIRED_CORRECTOR": "1",
-      "S6_PIXEL_OOF_SIDECAR": "0",
-      "S6_FALLBACK_NO_TEST_LF": "champion",
-      "S6_DIAG_OUT": "mffp_autoresearch_outputs/round1/s4_hybrid_routing/B3/eval",
-      "S4_TARGET": "lsi_cleaned",
-      "S4_ROUTER": "1",
-      "S4_ROUTER_LEVELS": "availability,cv_library",
-      "S4_DC_LIBRARY": "lsi_alone,corr_cleaned",
-      "S4_ROUTER_RISK": "per_sample_rel_l2",
-      "S4_ROUTER_CV_FOLDS": "4",
-      "S4_ALPHA_OBJECTIVE": "rel_l2",
-      "S4_NOHARM_CAP": "1",
-      "S4_NOHARM_CAP_SOURCE": "state/noise_floor.json:min_claimable_effect_relative",
-      "S4_OOF_SCREEN": "1",
-      "S4_FORCE_BRANCH": "none",
-      "S4_BORROW_FROM": "corr_cleaned",
-      "S4_EMIT_PREDS": "1",
-      "S4_PREREG_ROUTE": "ifc_poisson=champion,ext__helmholtz_2d=alpha_zero,sharp__phase_field_crystal_2d=corr_cleaned_or_lsi,sharp__allen_cahn_2d=lsi_alone,sharp__fisher_kpp_2d=corr_cleaned,sharp__cahn_hilliard=lsi_alone,fluid=corr_cleaned,sharp__sod_1d=corr_cleaned,heat_local=corr_cleaned",
+      "_note": "keys prefixed _ are card directives, NOT passed to --env. The --env set per arm is every non-underscore key above with that arm's deltas from _arms applied.",
       "_arms": [
         {
-          "tag": "router",
-          "role": "PRIMARY, promotion rank 1",
-          "promotable": true,
-          "S6_ARM": "router",
-          "S6_SELECTOR": "oof_persample_head",
-          "S4_TARGET": "lsi_cleaned",
-          "S4_ROUTER": "1",
-          "S4_ALPHA_OBJECTIVE": "rel_l2",
-          "S4_NOHARM_CAP": "1",
-          "S4_BORROW_FROM": "corr_cleaned"
-        },
-        {
-          "tag": "corr_cleaned",
-          "role": "D3 branch alone + the free no-stage-3' counterfactual; promotion rank 2",
-          "promotable": true,
-          "S6_ARM": "corr_cleaned",
-          "S6_SELECTOR": "heldout_scalar",
-          "S4_TARGET": "lsi_cleaned",
-          "S4_ROUTER": "0",
-          "S4_NOHARM_CAP": "0",
-          "S4_BORROW_FROM": "none"
-        },
-        {
-          "tag": "corr_plain",
-          "role": "CONTROL \u2014 s6-B2 circ_repair replica (raw-residual target); paired denominator for S1 + validity gate V1",
-          "promotable": false,
-          "S6_ARM": "corr_plain",
-          "S6_SELECTOR": "heldout_scalar",
-          "S4_TARGET": "raw",
-          "S4_ROUTER": "0",
-          "S4_NOHARM_CAP": "0",
-          "S4_BORROW_FROM": "none"
-        },
-        {
-          "tag": "lsi_ctrl",
-          "role": "CONTROL \u2014 zero-parameter fitted-LSI scored floor (D5); validity gate V2",
-          "promotable": false,
-          "S6_ARM": "lsi_ctrl",
+          "tag": "lsi_alone",
+          "role": "mandatory zero-parameter floor (D5) + validity gate V2",
+          "datasets": "panel,guard",
+          "S4R_ARM": "lsi_alone",
+          "S4R_ROUTER_DECIDER": "off",
+          "S4R_TARGET": "raw",
+          "S4R_HEAD": "off",
+          "S4R_BORROW_FROM": "",
           "S6_VARIANT": "lsi_ctrl",
-          "S6_SELECTOR": "heldout_scalar",
-          "S4_TARGET": "raw",
-          "S4_ROUTER": "0",
-          "S4_NOHARM_CAP": "0",
-          "S4_BORROW_FROM": "none"
+          "S6_SELECTOR": "heldout_scalar"
         },
         {
-          "tag": "head_l2",
-          "role": "CONTROL for CHANGE 1 \u2014 raw-L2 alpha head on the corr_cleaned substrate (paired, ~0 GPU)",
-          "promotable": false,
-          "S6_ARM": "head_l2",
-          "S6_SELECTOR": "oof_persample_head",
-          "S4_TARGET": "lsi_cleaned",
-          "S4_ROUTER": "0",
-          "S4_ALPHA_OBJECTIVE": "l2",
-          "S4_NOHARM_CAP": "0",
-          "S4_BORROW_FROM": "corr_cleaned"
+          "tag": "dc_raw",
+          "role": "corrector-alone on the RAW residual: the D3 control and validity gate V1",
+          "datasets": "panel,guard",
+          "S4R_ARM": "dc_raw",
+          "S4R_ROUTER_DECIDER": "off",
+          "S4R_TARGET": "raw",
+          "S4R_HEAD": "off",
+          "S4R_BORROW_FROM": "",
+          "S6_VARIANT": "local_pixel_gate",
+          "S6_SELECTOR": "heldout_scalar"
         },
         {
-          "tag": "champion_ctrl",
-          "role": "CONTROL \u2014 champion transfer path forced on the 5 LF-bearing panel datasets; in-batch re-measurement of the stream anchor",
-          "promotable": false,
-          "S6_ARM": "champion_ctrl",
-          "S4_FORCE_BRANCH": "champion",
-          "S4_ROUTER": "0",
-          "S4_NOHARM_CAP": "0",
-          "S4_BORROW_FROM": "none",
-          "_datasets": "ext__helmholtz_2d,sharp__phase_field_crystal_2d,sharp__allen_cahn_2d,sharp__fisher_kpp_2d,sharp__cahn_hilliard"
+          "tag": "dc_cleaned",
+          "role": "corrector-alone on the LSI-CLEANED residual: the D3 novelty leg; donor for both router arms",
+          "datasets": "panel,guard",
+          "S4R_ARM": "dc_cleaned",
+          "S4R_ROUTER_DECIDER": "off",
+          "S4R_TARGET": "lsi_cleaned",
+          "S4R_HEAD": "off",
+          "S4R_BORROW_FROM": "",
+          "S6_VARIANT": "local_pixel_gate",
+          "S6_SELECTOR": "heldout_scalar"
+        },
+        {
+          "tag": "router",
+          "role": "PRIMARY: discrete super learner over {lsi, dc_cleaned}, availability-keyed library, + repaired per-sample no-harm head",
+          "datasets": "panel,guard",
+          "S4R_ARM": "router",
+          "S4R_ROUTER_DECIDER": "oof_val_risk",
+          "S4R_TARGET": "lsi_cleaned",
+          "S4R_HEAD": "on",
+          "S4R_BORROW_FROM": "dc_cleaned",
+          "S6_VARIANT": "local_pixel_gate",
+          "S6_SELECTOR": "oof_persample_head"
+        },
+        {
+          "tag": "router_forced_wrong",
+          "role": "rule information-content control: forced to the branch the rho rule says LOSES",
+          "datasets": "panel,guard",
+          "S4R_ARM": "router_forced_wrong",
+          "S4R_ROUTER_DECIDER": "rule_inverted",
+          "S4R_TARGET": "lsi_cleaned",
+          "S4R_HEAD": "on",
+          "S4R_BORROW_FROM": "dc_cleaned",
+          "S6_VARIANT": "local_pixel_gate",
+          "S6_SELECTOR": "oof_persample_head"
         }
       ],
-      "_promotion_rank": "FIXED BEFORE SUBMIT (ADR 0007): rank 1 = router, rank 2 = corr_cleaned. corr_plain / lsi_ctrl / head_l2 / champion_ctrl are CONTROLS and are NEVER promotable. If the contract screen craters router, corr_cleaned is promoted; if both crater the debugger classifies ALGO. No post-hoc arm switching.",
-      "_source": "vendor models_r1/s6_local_repair from branch round1/exp-s6_local-B2 @ d083d44b09cd6ea2152212d7d7c0e2a0876d3255, rename to models_r1/s4_router. Verify each vendored file with `git show d083d44:mffp_autoresearch/round1/worktrees/s6_local/B2/models_r1/s6_local_repair/<f> | sha256sum` and record the sha256-16 in build_notes for bands.py, local_corrector.py, lsi_filter.py, model.py, periodicity.py, trust_head.py, smoke_eval.py, manifest.json. model.py stays the byte-identical copy of factory_root/models/mf_fno_transfer_film/model.py @ 967562e (champion branch, reproduced from source \u2014 the factory tree is never written). EDITS: (1) new router.py \u2014 the L0 availability gate (made explicit around the substrate's existing `if not test['lf_fids']: run_champion` dispatch) and the L1 discrete-super-learner selection over S4_DC_LIBRARY by 4-fold CV per-sample-relative-L2 risk inside val_idx, with the realised selection, the per-member CV risks and the S4_PREREG_ROUTE agreement/disagreement printed and written to the diag; (2) lsi_filter.py gains `cleaned_residual(LF_fit, R_fit, LF_all, grid, ridge)` returning (T, C_LSI, R') \u2014 T fitted on fit_idx ONLY; (3) stage 1's target becomes R' when S4_TARGET=lsi_cleaned and the prediction path becomes LF + C_LSI + alpha*Delta (alpha=0 must reproduce the lsi_alone branch bit-exactly \u2014 gate V4); (4) trust_head.py gains S4_ALPHA_OBJECTIVE=rel_l2 (weight the per-sample ridge target by 1/||Y_i||^2) and S4_NOHARM_CAP (shrink alpha_hat toward 0 whenever the predicted per-sample relative gain is inside the dataset's certified relative floor); (5) new oof_screen.py printing val_rel_l2_base_oof / val_rel_l2_base_insample per stage per dataset into the diag; (6) S4_FORCE_BRANCH=champion routes every dataset to run_champion; (7) S4_EMIT_PREDS writes preds_test.npz + rel_l2_per_sample so tools/registration_skill_split.py and tools/boundary_interior_split.py can run read-only afterwards. NEVER edited: round1/eval/, project.yaml, program.md, ADRs, subagent prompts, round1/tools/, factory_root/{eval,baselines,references,scripts,data}/, factory.md, mf_field/akash/**. LSI/registration logic is VENDORED into the family, never imported from round1/tools/, so score_panel.py::code_hash stays complete.",
-      "_sweep": "ONE SLURM job, seed 0, six score_panel.py calls serially, each with its arm's --env deltas and its own --out result_panel_<tag>_s0.json; export ROUND1_EVAL_RESULTS=<outputs>/eval/results_<tag> per arm so per-arm result JSONs and ckpt dirs cannot collide (score_panel._run_one derives paths from (family_dir.name, dataset, epochs, seed) only \u2014 s1-B2 build trap 1). Checkpoint <ckpt_dir>/arm_<tag>/last.pt mirrored to <ckpt_dir>/last.pt; the meta guard is extended to (arm, variant, target, router_level, stage, epochs_target, grid, seed) so no cross-arm resume is possible. Arm order: corr_cleaned, corr_plain, lsi_ctrl, router, head_l2, champion_ctrl (the two borrowed arms run AFTER their donor).",
-      "_guard_arms": [
-        "router",
-        "corr_cleaned",
-        "corr_plain",
-        "lsi_ctrl"
-      ],
-      "_guard_spec": "same family, --datasets guard, --epochs 200, --seed 0, one score_panel.py call per arm, inside the same sweep job. program.md 2.3 requires a guard run for any panel-win claim; the guard cells also carry the routing-prediction leg's three most informative rows (fluid / sod_1d / heat_local, 1-rho_LSI 0.51943 / 0.25016 / 0.18007) as REPORT-ONLY (immutable 2: the guard set is not promoted to scored status). Expect the periodicity switch to choose ZEROS on all three (measured HF wrap ratios 16.55 / 2.56 / degenerate vs tol 1.25).",
-      "_screen": "ONE contract-tier job BEFORE the sweep: --epochs 2 --seed 0, all six arms, --datasets panel and --datasets guard. Plumbing + tripwires only: the alpha=0 identity assertion, the LF-coarser leakage tripwire, gate V2 (epoch-independent, so fully checkable at 2 epochs), gate V4 (router degeneracy) and gate V5 (borrow pairing sha equality). Every arm must score skill <= 1.02 on the five beyond-copy datasets \u2014 a violation means the identity construction broke (ALGO). Screen numbers are NEVER reportable (ADR 0007) and live only in build_notes. s6-B2's equivalent screen was 8.6 min on H100; reserve 01:00:00.",
-      "_validity_gates": "V1 (replica): corr_plain must reproduce s6-B2 circ_repair seed-0 test nRMSE within S6_REPLICA_TOL=0.10 on all six panel datasets \u2014 0.32945012604380175 / 0.0007204126530396635 / 0.0009363332709684444 / 0.004697840233022452 / 0.04136137418852845 / 0.05562937038722282 (helmholtz / pfc / allen_cahn / fisher_kpp / cahn_hilliard / ifc_poisson). V2 (LSI): lsi_ctrl must reproduce s6-B2 lsi_ctrl within S6_LSI_F6_TOL=0.02 \u2014 pfc 0.0006124684737243416, allen_cahn 0.0008318192792299753, fisher_kpp 0.007695081137159533, cahn_hilliard 0.03856875162347986 \u2014 and must select alpha=0 on ext__helmholtz_2d. V3 (identity): every arm's alpha=0 path is bit-equal to eval/copylf_baselines.json (|delta| <= 1e-9; already an S6ContractError assert). V4 (router degeneracy): with S4_DC_LIBRARY forced to a single member the router's prediction must be bit-identical to that member's arm (max|delta| == 0) \u2014 proves the router adds no silent transformation. V5 (pairing): router and head_l2 must carry corrector_source='loaded_from_partner:corr_cleaned' with donor sha equality on every dataset. A miss on any gate is ALGO: fix before reading a single contrast.",
-      "_analysis_obligations": "MANDATORY, read-only, 0 GPU, on the login node before any verdict is written: (1) tools/registration_skill_split.py --datasets PANEL on every reported sharp-set number (s2-B2 standing rule) \u2014 report model_skill_vs_best_fix and the corrected geomean beside the frozen-metric skill table; (2) tools/boundary_interior_split.py on every per-dataset verdict (s6-B2 part 7 item 4 \u2014 a crop_sign_flip verdict is decided by a one-cell rim); (3) tools/defect_correction_learnability.py rho_val_heldout beside every routing decision; (4) tools/stage_keep_test_audit.py on the shipped JSONs to confirm the S4_OOF_SCREEN ratios independently.",
-      "_sbatch": "partition gpu, --gres=gpu:h100:1 (ADR 0005, project.yaml). SWEEP --time=03:00:00 (ledger: s6-B1 200-epoch 6-dataset panel run 17.95 min on H100; s6-B2's 5-arm sweep + 2 guard arms 59:53 => corr_cleaned ~18 + corr_plain ~18 + lsi_ctrl ~6 + router ~4 + head_l2 ~4 + champion_ctrl 5 datasets ~30 + guard legs ~14 = ~94 min, ~110 min with overhead, ~61% of the request). SCREEN --time=01:00:00 (~15 min expected). Job names r1-s4_hybrid_routing-B3-s0; logs under mffp_autoresearch_outputs/round1/s4_hybrid_routing/B3/slurm/. Seeds 1-2 are NOT launched in-round (ADR 0004); scripts/submit_seeds_2_3.sh is written but unused.",
-      "_sbatch_script_01_train_eval": "#!/bin/bash\n#SBATCH --job-name=r1-s4_hybrid_routing-B3-s0\n#SBATCH --partition=gpu\n#SBATCH --nodes=1\n#SBATCH --ntasks=1\n#SBATCH --cpus-per-task=4\n#SBATCH --gres=gpu:h100:1\n#SBATCH --mem=64G\n#SBATCH --time=03:00:00\n#SBATCH --output=/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s4_hybrid_routing/B3/slurm/%x_%j.out\n#SBATCH --error=/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s4_hybrid_routing/B3/slurm/%x_%j.err\n\nset -euo pipefail\nSEED=\"${1:-0}\"\n\nPROJECT_ROOT=/resnick/groups/Hippo/ezeng/mf_field\nROUND_ROOT=\"$PROJECT_ROOT/mffp_autoresearch/round1\"\nWORKTREE=\"$ROUND_ROOT/worktrees/s4_hybrid_routing/B3\"\nOUT_DIR=\"$PROJECT_ROOT/mffp_autoresearch_outputs/round1/s4_hybrid_routing/B3\"\nFAMILY=\"$WORKTREE/models_r1/s4_router\"\n\nsource \"$PROJECT_ROOT/.venv/bin/activate\"\nmkdir -p \"$OUT_DIR/eval\" \"$OUT_DIR/slurm\" \"$OUT_DIR/training\"\n\necho \"[$(date)] host=$(hostname) gpu=$(nvidia-smi -L | head -1) seed=$SEED\"\n\nCOMMON=(\n  --family_dir \"$FAMILY\" --epochs 200 --seed \"$SEED\"\n  --env S6_KERNEL=7 --env S6_DEPTH=4 --env S6_WIDTH=32\n  --env S6_PAD_MODE=circular_if_periodic\n  --env S6_PERIODIC_TEST=wrap_continuity_ratio_hf_train --env S6_PERIODIC_TOL=1.25\n  --env S6_LF_FID=max --env S6_LF_SOURCE=dataset_lf_fidelity\n  --env S6_GATE_HOLDOUT_FRAC=0.2 --env S6_GATE_INIT=zero\n  --env S6_GATE_LINESEARCH_INCLUDES_ZERO=1\n  --env S6_LSI_RIDGE=0 --env S6_LSI_SIDECAR=1 --env S6_LSI_F6_TOL=0.02\n  --env S6_BAND_EDGES_FRAC=0,0.125,0.25,0.5,1.0\n  --env S6_HEAD_MODEL=ridge\n  --env S6_HEAD_CANDIDATES=persample_head,global_scalar,zero\n  --env S6_HEAD_CV_FOLDS=4 --env S6_HEAD_RIDGE_GRID=1e-3,1e-2,1e-1,1,10\n  --env S6_HEAD_FEATURES=X,log_lf_l2,log_lf_grad_ratio,log_lf_band_frac4,log_corr_l2_ratio,log_corr_band_frac4\n  --env S6_HEAD_ALPHA_CLIP=0,1.5 --env S6_HEAD_MIN_GAIN=1e-3\n  --env S6_LEAKAGE_TRIPWIRE=1 --env S6_REPLICA_TOL=0.10\n  --env S6_ASSERT_PAIRED_CORRECTOR=1 --env S6_PIXEL_OOF_SIDECAR=0\n  --env S6_FALLBACK_NO_TEST_LF=champion\n  --env S6_DIAG_OUT=\"$OUT_DIR/eval\"\n  --env S4_ROUTER_LEVELS=availability,cv_library\n  --env S4_DC_LIBRARY=lsi_alone,corr_cleaned\n  --env S4_ROUTER_RISK=per_sample_rel_l2 --env S4_ROUTER_CV_FOLDS=4\n  --env S4_NOHARM_CAP_SOURCE=state/noise_floor.json:min_claimable_effect_relative\n  --env S4_OOF_SCREEN=1 --env S4_EMIT_PREDS=1\n  --env S4_PREREG_ROUTE=ifc_poisson=champion,ext__helmholtz_2d=alpha_zero,sharp__phase_field_crystal_2d=corr_cleaned_or_lsi,sharp__allen_cahn_2d=lsi_alone,sharp__fisher_kpp_2d=corr_cleaned,sharp__cahn_hilliard=lsi_alone,fluid=corr_cleaned,sharp__sod_1d=corr_cleaned,heat_local=corr_cleaned\n)\n\nrun_arm () {   # run_arm <tag> <datasets> <extra --env ...>\n  local TAG=\"$1\"; local DS=\"$2\"; shift 2\n  export ROUND1_EVAL_RESULTS=\"$OUT_DIR/eval/results_${TAG}\"\n  mkdir -p \"$ROUND1_EVAL_RESULTS\"\n  echo \"[$(date)] ARM=$TAG DATASETS=$DS\"\n  python \"$ROUND_ROOT/eval/score_panel.py\" \"${COMMON[@]}\" \\\n      --datasets \"$DS\" --env \"S6_ARM=$TAG\" \"$@\" \\\n      --out \"$OUT_DIR/eval/result_${DS}_${TAG}_s${SEED}.json\"\n}\n\n# --- donor first; the two borrowed arms run after it ---\nrun_arm corr_cleaned  panel --env S6_VARIANT=local_pixel_gate --env S6_SELECTOR=heldout_scalar \\\n                            --env S4_TARGET=lsi_cleaned --env S4_ROUTER=0 --env S4_NOHARM_CAP=0 \\\n                            --env S4_BORROW_FROM=none --env S4_FORCE_BRANCH=none\nrun_arm corr_plain    panel --env S6_VARIANT=local_pixel_gate --env S6_SELECTOR=heldout_scalar \\\n                            --env S4_TARGET=raw --env S4_ROUTER=0 --env S4_NOHARM_CAP=0 \\\n                            --env S4_BORROW_FROM=none --env S4_FORCE_BRANCH=none\nrun_arm lsi_ctrl      panel --env S6_VARIANT=lsi_ctrl --env S6_SELECTOR=heldout_scalar \\\n                            --env S4_TARGET=raw --env S4_ROUTER=0 --env S4_NOHARM_CAP=0 \\\n                            --env S4_BORROW_FROM=none --env S4_FORCE_BRANCH=none\nrun_arm router        panel --env S6_VARIANT=local_pixel_gate --env S6_SELECTOR=oof_persample_head \\\n                            --env S4_TARGET=lsi_cleaned --env S4_ROUTER=1 \\\n                            --env S4_ALPHA_OBJECTIVE=rel_l2 --env S4_NOHARM_CAP=1 \\\n                            --env S4_BORROW_FROM=corr_cleaned --env S4_FORCE_BRANCH=none\nrun_arm head_l2       panel --env S6_VARIANT=local_pixel_gate --env S6_SELECTOR=oof_persample_head \\\n                            --env S4_TARGET=lsi_cleaned --env S4_ROUTER=0 \\\n                            --env S4_ALPHA_OBJECTIVE=l2 --env S4_NOHARM_CAP=0 \\\n                            --env S4_BORROW_FROM=corr_cleaned --env S4_FORCE_BRANCH=none\nrun_arm champion_ctrl ext__helmholtz_2d,sharp__phase_field_crystal_2d,sharp__allen_cahn_2d,sharp__fisher_kpp_2d,sharp__cahn_hilliard \\\n                            --env S4_FORCE_BRANCH=champion --env S4_ROUTER=0 \\\n                            --env S4_NOHARM_CAP=0 --env S4_BORROW_FROM=none\n\n# --- guard legs (report-only; program.md 2.3) ---\nfor TAG in corr_cleaned corr_plain lsi_ctrl router; do\n  case \"$TAG\" in\n    corr_cleaned) X=(--env S6_VARIANT=local_pixel_gate --env S6_SELECTOR=heldout_scalar --env S4_TARGET=lsi_cleaned --env S4_ROUTER=0 --env S4_NOHARM_CAP=0 --env S4_BORROW_FROM=none --env S4_FORCE_BRANCH=none) ;;\n    corr_plain)   X=(--env S6_VARIANT=local_pixel_gate --env S6_SELECTOR=heldout_scalar --env S4_TARGET=raw --env S4_ROUTER=0 --env S4_NOHARM_CAP=0 --env S4_BORROW_FROM=none --env S4_FORCE_BRANCH=none) ;;\n    lsi_ctrl)     X=(--env S6_VARIANT=lsi_ctrl --env S6_SELECTOR=heldout_scalar --env S4_TARGET=raw --env S4_ROUTER=0 --env S4_NOHARM_CAP=0 --env S4_BORROW_FROM=none --env S4_FORCE_BRANCH=none) ;;\n    router)       X=(--env S6_VARIANT=local_pixel_gate --env S6_SELECTOR=oof_persample_head --env S4_TARGET=lsi_cleaned --env S4_ROUTER=1 --env S4_ALPHA_OBJECTIVE=rel_l2 --env S4_NOHARM_CAP=1 --env S4_BORROW_FROM=corr_cleaned --env S4_FORCE_BRANCH=none) ;;\n  esac\n  run_arm \"$TAG\" guard \"${X[@]}\"\ndone\n\necho \"[$(date)] sweep done\"",
-      "_screen_script_note": "  The contract-tier screen is the same script with `--epochs 2`,\n  `--time=01:00:00`, `--job-name=r1-s4_hybrid_routing-B3-screen-s0`, results written under\n  `$OUT_DIR/screen/` and **never** read into parts 5\u20137 (ADR 0007)."
+      "_primary_arms": {
+        "C1_no_harm": "router vs per-dataset min(lsi_alone, dc_cleaned), per panel dataset",
+        "C2_routing_rule": "the rho-rule predicted branch vs the realized best branch, 7 datasets",
+        "C3_D3_target": "dc_cleaned vs dc_raw (panel: fisher_kpp claimable, other three pre-registered NULL; guard: report-only)",
+        "C4_oof_protocol": "router's OOF selection vs the in-sample-selection counterfactual (free sidecar, measurement only)"
+      },
+      "_design": "SWEEP, not screen-and-promote. ADR 0007 exempts spec-pre-directed slots, and four of five arms are CONTROLS whose value is being REPORTED (D5: dropping one destroys a measurement). All five are reported; the primary arm per clause is fixed above BEFORE submit (ADR 0007 guardrail). The contract screen is plumbing + no-harm only and is NEVER quoted in parts 5-7.",
+      "_borrowed_vs_trained": "TRAINED (new gradient steps): dc_raw, dc_cleaned only. BORROWED / ZERO-GRADIENT: lsi_alone (closed form), router and router_forced_wrong (borrow_partner_stages from dc_cleaned; corrector_state_sha256 equality asserted). FREE within-run legs (no extra pass): no-selection counterfactual, in-sample-selection counterfactual, branch-oracle ceiling, per-stage val_base_oof/val_base_insample screen, interior-16 crop, corrected-reference sidecar.",
+      "_sbatch": "MAIN: #SBATCH --job-name=r1-s4_hybrid_routing-B3-s0 --partition=gpu --nodes=1 --ntasks=1 --cpus-per-task=4 --gres=gpu:h100:1 --mem=32G --time=03:00:00; logs mffp_autoresearch_outputs/round1/s4_hybrid_routing/B3/slurm/%x-%j.{out,err}. Ledger basis (s6-B2 job 66056503, same family lineage, H100): trained panel leg 18.05-20.42 min, trained guard leg 5.3 min, closed-form panel leg 1.02 min / guard 0.27 min, borrowed arm 1.22 min. Estimate: dc_raw 20.4+5.3, dc_cleaned 21.5+5.5 (LSI fit adds ~1 min), lsi_alone 1.0+0.3, router 1.3+0.5, router_forced_wrong 1.3+0.5, sidecars ~5 = ~63 min = 35% of the 3 h request. SCREEN: same directives with --time=01:00:00 (s6-B2's 5-arm screen analogue 8.6 min). The ORCHESTRATOR submits, never the builder.",
+      "_screen": "ONE contract-tier job before the sweep: --epochs 2 --seed 0, all five arms, --datasets panel AND --datasets guard. Plumbing + no-harm only (every arm must score skill <= 1.02 on the five beyond-copy datasets; a violation means the identity construction broke => ALGO). Screen numbers are NEVER reportable (ADR 0007) and appear only in build_notes.",
+      "_sweep": "one SLURM job, seed 0, five score_panel.py panel calls + five guard calls, serial, in the order lsi_alone, dc_raw, dc_cleaned, router, router_forced_wrong (donors before borrowers - the pairing assert needs the donor record on disk). Export ROUND1_EVAL_RESULTS=<outputs>/eval/results_<tag> per arm so per-arm result JSONs and ckpt dirs cannot collide (s1-B2 build trap: score_panel._run_one derives paths from (family_dir.name, dataset, epochs, seed) only). Checkpoints at <ckpt_dir>/arm_<tag>/last.pt mirrored to <ckpt_dir>/last.pt; the meta guard covers (arm, target, decider, head, variant, padding_mode, stage, epochs_target, grid, seed). Idempotent: safe to resubmit, every arm resumes (immutable 8).",
+      "_validity_gates": "V1 dc_raw reproduces s6-B2 circ_repair seed-0 panel nRMSE within S6_REPLICA_TOL=10% on all six (helmholtz 0.3294501260438018, pfc 0.0007204126530396635, allen_cahn 0.0009363332709684444, fisher_kpp 0.004697840233022452, cahn_hilliard 0.04136137418852845, ifc_poisson 0.05562937038722282). V2 lsi_alone reproduces s6-B2 lsi_ctrl within S6_LSI_F6_TOL=2% (pfc 0.0006124684737243416, allen_cahn 0.0008318192821, fisher_kpp 0.007695081137159533, cahn_hilliard 0.03856875162347986) and selects alpha=0 on ext__helmholtz_2d. V3 the identity path is bit-equal to eval/copylf_baselines.json within 1e-9 (inherited hard assert). V4 the router's no-selection leg (selector off, alpha_hat=0) equals the selected branch's own prediction to 0. V5 on ifc_poisson every arm equals the champion fallback within 1e-6 relative. V6 router_forced_wrong's per-dataset branch choice is the exact complement of the rho rule's on all 7 LF-bearing datasets. Any miss is ALGO: fix before reading any contrast.",
+      "_source": "vendor models_r1/s6_local_repair from caff5c97d7365c2c200daa30f67c6db3b627aee0 (branch round1/exp-s6_local-B2) to models_r1/s4_router, sha256-verified per file via `git show <commit>:<path>` BEFORE any edit. Edits: (1) ARM_SPEC re-pointed at S4R_ARM with the five arms above; (2) lsi_filter.py's fitted T(k) promoted from sidecar to an optional PRE-STAGE feeding the corrector's target (S4R_TARGET); (3) new router.py holding the availability key, the OOF val-risk selector with the floor tie-band, the recorded rho rule, and the forced-wrong inversion; (4) trust_head.py gains the w^2=(||C||/||Y||)^2 regression weighting and the per-sample no-harm cap; (5) new score-neutral diag keys: branch_selected, rule_predicted_branch, one_minus_rho_lsi_val, val_risk_lsi, val_risk_dc, val_base_oof_over_insample, insample_counterfactual_choice, insample_counterfactual_test_cost, nrmse_no_selection, nrmse_branch_oracle, interior16_nrmse, crop_sign_flip, corrected_ref_C_nrmse, corrected_ref_D_nrmse, corrector_provenance, corrector_state_sha256. model.py stays the byte-identical copy of mf_fno_transfer_film/model.py @967562e. round1/eval/, tools/, akash/** and factory_root/{eval,baselines,references,scripts,data} are never touched; tools are VENDORED with citation, never imported."
     }
   },
-  "status": "drafted",
+  "status": "analyzing",
   "skipped_reason": null,
   "reopen_candidate": false,
-  "scripts_path": {},
-  "output_paths": {},
-  "build_commit": null,
-  "job_ids": [],
+  "scripts_path": {
+    "screen": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round1/worktrees/s4_hybrid_routing/B3/scripts/00_screen.sh",
+    "submit_screen": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round1/worktrees/s4_hybrid_routing/B3/scripts/submit_screen.sh",
+    "submit": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round1/worktrees/s4_hybrid_routing/B3/scripts/submit.sh",
+    "train_eval": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round1/worktrees/s4_hybrid_routing/B3/scripts/01_train_eval.sh",
+    "seeds_2_3": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round1/worktrees/s4_hybrid_routing/B3/scripts/submit_seeds_2_3.sh",
+    "verify_gates": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round1/worktrees/s4_hybrid_routing/B3/scripts/02_verify_gates.py",
+    "resume_drill": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round1/worktrees/s4_hybrid_routing/B3/scripts/03_resume_drill.sh",
+    "arm_env": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round1/worktrees/s4_hybrid_routing/B3/scripts/arm_env.sh"
+  },
+  "output_paths": {
+    "training": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s4_hybrid_routing/B3/training",
+    "eval": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s4_hybrid_routing/B3/eval",
+    "slurm": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s4_hybrid_routing/B3/slurm",
+    "screen": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s4_hybrid_routing/B3/screen",
+    "family_dir": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round1/worktrees/s4_hybrid_routing/B3/models_r1/s4_router"
+  },
+  "build_commit": "b90d4662cd12820b6926730d39bdb5af70bba276",
+  "job_ids": [
+    "66112602 (screen, contract tier, non-reportable per ADR 0007)",
+    "66113509 (screen, relaunch after V5 tol fix)",
+    "66113973 (main, seed 0 per ADR 0004, H100, screen-gated)"
+  ],
   "logs": {},
-  "build_notes": [],
-  "review_notes": [],
-  "debug_notes": [],
-  "5_actual_result": null,
+  "build_notes": [
+    "1. QUARANTINE (done BEFORE any new file was written, so no stale file could shadow the build). This worktree carried untracked artifacts from a SUPERSEDED draft lineage: models_r1/s4_router built on S4_* env keys with arms corr_plain/corr_cleaned/lsi_ctrl/head_l2 and base_commit d083d44b, its scripts/, a 307 MB scratchpad/, and a builder handoff. All moved to quarantine_superseded_S4draft/ (models_r1_s4_router.superseded/, scripts.superseded/, scratchpad.superseded/, handoff_experiment_builder.superseded.md) with a README.md explaining the lineage difference. Inert: nothing there is imported, executed or referenced by the build. The *.pt weights are git-ignored, so only the auditable JSON/py/log files are committed.",
+    "2. VENDOR PINS, verified BEFORE any edit via `git show caff5c97:models_r1/s6_local_repair/<f>` and recorded in manifest.json.base_family_pins_sha256_16: INSPIRATION.md 76e15392fa3cb565, bands.py 42b869598fcc864e, local_corrector.py cdb1c65900648d77, lsi_filter.py 09a4973741594718, manifest.json afba4d1fbebf5e90, model.py 80d8940d8b90a4ac, periodicity.py 5c3c88c3d4a0a1bb, smoke_eval.py f38c6884e550b7ed, trust_head.py b99d9519f41f8fec. model.py re-verified byte-identical to mf_fno_transfer_film/model.py @967562e (full sha256 80d8940d8b90a4ac612ba39c8d233328e8421a55de337bca97157df0a00b85d3). UNCHANGED: bands.py, local_corrector.py, model.py, periodicity.py. APPEND-ONLY: lsi_filter.py (the base 4111 bytes verified as an exact byte prefix of the 9216-byte result). EDITED: trust_head.py, smoke_eval.py. NEW: router.py, floors.py, sidecars.py.",
+    "3. ENV BLOCK. scripts/arm_env.sh builds all 47 non-underscore recipe.env keys into ONE bash array passed after a SINGLE --env (score_panel.py declares --env with nargs='*' and NO append, so multiple --env flags silently keep only the last). Verified mechanically: for each of the five arms the emitted block is an EXACT key-by-key match to recipe.env + that arm's recipe.env._arms deltas (47/47 keys, all five arms), with S4R_DIAG_OUT the one key absolutised at runtime because outputs_root lives outside the worktree. smoke_eval.py::read_knobs raises on any missing knob and never falls back to a default.",
+    "4. CONTRACT SMOKE (build evidence only; ADR 0007 -- never reportable, never quoted in parts 5-7). Driver scratchpad/run_smoke.sh: 5 arms x {ext__helmholtz_2d, sharp__sod_1d, ifc_poisson} + lsi_alone on {sharp__fisher_kpp_2d, sharp__cahn_hilliard}, all via `python round1/eval/score_panel.py --family_dir <wt>/models_r1/s4_router --datasets <ds> --epochs 2 --seed 0 --no_cache --env <47 knobs>`. 16/16 cells exit 0 with finite nRMSE. Log scratchpad/smoke/smoke_driver.log; per-cell results scratchpad/smoke/smoke_<arm>_<ds>.json; 17 diag JSONs in scratchpad/smoke/diag/.",
+    "5. VALIDITY GATES at contract tier -- `python scripts/02_verify_gates.py --diag_dir scratchpad/smoke/diag --epochs 2 --seed 0 --screen_mode` exits 0, table at scratchpad/smoke/screen_table.json: V1 checked 0 (TIER-GATED, see note 8), V2 3/3 pass, V3 12/12 pass, V4 8/8 pass, V5 5/5 pass, V6 2/2 pass, SCREEN no-harm 0 violations at skill > 1.02. V2 EXACT: lsi_alone reproduces s6-B2 lsi_ctrl seed-0 to machine precision -- sharp__fisher_kpp_2d 0.007695081137159533 vs ref 0.007695081137159533 (rel_dev 0.0), sharp__cahn_hilliard 0.03856875162347987 vs ref 0.03856875162347986 (rel_dev 2.6e-16), and alpha_LSI == 0 on ext__helmholtz_2d giving nRMSE 0.3294501260438018 == copy-LF exactly. V3: identity_delta_vs_baseline == 0.0 on all 12 LF-path cells. V5: all five arms on ifc_poisson identical at 0.4900025652737079, rel_dev 0.0 (the champion-fallback + champion-borrow path).",
+    "6. BORROW PAIRING (sha-validated), the evidence that router/router_forced_wrong differ from dc_cleaned ONLY in the post-hoc selection layer: on sharp__sod_1d dc_cleaned, router and router_forced_wrong all carry corrector_state_sha256 7b0db8e1f9d483ca... with pairing_verified true against the donor record, while dc_raw carries a genuinely different c82b6bf3c8db... A missing donor pair file RAISES (donor_record) rather than silently retraining -- the card's _sweep arm order (donors before borrowers) is enforced, not assumed.",
+    "7. SELECTOR DECISIONS LOGGED PER DATASET. sharp__sod_1d: val_risk_lsi 0.01589029092635154 vs val_risk_dc 0.01587256290963061, relative gap 0.001117 > tie_band 0.0 -> branch dc; tie_band_source 'none_certified' (guard set has no state/noise_floor.json entry, so the band is 0 and the leg is report-only -- NO floor invented). The rho rule is RECORDED, not deciding: one_minus_rho_lsi_val 0.2501562804644306 (computed in-run, matching the card's pre-registered 0.25016) -> predicts dc. V6: router_forced_wrong selected lsi, the exact complement. ext__helmholtz_2d: 1-rho 1.0 -> rule predicts dc, selector routes to lsi (alpha_LSI 0 makes the LSI branch copy-LF itself). Free legs all populated: nrmse_no_selection, nrmse_branch_oracle (router/oracle 0.9848), insample_counterfactual_choice (+ decision_changed_by_oof true on router_forced_wrong), val_base_oof_over_insample 1.0499, interior16_nrmse + crop_sign_flip, corrected_ref_C/D.",
+    "8. TWO DEFECTS FOUND AND FIXED DURING THE SMOKE. (a) data_adapters/metrics.py::finalize_and_write writes the result JSON with a bare json.dumps and no default= hook, so the trust head's fitted numpy ridge coefficients aborted the router arms AFTER training. data_adapters/ is shared factory infrastructure used by the whole zoo and was NOT edited; the family sanitises its own payload via smoke_eval._json_safe (arrays converted to lists, not dropped). (b) validity gate V1 compares a TRAINED arm against s6-B2's 200-epoch numbers, so evaluating it at contract tier made the card's own screen job fail itself (ifc_poisson 0.4900 vs 0.05563 = 7.8x, meaning only that 2 epochs is not 200). replica_gate is now tier-gated on SMOKE_TIER_EPOCHS=200 and emits the record with applies=false plus the reason at other tiers. V2 is unaffected and stays fully checkable at contract tier because lsi_alone takes zero gradient steps.",
+    "9. CHECKPOINT-RESUME DRILL (immutable 8) -- `bash scripts/03_resume_drill.sh` exits 0, log scratchpad/resume_drill.log. D1 mid-stage: dc_cleaned killed with SIGKILL at 45 s into stage 1, restarted, log shows `[resume] using .../arm_dc_cleaned/last.pt (stage=corrector)` then `[resume] corrector continues from epoch 24/120` -- a resume, not a silent restart at 0. D2 done-stage: re-run loads stage=done and takes zero gradient steps. D3 cross-arm rejection: dc_raw pointed at dc_cleaned's ckpt_dir prints `meta mismatch` and trains its own corrector (the s1_poisson-B1 collision trap; the sweep ALSO redirects ROUND1_EVAL_RESULTS per arm, so the two defences are independent). D4: the contract path <ckpt_dir>/last.pt exists beside the per-arm mirrors. Timings calibrated at build time (300 epochs on sharp__sod_1d = 500 s wall).",
+    "10. THREE JUDGEMENT CALLS, all disclosed in code and in notes/handoff_experiment_builder.md. (i) The LSI pre-stage carries the val-selected alpha_LSI, so LF + C_LSI IS lsi_alone's scored prediction; reading 'R - C_LSI' as unit gain would break V4 and the C1 no-harm comparison and would put dc_cleaned at ~2.175 on helmholtz (vs copy-LF 0.3295), failing the card's own screen no-harm directive. One scalar fitted on val_idx therefore reaches the corrector's fit_idx training target -- disclosed, not hidden (diag.prestage.alpha_provenance). (ii) TBD(card-underspecified): the card names CHANGE 2 a 'per-sample no-harm cap' keyed to 'floor' but does not write its form; shipped as a per-sample cap at 1.0 (the head may only SHRINK the branch toward copy-LF, never amplify) plus a promotion gate at the certified relative floor, both no-harm-directional, no number invented. (iii) Guard datasets have no certified floor, so the tie band is 0.0 and the head margin falls back to S6_HEAD_MIN_GAIN, each recorded with its source string. floors.py transcribes state/noise_floor.json (state/ is not in this worktree checkout, and a value read from outside the family dir would be invisible to score_panel's code_hash) and SELF-CHECKS the derived relative floors against the percentages the card quotes -- 10.000% on the four sharp panel datasets, 70.165% on helmholtz -- raising on mismatch.",
+    "11. SCRIPTS. All absolute-pathed, all `bash -n` clean, all seed-parameterized where relevant, no `source \"$0\"`. 00_screen.sh (contract tier, --time=01:00:00) and 01_train_eval.sh (the sweep, SEED=$1, --time=03:00:00) transcribe the card's _sbatch block verbatim: --job-name=r1-s4_hybrid_routing-B3-s0, --partition=gpu, --gres=gpu:h100:1, --mem=32G, --cpus-per-task=4, logs under <outputs>/slurm/%x-%j.{out,err}. The sweep runs the five arms x {panel, guard} serially in the card's fixed order with a per-arm ROUND1_EVAL_RESULTS, then runs 02_verify_gates.py and exits non-zero on a gate miss. submit_screen.sh runs the screen first; submit.sh is GATED on it and refuses to submit the 3 h sweep until screen_table.json exists and records zero no-harm violations (--force overrides loudly). submit_seeds_2_3.sh exists for the end-of-round confirmation only -- program.md 4.4 is strict 1-seed in-round. The ORCHESTRATOR submits; the builder never did."
+  ],
+  "review_notes": [
+    {
+      "utc": "2026-07-31T03:25Z",
+      "reviewer": "code-reviewer (a2e5d750)",
+      "verdict": "SUGGEST \u2014 submit as-is",
+      "report": "worktrees/s4_hybrid_routing/B3/review_report.md",
+      "summary": "All load-bearing claims independently verified: 9/9 vendor pins byte-exact vs caff5c97; lsi_filter.py exact 4111-byte prefix append; arm_env 47/47 key-exact for all five arms; diff is 189 additions only (eval/data_adapters/guarded surfaces provably untouched); resume drill adversarial and real; gate figures reproduced from artifacts; floors.py never invents guard floors. Non-blocking findings: S1 submit.sh gates only on screen.violations (a V3-row failure with zero no-harm violations would still pass) \u2014 orchestrator will manually verify the full gate table before running submit.sh; S2-S4 V2 covers 2/4 sharp datasets and missing cells are not enforced as failures; S7 D3 contrast mildly asymmetric (dc_cleaned consumes val_idx twice, dc_raw once) \u2014 carry into analysis caveats. Operational: submit ONLY via submit_screen.sh/submit.sh (they mkdir -p outputs), never 01_train_eval.sh directly; build_notes[11] wrongly says both sbatch scripts use -s0 (screen job name -screen-s0 is correct per slurm_rules \u00a76) \u2014 note is wrong, code is right."
+    }
+  ],
+  "debug_notes": [
+    {
+      "attempt": 1,
+      "class": "ALGO",
+      "class_justification": "ALGO, not INFRA, and it counts 1/5. The failure is deterministic and reproducible on the same hardware -- resubmitting unchanged would fail identically -- so it is not a transient/environmental event. The defect is a code-chosen constant in a script the build shipped (a CPU-calibrated bitwise-ish tolerance applied to a GPU comparison), and the fix is a code edit. This matches the round's own precedent for exactly this class: the s6-B2 wave failure ('nondeterminism vs bit-identity requirement') and the s5-B2 device-provenance failure were both logged ALGO 1/5. The hardware nondeterminism itself is not a bug (it is certified round-1 behaviour); the bug is the gate's assumption that it does not exist.",
+      "symptom": "Screen job 66112602 (H100 hpc-33-19) exited 1 after 7:56. Gate table otherwise healthy (V2 5/5, V3 40/40, V4 32/32, V6 8/8, SCREEN no-harm 0 violations, screen_table.json written), but V5 3/5: on ifc_poisson dc_raw rel_dev 5.224e-6 and lsi_alone rel_dev 1.986e-6 against reference arm dc_cleaned, tol 1e-6. The three borrow-paired arms (dc_cleaned/router/router_forced_wrong, shared weight sha 05f7cf3b4f23986e) matched exactly at 0.0.",
+      "diagnosis": "VERIFIED, not assumed (evidence: scratchpad/diagnose_attempt_1.py + .out, which read only artifacts and computed no model number). On ifc_poisson the test split ships no LF, so the availability key collapses every arm to the base family's champion transfer path; lsi_alone, dc_raw and dc_cleaned each TRAIN THEIR OWN champion, while router and router_forced_wrong borrow dc_cleaned's bytes (zero gradient steps). (a) On the builder's CPU contract smoke all five arms are byte-identical -- nRMSE 0.4900025652737079 and trained-weight sha 72a35208acff97e1 for all five, across five separate processes. The champion fallback is therefore PROVABLY knob-invariant: the family code is correct and no arm's knobs leak into the fallback. (b) On H100 the same three independently-trained arms produce three DISTINCT weight shas (0ac043a3.., 2ad7edf2.., 05f7cf3b..) and three distinct nRMSEs. The device is the only variable between (a) and (b). (c) Both deviations sit inside the round's certified H100 run-to-run envelope and above the CPU-calibrated 1e-6: orchestrator_flow s5-B2 2026-07-30T03:29Z certified 'NOT bitwise reproducible (1.9e-4 rel helmholtz between two identical fresh same-job H100 runs; 6e-6 heat_local; 0.0 sod) -- bitwise gates are only decidable on CPU'; orchestrator_flow 2026-07-30T22:04Z passed an s5-B3 leg at 3.4e-5 as 'inside the 1.9e-4 GPU envelope' and adjudicated an s5-B3 strict-equality FAIL at 2.2e-7 on THIS dataset as 'cuDNN run-to-run nondeterminism ... Not ALGO'; s5_tuning/review_B3.md measured same-code GPU pairs on ifc_poisson spanning 1.1e-7..2.68e-6 while the same families agree to 16 digits on CPU. ROOT CAUSE: V5's 1e-6 is a bitwise-ish tolerance -- a numerical proxy for 'this arm executed the same code path'. That proxy is exact on CPU and undecidable on GPU, so on H100 the gate measures cuDNN nondeterminism instead of the code-path identity it exists to certify.",
+      "fix": "Two-tier V5 tolerance in scripts/02_verify_gates.py, keyed on whether an arm shares the reference arm's corrector_state_sha256 -- i.e. on whether bitwise equality is a structural CLAIM or an accident. (1) SHARED CHECKPOINT (borrow-paired: router, router_forced_wrong, and the reference itself): the card's literal 1e-6 is KEPT, UNWEAKENED. This is where the card's expected_falsification clause (i) bites -- 'the ifc_poisson availability leg deviates from the champion path by more than 1e-6 relative' is a statement about the PRIMARY arm (router), which does zero gradient steps on the donor's bytes and is still gated at the card's own number (observed rel_dev exactly 0.0). The card's falsification criterion is therefore intact, not relaxed. (2) INDEPENDENT TRAINING (lsi_alone, dc_raw): tolerance = 1.9e-4, the round's certified H100 run-to-run envelope, with the four provenance citations written inline in the script -- not a fitted or convenient number. The card makes NO CLAIM on ifc_poisson (pre-registered no-op fallback leg), and this comparison is arm-vs-arm, not the falsification clause. Every V5 row now also records tol_basis, shares_ref_checkpoint, both weight shas, card_literal_tol and pass_at_card_literal_tol, so the card's literal verdict stays readable off the gate table and nothing is hidden from the analyzer. NOT TOUCHED (verified by diff): V3's 1e-9 identity check, V4's ==0.0, V1's 10% / V2's 2% replication tolerances, the 1.02 no-harm screen threshold, all family code, the eval layer, data_adapters, and every locked card field. Diff is one file, 77+/6-. Re-ran the fixed gate against the FAILED run's own artifacts: 6/6 gates pass, router rel_dev still 0.0 (scratchpad/repro_attempt_1_gate_table.json, repro_attempt_1.out).",
+      "known_residual": "models_r1/s4_router/smoke_eval.py still writes v5_champion_leg.tol_relative = 1e-6 and a note saying 'within 1e-6' into each ifc_poisson diag. Left stale ON PURPOSE: editing family code would change the family code_hash for a metadata string. The gate table's tol / tol_basis / pass_at_card_literal_tol are authoritative (the diag itself names scripts/02_verify_gates.py as checked_by). Flagged for the analyzer in notes/handoff_experiment_debugger_1.md.",
+      "files_touched": [
+        "worktrees/s4_hybrid_routing/B3/scripts/02_verify_gates.py"
+      ],
+      "evidence_paths": [
+        "worktrees/s4_hybrid_routing/B3/scratchpad/diagnose_attempt_1.py",
+        "worktrees/s4_hybrid_routing/B3/scratchpad/diagnose_attempt_1.out",
+        "worktrees/s4_hybrid_routing/B3/scratchpad/repro_attempt_1.out",
+        "worktrees/s4_hybrid_routing/B3/scratchpad/repro_attempt_1_gate_table.json",
+        "worktrees/s4_hybrid_routing/B3/notes/handoff_experiment_debugger_1.md"
+      ],
+      "relaunched_job_ids": [
+        "66113509"
+      ],
+      "relaunch_scope": "SCREEN ONLY (bash scripts/submit_screen.sh). submit.sh NOT run: the main run stays gated on the orchestrator's manual full-gate-table check (reviewer finding S1).",
+      "status_note": "Card status deliberately LEFT at reviewed_suggest per the orchestrator's dispatch instruction (the debugger default of status='running' would misdescribe the card -- only the pre-sweep screen is in flight, and the main run remains gated).",
+      "next_suggestion": "On green: read screen_table.json and verify EVERY gate row passes (not just screen.violations == 0), then submit.sh. If V5 fails again with rel_dev >> 1.9e-4 the hypothesis is falsified; next suspect would be arm-dependent RNG consumption before the champion train loop, testable by rerunning the three trained arms with CUDA_VISIBLE_DEVICES='' and comparing weight shas.",
+      "utc": "2026-07-31T04:22Z"
+    }
+  ],
+  "5_actual_result": {
+    "_provenance": {
+      "label": "provisional-single-seed (ADR 0004); seeds 1-2 not submitted in-round",
+      "job_id": "66113973 (r1-s4_hybrid_routing-B3-s0) COMPLETED 0:0, Elapsed 00:57:22, hpc-33-13, 1x NVIDIA H100 80GB HBM3 (GPU-1c14544d), seed 0, 200 epochs, 5 arms x {panel, guard}",
+      "non_reportable_jobs": "the two contract-tier SCREEN jobs are NON-REPORTABLE per ADR 0007 and no screen number appears anywhere in this part 5; only main job 66113973 is read here.",
+      "slurm_log": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s4_hybrid_routing/B3/slurm/r1-s4_hybrid_routing-B3-s0-66113973.out (.err is 0 bytes)",
+      "panel_result_by_arm": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s4_hybrid_routing/B3/eval/result_panel_<arm>_s0.json",
+      "guard_result_by_arm": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s4_hybrid_routing/B3/eval/result_guard_<arm>_s0.json",
+      "per_dataset_result_jsons": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s4_hybrid_routing/B3/eval/results_<arm>/s4_router/<dataset>_e200_s0.json (45 files)",
+      "diag_sidecars": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s4_hybrid_routing/B3/eval/diag_<dataset>__<arm>_e200_s0.json (45 files)",
+      "pairing_records": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s4_hybrid_routing/B3/eval/pair_<dataset>_e200_s0__<arm>.json",
+      "validity_gates": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s4_hybrid_routing/B3/eval/gates_s0.json",
+      "frozen_reference": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round1/eval/copylf_baselines.json",
+      "noise_floor_reference": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round1/state/noise_floor.json (certified 2026-07-29T14:28:45Z)",
+      "anchor_reference_file": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round1/state/anchors/s4_hybrid_routing.json",
+      "nrmse_def_hash": "d3d0ade9191c13bacc40702f3eb26ad290e01641cacee22a1d2233b74c035850",
+      "nrmse_def_hash_check": "SEAM ASSERTION PASSES. IDENTICAL across all 10 result_{panel,guard}_<arm>_s0.json, and identical to the hash recorded in every one of the 45 diag sidecars and to s6_local-B2's recorded hash. No metric-definition drift between arms or against the frozen denominators.",
+      "metric_convention": "score_panel.py metric_source=per_sample_mean (rel_l2_mean over test samples), split=test_hf, cached=false on every arm x dataset (no cache reuse anywhere); skill = model nRMSE / reference nRMSE, LOWER IS BETTER. ifc_poisson uses reference_type=paper_bar per ADR 0002; all other datasets use copylf.",
+      "code_hash_by_arm": {
+        "lsi_alone": "8b1f2a877d8c2eda593ca07c523c7b23c36cb3f5402e9789a1e49e0558f47cce",
+        "dc_raw": "d8159273f791361107673b3f3455161f6f01436b55ef953c8ee39af429a863db",
+        "dc_cleaned": "7ead7d96e02ee025bb681de5c870facc96e9b14144fe0d35f84563f257ca49bc",
+        "router": "272a0f6e741fb0a3de23934f56501955be90b9242d041abc46d029cd2e700f6d",
+        "router_forced_wrong": "56cd5046ba9c043d0a64576b345dd4c2689b3be4debddc16b58b432fadc8b672"
+      },
+      "code_hash_note": "code_hash differs per arm because score_panel.py's hash covers the 47-knob S4R_*/S6_* env block as well as the family .py files. Family code is one build commit (b90d4662), unedited between arms. Same benign mechanism s6_local-B1/B2 recorded.",
+      "recomputation_policy": "every nRMSE and skill in this part 5 is PARSED from the score_panel.py result JSONs; nothing is recomputed by hand. Ratios/percentages between arms are arithmetic on those parsed numbers."
+    },
+    "seeds_available": [
+      0
+    ],
+    "per_dataset": {
+      "ext__helmholtz_2d": {
+        "scope": "panel",
+        "reference_type": "copylf",
+        "reference_nrmse": 0.3294501260438018,
+        "metric_source": "per_sample_mean",
+        "split": "test_hf",
+        "n_test_samples": 100,
+        "cached": {
+          "lsi_alone": false,
+          "dc_raw": false,
+          "dc_cleaned": false,
+          "router": false,
+          "router_forced_wrong": false
+        },
+        "per_arm_nrmse": {
+          "lsi_alone": 0.32945012604380175,
+          "dc_raw": 0.32945012604380175,
+          "dc_cleaned": 0.32945012604380175,
+          "router": 0.32945012604380175,
+          "router_forced_wrong": 0.32945012604380175
+        },
+        "per_arm_skill": {
+          "lsi_alone": 0.9999999999999998,
+          "dc_raw": 0.9999999999999998,
+          "dc_cleaned": 0.9999999999999998,
+          "router": 0.9999999999999998,
+          "router_forced_wrong": 0.9999999999999998
+        },
+        "per_sample_rel_l2_ci95": {
+          "lsi_alone": [
+            0.15104870751301017,
+            0.623771537524089
+          ],
+          "dc_raw": [
+            0.15104870751301017,
+            0.623771537524089
+          ],
+          "dc_cleaned": [
+            0.15104870751301017,
+            0.623771537524089
+          ],
+          "router": [
+            0.15104870751301017,
+            0.623771537524089
+          ],
+          "router_forced_wrong": [
+            0.15104870751301017,
+            0.623771537524089
+          ]
+        },
+        "certified_relative_floor_pct": 70.165,
+        "certified_floor_source": "state/noise_floor.json min_claimable_effect/mean_skill, certified 2026-07-29T14:28:45Z",
+        "router_branch_selected": "lsi",
+        "forced_wrong_branch_selected": "lsi",
+        "rule_predicted_branch": "dc",
+        "one_minus_rho_lsi_val_in_run": 1.0,
+        "val_risk_lsi": 0.16657216901523647,
+        "val_risk_dc": 0.16657216901523647,
+        "val_risk_relative_gap": 0.0,
+        "tie_band": 0.7016543420944195,
+        "tie_band_source": "certified_floor",
+        "branch_test_nrmse": {
+          "dc": 0.3294501260438018,
+          "lsi": 0.3294501260438018
+        },
+        "nrmse_branch_oracle": 0.3294501260438018,
+        "router_over_branch_oracle": 1.0,
+        "head_selected": "branch",
+        "head_no_harm_gate_fired": true,
+        "nrmse_no_selection": 0.3294501260438018,
+        "v4_no_selection_max_abs_dev": 0.0,
+        "interior16_nrmse": 0.29030535642347993,
+        "crop_sign_flip": false,
+        "corrected_ref_C_nrmse_sidecar_only": 0.3684911956100567,
+        "corrected_ref_D_nrmse_sidecar_only": 0.3725850560144695,
+        "pairing_verified": true,
+        "corrector_state_sha256_16": "800df4e6f60b19b1",
+        "per_seed_nrmse": {
+          "lsi_alone": [
+            0.32945012604380175
+          ],
+          "dc_raw": [
+            0.32945012604380175
+          ],
+          "dc_cleaned": [
+            0.32945012604380175
+          ],
+          "router": [
+            0.32945012604380175
+          ],
+          "router_forced_wrong": [
+            0.32945012604380175
+          ]
+        },
+        "per_seed_skill": {
+          "lsi_alone": [
+            0.9999999999999998
+          ],
+          "dc_raw": [
+            0.9999999999999998
+          ],
+          "dc_cleaned": [
+            0.9999999999999998
+          ],
+          "router": [
+            0.9999999999999998
+          ],
+          "router_forced_wrong": [
+            0.9999999999999998
+          ]
+        },
+        "mean_skill": 0.9999999999999998,
+        "ci95": null
+      },
+      "sharp__phase_field_crystal_2d": {
+        "scope": "panel",
+        "reference_type": "copylf",
+        "reference_nrmse": 0.04478044719481978,
+        "metric_source": "per_sample_mean",
+        "split": "test_hf",
+        "n_test_samples": 100,
+        "cached": {
+          "lsi_alone": false,
+          "dc_raw": false,
+          "dc_cleaned": false,
+          "router": false,
+          "router_forced_wrong": false
+        },
+        "per_arm_nrmse": {
+          "lsi_alone": 0.0006124684737243416,
+          "dc_raw": 0.0007205243939035404,
+          "dc_cleaned": 0.0003326459192490989,
+          "router": 0.0003326459192490989,
+          "router_forced_wrong": 0.0003326459192490989
+        },
+        "per_arm_skill": {
+          "lsi_alone": 0.01367714062925196,
+          "dc_raw": 0.01609015628559625,
+          "dc_cleaned": 0.007428374214350845,
+          "router": 0.007428374214350845,
+          "router_forced_wrong": 0.007428374214350845
+        },
+        "per_sample_rel_l2_ci95": {
+          "lsi_alone": [
+            0.00046884194520122085,
+            0.000759158730398596
+          ],
+          "dc_raw": [
+            0.0006310374363321493,
+            0.0008115249106845516
+          ],
+          "dc_cleaned": [
+            0.0002513354280213947,
+            0.0004207351186052486
+          ],
+          "router": [
+            0.0002513354280213947,
+            0.0004207351186052486
+          ],
+          "router_forced_wrong": [
+            0.0002513354280213947,
+            0.0004207351186052486
+          ]
+        },
+        "certified_relative_floor_pct": 10.0,
+        "certified_floor_source": "state/noise_floor.json min_claimable_effect/mean_skill, certified 2026-07-29T14:28:45Z",
+        "router_branch_selected": "dc",
+        "forced_wrong_branch_selected": "dc",
+        "rule_predicted_branch": "lsi",
+        "one_minus_rho_lsi_val_in_run": 0.00017823935749705644,
+        "val_risk_lsi": 0.0004479695119654507,
+        "val_risk_dc": 0.00023523990705239873,
+        "val_risk_relative_gap": 0.9043091692162051,
+        "tie_band": 0.1,
+        "tie_band_source": "certified_floor",
+        "branch_test_nrmse": {
+          "dc": 0.0003326459192490989,
+          "lsi": 0.0006124684737243416
+        },
+        "nrmse_branch_oracle": 0.0003326459192490989,
+        "router_over_branch_oracle": 1.0,
+        "head_selected": "branch",
+        "head_no_harm_gate_fired": true,
+        "nrmse_no_selection": 0.0003326459192490989,
+        "v4_no_selection_max_abs_dev": 0.0,
+        "interior16_nrmse": 0.00034036566024806447,
+        "crop_sign_flip": false,
+        "corrected_ref_C_nrmse_sidecar_only": 0.00738077856100695,
+        "corrected_ref_D_nrmse_sidecar_only": 3.188980812661484e-07,
+        "pairing_verified": true,
+        "corrector_state_sha256_16": "4e65e14ec22fc9f4",
+        "per_seed_nrmse": {
+          "lsi_alone": [
+            0.0006124684737243416
+          ],
+          "dc_raw": [
+            0.0007205243939035404
+          ],
+          "dc_cleaned": [
+            0.0003326459192490989
+          ],
+          "router": [
+            0.0003326459192490989
+          ],
+          "router_forced_wrong": [
+            0.0003326459192490989
+          ]
+        },
+        "per_seed_skill": {
+          "lsi_alone": [
+            0.01367714062925196
+          ],
+          "dc_raw": [
+            0.01609015628559625
+          ],
+          "dc_cleaned": [
+            0.007428374214350845
+          ],
+          "router": [
+            0.007428374214350845
+          ],
+          "router_forced_wrong": [
+            0.007428374214350845
+          ]
+        },
+        "mean_skill": 0.007428374214350845,
+        "ci95": null
+      },
+      "sharp__allen_cahn_2d": {
+        "scope": "panel",
+        "reference_type": "copylf",
+        "reference_nrmse": 0.016151772077279084,
+        "metric_source": "per_sample_mean",
+        "split": "test_hf",
+        "n_test_samples": 100,
+        "cached": {
+          "lsi_alone": false,
+          "dc_raw": false,
+          "dc_cleaned": false,
+          "router": false,
+          "router_forced_wrong": false
+        },
+        "per_arm_nrmse": {
+          "lsi_alone": 0.0008318192792299753,
+          "dc_raw": 0.0009363332709684444,
+          "dc_cleaned": 0.00019672587029864158,
+          "router": 0.00019672587029864158,
+          "router_forced_wrong": 0.00019672587029864158
+        },
+        "per_arm_skill": {
+          "lsi_alone": 0.05150018680613422,
+          "dc_raw": 0.057970931393069684,
+          "dc_cleaned": 0.012179831993504819,
+          "router": 0.012179831993504819,
+          "router_forced_wrong": 0.012179831993504819
+        },
+        "per_sample_rel_l2_ci95": {
+          "lsi_alone": [
+            0.0006798207570208068,
+            0.0009998831309758714
+          ],
+          "dc_raw": [
+            0.0007556029016422165,
+            0.0011466726226190514
+          ],
+          "dc_cleaned": [
+            0.0001580845315803809,
+            0.00023983446439604744
+          ],
+          "router": [
+            0.0001580845315803809,
+            0.00023983446439604744
+          ],
+          "router_forced_wrong": [
+            0.0001580845315803809,
+            0.00023983446439604744
+          ]
+        },
+        "certified_relative_floor_pct": 10.0,
+        "certified_floor_source": "state/noise_floor.json min_claimable_effect/mean_skill, certified 2026-07-29T14:28:45Z",
+        "router_branch_selected": "dc",
+        "forced_wrong_branch_selected": "dc",
+        "rule_predicted_branch": "lsi",
+        "one_minus_rho_lsi_val_in_run": 0.003424897509969438,
+        "val_risk_lsi": 0.0007985681481783975,
+        "val_risk_dc": 0.00019234561485995767,
+        "val_risk_relative_gap": 3.1517356595824464,
+        "tie_band": 0.1,
+        "tie_band_source": "certified_floor",
+        "branch_test_nrmse": {
+          "dc": 0.00019672587029864158,
+          "lsi": 0.0008318192792299754
+        },
+        "nrmse_branch_oracle": 0.00019672587029864158,
+        "router_over_branch_oracle": 1.0,
+        "head_selected": "branch",
+        "head_no_harm_gate_fired": true,
+        "nrmse_no_selection": 0.00019672587029864158,
+        "v4_no_selection_max_abs_dev": 0.0,
+        "interior16_nrmse": 0.0001576001422639382,
+        "crop_sign_flip": false,
+        "corrected_ref_C_nrmse_sidecar_only": 0.0017807662982691156,
+        "corrected_ref_D_nrmse_sidecar_only": 0.0021274838811161717,
+        "pairing_verified": true,
+        "corrector_state_sha256_16": "5065b6561c018f84",
+        "per_seed_nrmse": {
+          "lsi_alone": [
+            0.0008318192792299753
+          ],
+          "dc_raw": [
+            0.0009363332709684444
+          ],
+          "dc_cleaned": [
+            0.00019672587029864158
+          ],
+          "router": [
+            0.00019672587029864158
+          ],
+          "router_forced_wrong": [
+            0.00019672587029864158
+          ]
+        },
+        "per_seed_skill": {
+          "lsi_alone": [
+            0.05150018680613422
+          ],
+          "dc_raw": [
+            0.057970931393069684
+          ],
+          "dc_cleaned": [
+            0.012179831993504819
+          ],
+          "router": [
+            0.012179831993504819
+          ],
+          "router_forced_wrong": [
+            0.012179831993504819
+          ]
+        },
+        "mean_skill": 0.012179831993504819,
+        "ci95": null
+      },
+      "sharp__fisher_kpp_2d": {
+        "scope": "panel",
+        "reference_type": "copylf",
+        "reference_nrmse": 0.06263229669603956,
+        "metric_source": "per_sample_mean",
+        "split": "test_hf",
+        "n_test_samples": 100,
+        "cached": {
+          "lsi_alone": false,
+          "dc_raw": false,
+          "dc_cleaned": false,
+          "router": false,
+          "router_forced_wrong": false
+        },
+        "per_arm_nrmse": {
+          "lsi_alone": 0.007695081137159533,
+          "dc_raw": 0.004697840233022452,
+          "dc_cleaned": 0.003579004139880376,
+          "router": 0.003579004139880376,
+          "router_forced_wrong": 0.003579004139880376
+        },
+        "per_arm_skill": {
+          "lsi_alone": 0.12286123203344254,
+          "dc_raw": 0.07500667356685822,
+          "dc_cleaned": 0.05714310872631129,
+          "router": 0.05714310872631129,
+          "router_forced_wrong": 0.05714310872631129
+        },
+        "per_sample_rel_l2_ci95": {
+          "lsi_alone": [
+            0.0071188110540066395,
+            0.008344920208671783
+          ],
+          "dc_raw": [
+            0.0042353686658905924,
+            0.005202406431376258
+          ],
+          "dc_cleaned": [
+            0.003318056320758637,
+            0.003861394943409031
+          ],
+          "router": [
+            0.003318056320758637,
+            0.003861394943409031
+          ],
+          "router_forced_wrong": [
+            0.003318056320758637,
+            0.003861394943409031
+          ]
+        },
+        "certified_relative_floor_pct": 10.0,
+        "certified_floor_source": "state/noise_floor.json min_claimable_effect/mean_skill, certified 2026-07-29T14:28:45Z",
+        "router_branch_selected": "dc",
+        "forced_wrong_branch_selected": "dc",
+        "rule_predicted_branch": "lsi",
+        "one_minus_rho_lsi_val_in_run": 0.01575376232931147,
+        "val_risk_lsi": 0.007681539698339704,
+        "val_risk_dc": 0.003564461447267326,
+        "val_risk_relative_gap": 1.1550351468182416,
+        "tie_band": 0.1,
+        "tie_band_source": "certified_floor",
+        "branch_test_nrmse": {
+          "dc": 0.0035790041398803766,
+          "lsi": 0.007695081137159533
+        },
+        "nrmse_branch_oracle": 0.0035790041398803766,
+        "router_over_branch_oracle": 1.0,
+        "head_selected": "branch",
+        "head_no_harm_gate_fired": true,
+        "nrmse_no_selection": 0.0035790041398803766,
+        "v4_no_selection_max_abs_dev": 0.0,
+        "interior16_nrmse": 0.003481665215327832,
+        "crop_sign_flip": false,
+        "corrected_ref_C_nrmse_sidecar_only": 0.02144950364640668,
+        "corrected_ref_D_nrmse_sidecar_only": 0.01292194611731224,
+        "pairing_verified": true,
+        "corrector_state_sha256_16": "f50a5a4f6335c4d3",
+        "per_seed_nrmse": {
+          "lsi_alone": [
+            0.007695081137159533
+          ],
+          "dc_raw": [
+            0.004697840233022452
+          ],
+          "dc_cleaned": [
+            0.003579004139880376
+          ],
+          "router": [
+            0.003579004139880376
+          ],
+          "router_forced_wrong": [
+            0.003579004139880376
+          ]
+        },
+        "per_seed_skill": {
+          "lsi_alone": [
+            0.12286123203344254
+          ],
+          "dc_raw": [
+            0.07500667356685822
+          ],
+          "dc_cleaned": [
+            0.05714310872631129
+          ],
+          "router": [
+            0.05714310872631129
+          ],
+          "router_forced_wrong": [
+            0.05714310872631129
+          ]
+        },
+        "mean_skill": 0.05714310872631129,
+        "ci95": null
+      },
+      "sharp__cahn_hilliard": {
+        "scope": "panel",
+        "reference_type": "copylf",
+        "reference_nrmse": 0.08765999100758841,
+        "metric_source": "per_sample_mean",
+        "split": "test_hf",
+        "n_test_samples": 100,
+        "cached": {
+          "lsi_alone": false,
+          "dc_raw": false,
+          "dc_cleaned": false,
+          "router": false,
+          "router_forced_wrong": false
+        },
+        "per_arm_nrmse": {
+          "lsi_alone": 0.03856875162347987,
+          "dc_raw": 0.04136137418852845,
+          "dc_cleaned": 0.03856875162347987,
+          "router": 0.03856875162347987,
+          "router_forced_wrong": 0.03856875162347987
+        },
+        "per_arm_skill": {
+          "lsi_alone": 0.4399812409305531,
+          "dc_raw": 0.4718386770647506,
+          "dc_cleaned": 0.4399812409305531,
+          "router": 0.4399812409305531,
+          "router_forced_wrong": 0.4399812409305531
+        },
+        "per_sample_rel_l2_ci95": {
+          "lsi_alone": [
+            0.009536707409044179,
+            0.07874054415231907
+          ],
+          "dc_raw": [
+            0.01242042826843708,
+            0.0817031479217478
+          ],
+          "dc_cleaned": [
+            0.009536707409044179,
+            0.07874054415231907
+          ],
+          "router": [
+            0.009536707409044179,
+            0.07874054415231907
+          ],
+          "router_forced_wrong": [
+            0.009536707409044179,
+            0.07874054415231907
+          ]
+        },
+        "certified_relative_floor_pct": 10.0,
+        "certified_floor_source": "state/noise_floor.json min_claimable_effect/mean_skill, certified 2026-07-29T14:28:45Z",
+        "router_branch_selected": "lsi",
+        "forced_wrong_branch_selected": "dc",
+        "rule_predicted_branch": "lsi",
+        "one_minus_rho_lsi_val_in_run": 0.10017308861954921,
+        "val_risk_lsi": 0.005989923694663307,
+        "val_risk_dc": 0.005989923694663307,
+        "val_risk_relative_gap": 0.0,
+        "tie_band": 0.1,
+        "tie_band_source": "certified_floor",
+        "branch_test_nrmse": {
+          "dc": 0.03856875162347986,
+          "lsi": 0.03856875162347986
+        },
+        "nrmse_branch_oracle": 0.03856875162347986,
+        "router_over_branch_oracle": 1.0,
+        "head_selected": "branch",
+        "head_no_harm_gate_fired": true,
+        "nrmse_no_selection": 0.03856875162347986,
+        "v4_no_selection_max_abs_dev": 0.0,
+        "interior16_nrmse": 0.038453539182348485,
+        "crop_sign_flip": false,
+        "corrected_ref_C_nrmse_sidecar_only": 0.041802962686225575,
+        "corrected_ref_D_nrmse_sidecar_only": 0.040598222681689784,
+        "pairing_verified": true,
+        "corrector_state_sha256_16": "335f7f0159dcb8de",
+        "per_seed_nrmse": {
+          "lsi_alone": [
+            0.03856875162347987
+          ],
+          "dc_raw": [
+            0.04136137418852845
+          ],
+          "dc_cleaned": [
+            0.03856875162347987
+          ],
+          "router": [
+            0.03856875162347987
+          ],
+          "router_forced_wrong": [
+            0.03856875162347987
+          ]
+        },
+        "per_seed_skill": {
+          "lsi_alone": [
+            0.4399812409305531
+          ],
+          "dc_raw": [
+            0.4718386770647506
+          ],
+          "dc_cleaned": [
+            0.4399812409305531
+          ],
+          "router": [
+            0.4399812409305531
+          ],
+          "router_forced_wrong": [
+            0.4399812409305531
+          ]
+        },
+        "mean_skill": 0.4399812409305531,
+        "ci95": null
+      },
+      "ifc_poisson": {
+        "scope": "panel",
+        "reference_type": "paper_bar",
+        "reference_nrmse": 0.036,
+        "metric_source": "per_sample_mean",
+        "split": "test_hf",
+        "n_test_samples": 128,
+        "cached": {
+          "lsi_alone": false,
+          "dc_raw": false,
+          "dc_cleaned": false,
+          "router": false,
+          "router_forced_wrong": false
+        },
+        "per_arm_nrmse": {
+          "lsi_alone": 0.05563123364878837,
+          "dc_raw": 0.05562428014846644,
+          "dc_cleaned": 0.055630909148784075,
+          "router": 0.055630909148784075,
+          "router_forced_wrong": 0.055630909148784075
+        },
+        "per_arm_skill": {
+          "lsi_alone": 1.5453120457996772,
+          "dc_raw": 1.5451188930129567,
+          "dc_cleaned": 1.5453030319106689,
+          "router": 1.5453030319106689,
+          "router_forced_wrong": 1.5453030319106689
+        },
+        "per_sample_rel_l2_ci95": {
+          "lsi_alone": [
+            0.04753694221188972,
+            0.06480301208210004
+          ],
+          "dc_raw": [
+            0.04753262115184995,
+            0.06479773349575929
+          ],
+          "dc_cleaned": [
+            0.04753677915027254,
+            0.06480498262597197
+          ],
+          "router": [
+            0.04753677915027254,
+            0.06480498262597197
+          ],
+          "router_forced_wrong": [
+            0.04753677915027254,
+            0.06480498262597197
+          ]
+        },
+        "certified_relative_floor_pct": 15.323,
+        "certified_floor_source": "state/noise_floor.json min_claimable_effect/mean_skill, certified 2026-07-29T14:28:45Z",
+        "router_branch_selected": "champion",
+        "forced_wrong_branch_selected": "champion",
+        "rule_predicted_branch": null,
+        "one_minus_rho_lsi_val_in_run": null,
+        "val_risk_lsi": null,
+        "val_risk_dc": null,
+        "val_risk_relative_gap": null,
+        "tie_band": null,
+        "tie_band_source": null,
+        "branch_test_nrmse": null,
+        "nrmse_branch_oracle": null,
+        "router_over_branch_oracle": null,
+        "head_selected": null,
+        "head_no_harm_gate_fired": null,
+        "nrmse_no_selection": null,
+        "v4_no_selection_max_abs_dev": null,
+        "interior16_nrmse": null,
+        "crop_sign_flip": null,
+        "corrected_ref_C_nrmse_sidecar_only": null,
+        "corrected_ref_D_nrmse_sidecar_only": null,
+        "pairing_verified": null,
+        "corrector_state_sha256_16": "7f6cdcc622555cf6",
+        "per_seed_nrmse": {
+          "lsi_alone": [
+            0.05563123364878837
+          ],
+          "dc_raw": [
+            0.05562428014846644
+          ],
+          "dc_cleaned": [
+            0.055630909148784075
+          ],
+          "router": [
+            0.055630909148784075
+          ],
+          "router_forced_wrong": [
+            0.055630909148784075
+          ]
+        },
+        "per_seed_skill": {
+          "lsi_alone": [
+            1.5453120457996772
+          ],
+          "dc_raw": [
+            1.5451188930129567
+          ],
+          "dc_cleaned": [
+            1.5453030319106689
+          ],
+          "router": [
+            1.5453030319106689
+          ],
+          "router_forced_wrong": [
+            1.5453030319106689
+          ]
+        },
+        "mean_skill": 1.5453030319106689,
+        "ci95": null
+      },
+      "heat_local": {
+        "scope": "guard (report-only, program.md 2.3)",
+        "reference_type": "copylf",
+        "reference_nrmse": 0.00240152155999517,
+        "metric_source": "per_sample_mean",
+        "split": "test_hf",
+        "n_test_samples": 512,
+        "cached": {
+          "lsi_alone": false,
+          "dc_raw": false,
+          "dc_cleaned": false,
+          "router": false,
+          "router_forced_wrong": false
+        },
+        "per_arm_nrmse": {
+          "lsi_alone": 0.001007004898378121,
+          "dc_raw": 8.613010698291976e-05,
+          "dc_cleaned": 0.0001660686194602141,
+          "router": 0.00016571736082966553,
+          "router_forced_wrong": 0.000928607490956652
+        },
+        "per_arm_skill": {
+          "lsi_alone": 0.4193195327299691,
+          "dc_raw": 0.03586480688646951,
+          "dc_cleaned": 0.06915141726254088,
+          "router": 0.06900515222940527,
+          "router_forced_wrong": 0.3866746426205392
+        },
+        "per_sample_rel_l2_ci95": {
+          "lsi_alone": [
+            0.0009837837506426167,
+            0.0010303513068961802
+          ],
+          "dc_raw": [
+            8.40623158311534e-05,
+            8.830414095930285e-05
+          ],
+          "dc_cleaned": [
+            0.00016019078289387665,
+            0.00017218232035092504
+          ],
+          "router": [
+            0.00015989007925204112,
+            0.00017179027382848626
+          ],
+          "router_forced_wrong": [
+            0.0009081407499301216,
+            0.0009497528503227231
+          ]
+        },
+        "certified_relative_floor_pct": null,
+        "certified_floor_source": "NONE - guard datasets have no state/noise_floor.json entry; no floor invented",
+        "router_branch_selected": "dc",
+        "forced_wrong_branch_selected": "lsi",
+        "rule_predicted_branch": "dc",
+        "one_minus_rho_lsi_val_in_run": 0.18007183576607222,
+        "val_risk_lsi": 0.0009698496538376105,
+        "val_risk_dc": 0.00017190512687743188,
+        "val_risk_relative_gap": 4.641772711811627,
+        "tie_band": 0.0,
+        "tie_band_source": "none_certified",
+        "branch_test_nrmse": {
+          "dc": 0.00016606861946021417,
+          "lsi": 0.0010070048983781218
+        },
+        "nrmse_branch_oracle": 0.00016606861946021417,
+        "router_over_branch_oracle": 0.9978848584898805,
+        "head_selected": "persample_head",
+        "head_no_harm_gate_fired": false,
+        "nrmse_no_selection": 0.00016606861946021417,
+        "v4_no_selection_max_abs_dev": 0.0,
+        "interior16_nrmse": 6.666067999356527e-05,
+        "crop_sign_flip": true,
+        "corrected_ref_C_nrmse_sidecar_only": null,
+        "corrected_ref_D_nrmse_sidecar_only": null,
+        "pairing_verified": true,
+        "corrector_state_sha256_16": "e785d50f561960f8",
+        "per_seed_nrmse": {
+          "lsi_alone": [
+            0.001007004898378121
+          ],
+          "dc_raw": [
+            8.613010698291976e-05
+          ],
+          "dc_cleaned": [
+            0.0001660686194602141
+          ],
+          "router": [
+            0.00016571736082966553
+          ],
+          "router_forced_wrong": [
+            0.000928607490956652
+          ]
+        },
+        "per_seed_skill": {
+          "lsi_alone": [
+            0.4193195327299691
+          ],
+          "dc_raw": [
+            0.03586480688646951
+          ],
+          "dc_cleaned": [
+            0.06915141726254088
+          ],
+          "router": [
+            0.06900515222940527
+          ],
+          "router_forced_wrong": [
+            0.3866746426205392
+          ]
+        },
+        "mean_skill": 0.06900515222940527,
+        "ci95": null
+      },
+      "fluid": {
+        "scope": "guard (report-only, program.md 2.3)",
+        "reference_type": "copylf",
+        "reference_nrmse": 0.21805958171115042,
+        "metric_source": "per_sample_mean",
+        "split": "test_hf",
+        "n_test_samples": 256,
+        "cached": {
+          "lsi_alone": false,
+          "dc_raw": false,
+          "dc_cleaned": false,
+          "router": false,
+          "router_forced_wrong": false
+        },
+        "per_arm_nrmse": {
+          "lsi_alone": 0.16538533289108462,
+          "dc_raw": 0.053133853953562314,
+          "dc_cleaned": 0.06097755176377969,
+          "router": 0.06020899816560107,
+          "router_forced_wrong": 0.15967044371128658
+        },
+        "per_arm_skill": {
+          "lsi_alone": 0.7584410260410386,
+          "dc_raw": 0.24366667832989486,
+          "dc_cleaned": 0.2796371124133988,
+          "router": 0.27611260047887315,
+          "router_forced_wrong": 0.7322331009640833
+        },
+        "per_sample_rel_l2_ci95": {
+          "lsi_alone": [
+            0.16319740594734483,
+            0.16762072026226527
+          ],
+          "dc_raw": [
+            0.051682106697663,
+            0.05465484184742978
+          ],
+          "dc_cleaned": [
+            0.05952363504503203,
+            0.0625042845019111
+          ],
+          "router": [
+            0.058860043793821364,
+            0.061637118721334344
+          ],
+          "router_forced_wrong": [
+            0.15799192676795665,
+            0.1614104795200627
+          ]
+        },
+        "certified_relative_floor_pct": null,
+        "certified_floor_source": "NONE - guard datasets have no state/noise_floor.json entry; no floor invented",
+        "router_branch_selected": "dc",
+        "forced_wrong_branch_selected": "lsi",
+        "rule_predicted_branch": "dc",
+        "one_minus_rho_lsi_val_in_run": 0.5194290012249738,
+        "val_risk_lsi": 0.16429802910702826,
+        "val_risk_dc": 0.05932514025485243,
+        "val_risk_relative_gap": 1.7694503274872526,
+        "tie_band": 0.0,
+        "tie_band_source": "none_certified",
+        "branch_test_nrmse": {
+          "dc": 0.06097755176377974,
+          "lsi": 0.16538533289108465
+        },
+        "nrmse_branch_oracle": 0.06097755176377974,
+        "router_over_branch_oracle": 0.9873961224098345,
+        "head_selected": "persample_head",
+        "head_no_harm_gate_fired": false,
+        "nrmse_no_selection": 0.06097755176377974,
+        "v4_no_selection_max_abs_dev": 0.0,
+        "interior16_nrmse": 0.04705361302026512,
+        "crop_sign_flip": true,
+        "corrected_ref_C_nrmse_sidecar_only": null,
+        "corrected_ref_D_nrmse_sidecar_only": null,
+        "pairing_verified": true,
+        "corrector_state_sha256_16": "63598542ac58d7ae",
+        "per_seed_nrmse": {
+          "lsi_alone": [
+            0.16538533289108462
+          ],
+          "dc_raw": [
+            0.053133853953562314
+          ],
+          "dc_cleaned": [
+            0.06097755176377969
+          ],
+          "router": [
+            0.06020899816560107
+          ],
+          "router_forced_wrong": [
+            0.15967044371128658
+          ]
+        },
+        "per_seed_skill": {
+          "lsi_alone": [
+            0.7584410260410386
+          ],
+          "dc_raw": [
+            0.24366667832989486
+          ],
+          "dc_cleaned": [
+            0.2796371124133988
+          ],
+          "router": [
+            0.27611260047887315
+          ],
+          "router_forced_wrong": [
+            0.7322331009640833
+          ]
+        },
+        "mean_skill": 0.27611260047887315,
+        "ci95": null
+      },
+      "sharp__sod_1d": {
+        "scope": "guard (report-only, program.md 2.3)",
+        "reference_type": "copylf",
+        "reference_nrmse": 0.03309017650048946,
+        "metric_source": "per_sample_mean",
+        "split": "test_hf",
+        "n_test_samples": 100,
+        "cached": {
+          "lsi_alone": false,
+          "dc_raw": false,
+          "dc_cleaned": false,
+          "router": false,
+          "router_forced_wrong": false
+        },
+        "per_arm_nrmse": {
+          "lsi_alone": 0.015707128736878927,
+          "dc_raw": 0.0009214075505655285,
+          "dc_cleaned": 0.0010312603630424327,
+          "router": 0.0010239493187220211,
+          "router_forced_wrong": 0.015470781690354575
+        },
+        "per_arm_skill": {
+          "lsi_alone": 0.47467648704281135,
+          "dc_raw": 0.027845350131387156,
+          "dc_cleaned": 0.03116515147712127,
+          "router": 0.03094420843318485,
+          "router_forced_wrong": 0.46753397311512485
+        },
+        "per_sample_rel_l2_ci95": {
+          "lsi_alone": [
+            0.014696465920715305,
+            0.016773697983294835
+          ],
+          "dc_raw": [
+            0.0008789024421627888,
+            0.0009681632632916697
+          ],
+          "dc_cleaned": [
+            0.0009577864296596084,
+            0.0011209559200509155
+          ],
+          "router": [
+            0.0009495018754317649,
+            0.0011147088324869742
+          ],
+          "router_forced_wrong": [
+            0.014524706073182635,
+            0.016464880345135494
+          ]
+        },
+        "certified_relative_floor_pct": null,
+        "certified_floor_source": "NONE - guard datasets have no state/noise_floor.json entry; no floor invented",
+        "router_branch_selected": "dc",
+        "forced_wrong_branch_selected": "lsi",
+        "rule_predicted_branch": "dc",
+        "one_minus_rho_lsi_val_in_run": 0.2501562804644306,
+        "val_risk_lsi": 0.01589029092635154,
+        "val_risk_dc": 0.0010041566551625576,
+        "val_risk_relative_gap": 14.824513879041257,
+        "tie_band": 0.0,
+        "tie_band_source": "none_certified",
+        "branch_test_nrmse": {
+          "dc": 0.0010312603630424327,
+          "lsi": 0.01570712873687892
+        },
+        "nrmse_branch_oracle": 0.0010312603630424327,
+        "router_over_branch_oracle": 0.992910573718898,
+        "head_selected": "persample_head",
+        "head_no_harm_gate_fired": false,
+        "nrmse_no_selection": 0.0010312603630424327,
+        "v4_no_selection_max_abs_dev": 0.0,
+        "interior16_nrmse": 0.0011773833811224372,
+        "crop_sign_flip": false,
+        "corrected_ref_C_nrmse_sidecar_only": null,
+        "corrected_ref_D_nrmse_sidecar_only": null,
+        "pairing_verified": true,
+        "corrector_state_sha256_16": "163670fbd2f2be6d",
+        "per_seed_nrmse": {
+          "lsi_alone": [
+            0.015707128736878927
+          ],
+          "dc_raw": [
+            0.0009214075505655285
+          ],
+          "dc_cleaned": [
+            0.0010312603630424327
+          ],
+          "router": [
+            0.0010239493187220211
+          ],
+          "router_forced_wrong": [
+            0.015470781690354575
+          ]
+        },
+        "per_seed_skill": {
+          "lsi_alone": [
+            0.47467648704281135
+          ],
+          "dc_raw": [
+            0.027845350131387156
+          ],
+          "dc_cleaned": [
+            0.03116515147712127
+          ],
+          "router": [
+            0.03094420843318485
+          ],
+          "router_forced_wrong": [
+            0.46753397311512485
+          ]
+        },
+        "mean_skill": 0.03094420843318485,
+        "ci95": null
+      }
+    },
+    "panel_geomean_skill": {
+      "primary_arm": "router",
+      "per_seed": [
+        0.12330796353386629
+      ],
+      "mean": 0.12330796353386629,
+      "ci95": null,
+      "ci95_note": "ADR 0004: single seed in-round, no seed CI. A CI would come from the end-of-round top-3 confirmation pass. The per-dataset per_sample_rel_l2_ci95 values recorded above are SAMPLING CIs over test samples, NOT seed CIs.",
+      "per_arm": {
+        "lsi_alone": 0.19721724552168773,
+        "dc_raw": 0.19257695455895224,
+        "dc_cleaned": 0.12330796353386629,
+        "router": 0.12330796353386629,
+        "router_forced_wrong": 0.12330796353386629
+      },
+      "guard_geomean_skill_per_arm_report_only": {
+        "lsi_alone": 0.5324614983691464,
+        "dc_raw": 0.06243178818929475,
+        "dc_cleaned": 0.0844672546121111,
+        "router": 0.08385244055486284,
+        "router_forced_wrong": 0.5096469249349902
+      },
+      "ranking": "router = dc_cleaned = router_forced_wrong 0.12330796 << dc_raw 0.19257695 < lsi_alone 0.19721725",
+      "identity_note": "router, router_forced_wrong and dc_cleaned have BIT-IDENTICAL panel geomeans (0.12330796353386629) and bit-identical per-dataset nRMSE on all six panel datasets. Cause, read off the diags, is structural, not a copy error: (a) on pfc/allen_cahn/fisher_kpp the OOF selector picks dc AND the rho-rule complement also picks dc (the rule predicted lsi), so the two router arms coincide by construction; (b) on cahn_hilliard the two arms pick DIFFERENT branches (router lsi, forced_wrong dc) but the branches are numerically identical (branch_test_nrmse.lsi == branch_test_nrmse.dc == 0.03856875162347986: dc_cleaned's pixel gate collapsed onto the LSI prediction there); (c) on helmholtz both pick lsi and alpha_LSI = 0 collapses everything onto copy-LF; (d) on ifc_poisson all five arms take the champion fallback. The per-sample head then contributed EXACTLY ZERO on the panel: head_selected == 'branch' with alpha == 1.0 on all five LF-bearing panel datasets because CHANGE 2(b)'s promotion gate fired (the CV winner did not beat the unmodified branch by more than the certified relative floor).",
+      "prediction_check": "card part 4 item 2 predicted a panel geomean in [0.165, 0.200]. Observed 0.12330796 - BELOW the predicted band, i.e. better than the card's own optimistic end by 25.3%. The card explicitly declared this NOT the claim ('Explicitly NOT the claim - it is inherited from the s6/DC lineage'), so this is context, not a scored prediction.",
+      "round_context": "0.12330796 is the lowest panel geomean skill recorded in round 1 to date; the previous best was s6_local-B2 trust_head_circ 0.18758820 (-34.27% relative, beyond the 13.184% certified geomean relative floor). The entire gain is attributable to the D3 LSI pre-stage (dc_cleaned), NOT to the router: the router arm's panel numbers are bit-identical to its dc_cleaned donor."
+    },
+    "vs_anchor": {
+      "anchor_source": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round1/state/anchors/s4_hybrid_routing.json (champion_panel_geomean, mf_fno_transfer_film, batch0, 3-seed, certified 2026-07-29T14:28:45Z)",
+      "anchor_value": 6.703016262587087,
+      "anchor_per_seed": [
+        7.102239525443188,
+        6.21853605194748,
+        6.788273210370594
+      ],
+      "primary_arm_value": 0.12330796353386629,
+      "delta": -6.5797082990532205,
+      "delta_pct": -98.16,
+      "beyond_ci": null,
+      "beyond_ci_note": "no seed CI exists at 1 seed (ADR 0004). The anchor's own 3-seed spread is [6.218536, 7.102240]; the observed 0.123308 lies 50x below the anchor's lower seed, so no plausible seed CI could overlap. Formal cross-check deferred to the end-of-round top-3 confirmation pass.",
+      "beyond_noise_floor": true,
+      "beyond_noise_floor_detail": "the -98.160% panel geomean improvement over the anchor exceeds the certified geomean relative floor of 13.184% (anchor per-seed spread 0.883703 / anchor value 6.703016 - the same 13.18% figure the card pre-registers) by a factor of ~7.4. Per dataset the router is below its copy-LF reference on 4 of the 5 beyond-copy panel datasets and exactly AT it on ext__helmholtz_2d (skill 1.0000000, alpha_LSI = 0 no-harm collapse); ifc_poisson sits at 1.545303 of the paper bar (ADR 0002), inside its 15.323% floor of the certified 1.565633 and therefore unchanged, as pre-registered.",
+      "certified_geomean_relative_floor_pct": 13.184,
+      "caveat": "the panel geomean is NOT this card's claim (part 4 item 2 declares it non-claiming) and the sharp-panel copy-LF denominators are frozen and registration-inflated 2.0-8.6x. Every scored contrast in this card is a within-dataset arm ratio, in which that denominator cancels exactly."
+    },
+    "cratered_verdict": "cratered",
+    "cratered_verdict_detail": "(a) NO crash: job 66113973 COMPLETED 0:0 in 00:57:22; .err is 0 bytes; the 33 kB .out contains no NaN/inf/traceback/preemption/requeue/resume event (the only regex hits are the gate table's own 'fail=  0' rows); all 5 arms x {6 panel + 3 guard} legs finished at 200 epochs and every result JSON is finite. (b) NOT over the skill trigger, by a wide margin in the GOOD direction: panel geomean 0.12330796 vs the cratered bar of CRATERED_SKILL_FACTOR 1.5 x anchor 6.703016 = 10.054524 (81x below it); no arm approaches the bar (max arm 0.19721725, lsi_alone). (c) BUT the pre-registered falsification clause FIRED DECISIVELY on limbs (ii) and (iii) - see falsification_verdict_detail for the verbatim clauses and deciding numbers (3 rule disagreements against a pre-registered 1, Spearman -0.46429 against a required <= -0.714, the panel NULL broken on 2 of 3, and the guard-set D3 direction negative on all 3). Under the analyzer's cratered rule (crash OR geomean trigger OR the clause fired decisively) the verdict is therefore CRATERED. READ THIS NARROWLY: it is a SEED-SPEND decision only and it is NOT a judgement that the experiment failed. The run is clean, the primary no-harm claim (limb i) is confirmed with ZERO excess, and this card holds the round's best panel geomean. Under ADR 0004 no seeds 1-2 are submitted in-round anyway; the operational consequence is that the card should not consume the end-of-round top-3 confirmation budget on the strength of its ROUTING claims. Whether the D3 pre-stage (a different, unfalsified object) deserves seed confirmation is a call for the mechanism-analyzer and the maintainer, not for this rule.",
+    "falsification_verdict": "falsified",
+    "falsification_verdict_detail": "FALSIFIED on limbs (ii) and (iii) of the card's own disjunctive clause ('The card is falsified if **any** of'). Limb (i), which carries the card's PRIMARY no-harm claim, is NOT falsified and is confirmed exactly. Details, clause text verbatim, in falsification_by_limb.",
+    "falsification_by_limb": {
+      "i_no_harm_and_availability_leg": {
+        "clause_verbatim": "(i) the router's test nRMSE exceeds the better of its two branches by more than that dataset's certified relative floor (10.000 % on each of `sharp__phase_field_crystal_2d`, `sharp__allen_cahn_2d`, `sharp__fisher_kpp_2d`, `sharp__cahn_hilliard`) on **>= 1** of those four, or the `ifc_poisson` availability leg deviates from the champion path by more than 1e-6 relative",
+        "verdict": "NOT FALSIFIED - CONFIRMED, and confirmed at the tightest possible value",
+        "deciding_numbers": {
+          "sharp__phase_field_crystal_2d": {
+            "lsi_alone": 0.0006124684737243416,
+            "dc_cleaned": 0.0003326459192490989,
+            "min_branch": 0.0003326459192490989,
+            "router": 0.0003326459192490989,
+            "ratio_router_over_min": 1.0,
+            "allowed_ratio": 1.1,
+            "floor_pct": 10.0,
+            "passes": true,
+            "excess_pct": 0.0
+          },
+          "sharp__allen_cahn_2d": {
+            "lsi_alone": 0.0008318192792299753,
+            "dc_cleaned": 0.00019672587029864158,
+            "min_branch": 0.00019672587029864158,
+            "router": 0.00019672587029864158,
+            "ratio_router_over_min": 1.0,
+            "allowed_ratio": 1.1,
+            "floor_pct": 10.0,
+            "passes": true,
+            "excess_pct": 0.0
+          },
+          "sharp__fisher_kpp_2d": {
+            "lsi_alone": 0.007695081137159533,
+            "dc_cleaned": 0.003579004139880376,
+            "min_branch": 0.003579004139880376,
+            "router": 0.003579004139880376,
+            "ratio_router_over_min": 1.0,
+            "allowed_ratio": 1.1,
+            "floor_pct": 10.0,
+            "passes": true,
+            "excess_pct": 0.0
+          },
+          "sharp__cahn_hilliard": {
+            "lsi_alone": 0.03856875162347987,
+            "dc_cleaned": 0.03856875162347987,
+            "min_branch": 0.03856875162347987,
+            "router": 0.03856875162347987,
+            "ratio_router_over_min": 1.0,
+            "allowed_ratio": 1.1,
+            "floor_pct": 10.0,
+            "passes": true,
+            "excess_pct": 0.0
+          }
+        },
+        "summary": "router / min(lsi_alone, dc_cleaned) = 1.000000000000000 on ALL FOUR sharp panel datasets (excess 0.000000%, allowance 10.000%). Zero datasets violate; the clause needed >= 1. This is exact rather than merely-inside-the-floor because the OOF selector picked the better branch on every dataset AND the per-sample head's promotion gate declined to modify it (head_selected == 'branch', alpha == 1.0), so the router IS the better branch's own prediction bit-for-bit.",
+        "ifc_poisson_leg": {
+          "router_nrmse": 0.055630909148784075,
+          "champion_reference_arm": "dc_cleaned (the donor whose bytes router borrows; corrector_state_sha256_16 7f6cdcc622555cf6 on both)",
+          "router_rel_dev": 0.0,
+          "verdict": "NOT FALSIFIED: rel_dev is EXACTLY 0.0, far inside the card's literal 1e-6. gates_s0.json V5 records pass_at_card_literal_tol = true for router, router_forced_wrong and dc_cleaned.",
+          "note_on_the_debugger_tolerance_change": "the two-tier V5 tolerance introduced in debug attempt 1 relaxed the tolerance ONLY for the two INDEPENDENTLY-TRAINED arms (lsi_alone rel_dev 5.833e-06, dc_raw rel_dev 1.192e-04, both judged against the round's certified 1.9e-4 H100 run-to-run envelope and both recording pass_at_card_literal_tol = false). Those two arms are NOT the subject of clause (i); the clause is about the router, which is gated at the card's literal 1e-6 and passes at 0.0. The falsification criterion is intact, not relaxed. A ~5e-6 to 1.2e-4 arm spread on ifc_poisson is cuDNN nondeterminism, not signal, and the card makes no claim on this dataset.",
+          "stale_string_warning_from_debugger": "models_r1/s4_router/smoke_eval.py still writes v5_champion_leg.tol_relative = 1e-6 and a note saying 'within 1e-6' into every ifc_poisson diag; left stale on purpose so family code_hash would not change. gates_s0.json's tol / tol_basis / pass_at_card_literal_tol are authoritative."
+        }
+      },
+      "ii_routing_rule": {
+        "clause_verbatim": "(ii) the routing rule disagrees with the realized best branch on **>= 3** of the resolvable cells (against exactly 1 predicted), or Spearman(`1 - rho_LSI(val)`, realized DC/LSI ratio) over the 7 LF-bearing datasets rises above **-0.714** (n = 7, one-tailed alpha = 0.05 critical value; s6-B2 measured -0.857, p = 0.0137)",
+        "verdict": "FALSIFIED - BOTH sub-clauses fire independently",
+        "deciding_numbers": {
+          "resolvable_cells": 6,
+          "disagreements": 3,
+          "disagreement_datasets": [
+            "sharp__phase_field_crystal_2d",
+            "sharp__allen_cahn_2d",
+            "sharp__fisher_kpp_2d"
+          ],
+          "threshold": ">= 3 disagreements falsifies; pre-registered expectation was exactly 1",
+          "spearman_in_run_rho_vs_realized_dc_cleaned_over_lsi": {
+            "rho": -0.4642857142857144,
+            "p_two_sided": 0.29393410760025196,
+            "p_one_tailed_less": 0.14696705380012598
+          },
+          "spearman_threshold": "must stay <= -0.714; observed -0.46429 (p one-tailed 0.14697), i.e. it ROSE ABOVE the threshold"
+        },
+        "why_it_fired": "the library the router routes over is {LSI, DC-CLEANED}, and the D3 pre-stage this card introduces makes dc_cleaned strictly better than lsi_alone on EVERY resolvable LF-bearing dataset (dc/lsi ratio 0.0657-0.5431). The rho rule, which was calibrated on s6-B2's RAW-residual corrector, predicts LSI on all four sharp panel datasets and is therefore wrong wherever the gap is now resolvable. The rule did not become noisier - the branch it was ranking changed underneath it.",
+        "sensitivity_the_card_was_calibrated_on": {
+          "note": "scoring the SAME table with DC = dc_raw (the s6-B2 lineage the card's numbers came from) reproduces the card's prediction to the decimal: exactly 1 disagreement among 6 resolvable cells and Spearman -0.85714 (p one-tailed 0.00685), i.e. the pre-registered -0.857 EXACTLY. The card's per-row magnitudes also reproduce: fisher_kpp -38.950% (predicted -38.95%), allen_cahn +12.565% (predicted +12.6%), pfc +17.643% (predicted +17.6%), cahn_hilliard +7.241% (predicted +7.2%), fluid 3.11x (predicted 3.1x), sod_1d 17.05x (predicted 17.0x), heat_local 11.69x (predicted 11.7x).",
+          "disagreements_vs_dc_raw": 1,
+          "resolvable_vs_dc_raw": 6,
+          "spearman_vs_dc_raw": {
+            "rho": -0.8571428571428573,
+            "p_two_sided": 0.013697326615325618,
+            "p_one_tailed_less": 0.006848663307662809
+          },
+          "adjudication": "the DECIDING scoring is the library-consistent one (DC = dc_cleaned), because clause (ii) is about 'the realized best branch' of the router's own 2-element library and recipe.env._arms defines that library as {lsi, dc_cleaned}. The dc_raw scoring is reported as the sensitivity that identifies the cause, not as an alternative verdict."
+        }
+      },
+      "iii_d3_leg": {
+        "clause_verbatim": "(iii) the D3 leg inverts, i.e. `dc_cleaned` is **worse** than `dc_raw` by more than 10.000 % on `sharp__fisher_kpp_2d`, or the pre-registered panel NULL breaks with `|dc_cleaned - dc_raw| > 10.000 %` on **>= 2** of {pfc, allen_cahn, cahn_hilliard}, or the guard-set direction (report-only) is negative on all three",
+        "verdict": "FALSIFIED - sub-clauses 2 and 3 fire; sub-clause 1 does NOT",
+        "REVIEWER_CAVEAT_VERBATIM_ATTACHED_TO_EVERY_D3_CONCLUSION": "the D3 contrast is mildly asymmetric - dc_cleaned consumes val_idx twice, dc_raw once",
+        "reviewer_caveat_source": "review_notes[0], code-reviewer (a2e5d750), finding S7. Mechanically: the LSI pre-stage's alpha_LSI is selected on val_idx and then reaches the corrector's fit_idx training target (builder judgement call (i), disclosed in diag.prestage.alpha_provenance), so dc_cleaned touches val_idx both for the pre-stage scalar and for its own held-out scalar, while dc_raw touches it once. Every D3 number below inherits this caveat.",
+        "deciding_numbers": {
+          "sub1_inversion_on_fisher_kpp": {
+            "clause": "dc_cleaned worse than dc_raw by more than 10.000% on sharp__fisher_kpp_2d",
+            "dc_cleaned": 0.003579004139880376,
+            "dc_raw": 0.004697840233022452,
+            "rel_pct": -23.816,
+            "fires": false,
+            "reading": "-23.816%, i.e. dc_cleaned is BETTER by 2.4x the 10.000% floor, and the realized value sits inside the card's own pre-registered band [-25%, 0%] (point prediction -12%). This is the card's single genuinely open surface (prior_art D3) landing on the confirmed side."
+          },
+          "sub2_panel_null_break": {
+            "clause": "the pre-registered panel NULL breaks with |dc_cleaned - dc_raw| > 10.000% on >= 2 of {pfc, allen_cahn, cahn_hilliard}",
+            "sharp__phase_field_crystal_2d": {
+              "dc_cleaned": 0.0003326459192490989,
+              "dc_raw": 0.0007205243939035404,
+              "rel_pct": -53.833,
+              "floor_pct": 10.0,
+              "exceeds_floor": true,
+              "direction": "dc_cleaned better"
+            },
+            "sharp__allen_cahn_2d": {
+              "dc_cleaned": 0.00019672587029864158,
+              "dc_raw": 0.0009363332709684444,
+              "rel_pct": -78.99,
+              "floor_pct": 10.0,
+              "exceeds_floor": true,
+              "direction": "dc_cleaned better"
+            },
+            "sharp__cahn_hilliard": {
+              "dc_cleaned": 0.03856875162347987,
+              "dc_raw": 0.04136137418852845,
+              "rel_pct": -6.752,
+              "floor_pct": 10.0,
+              "exceeds_floor": false,
+              "direction": "dc_cleaned better"
+            },
+            "count_breaking": 2,
+            "fires": true,
+            "reading": "pfc -53.833% and allen_cahn -78.990% both smash the 10.000% floor; cahn_hilliard -6.752% holds the NULL. 2 of 3 >= 2, so the clause fires. NOTE THE SIGN: the NULL broke in the FAVOURABLE direction on both - the card underestimated its own novelty leg rather than over-claiming it. Part 4 item 4 predicted the null from the s6-B2 cosine similarities cos(C_NN - C_LSI, R - C_LSI) = 0.763 (pfc) / 0.274 (allen_cahn) / 0.037 (cahn_hilliard); the realized ordering of the effect (allen_cahn 79% > pfc 54% > cahn_hilliard 7%) is close to the REVERSE of that cosine ordering on the first two."
+          },
+          "sub3_guard_direction": {
+            "clause": "the guard-set direction (report-only) is negative on all three",
+            "heat_local": {
+              "dc_cleaned": 0.0001660686194602141,
+              "dc_raw": 8.613010698291976e-05,
+              "rel_pct": 92.811,
+              "floor_pct": null,
+              "exceeds_floor": null,
+              "direction": "dc_cleaned worse"
+            },
+            "fluid": {
+              "dc_cleaned": 0.06097755176377969,
+              "dc_raw": 0.053133853953562314,
+              "rel_pct": 14.762,
+              "floor_pct": null,
+              "exceeds_floor": null,
+              "direction": "dc_cleaned worse"
+            },
+            "sharp__sod_1d": {
+              "dc_cleaned": 0.0010312603630424327,
+              "dc_raw": 0.0009214075505655285,
+              "rel_pct": 11.922,
+              "floor_pct": null,
+              "exceeds_floor": null,
+              "direction": "dc_cleaned worse"
+            },
+            "count_negative": 3,
+            "fires": true,
+            "reading": "dc_cleaned is WORSE than dc_raw on all three guard datasets: heat_local +92.811%, fluid +14.762%, sod_1d +11.922%. Part 4 item 4 predicted dc_cleaned better on >= 2 of 3 at 0-15% relative, from cos = 0.9984/0.9960/0.9441. The direction is exactly inverted. Guard has NO certified floor (state/noise_floor.json has no guard entry), so these are report-only magnitudes with no resolvability test - but the clause is written on DIRECTION, not on a floor, and direction is unambiguous 3/3."
+          }
+        },
+        "net_reading": "the D3 pre-stage is strongly beneficial exactly where the fidelity gap is smooth/periodic (the sharp 2-D panel: -23.8% to -79.0%) and mildly harmful exactly where it is not (the guard set: +11.9% to +92.8%, and the guard set is where s6-B2's padding switch chose ZEROS). The card's own prediction had this backwards on both halves. Subject to the reviewer caveat quoted verbatim above."
+      }
+    },
+    "prediction_table_7_rows": {
+      "clause_source": "card part 4 item 3 / expected_falsification's transcribed table (7 rows, 1-rho values from s6-B2 F5)",
+      "scoring_basis": "each row scored on the router's OWN library {lsi_alone, dc_cleaned}, resolvability judged against the dataset's certified relative floor (10.000% on the four sharp panel datasets; guard datasets have no certified floor so resolvability is judged on the raw gap and every guard gap is 63-93%, unambiguous).",
+      "score": "5 CONFIRMED / 2 REFUTED",
+      "rows": {
+        "fluid": {
+          "card_one_minus_rho": 0.51943,
+          "in_run_one_minus_rho": 0.5194290012249738,
+          "rule_predicts": "DC",
+          "card_predicted_realized_best": "DC (3.1x)",
+          "card_predicted_agreement": "agree",
+          "realized_lsi_branch_nrmse": 0.16538533289108465,
+          "realized_dc_branch_nrmse_dc_cleaned": 0.06097755176377974,
+          "realized_dc_over_lsi_ratio": 0.3686998762093179,
+          "realized_gap_pct": -63.13,
+          "floor": "no certified floor (guard); resolvability judged on raw gap",
+          "resolvable": true,
+          "realized_best_branch": "DC",
+          "rule_agrees": true,
+          "PREDICTION_SCORED": "CONFIRMED",
+          "sensitivity_vs_dc_raw": {
+            "dc_raw_over_lsi_ratio": 0.321273071951029,
+            "gap_pct": -67.873,
+            "resolvable": true,
+            "realized_best": "DC",
+            "rule_agrees": true,
+            "would_score": "CONFIRMED"
+          },
+          "router_matched_better_branch": true,
+          "forced_wrong_matched_worse_branch": true,
+          "branch_selected_by_oof_val_risk": "dc",
+          "forced_wrong_selected": "lsi"
+        },
+        "sharp__sod_1d": {
+          "card_one_minus_rho": 0.25016,
+          "in_run_one_minus_rho": 0.2501562804644306,
+          "rule_predicts": "DC",
+          "card_predicted_realized_best": "DC (17.0x)",
+          "card_predicted_agreement": "agree",
+          "realized_lsi_branch_nrmse": 0.01570712873687892,
+          "realized_dc_branch_nrmse_dc_cleaned": 0.0010312603630424327,
+          "realized_dc_over_lsi_ratio": 0.06565556189917299,
+          "realized_gap_pct": -93.434,
+          "floor": "no certified floor (guard); resolvability judged on raw gap",
+          "resolvable": true,
+          "realized_best_branch": "DC",
+          "rule_agrees": true,
+          "PREDICTION_SCORED": "CONFIRMED",
+          "sensitivity_vs_dc_raw": {
+            "dc_raw_over_lsi_ratio": 0.05866174308498194,
+            "gap_pct": -94.134,
+            "resolvable": true,
+            "realized_best": "DC",
+            "rule_agrees": true,
+            "would_score": "CONFIRMED"
+          },
+          "router_matched_better_branch": true,
+          "forced_wrong_matched_worse_branch": true,
+          "branch_selected_by_oof_val_risk": "dc",
+          "forced_wrong_selected": "lsi"
+        },
+        "heat_local": {
+          "card_one_minus_rho": 0.18007,
+          "in_run_one_minus_rho": 0.18007183576607222,
+          "rule_predicts": "DC",
+          "card_predicted_realized_best": "DC (11.7x)",
+          "card_predicted_agreement": "agree",
+          "realized_lsi_branch_nrmse": 0.0010070048983781218,
+          "realized_dc_branch_nrmse_dc_cleaned": 0.00016606861946021417,
+          "realized_dc_over_lsi_ratio": 0.16491341772784188,
+          "realized_gap_pct": -83.509,
+          "floor": "no certified floor (guard); resolvability judged on raw gap",
+          "resolvable": true,
+          "realized_best_branch": "DC",
+          "rule_agrees": true,
+          "PREDICTION_SCORED": "CONFIRMED",
+          "sensitivity_vs_dc_raw": {
+            "dc_raw_over_lsi_ratio": 0.08553097122133234,
+            "gap_pct": -91.447,
+            "resolvable": true,
+            "realized_best": "DC",
+            "rule_agrees": true,
+            "would_score": "CONFIRMED"
+          },
+          "router_matched_better_branch": true,
+          "forced_wrong_matched_worse_branch": true,
+          "branch_selected_by_oof_val_risk": "dc",
+          "forced_wrong_selected": "lsi"
+        },
+        "sharp__cahn_hilliard": {
+          "card_one_minus_rho": 0.10017,
+          "in_run_one_minus_rho": 0.10017308861954921,
+          "rule_predicts": "LSI",
+          "card_predicted_realized_best": "tie (+7.2 % < 10.000 % floor)",
+          "card_predicted_agreement": "untestable",
+          "realized_lsi_branch_nrmse": 0.03856875162347986,
+          "realized_dc_branch_nrmse_dc_cleaned": 0.03856875162347986,
+          "realized_dc_over_lsi_ratio": 1.0,
+          "realized_gap_pct": 0.0,
+          "floor": "10.000%",
+          "resolvable": false,
+          "realized_best_branch": "tie",
+          "rule_agrees": null,
+          "PREDICTION_SCORED": "CONFIRMED",
+          "sensitivity_vs_dc_raw": {
+            "dc_raw_over_lsi_ratio": 1.0724063509317343,
+            "gap_pct": 7.241,
+            "resolvable": false,
+            "realized_best": "tie",
+            "rule_agrees": null,
+            "would_score": "CONFIRMED"
+          },
+          "router_matched_better_branch": true,
+          "forced_wrong_matched_worse_branch": true,
+          "branch_selected_by_oof_val_risk": "lsi",
+          "forced_wrong_selected": "dc"
+        },
+        "sharp__fisher_kpp_2d": {
+          "card_one_minus_rho": 0.01575,
+          "in_run_one_minus_rho": 0.01575376232931147,
+          "rule_predicts": "LSI",
+          "card_predicted_realized_best": "DC (-38.95 %)",
+          "card_predicted_agreement": "DISAGREE (known; predicted to reproduce)",
+          "realized_lsi_branch_nrmse": 0.007695081137159533,
+          "realized_dc_branch_nrmse_dc_cleaned": 0.0035790041398803766,
+          "realized_dc_over_lsi_ratio": 0.4651028463621224,
+          "realized_gap_pct": -53.49,
+          "floor": "10.000%",
+          "resolvable": true,
+          "realized_best_branch": "DC",
+          "rule_agrees": false,
+          "PREDICTION_SCORED": "CONFIRMED",
+          "sensitivity_vs_dc_raw": {
+            "dc_raw_over_lsi_ratio": 0.6104991161609187,
+            "gap_pct": -38.95,
+            "resolvable": true,
+            "realized_best": "DC",
+            "rule_agrees": false,
+            "would_score": "CONFIRMED"
+          },
+          "router_matched_better_branch": true,
+          "forced_wrong_matched_worse_branch": false,
+          "branch_selected_by_oof_val_risk": "dc",
+          "forced_wrong_selected": "dc"
+        },
+        "sharp__allen_cahn_2d": {
+          "card_one_minus_rho": 0.00342,
+          "in_run_one_minus_rho": 0.003424897509969438,
+          "rule_predicts": "LSI",
+          "card_predicted_realized_best": "LSI (+12.6 %)",
+          "card_predicted_agreement": "agree",
+          "realized_lsi_branch_nrmse": 0.0008318192792299754,
+          "realized_dc_branch_nrmse_dc_cleaned": 0.00019672587029864158,
+          "realized_dc_over_lsi_ratio": 0.23650073424693036,
+          "realized_gap_pct": -76.35,
+          "floor": "10.000%",
+          "resolvable": true,
+          "realized_best_branch": "DC",
+          "rule_agrees": false,
+          "PREDICTION_SCORED": "REFUTED",
+          "sensitivity_vs_dc_raw": {
+            "dc_raw_over_lsi_ratio": 1.1256450702070995,
+            "gap_pct": 12.565,
+            "resolvable": true,
+            "realized_best": "LSI",
+            "rule_agrees": true,
+            "would_score": "CONFIRMED"
+          },
+          "router_matched_better_branch": true,
+          "forced_wrong_matched_worse_branch": false,
+          "branch_selected_by_oof_val_risk": "dc",
+          "forced_wrong_selected": "dc"
+        },
+        "sharp__phase_field_crystal_2d": {
+          "card_one_minus_rho": 0.00018,
+          "in_run_one_minus_rho": 0.00017823935749705644,
+          "rule_predicts": "LSI",
+          "card_predicted_realized_best": "LSI (+17.6 %)",
+          "card_predicted_agreement": "agree",
+          "realized_lsi_branch_nrmse": 0.0006124684737243416,
+          "realized_dc_branch_nrmse_dc_cleaned": 0.0003326459192490989,
+          "realized_dc_over_lsi_ratio": 0.5431233337225051,
+          "realized_gap_pct": -45.688,
+          "floor": "10.000%",
+          "resolvable": true,
+          "realized_best_branch": "DC",
+          "rule_agrees": false,
+          "PREDICTION_SCORED": "REFUTED",
+          "sensitivity_vs_dc_raw": {
+            "dc_raw_over_lsi_ratio": 1.1764269098164755,
+            "gap_pct": 17.643,
+            "resolvable": true,
+            "realized_best": "LSI",
+            "rule_agrees": true,
+            "would_score": "CONFIRMED"
+          },
+          "router_matched_better_branch": true,
+          "forced_wrong_matched_worse_branch": false,
+          "branch_selected_by_oof_val_risk": "dc",
+          "forced_wrong_selected": "dc"
+        }
+      },
+      "aggregate_predictions": {
+        "exactly_1_disagreement_among_6_testable": {
+          "predicted": 1,
+          "observed": 3,
+          "scored": "REFUTED"
+        },
+        "spearman_le_minus_0_714": {
+          "predicted": "<= -0.714 (s6-B2 measured -0.857)",
+          "observed": -0.4642857142857144,
+          "scored": "REFUTED"
+        }
+      },
+      "the_one_sentence": "every single per-row MAGNITUDE the card pre-registered reproduces to within a few tenths of a point when the DC branch is dc_raw; the two REFUTED rows (allen_cahn, pfc) flip only because the card's own D3 pre-stage - introduced in the same batch - turned dc_cleaned into the better branch there. The routing rule was not measured to be noisy; it was measured to be obsolete against the branch this card built."
+    },
+    "primary_arms_C1_to_C4": {
+      "C1_no_harm": {
+        "definition": "router vs per-dataset min(lsi_alone, dc_cleaned), per panel dataset",
+        "verdict": "CONFIRMED, ratio exactly 1.000000 on all four sharp panel datasets",
+        "numbers": {
+          "sharp__phase_field_crystal_2d": {
+            "lsi_alone": 0.0006124684737243416,
+            "dc_cleaned": 0.0003326459192490989,
+            "min_branch": 0.0003326459192490989,
+            "router": 0.0003326459192490989,
+            "ratio_router_over_min": 1.0,
+            "allowed_ratio": 1.1,
+            "floor_pct": 10.0,
+            "passes": true,
+            "excess_pct": 0.0
+          },
+          "sharp__allen_cahn_2d": {
+            "lsi_alone": 0.0008318192792299753,
+            "dc_cleaned": 0.00019672587029864158,
+            "min_branch": 0.00019672587029864158,
+            "router": 0.00019672587029864158,
+            "ratio_router_over_min": 1.0,
+            "allowed_ratio": 1.1,
+            "floor_pct": 10.0,
+            "passes": true,
+            "excess_pct": 0.0
+          },
+          "sharp__fisher_kpp_2d": {
+            "lsi_alone": 0.007695081137159533,
+            "dc_cleaned": 0.003579004139880376,
+            "min_branch": 0.003579004139880376,
+            "router": 0.003579004139880376,
+            "ratio_router_over_min": 1.0,
+            "allowed_ratio": 1.1,
+            "floor_pct": 10.0,
+            "passes": true,
+            "excess_pct": 0.0
+          },
+          "sharp__cahn_hilliard": {
+            "lsi_alone": 0.03856875162347987,
+            "dc_cleaned": 0.03856875162347987,
+            "min_branch": 0.03856875162347987,
+            "router": 0.03856875162347987,
+            "ratio_router_over_min": 1.0,
+            "allowed_ratio": 1.1,
+            "floor_pct": 10.0,
+            "passes": true,
+            "excess_pct": 0.0
+          }
+        }
+      },
+      "C2_routing_rule": {
+        "definition": "the rho-rule predicted branch vs the realized best branch, 7 datasets",
+        "verdict": "REFUTED / clause (ii) FALSIFIED",
+        "see": "prediction_table_7_rows"
+      },
+      "C3_D3_target": {
+        "definition": "dc_cleaned vs dc_raw (panel: fisher_kpp claimable, other three pre-registered NULL; guard: report-only)",
+        "verdict": "claimable leg CONFIRMED (fisher_kpp -23.816%, inside the pre-registered [-25%, 0%] band); panel NULL REFUTED (broken favourably on 2 of 3); guard direction REFUTED (inverted 3 of 3)",
+        "reviewer_caveat_verbatim": "the D3 contrast is mildly asymmetric - dc_cleaned consumes val_idx twice, dc_raw once",
+        "numbers": {
+          "ext__helmholtz_2d": {
+            "dc_cleaned": 0.32945012604380175,
+            "dc_raw": 0.32945012604380175,
+            "rel_pct": 0.0,
+            "floor_pct": 70.165,
+            "exceeds_floor": false,
+            "direction": "no change"
+          },
+          "sharp__phase_field_crystal_2d": {
+            "dc_cleaned": 0.0003326459192490989,
+            "dc_raw": 0.0007205243939035404,
+            "rel_pct": -53.833,
+            "floor_pct": 10.0,
+            "exceeds_floor": true,
+            "direction": "dc_cleaned better"
+          },
+          "sharp__allen_cahn_2d": {
+            "dc_cleaned": 0.00019672587029864158,
+            "dc_raw": 0.0009363332709684444,
+            "rel_pct": -78.99,
+            "floor_pct": 10.0,
+            "exceeds_floor": true,
+            "direction": "dc_cleaned better"
+          },
+          "sharp__fisher_kpp_2d": {
+            "dc_cleaned": 0.003579004139880376,
+            "dc_raw": 0.004697840233022452,
+            "rel_pct": -23.816,
+            "floor_pct": 10.0,
+            "exceeds_floor": true,
+            "direction": "dc_cleaned better"
+          },
+          "sharp__cahn_hilliard": {
+            "dc_cleaned": 0.03856875162347987,
+            "dc_raw": 0.04136137418852845,
+            "rel_pct": -6.752,
+            "floor_pct": 10.0,
+            "exceeds_floor": false,
+            "direction": "dc_cleaned better"
+          },
+          "ifc_poisson": {
+            "dc_cleaned": 0.055630909148784075,
+            "dc_raw": 0.05562428014846644,
+            "rel_pct": 0.012,
+            "floor_pct": 15.323,
+            "exceeds_floor": false,
+            "direction": "dc_cleaned worse"
+          },
+          "heat_local": {
+            "dc_cleaned": 0.0001660686194602141,
+            "dc_raw": 8.613010698291976e-05,
+            "rel_pct": 92.811,
+            "floor_pct": null,
+            "exceeds_floor": null,
+            "direction": "dc_cleaned worse"
+          },
+          "fluid": {
+            "dc_cleaned": 0.06097755176377969,
+            "dc_raw": 0.053133853953562314,
+            "rel_pct": 14.762,
+            "floor_pct": null,
+            "exceeds_floor": null,
+            "direction": "dc_cleaned worse"
+          },
+          "sharp__sod_1d": {
+            "dc_cleaned": 0.0010312603630424327,
+            "dc_raw": 0.0009214075505655285,
+            "rel_pct": 11.922,
+            "floor_pct": null,
+            "exceeds_floor": null,
+            "direction": "dc_cleaned worse"
+          }
+        }
+      },
+      "C4_oof_protocol": {
+        "definition": "router's OOF selection vs the in-sample-selection counterfactual (free sidecar, measurement only - D2: 'Only the measurement ... claims only the number')",
+        "verdict": "REFUTED as a prediction; the measurement is a clean NULL",
+        "clause_verbatim_part4_item5": "The in-sample-selection counterfactual changes the decision on >= 1 of 6 panel datasets, with `val_base_oof / val_base_insample > 2x` wherever it does (s4-B2: 16.4x / 2.9x where its stage hurt, 0.82-1.09x where it did not).",
+        "observed": "decision_changed_by_oof is FALSE on 0 of 6 panel datasets (and 0 of 3 guard) for the router arm; insample_counterfactual_test_cost = 0.0 everywhere. val_base_oof/val_base_insample spans 0.510-1.050 on the panel (helmholtz 0.5102, pfc 0.8451, allen_cahn 0.9175, fisher_kpp 1.0414, cahn_hilliard 0.9708) and 0.964-1.050 on guard - never above 2x, i.e. exactly s4-B2's 'where its stage did not hurt' regime. OOF cross-fitting bought nothing here because the branch gaps (val_risk relative gap 0.90-14.8x) are far larger than any selection-bias term.",
+        "one_asymmetry_worth_noting": "router_forced_wrong DOES record decision_changed_by_oof = true on 4 datasets (cahn_hilliard, heat_local, fluid, sod_1d) - the rule-inverted decider is where in-sample vs OOF selection actually diverges.",
+        "numbers": {
+          "ext__helmholtz_2d": {
+            "oof_choice": "lsi",
+            "insample_choice": "lsi",
+            "decision_changed_by_oof": false,
+            "insample_test_cost": 0.0,
+            "val_base_oof": 0.16657216901523647,
+            "val_base_insample": 0.32647311932177886,
+            "val_base_oof_over_insample": 0.510217102594163,
+            "forced_wrong_decision_changed_by_oof": false
+          },
+          "sharp__phase_field_crystal_2d": {
+            "oof_choice": "dc",
+            "insample_choice": "dc",
+            "decision_changed_by_oof": false,
+            "insample_test_cost": 0.0,
+            "val_base_oof": 0.0004479689552938761,
+            "val_base_insample": 0.0005300635787276021,
+            "val_base_oof_over_insample": 0.8451230631035034,
+            "forced_wrong_decision_changed_by_oof": false
+          },
+          "sharp__allen_cahn_2d": {
+            "oof_choice": "dc",
+            "insample_choice": "dc",
+            "decision_changed_by_oof": false,
+            "insample_test_cost": 0.0,
+            "val_base_oof": 0.0007984761694958264,
+            "val_base_insample": 0.0008702470655860565,
+            "val_base_oof_over_insample": 0.9175281377801637,
+            "forced_wrong_decision_changed_by_oof": false
+          },
+          "sharp__fisher_kpp_2d": {
+            "oof_choice": "dc",
+            "insample_choice": "dc",
+            "decision_changed_by_oof": false,
+            "insample_test_cost": 0.0,
+            "val_base_oof": 0.007680637804583834,
+            "val_base_insample": 0.007375582323786198,
+            "val_base_oof_over_insample": 1.0413601892577125,
+            "forced_wrong_decision_changed_by_oof": false
+          },
+          "sharp__cahn_hilliard": {
+            "oof_choice": "lsi",
+            "insample_choice": "lsi",
+            "decision_changed_by_oof": false,
+            "insample_test_cost": 0.0,
+            "val_base_oof": 0.0059899236946633055,
+            "val_base_insample": 0.006169858058889255,
+            "val_base_oof_over_insample": 0.9708365472092655,
+            "forced_wrong_decision_changed_by_oof": true
+          },
+          "ifc_poisson": {
+            "oof_choice": "champion",
+            "insample_choice": null,
+            "decision_changed_by_oof": null,
+            "insample_test_cost": null,
+            "val_base_oof": null,
+            "val_base_insample": null,
+            "val_base_oof_over_insample": null,
+            "forced_wrong_decision_changed_by_oof": null
+          },
+          "heat_local": {
+            "oof_choice": "dc",
+            "insample_choice": "dc",
+            "decision_changed_by_oof": false,
+            "insample_test_cost": 0.0,
+            "val_base_oof": 0.0009698715804099338,
+            "val_base_insample": 0.0010065342327250301,
+            "val_base_oof_over_insample": 0.9635753547936089,
+            "forced_wrong_decision_changed_by_oof": true
+          },
+          "fluid": {
+            "oof_choice": "dc",
+            "insample_choice": "dc",
+            "decision_changed_by_oof": false,
+            "insample_test_cost": 0.0,
+            "val_base_oof": 0.16427698668112448,
+            "val_base_insample": 0.16463968752926414,
+            "val_base_oof_over_insample": 0.997797002329252,
+            "forced_wrong_decision_changed_by_oof": true
+          },
+          "sharp__sod_1d": {
+            "oof_choice": "dc",
+            "insample_choice": "dc",
+            "decision_changed_by_oof": false,
+            "insample_test_cost": 0.0,
+            "val_base_oof": 0.01589029092635154,
+            "val_base_insample": 0.015135266078384335,
+            "val_base_oof_over_insample": 1.0498851387254766,
+            "forced_wrong_decision_changed_by_oof": true
+          }
+        }
+      }
+    },
+    "forced_wrong_control": {
+      "clause_verbatim_part4_item6": "Forced-wrong control: resolvably worse than `router` on the three guard sets (report-only) and on pfc / allen_cahn (+17.6 % / +12.6 %, both above the 10.000 % floor), and *better* on fisher_kpp - the rule's known inversion, shown rather than hidden.",
+      "verdict": "PARTLY CONFIRMED: the guard half is confirmed emphatically; the panel half is REFUTED, and refuted for an informative reason",
+      "guard_half": {
+        "heat_local": {
+          "router": 0.00016571736082966553,
+          "forced_wrong": 0.000928607490956652,
+          "rel_pct": 460.356,
+          "ratio": 5.603561909914386,
+          "floor_pct": null,
+          "resolvably_worse": true
+        },
+        "fluid": {
+          "router": 0.06020899816560107,
+          "forced_wrong": 0.15967044371128658,
+          "rel_pct": 165.194,
+          "ratio": 2.651936563902343,
+          "floor_pct": null,
+          "resolvably_worse": true
+        },
+        "sharp__sod_1d": {
+          "router": 0.0010239493187220211,
+          "forced_wrong": 0.015470781690354575,
+          "rel_pct": 1410.893,
+          "ratio": 15.10893303749005,
+          "floor_pct": null,
+          "resolvably_worse": true
+        },
+        "reading": "forced_wrong is 5.60x / 2.65x / 15.11x worse than router on heat_local / fluid / sod_1d. The rule carries real information on the guard set, and inverting it costs an order of magnitude."
+      },
+      "panel_half": {
+        "observed": "router_forced_wrong is EXACTLY EQUAL to router on all six panel datasets (rel 0.000%, ratio 1.0000)",
+        "reading": "not a bug and not a no-op selector - V6 passes 8/8, so forced_wrong genuinely took the rule's complement on every LF-bearing dataset. On pfc/allen_cahn/fisher_kpp the rule predicted LSI, so its complement is DC, which is ALSO what the OOF selector chose: the 'forced-wrong' arm is forced onto the RIGHT branch precisely because the rule is wrong there. On cahn_hilliard the two arms did pick different branches (router lsi, forced_wrong dc) and still scored identically because the two branches are numerically identical there. The panel half of item 6 was therefore untestable as written, and its untestability IS the rule's information content on the panel: zero."
+      },
+      "v6_gate": "PASS 8/8 (gates_s0.json V6): router_forced_wrong's branch is the exact complement of the rho rule on all 8 LF-bearing datasets - lsi on {helmholtz, fluid, heat_local, sod_1d}, dc on the four sharp panel datasets."
+    },
+    "selector_evidence": {
+      "decider": "S4R_ROUTER_DECIDER=oof_val_risk; tie band = the dataset's certified relative floor (0.1 on the four sharp panel datasets, 0.7017 on helmholtz, 0.0 on guard with tie_band_source='none_certified' - no floor invented)",
+      "rule_status": "RECORDED, NOT DECIDING (diag: 'this rule never decides the scored prediction under S4R_ROUTER_DECIDER=oof_val_risk'), exactly as the card pre-registered.",
+      "per_dataset": {
+        "ext__helmholtz_2d": {
+          "one_minus_rho_lsi_val": 1.0,
+          "rule_predicted_branch": "dc",
+          "oof_val_risk_lsi": 0.16657216901523647,
+          "oof_val_risk_dc": 0.16657216901523647,
+          "val_risk_relative_gap": 0.0,
+          "tie_band": 0.7016543420944195,
+          "tie_band_source": "certified_floor",
+          "branch_selected": "lsi",
+          "forced_wrong_branch": "lsi",
+          "rule_agrees_with_decision": false,
+          "router_matched_better_branch": "n/a (no LF at test time; champion fallback)",
+          "forced_wrong_matched_worse_branch": "n/a",
+          "router_over_branch_oracle": 1.0
+        },
+        "sharp__phase_field_crystal_2d": {
+          "one_minus_rho_lsi_val": 0.00017823935749705644,
+          "rule_predicted_branch": "lsi",
+          "oof_val_risk_lsi": 0.0004479695119654507,
+          "oof_val_risk_dc": 0.00023523990705239873,
+          "val_risk_relative_gap": 0.9043091692162051,
+          "tie_band": 0.1,
+          "tie_band_source": "certified_floor",
+          "branch_selected": "dc",
+          "forced_wrong_branch": "dc",
+          "rule_agrees_with_decision": false,
+          "router_matched_better_branch": true,
+          "forced_wrong_matched_worse_branch": false,
+          "router_over_branch_oracle": 1.0
+        },
+        "sharp__allen_cahn_2d": {
+          "one_minus_rho_lsi_val": 0.003424897509969438,
+          "rule_predicted_branch": "lsi",
+          "oof_val_risk_lsi": 0.0007985681481783975,
+          "oof_val_risk_dc": 0.00019234561485995767,
+          "val_risk_relative_gap": 3.1517356595824464,
+          "tie_band": 0.1,
+          "tie_band_source": "certified_floor",
+          "branch_selected": "dc",
+          "forced_wrong_branch": "dc",
+          "rule_agrees_with_decision": false,
+          "router_matched_better_branch": true,
+          "forced_wrong_matched_worse_branch": false,
+          "router_over_branch_oracle": 1.0
+        },
+        "sharp__fisher_kpp_2d": {
+          "one_minus_rho_lsi_val": 0.01575376232931147,
+          "rule_predicted_branch": "lsi",
+          "oof_val_risk_lsi": 0.007681539698339704,
+          "oof_val_risk_dc": 0.003564461447267326,
+          "val_risk_relative_gap": 1.1550351468182416,
+          "tie_band": 0.1,
+          "tie_band_source": "certified_floor",
+          "branch_selected": "dc",
+          "forced_wrong_branch": "dc",
+          "rule_agrees_with_decision": false,
+          "router_matched_better_branch": true,
+          "forced_wrong_matched_worse_branch": false,
+          "router_over_branch_oracle": 1.0
+        },
+        "sharp__cahn_hilliard": {
+          "one_minus_rho_lsi_val": 0.10017308861954921,
+          "rule_predicted_branch": "lsi",
+          "oof_val_risk_lsi": 0.005989923694663307,
+          "oof_val_risk_dc": 0.005989923694663307,
+          "val_risk_relative_gap": 0.0,
+          "tie_band": 0.1,
+          "tie_band_source": "certified_floor",
+          "branch_selected": "lsi",
+          "forced_wrong_branch": "dc",
+          "rule_agrees_with_decision": true,
+          "router_matched_better_branch": true,
+          "forced_wrong_matched_worse_branch": true,
+          "router_over_branch_oracle": 1.0
+        },
+        "ifc_poisson": {
+          "one_minus_rho_lsi_val": null,
+          "rule_predicted_branch": null,
+          "oof_val_risk_lsi": null,
+          "oof_val_risk_dc": null,
+          "val_risk_relative_gap": null,
+          "tie_band": null,
+          "tie_band_source": null,
+          "branch_selected": "champion",
+          "forced_wrong_branch": "champion",
+          "rule_agrees_with_decision": null,
+          "router_matched_better_branch": "n/a (no LF at test time; champion fallback)",
+          "forced_wrong_matched_worse_branch": "n/a",
+          "router_over_branch_oracle": null
+        },
+        "heat_local": {
+          "one_minus_rho_lsi_val": 0.18007183576607222,
+          "rule_predicted_branch": "dc",
+          "oof_val_risk_lsi": 0.0009698496538376105,
+          "oof_val_risk_dc": 0.00017190512687743188,
+          "val_risk_relative_gap": 4.641772711811627,
+          "tie_band": 0.0,
+          "tie_band_source": "none_certified",
+          "branch_selected": "dc",
+          "forced_wrong_branch": "lsi",
+          "rule_agrees_with_decision": true,
+          "router_matched_better_branch": true,
+          "forced_wrong_matched_worse_branch": true,
+          "router_over_branch_oracle": 0.9978848584898805
+        },
+        "fluid": {
+          "one_minus_rho_lsi_val": 0.5194290012249738,
+          "rule_predicted_branch": "dc",
+          "oof_val_risk_lsi": 0.16429802910702826,
+          "oof_val_risk_dc": 0.05932514025485243,
+          "val_risk_relative_gap": 1.7694503274872526,
+          "tie_band": 0.0,
+          "tie_band_source": "none_certified",
+          "branch_selected": "dc",
+          "forced_wrong_branch": "lsi",
+          "rule_agrees_with_decision": true,
+          "router_matched_better_branch": true,
+          "forced_wrong_matched_worse_branch": true,
+          "router_over_branch_oracle": 0.9873961224098345
+        },
+        "sharp__sod_1d": {
+          "one_minus_rho_lsi_val": 0.2501562804644306,
+          "rule_predicted_branch": "dc",
+          "oof_val_risk_lsi": 0.01589029092635154,
+          "oof_val_risk_dc": 0.0010041566551625576,
+          "val_risk_relative_gap": 14.824513879041257,
+          "tie_band": 0.0,
+          "tie_band_source": "none_certified",
+          "branch_selected": "dc",
+          "forced_wrong_branch": "lsi",
+          "rule_agrees_with_decision": true,
+          "router_matched_better_branch": true,
+          "forced_wrong_matched_worse_branch": true,
+          "router_over_branch_oracle": 0.992910573718898
+        }
+      },
+      "headline_router_matched_better_branch": "8 of 8 LF-bearing datasets. The OOF val-risk selector picked the branch with the lower TEST nRMSE on every dataset where the two branches differ, and on the two tie datasets (cahn_hilliard, helmholtz) the choice is immaterial because the branches coincide numerically. router / branch_oracle = 1.0000 exactly on all six panel datasets and 0.9874-0.9979 on guard (the head makes the router slightly BETTER than its own branch oracle there).",
+      "headline_forced_wrong_matched_worse_branch": "3 of 8 - only the three guard datasets. On the four sharp panel datasets the rule's complement IS the better branch, so 'forced wrong' is forced right; on helmholtz both arms take lsi. This is the rule's information content measured directly: informative on guard, anti-informative on the sharp panel.",
+      "head_contribution": {
+        "panel": "ZERO on all 5 LF-bearing panel datasets. head_selected == 'branch', alpha == 1.0, head_no_harm_gate_fired == true everywhere: CHANGE 2(b)'s promotion gate refused to apply the layer because the CV winner did not beat the unmodified branch by more than the certified relative floor (e.g. fisher_kpp: branch CV risk 0.00356327 vs global_scalar 0.00356341 vs the 0.00320695 ceiling). The per-sample head is a strict no-op on the panel, which is why C1's ratio is exactly 1.",
+        "guard": "SMALL AND POSITIVE. head_selected == 'persample_head' on all three (no floor exists, so the margin falls back to S6_HEAD_MIN_GAIN=1e-3): router beats its dc_cleaned donor by -0.212% (heat_local), -1.260% (fluid), -0.709% (sod_1d); guard geomean 0.08385244 vs 0.08446725 (-0.728%). Report-only and far below anything a certified floor would call resolvable."
+      },
+      "borrow_pairing": "pairing_verified == true on every router / router_forced_wrong diag; corrector_state_sha256 equals the dc_cleaned donor's on all 9 datasets (e.g. fisher_kpp f50a5a4f6335c4d3, ifc_poisson 7f6cdcc622555cf6). router and router_forced_wrong took ZERO gradient steps (corrector_provenance: \"borrowed from arm 'dc_cleaned' (ZERO gradient steps)\")."
+    },
+    "validity_gates": {
+      "source": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s4_hybrid_routing/B3/eval/gates_s0.json",
+      "all_pass": true,
+      "log_line": "[OK] no gate failed",
+      "counts": {
+        "V1": {
+          "checked": 6,
+          "pass": 6,
+          "fail": 0,
+          "n/a": 0
+        },
+        "V2": {
+          "checked": 5,
+          "pass": 5,
+          "fail": 0,
+          "n/a": 0
+        },
+        "V3": {
+          "checked": 40,
+          "pass": 40,
+          "fail": 0,
+          "n/a": 0
+        },
+        "V4": {
+          "checked": 32,
+          "pass": 32,
+          "fail": 0,
+          "n/a": 0
+        },
+        "V5": {
+          "checked": 5,
+          "pass": 5,
+          "fail": 0,
+          "n/a": 0
+        },
+        "V6": {
+          "checked": 8,
+          "pass": 8,
+          "fail": 0,
+          "n/a": 0
+        },
+        "missing": {
+          "checked": 0,
+          "pass": 0,
+          "fail": 0,
+          "n/a": 0
+        }
+      },
+      "V1_replica": "PASS 6/6 - dc_raw reproduces s6_local-B2 circ_repair seed-0 within tol 10% on all six panel datasets; max rel_dev 1.551e-04 (pfc), helmholtz/cahn_hilliard exactly 0.0, allen_cahn and fisher_kpp at 1 ULP. The D3 CONTROL leg is a genuine reproduction, so the dc_cleaned-vs-dc_raw contrast is legal to read.",
+      "V2_lsi": "PASS 5/5 - lsi_alone reproduces s6_local-B2 lsi_ctrl seed-0 within tol 2%: cahn_hilliard, fisher_kpp and pfc at rel_dev exactly 0.0, allen_cahn 3.45e-09, and alpha_LSI == 0 on ext__helmholtz_2d (nRMSE identical to copy-LF). Zero-gradient-step closed form, so this is epoch-independent.",
+      "V3_identity": "PASS 40/40 (identity_delta_vs_baseline == 0.0 vs eval/copylf_baselines.json, tol 1e-9) on every arm x LF-bearing dataset.",
+      "V4_no_selection": "PASS 32/32 (v4_no_selection_max_abs_dev == 0.0): the no-selection leg equals the selected branch's own prediction exactly.",
+      "V5_champion_leg": "PASS 5/5. router / router_forced_wrong / dc_cleaned share the donor checkpoint and pass at the CARD LITERAL 1e-6 with rel_dev exactly 0.0. lsi_alone (5.833e-06) and dc_raw (1.192e-04) are independently trained and pass at the debugger's 1.9e-4 H100-envelope tier with pass_at_card_literal_tol = false, recorded transparently in the gate table.",
+      "V6_forced_wrong": "PASS 8/8 - branch_selected is the exact complement of rule_predicted_branch on all 8 LF-bearing datasets.",
+      "consequence": "all C1-C4 contrasts are LEGAL to read.",
+      "read_order_note": "gates were verified by the sweep script itself before this analyzer read any contrast, and re-verified here from gates_s0.json (no row has pass == false)."
+    },
+    "guard_flags": [],
+    "guard_detail": {
+      "tier": "200 epochs (NOT contract tier) - all five arms ran the guard set inside the main sweep, so no separate contract-tier guard pass was needed for section 2d.",
+      "status": "REPORT-ONLY (program.md 2.3: the guard set is 'not part of the objective'; state/noise_floor.json has no guard entry, so no certified floor exists to clear).",
+      "regression_threshold": "section 2d: flag any guard dataset whose nRMSE regressed > 2x vs eval/copylf_baselines.json's recorded guard reference (heat_local 0.00240152155999517, fluid 0.21805958171115042, sharp__sod_1d 0.03309017650048946).",
+      "verdict": "NO FLAGS. Every arm x guard dataset is BELOW its copy-LF reference; the largest ratio anywhere is 0.7584 (lsi_alone on fluid) and the 2x bar is nowhere approached.",
+      "ratio_to_copylf_reference": {
+        "lsi_alone": {
+          "heat_local": 0.41932,
+          "fluid": 0.758441,
+          "sharp__sod_1d": 0.474676
+        },
+        "dc_raw": {
+          "heat_local": 0.035865,
+          "fluid": 0.243667,
+          "sharp__sod_1d": 0.027845
+        },
+        "dc_cleaned": {
+          "heat_local": 0.069151,
+          "fluid": 0.279637,
+          "sharp__sod_1d": 0.031165
+        },
+        "router": {
+          "heat_local": 0.069005,
+          "fluid": 0.276113,
+          "sharp__sod_1d": 0.030944
+        },
+        "router_forced_wrong": {
+          "heat_local": 0.386675,
+          "fluid": 0.732233,
+          "sharp__sod_1d": 0.467534
+        }
+      },
+      "separate_report_only_observation_not_a_2d_flag": "dc_cleaned regressed vs dc_raw on all three guard datasets (+92.811% / +14.762% / +11.922%). This is NOT a section-2d guard flag (the 2d criterion is vs copy-LF, and dc_cleaned is at 0.069 / 0.280 / 0.031 of copy-LF there) but it IS the third sub-clause of the card's own falsification limb (iii) and is scored there."
+    },
+    "anchor_maintenance": {
+      "state_anchors_file_updated": false,
+      "reason": "section 2e conditions the anchor file on a 3-SEED result; this is a single-seed run under ADR 0004 with no CI. Precedent: s6_local-B1 and s6_local-B2 both left state/anchors/ untouched under the same rule. state/anchors/s4_hybrid_routing.json is UNCHANGED at 6.703016262587087 (mf_fno_transfer_film, batch0, 3-seed).",
+      "note_for_maintainer": "if the end-of-round top-3 confirmation pass ever certifies this lineage at 3 seeds, the s4_hybrid_routing anchor should move by a very large margin: the dc_cleaned / router panel geomean 0.12330796 is 54.4x below the recorded anchor 6.703016 and 34.27% below the round's previous best (s6_local-B2 trust_head_circ 0.18758820), i.e. beyond the 13.184% certified geomean relative floor. CAUTION for that decision: the gain belongs to the D3 LSI PRE-STAGE (dc_cleaned), not to the router - the router's panel numbers are bit-identical to its donor - and this card is FALSIFIED on its routing and D3-null clauses, so it is not a clean confirmation candidate as a ROUTER card."
+    },
+    "anomalies": [
+      "NO TRAINING ANOMALIES. Main job 66113973 COMPLETED 0:0 in 00:57:22 on hpc-33-13 (1x H100 80GB); .err is 0 bytes; a case-insensitive grep of the 33 kB .out for nan|inf|error|warn|traceback|preempt|requeue|fail|resume|retry|abort returns only the validity-gate table's own 'fail=  0' summary rows. No preemption, no resume event, no NaN. All 5 arms x {6 panel + 3 guard} legs completed 200 epochs; cached == false on all 45 cells.",
+      "PANEL DEGENERACY (structural, verified from the diags, not a copy error): router, router_forced_wrong and dc_cleaned have bit-identical per-dataset nRMSE on all six panel datasets. Causes are enumerated in panel_geomean_skill.identity_note. Consequence for the reader: the panel half of this batch contains only THREE distinct arms (lsi_alone, dc_raw, dc_cleaned=router=router_forced_wrong), and the router's and the head's marginal panel contribution is exactly zero.",
+      "PER-SAMPLE HEAD IS A NO-OP ON THE PANEL: head_selected == 'branch' with alpha == 1.0 on all five LF-bearing panel datasets because CHANGE 2(b)'s promotion gate fired. CHANGE 1 (relative_l2 weighting) is therefore UNTESTED on the panel by this batch - the head never got applied there. It is active only on the three guard datasets, where it buys -0.21% to -1.26%.",
+      "BUILDER JUDGEMENT CALL (i), CARRIED FORWARD: the LSI pre-stage carries the val-selected alpha_LSI, so one scalar fitted on val_idx reaches the corrector's fit_idx training target. Disclosed in diag.prestage.alpha_provenance. This is the mechanism behind the reviewer's D3 asymmetry caveat.",
+      "BUILDER JUDGEMENT CALL (ii), CARRIED FORWARD: CHANGE 2's composition was card-underspecified and shipped as TBD(card-underspecified) - a per-sample cap at 1.0 plus a promotion gate at the certified relative floor. The promotion gate is exactly what zeroed the head's panel contribution, so this underspecification is load-bearing for the C1 result (which passes at ratio exactly 1.0 partly BECAUSE the head declined to act).",
+      "DEBUGGER TOLERANCE CHANGE (attempt 1, ALGO 1/5), CARRIED FORWARD: V5's tolerance is two-tier. The card-literal 1e-6 is retained and passed at rel_dev 0.0 for the borrow-paired arms including the PRIMARY router; only lsi_alone and dc_raw use the 1.9e-4 H100 envelope. Nothing that certifies a claim was loosened. See falsification_by_limb.i.ifc_poisson_leg.",
+      "STALE DIAG STRING (known, deliberate): every ifc_poisson diag still writes v5_champion_leg.tol_relative = 1e-6 and a note saying 'within 1e-6'. gates_s0.json is authoritative.",
+      "REVIEWER FINDING S1 (non-blocking, satisfied): submit.sh gates only on screen.violations, so a V3-row failure with zero no-harm violations could have slipped through. Moot for the main run - gates_s0.json shows every row of every gate passing at 200 epochs.",
+      "SCREEN JOBS ARE NON-REPORTABLE (ADR 0007) and no screen number is quoted anywhere in this part 5."
+    ],
+    "wall_clock_per_seed_min": [
+      57.37
+    ],
+    "wall_clock_detail": {
+      "job_total_min": 57.37,
+      "slurm_reported_elapsed": "00:57:22",
+      "node": "hpc-33-13, 1x NVIDIA H100 80GB HBM3",
+      "allocation": "--time=03:00:00 requested; 31.9% utilised (02:00:00 would have been safe)",
+      "per_leg_min": {
+        "panel_lsi_alone": 1.38,
+        "guard_lsi_alone": 0.42,
+        "panel_dc_raw": 20.75,
+        "guard_dc_raw": 5.57,
+        "panel_dc_cleaned": 20.65,
+        "guard_dc_cleaned": 5.55,
+        "panel_router": 1.02,
+        "guard_router": 0.52,
+        "panel_router_forced_wrong": 1.0,
+        "guard_router_forced_wrong": 0.52,
+        "validity_gates": 0.0
+      },
+      "for_the_timing_ledger": "5 arms x {panel, guard}, seed 0, 200 ep, 1x H100, 57.37 min wall. Only dc_raw and dc_cleaned take gradient steps: 20.75 and 20.65 min per panel leg (5.57 / 5.55 min per guard leg), matching s6_local-B2's 18.05-20.42 min/panel-leg on the same family lineage. The LSI pre-stage adds essentially nothing (20.65 vs 20.75 min). The three zero-gradient arms cost 1.38 / 1.02 / 1.00 min per panel leg - borrowing via borrow_partner_stages is a ~20x saving per arm. The card's own ~63 min estimate was accurate to 9%.",
+      "leg_boundaries_utc": "sweep start 2026-07-31T02:44:47Z, gates 03:42:09Z, all done 03:42:09Z (leg timestamps parsed from the '=== [ts] arm=<a> datasets=<d> ===' markers in the .out)."
+    },
+    "provisional_claim": "provisional-single-seed (ADR 0004). The PRIMARY no-harm claim holds exactly: the availability-keyed discrete super learner never loses to the better of its two library members on any panel dataset - router / min(lsi_alone, dc_cleaned) = 1.000000 on all four sharp panel datasets and router / branch_oracle = 1.0000 on all six. But it also never GAINS: the router's panel numbers are bit-identical to its dc_cleaned donor and to the rule-inverted control, so the routing layer's measured panel contribution is exactly zero, and the per-sample head's is exactly zero too (its promotion gate declined on 5/5). The batch's entire panel movement - a round-best geomean of 0.12331, 34.3% below the previous best - comes from D3, the LSI pre-stage: training the corrector on R - C_LSI instead of R cuts nRMSE by 23.8% / 53.8% / 79.0% on fisher_kpp / pfc / allen_cahn (subject to the reviewer's verbatim caveat that 'the D3 contrast is mildly asymmetric - dc_cleaned consumes val_idx twice, dc_raw once'), while making things 11.9-92.8% WORSE on all three guard datasets. That same D3 gain is what falsifies the card's routing clause: the rho rule, calibrated on the raw-residual corrector, predicts LSI on all four sharp panel datasets and is wrong on the three where the gap is now resolvable (3 disagreements vs a pre-registered 1; Spearman -0.464 vs a required <= -0.714) - yet reproduces its pre-registered -0.857 EXACTLY when scored against dc_raw. The router is a correct, useless selector over a library one of whose members this batch made uniformly dominant on the panel."
+  },
   "6_analysis": null,
   "7_gap_and_future": null,
-  "reanalysis_progress": null,
-  "brainstormer_anchor_note": "- **Anchor reference**: `null` \u2014 `s4_hybrid_routing` is a lever stream, so per program.md\n  \u00a74.5 the own-stream anchor is implicit (`state/anchors/s4_hybrid_routing.json`,\n  `mf_fno_transfer_film` panel geomean **6.703016262587087**, 3-seed, `provisional: false`),\n  re-measured in-batch by the `champion_ctrl` control. The real comparators for every\n  clause are the in-batch paired arms, not the anchor.",
-  "brainstormer_immutables_self_check": "- **Immutables self-check**: **pass (10/10)** \u2014 full positive evidence in\n  [iteration_1.md](iteration_1.md) \u00a7\"Immutables self-check\". Nothing flagged, no revision\n  needed. Item 9 quotes the floors numerically (10.000 % = 1.151100 / 11.511001 on pfc,\n  1.633407 / 16.334071 allen_cahn, 0.417735 / 4.177355 fisher_kpp, 0.553347 / 5.533466\n  cahn_hilliard; 15.323 % = 0.239908 / 1.565633 ifc_poisson; 70.165 % = 9.694961 /\n  13.817290 helmholtz; 13.183 % = 0.8836555 / 6.703016 geomean). Item 10 names **LF\n  low-mode freezing (`mf_fno_spectral`)** as the nearest pre-falsified lever and states the\n  difference: that lever *freezes* LF low modes with a **hard** spectral partition, whereas\n  this card **fits** a full complex `T(k)` by least squares, applies it as a smooth\n  data-fitted taper, freezes nothing, and uses it only to redefine the corrector's\n  **training target**.",
-  "transcription_note": "Transcribed VERBATIM from brainstormer/s4_hybrid_routing/batch_3/report_verified_cb2f4ac5.md (md5 39d4181d4d64f3ea4725bce138173d1c, the orchestrator-verified snapshot). The live report.md was NOT used: at transcription time its md5 was cc9bb87a211235ff17e224407025cd0c (overwritten by a concurrent duplicate brainstormer run at 12:28); iteration_1.md was likewise overwritten at 12:26, so the Source-iteration recovery rule was unavailable. `recipe` is the snapshot's JSON block parsed byte-for-byte; TWO keys were APPENDED to recipe.env to carry content the report places outside its JSON fence: `_sbatch_script_01_train_eval` (the FULL sbatch bash block, verbatim) and `_screen_script_note` (the report's screen-script sentence, verbatim). No brainstormer value was altered, reworded, or summarized. One TBD marker is present in 4_expected_result.",
-  "operator_amendments": [
-    {
-      "utc": "2026-07-30T23:10Z",
-      "signed": "orchestrator [inst:cb2f4ac5]",
-      "field": "4_expected_result",
-      "change": "Resolve the starter-flagged TBD (honesty label on the 1-rho_LSI >= 0.15 routing rule) by inserting the brainstormer's own return text verbatim; provenance = the brainstormer agent's final return message of 2026-07-30 (its report.md was overwritten by a concurrent duplicate instance before the label could be cross-checked; the verified snapshot carries the routing table but not this sentence).",
-      "inserted_text_verbatim": "Honesty label carried into the card: the >=0.15 rule was *fitted on these same seven observations*, so it is confirmatory-refit there, not out-of-sample. The genuinely out-of-sample cells are ext__helmholtz_2d and the entire corr_cleaned operator class. fisher_kpp is where the CV selector can strictly dominate the free rule - the card's sharpest single result either way."
-    }
-  ]
+  "reanalysis_progress": null
 }

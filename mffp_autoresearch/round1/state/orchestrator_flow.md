@@ -3492,3 +3492,129 @@ this axis cannot produce a claimable number. Streams: s2, s3_warp, s5,
 s7 CLOSED; s1, s6 holding complete; s4 ROUTER = the last active
 pipeline. Round remaining: ROUTER (cb2f4ac5's claim) → round report +
 confirmation slate.
+
+## ROUTER card adjudication — starter re-run ordered — 2026-07-31T00:40Z
+
+The 12:32 draft (cb2f4ac5's starter; that instance then stalled — stage
+never advanced, no builder dispatched) FAILS the 19:50Z pre-condition:
+(1) TBD markers in part 4 incl. on the routing rule's honesty label;
+(2) recipe has NO arm table (7 base keys + inherited 57-key s6 env
+only); (3) the evidence-fixed fisher_kpp 63.8% no-harm violation is
+ABSENT (fisher_kpp: 0 mentions in part 3). Adjudication per the logged
+protocol: re-run the starter against ONE named variant = report.md
+(carries the websearch-mandated honest framing, the prediction table,
+the denominator-invariance argument, and the evidence-fixed finding).
+First draft preserved as B3.superseded_first_draft.json; the cb2f4ac5
+report snapshot remains reviewer context, NOT card source. Transition
+claimed [inst:6f03a0f7].
+
+## ROUTER starter re-run SUCCESS + final build dispatched — 2026-07-31T01:05Z
+
+Re-run starter: drafted 19/19, ZERO TBDs, recipe round-trip verified
+(round-trip == report block: True), 63.8% finding + prediction table
+confirmed VERBATIM (table present twice: part 4 item 3 + appended to
+clause (ii)). Only report.md read; snapshot + superseded draft untouched.
+Worktree reused (clean @ 967562e). DISCOVERY: the worktree carries 307MB
+of untracked artifacts from the cb2f4ac5 lineage's superseded BUILD
+(S4_* keys, wrong arms, base d083d44b — that instance had evidently
+started a builder too before stalling). → final builder dispatched with
+QUARANTINE-FIRST instruction (stale-shadow trap) + the full 5-arm spec.
+Stage → builder_running [inst:6f03a0f7]. This is the round's last build.
+
+## Process restart #3 — ROUTER builder resumed — 2026-07-31T01:20Z
+
+Parent process exited again mid-ROUTER-build. Builder resumed from
+transcript with check-disk-first instructions. (Restart replays remain
+the round's dominant infra hazard; the claim protocol has contained
+every consequence so far.)
+
+## s4-B3 ROUTER build SUCCESS -> code-reviewer dispatched — 2026-07-31T03:05Z
+Builder a1783a31c5852dc5c returned SUCCESS after restart-#3 resume: build commit b90d4662,
+family models_r1/s4_router, quarantine of the superseded S4 draft done first (307MB inert under
+quarantine_superseded_S4draft/), vendor pins verified against caff5c97, V2 exact (lsi_alone == s6-B2
+lsi_ctrl to machine precision), V3-V6 pass, borrow pairing verified on sod_1d, selector branch=dc with
+1-rho=0.25016 matching the card pre-registration, resume drill clean. Two builder-fixed defects
+disclosed: (a) numpy-unsafe json.dumps in family finalize (fixed in-family, data_adapters untouched);
+(b) V1 tier-gated to 200 epochs. TBD(card-underspecified) on CHANGE 2 composition shipped as
+shrink-only cap + floor-keyed gate. Claim check: stage file held my builder tag, no squeue s4 jobs.
+Stage -> code_review_running [inst:6f03a0f7]. Reviewer prompt includes the standard 7 questions,
+quarantine + append-only + gate-evidence verification, the builder's disclosed judgement calls, and
+the explicit no-SLURM-submission line.
+
+## Round-2 design spec authored with Eloise (user-present interlude) — 2026-07-31T02:50Z
+Eloise engaged directly: round 2 = condition-vector->HF, LF at train only, 4 streams, skill vs
+offline copy-LF + NN/zero floors, stripped test view enforcement, no new data. Spec committed at
+docs/superpowers/specs/2026-07-30-mffp-autoresearch-round2-design.md (12a4c29). LAUNCH GATED on
+Eloise's explicit go — round 1 continues unaffected.
+
+## s4-B3 review SUGGEST -> screen submitted (job 66112602) — 2026-07-31T03:30Z
+Reviewer verdict SUGGEST, submit as-is; every independently-checkable claim verified (9/9 vendor pins,
+47/47 env keys x 5 arms, 189-additions-only diff, adversarial resume drill, gate figures reproduced).
+Verdict + findings recorded in card review_notes[0]; status -> reviewed_suggest. Claim check: queue clear
+for s4, card job_ids empty. Screen submitted via scripts/submit_screen.sh (never 01_train_eval.sh direct,
+per reviewer operational note) -> job 66112602. COMPENSATION for finding S1 (submit.sh gates only on
+screen.violations, not per-row gate failures): before running submit.sh I will read
+mffp_autoresearch_outputs/round1/s4_hybrid_routing/B3/screen/screen_table.json and manually verify every
+gate row passes, not just violations==0. build_notes[11] wording defect noted in review_notes; code
+correct, no edit needed. Stage -> screen_submitted [inst:6f03a0f7].
+
+## s4-B3 screen 66112602 FAILED (V5 gate) -> debugger dispatched — 2026-07-31T03:55Z
+Job exited 1 after 7:56. Gate table healthy except V5 on ifc_poisson: dc_raw rel_dev 5.2e-6 and
+lsi_alone 2.0e-6 vs tol 1e-6; the three borrow-paired arms (shared ckpt sha 7b0db8e1) matched their
+reference exactly. V2 5/5, V3 40/40, V4 32/32, V6 8/8, no-harm 0 violations; screen_table.json written.
+Orchestrator read: this is the known H100 nondeterminism envelope (~1.9e-4 rel, certified earlier in the
+round) hitting a CPU-calibrated 1e-6 tolerance — independently-trained arms cannot be bitwise-stable on
+H100. Note the irony: this failure class is exactly what the reviewer's S1 finding predicted the
+automatic gate would mishandle; the job's own exit-1 caught it. Debugger dispatched with the hypothesis,
+instructed to verify before fixing, key V5 tol to the certified H100 envelope (NOT to weaken sha-based
+borrow-pairing checks), classify ALGO vs INFRA with justification, and relaunch the screen.
+Stage -> debugger_running [inst:6f03a0f7].
+
+## s4-B3 debugger attempt 1 SUCCESS -> screen relaunched (job 66113509) — 2026-07-31T04:15Z
+Hypothesis verified from artifacts, not assumed: CPU tier all five arms byte-identical (sha 72a35208,
+champion fallback provably knob-invariant); H100 tier three distinct weight shas for the three
+independently-trained arms; both deviations inside the certified 1.9e-4 envelope (s5-B2 certification,
+s5-B3 precedent on this same dataset). Fix commit 9a6eed6, one script 77+/6-: V5 two-tier tol keyed on
+corrector_state_sha256 — borrow-paired arms keep the card-literal 1e-6 (router arm still passes at 0.0,
+so expected_falsification(i) is gated unchanged); independent arms get the envelope; every row records
+tol_basis + pass_at_card_literal_tol so the card-literal verdict stays readable. V3 1e-9, V4 ==0.0,
+no-harm 1.02, family code, eval layer all untouched (diff verified). Class ALGO 1/5. Known residual:
+smoke_eval.py diag metadata still says tol_relative=1e-6 (left to preserve family code_hash; gate table
+authoritative). Screen-only relaunch; submit.sh still gated on my manual full-row check (S1 compensation).
+Stage -> screen_running_relaunch [inst:6f03a0f7].
+
+## s4-B3 screen relaunch GREEN -> main run submitted (job 66113973) — 2026-07-31T04:35Z
+Screen 66113509 COMPLETED 0:0 in 5:59. S1 compensation executed: parsed screen_table.json and verified
+all 90 gate rows pass (V2 5, V3 40, V4 32, V5 5, V6 8; V1 empty by design — tier-gated to 200 epochs,
+fires in main), zero missing cells, 45 diags, no-harm violations []. V5 audit trail as designed: router
+arm rel_dev 0.0 at card-literal 1e-6 (expected_falsification(i) tested unchanged); dc_raw 5.2e-6 and
+lsi_alone 2.0e-6 inside the certified 1.9e-4 envelope with tol_basis + pass_at_card_literal_tol=False
+recorded. Main submitted via screen-gated scripts/submit.sh -> job 66113973 (seed 0 only, ADR 0004).
+~63 min estimate with reduced headroom (builder's OOF-forward note). On success -> initial-analyzer
+(no-harm primary, prediction-table scoring, D3 leg with reviewer S7 asymmetry caveat; guard report-only).
+Stage -> main_running [inst:6f03a0f7].
+
+## s4-B3 main COMPLETED -> initial-analyzer dispatched — 2026-07-31T05:40Z
+Job 66113973 COMPLETED 0:0 in 57:22 (inside the 63-min estimate despite the OOF-forward overhead).
+Eval diags present for all 5 arms x panel+guard; in-job gate run: [OK] no gate failed (V5 5/5 at main
+tier, V1 fired at 200 epochs as tier-gated). gates_s0.json written. Dispatching initial-analyzer:
+no-harm primary, pre-registered 7-row prediction table scoring, D3 leg with reviewer S7 asymmetry caveat
+(dc_cleaned consumes val_idx twice, dc_raw once), guard report-only, screens non-reportable (ADR 0007),
+promotion rules per card. Stage -> initial_analysis_running [inst:6f03a0f7].
+
+## s4-B3 part 5 in -> mechanism-analyzer dispatched — 2026-07-31T06:00Z
+Initial-analyzer SUCCESS. Panel geomean skill: router 0.12330796 (=dc_cleaned=router_forced_wrong,
+bit-identical on all 6 panel datasets); dc_raw 0.19258; lsi_alone 0.19722. ROUND-BEST to date
+(prev s6_local-B2 0.18759, -34.27%). Verdicts: falsified (limb i confirmed exactly, ii+iii fired;
+the D3 leg proved the pre-registered rho routing rule obsolete against dc_cleaned: Spearman -0.464 vs
+required <=-0.714, 3/6 disagreements) + cratered under the literal rule as seed-spend decision only
+(no crash; 81x below bar). Router/head contributed exactly zero on panel (no-harm ratio 1.0 to 15
+decimals; head promotion gate declined 5/5) — the gain is entirely dc_cleaned's. D3 sign splits by
+padding regime: -23.8/-53.8/-79.0% on circular-padding panel vs +11.9/+14.8/+92.8% worse on zero-padding
+guard. Guard flags none (max ratio 0.758 vs 2x bar). nrmse_def_hash identical across all JSONs; V5
+card-literal 1e-6 passed at 0.0 by router arm (limb i intact, not relaxed). LEADERBOARD IMPLICATION for
+round report + top-3 seed confirms: best claimable panel arm is now dc_cleaned (router adds nothing and
+costs complexity) at 0.1233 — supersedes s6 trust_head/circ_repair 0.1876-0.1926 pending 3-seed confirm.
+Mechanism-analyzer dispatched with probe pair sharp__allen_cahn_2d (largest D3 gain -79.0%) vs heat_local
+(largest reversal +92.8%); padding/band decomposition lever. Stage -> mechanism_analysis_running
+[inst:6f03a0f7].
