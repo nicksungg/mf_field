@@ -159,28 +159,33 @@
     specialized agents. Every experiment lives in its own git worktree and an append-only
     <strong>experiment card</strong> that records hypothesis, design, pre-registered falsification clause,
     recipe, results, and mechanism analysis.</p>
-    <p><strong>Naming convention:</strong> cards are IDed <code>{stream}-B{batch}</code>, and the rule is
-    one batch = one experiment = one card = one worktree = one SLURM submission — so <code>s4-B3</code> is
-    the third experiment of stream <code>s4_hybrid_routing</code>.</p>
-    <p><strong>Arms.</strong> One experiment is not one model: the brainstormer pre-registers several
-    <em>arms</em> — the treatment (the idea under test) plus the controls and ablations needed to interpret
-    it — all trained inside the same SLURM job with the same data pipeline, seed, and budget, so every
-    comparison is paired rather than against numbers from some other run. s4-B3, for example, carried five:
-    <code>dc_cleaned</code> (treatment — corrector trained on the cleaned residual),
-    <code>dc_raw</code> (same corrector without the cleaning stage — isolates the cleaning's contribution),
-    <code>lsi_alone</code> (cleaning stage with no corrector — isolates the corrector's contribution),
-    <code>router</code> (picks a branch per dataset — measures what routing adds), and
-    <code>router_forced_wrong</code> (routing deliberately inverted — bounds what a routing mistake costs).
-    That five-way contrast is how "the gain is the cleaning stage alone; routing adds exactly zero" became a
-    conclusion rather than a guess. Arm names are the lowercase identifiers, so a complete model identity is
-    stream-batch + arm: "s4-B3 <code>dc_cleaned</code>".</p>
-    <p>The arm count is per-experiment, not fixed: round 1 ranged from 4 (s1-B1's pairing comparison) through
-    5–6 (treatment-plus-controls and factorial designs) to 7 (s3_warp-B2: one test arm plus six reference
-    constructions), and diagnostic cards have none — nothing is trained. An arm is only added when a specific
-    contrast in the falsification clause needs it, since all arms share one SLURM job to keep comparisons
-    paired. Some experiments instead screened many candidate arms at the cheap 2-epoch tier and promoted a
-    single pinned winner to the reportable 200-epoch run (the "propose-many, screen-cheap" rule, ADR 0007 —
-    screen numbers are non-reportable; s2-B2 scored only its promoted <code>lf_resid_fno</code> this way).</p>
+    <h3>Vocabulary: stream · card · arm · architecture</h3>
+    <div class="tablewrap"><table>
+      <tr><th>Term</th><th>What it is</th><th>Example</th></tr>
+      <tr><td><strong>Stream</strong></td>
+          <td>A research <em>question</em>, run as a sequence of experiments</td>
+          <td><code>s4_hybrid_routing</code></td></tr>
+      <tr><td><strong>Card</strong> <code>{stream}-B{batch}</code></td>
+          <td>One <em>experiment</em>: hypothesis, pre-registered falsification clause, and a code build. One card = one worktree = one SLURM job</td>
+          <td><code>s4-B3</code> = 3rd experiment of s4</td></tr>
+      <tr><td><strong>Arm</strong></td>
+          <td>One runnable configuration of that build — the unit that gets a skill score. The treatment (the idea under test) plus the controls/ablations needed to interpret it, all trained in the same job so comparisons are paired. Count varies with the hypothesis (4–7 in round 1; diagnostics have 0)</td>
+          <td>s4-B3's five: <code>dc_cleaned</code> (treatment), <code>dc_raw</code> (no cleaning), <code>lsi_alone</code> (no network at all), <code>router</code>, <code>router_forced_wrong</code></td></tr>
+      <tr><td><strong>Architecture</strong></td>
+          <td>A reusable ingredient <em>inside</em> arms — not what s*-B* names. The same backbone appears across many cards; sibling arms may differ architecturally or not at all</td>
+          <td>FNO+FiLM backbone; the ~85k CNN corrector (used by s6-B1, s6-B2, s4-B3)</td></tr>
+      <tr><td><strong>Model identity</strong></td>
+          <td>Stream-batch + arm — provenance, like "Table 2, row 3 of study X"</td>
+          <td>"s4-B3 <code>dc_cleaned</code>"</td></tr>
+    </table></div>
+    <p>The brainstormer proposes a card's treatment and its arms <em>in one act</em>, novelty-checked against
+    the websearcher's verdict — new "models" are usually novel compositions of proven ingredients, since an
+    architecture without an interpretable contrast is tuning, which the program bans. Cards mark each arm's
+    role (<code>PRIMARY</code> vs control), and the winner isn't always the treatment: s1-B3's <em>control</em>
+    <code>self_only</code> beat its gain-head treatment and became the criterion-1 entry — recorded as a
+    surprise and attributed by the follow-up experiment. s4-B3 is the opposite story: the treatment won, and
+    the arm contrast is precisely how "the gain is the cleaning stage alone; routing adds zero" became a
+    conclusion rather than a guess.</p>
   </div>
   <ol class="pipeline">
     <li><span class="role">Web-searcher</span> — retrieval-grounded prior-art verdict on the candidate direction (novel / preempted / open), max 5 search iterations.</li>
