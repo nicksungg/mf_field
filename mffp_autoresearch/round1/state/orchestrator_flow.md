@@ -3640,3 +3640,17 @@ docs/round1_report.md authored: both criteria met, final leaderboard (dc_cleaned
 (incl. the two new s4-B3 rules: BC-match, routing-license), process findings, operator-gated end-of-round
 protocol. Round 1 experimental phase COMPLETE — remaining work is operator-gated (seed confirms, full
 runs) or between-rounds (fix list). Round-2 spec approved-and-gated separately (12a4c29).
+
+## Eloise's go — end-of-round protocol steps 2-6 kicked off — 2026-07-31T16:43Z
+Eloise gave explicit go for the full operator-gated end-of-round protocol (§8 of round1_report.md) plus
+downstream steps: seed 1-2 confirms -> 3-seed leaderboard -> 2500-epoch full runs for survivors -> full
+benchmark eval -> Elo (top-3 vs pre-round1 models) -> refresh docs/figures/top_models_overview.svg.
+Claim-protocol check: `squeue -u ezeng | grep r1-` clear before submitting (only round2 r2-* jobs in
+queue). Submitted each top-3 card's submit_seeds_2_3.sh verbatim (smoke tier, 200 epochs, unchanged
+from seed-0 main-run config):
+- s4_hybrid_routing-B3 (`dc_cleaned`): seed1 job 66165252, seed2 job 66165253
+- s6_local-B2 (DC lineage `trust_head`/`circ_repair`): seed1 job 66165254, seed2 job 66165255
+- s1_poisson-B3 (`self_only__none` slate): seed1 job 66165256, seed2 job 66165257
+No card code touched (submit_seeds_2_3.sh is unmodified, pre-existing per-card script); only job_ids
+appended to each card and this log entry. Next: poll squeue for completion, then run the 3-seed
+aggregation (mean +/- CI per report.md wording) and re-issue the leaderboard.
