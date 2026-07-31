@@ -3618,3 +3618,25 @@ costs complexity) at 0.1233 — supersedes s6 trust_head/circ_repair 0.1876-0.19
 Mechanism-analyzer dispatched with probe pair sharp__allen_cahn_2d (largest D3 gain -79.0%) vs heat_local
 (largest reversal +92.8%); padding/band decomposition lever. Stage -> mechanism_analysis_running
 [inst:6f03a0f7].
+
+## s4-B3 mechanism registered -> s4 CLOSED, s6 holding resolved -> CLOSED — 2026-07-31T06:50Z
+Mechanism turns 1-3 + register complete; card status=complete. Causal chain established: (1) D3 effect
+is broadband, not band-localized; (2) damage on non-periodic datasets is a one-pixel boundary ring
+(heat_local: 3.10% of area carries 49.22% of dc_cleaned error energy; fluid deep bulk exactly neutral
+1.002); mirror-extension refit recovers -38.92% on heat_local and costs +1840%/+7167% on periodic
+datasets — two-sided proof the decider is BOUNDARY-CONDITION MATCH with 1-rho as proxy; (3) router null
+is structural: cleaning nests the library (C_dc superset of C_lsi, alpha_nn line-search contains 0), DC
+weakly dominates 8/8, routing headroom +6.020% (raw) -> +0.000% (cleaned); panel rho rule == periodicity
+rule == constant always_lsi. Round-best 0.123308 is D3 alone (-35.97% vs dc_raw). Two tools promoted:
+spectral_prestage_bc_audit.py, library_dominance_audit.py (index.md +103 lines). s6 disposition resolved:
+s6-B2's routing-rule finding stands QUALIFIED as lineage-bound (report wording set accordingly). All
+seven streams now CLOSED or complete-holding-none. Next: round report (docs/round1_report.md), then the
+operator-gated end-of-round protocol (freeze leaderboard, top-3 seeds 1-2, Eloise's go for full runs;
+round-2 launch separately gated on Eloise per spec 12a4c29).
+
+## Round report written — 2026-07-31T07:05Z
+docs/round1_report.md authored: both criteria met, final leaderboard (dc_cleaned 0.1233 / s6 DC lineage
+/ s1-B3 slate), 7 stream closures, 6 mentor integrity findings + ordered fix list, methodological rules
+(incl. the two new s4-B3 rules: BC-match, routing-license), process findings, operator-gated end-of-round
+protocol. Round 1 experimental phase COMPLETE — remaining work is operator-gated (seed confirms, full
+runs) or between-rounds (fix list). Round-2 spec approved-and-gated separately (12a4c29).

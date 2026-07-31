@@ -44,6 +44,8 @@ tool: name, what it measures, invocation, provenance card.
 | `persample_norm_eligibility.py` | pre-flight, model-free GO/NO-GO for PER-SAMPLE target/loss normalisation: effective-N NEED test, a promoted-samples-are-noise SAFETY test, and metric-alignment; supersedes residual SPREAD as the decider | s2_beyond_copy-B3 turns 2-3 |
 | `checkpoint_divergence_audit.py` | is a rebuilt/paired CONTROL the same run? weight-space distance + bit-identical tensor count between two checkpoints, next to the scores they produced; flags dataset-dependent training nondeterminism | s2_beyond_copy-B3 turn 1 |
 | `stage_scaler_placement_forecast.py` | pre-flight, model-free, PER STAGE: which output-target scaler this dataset should be trained under — the typical-sample placement `F = median_i(sd_i/s_i)`, the target-energy effective N, the equalisation a FOREIGN-FIDELITY per-sample statistic actually delivers, and a centering-risk flag on DC-dominated targets | s5_tuning-B3 turns 2-3 |
+| `spectral_prestage_bc_audit.py` | training-free: does a global-FFT stage (LSI defect filter / Wiener transfer function / spectral pre-stage) impose the RIGHT boundary condition on this dataset? the data-driven wrap-continuity test, the same closed form refit under a periodic vs a mirror (non-periodic) extension and scored, and the residual left by each binned by distance-to-boundary | s4_hybrid_routing-B3 turns 1-2 |
+| `library_dominance_audit.py` | is a router / discrete super learner / MoE LICENSED at all? weak-dominance matrix over the library at each dataset's certified floor, degenerate ties where two members are the SAME object, and the geomean of every constant router vs the per-dataset oracle (`routing_headroom_pct`) | s4_hybrid_routing-B3 turn 3 |
 
 ---
 
@@ -1758,3 +1760,104 @@ unreachable (12.53/400), and the dataset whose true-scale ORACLE regressed.
 
 **Provenance.** `worktrees/s5_tuning/B3/scratchpad/reanalysis_turn_{2,2b,2c}.py`; card
 `experiment_cards/s5_tuning/batch_3/B3.json` part 6, findings F6–F9 and interpretation M3.
+
+
+---
+
+## `spectral_prestage_bc_audit.py`
+
+**Measures.** Any MF stage of the form `C = irfft2(rfft2(LF) * T(k))` — a fitted LSI
+defect filter, a Wiener transfer function, a spectral pre-stage — **silently imposes a
+PERIODIC boundary condition**. This tool prices that choice before any GPU is spent,
+training-free:
+
+| key | meaning |
+|---|---|
+| `periodicity.verdict` / `wrap_ratio_max` | the model's own data-driven test `RMS(f[0]-f[-1]) / RMS(f[1]-f[0])` on the HF TRAIN split (re-derived from `s6_local-B2 periodicity.py`, cited not imported; no physics assumed, ADR 0009) |
+| `branches.{periodic,mirror}.nrmse_prestage` | the SAME closed form fitted under a plain `rfft2` extension and under a MIRROR (even-symmetric ⇒ non-periodic) extension, gain selected by a held-out line search containing 0, scored via `round1/eval/nrmse.py` |
+| `mirror_delta_pct` | what swapping the imposed BC is worth, in nRMSE, with zero gradient steps |
+| `branches.*.resid_frac` | the `1 - rho_LSI` eligibility statistic: fraction of the fidelity-gap energy the pre-stage leaves on the table |
+| `branches.*.ring_profile_resid_frac` | that fraction binned by distance-to-boundary, so a rim-localized failure is visible instead of averaged away |
+
+**Read it as.** `mirror_delta_pct` strongly **negative** → the periodic pre-stage is
+leaking at the rim; apply the pre-stage with the same extension the downstream
+convolution uses. Strongly **positive** → the periodic BC was correct, do not "repair"
+it. **≈ 0 with a large `resid_frac` under both** → the pre-stage's problem is genuine
+fit quality, not the BC: gate the pre-stage off. s4-B3 F1 found
+`Spearman(1-rho, pre-stage benefit) = +0.857` over 7 datasets with the sign separated
+perfectly near `resid_frac ≈ 0.15`.
+
+**Invoke.**
+```bash
+source "$PROJECT_ROOT/.venv/bin/activate"
+python tools/spectral_prestage_bc_audit.py --dataset heat_local
+python tools/spectral_prestage_bc_audit.py --dataset sharp__allen_cahn_2d \
+    [--seed 0] [--holdout-frac 0.2] [--ridge 0.0] [--tol 1.25] [--n-probe 32] \
+    [--out bc_audit.json]
+```
+Pure numpy on the login node, 2-D datasets only, ~5–60 s per dataset.
+
+**Verified.** Run 2026-07-31 from `round1/`. `heat_local`: wrap ratios
+**10.6358 / 16.5482** (reproducing `periodicity.py`'s pre-registered numbers) →
+NON-PERIODIC; periodic pre-stage nRMSE 1.007874e-3, mirror **6.151774e-4**
+(**−38.96 %**), `resid_frac` 0.19274 → **0.07444**, outermost-ring residual fraction
+0.1328 → 0.0101. `sharp__phase_field_crystal_2d`: wrap ratios 1.0152 / 0.9908 →
+PERIODIC; periodic 6.145764e-4, mirror 4.441501e-2 (**+7126.93 %**), `resid_frac`
+0.00021 → 0.98400 — the two-sided control that shows the BC is a real decision, not a
+free repair.
+
+**Provenance.** `worktrees/s4_hybrid_routing/B3/scratchpad/reanalysis_turn_{1,2}.py`;
+card `experiment_cards/s4_hybrid_routing/batch_3/B3.json` part 6, findings F5 / F7 / F8
+and interpretation H2' / H5.
+
+
+---
+
+## `library_dominance_audit.py`
+
+**Measures.** A discrete super learner / router / mixture-of-experts can only pay if
+**no single member weakly dominates the rest**. Given each library member's scored
+result JSON (`score_panel.py`'s `result_{panel,guard}_<arm>_s<seed>.json`, or any JSON
+with `per_dataset.<ds>.{nRMSE, skill}`):
+
+| key | meaning |
+|---|---|
+| `dominance` | for every ordered member pair, does A beat B on EVERY dataset at that dataset's certified relative floor (`state/noise_floor.json`), and on how many is it strictly better |
+| `dominating_members` | members that weakly dominate the whole library — non-empty ⇒ routing is not licensed |
+| `degenerate_ties` | datasets where two members are numerically IDENTICAL (a held-out gain line search containing 0 collapsing one member onto another). These masquerade as measurement ties in a rule table and must not be counted as "untestable cells" |
+| `geomeans` / `oracle_geomean` / `routing_headroom_pct` | the panel geomean of every CONSTANT router ("always member m"), of the per-dataset oracle, and the prize a perfect selector would win over the best constant |
+| `selector_vs_best_constant_pct` | with `--selector NAME`, what a SHIPPED selector actually realised over the best constant router |
+
+**Read it as.** `routing_headroom_pct` inside the geomean floor ⇒ **the router is not
+licensed**; the lever is what the members CONTAIN, not how they are mixed. Run this
+BEFORE building a selector, and run it AGAIN after any change to a member's training
+target — s4-B3 changed one member into `other_member + gated_correction` (a strict
+superset) in the same card that built the router, and the headroom went from **+6.020 %**
+to **+0.000 %** without anyone noticing until the mechanism turn.
+
+Complements `routing_headroom.py` (s4-B1, the ceiling of a richer gate WITHIN one
+`base + alpha*correction` model) and `persample_gate_audit.py` (s6-B2, what a shipped
+per-sample gate realised); this tool works one level up, between whole arms.
+
+**Invoke.**
+```bash
+source "$PROJECT_ROOT/.venv/bin/activate"
+python tools/library_dominance_audit.py \
+    --arm lsi=$OUT/result_panel_lsi_alone_s0.json \
+    --arm dc=$OUT/result_panel_dc_cleaned_s0.json \
+    --arm shipped=$OUT/result_panel_router_s0.json --selector shipped \
+    [--floors state/noise_floor.json] [--default-floor 0.0] [--out dom.json]
+```
+Pure JSON parsing, < 1 s.
+
+**Verified.** Run 2026-07-31 from `round1/` on s4-B3's own outputs. CLEANED library
+(`lsi_alone`, `dc_cleaned`, selector `router`): `dc_cleaned` weakly dominates
+(strictly better on 3/6), degenerate ties on `ext__helmholtz_2d` and
+`sharp__cahn_hilliard`, always_lsi 0.197217 / always_dc 0.123308 / oracle 0.123308,
+`routing_headroom_pct` **+0.000 %**, verdict **NOT LICENSED**. RAW library
+(`lsi_alone`, `dc_raw`): neither dominates, always_dc 0.192577 vs oracle 0.181642,
+`routing_headroom_pct` **+6.020 %**, verdict **LICENSED** — the two-sided control.
+
+**Provenance.** `worktrees/s4_hybrid_routing/B3/scratchpad/reanalysis_turn_3.py`; card
+`experiment_cards/s4_hybrid_routing/batch_3/B3.json` part 6, findings F10 / F11 and
+interpretation H6.
