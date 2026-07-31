@@ -59,6 +59,8 @@ tool: name, what it measures, invocation, provenance card.
 | `conditional_mean_collapse.py` | ROUND-2: has a condition->field model collapsed to a constant field, and is its condition-driven variation worth its amplitude? own-mean-broadcast arm, fluctuation energy/alignment, shrinkage oracle, per-sample tail attribution, seed same-function test | r2s4_diag-B1 turns 1+3 |
 | `band_gain_counterfactual.py` | ROUND-2: is an arm-vs-arm advantage just BAND CALIBRATION? one scalar per radial Fourier band fitted out of fold on a train-side calibration fold, applied to the losing arm's test prediction and re-scored (optionally with the floor blend re-selected), plus `frac_of_gap_closed` against a reference arm. Complements `band_weight_counterfactual.py` (which LOCATES a gap; this one decides whether it SURVIVES recalibration) | r2s1_direct-B1 turn 3 |
 | `condition_identifiable_rank.py` | ROUND-2: how many degrees of freedom of the HF field the CONDITION VECTOR determines — per-POD-mode out-of-fold R^2 (identifiable rank), condition-predictable variance fraction and implied floor, a scoreable closed-form rank-r arm vs the ORACLE rank-r truncation (COEFFICIENT_UNIDENTIFIABLE vs BASIS_INADEQUATE verdict), the condition-predicted DC-only arm, the additive-field/centering trap, and a bimodal pattern-gate AUC | r2s1_direct-B1 turns 1+3 |
+| `affine_ladder_voi.py` | ROUND-2: training-free value-of-LF certificate in CONDITION-side coordinates — how affine the task is per rung (exact-LOO), how many affine directions the few HF TRAIN rows cannot determine and what share of the true law lives there, the resulting HF-only information limit (min-norm pinv), what each LF rung + one HF-row scalar + an HF-row residual actually scores, and whether the LF rungs recover the unidentifiable direction. Complements `condition_identifiable_rank.py` (field-basis coordinates, no LF rungs) | r2s3_lf_train_signal-B1 turns 2+3 |
+| `posthoc_repair_ladder.py` | ROUND-2: how much of a trained arm's error is LEGITIMATELY repairable without retraining — a 5-rung ladder (raw / global scale / radial low-pass / affine residual / low-pass+residual, every choice fitted on the HF TRAIN rows, each with its ORACLE twin) plus optional network AFFINE-ISATION: non-affinity remainder on a random condition design, the arm's implicit law vs the ORACLE law, the null-direction cos/gain, and ORACLE row-space-vs-null coefficient surgery | r2s3_lf_train_signal-B1 turn 3 |
 
 ---
 
@@ -2095,3 +2097,178 @@ numbers agree qualitatively but not to the digit.
 **Provenance.** `worktrees/r2s1_direct/B1/scratchpad/reanalysis_turn_1.py` and
 `.../turn3_followup_b.py`; card `experiment_cards/r2s1_direct/batch_1/B1.json`
 part 6, findings T1-F2, T1-F4, T1-F5, T2-F5, T3-F5, T3-F6, T3-F7.
+
+---
+
+## `affine_ladder_voi.py`  *(round 2)*
+
+**Measures.** Training-free, for a condition->HF task with a fidelity ladder, in
+the round's own metric: (A1) how AFFINE the map cond->field is at every rung and
+on the test rows (exact-LOO ridge over an alpha grid; the test-fitted entry is
+suffixed `_ORACLE` and is a benchmark characterisation, never a score);
+(A2) the numerical RANK and NULL SPACE of the HF-training design `[X_hf, 1]`,
+the singular values, and the fraction of the true law's coefficient energy that
+lives in the unidentifiable directions; (A3) HF-only controls including the
+**min-norm pinv** fit — with a rank-deficient design this is the exact
+INFORMATION LIMIT and it equals A2's row-space projection of the true law;
+(A4) each LF rung's affine law transferred to the HF grid with a single scale
+fitted on the HF TRAIN rows, next to the scale the grid-ratio-squared amplitude
+convention predicts, plus a joint all-rungs fit; (A5) the certificate —
+rung-affine base + an affine residual correction on the HF train rows with the
+ridge alpha chosen by exact LOO over those rows, full sweep reported;
+(A6) per-coefficient cosines against the ORACLE law and the **null-direction
+recovery ratio** of each rung; (A7) exact condition-overlap counts between test,
+HF train and every LF rung, so a "disjoint conditions" claim is verified.
+`verdict.value_of_lf_skill_units` = information limit minus the best legitimate
+LF-assisted estimator.
+
+**Not the same tool as `condition_identifiable_rank.py`** (r2s1-B1). That one
+works in FIELD-basis coordinates on the train split — per-POD-mode out-of-fold
+R^2 of the coefficient predicted from the condition — and has no LF rungs in it.
+This one works in CONDITION-side coordinates: whether the few HF rows SPAN the
+design at all, and what the LF rows at other conditions are worth as the fix.
+A dataset can be `COEFFICIENT_UNIDENTIFIABLE` there and full-rank here, or the
+reverse. Run both; they answer different halves of "is this information-limited?".
+
+**Read it as.** `label = RANK_LIMITED_LF_COMPLETES` -> no HF-only estimator of
+ANY capacity can beat `hf_only_information_limit_skill`, and the LF rows demonstrably
+close the gap: the next batch's job is to build a family that reaches the
+`best_lf_assisted_skill_LEGIT` number, and that number is the honest baseline to
+beat, not the previous network. `affine_task = true` (A1 test LOO << 1e-3) ->
+the benchmark is a closed-form linear map and any skill claim on it measures
+RANK RECOVERY, not operator learning — flag it for the round report.
+`c_legit_over_grid_ratio_squared` far from 1 -> the ladder carries a
+mesh-dependent amplitude convention; a single shared output scaler across rungs
+will deflate the HF-row loss by its square (see `ladder_level_diagnostic.py`).
+A6 `null_direction_recovery_ratio` ~ 1 with cos ~ 1 -> that rung transfers the
+unidentifiable direction faithfully across the resolution gap.
+
+**Invoke.**
+```bash
+source "$PROJECT_ROOT/.venv/bin/activate"
+python tools/affine_ladder_voi.py --datasets ifc_poisson --out voi_ifc.json
+# cheap affinity scan only (no rank/ladder work), several datasets:
+python tools/affine_ladder_voi.py \
+    --datasets ext__helmholtz_2d,sharp__allen_cahn_2d \
+    --affinity_only --quadratic --out panel_affinity.json
+```
+Pure numpy (torch only for the bilinear rung upsample) on the login node.
+Defaults to the STRIPPED view. 60 s on `ifc_poisson` (64^2, 175 train rows);
+76-566 s per sharp/ext dataset in `--affinity_only --quadratic` mode, dominated
+by the 8-alpha exact-LOO over 65536-dim fields — trim with `--max_test`.
+
+**Verified.** Run 2026-07-31 from `round2/` (outputs kept at
+`worktrees/r2s3_lf_train_signal/B1/scratchpad/register_toolcheck_voi_*.json`):
+`ifc_poisson` affine LOO **3.208e-08 / 3.389e-08 / 4.165e-08** (rungs 8/16/32)
+and **3.222e-08** on test; design rank **5/6**, null-direction energy share
+**0.18828**; min-norm information limit skill **3.47440** = the analytic
+row-space projection **3.47440**; rung affine + HF-row scale **5.0072 / 2.3418 /
+0.8863**, joint **3.7601**; rung + residual **1.3543 / 0.6382 / 0.24269**;
+null-direction recovery **0.940 / 0.982 / 0.9957** at cos **0.979 / 0.995 /
+0.9993**; all condition-overlap counts 0; verdict `RANK_LIMITED_LF_COMPLETES`,
+value of LF **+3.2317** skill units. Every one of these matches the source probe
+(turn-2 B1/B3/B4/B5/B7/B8/B9) to the digits reported there.
+Affinity scan: `sharp__allen_cahn_2d` **0.31714** affine / **0.26845** quadratic
+and `sharp__fisher_kpp_2d` **0.25074** / **0.25214** match the source probe
+exactly; `ext__helmholtz_2d` **2.3141** and `sharp__phase_field_crystal_2d`
+**0.4033** are LOWER than the source's 2.5644 / 0.40453 because this tool's
+alpha grid extends to 1.0 while `reanalysis_turn_2c.py` capped it at 1e-2 (the
+selected alphas here are 1.0 and 0.1) — a better-regularised fit of the same
+quantity; the conclusion is unchanged, `ifc_poisson` is seven orders of
+magnitude away from every other panel dataset.
+
+**Provenance.** `worktrees/r2s3_lf_train_signal/B1/scratchpad/reanalysis_turn_2.py`
+(part B), `.../reanalysis_turn_2c.py`, `.../reanalysis_turn_3b.py`; card
+`experiment_cards/r2s3_lf_train_signal/batch_1/B1.json` part 6, findings 6-9
+and interpretations M8/M11.
+
+---
+
+## `posthoc_repair_ladder.py`  *(round 2)*
+
+**Measures.** For a shipped arm (predictions only — no checkpoint surgery, no
+retraining), how much of its error a next batch could remove by construction.
+Five rungs, each fitted on the HF TRAINING rows only and each with an explicitly
+labelled `_ORACLE` twin: **L0** raw; **L1** one global scale; **L2** an ideal
+radial low-pass with the cutoff selected on the train rows (the target's own
+truncation ceiling is reported per cutoff, so "the filter helped" can be told
+from "the filter cannot possibly help more than this"); **L3** an affine residual
+correction with the ridge alpha chosen by exact LOO over the train rows, full
+sweep; **L4** L2 then L3. Reports `best_legitimate_repair` and its gain in skill
+units.
+
+With `--cond_probe/--pred_probe` it adds the **affine-isation** block: evaluate
+the net at a random condition design (emit it with `--gen_probe_conds`; no field
+data is read to build it), fit its own affine surrogate on a fraction of the
+design and report the NON-AFFINITY remainder on the rest, the surrogate's law
+against the ORACLE law per coefficient, the **null-direction** diagnostic
+(fraction of the arm's law energy in the directions the HF train rows cannot
+constrain, cosine and recovery ratio against the truth), and ORACLE
+row-space-vs-null coefficient **surgery** (arm row + oracle null, oracle row +
+arm null, …) which says whether the arm is wrong where it could have known or
+where it could not.
+
+**Read it as.** A big L1 gain -> the arm is mis-scaled, not mis-structured. A big
+**L1 ORACLE-vs-LEGIT gap** is the important pathology: the miscalibration is
+invisible from the training rows, so no early-stopping rule, trust gate or
+calibration fitted on them can catch it (r2s3-B1 found a 647-skill arm whose
+legitimate 5-row scale was 0.956 while the box-wide one was ~1/30). An L2 gain
+with the arm still far from the truncation ceiling -> spectral contamination is
+real but the low band is independently wrong. `null_direction.cos_vs_ORACLE ~ -1`
+-> the network is confidently extrapolating the WRONG way in a direction its data
+never constrained, i.e. its implicit bias is worse than a min-norm least-squares
+solution (which puts zero there). `|recovery_ratio| >> 1` with cos > 0 -> right
+direction, wrong gain: a calibration lever, not an information problem.
+Run `affine_ladder_voi.py` first for the ceiling, this second for the gap to it.
+
+**Invoke.**
+```bash
+source "$PROJECT_ROOT/.venv/bin/activate"
+# optional half: emit a probe condition design, run your family on it, feed back
+python tools/posthoc_repair_ladder.py --dataset ifc_poisson \
+    --gen_probe_conds 320 --probe_box 0.10,0.90 --probe_out probe_conds.npy
+python tools/posthoc_repair_ladder.py --dataset ifc_poisson --arm_name rung_native \
+    --pred_test preds_test.npz:pred --pred_hf_train preds_hftrain.npy \
+    --cond_probe probe_conds.npy --pred_probe probe_preds.npy \
+    --out repair_ladder.json
+```
+`--pred_*` accept `path.npy` or `path.npz:key`; shapes `(N,H,W)` or
+`(N,n_cells)`. Pure numpy on the login node, 54 s on `ifc_poisson`. Producing the
+three prediction files is the caller's job — `tools/regen_preds_from_ckpt.py`
+covers the test/train pair for contract families; the probe pass needs a family
+forward call on an arbitrary condition array.
+
+**Verified.** Run 2026-07-31 from `round2/` against the r2s3-B1 `rung_native` arm
+(predictions dumped by
+`worktrees/r2s3_lf_train_signal/B1/scratchpad/register_dump_preds.py`, output kept
+at `.../register_toolcheck_repair_rung_native.json`): L0 **16.8102**, L1 **16.2271**
+(c 0.97335; ORACLE c 0.71904 -> 13.1224), L2 cutoff **8** -> **15.2051** (ORACLE
+cutoff 2 -> 14.0218), L3 alpha 0.1 -> **15.5591**, non-affinity **0.19171**, law
+rel-L2 vs ORACLE **1.30894**, null-direction cos **0.84967** / recovery **2.65268**
+/ arm-law energy share **0.51933**, surgery arm-law **13.0894**, arm-row-only
+**9.6701**, arm-row+oracle-null **8.8697**, oracle-row+arm-null **8.1047**,
+information limit **3.47440**. All identical to the source probe (turn-3 C1/C2,
+D1/D2/D3). **One deliberate difference**: L4 re-fits the global scale AFTER
+filtering, where `reanalysis_turn_3.py` reused the unfiltered scale; on this arm
+that gives **15.0098** against the probe's 14.6254. Both are legitimate; neither
+is load-bearing for the card (its `-6.1150` network-channel figure uses L3).
+
+**Provenance.** `worktrees/r2s3_lf_train_signal/B1/scratchpad/reanalysis_turn_3.py`
+(parts C, D) and `.../reanalysis_turn_3b.py` (part E); card
+`experiment_cards/r2s3_lf_train_signal/batch_1/B1.json` part 6, findings 10-15
+and interpretations M8/M9/M10.
+
+---
+
+## Standing warning `affine_ladder_voi` + `posthoc_repair_ladder` encode
+
+Both tools assume the task is **condition -> HF field with a small HF training
+split**, which is round 2's setting; on a dataset with hundreds of HF train rows
+the design is full rank, the null-space half returns empty and only the affinity
+/ repair-ladder halves are informative. Both take the AFFINE model seriously as a
+reference class — that is a virtue when `A1` says the task is affine (it makes
+the analysis exact) and a limitation when it does not: a 0.3 affine-LOO residual
+means the surrogate law explains only part of the arm, and the surgery numbers
+should then be read as a coarse localisation, not an accounting identity. Every
+`_ORACLE` key in either tool is fitted on the test split; they exist to say WHERE
+an arm is wrong and must never be quoted as an arm score.

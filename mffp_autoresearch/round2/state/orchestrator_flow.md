@@ -321,3 +321,26 @@
 
 - 2026-07-31 ~19:5x PDT r2s4-B2 starter SUCCESS (13/13): B2.json drafted, no TBDs; 3-seed
   §12.4 exception flagged for reviewer adjudication. -> builder dispatched.
+
+- 2026-07-31 ~20:2x PDT r2s1-B2 websearcher SUCCESS (9/9, cap hit): E1 band-gain calibration =
+  non-causal WIENER FILTER (preempted; B1's gain collapse = Self-Wiener low-SNR thresholding);
+  E2/E3 preempted-but-open (E3 = closed-form-control protocol, best contribution shape);
+  E4 provisional; predictable-rank truncation = presumed prior art (do not claim).
+  -> B2 brainstormer dispatched.
+
+- 2026-07-31 ~21:0x PDT r2s1-B2 brainstormer SUCCESS (10/10): model card = closed-form spectral
+  head selected by pre-registered training-free rule vs 4-point capacity ladder, ALL arms
+  under same OOF Wiener calibration + floor blend; per-dataset falsification legs (no panel-
+  geomean leg — B1 showed it noise-decided); ch decision leg at 3x mce; seeds [0] correct;
+  helmholtz report-only. -> starter dispatched.
+
+- 2026-07-31 ~21:2x PDT r2s3-B1 COMPLETE (register 5/5; disk-verified; 2 tools promoted with
+  explicit non-overlap documentation vs r2s1's; honesty item: +3.23 gain clears BOTH the
+  provisional (13.5x) and certified (3.45x) floors). Third card closed. B2 direction from
+  part 7: linear/affine channel as contract family (0.2427 existence proof) vs network trio
+  (per-rung scaler + HF-Nyquist mode pinning + null-direction regularization).
+  -> B2 websearcher dispatched (batch counter -> 2).
+
+- 2026-07-31 ~21:4x PDT r2s1-B2 starter SUCCESS (28/28): B2.json drafted, no TBDs; 54 env keys
+  (5 _-prefixed directives to filter); E4 citation honestly marked SEARCH-RETURN ONLY.
+  -> builder dispatched.
