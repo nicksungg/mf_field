@@ -218,18 +218,12 @@
   <h3>The campaign: 21 experiments across 8 streams</h3>
   <div class="gridwrap"><div class="tracks">
     <div class="track">
-      <span class="tname">s4_hybrid_routing<span class="sub">routing &amp; synthesis</span></span>
-      <span class="expbox">composition measurement</span><span class="tarrow">→</span>
-      <span class="expbox">OOF keep-test repair</span><span class="tarrow">→</span>
-      <span class="expbox champ">router over cleaned library</span>
-      <span class="tmark star">★</span>
-      <span class="tout"><span class="num champ">0.123</span> champion — the cleaning stage alone; router null</span>
-    </div>
-    <div class="track">
-      <span class="tname">s6_local<span class="sub">local defect correction</span></span>
-      <span class="expbox">Richardson DC + trust gate</span><span class="tarrow">→</span>
-      <span class="expbox">circular-padding repair</span>
-      <span class="tout"><span class="num">0.188</span> first criterion-2 pass; superseded by s4</span>
+      <span class="tname">s1_poisson<span class="sub">few-shot fidelity ladder</span></span>
+      <span class="expbox">all-pairs ladder</span><span class="tarrow">→</span>
+      <span class="expbox">per-level-norm factorial</span><span class="tarrow">→</span>
+      <span class="expbox">closed-form gain head</span><span class="tarrow">→</span>
+      <span class="expbox">self_only attribution</span>
+      <span class="tout"><span class="num">0.609</span> criterion 1 met (5 HF samples)</span>
     </div>
     <div class="track">
       <span class="tname">s2_beyond_copy<span class="sub">beating copy-LF where it's hard</span></span>
@@ -239,12 +233,25 @@
       <span class="tout"><span class="num">0.380</span> + normalization eligibility rule</span>
     </div>
     <div class="track">
-      <span class="tname">s1_poisson<span class="sub">few-shot fidelity ladder</span></span>
-      <span class="expbox">all-pairs ladder</span><span class="tarrow">→</span>
-      <span class="expbox">per-level-norm factorial</span><span class="tarrow">→</span>
-      <span class="expbox">closed-form gain head</span><span class="tarrow">→</span>
-      <span class="expbox">self_only attribution</span>
-      <span class="tout"><span class="num">0.609</span> criterion 1 met (5 HF samples)</span>
+      <span class="tname">s3_testtime<span class="sub">test-time refinement (original s3)</span></span>
+      <span class="expbox diag">feasibility diagnostic</span>
+      <span class="tmark dead">✕</span>
+      <span class="tout">retired by operator (ADR 0010); slot reassigned ↓</span>
+    </div>
+    <div class="track">
+      <span class="tname">s3_warp<span class="sub">warp / advection premise (replacement)</span></span>
+      <span class="expbox diag">warp-opportunity oracle</span><span class="tarrow">→</span>
+      <span class="expbox">warp-then-correct</span>
+      <span class="tmark dead">✕</span>
+      <span class="tout">premise absent 100×; registration fix derived instead</span>
+    </div>
+    <div class="track">
+      <span class="tname">s4_hybrid_routing<span class="sub">routing &amp; synthesis</span></span>
+      <span class="expbox">composition measurement</span><span class="tarrow">→</span>
+      <span class="expbox">OOF keep-test repair</span><span class="tarrow">→</span>
+      <span class="expbox champ">router over cleaned library</span>
+      <span class="tmark star">★</span>
+      <span class="tout"><span class="num champ">0.123</span> champion — the cleaning stage alone; router null</span>
     </div>
     <div class="track">
       <span class="tname">s5_tuning<span class="sub">backbone tuning axes</span></span>
@@ -255,29 +262,29 @@
       <span class="tout">axis fully mapped — no claimable win exists</span>
     </div>
     <div class="track">
+      <span class="tname">s6_local<span class="sub">local defect correction</span></span>
+      <span class="expbox">Richardson DC + trust gate</span><span class="tarrow">→</span>
+      <span class="expbox">circular-padding repair</span>
+      <span class="tout"><span class="num">0.188</span> first criterion-2 pass; superseded by s4</span>
+    </div>
+    <div class="track">
       <span class="tname">s7_loss<span class="sub">objective design</span></span>
       <span class="expbox">relative-loss reparam</span><span class="tarrow">→</span>
       <span class="expbox diag">two-gate disambiguation</span>
       <span class="tmark dead">✕</span>
       <span class="tout">levers falsified; two-gate rule shipped</span>
     </div>
-    <div class="track">
-      <span class="tname">s3_warp<span class="sub">warp / advection premise</span></span>
-      <span class="expbox diag">warp-opportunity oracle</span><span class="tarrow">→</span>
-      <span class="expbox">warp-then-correct</span>
-      <span class="tmark dead">✕</span>
-      <span class="tout">premise absent 100×; registration fix derived instead</span>
-    </div>
-    <div class="track">
-      <span class="tname">s3_testtime<span class="sub">test-time adaptation</span></span>
-      <span class="expbox diag">feasibility diagnostic</span>
-      <span class="tmark dead">✕</span>
-      <span class="tout">retired by operator (ADR 0010)</span>
-    </div>
   </div></div>
-  <p class="gridkey">Each box is one experiment (card); rows iterate left → right and are ordered best to worst.
+  <p class="gridkey">Each box is one experiment (card); rows in stream order, iterating left → right.
   Dashed border = diagnostic card · ✕ = lever falsified or stream retired · ★ = champion.
-  Numbers are panel-geomean skill except s1 (ifc_poisson vs paper bar).</p>
+  Numbers are panel-geomean skill except s1 (ifc_poisson vs paper bar).
+  <strong>Why two s3 rows:</strong> the original s3 (test-time refinement using governing-equation residuals)
+  was retired mid-round by operator decision (ADR 0010) — the mentor's no-known-physics-at-test rule
+  (ADR 0009) removed its premise, and its own batch-1 diagnostic independently supported removal
+  (residuals computable on only 1/6 panel datasets, and those datasets are two-FFT-solvable without a model).
+  No GPU time was spent; <code>s3_warp</code> was created as the replacement and inherited the s3 slot.
+  s6 and s7 were likewise added mid-round (ADRs 0011–0012) — the stream roster is operator-amendable while
+  the round runs.</p>
 
   <h3>Top models, baseline first then best to worst</h3>
   <div class="tablewrap"><table>
