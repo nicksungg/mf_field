@@ -420,3 +420,21 @@
   deltas below MCE on all datasets (predicted value-of-LF NULL with sensitivity-proven
   instrument); F3_scaling FIRED, F1/F2/F4 not. -> initial-analyzer dispatched (fold-fixed
   spread labeling obligation forwarded).
+
+- 2026-08-01 ~00:4x PDT r2s4-B2 initial-analyzer SUCCESS (6/6, 3-seed): CRITERION-1 MEASUREMENT
+  LANDED — 0/6 claimable transfer effects (value-of-LF null at every N) vs instrument with
+  claimable information gap 5/5 (ratios 13.5-95.3x) => interpretable null; F3 fired on a
+  null (not resolved opposite effect — honestly recorded); T0 reproduces B1 certifier
+  bit-identically on ifc (instrument validation); fold-fixed spread NOT installed (labeled);
+  2 part-4 predictions not borne out (ch info gap 39.55 vs predicted 1.2-3). -> mechanism-
+  analyzer dispatched (4 leads incl. I-vs-T dissociation vs r2s3's linear-channel success).
+
+- 2026-08-01 ~01:0x PDT r2s3-B2 builder SUCCESS (10/10): build 945ee65; smoke exit 0 (ifc e2
+  0.3013); resume bit-identical; m/alpha match pre-registered values; vendored lift agrees
+  0.0; estimators reproduce B1 digits (3.4744/0.2427/0.18828). Builder caught --env nargs
+  footgun (multi-flag silently discards). -> code-reviewer dispatched.
+
+- 2026-08-01 ~01:3x PDT r2s3-B2 code-reviewer SUGGEST (6/6): all findings analyst-facing
+  (quote per_rung 32 not ref_linear_mf; 0.551 amplitude gain = first suspect on null;
+  F2 instrument-not-capacity contrast; TIMEOUT = resubmit not ALGO). ORCHESTRATOR SUBMITTED
+  seed 0: job 66185845 (h200, 17 serial legs). Card -> running.
