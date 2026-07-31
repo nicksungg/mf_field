@@ -1,88 +1,114 @@
-# MFFP Autoresearch Round 2 — Dashboard (updated 2026-07-31T16:34:10Z)
+# MFFP Autoresearch Round 2 — Dashboard (updated 2026-07-31T16:56:38Z)
 
 ## Streams
 
 | Stream | Anchor (skill) | Current batch | Card | Status | Jobs | Last change |
 |---|---|---|---|---|---|---|
-| r2s1_direct | 23.0636 (best_floor_panel_geomean) | 1 | r2s1_direct-B1 (**running**) | code-review verdict **SUGGEST — submit as-is** (`notes/handoff_code_reviewer.md`, 16:21:23Z; all 8 findings PASS); seed-0 job submitted per `scripts/submit.sh` | 1 (PENDING) | 2026-07-31T16:23:17Z (card status -> running, job 66163572 submitted) |
-| r2s2_stacked | 23.0636 (best_floor_panel_geomean) | 1 | r2s2_stacked-B1 (drafted) | builder DONE (handoff 15:48:15Z: 5 arms + S1/S2 sidecars + P1/P2 probes + gates V1-V7; ifc_poisson rung ladder UNPAIRED, arms A2/A5 there marked `arm_semantics_degraded=True`); card `status` still not advanced to `built` (~44 min after handoff) — but fresh `scratchpad/contract_smoke.json` (helmholtz, ~82s old at check) confirms active review-in-progress, liveness-confirmed not stalled; now the longest-outstanding builder->card lag in the round | 0 | 2026-07-31T16:31:15Z (fresh contract_smoke.json write) |
-| r2s3_lf_train_signal | 23.0636 (best_floor_panel_geomean) | 1 | r2s3_lf_train_signal-B1 (drafted) | builder in progress (`models_r2/r2s3_rung_supervised/`; extensive fresh scratchpad — dbg_pre/dbg_mid/dbg_ifc probes, resume.log within last few minutes) — confirmed live via filesystem-relative epoch delta, not stalled; no builder handoff yet | 0 | ~16:2xZ (scratchpad activity, see report) |
-| r2s4_diag | 23.0636 (best_floor_panel_geomean) | 1 | r2s4_diag-B1 (running) | 3-seed certification jobs (66161480/81/82) still **PENDING** (Priority), unchanged since prior run | 3 (all PENDING) | 2026-07-31T15:58:25Z (unchanged) |
+| r2s1_direct | 23.0636 (best_floor_panel_geomean) | 1 | r2s1_direct-B1 | **analyzing** — seed-0 job COMPLETED (66163572, h200, 6.95 min), panel_geomean_skill **19.6444** (vs 23.0636 anchor); initial-analyzer dispatched | 0 live (job done) | 2026-07-31T16:50:57Z (job 66163572 COMPLETED) |
+| r2s2_stacked | 23.0636 (best_floor_panel_geomean) | 1 | r2s2_stacked-B1 | **running** — code-review verdict **SUGGEST** landed 16:54:09Z (ifc_poisson unpaired-ladder deviation independently reproduced, 0.08-0.30 min cond distance every rung; A2-A3 flagged as an upper bound, not epoch-matched); seed-0 panel (66166237) + guard (66166238) jobs submitted and RUNNING | 2 (RUNNING, ~1m20s) | 2026-07-31T16:54:09Z (review SUGGEST) / jobs submitted ~16:55:18Z |
+| r2s3_lf_train_signal | 23.0636 (best_floor_panel_geomean) | 1 | r2s3_lf_train_signal-B1 | **running** — code-review verdict SUGGEST (reviewed_suggest, 16:41:06Z; shared-scaler confound on ifc_poisson travels as an interpretation constraint, not a build defect — null F1 there is NOT evidence LF adds nothing); seed-0 job (66165379) RUNNING since 16:45:32Z, arm `hf_only` in progress | 1 (RUNNING, ~11m) | 2026-07-31T16:45:32Z (job submitted) |
+| r2s4_diag | 23.0636 (best_floor_panel_geomean) | 1 | r2s4_diag-B1 | **analyzing** — all 3 seeds COMPLETED (66161480/81/82, h200, ~4.1-4.4 min each); `03_certify.sh` ran, noise floor **CERTIFIED and INSTALLED** over the provisional file (IQM panel geomean **19.8178**, beats the 23.0636 anchor); initial-analyzer dispatched (3-seed) | 0 live (all done) | 2026-07-31T16:49:04Z (noise_floor.json certified/installed) |
 
 All four anchors are identical: the round-2 launch anchor is the panel
 geomean of the best training-free floor per dataset
 (`state/anchors/{stream}.json`, `provisional: false`, certified
 2026-07-31T14:20:17Z). No stream has diverged yet.
 
-Since the prior maintainer run (16:14:05Z): r2s1_direct's code-review landed
-(verdict SUGGEST — submit as-is; mandatory analyzer caveat that the D3
-certificate's aleatoric floor is window-sensitive and, at the recipe's
-window, reads worse-than-zero-predictor on `ext__helmholtz_2d` — do not
-report it as a ceiling there; report `allen_cahn`'s ceiling as a range) and
-its seed-0 job (66163572) was submitted, still PENDING. r2s4_diag unchanged
-(still 3 PENDING jobs). r2s2_stacked's builder-to-card lag has grown to ~44
-min but is liveness-confirmed (fresh smoke-evidence write) rather than
-stalled. r2s3_lf_train_signal continues active building, confirmed live.
+**BATCH-1 WAVE FULLY SUBMITTED** (all 4 streams have at least seed-0 either
+completed or running) — first major milestone since round-2 launch.
 
 ## Running / pending jobs
 
 | Job | Card | State | Elapsed | Node/Reason |
 |---|---|---|---|---|
-| 66163572 | r2s1_direct-B1 (seed 0) | PENDING | 00:00:00 | None assigned (Priority) |
-| 66161480 | r2s4_diag-B1 (seed 0) | PENDING | 00:00:00 | None assigned (Priority) |
-| 66161481 | r2s4_diag-B1 (seed 1) | PENDING | 00:00:00 | None assigned (Priority) |
-| 66161482 | r2s4_diag-B1 (seed 2) | PENDING | 00:00:00 | None assigned (Priority) |
-| 66149132 | (unrelated interactive `bash`) | RUNNING | ~2h33m | hpc-90-18 — not a round-2 job |
-| 66162876 | (unrelated interactive `bash`) | RUNNING | ~16m | hpc-24-22 — not a round-2 job |
+| 66166237 | r2s2_stacked-B1 (seed 0, panel) | RUNNING | ~00:01:20 | hpc-sm-01-04 |
+| 66166238 | r2s2_stacked-B1 (seed 0, guard) | RUNNING | ~00:01:20 | hpc-sm-01-04 |
+| 66165379 | r2s3_lf_train_signal-B1 (seed 0) | RUNNING | ~00:11:06 | hpc-sm-01-15 (arm `hf_only`, first of several arms) |
+| 66149132 | (unrelated interactive `bash`) | RUNNING | ~2h57m | hpc-90-18 — not a round-2 job |
+| 66162876 | (unrelated interactive `bash`) | RUNNING | ~41m | hpc-24-22 — not a round-2 job |
+| 66166013 | (unrelated interactive `bash`) | RUNNING | ~4m | hpc-89-13 — not a round-2 job |
 
-r2s2_stacked has `scripts/submit.sh` + `scripts/submit_guard.sh` staged and
-unsubmitted (review still in progress).
+6 `r1-*` jobs also PENDING in the queue (round-1 top-3 seed-confirm work) —
+out of this maintainer's scope, noted only for queue-context.
 
 ## Completed cards
 
 (none — all 4 batch-1 cards still have `5_actual_result`/`6_analysis`/
-`7_gap_and_future` as placeholders and no COMPLETED SLURM jobs yet; all 4
-live jobs remain PENDING)
+`7_gap_and_future` as placeholders; jobs have completed but analyzers have
+not yet written results back to the cards)
+
+| Card | Type | Panel geomean skill (±CI) | Falsification verdict | Tools promoted |
+|---|---|---|---|---|
+| r2s1_direct-B1 | model | 19.6444 (single seed 0, no CI yet) | pending analyzer | pending |
+| r2s4_diag-B1 | diagnostic | 19.8178 IQM, CI95 [19.385, 20.527] (3 seeds) | pending analyzer | n/a (diagnostic) |
 
 ## Flags
 
+- **Noise floor certified**: `state/noise_floor.json` is now **REAL and
+  INSTALLED** (`_provisional: false`, certified 2026-07-31T16:49:04Z, source
+  `r2s4_diag-B1` 3-seed spread), replacing the round-1-rescaled provisional
+  file (backed up at `state/noise_floor.provisional_r1rescaled.json.bak`).
+  Panel-geomean IQM **19.8178**, CI95 [19.385, 20.527], min-claimable-effect
+  1.142 (max of spread-maxmin and paired-null-95). Per-dataset
+  min-claimable-effects are 10-1700x tighter than the provisional file (e.g.
+  `sharp__fisher_kpp_2d` 1.22 -> 0.0007; `ifc_poisson` 0.24 -> 0.94 — note
+  ifc_poisson's MCE *widened* vs provisional, the one dataset moving the
+  other direction). This is the certification event ADR r2-0002 gated on —
+  any downstream falsification/support-gate check using the noise floor
+  should now use the certified file.
+- **Hardware tier switch (ADR r2-0004)**: h100 queue had an estimated
+  2026-08-07 backlog (169 jobs) while h200 nodes sat idle; all 4 batch-1 jobs
+  were moved to `gpu:nvidia_h200:1` before any of them had produced results
+  (uniform-tier comparability preserved — no mixed-tier contamination).
+  `project.yaml`'s `sbatch.gres` already reflects this
+  (`gpu:nvidia_h200:1`, comment cites the ADR). All new timing-ledger
+  entries this run are h200.
+- **Timestamp anomaly (r2s1_direct-B1 review_notes)**: the card's
+  `review_notes[0].utc` reads `2026-07-31T17:05:00Z`, which is **~11-14 min
+  ahead of the actual system clock** at the time this maintainer ran
+  (confirmed via `date -u`, ~16:51-16:56Z) and also postdates the card file's
+  own mtime (16:23:17Z per `stat`). Read-only for cards, so not corrected
+  here — flagged for the orchestrator/reviewer subagent's awareness in case
+  its internal clock/timestamp logic is drifting; does not affect any scored
+  quantity.
+- **Analyzer caveat carried forward (r2s1_direct-B1, from code-review)**: the
+  D3 certificate's aleatoric-floor estimate is window-sensitive. At the
+  recipe's window (1000 closest pairs), `ext__helmholtz_2d` reads 1.200 —
+  worse than the zero predictor (1.0) — despite the card's own gate stamping
+  it `verdict: supported, trustworthy: true` (the gate tests `d_min`, not
+  window width). The initial-analyzer must NOT report this as a ceiling for
+  helmholtz (cite the zero-floor column instead); `allen_cahn`'s ceiling
+  moves ~50% across windows (0.315-0.471) and must be reported as a range.
+  `pfc`/`fisher_kpp` are window-robust and quotable.
+- **Analyzer caveat (r2s2_stacked-B1, from code-review)**: ifc_poisson's rung
+  ladder is UNPAIRED (independent condition draws per rung, min distance
+  0.08-0.30, never 0) — matches r2s3's independent finding, an
+  established cross-stream benchmark-integrity item for the round report
+  (round-1's copylf `lf[:n_hf]` truncation semantics on ifc train were never
+  valid pairs either). A2/A5 arms there are `arm_semantics_degraded=True`,
+  and A2-A3 is an upper bound on shift, not epoch-matched. Analyzer must open
+  `diag_ifc_poisson` since the panel JSON itself carries no degradation flag.
+- **Analyzer caveat (r2s3_lf_train_signal-B1, from code-review)**: the
+  shared-max-abs-rungs scaler makes ifc_poisson's `rung_native` stage-1 loss
+  ~42x amplitude-weighted (~1770x in scaled MSE) toward rung 8 over HF — a
+  card-locked design choice, not a build defect. A null/negative F1 on
+  ifc_poisson is NOT by itself evidence LF training signal adds nothing;
+  part 5 must report `extra.shared_scaler_max_abs` per arm alongside F1, and
+  the natural B2 follow-up is a per-rung/per-stage-scaler variant. F1 is also
+  epoch-matched but not step-matched (rung_native gets ~14x more optimizer
+  steps per epoch than hf_only on ifc_poisson at batch 16).
 - **Gates**: G1-r2 PASS, G2-r2 PASS, G3-r2 PASS (all 2026-07-31,
   `state/gates.md`) — round cleared for stream launch. Unchanged this run.
-- **Noise floor**: `state/noise_floor.json` is still PROVISIONAL
-  (`_source: round1-batch0-rescaled`) until r2s4-B1 certifies. The real
-  certification jobs (seeds 0-2) remain PENDING in the queue — no real cert
-  data exists yet. The only certification-adjacent artifacts on disk
-  (`worktrees/r2s4_diag/B1/scratchpad/certify_synthetic/*`) remain explicitly
-  FABRICATED plumbing-check data per that dir's own README and must never be
-  cited or installed over `state/noise_floor.json`.
-- **Analyzer caveat (r2s1_direct-B1, from code-review)**: the D3 certificate's
-  aleatoric-floor estimate is window-sensitive (250/1000/4000/16000 closest
-  pairs vs random-1000, measured by the reviewer). At the recipe's window
-  (1000 closest), `ext__helmholtz_2d` reads 1.200 — worse than the zero
-  predictor (1.0) — despite being flagged `verdict: supported, trustworthy:
-  true` by the card's own gate (which tests `d_min`, not window width). The
-  initial-analyzer/mechanism-analyzer must NOT report this as a ceiling for
-  helmholtz (cite the zero-floor column instead); `allen_cahn`'s ceiling
-  moves ~50% across windows and must be reported as a range (0.315-0.471),
-  not a point value. `pfc` and `fisher_kpp` are window-robust and quotable.
-  Zero-cost to fix (training-free, offline-regenerable), does not affect any
-  scored split or pre-registered falsification threshold.
-- **Builder->card lag**: r2s2_stacked's builder handoff (15:48:15Z) has not
-  been reflected in its card `status` or `current_stage.txt` for three
-  consecutive maintainer runs (now ~44 min and counting) — flagged for the
-  orchestrator; liveness-confirmed via a fresh smoke-evidence write this run
-  (not yet actionable as a stall, but now the longest-outstanding lag in the
-  round).
-- **Round-1 top-3 seed confirms**: NOT launched — pending a separate,
-  explicit operator (Eloise) gate (`state/orchestrator_flow.md`).
+- **Round-1 top-3 seed confirms**: NOT this maintainer's scope (round-1 jobs
+  visible in `squeue` as `r1-*`, PENDING) — separate round, separate report.
 - No reopen candidates, no `blocked.md` entries, no abandoned streams — none
   are possible yet (all streams at batch 1, no skip/block history).
-- Timing ledger: `state/timing_ledger.json` still has zero entries — no
-  COMPLETED `r2-*` job exists yet to upsert.
+- **Timing ledger**: `state/timing_ledger.json` now has its first 4 entries
+  (3x r2s4_diag seeds 0-2, 1x r2s1_direct seed 0; all h200, elapsed 4.13-6.95
+  min) upserted from `sacct` this run. r2s2_stacked and r2s3_lf_train_signal
+  jobs are still RUNNING, not yet eligible for the ledger.
 - Repo hygiene: `git status --short` on `mffp_autoresearch/round2/` shows
-  uncommitted working-tree changes to `experiment_cards/r2s1_direct/batch_1/B1.json`,
-  `state/orchestrator_flow.md`, and `state/r2s1_direct/current_stage.txt`
-  from other subagents (review/orchestrator writes this cycle), not from this
-  maintainer run — confirmed no Write call this run touched
-  `experiment_cards/`. Most recent `round2: auto-sync` commit is `2779bcf`
-  (2026-07-31T16:14:17Z), which predates these changes.
+  only `experiment_cards/r2s2_stacked/batch_1/B1.json` as modified in the
+  working tree (from another subagent's card write this cycle, predating
+  this maintainer run) — confirmed no Write call this run touched
+  `experiment_cards/`.

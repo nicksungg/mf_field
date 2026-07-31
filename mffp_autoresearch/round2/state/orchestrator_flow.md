@@ -155,3 +155,44 @@
   null F1 on ifc_poisson NOT evidence LF adds nothing; B2 = per-rung scaler variant);
   eta_min undeclared (build_notes fix); F1 epoch- but not step-matched (2nd confound).
   ORCHESTRATOR SUBMITTED seed 0: job 66165379 (h200, verified TresPerNode). Card -> running.
+
+- 2026-07-31 ~11:3x PDT r2s4-B1 ALL 3 SEEDS COMPLETED (66161480/81/82, h200). Orchestrator ran
+  03_certify.sh: certified MCEs 10-1700x tighter than provisional (helmholtz 2.95, ifc 0.94,
+  allen_cahn 0.88, ch 0.091, fisher 0.0007, pfc 0.213); certifier IQM geomean ~19.9 beats the
+  23.06 floor anchor; F1/F2 not fired, F3 pass. noise_floor_candidate INSTALLED over
+  state/noise_floor.json (provisional backed up as .bak; sanity-checked non-synthetic).
+  -> initial-analyzer dispatched (3-seed).
+
+- 2026-07-31 ~11:5x PDT r2s1-B1 seed 0 COMPLETED (66163572, h200). -> initial-analyzer
+  dispatched (judge pre-registered clauses as written vs provisional floor; also report
+  deltas vs the newly certified floor; certificate caveats forwarded).
+
+- 2026-07-31 ~12:1x PDT r2s2 code-reviewer SUGGEST (6/6): ifc unpaired-ladder deviation
+  independently REPRODUCED (0.08-0.30 every rung; agrees with r2s3 websearcher — established
+  finding). Analyzer-facing: A2-A3 is an UPPER BOUND on shift (not epoch-matched); "identically
+  zero" code string false at smoke tier (fix next build); panel JSON carries no degradation
+  flag -> analyzer must open diag_ifc_poisson. ORCHESTRATOR SUBMITTED seed 0 panel 66166237 +
+  guard 66166238 (h200). Card -> running. BATCH-1 WAVE FULLY SUBMITTED (all 4 streams).
+
+- 2026-07-31 ~12:2x PDT r2s1-B1 initial-analyzer SUCCESS: geomean 19.6444 (provisional-single-
+  seed) vs anchor 23.0636 (-14.8%, resolvable vs certified panel mce 1.1419); floors beaten
+  resolvably on pfc/allen_cahn/fisher/ch; falsification LEG 1 FIRED by 0.0444 (3.9% of mce —
+  inside seed noise, caveat recorded); guard heat_local flag fired (6.24x copylf; beats NN
+  floor; noted not auto-reject). Leads: ref_pod_lin BEATS scored arm on allen_cahn; best_epoch
+  2-24/200 overfit; wall clock 6.95 min vs 4h request (timing ledger). -> mechanism-analyzer.
+
+- 2026-07-31 ~12:5x PDT r2s4-B1 initial-analyzer SUCCESS (10/10, 3-seed): geomean 19.8178
+  [19.3853, 20.5271] CONFIRMED (F1 1/5, F2 1/6, F3 pass 9/9 floors exact); stream anchor
+  UPDATED 23.0636 -> 19.8178 (supersedes block preserved). Guard flags heat_local 16x /
+  sod_1d 2.1x recorded as regime artefacts (no auto-reject). Certified constants are RERUN
+  spreads; 3 seeds can't push sign-flip p < 0.25. k*-NN cond-mean floor beats frozen best
+  floor 5/6 (ADR r2-0003 evidence). -> mechanism-analyzer dispatched.
+
+- 2026-07-31 ~13:1x PDT r2s1-B1 mechanism turn 1 (6/6): ROUND-DEFINING — condition determines
+  only 1-3 field DOF per dataset (OOF R2>0.1 modes: 5/2/1/1/3/1); decoder INFORMATION-limited
+  not representation-limited; two regimes (coefficient-unidentifiable: helmholtz/pfc/ch/ifc,
+  1-2 decade oracle gap = missing info; basis-inadequate: allen_cahn/fisher). allen_cahn's
+  learnable map = ONE scalar (mode-1 R2 0.979); 16M-param decoder overfits rediscovering it;
+  lambda blend repairs decoder damage. Lanthaler POD-failure prediction fired only on SMOOTH
+  helmholtz (408x ||y|| spread — amplitude effect). -> turn 2 dispatched (H1 closed-form head
+  vs H2 lambda predictor).

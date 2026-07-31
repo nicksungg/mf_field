@@ -1,43 +1,67 @@
 {
+ "anchor_type": "certified_3seed_panel_geomean",
+ "certified_utc": "2026-07-31T17:03:41Z",
+ "ci95": [
+  19.38527533084317,
+  20.527142151972782
+ ],
+ "datasets": [
+  "ext__helmholtz_2d",
+  "sharp__phase_field_crystal_2d",
+  "sharp__allen_cahn_2d",
+  "sharp__fisher_kpp_2d",
+  "sharp__cahn_hilliard",
+  "ifc_poisson"
+ ],
+ "note": "Certified 3-seed panel geomean skill of the r2s4_diag-B1 certifier (family r2s4_cert_min, condition-only FiLM-FNO decoder, smoke tier 200 epochs, seeds 0/1/2). Beats the previous training-free launch anchor 23.063616857615774 by 3.245772 with the 3-seed interval [19.3853, 20.5271] entirely below it and above the certified panel min_claimable_effect 1.1418668211296108 (state/noise_floor.json). Lower is better. The superseded floor anchor is preserved below and remains intact in state/anchors/floors.json and program.md 2.3; per-dataset floor arms stay the mandatory reported columns on every model card.",
+ "per_dataset_mean_skill": {
+  "ext__helmholtz_2d": 6.943835485605,
+  "ifc_poisson": 8.261220201059428,
+  "sharp__allen_cahn_2d": 147.31539352549365,
+  "sharp__cahn_hilliard": 13.17806662874691,
+  "sharp__fisher_kpp_2d": 11.558192892385529,
+  "sharp__phase_field_crystal_2d": 47.847203673185426
+ },
+ "per_seed": [
+  19.38527533084317,
+  19.541116712906522,
+  20.527142151972782
+ ],
+ "provisional": false,
+ "source_card": "r2s4_diag-B1",
+ "stream": "r2s4_diag",
+ "supersedes": {
   "anchor_type": "best_floor_panel_geomean",
   "certified_utc": "2026-07-31T14:20:17Z",
-  "datasets": [
-    "ext__helmholtz_2d",
-    "sharp__phase_field_crystal_2d",
-    "sharp__allen_cahn_2d",
-    "sharp__fisher_kpp_2d",
-    "sharp__cahn_hilliard",
-    "ifc_poisson"
-  ],
   "note": "Round-2 launch anchor: geomean over the panel of the best training-free floor (NN-in-condition / train-mean / zero) per dataset, under the corrected copy-LF denominators (ADR r2-0001). skill < 1 vs copy-LF remains the headline deployment claim; beating THIS anchor is the minimum bar for any trained model.",
   "per_dataset": {
-    "ext__helmholtz_2d": {
-      "arm": "zero",
-      "skill": 3.3441095587226317
-    },
-    "ifc_poisson": {
-      "arm": "nn_condition",
-      "skill": 10.054890929609687
-    },
-    "sharp__allen_cahn_2d": {
-      "arm": "nn_condition",
-      "skill": 269.19587575878967
-    },
-    "sharp__cahn_hilliard": {
-      "arm": "nn_condition",
-      "skill": 23.180342227117514
-    },
-    "sharp__fisher_kpp_2d": {
-      "arm": "train_mean",
-      "skill": 11.99311063309952
-    },
-    "sharp__phase_field_crystal_2d": {
-      "arm": "train_mean",
-      "skill": 59.8117544948052
-    }
+   "ext__helmholtz_2d": {
+    "arm": "zero",
+    "skill": 3.3441095587226317
+   },
+   "ifc_poisson": {
+    "arm": "nn_condition",
+    "skill": 10.054890929609687
+   },
+   "sharp__allen_cahn_2d": {
+    "arm": "nn_condition",
+    "skill": 269.19587575878967
+   },
+   "sharp__cahn_hilliard": {
+    "arm": "nn_condition",
+    "skill": 23.180342227117514
+   },
+   "sharp__fisher_kpp_2d": {
+    "arm": "train_mean",
+    "skill": 11.99311063309952
+   },
+   "sharp__phase_field_crystal_2d": {
+    "arm": "train_mean",
+    "skill": 59.8117544948052
+   }
   },
-  "provisional": false,
   "source": "training_free_floors",
-  "stream": "r2s4_diag",
   "value": 23.063616857615774
+ },
+ "value": 19.817844731907492
 }

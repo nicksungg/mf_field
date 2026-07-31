@@ -1,102 +1,308 @@
 {
-  "_certified_utc": "2026-07-31T14:20:17Z",
-  "_note": "Per-seed nRMSE spreads from round-1 batch 0 (LF-consuming families), skills recomputed under the corrected round-2 denominators. PROVISIONAL: not a numeric threshold (r1 program \u00a74.5) until r2s4-B1 certifies a condition->HF 3-seed spread at smoke tier.",
-  "_provisional": true,
-  "_source": "round1-batch0-rescaled",
+  "_certified_utc": "2026-07-31T16:49:04Z",
+  "_note": "Replaces the round-1-rescaled provisional file (program.md \u00a74.3/\u00a712.4). INSTALLED BY THE ORCHESTRATOR; this probe does not write state/.",
+  "_panel_geomean": {
+    "anchor_best_floor_panel_geomean": 23.063616857615774,
+    "ci95_stratified_bootstrap": [
+      19.38527533084317,
+      20.527142151972782
+    ],
+    "iqm": 19.817844731907492,
+    "iqm_method": "scipy.stats.trim_mean semantics, proportiontocut=0.25; with n=3 it trims nothing and equals the mean",
+    "mean": 19.817844731907492,
+    "min_claimable_effect": 1.1418668211296108,
+    "min_claimable_effect_definition": "max(spread_maxmin, paired_null_95) \u2014 guarantees a usable constant even when the conservative paired protocol declares nothing",
+    "n_seeds": 3,
+    "null_iqm_diff_95": 0.7612445474197429,
+    "paired_null_95": 1.0379725664207105,
+    "paired_null_definition": "95th percentile of |mean of 3 signed same-model pairwise seed deltas| under a bootstrap over the 6-element signed null pool (Du, paired per-seed deltas)",
+    "pairwise_seed_deltas": [
+      -0.1558413820633504,
+      -1.1418668211296108,
+      -0.9860254390662604
+    ],
+    "per_seed": [
+      19.38527533084317,
+      19.541116712906522,
+      20.527142151972782
+    ],
+    "sign_flip_min_attainable_p": 0.25,
+    "sign_flip_p": 0.25,
+    "spread_maxmin": 1.1418668211296108
+  },
+  "_protocol": {
+    "bootstrap_rng_seed": 0,
+    "iqm_and_stratified_bootstrap": "Agarwal et al., arXiv:2108.13264",
+    "min_claimable_effect": "max(spread_maxmin, paired_null_95)",
+    "n_boot": 10000,
+    "paired_per_seed_deltas": "Du, arXiv:2511.19794"
+  },
+  "_provenance": {
+    "code_hash": "574ff2652419d6ee2b7d739b3f929ce702445402238a08c487fd0ef893ece03c",
+    "copylf_def_hash": "9753ff24e856f595748492dec6cb6c215d748f97e8ec4a679b651f8846da907a",
+    "env": {
+      "R2S4B1_BATCH": "16",
+      "R2S4B1_BLOCKS": "2",
+      "R2S4B1_BOOTSTRAP_B": "10000",
+      "R2S4B1_CLIP": "1.0",
+      "R2S4B1_DIAG_OUT": "mffp_autoresearch_outputs/round2/r2s4_diag/B1/eval",
+      "R2S4B1_FILM_MLP_WIDTH": "64",
+      "R2S4B1_FLOORS_JSON": "mffp_autoresearch/round2/state/anchors/floors.json",
+      "R2S4B1_FLOOR_ARMS": "nn_condition,train_mean,zero",
+      "R2S4B1_FLOOR_TOL": "1e-9",
+      "R2S4B1_KNN_K": "1,2,4,8,16,32,64,128,400",
+      "R2S4B1_KNN_SELECT": "loo_train",
+      "R2S4B1_LR": "1e-3",
+      "R2S4B1_MODES": "16",
+      "R2S4B1_SCHED": "cosine",
+      "R2S4B1_TARGET_NORM": "train_zscore_global",
+      "R2S4B1_VAL_FRAC": "0.1",
+      "R2S4B1_VAL_MIN_N": "20",
+      "R2S4B1_WD": "1e-5",
+      "R2S4B1_WIDTH": "32"
+    },
+    "epochs": 200,
+    "family": "r2s4_cert_min",
+    "nrmse_def_hash": "d3d0ade9191c13bacc40702f3eb26ad290e01641cacee22a1d2233b74c035850",
+    "result_files": [
+      "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s4_diag/B1/eval/result_panel_s0.json",
+      "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s4_diag/B1/eval/result_panel_s1.json",
+      "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s4_diag/B1/eval/result_panel_s2.json"
+    ],
+    "seeds": [
+      0,
+      1,
+      2
+    ]
+  },
+  "_provisional": false,
+  "_source": "r2s4_diag-B1 condition->HF 3-seed spread (family r2s4_cert_min, smoke tier, seeds 0,1,2)",
   "ext__helmholtz_2d": {
-    "family": "mf_fno_transfer_film",
-    "mean_skill": 15.22274712956998,
-    "min_claimable_effect": 10.681106622068137,
+    "ci95_stratified_bootstrap": [
+      5.8530028173372735,
+      8.805994391709604
+    ],
+    "delta_vs_provisional": -7.728115047695807,
+    "family": "r2s4_cert_min",
+    "iqm": 6.943835485605,
+    "iqm_method": "scipy.stats.trim_mean semantics, proportiontocut=0.25; with n=3 it trims nothing and equals the mean",
+    "mean": 6.943835485605,
+    "mean_skill": 6.943835485605,
+    "min_claimable_effect": 2.95299157437233,
+    "min_claimable_effect_definition": "max(spread_maxmin, paired_null_95) \u2014 guarantees a usable constant even when the conservative paired protocol declares nothing",
+    "n_seeds": 3,
+    "null_iqm_diff_95": 1.968661049581554,
+    "paired_null_95": 2.73998728741843,
+    "paired_null_definition": "95th percentile of |mean of 3 signed same-model pairwise seed deltas| under a bootstrap over the 6-element signed null pool (Du, paired per-seed deltas)",
+    "pairwise_seed_deltas": [
+      0.3195064304308497,
+      -2.6334851439414804,
+      -2.95299157437233
+    ],
     "per_seed_nrmse": [
-      6.202266339979611,
-      3.0082601525304,
-      4.445796838641283
+      1.8457855938565217,
+      1.7502425427631558,
+      2.633285254886589
     ],
     "per_seed_skill": [
-      20.74105815326945,
-      10.059951531201312,
-      14.867231704239172
+      6.172509247768123,
+      5.8530028173372735,
+      8.805994391709604
     ],
-    "spread": 10.681106622068137
+    "provisional_min_claimable_effect": 10.681106622068137,
+    "sign_flip_min_attainable_p": 0.25,
+    "sign_flip_p": 0.5,
+    "spread": 2.95299157437233,
+    "spread_maxmin": 2.95299157437233
   },
   "ifc_poisson": {
-    "family": "mf_fno_transfer_film",
-    "mean_skill": 1.5656334312786022,
-    "min_claimable_effect": 0.23990756041925798,
+    "ci95_stratified_bootstrap": [
+      7.941161869912803,
+      8.878865998865917
+    ],
+    "delta_vs_provisional": 0.6977965685338561,
+    "family": "r2s4_cert_min",
+    "iqm": 8.261220201059428,
+    "iqm_method": "scipy.stats.trim_mean semantics, proportiontocut=0.25; with n=3 it trims nothing and equals the mean",
+    "mean": 8.261220201059428,
+    "mean_skill": 8.261220201059428,
+    "min_claimable_effect": 0.9377041289531141,
+    "min_claimable_effect_definition": "max(spread_maxmin, paired_null_95) \u2014 guarantees a usable constant even when the conservative paired protocol declares nothing",
+    "n_seeds": 3,
+    "null_iqm_diff_95": 0.6251360859687427,
+    "paired_null_95": 0.9227235526286076,
+    "paired_null_definition": "95th percentile of |mean of 3 signed same-model pairwise seed deltas| under a bootstrap over the 6-element signed null pool (Du, paired per-seed deltas)",
+    "pairwise_seed_deltas": [
+      -0.9377041289531141,
+      -0.022470864486759723,
+      0.9152332644663543
+    ],
     "per_seed_nrmse": [
-      0.05560809884697858,
-      0.05242181977800858,
-      0.06105849195310187
+      0.2858818273168609,
+      0.319639175959173,
+      0.28669077843838425
     ],
     "per_seed_skill": [
-      1.5446694124160718,
-      1.4561616605002385,
-      1.6960692209194965
+      7.941161869912803,
+      8.878865998865917,
+      7.963632734399563
     ],
-    "spread": 0.23990756041925798
+    "provisional_min_claimable_effect": 0.23990756041925798,
+    "sign_flip_min_attainable_p": 0.25,
+    "sign_flip_p": 0.75,
+    "spread": 0.9377041289531141,
+    "spread_maxmin": 0.9377041289531141
   },
   "sharp__allen_cahn_2d": {
-    "family": "mf_fno_pinn_transfer",
-    "mean_skill": 148.1520561249866,
-    "min_claimable_effect": 14.815205612498659,
+    "ci95_stratified_bootstrap": [
+      146.89350343216486,
+      147.77320815117753
+    ],
+    "delta_vs_provisional": -13.935500893485994,
+    "family": "r2s4_cert_min",
+    "iqm": 147.31539352549365,
+    "iqm_method": "scipy.stats.trim_mean semantics, proportiontocut=0.25; with n=3 it trims nothing and equals the mean",
+    "mean": 147.31539352549365,
+    "mean_skill": 147.31539352549365,
+    "min_claimable_effect": 0.8797047190126648,
+    "min_claimable_effect_definition": "max(spread_maxmin, paired_null_95) \u2014 guarantees a usable constant even when the conservative paired protocol declares nothing",
+    "n_seeds": 3,
+    "null_iqm_diff_95": 0.5864698126751193,
+    "paired_null_95": 0.7151249996663486,
+    "paired_null_definition": "95th percentile of |mean of 3 signed same-model pairwise seed deltas| under a bootstrap over the 6-element signed null pool (Du, paired per-seed deltas)",
+    "pairwise_seed_deltas": [
+      0.8797047190126648,
+      0.49373915803894874,
+      -0.38596556097371604
+    ],
     "per_seed_nrmse": [
-      0.2638331949457305,
-      0.2637054122632834,
-      0.26393395849093787
+      0.2631495488627239,
+      0.26158300034667786,
+      0.2622703148099524
     ],
     "per_seed_skill": [
-      148.15711371120025,
-      148.08535657913228,
-      148.2136980846272
+      147.77320815117753,
+      146.89350343216486,
+      147.27946899313858
     ],
-    "spread": 0.12834150549491596
+    "provisional_min_claimable_effect": 14.815205612498659,
+    "sign_flip_min_attainable_p": 0.25,
+    "sign_flip_p": 0.5,
+    "spread": 0.8797047190126648,
+    "spread_maxmin": 0.8797047190126648
   },
   "sharp__cahn_hilliard": {
-    "family": "mf_fno_pinn_transfer",
-    "mean_skill": 11.603569120520158,
-    "min_claimable_effect": 1.1603569120520159,
+    "ci95_stratified_bootstrap": [
+      13.125780297601219,
+      13.217025650824231
+    ],
+    "delta_vs_provisional": -1.069111558829007,
+    "family": "r2s4_cert_min",
+    "iqm": 13.17806662874691,
+    "iqm_method": "scipy.stats.trim_mean semantics, proportiontocut=0.25; with n=3 it trims nothing and equals the mean",
+    "mean": 13.17806662874691,
+    "mean_skill": 13.17806662874691,
+    "min_claimable_effect": 0.09124535322300886,
+    "min_claimable_effect_definition": "max(spread_maxmin, paired_null_95) \u2014 guarantees a usable constant even when the conservative paired protocol declares nothing",
+    "n_seeds": 3,
+    "null_iqm_diff_95": 0.060830235482004724,
+    "paired_null_95": 0.07415754455037298,
+    "paired_null_definition": "95th percentile of |mean of 3 signed same-model pairwise seed deltas| under a bootstrap over the 6-element signed null pool (Du, paired per-seed deltas)",
+    "pairwise_seed_deltas": [
+      0.025631713008953838,
+      0.09124535322300886,
+      0.06561364021405502
+    ],
     "per_seed_nrmse": [
-      0.4876164761203968,
-      0.4921948954190091,
-      0.47537932937702465
+      0.5525108301042916,
+      0.5514393485617942,
+      0.5486965040082187
     ],
     "per_seed_skill": [
-      11.664639173554809,
-      11.774162972931855,
-      11.371905215073813
+      13.21702565082423,
+      13.191393937815276,
+      13.12578029760122
     ],
-    "spread": 0.40225775785804174
+    "provisional_min_claimable_effect": 1.1603569120520159,
+    "sign_flip_min_attainable_p": 0.25,
+    "sign_flip_p": 0.25,
+    "spread": 0.09124535322300886,
+    "spread_maxmin": 0.09124535322300886
   },
   "sharp__fisher_kpp_2d": {
-    "family": "mf_fno_pinn_transfer",
-    "mean_skill": 12.197827127831308,
-    "min_claimable_effect": 1.2197827127831309,
+    "ci95_stratified_bootstrap": [
+      11.557798681492807,
+      11.558512362775486
+    ],
+    "delta_vs_provisional": -1.2190690315004533,
+    "family": "r2s4_cert_min",
+    "iqm": 11.558192892385529,
+    "iqm_method": "scipy.stats.trim_mean semantics, proportiontocut=0.25; with n=3 it trims nothing and equals the mean",
+    "mean": 11.558192892385529,
+    "mean_skill": 11.558192892385529,
+    "min_claimable_effect": 0.0007136812826775696,
+    "min_claimable_effect_definition": "max(spread_maxmin, paired_null_95) \u2014 guarantees a usable constant even when the conservative paired protocol declares nothing",
+    "n_seeds": 3,
+    "null_iqm_diff_95": 0.00047578752178445427,
+    "paired_null_95": 0.0005573641508499113,
+    "paired_null_definition": "95th percentile of |mean of 3 signed same-model pairwise seed deltas| under a bootstrap over the 6-element signed null pool (Du, paired per-seed deltas)",
+    "pairwise_seed_deltas": [
+      0.0007136812826775696,
+      0.00024472988719459465,
+      -0.00046895139548297493
+    ],
     "per_seed_nrmse": [
-      0.26463871182832954,
-      0.2588897501906785,
-      0.2613835503509599
+      0.24792435307238947,
+      0.2479090449631143,
+      0.24791910373778173
     ],
     "per_seed_skill": [
-      12.337754578888031,
-      12.06973151726282,
-      12.185995287343074
+      11.558512362775486,
+      11.557798681492809,
+      11.558267632888292
     ],
-    "spread": 0.26802306162521106
+    "provisional_min_claimable_effect": 1.2197827127831309,
+    "sign_flip_min_attainable_p": 0.25,
+    "sign_flip_p": 0.75,
+    "spread": 0.0007136812826775696,
+    "spread_maxmin": 0.0007136812826775696
   },
   "sharp__phase_field_crystal_2d": {
-    "family": "mf_fno_transfer_film",
-    "mean_skill": 69.83921646759966,
-    "min_claimable_effect": 6.983921646759966,
+    "ci95_stratified_bootstrap": [
+      47.7442664035436,
+      47.95729375316059
+    ],
+    "delta_vs_provisional": -6.770894297142973,
+    "family": "r2s4_cert_min",
+    "iqm": 47.847203673185426,
+    "iqm_method": "scipy.stats.trim_mean semantics, proportiontocut=0.25; with n=3 it trims nothing and equals the mean",
+    "mean": 47.847203673185426,
+    "mean_skill": 47.847203673185426,
+    "min_claimable_effect": 0.21302734961699343,
+    "min_claimable_effect_definition": "max(spread_maxmin, paired_null_95) \u2014 guarantees a usable constant even when the conservative paired protocol declares nothing",
+    "n_seeds": 3,
+    "null_iqm_diff_95": 0.14201823307799089,
+    "paired_null_95": 0.1739463861808422,
+    "paired_null_definition": "95th percentile of |mean of 3 signed same-model pairwise seed deltas| under a bootstrap over the 6-element signed null pool (Du, paired per-seed deltas)",
+    "pairwise_seed_deltas": [
+      0.1172428903084537,
+      0.21302734961699343,
+      0.09578445930853974
+    ],
     "per_seed_nrmse": [
-      0.5147787161491543,
-      0.5139619404866399,
-      0.5176627182289554
+      0.3539621655772402,
+      0.3530968217660211,
+      0.35238985788227895
     ],
     "per_seed_skill": [
-      69.74585565657773,
-      69.63519312202759,
-      70.13660062419368
+      47.957293753160585,
+      47.84005086285213,
+      47.74426640354359
     ],
-    "spread": 0.5014075021660886
+    "provisional_min_claimable_effect": 6.983921646759966,
+    "sign_flip_min_attainable_p": 0.25,
+    "sign_flip_p": 0.25,
+    "spread": 0.21302734961699343,
+    "spread_maxmin": 0.21302734961699343
   }
 }

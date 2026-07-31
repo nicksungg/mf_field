@@ -9,10 +9,10 @@
   "source_iteration": "brainstormer/r2s1_direct/batch_1/iteration_1.md",
   "reopened_from": null,
   "1_id_category": "r2s1_direct-B1 / gap / identifiability-certified condition->HF decoder with a condition-predicted amplitude-direction factorization",
-  "2_motivation": "The websearcher's verdict forbids the obvious card and names\nthe one that is open: D1 (\"FiLM/modulation-conditioned spectral (FNO) decoder:\ncondition -> latent -> HF field, no field input\") is **`preempted`** \u2014\n\"Nothing mechanism-level. Admissible only as a *measurement/baseline arm* on\nthis panel against the mandatory floor arms\" \u2014 and D3 is\n**`preempted-but-MF-composition-open`**: \"(i) the barrier diagnostic has never\nbeen instantiated where the unobserved driver is a *stored coarse solve*,\nmaking the floor validatable rather than assumed; (ii) NN-in-condition /\ntrain-mean / zero as a standing certification panel is not done in the fetched\nbenchmark literature.\" This card therefore (a) declares the D1 decoder as its\nbaseline architecture, not its contribution; (b) adds the one regime-specific\nelement the data demands \u2014 a **condition-predicted amplitude head** \u2014 which is\nthe exact successor round 1 named when s5_tuning closed (\"(i) a PREDICTED scale\nhead\", `round1/experiment_cards/s5_tuning/batch_3/B3.json` part 7, where the\nLF-proxy scaler reached nRMSE 0.367721 on helmholtz but the true-scale oracle\nreached 0.258380 = skill 0.864 under the corrected denominator, and where 60%\nof the damage was the amplitude channel per the two-gate rule); and (c) frames\nevery number against the D3 certificate, computed in-job and training-free, so\nADR r2-0003's conditional-mean reality becomes a measured per-dataset ceiling\ninstead of an assumption.",
-  "3_description": "New from-scratch family `models_r2/r2s1_cond_decoder` \u2014\ncondition-only forward signature, no field input at any stage of test, no\nround-1 code vendored. Condition standardized on train statistics -> 16 random\nFourier features -> 128-wide MLP -> 16x16 latent seed grid; 4 FiLM-modulated\nspectral blocks (hidden 64, `modes_cap` 16) with progressive Fourier upsampling\nto the native HF grid (WORK_CAP 256); the decoder output is L2-normalized to a\nunit **direction** field and multiplied by `exp(logamp)` from a separate\n128-wide MLP **amplitude head** trained on `log||y||`. Loss = relative L2 with\na p25-median denominator floor (round-1 two-gate rule: lambda <= 1 always +\nlow-norm tail gate), AdamW lr 1e-3 / wd 1e-5 / cosine / batch 16 / grad-clip\n1.0 / 200 epochs. **Two disjoint train-side folds** (10% model selection, 10%\nblend calibration) \u2014 no test-split quantity is ever consulted (the round-1 D3\nval_idx double-consumption caveat); when `N_train < 20` (ifc_poisson, N_hf = 5)\nthe blend switches to leave-one-out and training to fixed-epoch, no early stop.\nFinal prediction = `lambda * model + (1 - lambda) * b` with `b` in {zero,\ntrain_mean, nn_condition} and `lambda` on a 21-point grid, both chosen on the\ncalibration fold. Emitted splits: `test_hf` (scored, blended arm) plus\nnon-scored `ref_raw` (lambda = 1, same checkpoint \u2014 free), `ref_pod_lin`\n(rank-50 POD + ridge, the declared D2 linear-reconstruction control, predicted\nin advance to fail on the 4 discontinuous datasets per Lanthaler 2210.01074),\n`ref_zero` / `ref_train_mean` / `ref_nn_condition` (floor arms recomputed\nin-job and asserted equal to `state/anchors/floors.json` within 1e-9 \u2014 a seam\ncheck, NOT a re-certification of r2s4's floors), and `cert_*` (the D3\ncertificate: aleatoric estimate from condition-pair differences with a\ndistance-slope test and zero-distance extrapolation, a `no_support` verdict\nwhen the nearest pair distance exceeds 0.5 \u2014 `sharp__cahn_hilliard` will trip\nit at 2.822 \u2014 the implied maximum achievable skill per dataset, and the\n**LF-carrier cosine** between block-mean HF pair differences and train-LF pair\ndifferences). Guards run at contract tier (2 epochs). Extra split names\ndeliberately avoid the `test*` prefix because\n`eval/score_panel.py::_extract_test_metric` errors on ambiguous test splits.",
-  "4_expected_result": "(primary blended arm, seed 0, 200 epochs, skill units;\nevery number `provisional-single-seed`):\n\n| dataset | best floor (arm) | expected | certified ceiling (in-job cert leg) |\n|---|---|---|---|\n| `ext__helmholtz_2d` | 3.3441 (zero) | 1.3-2.5 **report-only**, zero-floor column shown | ~0 (deterministic map) |\n| `sharp__phase_field_crystal_2d` | 59.812 (train_mean) | 44-55 (pfc denominator caveat: 0.007381 under variant C; no fidelity gap under band-limited) | ~41 |\n| `sharp__allen_cahn_2d` | 269.196 (NN) | 150-200 | ~35 if deterministic, ~131 if stochastic \u2014 the card decides |\n| `sharp__fisher_kpp_2d` | 11.993 (train_mean) | 11.0-11.8 | ~11 (essentially exhausted) |\n| `sharp__cahn_hilliard` | 23.180 (NN) | 12-19 | `no_support` (min pair distance 2.822 in 19 dims) |\n| `ifc_poisson` | 10.055 (NN) | 9-10, **anecdote-grade** (N_hf = 5) | not estimable |\n\nPanel geomean point estimate **~17.3** vs the launch anchor **23.0636**\n(-25%). Against the noise floor: the geomean leg demands >= 15% vs an implied\ngeomean noise of ~12.4%, and every per-dataset leg exceeds its\n`min_claimable_effect` (see below) except `ext__helmholtz_2d`, which is\nreport-only for exactly that reason.",
-  "expected_falsification": "H-r2s1-B1 (\"a from-scratch condition->HF decoder\nthat predicts the per-sample amplitude from the condition and is blended\nout-of-fold onto the best training-free floor extracts information the floors\ndo not have, and its residual gap is bounded by a measurable identifiability\nfloor\") is FALSIFIED if, at 200 epochs / seed 0 on the stripped view, the\nprimary `test_hf` arm's panel geomean skill is `> 19.60` (i.e. fails to beat\nthe frozen best-floor anchor 23.0636 by 15%), **or** it fails to beat the best\nfrozen floor by >= 25% on BOTH `sharp__cahn_hilliard` (needs `<= 17.39`) and\n`sharp__allen_cahn_2d` (needs `<= 201.90`) \u2014 the two datasets the in-job\ncertificate says have real headroom \u2014 **or** it is worse than 1.15x the best\nfrozen floor on any scored panel dataset (`sharp__phase_field_crystal_2d`\n`> 68.78`, `sharp__fisher_kpp_2d` `> 13.79`, `sharp__allen_cahn_2d` `> 309.58`,\n`sharp__cahn_hilliard` `> 26.66`, `ifc_poisson` `> 11.56`), which the\nout-of-fold blend is designed to make impossible and would therefore indict the\ncalibration; `ext__helmholtz_2d` carries a report-only prediction (`<= 2.00`\nwith the zero-floor column) and no falsification weight, and every number is\nlabelled `provisional-single-seed`.",
+  "2_motivation": "The websearcher's verdict forbids the obvious card and names\nthe one that is open: D1 (\"FiLM/modulation-conditioned spectral (FNO) decoder:\ncondition -> latent -> HF field, no field input\") is **`preempted`** —\n\"Nothing mechanism-level. Admissible only as a *measurement/baseline arm* on\nthis panel against the mandatory floor arms\" — and D3 is\n**`preempted-but-MF-composition-open`**: \"(i) the barrier diagnostic has never\nbeen instantiated where the unobserved driver is a *stored coarse solve*,\nmaking the floor validatable rather than assumed; (ii) NN-in-condition /\ntrain-mean / zero as a standing certification panel is not done in the fetched\nbenchmark literature.\" This card therefore (a) declares the D1 decoder as its\nbaseline architecture, not its contribution; (b) adds the one regime-specific\nelement the data demands — a **condition-predicted amplitude head** — which is\nthe exact successor round 1 named when s5_tuning closed (\"(i) a PREDICTED scale\nhead\", `round1/experiment_cards/s5_tuning/batch_3/B3.json` part 7, where the\nLF-proxy scaler reached nRMSE 0.367721 on helmholtz but the true-scale oracle\nreached 0.258380 = skill 0.864 under the corrected denominator, and where 60%\nof the damage was the amplitude channel per the two-gate rule); and (c) frames\nevery number against the D3 certificate, computed in-job and training-free, so\nADR r2-0003's conditional-mean reality becomes a measured per-dataset ceiling\ninstead of an assumption.",
+  "3_description": "New from-scratch family `models_r2/r2s1_cond_decoder` —\ncondition-only forward signature, no field input at any stage of test, no\nround-1 code vendored. Condition standardized on train statistics -> 16 random\nFourier features -> 128-wide MLP -> 16x16 latent seed grid; 4 FiLM-modulated\nspectral blocks (hidden 64, `modes_cap` 16) with progressive Fourier upsampling\nto the native HF grid (WORK_CAP 256); the decoder output is L2-normalized to a\nunit **direction** field and multiplied by `exp(logamp)` from a separate\n128-wide MLP **amplitude head** trained on `log||y||`. Loss = relative L2 with\na p25-median denominator floor (round-1 two-gate rule: lambda <= 1 always +\nlow-norm tail gate), AdamW lr 1e-3 / wd 1e-5 / cosine / batch 16 / grad-clip\n1.0 / 200 epochs. **Two disjoint train-side folds** (10% model selection, 10%\nblend calibration) — no test-split quantity is ever consulted (the round-1 D3\nval_idx double-consumption caveat); when `N_train < 20` (ifc_poisson, N_hf = 5)\nthe blend switches to leave-one-out and training to fixed-epoch, no early stop.\nFinal prediction = `lambda * model + (1 - lambda) * b` with `b` in {zero,\ntrain_mean, nn_condition} and `lambda` on a 21-point grid, both chosen on the\ncalibration fold. Emitted splits: `test_hf` (scored, blended arm) plus\nnon-scored `ref_raw` (lambda = 1, same checkpoint — free), `ref_pod_lin`\n(rank-50 POD + ridge, the declared D2 linear-reconstruction control, predicted\nin advance to fail on the 4 discontinuous datasets per Lanthaler 2210.01074),\n`ref_zero` / `ref_train_mean` / `ref_nn_condition` (floor arms recomputed\nin-job and asserted equal to `state/anchors/floors.json` within 1e-9 — a seam\ncheck, NOT a re-certification of r2s4's floors), and `cert_*` (the D3\ncertificate: aleatoric estimate from condition-pair differences with a\ndistance-slope test and zero-distance extrapolation, a `no_support` verdict\nwhen the nearest pair distance exceeds 0.5 — `sharp__cahn_hilliard` will trip\nit at 2.822 — the implied maximum achievable skill per dataset, and the\n**LF-carrier cosine** between block-mean HF pair differences and train-LF pair\ndifferences). Guards run at contract tier (2 epochs). Extra split names\ndeliberately avoid the `test*` prefix because\n`eval/score_panel.py::_extract_test_metric` errors on ambiguous test splits.",
+  "4_expected_result": "(primary blended arm, seed 0, 200 epochs, skill units;\nevery number `provisional-single-seed`):\n\n| dataset | best floor (arm) | expected | certified ceiling (in-job cert leg) |\n|---|---|---|---|\n| `ext__helmholtz_2d` | 3.3441 (zero) | 1.3-2.5 **report-only**, zero-floor column shown | ~0 (deterministic map) |\n| `sharp__phase_field_crystal_2d` | 59.812 (train_mean) | 44-55 (pfc denominator caveat: 0.007381 under variant C; no fidelity gap under band-limited) | ~41 |\n| `sharp__allen_cahn_2d` | 269.196 (NN) | 150-200 | ~35 if deterministic, ~131 if stochastic — the card decides |\n| `sharp__fisher_kpp_2d` | 11.993 (train_mean) | 11.0-11.8 | ~11 (essentially exhausted) |\n| `sharp__cahn_hilliard` | 23.180 (NN) | 12-19 | `no_support` (min pair distance 2.822 in 19 dims) |\n| `ifc_poisson` | 10.055 (NN) | 9-10, **anecdote-grade** (N_hf = 5) | not estimable |\n\nPanel geomean point estimate **~17.3** vs the launch anchor **23.0636**\n(-25%). Against the noise floor: the geomean leg demands >= 15% vs an implied\ngeomean noise of ~12.4%, and every per-dataset leg exceeds its\n`min_claimable_effect` (see below) except `ext__helmholtz_2d`, which is\nreport-only for exactly that reason.",
+  "expected_falsification": "H-r2s1-B1 (\"a from-scratch condition->HF decoder\nthat predicts the per-sample amplitude from the condition and is blended\nout-of-fold onto the best training-free floor extracts information the floors\ndo not have, and its residual gap is bounded by a measurable identifiability\nfloor\") is FALSIFIED if, at 200 epochs / seed 0 on the stripped view, the\nprimary `test_hf` arm's panel geomean skill is `> 19.60` (i.e. fails to beat\nthe frozen best-floor anchor 23.0636 by 15%), **or** it fails to beat the best\nfrozen floor by >= 25% on BOTH `sharp__cahn_hilliard` (needs `<= 17.39`) and\n`sharp__allen_cahn_2d` (needs `<= 201.90`) — the two datasets the in-job\ncertificate says have real headroom — **or** it is worse than 1.15x the best\nfrozen floor on any scored panel dataset (`sharp__phase_field_crystal_2d`\n`> 68.78`, `sharp__fisher_kpp_2d` `> 13.79`, `sharp__allen_cahn_2d` `> 309.58`,\n`sharp__cahn_hilliard` `> 26.66`, `ifc_poisson` `> 11.56`), which the\nout-of-fold blend is designed to make impossible and would therefore indict the\ncalibration; `ext__helmholtz_2d` carries a report-only prediction (`<= 2.00`\nwith the zero-floor column) and no falsification weight, and every number is\nlabelled `provisional-single-seed`.",
   "anchor_reference": null,
   "prior_art": {
     "verdict": "preempted-pivoted",
@@ -26,7 +26,7 @@
       "D3: REALM https://arxiv.org/html/2512.18595 (fetched, shows floors are not standard practice)",
       "Constraint: Lanthaler et al. arXiv:2210.01074"
     ],
-    "verdict_quoted": "**Prior-art verdict quoted** (verbatim from\n`websearches/r2s1_direct/batch_1/report.md`):\n- D1 row: \"**preempted**\" | citations \"https://arxiv.org/html/2601.22654v1;\n  https://arxiv.org/html/2511.09729v1; ModAFNO\n  https://archive.docs.nvidia.com/physicsnemo/26.03/physicsnemo/api/models/fnos.html\"\n  | \"Nothing mechanism-level. Admissible only as a *measurement/baseline arm*\n  on this panel against the mandatory floor arms.\"\n- D2 row: \"**preempted**\" | \"PODNO https://arxiv.org/html/2504.18513v1/\n  (fetched); RB-DeepONet https://arxiv.org/abs/2511.18260 (fetched)\" | \"Only\n  the number is unmeasured (fixed basis vs free decoder at N_hf=5). Declare as\n  a baseline arm; it is POD-NN/PCA-Net prior art under a new name.\"\n- D3 row: \"**preempted-but-MF-composition-open**\" | \"Conditional-mean barrier\n  arXiv:2605.28076v3 https://arxiv.org/html/2605.28076 (fetched); REALM\n  https://arxiv.org/html/2512.18595 (fetched, shows floors are not standard\n  practice)\" | \"Open: (i) the barrier diagnostic has never been instantiated\n  where the unobserved driver is a *stored coarse solve*, making the floor\n  validatable rather than assumed; (ii) NN-in-condition / train-mean / zero as\n  a standing certification panel is not done in the fetched benchmark\n  literature.\"\n- Constraint carried onto the card (report item 6): \"Lanthaler et al.\n  (arXiv:2210.01074 ...) proves linear-reconstruction architectures \u2014\n  DeepONet, PCA-Net, and therefore any fixed-POD-basis D2 arm \u2014 are provably\n  inefficient for *discontinuous* operators ... If D2 is run as a baseline,\n  predict its failure mode in advance.\"\n- Card `prior_art.verdict` to record: **`preempted-pivoted`** (architecture\n  preempted and declared as a baseline; the composition scored is D3's)."
+    "verdict_quoted": "**Prior-art verdict quoted** (verbatim from\n`websearches/r2s1_direct/batch_1/report.md`):\n- D1 row: \"**preempted**\" | citations \"https://arxiv.org/html/2601.22654v1;\n  https://arxiv.org/html/2511.09729v1; ModAFNO\n  https://archive.docs.nvidia.com/physicsnemo/26.03/physicsnemo/api/models/fnos.html\"\n  | \"Nothing mechanism-level. Admissible only as a *measurement/baseline arm*\n  on this panel against the mandatory floor arms.\"\n- D2 row: \"**preempted**\" | \"PODNO https://arxiv.org/html/2504.18513v1/\n  (fetched); RB-DeepONet https://arxiv.org/abs/2511.18260 (fetched)\" | \"Only\n  the number is unmeasured (fixed basis vs free decoder at N_hf=5). Declare as\n  a baseline arm; it is POD-NN/PCA-Net prior art under a new name.\"\n- D3 row: \"**preempted-but-MF-composition-open**\" | \"Conditional-mean barrier\n  arXiv:2605.28076v3 https://arxiv.org/html/2605.28076 (fetched); REALM\n  https://arxiv.org/html/2512.18595 (fetched, shows floors are not standard\n  practice)\" | \"Open: (i) the barrier diagnostic has never been instantiated\n  where the unobserved driver is a *stored coarse solve*, making the floor\n  validatable rather than assumed; (ii) NN-in-condition / train-mean / zero as\n  a standing certification panel is not done in the fetched benchmark\n  literature.\"\n- Constraint carried onto the card (report item 6): \"Lanthaler et al.\n  (arXiv:2210.01074 ...) proves linear-reconstruction architectures —\n  DeepONet, PCA-Net, and therefore any fixed-POD-basis D2 arm — are provably\n  inefficient for *discontinuous* operators ... If D2 is run as a baseline,\n  predict its failure mode in advance.\"\n- Card `prior_art.verdict` to record: **`preempted-pivoted`** (architecture\n  preempted and declared as a baseline; the composition scored is D3's)."
   },
   "recipe": {
     "base_family": "none (new family built from scratch on the round2-substrate; no round-1 or factory model code vendored; condition-only forward signature)",
@@ -78,12 +78,12 @@
       "R2S1_DIAG_OUT": "mffp_autoresearch_outputs/round2/r2s1_direct/B1/eval",
       "_scored_arm": "amp_dir_blend",
       "_scored_split": "test_hf",
-      "_ref_split_prefix": "ref_ (and cert_) \u2014 extra splits MUST NOT start with 'test'",
+      "_ref_split_prefix": "ref_ (and cert_) — extra splits MUST NOT start with 'test'",
       "_guard_tier": "contract (2 epochs) on heat_local,fluid,sharp__sod_1d",
       "_note": "keys prefixed _ are card directives, NOT passed to --env"
     }
   },
-  "status": "running",
+  "status": "analyzing",
   "skipped_reason": null,
   "reopen_candidate": false,
   "scripts_path": {
@@ -102,15 +102,15 @@
   ],
   "logs": {},
   "build_notes": [
-    "Family built from scratch at models_r2/r2s1_cond_decoder (config.py, common.py, model.py, floors.py, certificate.py, train.py, blend.py, smoke_eval.py, manifest.json, INSPIRATION.md). Condition-only forward signature; no round-1 or factory model code vendored \u2014 the sole factory contact is a read-only import of mf_field/factory_mffp/data_adapters/loaders.py. recipe.base_family is 'none', so no base-family commit pin applies beyond recipe.base_commit 9e10d414 (round2-substrate), which is the worktree's fork point.",
+    "Family built from scratch at models_r2/r2s1_cond_decoder (config.py, common.py, model.py, floors.py, certificate.py, train.py, blend.py, smoke_eval.py, manifest.json, INSPIRATION.md). Condition-only forward signature; no round-1 or factory model code vendored — the sole factory contact is a read-only import of mf_field/factory_mffp/data_adapters/loaders.py. recipe.base_family is 'none', so no base-family commit pin applies beyond recipe.base_commit 9e10d414 (round2-substrate), which is the worktree's fork point.",
     "CONTRACT SMOKE (mandatory, in-session, login node, CPU): `python ${ROUND_ROOT}/eval/score_panel.py --family_dir <worktree>/models_r2/r2s1_cond_decoder --datasets ext__helmholtz_2d --epochs 2 --seed 0 --out <worktree>/scratchpad/contract_smoke.json --no_cache --env <all 37 recipe.env knobs>` -> EXIT 0, test_hf nRMSE 0.9301204901795666 (finite), skill 3.110424821973268, split 'test_hf', metric_source 'per_sample_mean'. Result file committed at <worktree>/scratchpad/contract_smoke.json. Per-arm at 2 epochs: ref_zero 1.0, ref_nn_condition 1.3113524474983616, ref_train_mean 4.369072694559929, ref_raw 1.2456637, ref_pod_lin 15.3392, cert_identifiability 1.2002501. n_params 14,039,298.",
-    "Floor seam check reproduces state/anchors/floors.json with max |in-job - frozen| = 0.0 (exactly) on ALL nine panel+guard datasets (ext__helmholtz_2d, sharp__phase_field_crystal_2d, sharp__allen_cahn_2d, sharp__fisher_kpp_2d, sharp__cahn_hilliard, ifc_poisson, heat_local, fluid, sharp__sod_1d), verified in-session before commit. The check RAISES on mismatch rather than defaulting (spec \u00a75.3), so a seam break fails the job loudly.",
-    "Extra code paths exercised in-session beyond the mandated smoke: (a) small-N leave-one-out branch on ifc_poisson (n_train=5 < R2S1_SMALL_N_THRESHOLD=20) \u2014 5 genuine LOO refits + 1 final fit, exit 0, test_hf 0.361275 vs the NN floor 0.361976, blend base nn_condition lambda 0.15; (b) 1-D field path on sharp__sod_1d (grid_shape None, 128 cells) via the resume test, 695,554 params, model-fold rel-L2 0.011646 at 20 epochs; (c) 2-D guard path on fluid, exit 0, test_hf 0.044659. Logs/JSONs committed under <worktree>/scratchpad/.",
-    "CHECKPOINT RESUME verified explicitly (immutable #8), both branches, script committed at <worktree>/scratchpad/test_resume.py with output test_resume.log: (i) finished-run reload \u2014 '[resume] run main already complete; state reloaded', predictions bit-identical (np.array_equal True), no retraining; (ii) mid-run continue \u2014 checkpoint rewound to epoch 10 of 20, rerun printed '[resume] run main continues at epoch 10' and did NOT restart from 0. last.pt carries a meta block (model/dataset/seed/epochs/grid/env) so a stale checkpoint is ignored rather than silently reused, and is written atomically via a .tmp rename.",
-    "HYPERPARAMETER PROVENANCE. Every knob in config.RECIPE_ENV is transcribed verbatim from recipe.env and is ALSO passed through score_panel.py --env by scripts/01_train_eval.sh (so it enters code_hash); the five '_'-prefixed recipe keys are card directives and are deliberately excluded (starter handoff). Values not fixed by the card, all documented in code comments + the builder handoff: (1) R2S1_DENOM_FLOOR='p25_median' implemented as the p25 quantile of ||y|| over the fitting subset \u2014 the round-1 rule (s7_loss-B2 F9 / part-7 two-gate rule) names a BAND [p25, median] and F9 states 'p25 is where the concentration stops being pathological'; the lower edge is taken and a TBD comment in train.py::denominator_floor names 'median' as the other admissible reading, selectable through the same knob. (2) RFF frequency matrix B ~ N(0,1) (canonical unit-bandwidth RFF on standardized inputs), drawn from the run seed. (3) GELU nonlinearity + 1x1 local path beside each spectral path (standard FNO block layout, Li 2010.08895). (4) FiLM and amplitude output layers zero-initialised (gamma=1, beta=0, logamp = mean log||y||_train at init). (5) POD-ridge alpha selected by train-side K-fold CV over a fixed logspace(-6,2,9) grid rather than a hand-picked constant. (6) Fourier transforms use norm='forward' on both directions so the resolution cascade is amplitude-preserving band-limited interpolation.",
-    "DEVIATION FROM THE LITERAL RECIPE, flagged for the reviewer: the D3 certificate fits s^2 = a + b d^2 (R2S1_CERT_SLOPE_FIT='linear_on_sq', as fixed) on the R2S1_CERT_PAIRS=1000 CLOSEST condition pairs rather than 1000 random pairs. Measured in-session: a random-pair fit extrapolates sharp__allen_cahn_2d to an 'aleatoric' 1.108 \u2014 worse than the zero predictor and worse than the NN floor that already exists \u2014 because s^2 saturates near 2 once conditions are far apart; the closest-pair fit reproduces the brainstormer's own probe (iteration_1.md 'NN-pair rel diff vs cond distance'), which is where the card's expected-ceiling column came from. Both the card-defined RMS-scale aleatoric (sqrt(intercept)/sqrt(2)) and a mean-scale variant (comparable with the round's mean-of-ratios nRMSE) are emitted; they differ by a Jensen gap on flat profiles (pfc 0.522 vs 0.318). Certificate output at contract tier: cahn_hilliard min pair distance 2.822 -> verdict 'no_support' (exactly as the card predicted); ifc_poisson -> 'not_estimable' (only 10 train pairs); LF-carrier cosine medians pfc 1.000, allen_cahn 0.999, cahn_hilliard 0.998, helmholtz 0.997, fisher_kpp 0.970.",
-    "SLURM scripts at <worktree>/scripts/, all absolute paths, all pass `bash -n`. 01_train_eval.sh takes SEED=$1 and runs TWO score_panel.py invocations: the panel leg (--datasets panel --epochs 200) and the guard leg (--datasets guard --epochs 2, per recipe.env `_guard_tier`), both with the identical 37-knob --env list. submit.sh submits seed 0 only; submit_seeds_2_3.sh submits seeds 1 and 2 in parallel (end-of-round top-3 confirmation only). Job names are set on the sbatch command line as r2-r2s1_direct-B1-s{seed} so %x resolves per seed. SBATCH: partition gpu, gres gpu:h100:1 (project.yaml), mem 32G, cpus 4, --time 04:00:00 \u2014 state/timing_ledger.json has NO entries, so the slurm_rules.md default for panel x 200 epochs applies.",
-    "REVIEWER NOTES. (1) ref_pod_lin reaching 15.34 on helmholtz is the predicted-in-advance D2 failure (Lanthaler 2210.01074 + helmholtz's ~100x norm spread), not a bug. (2) At contract tier (2 epochs) the blend correctly collapses toward the floor (helmholtz base 'zero' lambda 0.25; fluid base 'nn_condition' lambda 0.00) \u2014 ref_raw is meaningless at 2 epochs and only becomes informative at the 200-epoch smoke tier. (3) The leakage tripwire (R2S1_LEAKAGE_TRIPWIRE=1) asserts the dataset_dir is under stripped_data AND that the test split exposes zero LF fidelities; no code path reads ${DATA_ROOT}. (4) Estimated wall time: the 2-epoch helmholtz smoke took 724 s of TRAIN time on a heavily contended CPU login node (three sibling builders running concurrently); on the requested H100 the 200-epoch panel is expected to finish far inside the 4 h request."
+    "Floor seam check reproduces state/anchors/floors.json with max |in-job - frozen| = 0.0 (exactly) on ALL nine panel+guard datasets (ext__helmholtz_2d, sharp__phase_field_crystal_2d, sharp__allen_cahn_2d, sharp__fisher_kpp_2d, sharp__cahn_hilliard, ifc_poisson, heat_local, fluid, sharp__sod_1d), verified in-session before commit. The check RAISES on mismatch rather than defaulting (spec §5.3), so a seam break fails the job loudly.",
+    "Extra code paths exercised in-session beyond the mandated smoke: (a) small-N leave-one-out branch on ifc_poisson (n_train=5 < R2S1_SMALL_N_THRESHOLD=20) — 5 genuine LOO refits + 1 final fit, exit 0, test_hf 0.361275 vs the NN floor 0.361976, blend base nn_condition lambda 0.15; (b) 1-D field path on sharp__sod_1d (grid_shape None, 128 cells) via the resume test, 695,554 params, model-fold rel-L2 0.011646 at 20 epochs; (c) 2-D guard path on fluid, exit 0, test_hf 0.044659. Logs/JSONs committed under <worktree>/scratchpad/.",
+    "CHECKPOINT RESUME verified explicitly (immutable #8), both branches, script committed at <worktree>/scratchpad/test_resume.py with output test_resume.log: (i) finished-run reload — '[resume] run main already complete; state reloaded', predictions bit-identical (np.array_equal True), no retraining; (ii) mid-run continue — checkpoint rewound to epoch 10 of 20, rerun printed '[resume] run main continues at epoch 10' and did NOT restart from 0. last.pt carries a meta block (model/dataset/seed/epochs/grid/env) so a stale checkpoint is ignored rather than silently reused, and is written atomically via a .tmp rename.",
+    "HYPERPARAMETER PROVENANCE. Every knob in config.RECIPE_ENV is transcribed verbatim from recipe.env and is ALSO passed through score_panel.py --env by scripts/01_train_eval.sh (so it enters code_hash); the five '_'-prefixed recipe keys are card directives and are deliberately excluded (starter handoff). Values not fixed by the card, all documented in code comments + the builder handoff: (1) R2S1_DENOM_FLOOR='p25_median' implemented as the p25 quantile of ||y|| over the fitting subset — the round-1 rule (s7_loss-B2 F9 / part-7 two-gate rule) names a BAND [p25, median] and F9 states 'p25 is where the concentration stops being pathological'; the lower edge is taken and a TBD comment in train.py::denominator_floor names 'median' as the other admissible reading, selectable through the same knob. (2) RFF frequency matrix B ~ N(0,1) (canonical unit-bandwidth RFF on standardized inputs), drawn from the run seed. (3) GELU nonlinearity + 1x1 local path beside each spectral path (standard FNO block layout, Li 2010.08895). (4) FiLM and amplitude output layers zero-initialised (gamma=1, beta=0, logamp = mean log||y||_train at init). (5) POD-ridge alpha selected by train-side K-fold CV over a fixed logspace(-6,2,9) grid rather than a hand-picked constant. (6) Fourier transforms use norm='forward' on both directions so the resolution cascade is amplitude-preserving band-limited interpolation.",
+    "DEVIATION FROM THE LITERAL RECIPE, flagged for the reviewer: the D3 certificate fits s^2 = a + b d^2 (R2S1_CERT_SLOPE_FIT='linear_on_sq', as fixed) on the R2S1_CERT_PAIRS=1000 CLOSEST condition pairs rather than 1000 random pairs. Measured in-session: a random-pair fit extrapolates sharp__allen_cahn_2d to an 'aleatoric' 1.108 — worse than the zero predictor and worse than the NN floor that already exists — because s^2 saturates near 2 once conditions are far apart; the closest-pair fit reproduces the brainstormer's own probe (iteration_1.md 'NN-pair rel diff vs cond distance'), which is where the card's expected-ceiling column came from. Both the card-defined RMS-scale aleatoric (sqrt(intercept)/sqrt(2)) and a mean-scale variant (comparable with the round's mean-of-ratios nRMSE) are emitted; they differ by a Jensen gap on flat profiles (pfc 0.522 vs 0.318). Certificate output at contract tier: cahn_hilliard min pair distance 2.822 -> verdict 'no_support' (exactly as the card predicted); ifc_poisson -> 'not_estimable' (only 10 train pairs); LF-carrier cosine medians pfc 1.000, allen_cahn 0.999, cahn_hilliard 0.998, helmholtz 0.997, fisher_kpp 0.970.",
+    "SLURM scripts at <worktree>/scripts/, all absolute paths, all pass `bash -n`. 01_train_eval.sh takes SEED=$1 and runs TWO score_panel.py invocations: the panel leg (--datasets panel --epochs 200) and the guard leg (--datasets guard --epochs 2, per recipe.env `_guard_tier`), both with the identical 37-knob --env list. submit.sh submits seed 0 only; submit_seeds_2_3.sh submits seeds 1 and 2 in parallel (end-of-round top-3 confirmation only). Job names are set on the sbatch command line as r2-r2s1_direct-B1-s{seed} so %x resolves per seed. SBATCH: partition gpu, gres gpu:h100:1 (project.yaml), mem 32G, cpus 4, --time 04:00:00 — state/timing_ledger.json has NO entries, so the slurm_rules.md default for panel x 200 epochs applies.",
+    "REVIEWER NOTES. (1) ref_pod_lin reaching 15.34 on helmholtz is the predicted-in-advance D2 failure (Lanthaler 2210.01074 + helmholtz's ~100x norm spread), not a bug. (2) At contract tier (2 epochs) the blend correctly collapses toward the floor (helmholtz base 'zero' lambda 0.25; fluid base 'nn_condition' lambda 0.00) — ref_raw is meaningless at 2 epochs and only becomes informative at the 200-epoch smoke tier. (3) The leakage tripwire (R2S1_LEAKAGE_TRIPWIRE=1) asserts the dataset_dir is under stripped_data AND that the test split exposes zero LF fidelities; no code path reads ${DATA_ROOT}. (4) Estimated wall time: the 2-epoch helmholtz smoke took 724 s of TRAIN time on a heavily contended CPU login node (three sibling builders running concurrently); on the requested H100 the 200-epoch panel is expected to finish far inside the 4 h request."
   ],
   "review_notes": [
     {
@@ -134,8 +134,797 @@
     }
   ],
   "debug_notes": [],
-  "5_actual_result": null,
+  "5_actual_result": {
+    "seeds_available": [
+      0
+    ],
+    "labeling": "provisional-single-seed (round-2 strict 1-seed in-round protocol; seeds 1-2 only at round end for the top 3)",
+    "job_ids": [
+      "66163572"
+    ],
+    "result_jsons": {
+      "panel": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s1_direct/B1/eval/result_panel_s0.json",
+      "guard": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s1_direct/B1/eval/result_guard_s0.json"
+    },
+    "hash_seam": {
+      "nrmse_def_hash": "d3d0ade9191c13bacc40702f3eb26ad290e01641cacee22a1d2233b74c035850",
+      "copylf_def_hash": "9753ff24e856f595748492dec6cb6c215d748f97e8ec4a679b651f8846da907a",
+      "consistent_across_parsed_jsons": true,
+      "checked": [
+        "result_panel_s0.json",
+        "result_guard_s0.json",
+        "eval/copylf_baselines.json",
+        "state/anchors/floors.json",
+        "state/noise_floor.json (_provenance)"
+      ],
+      "note": "all five carry nrmse_def_hash d3d0ade9... and copylf_def_hash 9753ff24...; single seed so no cross-seed hash comparison was possible."
+    },
+    "code_hash": "0bf2c2dea470ad06349f92e04d16448274add46d1bc7ceb4345d3b8d333306df",
+    "family": "r2s1_cond_decoder",
+    "epochs": 200,
+    "per_dataset": {
+      "ext__helmholtz_2d": {
+        "per_seed_nrmse": [
+          0.9283014268248406
+        ],
+        "per_seed_skill": [
+          3.104341674820807
+        ],
+        "mean_skill": 3.104341674820807,
+        "ci95": null,
+        "ci95_note": "single seed (strict 1-seed round-2 protocol): no bootstrap CI computable; value is provisional-single-seed",
+        "reference_type": "copylf",
+        "reference_nrmse": 0.2990332650411058,
+        "cached": false,
+        "split": "test_hf",
+        "metric_source": "per_sample_mean",
+        "floor_arms_skill": {
+          "nn_condition": 4.385306254533589,
+          "train_mean": 14.610657760631902,
+          "zero": 3.3441095587226317
+        },
+        "best_floor": {
+          "arm": "zero",
+          "skill": 3.3441095587226317
+        },
+        "delta_vs_best_floor": 0.23976788390182469,
+        "beats_best_floor": true,
+        "min_claimable_effect_certified": 2.95299157437233,
+        "delta_beyond_noise_floor": false,
+        "non_scored_arms_nrmse": {
+          "ref_raw": 1.174780383598187,
+          "ref_pod_lin": 15.339231252702934,
+          "ref_nn_condition": 1.3113524474983616,
+          "ref_train_mean": 4.369072694559929,
+          "ref_zero": 1.0,
+          "cert_identifiability": 1.2002501000432206
+        },
+        "non_scored_arms_skill_derived": {
+          "ref_raw": 3.9285943101905367,
+          "ref_pod_lin": 51.29606985562081
+        },
+        "blend": {
+          "base": "zero",
+          "lambda": 0.25,
+          "cal_rel_l2": 0.9446025052668734,
+          "n_cal": 40
+        },
+        "train_diag": {
+          "best_epoch": 2,
+          "epochs": 200,
+          "best_val_rel_l2": 1.143064803099063,
+          "final_train_loss": 0.02573290152940899,
+          "n_fit": 320,
+          "n_val": 40,
+          "n_params": 14039298,
+          "train_seconds": 54.54110550880432,
+          "protocol": "disjoint_folds"
+        },
+        "certificate": {
+          "aleatoric_nrmse": 1.2002501000432206,
+          "aleatoric_nrmse_mean_scale": 0.5818993037105331,
+          "implied_max_skill": 4.013767832412329,
+          "verdict": "supported",
+          "trustworthy": 1,
+          "min_pair_distance": 0.03514437567799782,
+          "d_used_max": 0.5418032446733158,
+          "fit_r2": 0.0009211544817974149,
+          "profile": "RISING",
+          "pairs_used": "closest",
+          "lf_carrier_cosine_median": 0.9972137841278829,
+          "caveat": "DO NOT cite as a ceiling: the recipe-window value 1.200 exceeds the zero-floor nRMSE 1.0 on the one panel dataset the card calls deterministic; the support gate tests d_min (0.035) not the fitted window width, so verdict='supported' is a locked-card gate limitation, not evidence. Report the zero-floor column (skill 3.3441) instead (program.md 12.1). Reviewer sweep: 0.000/1.200/1.772/1.921/2.013."
+        },
+        "floor_seam": {
+          "status": "ok",
+          "max_abs_delta": 0.0
+        },
+        "leakage_tripwire": {
+          "under_stripped_view": 1,
+          "test_lf_fids": []
+        },
+        "source_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s1_direct/B1/eval/diag_ext__helmholtz_2d_e200_s0.json"
+      },
+      "ifc_poisson": {
+        "per_seed_nrmse": [
+          0.35224490085037535
+        ],
+        "per_seed_skill": [
+          9.784580579177094
+        ],
+        "mean_skill": 9.784580579177094,
+        "ci95": null,
+        "ci95_note": "single seed (strict 1-seed round-2 protocol): no bootstrap CI computable; value is provisional-single-seed",
+        "reference_type": "paper_bar",
+        "reference_nrmse": 0.036,
+        "cached": false,
+        "split": "test_hf",
+        "metric_source": "per_sample_mean",
+        "floor_arms_skill": {
+          "nn_condition": 10.054890929609687,
+          "train_mean": 11.206332455369639,
+          "zero": 27.77777777777778
+        },
+        "best_floor": {
+          "arm": "nn_condition",
+          "skill": 10.054890929609687
+        },
+        "delta_vs_best_floor": 0.27031035043259344,
+        "beats_best_floor": true,
+        "min_claimable_effect_certified": 0.9377041289531141,
+        "delta_beyond_noise_floor": false,
+        "non_scored_arms_nrmse": {
+          "ref_raw": 0.3968060322175234,
+          "ref_pod_lin": 0.3582564108802082,
+          "ref_nn_condition": 0.36197607346594873,
+          "ref_train_mean": 0.40342796839330697,
+          "ref_zero": 1.0,
+          "cert_identifiability": null
+        },
+        "non_scored_arms_skill_derived": {
+          "ref_raw": 11.022389783820095,
+          "ref_pod_lin": 9.951566968894673
+        },
+        "blend": {
+          "base": "nn_condition",
+          "lambda": 0.2,
+          "cal_rel_l2": 0.24100620339420872,
+          "n_cal": 5
+        },
+        "train_diag": {
+          "best_epoch": null,
+          "epochs": 200,
+          "best_val_rel_l2": null,
+          "final_train_loss": 0.0026287250220775604,
+          "n_fit": 5,
+          "n_val": 0,
+          "n_params": 13662978,
+          "train_seconds": 6.659467458724976,
+          "protocol": "leave_one_out"
+        },
+        "certificate": {
+          "aleatoric_nrmse": null,
+          "aleatoric_nrmse_mean_scale": null,
+          "implied_max_skill": null,
+          "verdict": "not_estimable",
+          "trustworthy": 0,
+          "min_pair_distance": 1.5878914166290579,
+          "d_used_max": 4.812195978914696,
+          "fit_r2": 0.46626157535339097,
+          "profile": "RISING",
+          "pairs_used": "closest",
+          "lf_carrier_cosine_median": -0.7044164263185804,
+          "caveat": "verdict='not_estimable' (only 10 train pairs at N_hf=5); no ceiling claimable. LF-carrier cosine median is NEGATIVE (-0.704), unlike every other panel dataset."
+        },
+        "floor_seam": {
+          "status": "ok",
+          "max_abs_delta": 0.0
+        },
+        "leakage_tripwire": {
+          "under_stripped_view": 1,
+          "test_lf_fids": []
+        },
+        "source_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s1_direct/B1/eval/diag_ifc_poisson_e200_s0.json"
+      },
+      "sharp__allen_cahn_2d": {
+        "per_seed_nrmse": [
+          0.4352738336183976
+        ],
+        "per_seed_skill": [
+          244.43063306031723
+        ],
+        "mean_skill": 244.43063306031723,
+        "ci95": null,
+        "ci95_note": "single seed (strict 1-seed round-2 protocol): no bootstrap CI computable; value is provisional-single-seed",
+        "reference_type": "copylf",
+        "reference_nrmse": 0.0017807662982691156,
+        "cached": false,
+        "split": "test_hf",
+        "metric_source": "per_sample_mean",
+        "floor_arms_skill": {
+          "nn_condition": 269.19587575878967,
+          "train_mean": 562.0295274675294,
+          "zero": 561.5560003420935
+        },
+        "best_floor": {
+          "arm": "nn_condition",
+          "skill": 269.19587575878967
+        },
+        "delta_vs_best_floor": 24.765242698472434,
+        "beats_best_floor": true,
+        "min_claimable_effect_certified": 0.8797047190126648,
+        "delta_beyond_noise_floor": true,
+        "non_scored_arms_nrmse": {
+          "ref_raw": 0.6346573178570672,
+          "ref_pod_lin": 0.3475247468365679,
+          "ref_nn_condition": 0.47937494318429263,
+          "ref_train_mean": 1.0008432411462926,
+          "ref_zero": 1.0,
+          "cert_identifiability": 0.31530019328640635
+        },
+        "non_scored_arms_skill_derived": {
+          "ref_raw": 356.39562500365537,
+          "ref_pod_lin": 195.1546068534417
+        },
+        "blend": {
+          "base": "nn_condition",
+          "lambda": 0.4,
+          "cal_rel_l2": 0.5400961491851731,
+          "n_cal": 40
+        },
+        "train_diag": {
+          "best_epoch": 24,
+          "epochs": 200,
+          "best_val_rel_l2": 0.4638627927723344,
+          "final_train_loss": 0.004149020509794354,
+          "n_fit": 320,
+          "n_val": 40,
+          "n_params": 15874306,
+          "train_seconds": 63.550522804260254,
+          "protocol": "disjoint_folds"
+        },
+        "certificate": {
+          "aleatoric_nrmse": 0.31530019328640635,
+          "aleatoric_nrmse_mean_scale": 0.24467652128718115,
+          "implied_max_skill": 177.05871544900333,
+          "verdict": "supported",
+          "trustworthy": 1,
+          "min_pair_distance": 0.05105905500576748,
+          "d_used_max": 0.5478029288613215,
+          "fit_r2": 0.02979080101459075,
+          "profile": "RISING",
+          "pairs_used": "closest",
+          "lf_carrier_cosine_median": 0.9986012870037355,
+          "aleatoric_nrmse_quotable_range": [
+            0.315,
+            0.471
+          ],
+          "implied_max_skill_quotable_range": [
+            176.89014010775944,
+            264.492876161126
+          ],
+          "caveat": "window-sensitive: reviewer sensitivity sweep (250/1000-recipe/4000/16000 closest, random-1000) gives 0.334/0.315/0.417/0.471/1.072; quote as the range 0.315-0.471, never as a single number."
+        },
+        "floor_seam": {
+          "status": "ok",
+          "max_abs_delta": 0.0
+        },
+        "leakage_tripwire": {
+          "under_stripped_view": 1,
+          "test_lf_fids": []
+        },
+        "source_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s1_direct/B1/eval/diag_sharp__allen_cahn_2d_e200_s0.json"
+      },
+      "sharp__cahn_hilliard": {
+        "per_seed_nrmse": [
+          0.5368565688680653
+        ],
+        "per_seed_skill": [
+          12.842548335574408
+        ],
+        "mean_skill": 12.842548335574408,
+        "ci95": null,
+        "ci95_note": "single seed (strict 1-seed round-2 protocol): no bootstrap CI computable; value is provisional-single-seed",
+        "reference_type": "copylf",
+        "reference_nrmse": 0.041802962686225575,
+        "cached": false,
+        "split": "test_hf",
+        "metric_source": "per_sample_mean",
+        "floor_arms_skill": {
+          "nn_condition": 23.180342227117514,
+          "train_mean": 23.96905448527446,
+          "zero": 23.92174945843033
+        },
+        "best_floor": {
+          "arm": "nn_condition",
+          "skill": 23.180342227117514
+        },
+        "delta_vs_best_floor": 10.337793891543106,
+        "beats_best_floor": true,
+        "min_claimable_effect_certified": 0.09124535322300886,
+        "delta_beyond_noise_floor": true,
+        "non_scored_arms_nrmse": {
+          "ref_raw": 0.5411812789487341,
+          "ref_pod_lin": 0.5648210426126976,
+          "ref_nn_condition": 0.9690069811741324,
+          "ref_train_mean": 1.001977490272036,
+          "ref_zero": 1.0,
+          "cert_identifiability": 0.6964423519722276
+        },
+        "non_scored_arms_skill_derived": {
+          "ref_raw": 12.946002966604516,
+          "ref_pod_lin": 13.511507470230354
+        },
+        "blend": {
+          "base": "nn_condition",
+          "lambda": 0.9500000000000001,
+          "cal_rel_l2": 0.49852230845690215,
+          "n_cal": 40
+        },
+        "train_diag": {
+          "best_epoch": 6,
+          "epochs": 200,
+          "best_val_rel_l2": 0.4179009782495452,
+          "final_train_loss": 0.003616150445304811,
+          "n_fit": 320,
+          "n_val": 40,
+          "n_params": 15878402,
+          "train_seconds": 63.21464467048645,
+          "protocol": "disjoint_folds"
+        },
+        "certificate": {
+          "aleatoric_nrmse": 0.6964423519722276,
+          "aleatoric_nrmse_mean_scale": 0.6116242702369077,
+          "implied_max_skill": 16.66011945611958,
+          "verdict": "no_support",
+          "trustworthy": 0,
+          "min_pair_distance": 2.822204990196741,
+          "d_used_max": 4.196067777926915,
+          "fit_r2": 0.0026715112385505835,
+          "profile": "RISING",
+          "pairs_used": "closest",
+          "lf_carrier_cosine_median": 0.9977853786434681,
+          "caveat": "verdict='no_support' as the card predicted in advance (min pair distance 2.822 in 19 condition dims > R2S1_CERT_MIN_SUPPORT_D 0.5); no ceiling claimable."
+        },
+        "floor_seam": {
+          "status": "ok",
+          "max_abs_delta": 0.0
+        },
+        "leakage_tripwire": {
+          "under_stripped_view": 1,
+          "test_lf_fids": []
+        },
+        "source_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s1_direct/B1/eval/diag_sharp__cahn_hilliard_e200_s0.json"
+      },
+      "sharp__fisher_kpp_2d": {
+        "per_seed_nrmse": [
+          0.2484681171692047
+        ],
+        "per_seed_skill": [
+          11.583863256939711
+        ],
+        "mean_skill": 11.583863256939711,
+        "ci95": null,
+        "ci95_note": "single seed (strict 1-seed round-2 protocol): no bootstrap CI computable; value is provisional-single-seed",
+        "reference_type": "copylf",
+        "reference_nrmse": 0.02144950364640668,
+        "cached": false,
+        "split": "test_hf",
+        "metric_source": "per_sample_mean",
+        "floor_arms_skill": {
+          "nn_condition": 16.337946591223936,
+          "train_mean": 11.99311063309952,
+          "zero": 46.62112543417874
+        },
+        "best_floor": {
+          "arm": "train_mean",
+          "skill": 11.99311063309952
+        },
+        "delta_vs_best_floor": 0.4092473761598079,
+        "beats_best_floor": true,
+        "min_claimable_effect_certified": 0.0007136812826775696,
+        "delta_beyond_noise_floor": true,
+        "non_scored_arms_nrmse": {
+          "ref_raw": 0.24846811716920467,
+          "ref_pod_lin": 0.24984159994729638,
+          "ref_nn_condition": 0.3504408449832554,
+          "ref_train_mean": 0.2572462702564269,
+          "ref_zero": 1.0,
+          "cert_identifiability": 0.25110791841354557
+        },
+        "non_scored_arms_skill_derived": {
+          "ref_raw": 11.58386325693971,
+          "ref_pod_lin": 11.647896569818808
+        },
+        "blend": {
+          "base": "zero",
+          "lambda": 1.0,
+          "cal_rel_l2": 0.2421566102083454,
+          "n_cal": 40
+        },
+        "train_diag": {
+          "best_epoch": 2,
+          "epochs": 200,
+          "best_val_rel_l2": 0.24357468416467726,
+          "final_train_loss": 0.02160383081063628,
+          "n_fit": 320,
+          "n_val": 40,
+          "n_params": 15874050,
+          "train_seconds": 62.845507860183716,
+          "protocol": "disjoint_folds"
+        },
+        "certificate": {
+          "aleatoric_nrmse": 0.25110791841354557,
+          "aleatoric_nrmse_mean_scale": 0.2450233426495224,
+          "implied_max_skill": 11.706933761873428,
+          "verdict": "supported",
+          "trustworthy": 1,
+          "min_pair_distance": 0.012416659528735408,
+          "d_used_max": 0.23011951398662814,
+          "fit_r2": 0.0004507773440165508,
+          "profile": "FLAT_OR_FALLING",
+          "pairs_used": "closest",
+          "lf_carrier_cosine_median": 0.9699825968810674,
+          "caveat": "window-robust across the reviewer sweep (0.236-0.251), but the SCORED arm (0.24847) is already BELOW the certificate (0.25111) -> the certificate is not a binding ceiling here."
+        },
+        "floor_seam": {
+          "status": "ok",
+          "max_abs_delta": 0.0
+        },
+        "leakage_tripwire": {
+          "under_stripped_view": 1,
+          "test_lf_fids": []
+        },
+        "source_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s1_direct/B1/eval/diag_sharp__fisher_kpp_2d_e200_s0.json"
+      },
+      "sharp__phase_field_crystal_2d": {
+        "per_seed_nrmse": [
+          0.3840321687937861
+        ],
+        "per_seed_skill": [
+          52.031390133101766
+        ],
+        "mean_skill": 52.031390133101766,
+        "ci95": null,
+        "ci95_note": "single seed (strict 1-seed round-2 protocol): no bootstrap CI computable; value is provisional-single-seed",
+        "reference_type": "copylf",
+        "reference_nrmse": 0.00738077856100695,
+        "cached": false,
+        "split": "test_hf",
+        "metric_source": "per_sample_mean",
+        "floor_arms_skill": {
+          "nn_condition": 68.55554386549396,
+          "train_mean": 59.8117544948052,
+          "zero": 135.48706166081905
+        },
+        "best_floor": {
+          "arm": "train_mean",
+          "skill": 59.8117544948052
+        },
+        "delta_vs_best_floor": 7.780364361703434,
+        "beats_best_floor": true,
+        "min_claimable_effect_certified": 0.21302734961699343,
+        "delta_beyond_noise_floor": true,
+        "non_scored_arms_nrmse": {
+          "ref_raw": 0.38397575969250675,
+          "ref_pod_lin": 0.4142217120878653,
+          "ref_nn_condition": 0.5059932884006093,
+          "ref_train_mean": 0.4414573152714693,
+          "ref_zero": 1.0,
+          "cert_identifiability": 0.5216309063292783
+        },
+        "non_scored_arms_skill_derived": {
+          "ref_raw": 52.023747429718505,
+          "ref_pod_lin": 56.12168264689864
+        },
+        "blend": {
+          "base": "train_mean",
+          "lambda": 0.9,
+          "cal_rel_l2": 0.4183866940390473,
+          "n_cal": 40
+        },
+        "train_diag": {
+          "best_epoch": 4,
+          "epochs": 200,
+          "best_val_rel_l2": 0.29844679118980505,
+          "final_train_loss": 0.008031206170562655,
+          "n_fit": 320,
+          "n_val": 40,
+          "n_params": 14448642,
+          "train_seconds": 52.76885175704956,
+          "protocol": "disjoint_folds"
+        },
+        "certificate": {
+          "aleatoric_nrmse": 0.5216309063292783,
+          "aleatoric_nrmse_mean_scale": 0.3366361588980356,
+          "implied_max_skill": 70.67423877002386,
+          "verdict": "supported",
+          "trustworthy": 1,
+          "min_pair_distance": 0.012416874495411706,
+          "d_used_max": 0.23011972789996202,
+          "fit_r2": 0.001964420698239433,
+          "profile": "FLAT_OR_FALLING",
+          "pairs_used": "closest",
+          "lf_carrier_cosine_median": 0.9999999968091039,
+          "caveat": "window-robust (0.428-0.522); the scored arm (0.38403) is BELOW the RMS-scale certificate (0.52163) and above the mean-scale variant (0.33664) -> Jensen-gap-sensitive, not binding. pfc denominator caveat (copylf_baselines._notes.pfc) applies to every pfc skill number."
+        },
+        "floor_seam": {
+          "status": "ok",
+          "max_abs_delta": 0.0
+        },
+        "leakage_tripwire": {
+          "under_stripped_view": 1,
+          "test_lf_fids": []
+        },
+        "source_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s1_direct/B1/eval/diag_sharp__phase_field_crystal_2d_e200_s0.json"
+      }
+    },
+    "panel_geomean_skill": {
+      "per_seed": [
+        19.644436263565854
+      ],
+      "mean": 19.644436263565854,
+      "ci95": null,
+      "ci95_note": "single seed: no bootstrap CI computable",
+      "source": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s1_direct/B1/eval/result_panel_s0.json"
+    },
+    "vs_anchor": {
+      "anchor_value": 23.063616857615774,
+      "anchor_type": "best_floor_panel_geomean",
+      "delta": 3.4191805940499194,
+      "delta_pct": 14.824997376423555,
+      "direction": "model better than anchor (lower skill is better)",
+      "beyond_ci": false,
+      "beyond_ci_note": "no CI at 1 seed; recorded False for schema conformance, NOT a negative finding",
+      "beyond_noise_floor": true,
+      "noise_floor_min_claimable_effect": 1.1418668211296108,
+      "noise_floor_source": "state/noise_floor.json (CERTIFIED r2s4_diag-B1, 3-seed, family r2s4_cert_min)"
+    },
+    "vs_certified_noise_floor_family": {
+      "note": "cross-card comparison against the r2s4-B1 certification model r2s4_cert_min (3-seed mean), the family that DEFINES the certified floor. Same nrmse/copylf hashes, same smoke tier, different family: informative, not a controlled contrast.",
+      "panel_geomean": {
+        "r2s4_cert_min_mean": 19.817844731907492,
+        "this_card_s0": 19.644436263565854,
+        "delta": 0.1734084683416377,
+        "resolvable": false
+      },
+      "per_dataset": {
+        "ext__helmholtz_2d": {
+          "r2s4_cert_min_mean_skill": 6.943835485605,
+          "this_card_s0_skill": 3.104341674820807,
+          "delta": 3.8394938107841927,
+          "resolvable": true
+        },
+        "ifc_poisson": {
+          "r2s4_cert_min_mean_skill": 8.261220201059428,
+          "this_card_s0_skill": 9.784580579177094,
+          "delta": -1.5233603781176654,
+          "resolvable": true
+        },
+        "sharp__allen_cahn_2d": {
+          "r2s4_cert_min_mean_skill": 147.31539352549365,
+          "this_card_s0_skill": 244.43063306031723,
+          "delta": -97.11523953482359,
+          "resolvable": true
+        },
+        "sharp__cahn_hilliard": {
+          "r2s4_cert_min_mean_skill": 13.17806662874691,
+          "this_card_s0_skill": 12.842548335574408,
+          "delta": 0.3355182931725018,
+          "resolvable": true
+        },
+        "sharp__fisher_kpp_2d": {
+          "r2s4_cert_min_mean_skill": 11.558192892385529,
+          "this_card_s0_skill": 11.583863256939711,
+          "delta": -0.025670364554182257,
+          "resolvable": true
+        },
+        "sharp__phase_field_crystal_2d": {
+          "r2s4_cert_min_mean_skill": 47.847203673185426,
+          "this_card_s0_skill": 52.031390133101766,
+          "delta": -4.18418645991634,
+          "resolvable": true
+        }
+      }
+    },
+    "cratered_verdict": "proceed_to_seeds_1_2",
+    "cratered_detail": {
+      "crash": false,
+      "panel_geomean": 19.644436263565854,
+      "cratered_threshold": 34.59542528642366,
+      "geomean_over_threshold": false,
+      "falsification_fired_decisively": false,
+      "reading": "no crash; geomean 19.6444 is far under the cratered threshold 34.5954; the falsification clause fires by 0.0444 skill units, which is 26x SMALLER than the certified panel min_claimable_effect 1.1419, hence not decisive. Under round-2's strict 1-seed protocol this verdict means 'not cratered; eligible for end-of-round 3-seed confirmation if top-3'."
+    },
+    "falsification_verdict": "falsified",
+    "falsification_detail": {
+      "clause_quoted": "H-r2s1-B1 ... is FALSIFIED if, at 200 epochs / seed 0 on the stripped view, the primary `test_hf` arm's panel geomean skill is `> 19.60` (i.e. fails to beat the frozen best-floor anchor 23.0636 by 15%), **or** it fails to beat the best frozen floor by >= 25% on BOTH `sharp__cahn_hilliard` (needs `<= 17.39`) and `sharp__allen_cahn_2d` (needs `<= 201.90`) ... **or** it is worse than 1.15x the best frozen floor on any scored panel dataset (`sharp__phase_field_crystal_2d` `> 68.78`, `sharp__fisher_kpp_2d` `> 13.79`, `sharp__allen_cahn_2d` `> 309.58`, `sharp__cahn_hilliard` `> 26.66`, `ifc_poisson` `> 11.56`)",
+      "leg_1_panel_geomean": {
+        "threshold": 19.6,
+        "threshold_exact_0.85x_anchor": 19.604074328973407,
+        "measured": 19.644436263565854,
+        "fires": true,
+        "margin_over_threshold": 0.04443626356585284,
+        "margin_vs_certified_min_claimable_effect": 0.03891545208564123,
+        "reading": "FIRES AS WRITTEN. Achieved -14.82% vs the anchor where >= -15% was required; the shortfall is 0.0444 skill units = 3.9% of the certified panel min_claimable_effect (1.1419), i.e. NOT RESOLVABLE at 1 seed. The clause is judged as written (pre-registered against the provisional floor); the certified-floor cross-check says the confirmed/falsified distinction is inside the seed noise."
+      },
+      "leg_2_two_headroom_datasets": {
+        "cahn_hilliard_threshold": 17.39,
+        "cahn_hilliard_measured": 12.842548335574408,
+        "cahn_hilliard_met": true,
+        "allen_cahn_threshold": 201.9,
+        "allen_cahn_measured": 244.43063306031723,
+        "allen_cahn_met": false,
+        "fires": false,
+        "reading": "clause requires failure on BOTH; cahn_hilliard passes decisively (12.843 <= 17.39, a 44.6% beat of the NN floor), so this leg does not fire. allen_cahn alone misses (244.43 > 201.90)."
+      },
+      "leg_3_no_dataset_worse_than_1.15x_floor": {
+        "fires": false,
+        "per_dataset": {
+          "sharp__phase_field_crystal_2d": {
+            "threshold": 68.78,
+            "measured": 52.031390133101766,
+            "fires": false
+          },
+          "sharp__fisher_kpp_2d": {
+            "threshold": 13.79,
+            "measured": 11.583863256939711,
+            "fires": false
+          },
+          "sharp__allen_cahn_2d": {
+            "threshold": 309.58,
+            "measured": 244.43063306031723,
+            "fires": false
+          },
+          "sharp__cahn_hilliard": {
+            "threshold": 26.66,
+            "measured": 12.842548335574408,
+            "fires": false
+          },
+          "ifc_poisson": {
+            "threshold": 11.56,
+            "measured": 9.784580579177094,
+            "fires": false
+          }
+        },
+        "reading": "no scored panel dataset is worse than 1.15x its best frozen floor; the out-of-fold blend did what it was designed to do, so the calibration is not indicted."
+      },
+      "helmholtz_report_only": {
+        "prediction": "<= 2.00 (report-only, explicitly carries no falsification weight)",
+        "measured": 3.104341674820807,
+        "met": false,
+        "zero_floor_column": 3.3441095587226317,
+        "delta_vs_zero_floor": 0.23976788390182469,
+        "certified_min_claimable_effect": 2.95299157437233,
+        "reading": "missed the report-only prediction by 55%; beats the zero floor by 0.240 skill units, which is BELOW the certified helmholtz min_claimable_effect 2.953 -> not resolvable. No falsification weight either way."
+      },
+      "summary": "FALSIFIED on leg 1 only, by a margin 26x below the certified noise floor; legs 2 and 3 do not fire. Interpretation (confirmed-in-substance vs falsified-on-the-letter) is the mechanism-analyzer's call, not this agent's."
+    },
+    "expected_vs_actual": {
+      "note": "card part 4 expectation band vs measured seed-0 skill",
+      "ext__helmholtz_2d": {
+        "expected": "1.3-2.5 (report-only)",
+        "actual": 3.104341674820807,
+        "in_band": false
+      },
+      "sharp__phase_field_crystal_2d": {
+        "expected": "44-55",
+        "actual": 52.031390133101766,
+        "in_band": true
+      },
+      "sharp__allen_cahn_2d": {
+        "expected": "150-200",
+        "actual": 244.43063306031723,
+        "in_band": false
+      },
+      "sharp__fisher_kpp_2d": {
+        "expected": "11.0-11.8",
+        "actual": 11.583863256939711,
+        "in_band": true
+      },
+      "sharp__cahn_hilliard": {
+        "expected": "12-19",
+        "actual": 12.842548335574408,
+        "in_band": true
+      },
+      "ifc_poisson": {
+        "expected": "9-10 (anecdote-grade, N_hf=5)",
+        "actual": 9.784580579177094,
+        "in_band": true
+      },
+      "panel_geomean": {
+        "expected": "~17.3",
+        "actual": 19.644436263565854,
+        "in_band": false
+      }
+    },
+    "guard_set": {
+      "tier": "contract (2 epochs)",
+      "source_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s1_direct/B1/eval/result_guard_s0.json",
+      "guard_geomean_skill": 0.6781879164165285,
+      "per_dataset": {
+        "fluid": {
+          "nRMSE": 0.04465925977189836,
+          "skill": 0.20480301494412487,
+          "reference_nrmse": 0.21805958171115042,
+          "ratio_vs_reference": 0.20480301494412487,
+          "nn_floor_nrmse": 0.04465925977189836,
+          "tier": "contract (2 epochs)"
+        },
+        "heat_local": {
+          "nRMSE": 0.0149886012153051,
+          "skill": 6.241293630249669,
+          "reference_nrmse": 0.00240152155999517,
+          "ratio_vs_reference": 6.241293630249669,
+          "nn_floor_nrmse": 0.015425060969713805,
+          "tier": "contract (2 epochs)"
+        },
+        "sharp__sod_1d": {
+          "nRMSE": 0.008074920688403448,
+          "skill": 0.2440277309576758,
+          "reference_nrmse": 0.03309017650048946,
+          "ratio_vs_reference": 0.2440277309576758,
+          "nn_floor_nrmse": 0.008074920688403445,
+          "tier": "contract (2 epochs)"
+        }
+      },
+      "trigger": "run because the seed-0 panel geomean (19.6444) beats the launch anchor (23.0636) by 3.4192 > the certified panel min_claimable_effect (1.1419)"
+    },
+    "guard_flags": [
+      {
+        "dataset": "heat_local",
+        "nRMSE": 0.0149886012153051,
+        "reference_nrmse": 0.00240152155999517,
+        "ratio": 6.241293630249669,
+        "rule": "nRMSE regressed > 2x vs eval/copylf_baselines.json recorded reference",
+        "context": "condition-only regime: no LF at test, so a copy-LF-referenced 'regression' is structural, not a code defect. The arm still beats heat_local's NN-in-condition floor (0.014989 vs 0.015425) and the guard leg is contract tier (2 epochs), per recipe.env _guard_tier. Flag recorded, no auto-reject."
+      }
+    ],
+    "anomalies": [
+      "NO training anomalies in the SLURM logs: .err is 0 bytes, .out contains no NaN/Inf/OOM/warning line and no resume-after-preemption event; job 66163572 COMPLETED in one allocation (H200, hpc-sm-01-15), sacct Elapsed 00:06:57, MaxRSS 2756252K.",
+      "SEVERE EARLY OVERFIT on 5 of 6 panel datasets: best_epoch on the disjoint model fold was 2/200 (helmholtz), 4/200 (pfc), 6/200 (cahn_hilliard), 24/200 (allen_cahn), 2/200 (fisher_kpp) while final_train_loss fell to 4e-3..2.6e-2. A 14-16M-parameter decoder against N_fit=320 is in the deep-overparameterized regime; 200 epochs is ~10-100x more than the model-fold selection used. This is the single most informative anomaly for the mechanism analyzer.",
+      "DECLARED-TO-FAIL D2 CONTROL BEATS THE SCORED ARM on sharp__allen_cahn_2d: ref_pod_lin (rank-50 POD + ridge) 0.347525 (derived skill 195.16) vs the scored blended arm 0.435274 (244.43) and vs ref_raw 0.634657 (356.40). The Lanthaler-predicted failure did materialize on ext__helmholtz_2d (ref_pod_lin 15.3392, derived skill 51.30) but NOT on the sharp datasets, where POD-ridge is competitive everywhere (pfc 0.4142, fisher_kpp 0.2498, cahn_hilliard 0.5648, ifc 0.3583).",
+      "BLEND BEHAVIOUR IS BIMODAL: lambda = 1.00 on fisher_kpp (base zero, blend inert, scored arm == ref_raw bit-for-bit), 0.95 cahn_hilliard, 0.90 pfc -- but 0.40 on allen_cahn (60% of the scored prediction is the NN-in-condition floor), 0.25 on helmholtz (75% zero field) and 0.20 on ifc_poisson (80% NN floor). The out-of-fold calibration is doing most of the work exactly where the decoder is weakest.",
+      "CERTIFICATE IS NOT A BINDING CEILING on the two window-robust datasets: the scored arm is BELOW its own certified aleatoric floor on fisher_kpp (0.248468 < 0.251108) and below the RMS-scale value on pfc (0.384032 < 0.521631, mean-scale variant 0.336636). Combined with the reviewer's window sweep this says the D3 estimator is loose, not that the model exceeded physics.",
+      "ext__helmholtz_2d certificate self-contradiction stands in the emitted JSON: aleatoric_nrmse 1.2002501 > the zero predictor 1.0, yet verdict='supported'/trustworthy=1 because the support gate tests min_pair_distance (0.0351) rather than the fitted-window width (d_used_max 0.5418). Locked-card gate design (reviewer FLAGGED ITEM 1); helmholtz implied_max_skill 4.0138 MUST NOT be quoted as a ceiling.",
+      "ifc_poisson LF-carrier cosine median is -0.704 (mean -0.204) against +0.970..+1.000 on every other panel dataset -- at N_hf=5 with 10 train pairs, LF pair differences are anti-correlated with block-mean HF pair differences. Certificate verdict there is 'not_estimable'; the cosine is reported but should not be over-read.",
+      "LF-carrier cosine window is UNDOCUMENTED IN THE RECIPE: certificate.py:187 uses the 200 closest condition pairs (k=min(200,n_pairs)), a choice absent from recipe.env, part 3 and build_notes (reviewer Q1 SUGGEST). Recorded here per the reviewer's requested minimal fix; all cosines above carry it.",
+      "fit_r2 of the D3 slope fit is essentially zero on the panel (helmholtz 0.0009, pfc 0.0020, allen_cahn 0.0298, fisher_kpp 0.0005, cahn_hilliard 0.0027): within the closest-pair window the s^2 ~ a + b d^2 model explains almost none of the pair-difference variance, so the intercept is an extrapolation with very wide implicit uncertainty. Consistent with the reviewer's window-sensitivity finding.",
+      "Guard fluid and sharp__sod_1d collapsed to lambda=0.0 (pure NN-in-condition floor): their nRMSE equals the frozen floor to ~1e-18. Those two guard 'wins' vs copy-LF are floor-level, not model-level (program.md 2.3 standing caveat).",
+      "SEAM CHECKS ALL GREEN: in-job floor recomputation reproduces state/anchors/floors.json with max_abs_delta = 0.0 exactly on all 9 panel+guard datasets; the leakage tripwire confirms every dataset_dir under stripped_data with test_lf_fids = [] everywhere."
+    ],
+    "wall_clock_per_seed_min": [
+      6.95
+    ],
+    "wall_clock_detail": {
+      "job_id": "66163572",
+      "state": "COMPLETED",
+      "elapsed": "00:06:57",
+      "elapsed_min": 6.95,
+      "node": "hpc-sm-01-15",
+      "gpu": "NVIDIA H200",
+      "max_rss_kb": 2756252,
+      "requested_time": "04:00:00",
+      "panel_leg_seconds": {
+        "ext__helmholtz_2d": 60.617859840393066,
+        "ifc_poisson": 43.23368763923645,
+        "sharp__allen_cahn_2d": 70.20809864997864,
+        "sharp__cahn_hilliard": 69.97129344940186,
+        "sharp__fisher_kpp_2d": 69.3097038269043,
+        "sharp__phase_field_crystal_2d": 56.54175424575806
+      },
+      "guard_leg_seconds": {
+        "fluid": 4.059905529022217,
+        "heat_local": 10.872830390930176,
+        "sharp__sod_1d": 3.1016035079956055
+      },
+      "note": "for state/timing_ledger.json: panel x 200 epochs + guard x 2 epochs, 6 panel datasets, one H200, 6.95 min wall for the whole chain vs a 4 h request -- the request is ~35x oversized."
+    },
+    "anchor_action": {
+      "updated": false,
+      "reason": "section 2e requires a 3-SEED result to establish or beat a stream anchor. This is a single-seed (provisional) measurement, so state/anchors/r2s1_direct.json is left untouched at 23.063616857615774. The seed-0 geomean 19.6444 would beat it by 3.4192 (> the certified panel min_claimable_effect 1.1419) if confirmed at 3 seeds."
+    }
+  },
   "6_analysis": null,
   "7_gap_and_future": null,
-  "reanalysis_progress": null
+  "reanalysis_progress": "turn_1"
 }
