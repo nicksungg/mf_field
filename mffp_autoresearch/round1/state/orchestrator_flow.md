@@ -3654,3 +3654,24 @@ from seed-0 main-run config):
 No card code touched (submit_seeds_2_3.sh is unmodified, pre-existing per-card script); only job_ids
 appended to each card and this log entry. Next: poll squeue for completion, then run the 3-seed
 aggregation (mean +/- CI per report.md wording) and re-issue the leaderboard.
+
+## Prep for full-eval + Elo — nondegenerate dataset scope decided — 2026-07-31T17:04Z
+Eloise: "only benchmark nondegenerate sets and recompute elo based off that". Researched existing
+degenerate-dataset evidence across the repo rather than re-deriving from scratch:
+- `mf_field/akash/results/BENCH_FULL.md` (the pre-round1, 12-model x 40-dataset Elo table I plan to
+  extend with the round1 top-3 survivors) already excludes 2 of the 42 akash-characterized datasets as
+  degenerate: `ext__gray_scott_2d`, `ext__kuramoto_sivashinsky_1d` — `dataset_characterization.csv`
+  confirms both `mf_useless=1` (LF/HF decorrelated; every model scores worse than predicting zero).
+- Round1's own finding (`docs/round1_report.md` §5.3, `state/noise_floor.json` `ext__helmholtz_2d`
+  entry, certified floor 9.695) is the same failure mode on `ext__helmholtz_2d`: the zero predictor
+  beats the round champion there. NOT currently in BENCH_FULL.md's exclusion list — adding it.
+  -> Consolidated exclusion for the full-eval + Elo recompute: {ext__gray_scott_2d,
+  ext__kuramoto_sivashinsky_1d, ext__helmholtz_2d} = 3 of 42 datasets, 39 remain.
+- Explicitly NOT excluding round1's "Leg-B' unclearable floors" (`allen_cahn_2d`, `cahn_hilliard`,
+  `fisher_kpp_2d`, `phase_field_crystal_2d` — sharp collection, all copy-LF-referenced skill floor
+  >1.0 per `noise_floor.json`): that defect is specific to round1's copy-LF skill-ratio metric
+  (inflated denominator, registration defect, report §5.1), not to raw pairwise nRMSE, which is what
+  Elo actually compares. Judgment call, flagged as such (not re-litigated with Eloise — proceeding).
+- `dataset_characterization.csv`'s `degenerate` column itself is NOT used as the exclusion criterion
+  (it's an OR of `mf_useless` and `operator_hard`; operator_hard datasets are legitimately difficult,
+  not broken benchmarks — using `mf_useless=1` plus round1's own helmholtz finding instead).
