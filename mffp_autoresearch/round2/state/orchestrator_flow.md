@@ -344,3 +344,30 @@
 - 2026-07-31 ~21:4x PDT r2s1-B2 starter SUCCESS (28/28): B2.json drafted, no TBDs; 54 env keys
   (5 _-prefixed directives to filter); E4 citation honestly marked SEARCH-RETURN ONLY.
   -> builder dispatched.
+
+- 2026-07-31 ~22:0x PDT r2s3-B2 websearcher SUCCESS (9/9, cap hit): E1 linear channel PREEMPTED
+  (Willcox 2508.08517 projection-based MF linear regression w/ disjoint-condition LF + HF-only
+  baseline) -> declared baseline only; E2 supersedes B1's D3 novel verdict (retain-plus-
+  transfer); E3b Nyquist pinning = bug fix; E5 matched ±LF neural contrast at N_hf~5 vs
+  certified floor = NOVEL (the stream's remaining claim). Honesty: ifc-affine = standard RB
+  knowledge (integrity statement not discovery); architecture tax must cite 2209.15265.
+  -> B2 brainstormer dispatched WITH r2s4-B2 turf boundary (accounting vs optimizing).
+
+- 2026-07-31 ~23:0x PDT r2s2-B1 mechanism turn 3 (6/6): corrector value governed by input
+  REALISATION COHERENCE (32-100% reduction at gamma~1.0 -> <=0.08% at gamma<=0.52; correction
+  rotates orthogonal to residual); even ORACLE Wiener on this pseudo-LF < the clause's 2.0
+  bar on ch; I8 STRUCTURAL: deterministic pseudo-LF = re-parameterisation, not information
+  channel — the stack cannot leave the condition->HF class. I2->I2' correction + three-way
+  taxonomy in part 6. 1-CPU cgroup disclosure noted. -> register turn dispatched (triad
+  tool-relationship documentation requested).
+
+- 2026-07-31 ~23:2x PDT r2s3-B2 brainstormer SUCCESS (12/12): model card = r2s3_null_supply
+  (per-rung scalers + Nyquist-pinned modes + null-direction paired-difference penalty from
+  LF rungs); step/normalization-matched ±LF at N_hf=5 on ifc (m=1) / ch (m=15, 3 HF draws) /
+  fisher (m=0 structural null control); E1 linear channel as cited reference arm only;
+  turf with r2s4-B2 explicitly partitioned (paired full-N vs disjoint-condition N_hf=5).
+  -> starter dispatched.
+
+- 2026-07-31 ~23:4x PDT r2s3-B2 starter SUCCESS (12/12): B2.json drafted, verdict novel (E5);
+  17-leg matrix; env-key count discrepancy (note says 25, lists 30) transcribed verbatim +
+  flagged -> builder told: 30 listed keys authoritative. -> builder dispatched.

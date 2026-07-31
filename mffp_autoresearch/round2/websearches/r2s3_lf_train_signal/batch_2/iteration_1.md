@@ -73,7 +73,7 @@ claim itself cannot be presented as new.
 
 ### Term 3 — closed-form/linear baselines vs neural operators
 
-Returns: arXiv:2606.29440 (PCA-RaNN: PCA + fixed random features + closed-form
+Returns: arXiv:2606.29440 [search return: https://arxiv.org/pdf/2606.29440] (PCA-RaNN: PCA + fixed random features + closed-form
 least-squares readout; "recasts latent operator learning as fixed-feature
 linear regression", 1-3 orders of magnitude faster, competitive accuracy —
 independently retrieved by `websearches/r2s1_direct/batch_2`);
