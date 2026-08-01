@@ -71,7 +71,7 @@
    "_declared_baseline": "program.md 12.3's mandatory declared baseline mf_fno_transfer_film is CITED, not re-run (ifc_poisson, 200 ep, seed 0, nRMSE 0.055637439592454, skill 1.5454844331237223, hashes d3d0ade9... / 9753ff24..., from r2s3-B1). This card trains nothing, so the rebadge question is answered by construction: no family is created."
   }
  },
- "status": "analyzing",
+ "status": "complete",
  "skipped_reason": null,
  "reopen_candidate": false,
  "scripts_path": {
@@ -1551,6 +1551,63 @@
    "hz fails a purely internal test that has nothing to do with ADR r2-0004: once both arms are amplitude-calibrated its effect is 0.04-0.13x its own mce. Its report-only status turns out to be generous rather than harsh."
   ]
  },
- "7_gap_and_future": null,
- "reanalysis_progress": "turn_3"
+ "7_gap_and_future": {
+  "open_question": "Is ch's near-orthogonal no-LF failure a DATA-BUDGET fact or an OPTIMISATION fact? Turn 2 established that on sharp__cahn_hilliard the no-LF arm's prediction is essentially uncorrelated with the truth (median per-sample cosine 0.0003-0.0385, 66-76 % of samples below 0.3) while the LF arm's is aligned (0.962-0.964), so the certified +-LF effect there is LF supplying the field's PHASE. What B4 cannot say is whether 5 HF rows plus a 19-dimensional condition vector fail to DETERMINE that phase (an identifiability limit, in which case no training recipe can close the gap without LF or more HF rows) or merely fail to let this optimiser FIND it in 200 epochs (a trainability limit, closable without LF). The discriminating measurement is training-free and exists in the round's own tool library - tools/condition_identifiable_rank.py and tools/affine_ladder_voi.py answer 'how many degrees of freedom does the condition determine, and can the 5-row design identify them' - but neither has been run on cahn_hilliard's 19-D condition vector, which is by far the widest in the panel and the only one where cond_dim exceeds n_hf_train by a factor of 4.",
+  "next_direction": "FORMAL STREAM CLOSE. r2s3_lf_train_signal closes on B4; no B5 is drafted. The pre-registered B5 trigger (brainstormer batch_4 iteration_1 Status) required F3 to fire on >= 1 of 6 datasets OR ch's ridge-LOO ceiling to absorb >= 50 %. Part 5 recorded F3 0/6 and ch's ceiling at 26.90/19.77/8.24 % (max 26.9 % < 50 %), so the trigger did not fire. Turn 2 STRENGTHENS that call rather than merely confirming it: ch's 26.9 % is entirely the [0.5, 2] clip - bit-identical to the absorbed share of a constant gain of 0.5, with clip fraction 1.00 - and ch's gain law carries essentially no condition information (LOO R^2 0.077-0.334; unclipped the law is actively harmful on d2 at -0.626). There is therefore no condition-keyed calibration headroom on ch for a B5 to chase, and the trigger's threshold was, if anything, generous. The stream's remaining question is the open question above, and it belongs to a FUTURE ROUND, not to a B5: it needs a rank/identifiability probe on cahn_hilliard's condition design plus at least one HF-budget rung above 5, which is a new stream premise (this stream's immutable is the +-LF contrast at a fixed 5-row budget), not another batch of this one.",
+  "cross_stream_notes": "1. PUBLICATION RULE for every stream, effective immediately: any card that GATES on a diagnostic number must publish the score of the ZERO-INFORMATION version of the same instrument next to it. r2s3-B4 produced three readings shaped by the instrument rather than the data - (a) 'the achievable calibration heads do nothing', true but because their fit rows were informationally empty (sd(log optimal-scale) <= 2.0e-06 on all 16 control legs) rather than because the head class was weak; (b) 'the test-fitted ceiling absorbs 26.9 / 44.3 / 69.7 %' on ch/ac/hz, bit-identical to a constant gain carrying no condition information on 6 of 16 draws; (c) 'the effect is N x the certified mce', a mean over a per-sample distribution concentrated enough that ifc's claim falls below its own mce once the 6 most favourable of 128 samples are deleted. Both promoted tools implement their own nulls; the rule generalises past them. 2. STRUCTURAL FACT any card contemplating a post-hoc calibration/gain/scale head should read first: such a head fitted on the same HF rows the arm was trained on is the IDENTITY BY CONSTRUCTION, for any architecture and any dataset, because the arm has already driven its calibration residual to zero on exactly those rows. The only escape is labels the arm did not fit, and r2s3-B4 priced them: on the one panel dataset with a condition-learnable gain law (ifc_poisson, held-out R^2 0.927), a head given REAL labels absorbs 0.251 of the per-sample-oracle repair at 5 rows and 0.792 at 10 - i.e. roughly TRIPLE this round's HF budget to recover most of one amplitude channel. 3. ext__helmholtz_2d fails a purely INTERNAL test independent of ADR r2-0004's report-only status: once both arms are amplitude-calibrated its +-LF effect is 0.04-0.13 x its own certified mce (amplitude share 0.88-0.99), and BOTH arms are near-orthogonal to the truth (median cosine 0.00-0.21) and collapsed (across-sample fluctuation ratio 0.036-0.282). Any stream still reading helmholtz contrasts should treat it as a contest between two failed predictors. 4. CARD-DESIGN corollary: a falsification clause written against a memorization statistic can be INVERTED by the mechanism it was meant to police. r2s3-B4's F3 was written to catch 5-row memorization as a threat to the reading; memorization turned out to be the reason the entire achievable control class was vacuous, so F3 could not fire and its non-firing was not evidence of anything. Check which side of a clause the mechanism lands on before reading a surviving null as support.",
+  "criterion1_legacy_statement": {
+   "_what_this_is": "The stream's contribution to round-2 criterion 1, in graded form: which datasets carry a certified LF TRAIN-TIME effect that no ACHIEVABLE LF-free control explains, at what grade, under which gate. Skill units, corrected denominators, seed 0, provisional-single-seed. Effects are E_free = skill(best achievable LF-free control) - skill(A1_lf_cov); a positive value means the LF-covariate arm wins.",
+   "gate": "ACHIEVABLE LF-free control gate (part 5): the treatment must beat the best control in {a0_raw, the four train-fitted gain heads, ref_linear_hfonly, ref_nn_condition_n5, ref_train_mean_n5, ref_zero, a0_split_ensemble (labelled non-budget-matched, 15 HF rows / 3x compute)} by more than the dataset's certified min_claimable_effect on EVERY HF-subset draw. Test-fitted ceilings (C1/C2/C3) are labelled upper bounds and never claims.",
+   "carried": [
+    {
+     "dataset": "sharp__cahn_hilliard",
+     "grade": "A",
+     "E_free_worst_draw": 10.355037714765485,
+     "over_mce": 113.48564446298083,
+     "why_A": "broad-based (median per-sample effect 131-181 x mce EXCEEDS the mean 113-125 x mce), sign-significant on every draw (win rate 0.76-0.79, p <= 1.8e-07), unanimous 7/7 readings on all three contrasts in part 5, survives deletion of the 10 % most favourable samples at 95-114 x mce, and survives the test-fitted ceiling gate as well (per_sample_oracle, unclipped, 64x)",
+     "mechanism": "STRUCTURAL: LF supplies the field's phase. The no-LF arm is near-orthogonal to the truth (median cosine 0.0003-0.0385) while the LF arm is aligned (0.962-0.964); only 25-35 % of the effect is amplitude, and E_struct is 99-125 x mce",
+     "honest_phrasing": "the LF arm beats the zero field on samples where the no-LF arm does not - which is exactly what the gate was built to test; ref_zero is the binding control on 2 of 3 draws"
+    },
+    {
+     "dataset": "ifc_poisson",
+     "grade": "B",
+     "E_free_worst_draw": 1.32431095834523,
+     "over_mce": 1.4122908468193878,
+     "why_B": "real and CI-supported (paired per-test-sample bootstrap CI95 [0.7735, 1.9182] excludes zero) but NARROW at 1.41 x mce, MEAN-driven rather than typical-sample (win rate 0.56, exact sign-test p = 0.185), TRIM-FRAGILE below its own mce once the 6 most favourable of 128 samples are deleted (0.79 x mce at 5 %, 0.44 x at 10 %), a single native draw, 5/6 available readings, and it does NOT survive the test-fitted ceiling gate",
+     "mechanism": "AMPLITUDE + refinement: two thirds amplitude (E_amp 3.984) on a field that is already structurally right without LF (median cosine 0.997), with a structural remainder of 2.000 = 2.1 x mce. This is the ONLY dataset in the panel with a condition-learnable gain law (held-out R^2 0.927, C2 0.937)",
+     "honest_phrasing": "quote it as a mean effect with its bootstrap CI, never as a typical-sample effect, and always with the trim statistic"
+    },
+    {
+     "dataset": "sharp__allen_cahn_2d",
+     "grade": "C",
+     "E_free_worst_draw": 23.64146786828445,
+     "over_mce": 26.87432198251524,
+     "why_C": "passes the primary reading on every draw and survives a 10 % adversarial trim (98.2 / 5.5 / 76.2 x mce), but TAIL-CARRIED (5-16 of 100 samples hold half the effect; the top 10 % hold 37-61 %), only 3/7 readings agree, the exact sign test FAILS on d1 (p = 0.271) - the one draw priced against a genuine LF-free floor - and 2 of 3 draws are priced against A0-derived controls (d0 the labelled non-budget-matched split ensemble; d2 A0 with the identity head, where E_free is identically E_raw). Carries the ADR r2-0003 conditional-mean caveat",
+     "mechanism": "CATASTROPHE AVOIDANCE: LF removes a heavy tail of samples on which the no-LF prediction becomes orthogonal-to-anticorrelated. The size of that tail is a draw-level lottery (frac cos < 0.3 = 0.32/0.09/0.09), which is the whole of the 761.90/36.25/98.55 E_raw dispersion, and the broken subset is largely different each draw (top-10 contributor Jaccard 0.18-0.25)",
+     "honest_phrasing": "never quote without the tail statistic and the control-provenance note"
+    }
+   ],
+   "retired": [
+    {
+     "dataset": "sharp__fisher_kpp_2d",
+     "why": "its raw effect is MORE than fully absorbed by the 5-row train-mean floor (absorbed 181-441 %); E_free is negative on all three draws (-1695 to -3597 x mce) and the LF arm improves only 16/9/24 % of test samples"
+    },
+    {
+     "dataset": "sharp__phase_field_crystal_2d",
+     "why": "negative on sign already in B3; E_free -40 to -50 x mce on every draw, LF arm improves 13-23 % of samples, and the binding control on all three draws is the labelled non-budget-matched split ensemble"
+    },
+    {
+     "dataset": "ext__helmholtz_2d",
+     "why": "report-only under ADR r2-0004, AND independently disqualified: E_free negative on all three draws, and once both arms are amplitude-calibrated the effect is 0.04-0.13 x its own mce, with both arms near-orthogonal and collapsed"
+    }
+   ],
+   "under_the_test_fitted_ceiling_gate": "Only sharp__cahn_hilliard survives (per_sample_oracle, unclipped, 5.8437 = 64x mce on the worst draw). ifc falls to +0.6106 < its 0.9377 mce and ac reverses sign. CAVEAT REQUIRED on any ridge_cond_loo_test absorbed share quoted for ch, ac or hz: 'clip-saturated - reproduced to within 3 % by a constant gain carrying no condition information'. The global_test and per_sample_oracle ceilings are unclipped exact minimisers and need no such caveat, and ch's surviving gate rides on per_sample_oracle.",
+   "transferable_finding": "The round's most portable result from this stream is not a dataset list but the MECHANISM and its PRICE: LF supplies its signal at TRAINING time, where it does not compete for the few HF rows. A post-hoc, test-time substitute must buy the same signal with HF labels the budget does not contain, and the rows it does own are informationally empty by construction (sd(log optimal-scale) <= 2.0e-06 on all 16 control legs, because the arm interpolates them to rel-L2 4.6e-04 ... 1.8e-02). Priced on the one dataset where the substitute is even possible: ~10 genuinely labelled held-out HF rows, TRIPLE this round's budget, to recover 79 % of one amplitude channel."
+  },
+  "promoted_tools": [
+   "gain_head_feasibility_audit.py",
+   "effect_concentration_audit.py"
+  ]
+ },
+ "reanalysis_progress": "registered"
 }

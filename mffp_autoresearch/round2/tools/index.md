@@ -162,6 +162,8 @@ design should know before it is written:
 | `matched_level_predictor_on_test` | training-free skill floor: nearest-condition sample at level `f`, upsampled, × one gain calibrated on the HF **train** samples only; plus zero- and HF-train-mean-predictor baselines |
 | `ledger_contamination_audit.py` | ROUND-2: could this A-vs-B reading have fired at all, and is it measuring what the card thinks? the identical triangle-inequality ceiling `D(arm, baseline)` on \|skill difference\| with a `COULD_NOT_FIRE` flag when it sits below the clause threshold, plus (with a `--control` column) the FUNCTION-CLASS vs TARGET decomposition that separates "is this estimator better" from "did the treatment's target buy anything", plus (`--matched`) the row-count bias when the arms were fitted on different numbers of rows | r2s4_diag-B3 turns 1-2 |
 | `band_retention_probe.py` | ROUND-2: what part of the spectrum a predictor actually PRODUCES — per radial band the truth's energy share, the arm's retained energy ratio, and the decisive `band_relative_error` (**1.00 = the arm contributes exactly zero useful energy in that band**), with a `contributes_nothing_above_lowest_band` verdict and (`--advantage A:B`) the per-band localisation of an arm-vs-arm gap | r2s4_diag-B3 turn 3 |
+| `gain_head_feasibility_audit.py` | ROUND-2: can a post-hoc per-sample GAIN head be fitted here at all, and is a reported gain CEILING real condition learning or just the head's own clip? the fit rows' calibration-label spread against the eval rows' (**a head fitted on rows the arm interpolated is the identity BY CONSTRUCTION**), the train-fitted head's out-of-fit R² against the true gain, a labelled-holdout learning curve that prices what real labels would buy, and the LOO-on-eval ceiling scored next to TWO zero-information nulls (constant gain at the clip bound, best constant) | r2s3_lf_train_signal-B4 turns 1-2 |
+| `effect_concentration_audit.py` | ROUND-2: is a paired A-vs-B effect BROAD-BASED or carried by a handful of test samples, and how much of it survives perfect per-sample amplitude calibration? per-sample effect distribution (median vs mean, win rate, exact sign test), concentration (top-1/5/10 % share of the positive effect, samples-to-halve), the ADVERSARIAL TRIM (effect after deleting the most favourable 5/10 %, judged against the certified mce), and the `E_struct`/`E_amp` split with the per-arm cosine / norm-ratio / fluctuation anatomy | r2s3_lf_train_signal-B4 turns 2-3 |
 
 **Read it as.** `index_aligned: false` → any family that pairs
 `cond_by_fid[s][:n]` with `field_by_fid[t][:n]` is training on mismatched
@@ -3528,3 +3530,126 @@ first and assert against a pre-registered value. r2s4-B3 turn 3 hit exactly this
 and the card's own `prereg_*.json::copylf_train_rel_l2_mean` caught it — that
 pre-registered column is a cross-check on downstream ANALYSIS, not just on the
 experiment, and is worth reproducing to `rtol=1e-6` in any probe that touches LF.
+
+---
+
+## `gain_head_feasibility_audit.py` (r2s3_lf_train_signal-B4 turns 1-2)
+
+**Question.** Two failures that keep being misread as physics:
+*"the calibration head does nothing"* and *"the test-fitted gain ceiling absorbs
+X % of the effect"*. Both are routinely instrument artifacts, and this tool
+always ships the zero-information null next to the instrument.
+
+| field | meaning |
+|---|---|
+| `label_degeneracy.c_fit` / `c_eval` / `sd_log_ratio_fit_over_eval` | spread of the per-sample optimal scale `c_i = <p_i,y_i>/‖p_i‖²` on the head's FIT rows vs the EVAL rows. **A ratio near zero means no head of any class can be anything but the identity** — the arm interpolated its fit rows, so the calibration label is a constant |
+| `train_fitted_head.R2_vs_true_eval_loggain` / `gain_spread_sd_log` | is the achievable head anti-informative, and is the gain it emits literally constant? |
+| `labelled_holdout_learning_curve[n]` | the SAME head class refitted on `n` random EVAL rows WITH REAL LABELS, scored on the remainder: `absorbed_of_oracle` and held-out `R2`. Plateau height = class capacity; curve shape = sample-size cost; the gap to the shipped head's 0.000 = label degeneracy. **A counterfactual price for labels, never an achievable score** |
+| `ceiling_reread.law_clipped` / `law_unclipped` / `null_constant_at_clip_lo` / `null_best_constant` | the LOO-on-eval ceiling clipped and unclipped, against two gains carrying NO condition information |
+| `ceiling_reread.null_over_law` | **≈1 ⇒ the ceiling number IS the clip.** On r2s3-B4, 6 of 16 draws were bit-identical to a constant gain of 0.5 |
+| `verdict` | `DEGENERATE_FIT_SET` / `CLIP_ARTIFACT_CEILING` / `LAW_LEARNABLE` / `NO_LAW` (thresholds `--degenerate_ratio`, `--null_share`, `--r2_learnable`) |
+
+```bash
+python tools/gain_head_feasibility_audit.py \
+    --preds <arm>_preds.npz --dataset ifc_poisson \
+    --floors_json state/anchors/floors.json --out gain_audit.json
+# or: --targets_npz t.npz --targets_key y_test (skips the panel loader entirely)
+# npz key overrides: --key_pred_test/--key_cond_test/--key_pred_fit/--key_target_fit/--key_cond_fit
+```
+
+Head conventions (log-space fit, unpenalised intercept, exact-LOO/PRESS λ,
+clipping on law-keyed heads only) are inherited from
+`gain_calibration_ceiling.py` via B4's `heads.py`. Scoring is `eval/nrmse.py`;
+a closed-form `‖g p − y‖/‖y‖ = √(g²a − 2gb + c)/√c` identity is asserted against
+it at `g = 1` (`gram_seam_abs < 1e-10`) before any rescale is scored, so 8 800
+rescored subsets never rebuild a field array.
+
+**Verified.** Run 2026-08-01 from `round2/` **on data it was not developed on** —
+r2s3-B2's `r2s3_null_supply` arms, a different card and a different family:
+`ifc_A5` → `CLIP_ARTIFACT_CEILING` + `NO_LAW` (`null_over_law` 1.0008, clip
+fraction 0.961, learning-curve R² plateau −0.045), `ch_A2_s1` →
+`DEGENERATE_FIT_SET` + `CLIP_ARTIFACT_CEILING` + `NO_LAW` (sd-log ratio 1.52e-04,
+`null_over_law` 1.186). Regression against its provenance card reproduces
+r2s3-B4 turn 1/2 exactly on B3's `ifc_A0`: sd-log ratio 3.3675069053836957e-06,
+head R² −0.038301842014462295, plateau 0.9268173107474013, `null_over_law`
+−1.1105616959545868.
+
+**Runtime.** Arithmetic is seconds; wall time is the panel loader (~1.6 min for
+16 legs of 100×65536). Use `--targets_npz` to skip it. `--dataset` materialises
+every fidelity through `panel_data.load_split` and drops the non-HF ones — this
+is NOT the structural LF-poisoning of B4's `lf_guard.py`; use that module when
+you need an auditable no-LF claim.
+
+---
+
+## `effect_concentration_audit.py` (r2s3_lf_train_signal-B4 turns 2-3)
+
+**Question.** A dataset-level effect in skill units is a MEAN over per-sample
+relative errors. Two effects that pass the same primary reading can be a
+typical-sample claim and a six-sample claim. This tool separates them, on the
+SAMPLE axis (complementing `effect_threshold_readings.py`, which works the
+draw/split axis) — and it works with a single split.
+
+| field | meaning |
+|---|---|
+| `effect.E` / `E_over_mce` | `mean_i (rel_i(baseline) − rel_i(treatment))/denom` — exactly the skill-unit effect, by construction |
+| `effect.median_over_mce` / `win_rate` / `sign_test_p` | the TYPICAL sample's effect, the fraction of samples actually improved, and an exact two-sided binomial sign test. **A median exceeding the mean = favourably skewed, not tail-carried** |
+| `concentration.share_of_positive_top{1,5pct,10pct}` / `n_samples_to_halve_E` | how few samples carry the claim (NaN when the effect is not positive — a share of a negative total is not a share) |
+| `trim.top{5,10}pct.E_over_mce` | the effect after DELETING the most favourable 5 / 10 % of samples. **Below 1.0 = the claim does not survive an adversarial trim** |
+| `amplitude_vs_structure.E_struct` / `E_amp` / `amplitude_share` | the effect surviving perfect per-sample amplitude calibration on BOTH arms (`rel^struct = √(1−cos²)`). `E_struct < mce` ⇒ the effect was amplitude all along. **Mechanism decomposition of an arm-vs-arm contrast — not priced against any control class** |
+| `arm_anatomy.*` | per arm: median/p10 cosine with the truth, `frac_cos_below_0.3`, `‖p‖/‖y‖`, and the across-sample fluctuation ratio (`≪1` = regressed toward the conditional mean) |
+| `verdict` | `NEGATIVE_EFFECT` / `NOT_SIGN_SIGNIFICANT` / `TAIL_BORNE` / `BROAD_BASED` / `AMPLITUDE_ONLY` |
+
+```bash
+python tools/effect_concentration_audit.py \
+    --baseline control_preds.npz --treatment treatment_preds.npz \
+    --dataset sharp__cahn_hilliard \
+    --floors_json state/anchors/floors.json \
+    --noise_floor_json state/noise_floor.json --out effect_audit.json
+```
+
+**Verified.** Run 2026-08-01 from `round2/` **on data it was not developed on** —
+r2s3-B2 arm pairs: `ifc A5→A0` → `BROAD_BASED` (E 28.18 = 30.05× mce, win rate
+0.992, top-10 % share 0.201, 10 %-trim 26.72× mce), the reversed direction →
+`NEGATIVE_EFFECT` with the concentration shares correctly NaN, and
+`ch A2_s1→A0_s0` → `NEGATIVE_EFFECT` (−185.2× mce, win rate 0.06). Regression
+against its provenance card reproduces r2s3-B4 turns 2-3 exactly on B3's
+`ch A0_d0 → A1_d0`: E 17.443643917468442, E/mce 191.1729562253453, median/mce
+204.63761340473863, win rate 0.91, top-10 % share 0.18344235614450372, trims
+181.29 / 172.40× mce, amplitude share 0.3461251574841438, `E_struct` 125.00× mce.
+
+**Runtime.** Seconds of arithmetic; the panel loader dominates (~15-30 s per
+dataset). Same `--targets_npz` escape and the same `load_split`-materialises-
+every-fidelity caveat as `gain_head_feasibility_audit.py`. The two arms must be
+scored on the same test split in the same row order — the tool checks shapes but
+cannot check provenance, so the `preds_oof_*` row-permutation caveat in the
+r2s4-B3 standing note applies here too.
+
+---
+
+## Standing rule the two r2s3-B4 tools encode
+
+**Publish the zero-information null next to any diagnostic number a card GATES
+on.** r2s3-B4 produced three readings that were shaped by the instrument rather
+than by the data, and each needed its own null to expose:
+
+1. *"The achievable calibration heads do nothing"* — true, but because their fit
+   rows were informationally empty (`sd(log c) ≤ 2.0e-06`), not because the head
+   class was weak. Null: refit the SAME class on real labels
+   (`labelled_holdout_learning_curve`). It reaches R² 0.927 on ifc.
+2. *"The test-fitted ceiling absorbs 26.9 % / 44.3 % / 69.7 %"* — on ch, ac and
+   hz those numbers are bit-identical to a constant gain of 0.5, because the
+   `[0.5, 2]` clip bound on 89-100 % of samples and the law never evaluated.
+   Null: `null_constant_at_clip_lo`. **Exact minimisers (`global_test`,
+   `per_sample_oracle`) are unclipped by construction and need no caveat.**
+3. *"The effect is N× the certified mce"* — a mean over a concentrated
+   distribution. Nulls: the sign test (does the MEDIAN sample benefit?) and the
+   adversarial trim (does the claim survive deleting its best 5 %?). On ifc the
+   answer to both is no, while its paired bootstrap CI still excludes zero — and
+   that disagreement is the finding, not a defect.
+
+Corollary for card design: a falsification clause written against a memorization
+statistic (r2s3-B4's F3) can be *inverted* by the mechanism it was meant to
+police — memorization was not the threat to the reading, it was the reason the
+whole achievable head class was vacuous. Check which side of the clause the
+mechanism actually lands on before reading a surviving null as evidence.
