@@ -85,12 +85,27 @@ does pfc's (note §06 item 4, unchanged: mandatory caveat).
   attention corrector is ever reused, permute queries before chunking
   (recovers the unchunked forward pass to 0.014% at zero cost, s4-B2 F7/F8).
 
-## 5. Warp premise re-audit (note §06 item 6) — RUN
+## 5. Warp premise re-audit (note §06 item 6) — RUN; PREMISE DEAD POST-FIX
 
-`tools/warp_premise_audit.py --datasets PANEL` re-run against the corrected
-references, output at `state/warp_premise_postfix_2026-08-01.json`; read it
-for the residual genuine-transport ceiling (the part of the round-1 warp
-premise that was not the (r−1)/2 registration constant).
+`tools/warp_premise_audit.py --datasets PANEL` re-run 2026-08-01 against the
+corrected references; output `state/warp_premise_postfix_2026-08-01.json`.
+Residual transport ceiling on the corrected path: the test-fitted per-sample
+rigid-shift oracle buys ≤ 3% relative (pfc 0.2218→0.1648 was the copy-LF
+column; corrected-path gains are 0.1196→0.1103 allen_cahn, 0.3536→0.3425
+fisher, 0.4193→0.3989 ch, with median fitted |shift| 0.000–0.045 cells on
+allen_cahn/pfc/ch) and the level-set displacement medians collapse from
+≈ 0.7071-cell (the registration expectation) to 0.007–0.051 cells on
+allen_cahn/pfc/ch.
+Residual worth noting: fisher_kpp keeps a 0.62-cell non-rigid level-set
+median (its rigid oracle still buys only 3%) — local, not a constant, and
+small; helmholtz's corrected path still shows a ≈ 2.0-cell level-set median
+against a 2.12-cell non-nested-grid expectation with a 2% oracle gain
+(consistent with the known zero-mean Dirichlet stretch; moot under §3).
+`ifc_poisson` errors out (test ships no LF — no moving image to audit; by
+design, recorded in the JSON).
+Conclusion: round 1's warp/displacement premise was the registration
+constant; there is no meaningful transport left to warp on the corrected
+references, so no future warp card should launch without quoting this file.
 
 ## 6. Halt-checklist repairs
 
