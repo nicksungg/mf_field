@@ -726,3 +726,35 @@
   sample-round only). (5) crons re-created (session-only, 7-day auto-expiry): orchestrator
   pulse 8de33a00 (4-59/10), maintainer 75c00bb0 (9-59/20), auto-sync f14a9d81 (17-59/30).
   (6) this commit.
+
+- 2026-08-01 post-resume session log (compressed). r2s4-B3 initial-analyzer: FALSIFIED
+  F3+F4a (advantage_total claimable 4/4 but reachable ~0; anchor untouched) -> mechanism
+  turns: T1 ceiling analysis (pfc/hz cells tautological, ch genuine; ridge-flip discovered),
+  T2 row-count+capacity controls (flip does NOT survive: 72% row bias, 99.2% function-class
+  term; teacher-target term 50-90x below threshold; F4a definitional artifact, corrected
+  reading 0/4) -> T3 dispatched (spatial structure of unreachable half + part 6).
+  r2s3-B3 initial-analyzer: FALSIFIED F1 3/6 F2 0/4 with knife-edge vs mce-only reading ->
+  T1 (knife edge resolves FOR falsified: mce imports variance constant from wrong regime;
+  H1 variance-reducer quantified), T2 (F4 adjudicated on degenerate single-member set +
+  timeout-stall recovery, all 14 legs; M1 gain channel 96.9%; M2 pfc structural harm;
+  M3 capacity non-binding), T3 (M1b scale-not-map; M5 no-LF ensemble beats LF on fk/pfc;
+  part 6, 23 findings) -> register: tools effect_threshold_readings.py +
+  map_dispersion_scale_shape.py promoted; CARD COMPLETE (10th). B4 websearcher dispatched
+  (batch counter -> 4); part 7 ranks gain-head learnability / budget-matched ensemble /
+  repaired claimability; do-not: no LF-supply engineering on fk/pfc.
+  r2s2-B2 register (re-dispatch) COMPLETE: tools zero_gradient_stage_ladder.py +
+  relative_gain_units_audit.py promoted + coherence-gate standing amendment; card closed
+  (9th) -> B3 websearcher (verdicts: composition open, Operator Boosting closest prior art;
+  WebFetch disabled in env — routed around, fix subagents/websearcher.md before batch-5) ->
+  brainstormer: B3-NOT-close, 4-arm zero-gradient scored design (A1_lsi scored; OB base-swap
+  control; 5 in-job fold/train seeds vs certified mce; est 60-80 min) -> starter drafted
+  card (no TBDs) -> builder dispatched.
+  r2s1-B3 builder (fresh) COMPLETE: build 2b030f0, 13/13, G-B structural TestLockError,
+  72/72 env keys, registration vendored -> code-reviewer SUGGEST (6/6): headline = disjoint
+  smoke stale vs HEAD; orchestrator discharged the gate (re-ran contract smoke at HEAD with
+  full ENV_ARGS: exit 0, nRMSE bit-identical 1.140818334879289; code_hash delta explained =
+  env-inclusion in code_hash(), empty-env hash at HEAD == d8cc06f0 exactly) -> ORCHESTRATOR
+  SUBMITTED seed 0: job 66262741 (h200). Card -> running.
+  Maintainer walks 1-5: clean; walk-3 caught r2s3-B3 F4 producer timeout stall (resolved via
+  orchestrator nudge); timing ledger current; auto-sync hazard noted (cron sweeps pre-staged
+  index — guard added to orchestrator sync procedure).

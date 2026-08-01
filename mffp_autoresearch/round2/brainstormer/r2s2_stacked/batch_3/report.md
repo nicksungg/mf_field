@@ -1,0 +1,330 @@
+# Brainstormer Report — Stream `r2s2_stacked`, Batch 3
+
+**Stream**: `r2s2_stacked`
+**Batch**: 3
+**Total iterations**: 1
+**Slot filled**: 1 (`model` card; close-on-B2 considered and rejected on 5 recorded grounds)
+**Reopen candidates resolved**: 0 of 0 (none exist round-wide)
+
+## Slot
+
+- **Category**: `zero_gradient_stage_attribution` — a scored retrieval→closed-form panel arm with a
+  fold/train-seed-paired decision on the learned stage and a matched no-LF base-swap control.
+
+- **Card type**: `model` (scored `test_hf` panel column; mandatory floor arms).
+
+- **Motivation**: B2 part 7's open question is unresolved and un-resolvable by desk analysis —
+  *"the entire out-of-fold case for a TRAINED corrector rests on ONE dataset (allen_cahn: gated CNN
+  9.443 skill units, 49.1 % of the scored gain) at ONE fold seed and ONE fit, while the family's own
+  calib line search set alpha_nn = 0.0 on 5 of the 8 rung cells measured"*. The batch-3 prior-art
+  verdict makes exactly this the claimable content. Direction **(i)** is
+  **`preempted-but-MF-composition-open (cite)`**: *"No fetched source composes **retrieval
+  intermediate → one fitted LSI Fourier-diagonal transfer** as a *multi-fidelity* corrector, scores
+  it under a **copy-LF-skill** denominator with **no LF at test**, or reports the **attribution**
+  (closed-form stage carries 33-100 % of a trained stack's out-of-fold gain; learned stage switched
+  off on 5/8 cells). Claim the composition + attribution, never the filter"* — with the closest
+  prior art named and differentiated: **Operator Boosting** (https://arxiv.org/abs/2606.17460)
+  *"incorporates each correction through validation-selected shrinkage"* over a cheap base, which is
+  structurally B2's `alpha_nn` line search; **their base is the empirical train mean and every stage
+  is trained, whereas here the base is an LF-retrieval intermediate and the winning stage is
+  closed-form** — and arm A3 runs their recipe as an in-job control rather than a citation.
+  Direction **(ii)** is **`preempted (cite)` — as a *method*; it is a measurement, not a claim**:
+  *"Nothing methodological is open — only the **answer on this panel**. Two design constraints fall
+  out of the citations: vary the **fold/train seed**, not just the corrector init
+  (2510.26714); and pre-register the decision against the certified per-dataset
+  `min_claimable_effect` (allen_cahn 0.8797 skill units), because a 3-seed paired test may never
+  declare significance (2511.19794)"* — both constraints are implemented (5 in-job fold/train seeds;
+  every clause denominated in certified mce, no p-value anywhere). Direction **(iii)** is
+  **`preempted (cite)` — as a *framing*; open as artefact + measurement**, so the card produces the
+  artefact (a first-class SCORED zero-gradient arm — none exists in this round; B2's 19.3868 was a
+  *diagnostic* arm with a CNN and a blend bolted on) and the measurement in the round's claim unit.
+  Finally, the websearcher's unpublished negative — *"no found MF/PDE result where the learned
+  corrector is switched off out-of-fold while a closed-form stage carries the gain"* — is made
+  identifiable per dataset exactly as instructed: *"LSI-only arm, LSI+CNN arm, same folds, same k*"*.
+
+- **Concrete config**: new family `models_r2/r2s2_zerograd` (worktree `worktrees/r2s2_stacked/B3`,
+  branch `round2/exp-r2s2_stacked-B3`), condition-only at test, stripped view only, tripwire
+  `R2S2B3_REQUIRE_NO_TEST_LF=1`. Vendored with provenance comments from
+  `worktrees/r2s2_stacked/B2/models_r2/r2s2_correctability` @ `bd54bcb`: `lsi_filter.py`
+  (closed-form Wiener `T(k)` + alpha line search **including 0**), `local_corrector.py`
+  (`local_pixel_gate`, kernel 7, depth 4, width 32, zero-init head), `bands.py`, `periodicity.py`,
+  `floors.py`, `folds.py`, `upsample.py` (per-dataset ADR r2-0001 conventions
+  `node_aligned_periodic` / `dirichlet_node` / `legacy_cell_centred`, with the existing read-only
+  1e-9 seam assert against `round2/eval/panel_data.py` on the TRAIN split).
+  **Folds**: fit 0.70 / calib 0.15 / eval 0.15, disjointness asserted; LOO below
+  `R2S2B3_LOO_MIN_N=20` (`ifc_poisson`, N_hf = 5).
+  **Intermediate**: `X_k` = mean of the real **train** LF fields of the k nearest train conditions
+  (per-dim train-standardised L2, the `floors.json` definition), LOO on train rows,
+  k ∈ {1,2,4,8,16,32,64,128} — **`all` deliberately absent** (B2 part 7 rule (iv): never build a
+  rung that is LOO on train and no-self on test). `k*` = argmin held-out **calib** nRMSE of the raw
+  intermediate, recomputed per fold seed; tripwire asserts the per-row fluctuation-energy ratio
+  train-vs-test at `k*` > 0.1 (the direct detector for B2's `B:all` defect).
+  **Four arms, identical folds and identical `k*`**:
+  `A0_retrieval_raw` = `X_{k*}` (0 parameters);
+  **`A1_lsi` = SCORED `test_hf`** = `A0` → one closed-form LSI Wiener filter fitted on the fit fold,
+  `alpha_lsi` chosen out-of-fold on calib **including 0** — **zero gradient steps**;
+  `A2_lsi_cnn` = `A1` → gated `LocalCorrector`, 2000 steps (`CORR_STEPS_PER_EPOCH=10` x 200 epochs),
+  shrinkage `alpha_nn` on calib **including 0**;
+  `A3_base_lsi_cnn` = the Operator-Boosting analog / **matched no-LF control** — identical LSI+CNN
+  pipeline, identical folds, budget and shrinkage grids, but starting from the best training-free
+  base selected on calib from `state/anchors/floors.json` (`zero` / `train_mean` / `nn_condition`);
+  because `alpha_lsi = 0` is in the grid, the *literal* Operator Boosting recipe is a reachable
+  special case, recorded per cell as `alpha_lsi_star == 0`.
+  **No blend stage on the scored arm** (B2 measured `lambda* = 1.0`, contribution exactly 0.000000,
+  on 3/4 sharp datasets; r2s1-B2/B3 traced the blend to an error-decorrelation evaluation artefact);
+  the floors are still reported as mandatory arms.
+  **Seeds**: SLURM `seeds: [0]` (strict 1-seed, program §4.2) with **5 in-job fold/train seeds
+  0–4**, each re-drawing the fit/calib/eval partition AND re-initialising the corrector AND
+  re-shuffling its batches — training-seed variation per 2510.26714, the r2s4-B3/r2s3-B3 precedent.
+  **Instruments**: `tools/zero_gradient_stage_ladder.py` adapted as `probes/stage_attribution.py`
+  (attribution in % and in skill units vs certified mce); `tools/relative_gain_units_audit.py` on
+  the arms table as a *reporting* instrument. **No coherence statistic is used as a gate**
+  (STOP-EXPORT honoured); centred gamma is recorded as a directional descriptor only.
+  **Pre-flights**: `tools/target_scale_spread_audit.py` on `ext__helmholtz_2d` and
+  `sharp__phase_field_crystal_2d` (ADR r2-0004, mandatory), `tools/persample_norm_eligibility.py` on
+  the corrector's residual target for all six; an `OUTLIER_DOMINATED` / `NEAR_ZERO_TARGETS` verdict
+  switches that dataset's corrector target to per-sample normalisation, verdicts recorded either way.
+  **Discipline**: `ext__helmholtz_2d` report-only with the zero-floor column and the ADR r2-0004
+  exact-solve caveat (no falsification weight); `ifc_poisson` LOO + `low_n`, excluded from clause
+  counting; pfc claims carry the band-limited-denominator caveat. Decidable set = pfc / allen_cahn /
+  fisher_kpp / cahn_hilliard. Reference-split names never begin with `test`
+  (`ref_retrieval_raw`, `ref_lsi_cnn`, `ref_base_lsi_cnn`, `ref_a1_fs{1..4}`, `ref_zero`,
+  `ref_train_mean`, `ref_nn_condition`). **Guard leg** at contract tier (2 epochs) on `heat_local`,
+  `fluid`, `sharp__sod_1d`.
+  **Size / cost**: 6 datasets x 5 fold seeds x 4 arms = **120 legs**, of which 60 are corrector
+  trainings at 2000 steps (B2 ran 36 in 33.58 min on an H200, with a 15-rung ladder, two conditioners
+  and 200-draw permutation nulls that this card does not have) → **estimate 60–80 min**, between
+  r2s3-B3's 55 min / 33 legs and r2s4-B3's 92 min / 36 legs. Recommend `--time 02:30:00`.
+
+- **Recipe**:
+
+```json
+{
+  "base_family": "r2s2_correctability",
+  "base_commit": "bd54bcba6bb9d8c497980220ac34d6fc78d21ca3",
+  "family_dir": "models_r2/r2s2_zerograd",
+  "datasets": "panel",
+  "epochs": 200,
+  "seeds": [0],
+  "env": {
+    "R2S2B3_ARMS": "A0_retrieval_raw,A1_lsi,A2_lsi_cnn,A3_base_lsi_cnn",
+    "R2S2B3_SCORED_ARM": "A1_lsi",
+    "R2S2B3_SCORED_FOLD_SEED": "0",
+    "R2S2B3_FOLD_SEEDS": "0,1,2,3,4",
+    "R2S2B3_SEED_COUPLES_FOLD_AND_INIT": "1",
+    "R2S2B3_FOLDS": "0.70,0.15,0.15",
+    "R2S2B3_LOO_MIN_N": "20",
+    "R2S2B3_K_GRID": "1,2,4,8,16,32,64,128",
+    "R2S2B3_K_GRID_EXCLUDES_ALL": "1",
+    "R2S2B3_K_SELECT": "calib_min_nrmse_raw",
+    "R2S2B3_K_LOO_TRAIN": "1",
+    "R2S2B3_KSTAR_TRAINTEST_FLUCT_MIN": "0.1",
+    "R2S2B3_KNN_METRIC": "per_dim_train_standardized_l2",
+    "R2S2B3_LSI_ALPHA_LINESEARCH": "21_including_zero",
+    "R2S2B3_LSI_RIDGE": "0",
+    "R2S2B3_NN_ALPHA_LINESEARCH": "21_including_zero",
+    "R2S2B3_BAND_EDGES_FRAC": "0,0.125,0.25,0.5,1.0",
+    "R2S2B3_VARIANT": "local_pixel_gate",
+    "R2S2B3_KERNEL": "7",
+    "R2S2B3_DEPTH": "4",
+    "R2S2B3_WIDTH": "32",
+    "R2S2B3_GATE_INIT": "zero",
+    "R2S2B3_CORR_STEPS_PER_EPOCH": "10",
+    "R2S2B3_A3_BASE_CANDIDATES": "zero,train_mean,nn_condition",
+    "R2S2B3_A3_BASE_SELECT": "calib_min_nrmse",
+    "R2S2B3_NO_BLEND_ON_SCORED": "1",
+    "R2S2B3_UPSAMPLE": "corrected_by_convention",
+    "R2S2B3_UPSAMPLE_ASSERT_TOL": "1e-9",
+    "R2S2B3_PAD_MODE": "circular_if_periodic",
+    "R2S2B3_FLOORS_JSON": "mffp_autoresearch/round2/state/anchors/floors.json",
+    "R2S2B3_FLOOR_ARMS": "nn_condition,train_mean,zero",
+    "R2S2B3_FLOOR_TOL": "1e-9",
+    "R2S2B3_MCE_JSON": "mffp_autoresearch/round2/state/noise_floor.json",
+    "R2S2B3_DECIDABLE_DATASETS": "sharp__phase_field_crystal_2d,sharp__allen_cahn_2d,sharp__fisher_kpp_2d,sharp__cahn_hilliard",
+    "R2S2B3_REPORT_ONLY_DATASETS": "ext__helmholtz_2d",
+    "R2S2B3_LOWN_EXCLUDED_DATASETS": "ifc_poisson",
+    "R2S2B3_SIGN_CONSISTENCY_MIN": "4",
+    "R2S2B3_REQUIRE_NO_TEST_LF": "1",
+    "R2S2B3_CENTRED_GAMMA_REPORT_ONLY": "1",
+    "R2S2B3_PREFLIGHT_TARGET_SCALE": "ext__helmholtz_2d,sharp__phase_field_crystal_2d",
+    "R2S2B3_PREFLIGHT_PERSAMPLE_NORM": "panel",
+    "R2S2B3_PERSAMPLE_NORM_ON_VERDICT": "OUTLIER_DOMINATED,NEAR_ZERO_TARGETS",
+    "R2S2B3_PROBE": "probes/stage_attribution.py",
+    "R2S2B3_UNITS_AUDIT": "1",
+    "R2S2B3_DIAG_OUT": "mffp_autoresearch_outputs/round2/r2s2_stacked/B3/eval",
+    "_substrate_commit": "9e10d414e35a96398f7b091bc84ddf936d88acc7",
+    "_vendor_source": "worktrees/r2s2_stacked/B2/models_r2/r2s2_correctability @ bd54bcb (lsi_filter.py, local_corrector.py, bands.py, periodicity.py, floors.py, folds.py, upsample.py) — vendored with provenance comments; round-2 in-stream continuation, declared-reuse role (a) for the round-1 s4_router LocalCorrector lineage",
+    "_probe_source": "tools/zero_gradient_stage_ladder.py (B2-promoted) adapted to the 4-arm table; re-promoted via the register turn",
+    "_guard_tier": "contract (epochs=2) on heat_local,fluid,sharp__sod_1d — separate job, B2 pattern",
+    "_timing": "estimate 60-80 min panel on h200 (120 legs, 60 corrector trainings); recommend --time 02:30:00",
+    "_note": "keys prefixed _ are card directives, NOT passed to --env. score_panel.py --datasets accepts ONLY the exact keyword 'panel' (or 'guard', or a comma-list); the per-dataset lists above are consumed inside the family."
+  }
+}
+```
+
+- **Expected outcome**: the scored `A1_lsi` panel geomean lands at **19.65** (band 19.2–20.7),
+  Δ = **−3.42** vs the stream anchor **23.0636**, i.e. **2.99x** the certified panel
+  `min_claimable_effect` **1.1418668** — clears the noise floor. Derivation: B2's scored per-dataset
+  skills [4.2465, 48.4515, 170.0842, 11.5725, 15.5067, 8.4546] minus its measured CNN+blend
+  attribution (T3/F3.3: allen_cahn 9.443+3.540, cahn_hilliard 0.081+0, fisher_kpp 0.019+0, pfc
+  0.000+0) → [4.25, 48.45, 183.07, 11.59, 15.59, 8.45], geomean 19.6485. Against the mandatory floor
+  arms, A1 beats the best training-free floor by 11.36 skill units on pfc (53x its 0.2130273 mce),
+  86.13 on allen_cahn (98x its 0.8797047), 0.40 on fisher_kpp (563x its 0.0007137), 7.59 on
+  cahn_hilliard (83x its 0.0912454) and 1.60 on ifc_poisson (1.7x its 0.9377041, `low_n`), and loses
+  to the **zero** floor on helmholtz by 0.90 (0.31x its 2.9529916 mce — unresolvable by
+  construction; report-only). The learned stage's paired increment (A1−A2) is predicted **below 2x
+  allen_cahn's mce (1.7594)** with inconsistent sign across the 5 fold seeds, and 0.00–0.10 skill
+  units on pfc / cahn_hilliard / fisher_kpp. The matched no-LF control A3 is predicted to lose to A2
+  by tens of skill units on allen_cahn / pfc / cahn_hilliard (its bases start at 269.2 / 59.8 /
+  23.2) — i.e. the LF-derived intermediate, not the stagewise shrinkage recipe, carries the class.
+  Informational, not a clause: A1 ~19.65 vs `r2s1_direct-B2`'s 18.3622 is a 1.29-skill-unit gap
+  (1.13x panel mce) in the direction §12.2 calls the stream's falsification framing — single-seed,
+  cross-card, cross-family, therefore reported with that caveat and never claimed.
+
+- **Expected falsification**: **H-r2s2-B3** — *"on this panel the condition-only stacked class has a
+  zero-gradient ceiling: retrieval over the real train LF pool at the calib-selected k* followed by
+  one closed-form LSI Wiener filter captures the class's out-of-fold value, the trained gated
+  corrector adds nothing that survives fold/train-seed variation, and it is the LF-derived
+  intermediate rather than the stagewise recipe that carries that value"* — is FALSIFIED if
+  **(F1, allen_cahn replication)** the paired `A1_lsi − A2_lsi_cnn` skill increment on
+  `sharp__allen_cahn_2d`, averaged over the 5 fold/train seeds, is ≥ **2x its certified
+  min_claimable_effect = 1.7594** skill units with the same sign on ≥ 4/5 fold seeds (B2 measured
+  9.443 = 10.7x mce at one fold seed), **or (F2, panel generality)** `A2_lsi_cnn` beats `A1_lsi` by
+  more than that dataset's certified `min_claimable_effect` — pfc **0.2130273**, allen_cahn
+  **0.8797047**, fisher_kpp **0.0007137**, cahn_hilliard **0.0912454** — with the same sign on ≥ 4/5
+  fold seeds on ≥ 2 of the 4 decidable datasets, **or (F3, the intermediate is dispensable)** the
+  matched no-LF control `A3_base_lsi_cnn` comes within 1 certified mce of `A2_lsi_cnn` (or beats it)
+  on ≥ 2 of the 4 decidable datasets, **or (F4, scored-arm validity)** the scored `A1_lsi` arm loses
+  to the best training-free floor arm from `state/anchors/floors.json` by more than that dataset's
+  certified mce on ≥ 2 of the 5 non-helmholtz panel datasets, or its panel geomean exceeds the
+  launch anchor 23.0636 by more than the certified panel mce **1.1418668**.
+
+- **Prior-art verdict quoted**: verbatim from
+  `websearches/r2s2_stacked/batch_3/report.md` "Prior-art verdict" table and "For the brainstormer":
+  > **(i)** … `preempted-but-MF-composition-open (cite)` … "No fetched source composes **retrieval
+  > intermediate → one fitted LSI Fourier-diagonal transfer** as a *multi-fidelity* corrector,
+  > scores it under a **copy-LF-skill** denominator with **no LF at test**, or reports the
+  > **attribution** (closed-form stage carries 33-100 % of a trained stack's out-of-fold gain;
+  > learned stage switched off on 5/8 cells). Claim the composition + attribution, never the filter"
+  > — citations: LS-MFS https://arxiv.org/abs/1705.02956 (FETCHED); projection-based MF linear
+  > regression, field output, ≤10 HF samples https://arxiv.org/abs/2508.08517 (FETCHED); HFS
+  > high-frequency scaling http://arxiv.org/abs/2503.13695 (FETCHED); spectral-bias diagnosis
+  > https://arxiv.org/abs/2602.19265 (FETCHED); shrinkage-gated stagewise residual correction
+  > (Operator Boosting) https://arxiv.org/abs/2606.17460 (FETCHED); analogue/k-NN downscaling
+  > https://agupubs.onlinelibrary.wiley.com/doi/full/10.1029/2004WR003444 (snippet, 403);
+  > training-free corrector class https://arxiv.org/abs/2507.02227 (FETCHED).
+  >
+  > **(ii)** … `preempted (cite)` — as a *method*; it is a measurement, not a claim … "Nothing
+  > methodological is open — only the **answer on this panel**. Two design constraints fall out of
+  > the citations: vary the **fold/train seed**, not just the corrector init (2510.26714); and
+  > pre-register the decision against the certified per-dataset `min_claimable_effect` (allen_cahn
+  > 0.8797 skill units), because with 3 seeds a paired significance test may declare nothing at all"
+  > — citations: Du https://arxiv.org/abs/2511.19794 (FETCHED); single-training-seed limitation
+  > https://arxiv.org/abs/2510.26714 (FETCHED); benchmark seed variance
+  > https://arxiv.org/abs/2406.10229 (FETCHED); per-cell CI decision on learned residual stages
+  > https://arxiv.org/abs/2606.17460 (FETCHED); Super-Learner zero OOF weight
+  > https://www.biorxiv.org/content/10.1101/172395v1.full (snippet).
+  >
+  > **(iii)** … `preempted (cite)` — as a *framing*; open as artefact + measurement … "The specific
+  > bar — an **LF-derived, retrieval + LSI, zero-gradient** predictor scored on a copy-LF-skill
+  > panel — exists in no fetched source" — citations: https://arxiv.org/abs/2508.05831 (FETCHED);
+  > https://www.nature.com/articles/s41592-025-02772-6 (FETCHED) + rebuttal
+  > https://www.biorxiv.org/content/10.1101/2025.10.20.683304.full.pdf; NAS-Bench-Suite-Zero
+  > (snippet).
+  >
+  > **The genuinely unpublished thing is the negative.** "Two separate refutation terms … found *no*
+  > published MF/PDE result where a learned corrector is switched off out of fold while a closed-form
+  > stage carries the gain; every returned ablation credits the learned stage. If B3 is scored,
+  > design it so that this negative is *identifiable* per dataset (LSI-only arm, LSI+CNN arm, same
+  > folds, same k*), because that contrast is the stream's only publishable content."
+
+- **Immutables self-check**: **pass (11/11)**, positive evidence per item:
+  1. **Data read-only** — the family reads only the shipped stripped-view arrays through the round-2
+     loader; the intermediate is an *average of shipped train LF fields* selected by condition
+     distance (no regeneration, no new samples, no downsampled HF); `ifc_poisson` stays at N_hf = 5
+     via `R2S2B3_LOO_MIN_N=20` LOO; no generation script or dataset path is written by the recipe.
+  2. **Panel + guard fixed** — `datasets: "panel"` (the exact keyword `score_panel.py` accepts) plus
+     a separate contract-tier guard job on `heat_local,fluid,sharp__sod_1d`, byte-identical to the
+     set B2 ran (its `result_guard_s0.json`); no dataset is added, dropped or reweighted.
+  3. **Eval layer / spec untouched** — all new code lands under
+     `worktrees/r2s2_stacked/B3/models_r2/r2s2_zerograd/`; the only contact with `round2/eval/` is a
+     read-only `import` of `panel_data.py`'s interpolators inside the 1e-9 upsample seam assert (the
+     B1/B2 precedent, which shipped with `eval/` unmodified); nothing in the design requires editing
+     `round2/eval/`, `project.yaml`, `program.md` or any agent prompt.
+  4. **One nRMSE definition** — every scored number comes from `score_panel.py` → `eval/nrmse.py`;
+     the card carries the seam check against `nrmse_def_hash`
+     `d3d0ade9191c13bacc40702f3eb26ad290e01641cacee22a1d2233b74c035850` and `copylf_def_hash`
+     `9753ff24e856f595748492dec6cb6c215d748f97e8ec4a679b651f8846da907a` (B2's verified values). The
+     LSI stage's internal Fourier least-squares objective and the corrector's MSE are *training*
+     losses, which §5 leaves free.
+  5. **Contract CLI fixed** — the family exposes the unchanged six-arg `smoke_eval.py`
+     (`--dataset_dir --dataset_name --epochs --out --ckpt_dir --seed`); every knob above is an
+     `R2S2B3_*` env key listed in the recipe (and therefore in the cache key); no new CLI flag.
+  6. **Seeds / tier epochs fixed** — `seeds: [0]` and `epochs: 200` (smoke tier, §2.4). The five
+     fold/train seeds are an *in-job* loop, not extra SLURM seeds — the same construction r2s4-B3
+     and r2s3-B3 used to satisfy strict-1-seed while varying training draws (orchestrator_flow
+     2026-08-01 ~11:0x and ~14:4x entries). No `submit_seeds_2_3.sh` leg is requested.
+  7. **Guarded factory surfaces untouched** — every vendored file comes from
+     `worktrees/r2s2_stacked/B2/models_r2/r2s2_correctability` @ `bd54bcb` (a round-2 worktree), and
+     the probe from `round2/tools/`; the card touches nothing under
+     `factory_mffp/{eval,baselines,references,scripts,data}`, `factory.md`, or `akash/` — in
+     particular it does **not** import `factory_mffp/models/_common/lf_registration.py`, using the
+     vendored `upsample.py` instead.
+  8. **Checkpoint resume** — `<ckpt_dir>/last.pt` stores the completed `(dataset, fold_seed, arm)`
+     cells plus the in-flight corrector's optimizer/step state, so a preempted job resumes
+     mid-ladder; the zero-gradient arms (A0/A1) are deterministic closed-form recomputes and are
+     re-derived on resume in seconds. B2's family already ships this pattern and its builder verified
+     resume before submit (B2 `build_notes`).
+  9. **Falsification thresholds exceed the noise floor** (`state/noise_floor.json`, `_provisional:
+     false`, source r2s4_diag-B1 3-seed condition→HF spread): F1 = **1.7594** = 2x allen_cahn's
+     certified mce **0.8797047**; F2 = each dataset's own certified mce (pfc **0.2130273**,
+     allen_cahn **0.8797047**, fisher_kpp **0.0007137**, cahn_hilliard **0.0912454**) *and* ≥4/5
+     sign consistency; F3 = 1 certified mce on the same four; F4 = per-dataset certified mce plus
+     the certified panel mce **1.1418668**. `ext__helmholtz_2d` (mce **2.9529916**, exceeding any
+     effect available against its 3.3441 zero floor) and `ifc_poisson` (mce **0.9377041**, N_hf = 5)
+     carry no clause weight, so no threshold in this card sits below its dataset's floor.
+  10. **Not a pre-falsified lever** — the three §5 pre-falsified levers (WNO backbone swap, LF
+      low-mode freezing, diffusion prior for point accuracy) are absent; no backbone swap, no mode
+      freezing, no generative prior. The nearest *in-round* retraction is r2s2-B1's coherence
+      **eligibility gate** (STOP-EXPORT, B2 part 7 note 1): this card does not use it — no gate, no
+      dimensionless threshold, centred gamma reported directionally only, and B2 part 7 rule (iv) is
+      obeyed by removing `k = all` from the grid. The nearest published near-miss is Operator
+      Boosting (https://arxiv.org/abs/2606.17460); the difference is stated on the card (their base
+      is the empirical mean and all stages are trained; here the base is an LF-retrieval intermediate
+      and the winning stage is closed-form) and is *run* as arm `A3_base_lsi_cnn`.
+  11. **Mandatory floor arms** — `R2S2B3_FLOOR_ARMS = nn_condition,train_mean,zero` read from
+      `state/anchors/floors.json` at `1e-9` tolerance, reported per dataset next to the model; **F4
+      is written directly against them** (the scored arm must not lose to the best floor by more than
+      the certified mce on ≥2 of the 5 non-helmholtz panel datasets), and the helmholtz **zero-floor
+      column** is reported per §2.3.
+
+- **Anchor reference**: `null` (program.md §4.5 — all four round-2 streams are gap/lever/diag; the
+  own-stream anchor 23.063616857615774 is implicit).
+
+- **Source iteration**: [iteration_1.md](iteration_1.md)
+
+## Reopen candidates
+
+| Candidate | Verdict (retry/drop) | Eased conditions | Source iteration |
+|---|---|---|---|
+| (none — `grep -rl '"reopen_candidate": true' experiment_cards/` returns nothing round-wide; `r2s2_stacked-B1` and `-B2` both read `reopen_candidate: false`) | n/a | n/a | [iteration_1.md](iteration_1.md) |
+
+## Skipped slot
+
+Not applicable — the slot is filled. **Close-on-B2 was explicitly considered and rejected** on five
+recorded grounds (iteration_1.md, Step 1): (1) the class's only nonlinear evidence is one dataset at
+one fold seed and one fit, which B2's own part 7 names as the open question; (2) direction (iii)'s
+export needs an artefact + numbers in skill units that do not yet exist (B2's 19.3868 is a diagnostic
+arm with a CNN and a blend attached); (3) the round's only unpublished content — the switched-off
+learned corrector — is identifiable only if B3 is scored with matched arms on the same folds and the
+same `k*`; (4) Operator Boosting can only be differentiated by running it; (5) cost (~60–80 min) sits
+inside the measured envelope. Three alternative designs were weighed and rejected with reasons:
+realisation-aware generative stage 1 (ceiling ~1.6 skill units, no admissible test-side conditioning
+under §5.9), re-running B2's repaired ladder (buys a confirmed instrument, not a claim), and a second
+trained pseudo-LF emulator front end (B1's design — rebadge risk, question already settled by I8).
+
+## Summary table
+
+| Slot | Category | One-liner | Status |
+|---|---|---|---|
+| B3 | `zero_gradient_stage_attribution` | Score the zero-gradient `k-NN LF retrieval @ k* → closed-form LSI Wiener` composition as a first-class panel arm, and decide the learned stage per dataset with 5 fold/train-seed-paired deltas against the certified mce, with a matched no-LF Operator-Boosting-analog base swap as the control | filled (`model`) |

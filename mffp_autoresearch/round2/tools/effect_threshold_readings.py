@@ -148,11 +148,10 @@ def main():
     else:
         raise SystemExit("pass --mce or --noise_floor")
 
-    arms = dict(_arm(s, a.split) for s in a.arm)
-    metas = {}
+    arms, metas = {}, {}
     for s in a.arm:
-        nm = s.split("=", 1)[0]
-        metas[nm] = _arm(s, a.split)[2]
+        nm, stack, meta = _arm(s, a.split)
+        arms[nm], metas[nm] = stack, meta
     ka, kb = a.contrast.split(":")
     for k in (ka, kb):
         if k not in arms:

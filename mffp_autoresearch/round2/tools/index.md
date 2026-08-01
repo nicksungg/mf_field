@@ -72,6 +72,8 @@ tool: name, what it measures, invocation, provenance card.
 | `selection_set_vs_window_audit.py` | ROUND-2: does a training-free selection rule fit the SET its own diagnostic identifies, or only that set's CARDINALITY (the leading window)? reconstructs `{i: stat_i > tau}` vs `{0..r_sel-1}` from the shipped selection diagnostics, prices the mismatch in the rule's own statistic (and optionally in basis energy), and raises `FORM_MISMATCH` when the statistic was measured on a different basis/centering form than the one fitted | r2s1_direct-B2 turn 1 |
 | `zero_gradient_stage_ladder.py` | ROUND-2: how much of a TRAINED stack's test-side value is reachable with ZERO gradient steps — an out-of-fold stage ladder (raw intermediate / global gain / closed-form LSI Wiener / two blend rungs / free joint `(k, base, lam)`) read on TEST against the shipped trained arm, ATTRIBUTING the scored gain to {closed-form, gradient, blend} in percent and in skill units vs the certified mce, plus per-rung geometry (cosine / amplitude / structure-only error) and the fitted transfer's dyadic band gains. Seam-checks the shipped calib k-sweep, the frozen floors and `nrmse_after_lsi` rather than assuming them | r2s2_stacked-B2 turn 3 |
 | `relative_gain_units_audit.py` | ROUND-2: can a DIMENSIONLESS eligibility threshold ("if the available value-add is below X %, don't build the stage") be stated in this benchmark's claim units? prices the threshold, the realised gain and the cost of OBEYING the rule in skill units and in certified `min_claimable_effect`, with panel verdicts `EXPRESSIBLE` / `COARSE` / `PANEL_INCONSISTENT` / `MISCALIBRATED`. Run it on any rule BEFORE exporting it as a gate | r2s2_stacked-B2 turn 3 |
+| `effect_threshold_readings.py` | ROUND-2: is a paired A-vs-B effect measured over REPEATED SPLITS claimable, and does the verdict depend on how the threshold is read? separates the TEST-SAMPLE variance component (paired per-sample bootstrap) from the SPLIT variance component (range, range-derived sd/SE via the control-chart `d2`, log-units), then recounts the verdict under 7 threshold readings and reports `readings_agree` plus `mce_over_observed_split_range` (a provenance smell when « 1). Run it on any falsification clause whose threshold mixes a certified constant with an in-job spread | r2s3_lf_train_signal-B3 turn 1 |
+| `map_dispersion_scale_shape.py` | ROUND-2: across repeated training splits, does an arm's learned MAP change or only its SCALE? per split-pair inter-prediction dispersion split into total vs shape-only (`min_a ‖a·p_d − p_d'‖`, i.e. what survives the best per-sample rescale), in `‖y‖` and skill units; plus each split's score at the ORACLE per-sample gain (how much of a score AND of its split-range is the amplitude channel alone) and the split-ENSEMBLE arm as a deliberately non-budget-matched upper bound on any variance-only explanation | r2s3_lf_train_signal-B3 turns 2-3 |
 
 ---
 
@@ -158,6 +160,8 @@ design should know before it is written:
 | `condition_coverage` | per-level condition box + scaled nearest-neighbour distance from the HF-train and TEST conditions to each level's cloud |
 | `cross_level_consistency` | nearest-condition-matched, upsampled source vs target field: rel-L2 raw, rel-L2 after ONE optimal global gain, that gain, and Pearson r — does a level carry the HF *shape*? |
 | `matched_level_predictor_on_test` | training-free skill floor: nearest-condition sample at level `f`, upsampled, × one gain calibrated on the HF **train** samples only; plus zero- and HF-train-mean-predictor baselines |
+| `ledger_contamination_audit.py` | ROUND-2: could this A-vs-B reading have fired at all, and is it measuring what the card thinks? the identical triangle-inequality ceiling `D(arm, baseline)` on \|skill difference\| with a `COULD_NOT_FIRE` flag when it sits below the clause threshold, plus (with a `--control` column) the FUNCTION-CLASS vs TARGET decomposition that separates "is this estimator better" from "did the treatment's target buy anything", plus (`--matched`) the row-count bias when the arms were fitted on different numbers of rows | r2s4_diag-B3 turns 1-2 |
+| `band_retention_probe.py` | ROUND-2: what part of the spectrum a predictor actually PRODUCES — per radial band the truth's energy share, the arm's retained energy ratio, and the decisive `band_relative_error` (**1.00 = the arm contributes exactly zero useful energy in that band**), with a `contributes_nothing_above_lowest_band` verdict and (`--advantage A:B`) the per-band localisation of an arm-vs-arm gap | r2s4_diag-B3 turn 3 |
 
 **Read it as.** `index_aligned: false` → any family that pairs
 `cond_by_fid[s][:n]` with `field_by_fid[t][:n]` is training on mismatched
@@ -3174,3 +3178,159 @@ zero-gradient closed-form Wiener filter and the gated CNN was rejected out of
 fold (`alpha_nn = 0`) on 5 of 8 rung cells. (d) Never build a ladder rung that is
 leave-one-out on TRAIN and no-self on TEST (r2s2-B2's `B:all`): it is train/test
 inconsistent by construction and it fooled three independent clauses at once.
+
+---
+
+## `effect_threshold_readings.py`  *(round 2)*
+
+**Measures.** For a paired A-vs-B contrast measured over REPEATED TRAINING SPLITS
+(HF-subset draws, folds, restarts), whether the effect is claimable — and whether
+that answer survives a change in how the threshold is read. It separates the two
+variance components cards routinely conflate:
+
+- **test-sample** variance (conditional on one split): paired per-sample delta
+  `(rel_l2^A_i − rel_l2^B_i)/D`, bootstrap CI over the shared test set, and the
+  fraction of test samples the treatment improves;
+- **split** variance: per-split effect, its max−min range, the unbiased sd that
+  range implies at this `n` (control-chart `d2`), the SE of the split-mean,
+  `t = effect/SE`, each arm's own split range and CV, the arm-instability ratio,
+  and the whole comparison re-expressed in **log-score** units (the native units
+  of a geometric-mean panel metric).
+
+Then it recounts the verdict under **seven readings**: `verbatim_max_mce_spread`,
+`mce_only`, `paired_se_over_splits` (`max(mce, 1.96·SE)`),
+`persample_ci_excludes_zero`, `median_stat_verbatim`, `worst_split_vs_mce`, and
+`log_effect_vs_own_range` — reporting `readings_agree`, `n_readings_pass` and
+`mce_over_observed_split_range`.
+
+**Why.** r2s3-B3's primary clause sat exactly on a knife edge: `max(mce, in-job
+range)` gave 3/6 datasets passing (FALSIFIED) and `mce` alone gave exactly 5/6
+(CONFIRMED at the minimum margin). The tool turns that from an adjudication into
+an observation. The decisive fact it surfaces is `mce_over_observed_split_range`:
+B3's certified constant came from 3 TRAINING SEEDS of a full-400-row model and
+was **0.0012×** the split-to-split range of the control arm it was applied to —
+i.e. the `mce`-only reading priced the card's dominant noise source at zero.
+
+**Read it as.** `readings_agree = true` → quote the verdict and move on.
+Disagreement confined to the readings that price split variance → the card is
+measuring a **variance-reduction** effect and the gate has inherited the CONTROL
+arm's instability; the better the treatment works as a stabiliser, the harder the
+gate becomes. Prefer `worst_split_vs_mce` (the effect must clear the certified
+constant on EVERY split): same conservatism, no coupling between the effect and
+its own dispersion. `mce_over_observed_split_range` « 1 is a provenance smell —
+check which axis the constant was certified on before quoting it.
+
+**Invoke.**
+```bash
+source "$PROJECT_ROOT/.venv/bin/activate"
+python tools/effect_threshold_readings.py --dataset sharp__allen_cahn_2d \
+    --arm A0_nolf=<outputs>/results_ac_A0_d0/<fam>/<ds>_e200_s0.json,<...d1>,<...d2> \
+    --arm A1_lf_cov=<outputs>/results_ac_A1_d0/<fam>/<ds>_e200_s0.json,<...d1>,<...d2> \
+    --contrast A0_nolf:A1_lf_cov --noise_floor state/noise_floor.json \
+    --out readings.json
+```
+`--arm NAME=leg.json[,leg.json...]` repeatable, one leg per split; legs must
+carry `splits.<--split>.rel_l2_per_sample` (any `score_panel.py` result JSON
+does) and share a test set. Threshold from `--mce` or
+`--noise_floor <path> [--mce_key]`; denominator from `state/anchors/floors.json`
+unless `--skill_denominator`. Knobs: `--split` (default `test_hf`), `--n_boot`,
+`--seed`. Pure numpy, ~2 s on the login node.
+
+**Verified.** Run 2026-08-01 from `round2/` on r2s3-B3's shipped legs.
+`sharp__allen_cahn_2d`: per-split effect 761.903 / 36.2541 / 98.5502, mean
+298.9024, range 725.6489, `sd_hat` 428.7261, SE 247.5251, **t 1.21**, arm
+instability 1773.0×, `mce_over_observed_split_range` 0.00121, readings
+3/7 pass (`mce_only`, `worst_split_vs_mce`, `persample_ci_excludes_zero`),
+`readings_agree = false`. `sharp__cahn_hilliard`: effect 14.7762, range 5.2888,
+t 8.19, **7/7 pass, `readings_agree = true`**. Every point statistic matches the
+source probe (turn 1 findings 1/2/4/5/7) exactly; the bootstrap CI matches to
+Monte-Carlo error only (206.22–408.80 here vs 208.44–404.75 in the probe — same
+seed, different RNG draw order).
+
+**Provenance.** `worktrees/r2s3_lf_train_signal/B3/scratchpad/reanalysis_turn_1.py`;
+card `experiment_cards/r2s3_lf_train_signal/batch_3/B3.json` part 6, findings
+T1-2 … T1-8 and interpretation M0.
+
+---
+
+## `map_dispersion_scale_shape.py`  *(round 2)*
+
+**Measures.** Training-free, from prediction dumps only: across repeated training
+splits, how far apart are an arm's learned maps, and is the difference SCALE or
+SHAPE? Per arm, per split-pair `(d, d')`, per test sample:
+`cos(p_d, p_d')`, the gain ratio `‖p_d‖/‖p_d'‖`, the total dispersion
+`‖p_d − p_d'‖/‖y‖`, and the **shape-only** dispersion
+`min_a ‖a·p_d − p_d'‖/‖y‖ = √(1−cos²)·‖p_d'‖/‖y‖` — what survives the best
+possible per-sample rescale. Reported in `‖y‖` units and in skill units, so the
+dispersion is directly comparable with the arm's own error. Plus, per arm: each
+split's score at the **ORACLE per-sample gain** (a ceiling, never an arm score)
+with `gain_channel_share_of_skill_range` — how much of the score's split-range is
+the amplitude channel alone — and, with `--ensemble`, the **split-ensemble** arm.
+
+**Why.** When a treatment makes an arm's SCORE stable across splits, the natural
+story is "it makes the learned function split-independent". On r2s3-B3 that story
+was wrong in a specific, reusable way: the LF arm's three `allen_cahn` models
+scored within 0.41 skill units of each other while sitting **100.5 skill units
+apart** in function space (inter-split cosine 0.9485). What the treatment pinned
+was the output AMPLITUDE — **96.9 %** of the control's 726-unit split-range was
+one scalar per sample. Any design that assumes a canonical treated map
+(single-teacher distillation, weight averaging, "the" regularised solution) is
+assuming something this measurement can refute in minutes.
+
+**The ensemble arm is an upper bound, not a control.** It sees every split's
+training rows and `n_splits ×` the compute, so it is NOT budget-matched and is
+usable in one direction only: a treatment that still beats it is not doing
+variance reduction; a treatment that LOSES to it has a cheaper alternative. On
+r2s3-B3 the 3-split ensemble of the no-LF arm lost to the LF arm by +219.17
+(allen_cahn) and +11.78 (cahn_hilliard) but **beat** it on fisher_kpp (13.378 vs
+14.991) and pfc — which is how the card learned that LF supply was the wrong
+lever on those two datasets.
+
+**Read it as.** `shape_share_of_dispersion` near 0 → the splits differ by a scale
+factor and nothing else; near 1 → genuinely different functions.
+`gain_channel_share_of_skill_range` near 1 → the arm's split instability is an
+amplitude-calibration artifact and a post-hoc per-sample gain would remove it
+(check `gain_channel_share_valid`; the share is meaningless when an arm's raw
+range is already below its oracle-gain range). Score stable + dispersion large →
+the treatment pins the error LEVEL, not the map.
+
+**Invoke.**
+```bash
+source "$PROJECT_ROOT/.venv/bin/activate"
+python tools/map_dispersion_scale_shape.py --dataset sharp__allen_cahn_2d \
+    --arm A0_nolf=<outputs>/results_ac_A0_d0/<fam>/<ds>_e200_s0_preds.npz,<...d1>,<...d2> \
+    --arm A1_lf_cov=<outputs>/results_ac_A1_d0/<fam>/<ds>_e200_s0_preds.npz,<...d1>,<...d2> \
+    --ensemble --out dispersion.json
+```
+`--arm NAME=pred.npz[,pred.npz...]` repeatable (`.npy` or `.npz:key`, default key
+`pred_test`); fields `(N,H,W)` or `(N,n_cells)`. Targets from
+`round2/eval/panel_data.py` (offline reference path, read-only) unless
+`--targets path[:key]`. Knobs: `--key`, `--skill_denominator`, `--max_test`,
+`--ensemble`. Pure numpy. **Runtime is I/O-bound, not CPU-bound**: 2 arms × 3
+splits at 100 × 256² is ~6 s of compute but ~1 m 45 s wall on the shared login
+filesystem (6 × 52 MB npz). The login shell is nproc-limited (see r2s2-B2's
+register note) — for more than ~4 arms × 4 splits at 256², run it from a batch
+step or cap with `--max_test`.
+
+**Verified.** Run 2026-08-01 from `round2/` on r2s3-B3's shipped dumps.
+`sharp__allen_cahn_2d`: A0_nolf cos 0.6273 / gain ratio 1.7941 / `D_tot` 1.2451 /
+`D_shape` 0.3316 (26.6 % shape) = 699.18 skill units; A1_lf_cov 0.9485 / 0.9620 /
+0.1789 / 0.1664 (93.0 %) = 100.47; A0 skill range 726.058 → 22.629 at oracle gain
+(**gain share 96.9 %**); split-ensemble 431.799 (A0) vs 203.738 (A1).
+`sharp__fisher_kpp_2d`: A0 95.3 % shape, gain share 55.5 %, ensemble 13.378 vs
+the A1 split-mean 14.991. All match the source probe (turn 3 findings T3-1, T3-3,
+T3-5) exactly.
+
+**Complements, does not duplicate.** `field_error_decomposition.py` (r1) splits ONE
+predictor's error into amplitude vs structure against the target; **this tool**
+splits the disagreement BETWEEN training splits of the same arm, which is the
+quantity a variance-reduction claim is actually about.
+`null_family_ceiling_audit.py` asks where an arm's error sits relative to its
+design's null space; `effect_threshold_readings.py` asks whether the resulting
+arm-vs-arm gap is claimable.
+
+**Provenance.** `worktrees/r2s3_lf_train_signal/B3/scratchpad/reanalysis_turn_3.py`
+(dispersion, oracle-gain ladder, ensemble) and `.../reanalysis_turn_2_pfc.py`
+(the per-sample gain/cosine decomposition); card
+`experiment_cards/r2s3_lf_train_signal/batch_3/B3.json` part 6, findings T2-5,
+T3-1, T3-2, T3-3, T3-5 and interpretations M1, M1b, M5.
