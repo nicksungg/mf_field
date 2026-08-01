@@ -98,7 +98,7 @@
     },
     "_brainstormer_recipe_notes": "`base_commit` = `round2-substrate` HEAD, verified by\n  `git rev-parse round2-substrate` = 9e10d414e35a96398f7b091bc84ddf936d88acc7. Leg budget\n  93 + 48 + 60 = **201 trainings** plus 3 guard legs at 2 epochs; every group-A leg is\n  200 optimiser steps on \u2264 5 rows of 64x64 and the largest group-C leg is 80 rows of 8x8,\n  all in one process with a single dataset load. B3 ran 184 far larger legs in 92 min, so\n  expect **45\u201375 min**; request `--time 02:00:00`. Strict 1 card seed \u21d2 only `submit.sh`,\n  no `submit_seeds_2_3.sh`. Groups D\u2013F are numpy/closed-form post-processing over\n  already-trained legs: no extra GPU, no new dependencies."
   },
-  "status": "built",
+  "status": "running",
   "skipped_reason": null,
   "reopen_candidate": false,
   "scripts_path": {
@@ -113,7 +113,9 @@
     "slurm": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s4_diag/B4/slurm"
   },
   "build_commit": "61cf430c704a89a5f55630c6480cdb4692511de4",
-  "job_ids": [],
+  "job_ids": [
+    "66269660"
+  ],
   "logs": {},
   "build_notes": [
     "Family dir models_r2/r2s4_b4_anatomy (manifest.json + model.py + subsets.py + rung_cv.py + lf_registration.py + smoke_eval.py + INSPIRATION.md), probe probes/few_hf_anatomy.py, scripts/{01_train_eval.sh,03_anatomy.sh,submit.sh}. All 201 legs (93 group-A w32 + 48 group-A w8 + 60 group-C) run in ONE score_panel.py -> smoke_eval.py invocation with ONE dataset load (r2s4-B3 pattern), per card part 3. Diagnostic card: manifest carries \"diagnostic\": true and the probe writes eval/diagnostic.json.",
@@ -151,7 +153,28 @@
         "Handoff: worktrees/r2s4_diag/B4/notes/handoff_code_reviewer.md"
       ],
       "utc": "2026-08-01T20:13:27Z"
-    }
+    },
+    {
+      "attempt": 2,
+      "verdict": "reviewed_suggest",
+      "scope": "focused re-review of the fix delta git diff dc0d7ae..61cf430 only (per orchestrator); the attempt-1 8-question review stands.",
+      "findings": [
+        "REQUIRED FIX 1 (blocking attempt-1 FAIL cause) CLOSED: smoke_eval.py::_repo_root now iterates WORKTREE_ROOT.parents only, with a comment recording why WORKTREE_ROOT must be excluded (a git worktree of this repo is a full checkout). Verified LIVE, not just by reading: the re-verification's prereg/anatomy/preds all landed at /resnick/.../mffp_autoresearch_outputs/round2/r2s4_diag/B4/eval/ (reverify.log lines 2, 406, 407), no <worktree>/mffp_autoresearch_outputs directory exists, and the new equivalence-bound cross-check in the committed artifact records noise_floor_json = the MAIN tree path with file_value 0.9377041289531141, matches true.",
+        "REQUIRED FIX 2 CLOSED: scripts/01_train_eval.sh now calls 03_anatomy.sh unmasked (under set -e) followed by `if [ ! -s $OUT_DIR/eval/diagnostic.json ]; then ... exit 1; fi` and an [ok] size echo. A job that trains 201 legs and produces no deliverable can no longer exit 0.",
+        "REQUIRED FIX 3 CLOSED: the no-override contract-tier re-verification ran and is evidenced \u2014 diagnostic.json 63697 bytes at the real OUTPUTS_ROOT eval dir, plus a re-run contract smoke committed with env {} (no R2S4B4_DIAG_OUT override), exit 0, nRMSE 2.2563410647526854 unchanged from attempt 1.",
+        "SUGGEST 1 CLOSED: the exit-2 certificate is now gated on the audit JSON's own datasets.ifc_poisson.verdict == MISPAIRED in addition to exit code 2, with an UNREADABLE(...) fallback that routes a missing/garbled JSON (the argparse-exit-2 channel) into the loud WARNING branch. Message text updated to quote the verdict.",
+        "SUGGEST 2 CLOSED (both halves): (a) the equivalence bound is now cross-checked against its own declared source (R2S4B4_NOISE_FLOOR_JSON) inside _prereg with a pre-training SystemExit on mismatch at 1e-12 relative tolerance \u2014 this also converts the previously dead knob into a live guard and, post-fix-1, reads the certified main-tree value; (b) a metric seam assert on the scored leg compares the eval layer's splits.test_hf.rel_l2_mean against the in-family subsets.rel_l2 twin and raises on divergence, surfacing metric_seam_check into anatomy.primary_leg \u2014 present in the committed re-verification artifact with abs_diff 0.0, asserted true. Dead code in probes/few_hf_anatomy.py also removed.",
+        "bash -n re-run by the reviewer on all three scripts after the edit (the new heredoc-inside-command-substitution is the syntax risk): 'OK scripts/01_train_eval.sh', 'OK scripts/03_anatomy.sh', 'OK scripts/submit.sh'.",
+        "Blast radius of the fix delta PASS: models_r2/, notes/, probes/, scratchpad/, scripts/ only (5 files). No locked card field touched; recipe still 51 knobs; no eval/ or guarded-surface write.",
+        "PROVENANCE of the orchestrator-made commit ACCEPTABLE \u2014 no issue to flag on content. Three independent checks: (i) git status shows ZERO modified/deleted tracked files, so no part of the builder's fix cycle was left uncommitted; (ii) every hunk in dc0d7ae..61cf430 was read by the reviewer and maps 1:1 onto the attempt-1 required-fix/SUGGEST list with no unrequested behavioural change; (iii) the committed contract-smoke artifact's code_hash df16b951701afba4f1a3b07c9a4aa6a833424b37f1ca6e4419d969b84ab635bc reproduces EXACTLY when recomputed by score_panel.py's own algorithm over the committed family .py files + main-tree models/_common + the hashed eval files \u2014 i.e. the smoke evidence was produced by precisely the shipped code.",
+        "SUGGEST (pre-submit housekeeping, orchestrator action, not a code change): ${OUTPUTS_ROOT}/r2s4_diag/B4/eval/ currently holds the CONTRACT-TIER re-verification artifacts, including diagnostic.json (2-epoch, untrained models), ledger_contamination_audit_s0.json, band_retention_probe_s0.json and a 298 MB preds_test_ifc_poisson_e2_s0.npz. The anatomy/preds files are epoch-stemmed and cannot collide with the e200 run, but those THREE are not epoch-stamped: if the 200-epoch job dies after training and before the probe, a structurally valid but meaningless 2-epoch diagnostic.json sits at the exact deliverable path. The hazard is already visible \u2014 the present diagnostic.json (13:25) carries primary_leg.metric_seam_check = null while the anatomy dump beside it (13:26) carries the seam block, i.e. two mutually inconsistent snapshots at the deliverable path. Clear or archive that directory before submitting, and have the initial-analyzer assert diagnostic.json.epochs == 200 and per_seed.0.source ending in _e200_s0.json.",
+        "SUGGEST (evidence provenance): build_notes[10] cites scratchpad/reverify.log and scratchpad/reverify_contract.json as the re-verification evidence, but both are UNTRACKED and absent from 61cf430 (as are contract_smoke_rerun.log and reverify_diag/), so a reader checking out the build commit cannot find the cited evidence \u2014 the attempt-1 pattern committed its artifacts. Also scratchpad/VERIFICATION.md was not updated: its section 2 still claims the full 201-leg run used 'no env overrides' (it passed an absolute R2S4B4_DIAG_OUT, which is exactly why the misresolution went unseen) and it records nothing about the fix cycle. Commit the evidence files and correct/extend VERIFICATION.md in the next commit touching this branch.",
+        "Attempt-1 priority-1 adjudication UNCHANGED and still binding: the O_UNCLASSIFIED / prereg_gap handling is correct and was not altered by the fix delta; the downstream obligations recorded in review_notes[0] (no retro-labelling; watch the second, entirely-below-minus-bound lobe; register a 4-way partition for the successor card) carry forward.",
+        "Handoff: worktrees/r2s4_diag/B4/notes/handoff_code_reviewer.md (attempt-2 section appended)"
+      ],
+      "utc": "2026-08-01T21:03:50Z"
+    },
+    "orchestrator 2026-08-01: submitted per attempt-2 reviewer SUGGEST \u2014 job 66269660. Pre-submit housekeeping done: contract-tier outputs archived to eval_contract_tier_archive/ (8 files incl. the 2-epoch diagnostic.json and 298MB preds npz) so no stale deliverable sits at the analyzer path. ANALYZER OBLIGATIONS: assert diagnostic.json.epochs == 200 and per_seed.0.source ends _e200_s0.json; carry O_UNCLASSIFIED/prereg_gap verbatim; watch the second lobe (CI entirely below -bound = pre-registered non-monotone RESULT, not equivalence). Evidence-provenance SUGGEST (reverify logs untracked, VERIFICATION.md stale claim) noted, non-blocking."
   ],
   "debug_notes": [],
   "5_actual_result": null,

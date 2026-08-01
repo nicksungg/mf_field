@@ -1,1524 +1,1556 @@
 {
-  "id": "r2s3_lf_train_signal-B4",
-  "stream": "r2s3_lf_train_signal",
-  "batch": 4,
-  "category": "lf_train_signal / substitution audit \u2014 pricing the certified \u00b1LF effect against the LF-free control class (achievable heads vs test-fitted calibration ceilings) on B3's shipped dumps",
-  "card_type": "diagnostic",
-  "created_utc": "2026-08-01T18:40:33Z",
-  "worktree_path": "mffp_autoresearch/round2/worktrees/r2s3_lf_train_signal/B4",
-  "source_iteration": "mffp_autoresearch/round2/brainstormer/r2s3_lf_train_signal/batch_4/iteration_1.md",
-  "reopened_from": null,
-  "1_id_category": "r2s3_lf_train_signal-B4 \u2014 lf_train_signal / substitution audit \u2014 pricing the certified \u00b1LF effect against the LF-free control class (achievable heads vs test-fitted calibration ceilings) on B3's shipped dumps",
-  "2_motivation": "quotes the batch-4 prior-art verdict row (a) verbatim (see \"Prior-art verdict quoted\" below) and B3 part 7's open question \u2014 \"whether an ACHIEVABLE gain head \u2026 recovers most of it. If yes, the round's affirmative value-of-LF evidence largely reduces to an output-calibration trick that costs no LF data at all \u2026 if no, LF supplies a calibration signal that 5 HF rows provably cannot\". The card delivers the *measured absorbed share*, never a head.",
-  "3_description": "new probe family `models_r2/r2s3_b4_substitution/`, `epochs 0`, seed 0, no training and no GPU maths. Reads B3's 33 leg result JSONs (exact `rel_l2_per_sample`, floor splits), B3's 33 `*_preds.npz` dumps (`pred_test`, `cond_test_raw`, `pred_hf_train`, `target_hf_train`, `cond_hf_train_raw`, `selected_train_rows`), HF test targets through `round2/eval/panel_data.py` (offline reference path), and the two frozen state files. Never opens an LF field.\n  **Achievable LF-free control class** (no test targets in any fit): `A0_raw`; `A0 + H_global_train`; `A0 + H_ridge_cond_train` (LOO-\u03bb over the 5 rows); `A0 + H_knn_cond_train`; `ref_linear_hfonly`; `ref_nn_condition_n5`; `ref_train_mean_n5`; `ref_zero`; `A0_split_ensemble` (**labelled non-budget-matched**, 15 HF rows / 3\u00d7 compute \u2014 verdict (b) rides as an arm, never a claim).\n  **Ceilings** (TEST-FITTED, labelled on every line, never claims): `C1_global_test`, `C2_ridge_cond_loo_test`, `C3_per_sample_oracle`.\n  **Deliverables**: per (dataset, draw) the raw effect, the substituted effect, the ceiling-substituted effect and each absorbed share; the 7-reading claimability recount (`tools/effect_threshold_readings.py`, primary reading `worst_split_vs_mce`); paired per-test-sample bootstrap CIs where the draw axis does not exist; the arm-symmetry column (same heads on A1); the memorization statistics; `tools/map_dispersion_scale_shape.py --ensemble`. Floor arms are reported next to every calibrated variant. Standing caveats carried per row: helmholtz report-only (ADR r2-0004); pfc band-limited denominator; ac/fk/pfc ADR r2-0003 conditional-mean bound + M2 shrinkage reward; everything `provisional-single-seed`.",
-  "4_expected_result": "(skill units, corrected denominators, seed 0, `provisional-single-seed`; every figure below **measured in the brainstormer pre-flight** from B3's shipped artifacts unless marked *predicted*):\n\n  | dataset | `E_raw` (draw-mean) | best achievable LF-free control | `E_free` worst draw | vs certified mce | `E_ceil` worst draw (per-sample oracle) |\n  |---|---|---|---|---|---|\n  | `ifc_poisson` | +5.9843 | `ref_linear_hfonly` 3.4744 | **+1.3243** (single native draw) | 0.9377041 \u2192 **1.41\u00d7** | +0.6106 \u2192 **below mce** |\n  | `sharp__cahn_hilliard` | +14.7762 | `ref_zero` 23.9217 / `ref_linear_hfonly` 22.959 | **+10.3548** | 0.0912454 \u2192 **113\u00d7** | +6.632 \u2192 **72.7\u00d7** |\n  | `sharp__allen_cahn_2d` | +298.902 | `ref_zero` 561.482 / `ref_linear_hfonly` 235.983 / `A0` 311.281 | **+23.611** | 0.8797047 \u2192 **26.8\u00d7** | \u221229.44 \u2192 **sign reversal** |\n  | `sharp__fisher_kpp_2d` | +1.3132 | `ref_train_mean_n5` 12.865\u201313.162 | **\u22122.568** | fails on sign | \u22122.568 |\n  | `sharp__phase_field_crystal_2d` | \u22122.5588 | `A0` / split-ensemble 54.55 | **\u221210.7** | fails on sign (M2 predicted) | \u221211.74 |\n  | `ext__helmholtz_2d` (report-only) | +5.7169 | `ref_zero` 3.3441 | **\u22122.615** | fails on sign; report-only regardless | \u22122.615 |\n\n  *Predicted* additions the card measures: the achievable heads add **\u2248 0.00** on every leg (the arms interpolate their 5 HF train rows \u2014 per-sample optimal scale 1.0000 on 5/5 rows, train rel-L2 0.0005\u20130.0026 \u2014 so the train-fitted heads are the identity); the decisive unknown is `C2_ridge_cond_loo_test` on `ifc_poisson`, bracketed by `C1_global_test` (0% absorbed, actively harmful: 8.1344 \u2192 8.1844) and `C3_per_sample_oracle` (89.8% absorbed), with a documented prior of LOO-linear R\u00b2 = 0.919 on exactly this dataset's 5-D condition vector (`tools/residual_gain_learnability.py` header, round-1 `s1_poisson-B2`) \u2014 I predict 60\u201390% on ifc and 20\u201345% on ch.\n  **Net expected finding**: under the achievable-control gate the criterion-1 claimable set becomes **{ch 113\u00d7, ac 26.8\u00d7, ifc 1.41\u00d7}** \u2014 still three datasets but different membership from B3's {ifc, ch, fk}, with fk retiring; under the ceiling gate only **{ch}** survives. Anchor context: the stream anchor is the best-floor panel geomean **23.063616857615774**; B3's primary arm landed at 17.115.",
-  "expected_falsification": "FALSIFIED if fewer than 2 of {ifc, ch, ac} keep an LF advantage over the **best achievable LF-free control** above their certified `min_claimable_effect` on **every** draw (ifc 0.9377041289531141 + a paired per-test-sample bootstrap CI excluding zero, since its single native draw makes it mce-only by construction; ch 0.09124535322300886; ac 0.8797047190126648), or if the ceiling-corrected advantage on `sharp__cahn_hilliard` falls below 0.09124535322300886 on any draw \u2014 with the predicted ceiling failures on ifc (+0.611 < 0.9377) and ac (sign reversal) pre-registered as the card's *finding*, plus F3 (the 5-row memorization mechanism: falsified if median |log per-sample optimal scale| on the train rows exceeds 0.05 on \u22652 of 6 datasets) and F4 (instrument seam: dump-recomputed skills must match B3's per-leg record to 1e-3 relative \u2014 pre-flight max observed 1.31e-4 \u2014 and full-row floors must match `state/anchors/floors.json` at 1e-9).",
-  "anchor_reference": null,
-  "prior_art": {
-    "verdict": "preempted-but-MF-composition-open",
-    "verdict_quote": "> **(a)** LF-free **gain/amplitude head** conditioned on the condition vector, fitted on the same 5 HF rows, used as a **substitution test** for LF's train-time value (training-free probe on shipped dumps first, then one confirmatory arm) | **preempted-but-MF-composition-open** | https://arxiv.org/abs/2601.09143 (**curl-fetched**; DiSOL Methods \u00a74.1: per-sample amplitude u_lim, dimensionless pattern, \"optional **amplitude regressor**\" \u2014 the mechanism verbatim, in PDE operator learning); https://arxiv.org/abs/2508.01341 (**curl-fetched**; LCC = affine de-shrinkage on a small held-out calibration split, Tweedie local de-shrinkage, no new labels, domain-general); https://distill.pub/2018/feature-wise-transformations/ (search return; FiLM \u03b3 = learned scale, \"specialized HyperNetwork\"); https://arxiv.org/abs/2606.20771 (**curl-fetched**; controlled amplitude normalization + \"mean relative L\u00b2 \u2026 may obscure\"); https://arxiv.org/abs/2202.03365 (**curl-fetched**; control-baseline discipline) | Only the **composition**: using the head as a **control that prices auxiliary low-fidelity training data**. No retrieved MF ablation output-scale-corrects its single-fidelity baseline (turn 4 t1), and the direct query \"is the auxiliary-data gain just calibration?\" returned **no usable results** (turn 3 t2). Plus the round's four standing openers: condition-vector-only test input with genuine coarse consistent solves at train; N_hf = 5; the **copy-LF denominator**; a panel varying condition completeness (ADR r2-0003). **The deliverable is the measured share of the \u00b1LF effect the LF-free head absorbs \u2014 never the head itself.**",
-    "citations": [
-      "https://arxiv.org/abs/2601.09143",
-      "https://arxiv.org/abs/2508.01341",
-      "https://distill.pub/2018/feature-wise-transformations/",
-      "https://arxiv.org/abs/2606.20771",
-      "https://arxiv.org/abs/2202.03365"
-    ],
-    "supporting_rows_quote": "Also honoured: row (b) `preempted-but-MF-composition-open` (weak) \u2014 the ensemble \"carries as a control arm, not a claim\"; row (c) `preempted` \u2014 Bouthillier et al. adopted as the card's statistics section and cited, not carded; row (S) `preempted (cite)` \u2014 the regime is LUPI / privileged-information distillation (Mazloom et al., DOI 10.1016/j.engappai.2025.113398, metadata-only citation).",
-    "source": "mffp_autoresearch/round2/websearches/r2s3_lf_train_signal/batch_4/report.md \u2014 \"## Prior-art verdict\", row (a)"
+ "id": "r2s3_lf_train_signal-B4",
+ "stream": "r2s3_lf_train_signal",
+ "batch": 4,
+ "category": "lf_train_signal / substitution audit — pricing the certified ±LF effect against the LF-free control class (achievable heads vs test-fitted calibration ceilings) on B3's shipped dumps",
+ "card_type": "diagnostic",
+ "created_utc": "2026-08-01T18:40:33Z",
+ "worktree_path": "mffp_autoresearch/round2/worktrees/r2s3_lf_train_signal/B4",
+ "source_iteration": "mffp_autoresearch/round2/brainstormer/r2s3_lf_train_signal/batch_4/iteration_1.md",
+ "reopened_from": null,
+ "1_id_category": "r2s3_lf_train_signal-B4 — lf_train_signal / substitution audit — pricing the certified ±LF effect against the LF-free control class (achievable heads vs test-fitted calibration ceilings) on B3's shipped dumps",
+ "2_motivation": "quotes the batch-4 prior-art verdict row (a) verbatim (see \"Prior-art verdict quoted\" below) and B3 part 7's open question — \"whether an ACHIEVABLE gain head … recovers most of it. If yes, the round's affirmative value-of-LF evidence largely reduces to an output-calibration trick that costs no LF data at all … if no, LF supplies a calibration signal that 5 HF rows provably cannot\". The card delivers the *measured absorbed share*, never a head.",
+ "3_description": "new probe family `models_r2/r2s3_b4_substitution/`, `epochs 0`, seed 0, no training and no GPU maths. Reads B3's 33 leg result JSONs (exact `rel_l2_per_sample`, floor splits), B3's 33 `*_preds.npz` dumps (`pred_test`, `cond_test_raw`, `pred_hf_train`, `target_hf_train`, `cond_hf_train_raw`, `selected_train_rows`), HF test targets through `round2/eval/panel_data.py` (offline reference path), and the two frozen state files. Never opens an LF field.\n  **Achievable LF-free control class** (no test targets in any fit): `A0_raw`; `A0 + H_global_train`; `A0 + H_ridge_cond_train` (LOO-λ over the 5 rows); `A0 + H_knn_cond_train`; `ref_linear_hfonly`; `ref_nn_condition_n5`; `ref_train_mean_n5`; `ref_zero`; `A0_split_ensemble` (**labelled non-budget-matched**, 15 HF rows / 3× compute — verdict (b) rides as an arm, never a claim).\n  **Ceilings** (TEST-FITTED, labelled on every line, never claims): `C1_global_test`, `C2_ridge_cond_loo_test`, `C3_per_sample_oracle`.\n  **Deliverables**: per (dataset, draw) the raw effect, the substituted effect, the ceiling-substituted effect and each absorbed share; the 7-reading claimability recount (`tools/effect_threshold_readings.py`, primary reading `worst_split_vs_mce`); paired per-test-sample bootstrap CIs where the draw axis does not exist; the arm-symmetry column (same heads on A1); the memorization statistics; `tools/map_dispersion_scale_shape.py --ensemble`. Floor arms are reported next to every calibrated variant. Standing caveats carried per row: helmholtz report-only (ADR r2-0004); pfc band-limited denominator; ac/fk/pfc ADR r2-0003 conditional-mean bound + M2 shrinkage reward; everything `provisional-single-seed`.",
+ "4_expected_result": "(skill units, corrected denominators, seed 0, `provisional-single-seed`; every figure below **measured in the brainstormer pre-flight** from B3's shipped artifacts unless marked *predicted*):\n\n  | dataset | `E_raw` (draw-mean) | best achievable LF-free control | `E_free` worst draw | vs certified mce | `E_ceil` worst draw (per-sample oracle) |\n  |---|---|---|---|---|---|\n  | `ifc_poisson` | +5.9843 | `ref_linear_hfonly` 3.4744 | **+1.3243** (single native draw) | 0.9377041 → **1.41×** | +0.6106 → **below mce** |\n  | `sharp__cahn_hilliard` | +14.7762 | `ref_zero` 23.9217 / `ref_linear_hfonly` 22.959 | **+10.3548** | 0.0912454 → **113×** | +6.632 → **72.7×** |\n  | `sharp__allen_cahn_2d` | +298.902 | `ref_zero` 561.482 / `ref_linear_hfonly` 235.983 / `A0` 311.281 | **+23.611** | 0.8797047 → **26.8×** | −29.44 → **sign reversal** |\n  | `sharp__fisher_kpp_2d` | +1.3132 | `ref_train_mean_n5` 12.865–13.162 | **−2.568** | fails on sign | −2.568 |\n  | `sharp__phase_field_crystal_2d` | −2.5588 | `A0` / split-ensemble 54.55 | **−10.7** | fails on sign (M2 predicted) | −11.74 |\n  | `ext__helmholtz_2d` (report-only) | +5.7169 | `ref_zero` 3.3441 | **−2.615** | fails on sign; report-only regardless | −2.615 |\n\n  *Predicted* additions the card measures: the achievable heads add **≈ 0.00** on every leg (the arms interpolate their 5 HF train rows — per-sample optimal scale 1.0000 on 5/5 rows, train rel-L2 0.0005–0.0026 — so the train-fitted heads are the identity); the decisive unknown is `C2_ridge_cond_loo_test` on `ifc_poisson`, bracketed by `C1_global_test` (0% absorbed, actively harmful: 8.1344 → 8.1844) and `C3_per_sample_oracle` (89.8% absorbed), with a documented prior of LOO-linear R² = 0.919 on exactly this dataset's 5-D condition vector (`tools/residual_gain_learnability.py` header, round-1 `s1_poisson-B2`) — I predict 60–90% on ifc and 20–45% on ch.\n  **Net expected finding**: under the achievable-control gate the criterion-1 claimable set becomes **{ch 113×, ac 26.8×, ifc 1.41×}** — still three datasets but different membership from B3's {ifc, ch, fk}, with fk retiring; under the ceiling gate only **{ch}** survives. Anchor context: the stream anchor is the best-floor panel geomean **23.063616857615774**; B3's primary arm landed at 17.115.",
+ "expected_falsification": "FALSIFIED if fewer than 2 of {ifc, ch, ac} keep an LF advantage over the **best achievable LF-free control** above their certified `min_claimable_effect` on **every** draw (ifc 0.9377041289531141 + a paired per-test-sample bootstrap CI excluding zero, since its single native draw makes it mce-only by construction; ch 0.09124535322300886; ac 0.8797047190126648), or if the ceiling-corrected advantage on `sharp__cahn_hilliard` falls below 0.09124535322300886 on any draw — with the predicted ceiling failures on ifc (+0.611 < 0.9377) and ac (sign reversal) pre-registered as the card's *finding*, plus F3 (the 5-row memorization mechanism: falsified if median |log per-sample optimal scale| on the train rows exceeds 0.05 on ≥2 of 6 datasets) and F4 (instrument seam: dump-recomputed skills must match B3's per-leg record to 1e-3 relative — pre-flight max observed 1.31e-4 — and full-row floors must match `state/anchors/floors.json` at 1e-9).",
+ "anchor_reference": null,
+ "prior_art": {
+  "verdict": "preempted-but-MF-composition-open",
+  "verdict_quote": "> **(a)** LF-free **gain/amplitude head** conditioned on the condition vector, fitted on the same 5 HF rows, used as a **substitution test** for LF's train-time value (training-free probe on shipped dumps first, then one confirmatory arm) | **preempted-but-MF-composition-open** | https://arxiv.org/abs/2601.09143 (**curl-fetched**; DiSOL Methods §4.1: per-sample amplitude u_lim, dimensionless pattern, \"optional **amplitude regressor**\" — the mechanism verbatim, in PDE operator learning); https://arxiv.org/abs/2508.01341 (**curl-fetched**; LCC = affine de-shrinkage on a small held-out calibration split, Tweedie local de-shrinkage, no new labels, domain-general); https://distill.pub/2018/feature-wise-transformations/ (search return; FiLM γ = learned scale, \"specialized HyperNetwork\"); https://arxiv.org/abs/2606.20771 (**curl-fetched**; controlled amplitude normalization + \"mean relative L² … may obscure\"); https://arxiv.org/abs/2202.03365 (**curl-fetched**; control-baseline discipline) | Only the **composition**: using the head as a **control that prices auxiliary low-fidelity training data**. No retrieved MF ablation output-scale-corrects its single-fidelity baseline (turn 4 t1), and the direct query \"is the auxiliary-data gain just calibration?\" returned **no usable results** (turn 3 t2). Plus the round's four standing openers: condition-vector-only test input with genuine coarse consistent solves at train; N_hf = 5; the **copy-LF denominator**; a panel varying condition completeness (ADR r2-0003). **The deliverable is the measured share of the ±LF effect the LF-free head absorbs — never the head itself.**",
+  "citations": [
+   "https://arxiv.org/abs/2601.09143",
+   "https://arxiv.org/abs/2508.01341",
+   "https://distill.pub/2018/feature-wise-transformations/",
+   "https://arxiv.org/abs/2606.20771",
+   "https://arxiv.org/abs/2202.03365"
+  ],
+  "supporting_rows_quote": "Also honoured: row (b) `preempted-but-MF-composition-open` (weak) — the ensemble \"carries as a control arm, not a claim\"; row (c) `preempted` — Bouthillier et al. adopted as the card's statistics section and cited, not carded; row (S) `preempted (cite)` — the regime is LUPI / privileged-information distillation (Mazloom et al., DOI 10.1016/j.engappai.2025.113398, metadata-only citation).",
+  "source": "mffp_autoresearch/round2/websearches/r2s3_lf_train_signal/batch_4/report.md — \"## Prior-art verdict\", row (a)"
+ },
+ "recipe": {
+  "base_family": "none (training-free diagnostic probe; no model family is trained or scored. Reads ONLY r2s3_lf_train_signal-B3's shipped artifacts, build_commit dfcd46c6b51b5fe0bd533b9c670a7cdbf9d13830, job 66196690. NO round-1 reuse of any kind; reuses only round2/eval/panel_data.py + eval/nrmse.py read-only and four tools/ probes adapted to round-2 paths)",
+  "base_commit": "9e10d414e35a96398f7b091bc84ddf936d88acc7",
+  "family_dir": "models_r2/r2s3_b4_substitution",
+  "datasets": "ifc_poisson,sharp__cahn_hilliard,sharp__fisher_kpp_2d,sharp__allen_cahn_2d,sharp__phase_field_crystal_2d,ext__helmholtz_2d",
+  "epochs": 0,
+  "seeds": [
+   0
+  ],
+  "env": {
+   "R2S3B4_DUMP_ROOT": "mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B3/eval",
+   "R2S3B4_SOURCE_FAMILY": "r2s3_coverage_panel",
+   "R2S3B4_LEGS": "ifc_A0,ifc_A1,ch_A0_d0,ch_A0_d1,ch_A0_d2,ch_A1_d0,ch_A1_d1,ch_A1_d2,fk_A0_d0,fk_A0_d1,fk_A0_d2,fk_A1_d0,fk_A1_d1,fk_A1_d2,ac_A0_d0,ac_A0_d1,ac_A0_d2,ac_A1_d0,ac_A1_d1,ac_A1_d2,pfc_A0_d0,pfc_A0_d1,pfc_A0_d2,pfc_A1_d0,pfc_A1_d1,pfc_A1_d2,hz_A0_d0,hz_A0_d1,hz_A0_d2,hz_A1_d0,hz_A1_d1,hz_A1_d2",
+   "R2S3B4_TREATMENT_ARM": "A1_lf_cov",
+   "R2S3B4_CONTROL_ARM": "A0_nolf",
+   "R2S3B4_ACHIEVABLE_HEADS": "identity,global_train,ridge_cond_train,knn_cond_train",
+   "R2S3B4_CEILING_HEADS": "global_test,ridge_cond_loo_test,per_sample_oracle",
+   "R2S3B4_ACHIEVABLE_CONTROLS": "a0_raw,a0_head,ref_linear_hfonly,ref_nn_condition_n5,ref_train_mean_n5,ref_zero,a0_split_ensemble",
+   "R2S3B4_ENSEMBLE_LABEL": "non_budget_matched_upper_bound_15hf_rows_3x_compute",
+   "R2S3B4_HEAD_TARGET": "per_sample_optimal_scale",
+   "R2S3B4_HEAD_CLIP": "0.5,2.0",
+   "R2S3B4_RIDGE_LAMBDAS": "1e-6,1e-5,1e-4,1e-3,1e-2,1e-1,1,10,100",
+   "R2S3B4_KNN_K": "1,2,3",
+   "R2S3B4_CAL_FOLDS": "loo5",
+   "R2S3B4_SYMMETRY_ARM": "A1_lf_cov",
+   "R2S3B4_READINGS": "verbatim_max_mce_spread,mce_only,paired_se_over_splits,persample_ci_excludes_zero,median_stat_verbatim,worst_split_vs_mce,log_effect_vs_own_range",
+   "R2S3B4_PRIMARY_READING": "worst_split_vs_mce",
+   "R2S3B4_NOISE_FLOOR_JSON": "mffp_autoresearch/round2/state/noise_floor.json",
+   "R2S3B4_FLOORS_JSON": "mffp_autoresearch/round2/state/anchors/floors.json",
+   "R2S3B4_FLOOR_TOL": "1e-9",
+   "R2S3B4_SEAM_TOL_REL": "1e-3",
+   "R2S3B4_BOOTSTRAP_B": "10000",
+   "R2S3B4_BOOTSTRAP_SEED": "0",
+   "R2S3B4_REPORT_ONLY_DATASETS": "ext__helmholtz_2d",
+   "R2S3B4_CAVEAT_DATASETS": "sharp__phase_field_crystal_2d:band_limited_denominator,sharp__allen_cahn_2d:adr_r2_0003,sharp__fisher_kpp_2d:adr_r2_0003,sharp__phase_field_crystal_2d:adr_r2_0003",
+   "R2S3B4_STREAM_PER_DATASET": "1",
+   "R2S3B4_DIAG_OUT": "mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B4/eval",
+   "_note": "keys prefixed _ are card directives, NOT passed to --env. The --env set is exactly the 27 R2S3B4_* keys above. epochs=0: the probe trains nothing and calls no optimizer; score_panel.py is NOT the entry point (round-1 epochs-0 precedent: s2_beyond_copy-B1). Tools to adapt to round-2 eval paths and re-promote via the register turn: tools/residual_gain_learnability.py, tools/gain_calibration_ceiling.py, tools/effect_threshold_readings.py, tools/map_dispersion_scale_shape.py — their round-1 headers point at round1/eval/panel_data.py.",
+   "_walltime": "--time 00:40:00. Basis: the brainstormer pre-flight computed 9 of the 33 legs (ch x3, ac x3, ifc, fk, pfc) including per-sample oracle scales and target loads in under 4 minutes on the login node; the full job is numpy-only and I/O-bound over 4.1 GB of dumps. CPU-only: no GPU maths is performed. Partition/gres per project.yaml; the orchestrator may drop the gres request since no CUDA kernel is launched.",
+   "_memory": "R2S3B4_STREAM_PER_DATASET=1 means one dataset is resident at a time (largest: allen_cahn 6 legs x 100 x 65536 float32 + targets ~200 MB).",
+   "_no_lf_assert": "the probe must RAISE if any code path opens an LF field or any file under stripped-out LF keys; every output JSON records lf_read_anywhere=false, field_input_at_test=false, trained_parameters=0.",
+   "_declared_baseline": "program.md 12.3's mandatory declared baseline mf_fno_transfer_film is CITED, not re-run (ifc_poisson, 200 ep, seed 0, nRMSE 0.055637439592454, skill 1.5454844331237223, hashes d3d0ade9... / 9753ff24..., from r2s3-B1). This card trains nothing, so the rebadge question is answered by construction: no family is created."
+  }
+ },
+ "status": "analyzing",
+ "skipped_reason": null,
+ "reopen_candidate": false,
+ "scripts_path": {
+  "submit": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round2/worktrees/r2s3_lf_train_signal/B4/scripts/submit.sh",
+  "train_eval": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round2/worktrees/r2s3_lf_train_signal/B4/scripts/01_train_eval.sh",
+  "seeds_2_3": null
+ },
+ "output_paths": {
+  "training": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B4/training",
+  "eval": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B4/eval",
+  "slurm": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B4/slurm",
+  "primary_result": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B4/eval/diagnostic.json",
+  "per_dataset_sidecars": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B4/eval/substitution_<dataset>.json (+ readings_tool_<dataset>.json, dispersion_<dataset>.json)"
+ },
+ "build_commit": "bd1f74673d96a60c97da0ca130aeb931fcf48e92",
+ "job_ids": [
+  "66268786"
+ ],
+ "logs": {},
+ "build_notes": [
+  "Family dir models_r2/r2s3_b4_substitution/: manifest.json (diagnostic: true), run_diagnostic.py (entry point), heads.py, controls.py, readings.py, lf_guard.py, paths.py, INSPIRATION.md. NO smoke_eval.py and NO checkpoint contract: card_type diagnostic, recipe.epochs = 0, nothing is trained and score_panel.py is not the entry point (recipe.env._note). base_family is 'none' per the recipe, so no zoo family was copied or modified.",
+  "SMOKE TEST (full panel, in-session, login node, 2026-08-01): `source .venv/bin/activate; cd <worktree>; source scratchpad/smoke_env.sh; python models_r2/r2s3_b4_substitution/run_diagnostic.py --datasets ifc_poisson,sharp__cahn_hilliard,sharp__fisher_kpp_2d,sharp__allen_cahn_2d,sharp__phase_field_crystal_2d,ext__helmholtz_2d --out scratchpad/smoke/contract_smoke.json --env \"${R2S3B4_ENV[@]}\"` -> exit 0 in ~896 s over all 32 legs. Result JSON: worktrees/r2s3_lf_train_signal/B4/scratchpad/smoke/contract_smoke.json (log: scratchpad/smoke/full.log). Every value finite. Measured E_raw (draw-mean) / E_free (worst draw): ifc 5.9843 / 1.3243; ch 14.7762 / 10.3550; fk 1.3132 / -2.5672; ac 298.9024 / 23.6415; pfc -2.5588 / -10.6588; hz 5.7168 / -2.6149 -- all reproduce the card's part-4 pre-registered table (brainstormer pre-flight) to <= 3e-2 absolute on the largest-magnitude leg. E_ceil on A0 at the per-sample oracle, worst draw: ifc +0.6106, ch +6.6325, ac -29.4396, pfc -11.7416 -- the card's quoted column, exactly. F1 passing set {ifc, ch, ac} (falsified false); F3 fires nowhere (max median |log c| = 1.6e-4 << 0.05); F4 max arm-skill rel diff 6.2e-16 (tol 1e-3) and all full-row floors match state/anchors/floors.json exactly at 1e-9.",
+  "HYPERPARAMETER PROVENANCE: every knob is read from recipe.env -- paths.need() raises on a missing knob and paths.parse_env() raises on an unknown R2S3B4_* key, so a typo in the sbatch script cannot fall back to a built-in default. Nothing is invented. Two CONVENTIONS were inherited from the round's promoted tools rather than guessed, and are cited in heads.py: (i) log-space gain fits with PRESS-LOO lambda selection and an unpenalised intercept follow tools/gain_calibration_ceiling.py::_ridge_loo; (ii) R2S3B4_HEAD_CLIP is applied ONLY to the law-keyed heads (ridge_cond_train, knn_cond_train, ridge_cond_loo_test), exactly as that tool clips only its x_linear_law -- the exact minimisers (global_train, global_test, per_sample_oracle) are unclipped, because clipping an exact minimiser stops it being the bound it is defined to be. Selection rules the card left implicit and the code makes explicit + labelled: knn k in R2S3B4_KNN_K chosen by exact LOO over the 5 rows (ties -> smallest k); the 'best achievable control' is chosen BY ITS TEST SCORE (generous to the LF-free class, conservative about LF) and says so in the JSON; the F3 per-dataset statistic is the MAX over that dataset's legs (the reading most likely to fire, i.e. least favourable to the card's own mechanism claim).",
+  "PATH RESOLUTION (a real hazard, handled): repo-relative recipe.env paths are resolved against the MAIN repo root via `git rev-parse --git-common-dir`, NOT the worktree. The worktree was forked at round2-substrate 9e10d41, whose state/noise_floor.json is the PROVISIONAL file (ifc mce 0.2399 vs the certified 0.9377 the card's F1 quotes). run_diagnostic.py raises if the noise-floor file it reads carries _provisional: true, so a stale copy can never silently change a falsification verdict.",
+  "_no_lf_assert ENFORCEMENT + its one honest caveat: HF test targets come through round2/eval/panel_data.py (the card's offline reference path). The frozen factory loader materialises every fidelity in one call and has no HF-only mode, and the eval layer is byte-immutable during the round, so lf_guard.py copies out the HF field and immediately replaces every non-HF field_by_fid / cond_by_fid entry with a poison object that raises LFAccessError on any use (indexing, iteration, len, numpy coercion, arithmetic). Every output JSON carries lf_read_anywhere=false, field_input_at_test=false, trained_parameters=0 and the audit counter lf_touch_attempts (0 across all six datasets in the smoke). The JSON states plainly that the claim is 'no LF value entered any computation', not 'the frozen loader never touched an LF file on disk' -- the latter is not achievable without editing the eval layer.",
+  "INSTRUMENT SEAMS (F4 is enforced inline; the probe RAISES rather than degrading): (a) every leg's dump-recomputed skill vs B3's recorded per-leg skill at R2S3B4_SEAM_TOL_REL; (b) the full-row floors read back from B3's leg JSONs vs state/anchors/floors.json at R2S3B4_FLOOR_TOL; (c) the four LF-free floors are REBUILT from the dumped 5 HF rows (definitions vendored from B3's refs.py / affine_probe.py, build_commit dfcd46c6) and seam-checked against B3's recorded rel_l2_mean -- observed rel diff exactly 0.0 on ifc; this rebuild is what gives the floors PER-SAMPLE arrays, without which F1's ifc bootstrap requirement is unanswerable since B3 shipped floors as scalars only; (d) the in-probe 7-reading recount is cross-checked against tools/effect_threshold_readings.py run as a subprocess on the RAW contrast of every dataset (max abs diff 0.0 observed) and the split-ensemble skill against tools/map_dispersion_scale_shape.py --ensemble (rel diff 0.0). A mismatch raises; a tool that cannot launch is recorded as 'unavailable' rather than silently skipped.",
+  "SLURM: CPU-ONLY. No CUDA kernel is launched anywhere, so 01_train_eval.sh omits --gres (recipe.env._walltime authorises exactly this). --partition stays at project.yaml's `gpu` (slurm_rules.md forbids invented partitions); dropping only the gres takes CPU cores on a GPU node and leaves its GPUs allocatable. IF the site rejects a gres-less job on partition gpu, the cluster default CPU partition `expansion` is the drop-in fallback -- flagged here for the orchestrator rather than taken unilaterally. --time 00:40:00 per recipe.env._walltime (measured: 896 s for the full panel on a contended login node, 15 min, ~2.7x headroom); --mail-user=ezeng@caltech.edu --mail-type=END,FAIL; --requeue set. The 27 --env knobs were diffed programmatically against recipe.env: 27/27 keys present, zero value mismatches, zero extras; the _-prefixed recipe keys are card directives and are NOT passed.",
+  "NO submit_seeds_2_3.sh: card_type diagnostic runs once with no seeds 1-2 (SCHEMA.md; project.yaml seed_protocol.seeds = [0]). The probe has no stochastic training and its only randomness -- the paired per-test-sample bootstrap -- is pinned by recipe R2S3B4_BOOTSTRAP_SEED=0, so a second seed would reproduce the first bit-for-bit; 01_train_eval.sh warns if invoked with SEED != 0. Resumability is structural, not checkpoint-based: R2S3B4_STREAM_PER_DATASET=1 writes each substitution_<dataset>.json before the next dataset starts, and a _schema_version guard forces recomputation rather than reusing a sidecar written by different code.",
+  "SCOPE HONESTY: the card's part-3 rule is 'each ceiling is applied to every achievable control, and the best is reported', so E_ceil is the best over the whole class x ceiling grid; the card's part-4 TABLE quotes the narrower 'per-sample oracle on A0'. Both are reported -- per_draw.E_ceil (class-wide) and per_draw.ceilings_on_A0_only (the pre-registered column) -- so the analyzer can read the pre-registered number directly without re-deriving it. No TBDs were propagated."
+ ],
+ "review_notes": [
+  {
+   "attempt": 1,
+   "verdict": "SUGGEST",
+   "findings": [
+    "Q1 card-implementation alignment PASS: every part-3 deliverable traces to code (achievable class run_diagnostic.py:380-397; 3 labelled ceilings heads.py:197-248; per-draw E_raw/E_free/E_ceil + absorbed shares :400-432; 7-reading recount readings.py:108-126; paired per-sample bootstrap readings.py:92-106; arm-symmetry :440; F3 :477-488; both tool cross-checks :533-590). The four choices the card left implicit are labelled in-JSON and in build_notes.",
+    "Q2 recipe fidelity PASS: 27/27 R2S3B4_* keys byte-identical between scripts/01_train_eval.sh and recipe.env (programmatic diff: 0 mismatches, 0 extras); datasets verbatim; epochs 0; seeds [0]; base_family none honoured. paths.parse_env/need make a silent default impossible. Only non-recipe constants are the vendored D2 table (readings.py:26) and _EPS/_LOG_FLOOR (heads.py:45-46), both disclosed.",
+    "Q3 section-5 immutables PASS: no writes to round2/eval, project.yaml, program.md, prompts, tools/, state/, or guarded factory surfaces; no data regeneration; no new score minted (every arm skill is B3's score_panel record, re-derived and seam-gated at 1e-3, observed 6.196e-16; denominators from frozen floors.json at 1e-9). Stripped-view rule intact: no model runs, no field is a forward input; the one data_root touch is panel_data.load_split for HF TARGETS (the eval layer's own offline route named by the card) with every non-HF fidelity poisoned before return. No pre-falsified lever re-proposed.",
+    "Q4 contract compliance PASS (diagnostic form): manifest.json diagnostic:true + entry_point + trained_parameters:0; INSPIRATION.md cites all 5 prior_art URLs; run_diagnostic.py writes diagnostic.json + sidecars under R2S3B4_DIAG_OUT which resolves to outputs_root/.../B4/eval. No smoke_eval.py / no last.pt is legal (card_type diagnostic, epochs 0, SCHEMA.md L70); resumability structural via per-dataset sidecar + _schema_version; only RNG is default_rng(R2S3B4_BOOTSTRAP_SEED=0).",
+    "Q5 SLURM PASS with one authorized deviation: bash -n run by the reviewer on 01_train_eval.sh, submit.sh and scratchpad/smoke_env.sh, all OK (exit 0, no output). Partition gpu per project.yaml; job name r2-r2s3_lf_train_signal-B4-s0; absolute --output/--error under outputs_root/.../B4/slurm/%x_%j.{out,err}; SEED=$1; submit.sh seed 0 only and mkdir -p first; --time 00:40:00 (2.7x the measured 896 s); --requeue + mail END,FAIL. --gres omitted: authorized by recipe.env._walltime, partition imposes no gres requirement (AllowQos=ALL), and 464 gres-less jobs ran on partition gpu since 2026-07-28 -> acceptable, expansion fallback correctly left to the orchestrator. No submit_seeds_2_3.sh: correct for a diagnostic, scripts_path.seeds_2_3 is null.",
+    "Q6 smoke evidence PASS: no score_panel contract tier applies to a diagnostic; the equivalent full-panel evidence exists at scratchpad/smoke/contract_smoke.json + full.log (32 legs, exit 0, 896 s, smoke_truncated_test_split false, lf_touch_attempts 0) and reproduces card part 4 including the oracle-on-A0 column exactly (ifc +0.6106, ch +6.6325, ac -29.4396, pfc -11.7416); F1 {ifc,ch,ac}, F3 nowhere, F4 6.196e-16, both tool cross-checks 0.0.",
+    "Q7 blast radius PASS: 19 files / +4294 confined to models_r2/ (8), scripts/ (2), notes/ (2), scratchpad/ (7); tree clean at bd1f746 on round2/exp-r2s3_lf_train_signal-B4; layout matches the B3 precedent; no substrate contamination.",
+    "Q8 round-2 novelty PASS: nothing trained, no family created or scored, so the rebadge question is answered by construction (5.10). No round-1 code vendored (floor/affine definitions from B3 dfcd46c6, head conventions from round-2 tools/); declared baseline mf_fno_transfer_film cited not re-run; no round-1 model present at test in any role.",
+    "PRIORITY-1 VERIFIED (_no_lf_assert): _LFDenied exercised over 28 access paths by the reviewer -- indexing, iteration, len, np.asarray/np.array/np.mean/np.concatenate/np.stack/np.reshape, ufunc dispatch with an ndarray on the left, forward and reverse arithmetic, attribute access, float(), bool(), deepcopy, json.dumps -- every value-bearing path raised (LFAccessError or TypeError); only repr() (deliberately safe) and pickle of the sentinel itself returned, neither carrying an LF value. The loader's only LF-holding keys are exactly the two dicts poisoned, and the whole split is dropped before return. The output wording ('no LF value entered any computation', not 'no LF file was opened') matches what is enforced.",
+    "PRIORITY-2 VERIFIED (stale-worktree protection): git rev-parse --git-common-dir from the family dir resolves to /resnick/groups/Hippo/ezeng/mf_field, so the probe consumes the CERTIFIED state/noise_floor.json (_provisional false, ifc mce 0.9377041289531141, certified_utc 2026-07-31T16:49:04Z) and not the worktree copy (_provisional true, ifc 0.23990756041925798), which the _provisional guard at run_diagnostic.py:599 would reject outright.",
+    "PRIORITY-3 VERIFIED (no ceiling leakage): the achievable set is built exclusively from the 'raw' variant key (run_diagnostic.py:393); ceilings live under separate keys and carry test_fitted:true plus the 'UPPER BOUND, never a claim' label; achievable heads see only pred_hf_train/target_hf_train/cond_hf_train_raw and cond_test (heads.py:134-194) -- no test target reaches them; the ceiling grid is selected as a MINIMUM skill, i.e. adverse to LF.",
+    "SUGGEST S1: the card's expected_falsification joins the achievable-control gate and the ch ceiling clause with 'or', but run_diagnostic.py:784-800 emits F1_achievable_control_gate.falsified and F2_ceiling_gate.falsified separately with no aggregate. Both false in the smoke so no verdict changes; the analyzer must read the card clause as F1 OR F2. Minimal fix on any rebuild: emit card_falsified = F1 or F2 or F3.",
+    "SUGGEST S2: the card's part-4 E_ceil column is heterogeneous -- for ifc/ch/ac/pfc it equals ceilings_on_A0_only.per_sample_oracle exactly, but for fk (-2.568) and hz (-2.615) it equals E_free, whereas the code's oracle-on-A0 gives +0.3332 / -3.1249 and the class-wide E_ceil gives -2.9640 / -3.2549. Both datasets already fail on sign so no verdict moves; part 5 must quote ceilings_on_A0_only and E_ceil by name. Card-side pre-flight artifact, not a builder defect (part 4 is locked).",
+    "SUGGEST S3: INSPIRATION.md and recipe.base_family describe round2/eval/nrmse.py as 'imported, never modified', but controls.rel_l2_per_sample re-derives the per-sample form locally (nrmse.py exposes only the mean) -- definitionally identical and pinned by the F4 seam at 6.196e-16, but the wording overstates. Separately the resume path (run_diagnostic.py:698-707) validates only _schema_version, not the stored _knobs, so a resubmit after an env change with unchanged code would reuse a sidecar computed under different knobs (moot: env is card-locked and the outputs dir is currently empty).",
+    "RUN-TIME WATCH: the two cross-check subprocesses invoke tools/ from the MAIN tree, not from the build commit, so a register-turn edit to either tool before the job runs would trip the RAISE-on-disagreement seam -- read that as instrument drift, not a probe bug. Also a0_split_ensemble is a class member and wins best_achievable_control on pfc and one ac draw; it is labelled non-budget-matched and only lowers E_free (conservative about LF), but part 5 should say so where it drives a row."
+   ],
+   "utc": "2026-08-01T21:20:00Z"
   },
-  "recipe": {
-    "base_family": "none (training-free diagnostic probe; no model family is trained or scored. Reads ONLY r2s3_lf_train_signal-B3's shipped artifacts, build_commit dfcd46c6b51b5fe0bd533b9c670a7cdbf9d13830, job 66196690. NO round-1 reuse of any kind; reuses only round2/eval/panel_data.py + eval/nrmse.py read-only and four tools/ probes adapted to round-2 paths)",
-    "base_commit": "9e10d414e35a96398f7b091bc84ddf936d88acc7",
-    "family_dir": "models_r2/r2s3_b4_substitution",
-    "datasets": "ifc_poisson,sharp__cahn_hilliard,sharp__fisher_kpp_2d,sharp__allen_cahn_2d,sharp__phase_field_crystal_2d,ext__helmholtz_2d",
-    "epochs": 0,
-    "seeds": [
-      0
+  "orchestrator 2026-08-01: submitted per reviewer's SUGGEST — job 66268786. SITE REJECTED the gres-less gpu-partition submission (reviewer's empirical acceptance claim did not hold at submit time); submitted with sbatch --partition=expansion CLI override per the builder's pre-flagged fallback — no script edit, build commit bd1f746 untouched. ANALYZER seams from review: S1 quote F1∨F2 as the clause (emitted separately); S2 part-5 must name E_ceil heterogeneity (oracle-on-A0 for ifc/ch/ac/pfc, E_free for fk/hz) via ceilings_on_A0_only; S3 nrmse re-derived locally (pinned 6.2e-16), resume validates _schema_version not _knobs."
+ ],
+ "debug_notes": [],
+ "5_actual_result": {
+  "seeds_available": [
+   0
+  ],
+  "card_type_note": "DIAGNOSTIC card, training-free substitution audit (epochs 0, trained_parameters 0, seed 0 only per project.yaml seed_protocol for diagnostics). It mints NO new score: every arm skill is r2s3_lf_train_signal-B3's score_panel record (build dfcd46c6, job 66196690), re-derived from B3's dumps and seam-gated by F4. Effects are reported in skill units (skill = nRMSE / copy-LF-or-paper-bar reference, lower is better), so a POSITIVE effect E = skill(control) - skill(A1_lf_cov) means the LF-covariate arm wins.",
+  "per_dataset": {
+   "ifc_poisson": {
+    "reference_type": "paper_bar",
+    "skill_denominator": 0.036,
+    "mce": 0.9377041289531141,
+    "report_only": false,
+    "caveats": [],
+    "draws": [
+     "native"
     ],
-    "env": {
-      "R2S3B4_DUMP_ROOT": "mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B3/eval",
-      "R2S3B4_SOURCE_FAMILY": "r2s3_coverage_panel",
-      "R2S3B4_LEGS": "ifc_A0,ifc_A1,ch_A0_d0,ch_A0_d1,ch_A0_d2,ch_A1_d0,ch_A1_d1,ch_A1_d2,fk_A0_d0,fk_A0_d1,fk_A0_d2,fk_A1_d0,fk_A1_d1,fk_A1_d2,ac_A0_d0,ac_A0_d1,ac_A0_d2,ac_A1_d0,ac_A1_d1,ac_A1_d2,pfc_A0_d0,pfc_A0_d1,pfc_A0_d2,pfc_A1_d0,pfc_A1_d1,pfc_A1_d2,hz_A0_d0,hz_A0_d1,hz_A0_d2,hz_A1_d0,hz_A1_d1,hz_A1_d2",
-      "R2S3B4_TREATMENT_ARM": "A1_lf_cov",
-      "R2S3B4_CONTROL_ARM": "A0_nolf",
-      "R2S3B4_ACHIEVABLE_HEADS": "identity,global_train,ridge_cond_train,knn_cond_train",
-      "R2S3B4_CEILING_HEADS": "global_test,ridge_cond_loo_test,per_sample_oracle",
-      "R2S3B4_ACHIEVABLE_CONTROLS": "a0_raw,a0_head,ref_linear_hfonly,ref_nn_condition_n5,ref_train_mean_n5,ref_zero,a0_split_ensemble",
-      "R2S3B4_ENSEMBLE_LABEL": "non_budget_matched_upper_bound_15hf_rows_3x_compute",
-      "R2S3B4_HEAD_TARGET": "per_sample_optimal_scale",
-      "R2S3B4_HEAD_CLIP": "0.5,2.0",
-      "R2S3B4_RIDGE_LAMBDAS": "1e-6,1e-5,1e-4,1e-3,1e-2,1e-1,1,10,100",
-      "R2S3B4_KNN_K": "1,2,3",
-      "R2S3B4_CAL_FOLDS": "loo5",
-      "R2S3B4_SYMMETRY_ARM": "A1_lf_cov",
-      "R2S3B4_READINGS": "verbatim_max_mce_spread,mce_only,paired_se_over_splits,persample_ci_excludes_zero,median_stat_verbatim,worst_split_vs_mce,log_effect_vs_own_range",
-      "R2S3B4_PRIMARY_READING": "worst_split_vs_mce",
-      "R2S3B4_NOISE_FLOOR_JSON": "mffp_autoresearch/round2/state/noise_floor.json",
-      "R2S3B4_FLOORS_JSON": "mffp_autoresearch/round2/state/anchors/floors.json",
-      "R2S3B4_FLOOR_TOL": "1e-9",
-      "R2S3B4_SEAM_TOL_REL": "1e-3",
-      "R2S3B4_BOOTSTRAP_B": "10000",
-      "R2S3B4_BOOTSTRAP_SEED": "0",
-      "R2S3B4_REPORT_ONLY_DATASETS": "ext__helmholtz_2d",
-      "R2S3B4_CAVEAT_DATASETS": "sharp__phase_field_crystal_2d:band_limited_denominator,sharp__allen_cahn_2d:adr_r2_0003,sharp__fisher_kpp_2d:adr_r2_0003,sharp__phase_field_crystal_2d:adr_r2_0003",
-      "R2S3B4_STREAM_PER_DATASET": "1",
-      "R2S3B4_DIAG_OUT": "mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B4/eval",
-      "_note": "keys prefixed _ are card directives, NOT passed to --env. The --env set is exactly the 27 R2S3B4_* keys above. epochs=0: the probe trains nothing and calls no optimizer; score_panel.py is NOT the entry point (round-1 epochs-0 precedent: s2_beyond_copy-B1). Tools to adapt to round-2 eval paths and re-promote via the register turn: tools/residual_gain_learnability.py, tools/gain_calibration_ceiling.py, tools/effect_threshold_readings.py, tools/map_dispersion_scale_shape.py \u2014 their round-1 headers point at round1/eval/panel_data.py.",
-      "_walltime": "--time 00:40:00. Basis: the brainstormer pre-flight computed 9 of the 33 legs (ch x3, ac x3, ifc, fk, pfc) including per-sample oracle scales and target loads in under 4 minutes on the login node; the full job is numpy-only and I/O-bound over 4.1 GB of dumps. CPU-only: no GPU maths is performed. Partition/gres per project.yaml; the orchestrator may drop the gres request since no CUDA kernel is launched.",
-      "_memory": "R2S3B4_STREAM_PER_DATASET=1 means one dataset is resident at a time (largest: allen_cahn 6 legs x 100 x 65536 float32 + targets ~200 MB).",
-      "_no_lf_assert": "the probe must RAISE if any code path opens an LF field or any file under stripped-out LF keys; every output JSON records lf_read_anywhere=false, field_input_at_test=false, trained_parameters=0.",
-      "_declared_baseline": "program.md 12.3's mandatory declared baseline mf_fno_transfer_film is CITED, not re-run (ifc_poisson, 200 ep, seed 0, nRMSE 0.055637439592454, skill 1.5454844331237223, hashes d3d0ade9... / 9753ff24..., from r2s3-B1). This card trains nothing, so the rebadge question is answered by construction: no family is created."
+    "n_test": 128,
+    "per_seed_nrmse": {
+     "seed0_per_draw_A0_nolf": [
+      0.29283781751768306
+     ],
+     "seed0_per_draw_A1_lf_cov": [
+      0.07740329672823923
+     ],
+     "source": "B3 leg JSON record, re-derived from the dumps and seam-gated (F4)"
+    },
+    "per_seed_skill": {
+     "seed0_per_draw_A0_nolf": [
+      8.134383819935639
+     ],
+     "seed0_per_draw_A1_lf_cov": [
+      2.1500915757844243
+     ]
+    },
+    "mean_skill": null,
+    "ci95": null,
+    "_mean_skill_note": "null by design: single seed, and this card's aggregation axis is the HF-subset draw, not the seed. Draw-level aggregation is published by the probe only for the EFFECT (E_raw_draw_mean) and as paired per-test-sample bootstrap CIs; no arm-skill draw-mean is minted here.",
+    "E_raw_per_draw": [
+     5.984292244151215
+    ],
+    "E_raw_draw_mean": 5.984292244151215,
+    "E_raw_persample_ci95": [
+     4.756851890362466,
+     7.336454480952463
+    ],
+    "best_achievable_control_by_draw": {
+     "native": "ref_linear_hfonly"
+    },
+    "best_achievable_control_skill_by_draw": {
+     "native": 3.4744025341296543
+    },
+    "E_free_per_draw": [
+     1.32431095834523
+    ],
+    "absorbed_share_achievable_per_draw": [
+     0.778702158197646
+    ],
+    "E_free_worst_draw": 1.32431095834523,
+    "E_free_worst_draw_over_mce": 1.4122908468193878,
+    "E_free_persample_ci95": [
+     0.7735019598728827,
+     1.9182343001787863
+    ],
+    "E_free_passes_mce_on_every_draw": true,
+    "ceilings_on_A0_only": {
+     "global_test": {
+      "E_per_draw": [
+       6.034281918839689
+      ],
+      "absorbed_share_per_draw": [
+       -0.008353481522786886
+      ],
+      "E_worst_draw": 6.034281918839689
+     },
+     "ridge_cond_loo_test": {
+      "E_per_draw": [
+       1.2491972541207415
+      ],
+      "absorbed_share_per_draw": [
+       0.7912539690317344
+      ],
+      "E_worst_draw": 1.2491972541207415
+     },
+     "per_sample_oracle": {
+      "E_per_draw": [
+       0.6106466783301383
+      ],
+      "absorbed_share_per_draw": [
+       0.8979584128888496
+      ],
+      "E_worst_draw": 0.6106466783301383
+     }
+    },
+    "E_ceil_class_wide": {
+     "best_control_by_draw": {
+      "native": "ref_linear_hfonly@per_sample_oracle"
+     },
+     "E_per_draw": [
+      -1.4548754280439837
+     ],
+     "absorbed_share_per_draw": [
+      1.2431157050302675
+     ],
+     "E_worst_draw": -1.4548754280439837,
+     "passes_mce_on_every_draw": false
+    },
+    "readings_recount_pass_over_available": {
+     "raw": [
+      6,
+      6
+     ],
+     "substituted_best_achievable": [
+      5,
+      6
+     ],
+     "ceiling_corrected": [
+      0,
+      6
+     ]
+    },
+    "readings_unavailable": [
+     "log_effect_vs_own_range"
+    ],
+    "primary_reading_worst_split_vs_mce_verdicts": {
+     "raw": true,
+     "raw_exact_from_leg_json": true,
+     "substituted_best_achievable": true,
+     "ceiling_corrected": false
+    },
+    "arm_symmetry_A1_worst_draw": {
+     "raw": 2.1500915757844243,
+     "head_identity": 2.1500915757844243,
+     "head_global_train": 2.1459470868354216,
+     "head_ridge_cond_train": 2.141639473103919,
+     "head_knn_cond_train": 2.1416517449714987,
+     "global_test": 1.144369658769061,
+     "ridge_cond_loo_test": 1.116496007272225,
+     "per_sample_oracle": 0.760771948095903
+    },
+    "split_ensemble_non_budget_matched": {
+     "available": false,
+     "reason": "a split ensemble needs >= 2 HF-subset draws; this dataset ships a single native draw",
+     "label": "non_budget_matched_upper_bound_15hf_rows_3x_compute"
+    },
+    "F3_memorization_max_over_legs": 0.00015796883713880785,
+    "F3_fires": false,
+    "lf_touch_attempts": 0,
+    "seconds": 7.67,
+    "result_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B4/eval/substitution_ifc_poisson.json"
+   },
+   "sharp__cahn_hilliard": {
+    "reference_type": "copylf",
+    "skill_denominator": 0.041802962686225575,
+    "mce": 0.09124535322300886,
+    "report_only": false,
+    "caveats": [],
+    "draws": [
+     "d0",
+     "d1",
+     "d2"
+    ],
+    "n_test": 100,
+    "per_seed_nrmse": {
+     "seed0_per_draw_A0_nolf": [
+      1.25736143313939,
+      1.1391260131894858,
+      1.0350022891965012
+     ],
+     "seed0_per_draw_A1_lf_cov": [
+      0.5281654373456512,
+      0.5233679056709178,
+      0.5268923181239173
+     ],
+     "source": "B3 leg JSON record, re-derived from the dumps and seam-gated (F4)"
+    },
+    "per_seed_skill": {
+     "seed0_per_draw_A0_nolf": [
+      30.078285182253396,
+      27.249887089099484,
+      24.759065451060543
+     ],
+     "seed0_per_draw_A1_lf_cov": [
+      12.634641264784957,
+      12.519875914043096,
+      12.604186025731922
+     ]
+    },
+    "mean_skill": null,
+    "ci95": null,
+    "_mean_skill_note": "null by design: single seed, and this card's aggregation axis is the HF-subset draw, not the seed. Draw-level aggregation is published by the probe only for the EFFECT (E_raw_draw_mean) and as paired per-test-sample bootstrap CIs; no arm-skill draw-mean is minted here.",
+    "E_raw_per_draw": [
+     17.44364391746844,
+     14.730011175056388,
+     12.154879425328621
+    ],
+    "E_raw_draw_mean": 14.776178172617817,
+    "E_raw_persample_ci95": [
+     12.779091478954067,
+     16.735116383212336
+    ],
+    "best_achievable_control_by_draw": {
+     "d0": "ref_zero",
+     "d1": "ref_zero",
+     "d2": "ref_linear_hfonly"
+    },
+    "best_achievable_control_skill_by_draw": {
+     "d0": 23.92174945843033,
+     "d1": 23.92174945843033,
+     "d2": 22.959223740497407
+    },
+    "E_free_per_draw": [
+     11.287108193645373,
+     11.401873544387234,
+     10.355037714765485
+    ],
+    "absorbed_share_achievable_per_draw": [
+     0.35293862641037854,
+     0.22594264125915803,
+     0.14807565320743404
+    ],
+    "E_free_worst_draw": 10.355037714765485,
+    "E_free_worst_draw_over_mce": 113.48564446298083,
+    "E_free_persample_ci95": [
+     9.170465628360828,
+     12.810665097007737
+    ],
+    "E_free_passes_mce_on_every_draw": true,
+    "ceilings_on_A0_only": {
+     "global_test": {
+      "E_per_draw": [
+       11.269955136404235,
+       11.270507544444046,
+       10.928735241252307
+      ],
+      "absorbed_share_per_draw": [
+       0.3539219678109652,
+       0.2348608965396185,
+       0.10087670483355408
+      ],
+      "E_worst_draw": 10.928735241252307
+     },
+     "ridge_cond_loo_test": {
+      "E_per_draw": [
+       12.75121648146736,
+       11.818117861846092,
+       11.153753430798025
+      ],
+      "absorbed_share_per_draw": [
+       0.2690050002283056,
+       0.1976843926731881,
+       0.08236412386324679
+      ],
+      "E_worst_draw": 11.153753430798025
+     },
+     "per_sample_oracle": {
+      "E_per_draw": [
+       9.278210728306973,
+       8.280388541257372,
+       6.632464460018644
+      ],
+      "absorbed_share_per_draw": [
+       0.46810363865456034,
+       0.43785592265678147,
+       0.45433728892466346
+      ],
+      "E_worst_draw": 6.632464460018644
+     }
+    },
+    "E_ceil_class_wide": {
+     "best_control_by_draw": {
+      "d0": "a0_split_ensemble@per_sample_oracle",
+      "d1": "ref_nn_condition_n5@per_sample_oracle",
+      "d2": "ref_nn_condition_n5@per_sample_oracle"
+     },
+     "E_per_draw": [
+      8.163740998344952,
+      6.8792063766769065,
+      5.843719259647807
+     ],
+     "absorbed_share_per_draw": [
+      0.531993370366291,
+      0.5329802336928253,
+      0.5192285291230015
+     ],
+     "E_worst_draw": 5.843719259647807,
+     "passes_mce_on_every_draw": true
+    },
+    "readings_recount_pass_over_available": {
+     "raw": [
+      7,
+      7
+     ],
+     "substituted_best_achievable": [
+      7,
+      7
+     ],
+     "ceiling_corrected": [
+      7,
+      7
+     ]
+    },
+    "readings_unavailable": [],
+    "primary_reading_worst_split_vs_mce_verdicts": {
+     "raw": true,
+     "raw_exact_from_leg_json": true,
+     "substituted_best_achievable": true,
+     "ceiling_corrected": true
+    },
+    "arm_symmetry_A1_worst_draw": {
+     "raw": 12.519875914043096,
+     "head_identity": 12.519875914043096,
+     "head_global_train": 12.509009468744585,
+     "head_ridge_cond_train": 12.508534493142626,
+     "head_knn_cond_train": 12.509471608348957,
+     "global_test": 12.945509243650433,
+     "ridge_cond_loo_test": 17.272029063308842,
+     "per_sample_oracle": 10.170737042687966
+    },
+    "split_ensemble_non_budget_matched": {
+     "available": true,
+     "n_splits_averaged": 3,
+     "label": "non_budget_matched_upper_bound_15hf_rows_3x_compute",
+     "skill_raw": 24.361919707677977,
+     "skill_by_ceiling": {
+      "global_test": 23.632919210823065,
+      "ridge_cond_loo_test": 23.544936158857805,
+      "per_sample_oracle": 20.79838226312991
+     }
+    },
+    "F3_memorization_max_over_legs": 0.0017638666039803612,
+    "F3_fires": false,
+    "lf_touch_attempts": 0,
+    "seconds": 25.84,
+    "result_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B4/eval/substitution_sharp__cahn_hilliard.json"
+   },
+   "sharp__fisher_kpp_2d": {
+    "reference_type": "copylf",
+    "skill_denominator": 0.02144950364640668,
+    "mce": 0.0007136812826775696,
+    "report_only": false,
+    "caveats": [
+     "adr_r2_0003"
+    ],
+    "draws": [
+     "d0",
+     "d1",
+     "d2"
+    ],
+    "n_test": 100,
+    "per_seed_nrmse": {
+     "seed0_per_draw_A0_nolf": [
+      0.3634316813540858,
+      0.34718578736522965,
+      0.3385393609588949
+     ],
+     "seed0_per_draw_A1_lf_cov": [
+      0.32711295988194705,
+      0.33103039625839964,
+      0.30650892391805806
+     ],
+     "source": "B3 leg JSON record, re-derived from the dumps and seam-gated (F4)"
+    },
+    "per_seed_skill": {
+     "seed0_per_draw_A0_nolf": [
+      16.943594003163312,
+      16.18619214171848,
+      15.783086011671356
+     ],
+     "seed0_per_draw_A1_lf_cov": [
+      15.25037433380173,
+      15.433009626488744,
+      14.289790988678932
+     ]
+    },
+    "mean_skill": null,
+    "ci95": null,
+    "_mean_skill_note": "null by design: single seed, and this card's aggregation axis is the HF-subset draw, not the seed. Draw-level aggregation is published by the probe only for the EFFECT (E_raw_draw_mean) and as paired per-test-sample bootstrap CIs; no arm-skill draw-mean is minted here.",
+    "E_raw_per_draw": [
+     1.6932196693615822,
+     0.7531825152297351,
+     1.4932950229924238
+    ],
+    "E_raw_draw_mean": 1.3132324025279136,
+    "E_raw_persample_ci95": [
+     1.171593546477219,
+     1.4599719630346848
+    ],
+    "best_achievable_control_by_draw": {
+     "d0": "ref_train_mean_n5",
+     "d1": "ref_train_mean_n5",
+     "d2": "ref_train_mean_n5"
+    },
+    "best_achievable_control_skill_by_draw": {
+     "d0": 13.162406874668484,
+     "d1": 12.865760746150269,
+     "d2": 13.080050106348434
+    },
+    "E_free_per_draw": [
+     -2.087967459133246,
+     -2.567248880338475,
+     -1.2097408823304985
+    ],
+    "absorbed_share_achievable_per_draw": [
+     2.233134422493746,
+     4.408534888194285,
+     1.810115123739106
+    ],
+    "E_free_worst_draw": -2.567248880338475,
+    "E_free_worst_draw_over_mce": -3597.1923919690626,
+    "E_free_persample_ci95": [
+     -2.226714799602442,
+     -1.672638859015425
+    ],
+    "E_free_passes_mce_on_every_draw": false,
+    "ceilings_on_A0_only": {
+     "global_test": {
+      "E_per_draw": [
+       1.210937879966167,
+       0.4838388091024335,
+       1.3486164287078868
+      ],
+      "absorbed_share_per_draw": [
+       0.28483119947292873,
+       0.3576074864737754,
+       0.09688547276787583
+      ],
+      "E_worst_draw": 0.4838388091024335
+     },
+     "ridge_cond_loo_test": {
+      "E_per_draw": [
+       1.02468703661809,
+       0.3919452556809375,
+       1.3356255656787521
+      ],
+      "absorbed_share_per_draw": [
+       0.39482923854502483,
+       0.47961450544110584,
+       0.10558493458159178
+      ],
+      "E_worst_draw": 0.3919452556809375
+     },
+     "per_sample_oracle": {
+      "E_per_draw": [
+       0.840497621798356,
+       0.3331733079854473,
+       1.2847350573291738
+      ],
+      "absorbed_share_per_draw": [
+       0.5036098168436348,
+       0.5576459871963132,
+       0.13966427427402475
+      ],
+      "E_worst_draw": 0.3331733079854473
+     }
+    },
+    "E_ceil_class_wide": {
+     "best_control_by_draw": {
+      "d0": "ref_train_mean_n5@per_sample_oracle",
+      "d1": "ref_train_mean_n5@per_sample_oracle",
+      "d2": "ref_train_mean_n5@per_sample_oracle"
+     },
+     "E_per_draw": [
+      -2.4731343073947514,
+      -2.9639899890677093,
+      -1.5936355648237335
+     ],
+     "absorbed_share_per_draw": [
+      2.4606104288448476,
+      4.935287834136239,
+      2.0671940509319024
+     ],
+     "E_worst_draw": -2.9639899890677093,
+     "passes_mce_on_every_draw": false
+    },
+    "readings_recount_pass_over_available": {
+     "raw": [
+      6,
+      7
+     ],
+     "substituted_best_achievable": [
+      0,
+      7
+     ],
+     "ceiling_corrected": [
+      0,
+      7
+     ]
+    },
+    "readings_unavailable": [],
+    "primary_reading_worst_split_vs_mce_verdicts": {
+     "raw": true,
+     "raw_exact_from_leg_json": true,
+     "substituted_best_achievable": false,
+     "ceiling_corrected": false
+    },
+    "arm_symmetry_A1_worst_draw": {
+     "raw": 14.289790988678932,
+     "head_identity": 14.289790988678932,
+     "head_global_train": 14.288968307503179,
+     "head_ridge_cond_train": 14.289124389817589,
+     "head_knn_cond_train": 14.289055987854185,
+     "global_test": 14.265902449904384,
+     "ridge_cond_loo_test": 14.253506334990231,
+     "per_sample_oracle": 14.215253597444951
+    },
+    "split_ensemble_non_budget_matched": {
+     "available": true,
+     "n_splits_averaged": 3,
+     "label": "non_budget_matched_upper_bound_15hf_rows_3x_compute",
+     "skill_raw": 13.377959167485766,
+     "skill_by_ceiling": {
+      "global_test": 13.322154066776836,
+      "ridge_cond_loo_test": 13.282867136256453,
+      "per_sample_oracle": 13.202203693728512
+     }
+    },
+    "F3_memorization_max_over_legs": 0.0003000430200265068,
+    "F3_fires": false,
+    "lf_touch_attempts": 0,
+    "seconds": 24.45,
+    "result_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B4/eval/substitution_sharp__fisher_kpp_2d.json"
+   },
+   "sharp__allen_cahn_2d": {
+    "reference_type": "copylf",
+    "skill_denominator": 0.0017807662982691156,
+    "mce": 0.8797047190126648,
+    "report_only": false,
+    "caveats": [
+     "adr_r2_0003"
+    ],
+    "draws": [
+     "d0",
+     "d1",
+     "d2"
+    ],
+    "n_test": 100,
+    "per_seed_nrmse": {
+     "seed0_per_draw_A0_nolf": [
+      1.7356855303739798,
+      0.44274512019460743,
+      0.5543183079208849
+     ],
+     "seed0_per_draw_A1_lf_cov": [
+      0.3789143694980034,
+      0.378185124770519,
+      0.3788234542001295
+     ],
+     "source": "B3 leg JSON record, re-derived from the dumps and seam-gated (F4)"
+    },
+    "per_seed_skill": {
+     "seed0_per_draw_A0_nolf": [
+      974.6846242884573,
+      248.62617886746307,
+      311.2807719124491
+     ],
+     "seed0_per_draw_A1_lf_cov": [
+      212.781637807445,
+      212.37212605500818,
+      212.7305837764009
+     ]
+    },
+    "mean_skill": null,
+    "ci95": null,
+    "_mean_skill_note": "null by design: single seed, and this card's aggregation axis is the HF-subset draw, not the seed. Draw-level aggregation is published by the probe only for the EFFECT (E_raw_draw_mean) and as paired per-test-sample bootstrap CIs; no arm-skill draw-mean is minted here.",
+    "E_raw_per_draw": [
+     761.9029864810122,
+     36.25405281245489,
+     98.5501881360482
+    ],
+    "E_raw_draw_mean": 298.9024091431718,
+    "E_raw_persample_ci95": [
+     205.45285317806102,
+     408.9047313002976
+    ],
+    "best_achievable_control_by_draw": {
+     "d0": "a0_split_ensemble",
+     "d1": "ref_linear_hfonly",
+     "d2": "a0_head_ridge_cond_train"
+    },
+    "best_achievable_control_skill_by_draw": {
+     "d0": 431.79864759557205,
+     "d1": 236.01359392329263,
+     "d2": 311.28072871028667
+    },
+    "E_free_per_draw": [
+     219.01700978812704,
+     23.64146786828445,
+     98.55014493388578
+    ],
+    "absorbed_share_achievable_per_draw": [
+     0.7125395048000834,
+     0.34789448256768274,
+     4.3837726997485284e-07
+    ],
+    "E_free_worst_draw": 23.64146786828445,
+    "E_free_worst_draw_over_mce": 26.87432198251524,
+    "E_free_persample_ci95": [
+     75.77863256917865,
+     158.09764242546663
+    ],
+    "E_free_passes_mce_on_every_draw": true,
+    "ceilings_on_A0_only": {
+     "global_test": {
+      "E_per_draw": [
+       448.4176307588933,
+       42.86773201459266,
+       114.82290677088153
+      ],
+      "absorbed_share_per_draw": [
+       0.41145048816517726,
+       -0.18242592728462292,
+       -0.16512113211157842
+      ],
+      "E_worst_draw": 42.86773201459266
+     },
+     "ridge_cond_loo_test": {
+      "E_per_draw": [
+       424.61893073217084,
+       143.8431853701995,
+       171.9751978622194
+      ],
+      "absorbed_share_per_draw": [
+       0.4426863547374309,
+       -2.9676442828147187,
+       -0.7450519488081364
+      ],
+      "E_worst_draw": 143.8431853701995
+     },
+     "per_sample_oracle": {
+      "E_per_draw": [
+       -9.706018312212649,
+       -29.439640701630765,
+       -7.169129378081834
+      ],
+      "absorbed_share_per_draw": [
+       1.0127391787201698,
+       1.8120372321937186,
+       1.072745973535686
+      ],
+      "E_worst_draw": -29.439640701630765
+     }
+    },
+    "E_ceil_class_wide": {
+     "best_control_by_draw": {
+      "d0": "ref_nn_condition_n5@per_sample_oracle",
+      "d1": "ref_nn_condition_n5@per_sample_oracle",
+      "d2": "ref_train_mean_n5@per_sample_oracle"
+     },
+     "E_per_draw": [
+      -38.99745641916269,
+      -32.79393531909878,
+      -52.29620995780479
+     ],
+     "absorbed_share_per_draw": [
+      1.0511842808219976,
+      1.9045591533929855,
+      1.5306556075327837
+     ],
+     "E_worst_draw": -52.29620995780479,
+     "passes_mce_on_every_draw": false
+    },
+    "readings_recount_pass_over_available": {
+     "raw": [
+      3,
+      7
+     ],
+     "substituted_best_achievable": [
+      3,
+      7
+     ],
+     "ceiling_corrected": [
+      0,
+      7
+     ]
+    },
+    "readings_unavailable": [],
+    "primary_reading_worst_split_vs_mce_verdicts": {
+     "raw": true,
+     "raw_exact_from_leg_json": true,
+     "substituted_best_achievable": true,
+     "ceiling_corrected": false
+    },
+    "arm_symmetry_A1_worst_draw": {
+     "raw": 212.37212605500818,
+     "head_identity": 212.37212605500818,
+     "head_global_train": 211.87653479162782,
+     "head_ridge_cond_train": 211.81316510799732,
+     "head_knn_cond_train": 211.8336458447687,
+     "global_test": 183.74178251801217,
+     "ridge_cond_loo_test": 228.03135727670096,
+     "per_sample_oracle": 171.0033974265535
+    },
+    "split_ensemble_non_budget_matched": {
+     "available": true,
+     "n_splits_averaged": 3,
+     "label": "non_budget_matched_upper_bound_15hf_rows_3x_compute",
+     "skill_raw": 431.79864759557205,
+     "skill_by_ceiling": {
+      "global_test": 444.80468737380176,
+      "ridge_cond_loo_test": 430.4305223498406,
+      "per_sample_oracle": 183.3657752360661
+     }
+    },
+    "F3_memorization_max_over_legs": 0.0021683687004001918,
+    "F3_fires": false,
+    "lf_touch_attempts": 0,
+    "seconds": 24.65,
+    "result_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B4/eval/substitution_sharp__allen_cahn_2d.json"
+   },
+   "sharp__phase_field_crystal_2d": {
+    "reference_type": "copylf",
+    "skill_denominator": 0.00738077856100695,
+    "mce": 0.21302734961699343,
+    "report_only": false,
+    "caveats": [
+     "band_limited_denominator",
+     "adr_r2_0003"
+    ],
+    "draws": [
+     "d0",
+     "d1",
+     "d2"
+    ],
+    "n_test": 100,
+    "per_seed_nrmse": {
+     "seed0_per_draw_A0_nolf": [
+      0.45372253553673625,
+      0.42440586045926737,
+      0.4819785101607259
+     ],
+     "seed0_per_draw_A1_lf_cov": [
+      0.4813088754283072,
+      0.46607869850660777,
+      0.46937749770008375
+     ],
+     "source": "B3 leg JSON record, re-derived from the dumps and seam-gated (F4)"
+    },
+    "per_seed_skill": {
+     "seed0_per_draw_A0_nolf": [
+      61.47353314916895,
+      57.50150298525773,
+      65.30185212533597
+     ],
+     "seed0_per_draw_A1_lf_cov": [
+      65.21112528305453,
+      63.147633363359056,
+      63.59457797309218
+     ]
+    },
+    "mean_skill": null,
+    "ci95": null,
+    "_mean_skill_note": "null by design: single seed, and this card's aggregation axis is the HF-subset draw, not the seed. Draw-level aggregation is published by the probe only for the EFFECT (E_raw_draw_mean) and as paired per-test-sample bootstrap CIs; no arm-skill draw-mean is minted here.",
+    "E_raw_per_draw": [
+     -3.7375921338855775,
+     -5.646130378101326,
+     1.7072741522437909
+    ],
+    "E_raw_draw_mean": -2.5588161199143706,
+    "E_raw_persample_ci95": [
+     -5.398741297955149,
+     0.5462110972146004
+    ],
+    "best_achievable_control_by_draw": {
+     "d0": "a0_split_ensemble",
+     "d1": "a0_split_ensemble",
+     "d2": "a0_split_ensemble"
+    },
+    "best_achievable_control_skill_by_draw": {
+     "d0": 54.55236930467282,
+     "d1": 54.55236930467282,
+     "d2": 54.55236930467282
+    },
+    "E_free_per_draw": [
+     -10.658755978381706,
+     -8.595264058686233,
+     -9.042208668419356
+    ],
+    "absorbed_share_achievable_per_draw": [
+     -1.8517707648589599,
+     -0.5223282997543246,
+     6.2962839369035155
+    ],
+    "E_free_worst_draw": -10.658755978381706,
+    "E_free_worst_draw_over_mce": -50.03468332843327,
+    "E_free_persample_ci95": [
+     -11.983261365366085,
+     -6.838225891247229
+    ],
+    "E_free_passes_mce_on_every_draw": false,
+    "ceilings_on_A0_only": {
+     "global_test": {
+      "E_per_draw": [
+       9.66031571560218,
+       3.959520796765325,
+       16.553004962031615
+      ],
+      "absorbed_share_per_draw": [
+       3.584636142617139,
+       1.7012804401617145,
+       -8.695575218705661
+      ],
+      "E_worst_draw": 3.959520796765325
+     },
+     "ridge_cond_loo_test": {
+      "E_per_draw": [
+       5.846359087729553,
+       2.4717353380517793,
+       15.940612910650025
+      ],
+      "absorbed_share_per_draw": [
+       2.564204674642151,
+       1.4377751083535857,
+       -8.336879428356612
+      ],
+      "E_worst_draw": 2.4717353380517793
+     },
+     "per_sample_oracle": {
+      "E_per_draw": [
+       -11.741568816651366,
+       -10.591964248890996,
+       -8.418701583523081
+      ],
+      "absorbed_share_per_draw": [
+       -2.141479432761141,
+       -0.875968767914433,
+       5.931077748971232
+      ],
+      "E_worst_draw": -11.741568816651366
+     }
+    },
+    "E_ceil_class_wide": {
+     "best_control_by_draw": {
+      "d0": "a0_split_ensemble@per_sample_oracle",
+      "d1": "a0_split_ensemble@per_sample_oracle",
+      "d2": "a0_split_ensemble@per_sample_oracle"
+     },
+     "E_per_draw": [
+      -13.425965373778546,
+      -11.362473454083073,
+      -11.809418063816196
+     ],
+     "absorbed_share_per_draw": [
+      -2.5921429874749324,
+      -1.0124355431381364,
+      7.917118758165247
+     ],
+     "E_worst_draw": -13.425965373778546,
+     "passes_mce_on_every_draw": false
+    },
+    "readings_recount_pass_over_available": {
+     "raw": [
+      0,
+      7
+     ],
+     "substituted_best_achievable": [
+      0,
+      7
+     ],
+     "ceiling_corrected": [
+      0,
+      7
+     ]
+    },
+    "readings_unavailable": [],
+    "primary_reading_worst_split_vs_mce_verdicts": {
+     "raw": false,
+     "raw_exact_from_leg_json": false,
+     "substituted_best_achievable": false,
+     "ceiling_corrected": false
+    },
+    "arm_symmetry_A1_worst_draw": {
+     "raw": 63.147633363359056,
+     "head_identity": 63.147633363359056,
+     "head_global_train": 63.15508479689154,
+     "head_ridge_cond_train": 63.151577918245735,
+     "head_knn_cond_train": 63.151722185293714,
+     "global_test": 72.28115904974354,
+     "ridge_cond_loo_test": 73.45002234150719,
+     "per_sample_oracle": 55.268453746938526
+    },
+    "split_ensemble_non_budget_matched": {
+     "available": true,
+     "n_splits_averaged": 3,
+     "label": "non_budget_matched_upper_bound_15hf_rows_3x_compute",
+     "skill_raw": 54.55236930467282,
+     "skill_by_ceiling": {
+      "global_test": 61.671631271431814,
+      "ridge_cond_loo_test": 60.83802336463401,
+      "per_sample_oracle": 51.78515990927598
+     }
+    },
+    "F3_memorization_max_over_legs": 0.0007244069438092519,
+    "F3_fires": false,
+    "lf_touch_attempts": 0,
+    "seconds": 7.67,
+    "result_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B4/eval/substitution_sharp__phase_field_crystal_2d.json"
+   },
+   "ext__helmholtz_2d": {
+    "reference_type": "copylf",
+    "skill_denominator": 0.2990332650411058,
+    "mce": 2.95299157437233,
+    "report_only": true,
+    "caveats": [],
+    "draws": [
+     "d0",
+     "d1",
+     "d2"
+    ],
+    "n_test": 100,
+    "per_seed_nrmse": {
+     "seed0_per_draw_A0_nolf": [
+      2.281939569389837,
+      5.425353131668044,
+      1.50651753959406
+     ],
+     "seed0_per_draw_A1_lf_cov": [
+      1.0752953522855813,
+      1.781956818584442,
+      1.227987217823707
+     ],
+     "source": "B3 leg JSON record, re-derived from the dumps and seam-gated (F4)"
+    },
+    "per_seed_skill": {
+     "seed0_per_draw_A0_nolf": [
+      7.631055926423963,
+      18.142975267056865,
+      5.037959704539794
+     ],
+     "seed0_per_draw_A1_lf_cov": [
+      3.5959054660282335,
+      5.959058830259203,
+      4.10652379311347
+     ]
+    },
+    "mean_skill": null,
+    "ci95": null,
+    "_mean_skill_note": "null by design: single seed, and this card's aggregation axis is the HF-subset draw, not the seed. Draw-level aggregation is published by the probe only for the EFFECT (E_raw_draw_mean) and as paired per-test-sample bootstrap CIs; no arm-skill draw-mean is minted here.",
+    "E_raw_per_draw": [
+     4.03515046039573,
+     12.183916436797663,
+     0.9314359114263242
+    ],
+    "E_raw_draw_mean": 5.7168342695399055,
+    "E_raw_persample_ci95": [
+     4.6814760198944,
+     6.8283571435585495
+    ],
+    "best_achievable_control_by_draw": {
+     "d0": "ref_zero",
+     "d1": "ref_zero",
+     "d2": "ref_zero"
+    },
+    "best_achievable_control_skill_by_draw": {
+     "d0": 3.3441095587226317,
+     "d1": 3.3441095587226317,
+     "d2": 3.3441095587226317
+    },
+    "E_free_per_draw": [
+     -0.25179590730560175,
+     -2.6149492715365716,
+     -0.7624142343908384
+    ],
+    "absorbed_share_achievable_per_draw": [
+     1.0624006241593549,
+     1.2146230471212807,
+     1.8185364393169468
+    ],
+    "E_free_worst_draw": -2.6149492715365716,
+    "E_free_worst_draw_over_mce": -0.8855254766828752,
+    "E_free_persample_ci95": [
+     -1.7351445553540499,
+     -0.7636985202855165
+    ],
+    "E_free_passes_mce_on_every_draw": false,
+    "ceilings_on_A0_only": {
+     "global_test": {
+      "E_per_draw": [
+       -0.25286804706184984,
+       -1.7677741885324805,
+       -0.7737335536884884
+      ],
+      "absorbed_share_per_draw": [
+       1.0626663242284777,
+       1.1450908004583387,
+       1.8306889869681495
+      ],
+      "E_worst_draw": -1.7677741885324805
+     },
+     "ridge_cond_loo_test": {
+      "E_per_draw": [
+       1.2228568299173364,
+       3.5769827330697774,
+       -0.22888328394270552
+      ],
+      "absorbed_share_per_draw": [
+       0.6969488890390942,
+       0.7064176571117451,
+       1.2457316505997846
+      ],
+      "E_worst_draw": -0.22888328394270552
+     },
+     "per_sample_oracle": {
+      "E_per_draw": [
+       -0.5848001546236237,
+       -3.1248786937404187,
+       -1.1395567856676183
+      ],
+      "absorbed_share_per_draw": [
+       1.1449264805273882,
+       1.2564757161582882,
+       2.223440895598061
+      ],
+      "E_worst_draw": -3.1248786937404187
+     }
+    },
+    "E_ceil_class_wide": {
+     "best_control_by_draw": {
+      "d0": "ref_train_mean_n5@per_sample_oracle",
+      "d1": "ref_nn_condition_n5@per_sample_oracle",
+      "d2": "ref_nn_condition_n5@per_sample_oracle"
+     },
+     "E_per_draw": [
+      -0.8271303358577722,
+      -3.2548621329399725,
+      -1.2325026128346592
+     ],
+     "absorbed_share_per_draw": [
+      1.204981287309087,
+      1.267144160896384,
+      2.323228573984555
+     ],
+     "E_worst_draw": -3.2548621329399725,
+     "passes_mce_on_every_draw": false
+    },
+    "readings_recount_pass_over_available": {
+     "raw": [
+      2,
+      7
+     ],
+     "substituted_best_achievable": [
+      0,
+      7
+     ],
+     "ceiling_corrected": [
+      0,
+      7
+     ]
+    },
+    "readings_unavailable": [],
+    "primary_reading_worst_split_vs_mce_verdicts": {
+     "raw": false,
+     "raw_exact_from_leg_json": false,
+     "substituted_best_achievable": false,
+     "ceiling_corrected": false
+    },
+    "arm_symmetry_A1_worst_draw": {
+     "raw": 3.5959054660282335,
+     "head_identity": 3.5959054660282335,
+     "head_global_train": 3.5959229779309747,
+     "head_ridge_cond_train": 3.59590109959557,
+     "head_knn_cond_train": 3.5959135969531273,
+     "global_test": 3.2980746886399546,
+     "ridge_cond_loo_test": 3.330040765462849,
+     "per_sample_oracle": 2.639763428808447
+    },
+    "split_ensemble_non_budget_matched": {
+     "available": true,
+     "n_splits_averaged": 3,
+     "label": "non_budget_matched_upper_bound_15hf_rows_3x_compute",
+     "skill_raw": 7.234773836256585,
+     "skill_by_ceiling": {
+      "global_test": 4.1273846187454115,
+      "ridge_cond_loo_test": 4.442670314482152,
+      "per_sample_oracle": 2.876831599853192
+     }
+    },
+    "F3_memorization_max_over_legs": 0.00018092393677579516,
+    "F3_fires": false,
+    "lf_touch_attempts": 0,
+    "seconds": 6.53,
+    "result_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B4/eval/substitution_ext__helmholtz_2d.json"
+   }
+  },
+  "panel_geomean_skill": {
+   "per_seed": null,
+   "mean": null,
+   "ci95": null,
+   "_note": "n/a by construction: no model is trained and no panel geomean is produced by this card. The probe emits per-(dataset,draw) contrasts only; diagnostic.json contains no panel aggregate. Panel-level skill for the underlying arms lives on the B3 card."
+  },
+  "vs_anchor": {
+   "anchor_file": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round2/state/anchors/r2s3_lf_train_signal.json",
+   "anchor_type": "best_floor_panel_geomean",
+   "anchor_value": 23.063616857615774,
+   "delta": null,
+   "beyond_ci": false,
+   "beyond_noise_floor": null,
+   "_note": "The anchor is NOT contested by this card: nothing is trained, so there is no panel geomean to compare. The only anchor-facing check performed is the seam one, and it passed: the full-row training-free floors read back from B3's leg JSONs match state/anchors/floors.json exactly (max abs diff 0.0, tol 1e-9) on all 6 datasets, so the denominators behind the anchor are unchanged. Anchor file left untouched.",
+   "per_dataset_effect_vs_certified_noise_floor": {
+    "definition": "worst-draw effect over that dataset's certified min_claimable_effect (state/noise_floor.json, certified 2026-07-31T16:49:04Z)",
+    "achievable_gate_E_free_worst_draw_over_mce": {
+     "ifc_poisson": 1.4122908468193878,
+     "sharp__cahn_hilliard": 113.48564446298083,
+     "sharp__fisher_kpp_2d": -3597.1923919690626,
+     "sharp__allen_cahn_2d": 26.87432198251524,
+     "sharp__phase_field_crystal_2d": -50.03468332843327,
+     "ext__helmholtz_2d": -0.8855254766828752
+    },
+    "resolvable_above_floor_achievable_gate": [
+     "ifc_poisson",
+     "sharp__cahn_hilliard",
+     "sharp__allen_cahn_2d"
+    ],
+    "resolvable_above_floor_ceiling_gate_class_wide": [
+     "sharp__cahn_hilliard"
+    ]
+   }
+  },
+  "claimable_set_impact_on_criterion_1": {
+   "pre_registered_expectation": "achievable-control gate yields {sharp__cahn_hilliard, sharp__allen_cahn_2d, ifc_poisson} with sharp__fisher_kpp_2d retiring; ceiling gate leaves only {sharp__cahn_hilliard}",
+   "measured_achievable_gate": [
+    "ifc_poisson",
+    "sharp__cahn_hilliard",
+    "sharp__allen_cahn_2d"
+   ],
+   "measured_ceiling_gate_class_wide_E_ceil": [
+    "sharp__cahn_hilliard"
+   ],
+   "measured_ceiling_gate_ceilings_on_A0_only_per_sample_oracle": [
+    "sharp__cahn_hilliard"
+   ],
+   "expectation_met": true,
+   "retired_vs_B3": [
+    "sharp__fisher_kpp_2d"
+   ],
+   "_retirement_evidence": "fk keeps a raw ±LF effect (E_raw draw-mean 1.3132, worst draw 0.7532, 3/3 sign-consistent, mce 0.0007137) but the best ACHIEVABLE LF-free control (ref_train_mean_n5, 5 HF rows, no LF) beats the LF arm on every draw: E_free = -2.0880 / -2.5672 / -1.2097, absorbed share 223% / 441% / 181%. Its 7-reading recount collapses from 6/7 (raw) to 0/7 (substituted).",
+   "_unchanged_vs_B3": "ifc_poisson and sharp__cahn_hilliard survive the achievable gate; sharp__allen_cahn_2d enters it (B3's claimable set was {ifc, ch, fk}), so the membership changes but the count stays at three.",
+   "_margin_caveats": "ifc survives on a thin margin only: E_free 1.3243 = 1.41x its mce 0.9377, on its single native draw, with the paired per-test-sample bootstrap CI [0.7735, 1.9182] excluding zero (the clause's extra requirement for ifc) but with the median-statistic reading FAILING (0.2882 < 0.9377) -> 5/6 readings. ac survives the achievable gate at 26.9x mce on its worst draw but only 3/7 readings agree, and on draw d2 the absorbed share is 4.4e-07 (the best achievable control is the identity-like a0_head_ridge_cond_train, i.e. nothing is absorbed there) while d0 absorbs 71.3% via the non-budget-matched split ensemble. ch is the only dataset that is unanimous (7/7 readings) on all three contrasts."
+  },
+  "substitution_and_absorption_summary": {
+   "columns": "E_raw (draw-mean) | best achievable LF-free control | E_free (worst draw) | E_free/mce | ceilings_on_A0_only.per_sample_oracle (worst draw) | class-wide E_ceil (worst draw)",
+   "rows": {
+    "ifc_poisson": {
+     "E_raw_draw_mean": 5.984292244151215,
+     "best_achievable_control_by_draw": {
+      "native": "ref_linear_hfonly"
+     },
+     "E_free_worst_draw": 1.32431095834523,
+     "E_free_worst_draw_over_mce": 1.4122908468193878,
+     "ceilings_on_A0_only__per_sample_oracle__worst_draw": 0.6106466783301383,
+     "E_ceil_class_wide_worst_draw": -1.4548754280439837,
+     "absorbed_share_achievable_by_draw": {
+      "native": 0.778702158197646
+     },
+     "absorbed_share_ceiling_by_draw": {
+      "native": 1.2431157050302675
+     }
+    },
+    "sharp__cahn_hilliard": {
+     "E_raw_draw_mean": 14.776178172617817,
+     "best_achievable_control_by_draw": {
+      "d0": "ref_zero",
+      "d1": "ref_zero",
+      "d2": "ref_linear_hfonly"
+     },
+     "E_free_worst_draw": 10.355037714765485,
+     "E_free_worst_draw_over_mce": 113.48564446298083,
+     "ceilings_on_A0_only__per_sample_oracle__worst_draw": 6.632464460018644,
+     "E_ceil_class_wide_worst_draw": 5.843719259647807,
+     "absorbed_share_achievable_by_draw": {
+      "d0": 0.35293862641037854,
+      "d1": 0.22594264125915803,
+      "d2": 0.14807565320743404
+     },
+     "absorbed_share_ceiling_by_draw": {
+      "d0": 0.531993370366291,
+      "d1": 0.5329802336928253,
+      "d2": 0.5192285291230015
+     }
+    },
+    "sharp__fisher_kpp_2d": {
+     "E_raw_draw_mean": 1.3132324025279136,
+     "best_achievable_control_by_draw": {
+      "d0": "ref_train_mean_n5",
+      "d1": "ref_train_mean_n5",
+      "d2": "ref_train_mean_n5"
+     },
+     "E_free_worst_draw": -2.567248880338475,
+     "E_free_worst_draw_over_mce": -3597.1923919690626,
+     "ceilings_on_A0_only__per_sample_oracle__worst_draw": 0.3331733079854473,
+     "E_ceil_class_wide_worst_draw": -2.9639899890677093,
+     "absorbed_share_achievable_by_draw": {
+      "d0": 2.233134422493746,
+      "d1": 4.408534888194285,
+      "d2": 1.810115123739106
+     },
+     "absorbed_share_ceiling_by_draw": {
+      "d0": 2.4606104288448476,
+      "d1": 4.935287834136239,
+      "d2": 2.0671940509319024
+     }
+    },
+    "sharp__allen_cahn_2d": {
+     "E_raw_draw_mean": 298.9024091431718,
+     "best_achievable_control_by_draw": {
+      "d0": "a0_split_ensemble",
+      "d1": "ref_linear_hfonly",
+      "d2": "a0_head_ridge_cond_train"
+     },
+     "E_free_worst_draw": 23.64146786828445,
+     "E_free_worst_draw_over_mce": 26.87432198251524,
+     "ceilings_on_A0_only__per_sample_oracle__worst_draw": -29.439640701630765,
+     "E_ceil_class_wide_worst_draw": -52.29620995780479,
+     "absorbed_share_achievable_by_draw": {
+      "d0": 0.7125395048000834,
+      "d1": 0.34789448256768274,
+      "d2": 4.3837726997485284e-07
+     },
+     "absorbed_share_ceiling_by_draw": {
+      "d0": 1.0511842808219976,
+      "d1": 1.9045591533929855,
+      "d2": 1.5306556075327837
+     }
+    },
+    "sharp__phase_field_crystal_2d": {
+     "E_raw_draw_mean": -2.5588161199143706,
+     "best_achievable_control_by_draw": {
+      "d0": "a0_split_ensemble",
+      "d1": "a0_split_ensemble",
+      "d2": "a0_split_ensemble"
+     },
+     "E_free_worst_draw": -10.658755978381706,
+     "E_free_worst_draw_over_mce": -50.03468332843327,
+     "ceilings_on_A0_only__per_sample_oracle__worst_draw": -11.741568816651366,
+     "E_ceil_class_wide_worst_draw": -13.425965373778546,
+     "absorbed_share_achievable_by_draw": {
+      "d0": -1.8517707648589599,
+      "d1": -0.5223282997543246,
+      "d2": 6.2962839369035155
+     },
+     "absorbed_share_ceiling_by_draw": {
+      "d0": -2.5921429874749324,
+      "d1": -1.0124355431381364,
+      "d2": 7.917118758165247
+     }
+    },
+    "ext__helmholtz_2d": {
+     "E_raw_draw_mean": 5.7168342695399055,
+     "best_achievable_control_by_draw": {
+      "d0": "ref_zero",
+      "d1": "ref_zero",
+      "d2": "ref_zero"
+     },
+     "E_free_worst_draw": -2.6149492715365716,
+     "E_free_worst_draw_over_mce": -0.8855254766828752,
+     "ceilings_on_A0_only__per_sample_oracle__worst_draw": -3.1248786937404187,
+     "E_ceil_class_wide_worst_draw": -3.2548621329399725,
+     "absorbed_share_achievable_by_draw": {
+      "d0": 1.0624006241593549,
+      "d1": 1.2146230471212807,
+      "d2": 1.8185364393169468
+     },
+     "absorbed_share_ceiling_by_draw": {
+      "d0": 1.204981287309087,
+      "d1": 1.267144160896384,
+      "d2": 2.323228573984555
+     }
     }
+   },
+   "S2_ceiling_column_heterogeneity": "REVIEW SEAM S2 (carried per review_notes[1]): the card's LOCKED part-4 'E_ceil' column is heterogeneous and must never be quoted as one quantity. Two DISTINCT measured columns exist and are named separately here: (i) `ceilings_on_A0_only.per_sample_oracle` worst draw = ifc +0.6106, ch +6.6325, ac -29.4396, pfc -11.7416, fk +0.3332, hz -3.1249; (ii) class-wide `E_ceil` (best over the whole achievable class x ceiling grid) worst draw = ifc -1.4549, ch +5.8437, ac -52.2962, pfc -13.4260, fk -2.9640, hz -3.2549. Part 4's column equals (i) for ifc/ch/ac/pfc and equals E_free for fk (-2.568) and hz (-2.615) - a card-side pre-flight artifact. No verdict moves: fk and hz fail on sign under every column. Never mix (i) and (ii) in one claim sentence.",
+   "split_ensemble_caveat": "`a0_split_ensemble` (15 HF rows, 3x compute, labelled non_budget_matched_upper_bound in every output) is a member of the achievable class and DRIVES the row on pfc (all 3 draws) and on ac d0, and it drives the best ceiling-corrected control on ch d0. It only ever LOWERS E_free, i.e. it is conservative about LF's value; but any statement about those rows must carry the label.",
+   "achievable_heads_are_the_identity": "Measured, as the card predicted: the 4 achievable heads (identity, global_train, ridge_cond_train, knn_cond_train) move A0's skill by <= ~1e-5 relative on every leg - e.g. ch d0 A0 raw 30.078285182 vs a0_head_global_train 30.078286032 - because the arms interpolate their 5 HF train rows (F3 statistics 1.5e-08..2.2e-03 in |log c|). All of the achievable absorption therefore comes from the LF-FREE REFERENCE FLOORS (ref_zero, ref_linear_hfonly, ref_train_mean_n5, ref_nn_condition_n5) and the split ensemble, not from output calibration of A0."
   },
-  "status": "analyzing",
-  "skipped_reason": null,
-  "reopen_candidate": false,
-  "scripts_path": {
-    "submit": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round2/worktrees/r2s3_lf_train_signal/B4/scripts/submit.sh",
-    "train_eval": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round2/worktrees/r2s3_lf_train_signal/B4/scripts/01_train_eval.sh",
-    "seeds_2_3": null
-  },
-  "output_paths": {
-    "training": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B4/training",
-    "eval": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B4/eval",
-    "slurm": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B4/slurm",
-    "primary_result": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B4/eval/diagnostic.json",
-    "per_dataset_sidecars": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B4/eval/substitution_<dataset>.json (+ readings_tool_<dataset>.json, dispersion_<dataset>.json)"
-  },
-  "build_commit": "bd1f74673d96a60c97da0ca130aeb931fcf48e92",
-  "job_ids": [
-    "66268786"
-  ],
-  "logs": {},
-  "build_notes": [
-    "Family dir models_r2/r2s3_b4_substitution/: manifest.json (diagnostic: true), run_diagnostic.py (entry point), heads.py, controls.py, readings.py, lf_guard.py, paths.py, INSPIRATION.md. NO smoke_eval.py and NO checkpoint contract: card_type diagnostic, recipe.epochs = 0, nothing is trained and score_panel.py is not the entry point (recipe.env._note). base_family is 'none' per the recipe, so no zoo family was copied or modified.",
-    "SMOKE TEST (full panel, in-session, login node, 2026-08-01): `source .venv/bin/activate; cd <worktree>; source scratchpad/smoke_env.sh; python models_r2/r2s3_b4_substitution/run_diagnostic.py --datasets ifc_poisson,sharp__cahn_hilliard,sharp__fisher_kpp_2d,sharp__allen_cahn_2d,sharp__phase_field_crystal_2d,ext__helmholtz_2d --out scratchpad/smoke/contract_smoke.json --env \"${R2S3B4_ENV[@]}\"` -> exit 0 in ~896 s over all 32 legs. Result JSON: worktrees/r2s3_lf_train_signal/B4/scratchpad/smoke/contract_smoke.json (log: scratchpad/smoke/full.log). Every value finite. Measured E_raw (draw-mean) / E_free (worst draw): ifc 5.9843 / 1.3243; ch 14.7762 / 10.3550; fk 1.3132 / -2.5672; ac 298.9024 / 23.6415; pfc -2.5588 / -10.6588; hz 5.7168 / -2.6149 -- all reproduce the card's part-4 pre-registered table (brainstormer pre-flight) to <= 3e-2 absolute on the largest-magnitude leg. E_ceil on A0 at the per-sample oracle, worst draw: ifc +0.6106, ch +6.6325, ac -29.4396, pfc -11.7416 -- the card's quoted column, exactly. F1 passing set {ifc, ch, ac} (falsified false); F3 fires nowhere (max median |log c| = 1.6e-4 << 0.05); F4 max arm-skill rel diff 6.2e-16 (tol 1e-3) and all full-row floors match state/anchors/floors.json exactly at 1e-9.",
-    "HYPERPARAMETER PROVENANCE: every knob is read from recipe.env -- paths.need() raises on a missing knob and paths.parse_env() raises on an unknown R2S3B4_* key, so a typo in the sbatch script cannot fall back to a built-in default. Nothing is invented. Two CONVENTIONS were inherited from the round's promoted tools rather than guessed, and are cited in heads.py: (i) log-space gain fits with PRESS-LOO lambda selection and an unpenalised intercept follow tools/gain_calibration_ceiling.py::_ridge_loo; (ii) R2S3B4_HEAD_CLIP is applied ONLY to the law-keyed heads (ridge_cond_train, knn_cond_train, ridge_cond_loo_test), exactly as that tool clips only its x_linear_law -- the exact minimisers (global_train, global_test, per_sample_oracle) are unclipped, because clipping an exact minimiser stops it being the bound it is defined to be. Selection rules the card left implicit and the code makes explicit + labelled: knn k in R2S3B4_KNN_K chosen by exact LOO over the 5 rows (ties -> smallest k); the 'best achievable control' is chosen BY ITS TEST SCORE (generous to the LF-free class, conservative about LF) and says so in the JSON; the F3 per-dataset statistic is the MAX over that dataset's legs (the reading most likely to fire, i.e. least favourable to the card's own mechanism claim).",
-    "PATH RESOLUTION (a real hazard, handled): repo-relative recipe.env paths are resolved against the MAIN repo root via `git rev-parse --git-common-dir`, NOT the worktree. The worktree was forked at round2-substrate 9e10d41, whose state/noise_floor.json is the PROVISIONAL file (ifc mce 0.2399 vs the certified 0.9377 the card's F1 quotes). run_diagnostic.py raises if the noise-floor file it reads carries _provisional: true, so a stale copy can never silently change a falsification verdict.",
-    "_no_lf_assert ENFORCEMENT + its one honest caveat: HF test targets come through round2/eval/panel_data.py (the card's offline reference path). The frozen factory loader materialises every fidelity in one call and has no HF-only mode, and the eval layer is byte-immutable during the round, so lf_guard.py copies out the HF field and immediately replaces every non-HF field_by_fid / cond_by_fid entry with a poison object that raises LFAccessError on any use (indexing, iteration, len, numpy coercion, arithmetic). Every output JSON carries lf_read_anywhere=false, field_input_at_test=false, trained_parameters=0 and the audit counter lf_touch_attempts (0 across all six datasets in the smoke). The JSON states plainly that the claim is 'no LF value entered any computation', not 'the frozen loader never touched an LF file on disk' -- the latter is not achievable without editing the eval layer.",
-    "INSTRUMENT SEAMS (F4 is enforced inline; the probe RAISES rather than degrading): (a) every leg's dump-recomputed skill vs B3's recorded per-leg skill at R2S3B4_SEAM_TOL_REL; (b) the full-row floors read back from B3's leg JSONs vs state/anchors/floors.json at R2S3B4_FLOOR_TOL; (c) the four LF-free floors are REBUILT from the dumped 5 HF rows (definitions vendored from B3's refs.py / affine_probe.py, build_commit dfcd46c6) and seam-checked against B3's recorded rel_l2_mean -- observed rel diff exactly 0.0 on ifc; this rebuild is what gives the floors PER-SAMPLE arrays, without which F1's ifc bootstrap requirement is unanswerable since B3 shipped floors as scalars only; (d) the in-probe 7-reading recount is cross-checked against tools/effect_threshold_readings.py run as a subprocess on the RAW contrast of every dataset (max abs diff 0.0 observed) and the split-ensemble skill against tools/map_dispersion_scale_shape.py --ensemble (rel diff 0.0). A mismatch raises; a tool that cannot launch is recorded as 'unavailable' rather than silently skipped.",
-    "SLURM: CPU-ONLY. No CUDA kernel is launched anywhere, so 01_train_eval.sh omits --gres (recipe.env._walltime authorises exactly this). --partition stays at project.yaml's `gpu` (slurm_rules.md forbids invented partitions); dropping only the gres takes CPU cores on a GPU node and leaves its GPUs allocatable. IF the site rejects a gres-less job on partition gpu, the cluster default CPU partition `expansion` is the drop-in fallback -- flagged here for the orchestrator rather than taken unilaterally. --time 00:40:00 per recipe.env._walltime (measured: 896 s for the full panel on a contended login node, 15 min, ~2.7x headroom); --mail-user=ezeng@caltech.edu --mail-type=END,FAIL; --requeue set. The 27 --env knobs were diffed programmatically against recipe.env: 27/27 keys present, zero value mismatches, zero extras; the _-prefixed recipe keys are card directives and are NOT passed.",
-    "NO submit_seeds_2_3.sh: card_type diagnostic runs once with no seeds 1-2 (SCHEMA.md; project.yaml seed_protocol.seeds = [0]). The probe has no stochastic training and its only randomness -- the paired per-test-sample bootstrap -- is pinned by recipe R2S3B4_BOOTSTRAP_SEED=0, so a second seed would reproduce the first bit-for-bit; 01_train_eval.sh warns if invoked with SEED != 0. Resumability is structural, not checkpoint-based: R2S3B4_STREAM_PER_DATASET=1 writes each substitution_<dataset>.json before the next dataset starts, and a _schema_version guard forces recomputation rather than reusing a sidecar written by different code.",
-    "SCOPE HONESTY: the card's part-3 rule is 'each ceiling is applied to every achievable control, and the best is reported', so E_ceil is the best over the whole class x ceiling grid; the card's part-4 TABLE quotes the narrower 'per-sample oracle on A0'. Both are reported -- per_draw.E_ceil (class-wide) and per_draw.ceilings_on_A0_only (the pre-registered column) -- so the analyzer can read the pre-registered number directly without re-deriving it. No TBDs were propagated."
-  ],
-  "review_notes": [
-    {
-      "attempt": 1,
-      "verdict": "SUGGEST",
-      "findings": [
-        "Q1 card-implementation alignment PASS: every part-3 deliverable traces to code (achievable class run_diagnostic.py:380-397; 3 labelled ceilings heads.py:197-248; per-draw E_raw/E_free/E_ceil + absorbed shares :400-432; 7-reading recount readings.py:108-126; paired per-sample bootstrap readings.py:92-106; arm-symmetry :440; F3 :477-488; both tool cross-checks :533-590). The four choices the card left implicit are labelled in-JSON and in build_notes.",
-        "Q2 recipe fidelity PASS: 27/27 R2S3B4_* keys byte-identical between scripts/01_train_eval.sh and recipe.env (programmatic diff: 0 mismatches, 0 extras); datasets verbatim; epochs 0; seeds [0]; base_family none honoured. paths.parse_env/need make a silent default impossible. Only non-recipe constants are the vendored D2 table (readings.py:26) and _EPS/_LOG_FLOOR (heads.py:45-46), both disclosed.",
-        "Q3 section-5 immutables PASS: no writes to round2/eval, project.yaml, program.md, prompts, tools/, state/, or guarded factory surfaces; no data regeneration; no new score minted (every arm skill is B3's score_panel record, re-derived and seam-gated at 1e-3, observed 6.196e-16; denominators from frozen floors.json at 1e-9). Stripped-view rule intact: no model runs, no field is a forward input; the one data_root touch is panel_data.load_split for HF TARGETS (the eval layer's own offline route named by the card) with every non-HF fidelity poisoned before return. No pre-falsified lever re-proposed.",
-        "Q4 contract compliance PASS (diagnostic form): manifest.json diagnostic:true + entry_point + trained_parameters:0; INSPIRATION.md cites all 5 prior_art URLs; run_diagnostic.py writes diagnostic.json + sidecars under R2S3B4_DIAG_OUT which resolves to outputs_root/.../B4/eval. No smoke_eval.py / no last.pt is legal (card_type diagnostic, epochs 0, SCHEMA.md L70); resumability structural via per-dataset sidecar + _schema_version; only RNG is default_rng(R2S3B4_BOOTSTRAP_SEED=0).",
-        "Q5 SLURM PASS with one authorized deviation: bash -n run by the reviewer on 01_train_eval.sh, submit.sh and scratchpad/smoke_env.sh, all OK (exit 0, no output). Partition gpu per project.yaml; job name r2-r2s3_lf_train_signal-B4-s0; absolute --output/--error under outputs_root/.../B4/slurm/%x_%j.{out,err}; SEED=$1; submit.sh seed 0 only and mkdir -p first; --time 00:40:00 (2.7x the measured 896 s); --requeue + mail END,FAIL. --gres omitted: authorized by recipe.env._walltime, partition imposes no gres requirement (AllowQos=ALL), and 464 gres-less jobs ran on partition gpu since 2026-07-28 -> acceptable, expansion fallback correctly left to the orchestrator. No submit_seeds_2_3.sh: correct for a diagnostic, scripts_path.seeds_2_3 is null.",
-        "Q6 smoke evidence PASS: no score_panel contract tier applies to a diagnostic; the equivalent full-panel evidence exists at scratchpad/smoke/contract_smoke.json + full.log (32 legs, exit 0, 896 s, smoke_truncated_test_split false, lf_touch_attempts 0) and reproduces card part 4 including the oracle-on-A0 column exactly (ifc +0.6106, ch +6.6325, ac -29.4396, pfc -11.7416); F1 {ifc,ch,ac}, F3 nowhere, F4 6.196e-16, both tool cross-checks 0.0.",
-        "Q7 blast radius PASS: 19 files / +4294 confined to models_r2/ (8), scripts/ (2), notes/ (2), scratchpad/ (7); tree clean at bd1f746 on round2/exp-r2s3_lf_train_signal-B4; layout matches the B3 precedent; no substrate contamination.",
-        "Q8 round-2 novelty PASS: nothing trained, no family created or scored, so the rebadge question is answered by construction (5.10). No round-1 code vendored (floor/affine definitions from B3 dfcd46c6, head conventions from round-2 tools/); declared baseline mf_fno_transfer_film cited not re-run; no round-1 model present at test in any role.",
-        "PRIORITY-1 VERIFIED (_no_lf_assert): _LFDenied exercised over 28 access paths by the reviewer -- indexing, iteration, len, np.asarray/np.array/np.mean/np.concatenate/np.stack/np.reshape, ufunc dispatch with an ndarray on the left, forward and reverse arithmetic, attribute access, float(), bool(), deepcopy, json.dumps -- every value-bearing path raised (LFAccessError or TypeError); only repr() (deliberately safe) and pickle of the sentinel itself returned, neither carrying an LF value. The loader's only LF-holding keys are exactly the two dicts poisoned, and the whole split is dropped before return. The output wording ('no LF value entered any computation', not 'no LF file was opened') matches what is enforced.",
-        "PRIORITY-2 VERIFIED (stale-worktree protection): git rev-parse --git-common-dir from the family dir resolves to /resnick/groups/Hippo/ezeng/mf_field, so the probe consumes the CERTIFIED state/noise_floor.json (_provisional false, ifc mce 0.9377041289531141, certified_utc 2026-07-31T16:49:04Z) and not the worktree copy (_provisional true, ifc 0.23990756041925798), which the _provisional guard at run_diagnostic.py:599 would reject outright.",
-        "PRIORITY-3 VERIFIED (no ceiling leakage): the achievable set is built exclusively from the 'raw' variant key (run_diagnostic.py:393); ceilings live under separate keys and carry test_fitted:true plus the 'UPPER BOUND, never a claim' label; achievable heads see only pred_hf_train/target_hf_train/cond_hf_train_raw and cond_test (heads.py:134-194) -- no test target reaches them; the ceiling grid is selected as a MINIMUM skill, i.e. adverse to LF.",
-        "SUGGEST S1: the card's expected_falsification joins the achievable-control gate and the ch ceiling clause with 'or', but run_diagnostic.py:784-800 emits F1_achievable_control_gate.falsified and F2_ceiling_gate.falsified separately with no aggregate. Both false in the smoke so no verdict changes; the analyzer must read the card clause as F1 OR F2. Minimal fix on any rebuild: emit card_falsified = F1 or F2 or F3.",
-        "SUGGEST S2: the card's part-4 E_ceil column is heterogeneous -- for ifc/ch/ac/pfc it equals ceilings_on_A0_only.per_sample_oracle exactly, but for fk (-2.568) and hz (-2.615) it equals E_free, whereas the code's oracle-on-A0 gives +0.3332 / -3.1249 and the class-wide E_ceil gives -2.9640 / -3.2549. Both datasets already fail on sign so no verdict moves; part 5 must quote ceilings_on_A0_only and E_ceil by name. Card-side pre-flight artifact, not a builder defect (part 4 is locked).",
-        "SUGGEST S3: INSPIRATION.md and recipe.base_family describe round2/eval/nrmse.py as 'imported, never modified', but controls.rel_l2_per_sample re-derives the per-sample form locally (nrmse.py exposes only the mean) -- definitionally identical and pinned by the F4 seam at 6.196e-16, but the wording overstates. Separately the resume path (run_diagnostic.py:698-707) validates only _schema_version, not the stored _knobs, so a resubmit after an env change with unchanged code would reuse a sidecar computed under different knobs (moot: env is card-locked and the outputs dir is currently empty).",
-        "RUN-TIME WATCH: the two cross-check subprocesses invoke tools/ from the MAIN tree, not from the build commit, so a register-turn edit to either tool before the job runs would trip the RAISE-on-disagreement seam -- read that as instrument drift, not a probe bug. Also a0_split_ensemble is a class member and wins best_achievable_control on pfc and one ac draw; it is labelled non-budget-matched and only lowers E_free (conservative about LF), but part 5 should say so where it drives a row."
-      ],
-      "utc": "2026-08-01T21:20:00Z"
-    },
-    "orchestrator 2026-08-01: submitted per reviewer's SUGGEST \u2014 job 66268786. SITE REJECTED the gres-less gpu-partition submission (reviewer's empirical acceptance claim did not hold at submit time); submitted with sbatch --partition=expansion CLI override per the builder's pre-flagged fallback \u2014 no script edit, build commit bd1f746 untouched. ANALYZER seams from review: S1 quote F1\u2228F2 as the clause (emitted separately); S2 part-5 must name E_ceil heterogeneity (oracle-on-A0 for ifc/ch/ac/pfc, E_free for fk/hz) via ceilings_on_A0_only; S3 nrmse re-derived locally (pinned 6.2e-16), resume validates _schema_version not _knobs."
-  ],
-  "debug_notes": [],
-  "5_actual_result": {
-    "seeds_available": [
-      0
+  "cratered_verdict": "n/a",
+  "_cratered_note": "No cratered rule applies: card_type is diagnostic, seed 0 is the only seed, no model is trained and no panel geomean skill exists to compare against the stream anchor (23.063616857615774). Per the diagnostic-card spec the measurement-vs-falsification-clause record below replaces the cratered call. Job 66268786 COMPLETED 0:0, empty .err, no NaN/inf, no preemption or requeue.",
+  "falsification_verdict": "confirmed",
+  "falsification_detail": {
+   "clause_verbatim": "FALSIFIED if fewer than 2 of {ifc, ch, ac} keep an LF advantage over the best achievable LF-free control above their certified min_claimable_effect on every draw (ifc 0.9377041289531141 + a paired per-test-sample bootstrap CI excluding zero, since its single native draw makes it mce-only by construction; ch 0.09124535322300886; ac 0.8797047190126648), or if the ceiling-corrected advantage on sharp__cahn_hilliard falls below 0.09124535322300886 on any draw - with the predicted ceiling failures on ifc (+0.611 < 0.9377) and ac (sign reversal) pre-registered as the card's *finding*, plus F3 (the 5-row memorization mechanism: falsified if median |log per-sample optimal scale| on the train rows exceeds 0.05 on >=2 of 6 datasets) and F4 (instrument seam: dump-recomputed skills must match B3's per-leg record to 1e-3 relative - pre-flight max observed 1.31e-4 - and full-row floors must match state/anchors/floors.json at 1e-9).",
+   "S1_disjunction_note": "REVIEW SEAM S1 (review_notes[1]): the clause joins the achievable-control gate and the ch ceiling gate with 'or', but run_diagnostic.py emits verdicts.F1_achievable_control_gate.falsified and verdicts.F2_ceiling_gate.falsified as SEPARATE booleans with no aggregate field. The card-level verdict read as the disjunction is: card_falsified = F1 OR F2 (OR F3, OR F4) = false OR false OR false OR false = FALSE. The card is CONFIRMED, not falsified.",
+   "F1_achievable_control_gate": {
+    "falsified": false,
+    "datasets_evaluated": [
+     "ifc_poisson",
+     "sharp__cahn_hilliard",
+     "sharp__allen_cahn_2d"
     ],
-    "card_type_note": "DIAGNOSTIC card, training-free substitution audit (epochs 0, trained_parameters 0, seed 0 only per project.yaml seed_protocol for diagnostics). It mints NO new score: every arm skill is r2s3_lf_train_signal-B3's score_panel record (build dfcd46c6, job 66196690), re-derived from B3's dumps and seam-gated by F4. Effects are reported in skill units (skill = nRMSE / copy-LF-or-paper-bar reference, lower is better), so a POSITIVE effect E = skill(control) - skill(A1_lf_cov) means the LF-covariate arm wins.",
-    "per_dataset": {
-      "ifc_poisson": {
-        "reference_type": "paper_bar",
-        "skill_denominator": 0.036,
-        "mce": 0.9377041289531141,
-        "report_only": false,
-        "caveats": [],
-        "draws": [
-          "native"
-        ],
-        "n_test": 128,
-        "per_seed_nrmse": {
-          "seed0_per_draw_A0_nolf": [
-            0.29283781751768306
-          ],
-          "seed0_per_draw_A1_lf_cov": [
-            0.07740329672823923
-          ],
-          "source": "B3 leg JSON record, re-derived from the dumps and seam-gated (F4)"
-        },
-        "per_seed_skill": {
-          "seed0_per_draw_A0_nolf": [
-            8.134383819935639
-          ],
-          "seed0_per_draw_A1_lf_cov": [
-            2.1500915757844243
-          ]
-        },
-        "mean_skill": null,
-        "ci95": null,
-        "_mean_skill_note": "null by design: single seed, and this card's aggregation axis is the HF-subset draw, not the seed. Draw-level aggregation is published by the probe only for the EFFECT (E_raw_draw_mean) and as paired per-test-sample bootstrap CIs; no arm-skill draw-mean is minted here.",
-        "E_raw_per_draw": [
-          5.984292244151215
-        ],
-        "E_raw_draw_mean": 5.984292244151215,
-        "E_raw_persample_ci95": [
-          4.756851890362466,
-          7.336454480952463
-        ],
-        "best_achievable_control_by_draw": {
-          "native": "ref_linear_hfonly"
-        },
-        "best_achievable_control_skill_by_draw": {
-          "native": 3.4744025341296543
-        },
-        "E_free_per_draw": [
-          1.32431095834523
-        ],
-        "absorbed_share_achievable_per_draw": [
-          0.778702158197646
-        ],
-        "E_free_worst_draw": 1.32431095834523,
-        "E_free_worst_draw_over_mce": 1.4122908468193878,
-        "E_free_persample_ci95": [
-          0.7735019598728827,
-          1.9182343001787863
-        ],
-        "E_free_passes_mce_on_every_draw": true,
-        "ceilings_on_A0_only": {
-          "global_test": {
-            "E_per_draw": [
-              6.034281918839689
-            ],
-            "absorbed_share_per_draw": [
-              -0.008353481522786886
-            ],
-            "E_worst_draw": 6.034281918839689
-          },
-          "ridge_cond_loo_test": {
-            "E_per_draw": [
-              1.2491972541207415
-            ],
-            "absorbed_share_per_draw": [
-              0.7912539690317344
-            ],
-            "E_worst_draw": 1.2491972541207415
-          },
-          "per_sample_oracle": {
-            "E_per_draw": [
-              0.6106466783301383
-            ],
-            "absorbed_share_per_draw": [
-              0.8979584128888496
-            ],
-            "E_worst_draw": 0.6106466783301383
-          }
-        },
-        "E_ceil_class_wide": {
-          "best_control_by_draw": {
-            "native": "ref_linear_hfonly@per_sample_oracle"
-          },
-          "E_per_draw": [
-            -1.4548754280439837
-          ],
-          "absorbed_share_per_draw": [
-            1.2431157050302675
-          ],
-          "E_worst_draw": -1.4548754280439837,
-          "passes_mce_on_every_draw": false
-        },
-        "readings_recount_pass_over_available": {
-          "raw": [
-            6,
-            6
-          ],
-          "substituted_best_achievable": [
-            5,
-            6
-          ],
-          "ceiling_corrected": [
-            0,
-            6
-          ]
-        },
-        "readings_unavailable": [
-          "log_effect_vs_own_range"
-        ],
-        "primary_reading_worst_split_vs_mce_verdicts": {
-          "raw": true,
-          "raw_exact_from_leg_json": true,
-          "substituted_best_achievable": true,
-          "ceiling_corrected": false
-        },
-        "arm_symmetry_A1_worst_draw": {
-          "raw": 2.1500915757844243,
-          "head_identity": 2.1500915757844243,
-          "head_global_train": 2.1459470868354216,
-          "head_ridge_cond_train": 2.141639473103919,
-          "head_knn_cond_train": 2.1416517449714987,
-          "global_test": 1.144369658769061,
-          "ridge_cond_loo_test": 1.116496007272225,
-          "per_sample_oracle": 0.760771948095903
-        },
-        "split_ensemble_non_budget_matched": {
-          "available": false,
-          "reason": "a split ensemble needs >= 2 HF-subset draws; this dataset ships a single native draw",
-          "label": "non_budget_matched_upper_bound_15hf_rows_3x_compute"
-        },
-        "F3_memorization_max_over_legs": 0.00015796883713880785,
-        "F3_fires": false,
-        "lf_touch_attempts": 0,
-        "seconds": 7.67,
-        "result_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B4/eval/substitution_ifc_poisson.json"
-      },
-      "sharp__cahn_hilliard": {
-        "reference_type": "copylf",
-        "skill_denominator": 0.041802962686225575,
-        "mce": 0.09124535322300886,
-        "report_only": false,
-        "caveats": [],
-        "draws": [
-          "d0",
-          "d1",
-          "d2"
-        ],
-        "n_test": 100,
-        "per_seed_nrmse": {
-          "seed0_per_draw_A0_nolf": [
-            1.25736143313939,
-            1.1391260131894858,
-            1.0350022891965012
-          ],
-          "seed0_per_draw_A1_lf_cov": [
-            0.5281654373456512,
-            0.5233679056709178,
-            0.5268923181239173
-          ],
-          "source": "B3 leg JSON record, re-derived from the dumps and seam-gated (F4)"
-        },
-        "per_seed_skill": {
-          "seed0_per_draw_A0_nolf": [
-            30.078285182253396,
-            27.249887089099484,
-            24.759065451060543
-          ],
-          "seed0_per_draw_A1_lf_cov": [
-            12.634641264784957,
-            12.519875914043096,
-            12.604186025731922
-          ]
-        },
-        "mean_skill": null,
-        "ci95": null,
-        "_mean_skill_note": "null by design: single seed, and this card's aggregation axis is the HF-subset draw, not the seed. Draw-level aggregation is published by the probe only for the EFFECT (E_raw_draw_mean) and as paired per-test-sample bootstrap CIs; no arm-skill draw-mean is minted here.",
-        "E_raw_per_draw": [
-          17.44364391746844,
-          14.730011175056388,
-          12.154879425328621
-        ],
-        "E_raw_draw_mean": 14.776178172617817,
-        "E_raw_persample_ci95": [
-          12.779091478954067,
-          16.735116383212336
-        ],
-        "best_achievable_control_by_draw": {
-          "d0": "ref_zero",
-          "d1": "ref_zero",
-          "d2": "ref_linear_hfonly"
-        },
-        "best_achievable_control_skill_by_draw": {
-          "d0": 23.92174945843033,
-          "d1": 23.92174945843033,
-          "d2": 22.959223740497407
-        },
-        "E_free_per_draw": [
-          11.287108193645373,
-          11.401873544387234,
-          10.355037714765485
-        ],
-        "absorbed_share_achievable_per_draw": [
-          0.35293862641037854,
-          0.22594264125915803,
-          0.14807565320743404
-        ],
-        "E_free_worst_draw": 10.355037714765485,
-        "E_free_worst_draw_over_mce": 113.48564446298083,
-        "E_free_persample_ci95": [
-          9.170465628360828,
-          12.810665097007737
-        ],
-        "E_free_passes_mce_on_every_draw": true,
-        "ceilings_on_A0_only": {
-          "global_test": {
-            "E_per_draw": [
-              11.269955136404235,
-              11.270507544444046,
-              10.928735241252307
-            ],
-            "absorbed_share_per_draw": [
-              0.3539219678109652,
-              0.2348608965396185,
-              0.10087670483355408
-            ],
-            "E_worst_draw": 10.928735241252307
-          },
-          "ridge_cond_loo_test": {
-            "E_per_draw": [
-              12.75121648146736,
-              11.818117861846092,
-              11.153753430798025
-            ],
-            "absorbed_share_per_draw": [
-              0.2690050002283056,
-              0.1976843926731881,
-              0.08236412386324679
-            ],
-            "E_worst_draw": 11.153753430798025
-          },
-          "per_sample_oracle": {
-            "E_per_draw": [
-              9.278210728306973,
-              8.280388541257372,
-              6.632464460018644
-            ],
-            "absorbed_share_per_draw": [
-              0.46810363865456034,
-              0.43785592265678147,
-              0.45433728892466346
-            ],
-            "E_worst_draw": 6.632464460018644
-          }
-        },
-        "E_ceil_class_wide": {
-          "best_control_by_draw": {
-            "d0": "a0_split_ensemble@per_sample_oracle",
-            "d1": "ref_nn_condition_n5@per_sample_oracle",
-            "d2": "ref_nn_condition_n5@per_sample_oracle"
-          },
-          "E_per_draw": [
-            8.163740998344952,
-            6.8792063766769065,
-            5.843719259647807
-          ],
-          "absorbed_share_per_draw": [
-            0.531993370366291,
-            0.5329802336928253,
-            0.5192285291230015
-          ],
-          "E_worst_draw": 5.843719259647807,
-          "passes_mce_on_every_draw": true
-        },
-        "readings_recount_pass_over_available": {
-          "raw": [
-            7,
-            7
-          ],
-          "substituted_best_achievable": [
-            7,
-            7
-          ],
-          "ceiling_corrected": [
-            7,
-            7
-          ]
-        },
-        "readings_unavailable": [],
-        "primary_reading_worst_split_vs_mce_verdicts": {
-          "raw": true,
-          "raw_exact_from_leg_json": true,
-          "substituted_best_achievable": true,
-          "ceiling_corrected": true
-        },
-        "arm_symmetry_A1_worst_draw": {
-          "raw": 12.519875914043096,
-          "head_identity": 12.519875914043096,
-          "head_global_train": 12.509009468744585,
-          "head_ridge_cond_train": 12.508534493142626,
-          "head_knn_cond_train": 12.509471608348957,
-          "global_test": 12.945509243650433,
-          "ridge_cond_loo_test": 17.272029063308842,
-          "per_sample_oracle": 10.170737042687966
-        },
-        "split_ensemble_non_budget_matched": {
-          "available": true,
-          "n_splits_averaged": 3,
-          "label": "non_budget_matched_upper_bound_15hf_rows_3x_compute",
-          "skill_raw": 24.361919707677977,
-          "skill_by_ceiling": {
-            "global_test": 23.632919210823065,
-            "ridge_cond_loo_test": 23.544936158857805,
-            "per_sample_oracle": 20.79838226312991
-          }
-        },
-        "F3_memorization_max_over_legs": 0.0017638666039803612,
-        "F3_fires": false,
-        "lf_touch_attempts": 0,
-        "seconds": 25.84,
-        "result_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B4/eval/substitution_sharp__cahn_hilliard.json"
-      },
-      "sharp__fisher_kpp_2d": {
-        "reference_type": "copylf",
-        "skill_denominator": 0.02144950364640668,
-        "mce": 0.0007136812826775696,
-        "report_only": false,
-        "caveats": [
-          "adr_r2_0003"
-        ],
-        "draws": [
-          "d0",
-          "d1",
-          "d2"
-        ],
-        "n_test": 100,
-        "per_seed_nrmse": {
-          "seed0_per_draw_A0_nolf": [
-            0.3634316813540858,
-            0.34718578736522965,
-            0.3385393609588949
-          ],
-          "seed0_per_draw_A1_lf_cov": [
-            0.32711295988194705,
-            0.33103039625839964,
-            0.30650892391805806
-          ],
-          "source": "B3 leg JSON record, re-derived from the dumps and seam-gated (F4)"
-        },
-        "per_seed_skill": {
-          "seed0_per_draw_A0_nolf": [
-            16.943594003163312,
-            16.18619214171848,
-            15.783086011671356
-          ],
-          "seed0_per_draw_A1_lf_cov": [
-            15.25037433380173,
-            15.433009626488744,
-            14.289790988678932
-          ]
-        },
-        "mean_skill": null,
-        "ci95": null,
-        "_mean_skill_note": "null by design: single seed, and this card's aggregation axis is the HF-subset draw, not the seed. Draw-level aggregation is published by the probe only for the EFFECT (E_raw_draw_mean) and as paired per-test-sample bootstrap CIs; no arm-skill draw-mean is minted here.",
-        "E_raw_per_draw": [
-          1.6932196693615822,
-          0.7531825152297351,
-          1.4932950229924238
-        ],
-        "E_raw_draw_mean": 1.3132324025279136,
-        "E_raw_persample_ci95": [
-          1.171593546477219,
-          1.4599719630346848
-        ],
-        "best_achievable_control_by_draw": {
-          "d0": "ref_train_mean_n5",
-          "d1": "ref_train_mean_n5",
-          "d2": "ref_train_mean_n5"
-        },
-        "best_achievable_control_skill_by_draw": {
-          "d0": 13.162406874668484,
-          "d1": 12.865760746150269,
-          "d2": 13.080050106348434
-        },
-        "E_free_per_draw": [
-          -2.087967459133246,
-          -2.567248880338475,
-          -1.2097408823304985
-        ],
-        "absorbed_share_achievable_per_draw": [
-          2.233134422493746,
-          4.408534888194285,
-          1.810115123739106
-        ],
-        "E_free_worst_draw": -2.567248880338475,
-        "E_free_worst_draw_over_mce": -3597.1923919690626,
-        "E_free_persample_ci95": [
-          -2.226714799602442,
-          -1.672638859015425
-        ],
-        "E_free_passes_mce_on_every_draw": false,
-        "ceilings_on_A0_only": {
-          "global_test": {
-            "E_per_draw": [
-              1.210937879966167,
-              0.4838388091024335,
-              1.3486164287078868
-            ],
-            "absorbed_share_per_draw": [
-              0.28483119947292873,
-              0.3576074864737754,
-              0.09688547276787583
-            ],
-            "E_worst_draw": 0.4838388091024335
-          },
-          "ridge_cond_loo_test": {
-            "E_per_draw": [
-              1.02468703661809,
-              0.3919452556809375,
-              1.3356255656787521
-            ],
-            "absorbed_share_per_draw": [
-              0.39482923854502483,
-              0.47961450544110584,
-              0.10558493458159178
-            ],
-            "E_worst_draw": 0.3919452556809375
-          },
-          "per_sample_oracle": {
-            "E_per_draw": [
-              0.840497621798356,
-              0.3331733079854473,
-              1.2847350573291738
-            ],
-            "absorbed_share_per_draw": [
-              0.5036098168436348,
-              0.5576459871963132,
-              0.13966427427402475
-            ],
-            "E_worst_draw": 0.3331733079854473
-          }
-        },
-        "E_ceil_class_wide": {
-          "best_control_by_draw": {
-            "d0": "ref_train_mean_n5@per_sample_oracle",
-            "d1": "ref_train_mean_n5@per_sample_oracle",
-            "d2": "ref_train_mean_n5@per_sample_oracle"
-          },
-          "E_per_draw": [
-            -2.4731343073947514,
-            -2.9639899890677093,
-            -1.5936355648237335
-          ],
-          "absorbed_share_per_draw": [
-            2.4606104288448476,
-            4.935287834136239,
-            2.0671940509319024
-          ],
-          "E_worst_draw": -2.9639899890677093,
-          "passes_mce_on_every_draw": false
-        },
-        "readings_recount_pass_over_available": {
-          "raw": [
-            6,
-            7
-          ],
-          "substituted_best_achievable": [
-            0,
-            7
-          ],
-          "ceiling_corrected": [
-            0,
-            7
-          ]
-        },
-        "readings_unavailable": [],
-        "primary_reading_worst_split_vs_mce_verdicts": {
-          "raw": true,
-          "raw_exact_from_leg_json": true,
-          "substituted_best_achievable": false,
-          "ceiling_corrected": false
-        },
-        "arm_symmetry_A1_worst_draw": {
-          "raw": 14.289790988678932,
-          "head_identity": 14.289790988678932,
-          "head_global_train": 14.288968307503179,
-          "head_ridge_cond_train": 14.289124389817589,
-          "head_knn_cond_train": 14.289055987854185,
-          "global_test": 14.265902449904384,
-          "ridge_cond_loo_test": 14.253506334990231,
-          "per_sample_oracle": 14.215253597444951
-        },
-        "split_ensemble_non_budget_matched": {
-          "available": true,
-          "n_splits_averaged": 3,
-          "label": "non_budget_matched_upper_bound_15hf_rows_3x_compute",
-          "skill_raw": 13.377959167485766,
-          "skill_by_ceiling": {
-            "global_test": 13.322154066776836,
-            "ridge_cond_loo_test": 13.282867136256453,
-            "per_sample_oracle": 13.202203693728512
-          }
-        },
-        "F3_memorization_max_over_legs": 0.0003000430200265068,
-        "F3_fires": false,
-        "lf_touch_attempts": 0,
-        "seconds": 24.45,
-        "result_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B4/eval/substitution_sharp__fisher_kpp_2d.json"
-      },
-      "sharp__allen_cahn_2d": {
-        "reference_type": "copylf",
-        "skill_denominator": 0.0017807662982691156,
-        "mce": 0.8797047190126648,
-        "report_only": false,
-        "caveats": [
-          "adr_r2_0003"
-        ],
-        "draws": [
-          "d0",
-          "d1",
-          "d2"
-        ],
-        "n_test": 100,
-        "per_seed_nrmse": {
-          "seed0_per_draw_A0_nolf": [
-            1.7356855303739798,
-            0.44274512019460743,
-            0.5543183079208849
-          ],
-          "seed0_per_draw_A1_lf_cov": [
-            0.3789143694980034,
-            0.378185124770519,
-            0.3788234542001295
-          ],
-          "source": "B3 leg JSON record, re-derived from the dumps and seam-gated (F4)"
-        },
-        "per_seed_skill": {
-          "seed0_per_draw_A0_nolf": [
-            974.6846242884573,
-            248.62617886746307,
-            311.2807719124491
-          ],
-          "seed0_per_draw_A1_lf_cov": [
-            212.781637807445,
-            212.37212605500818,
-            212.7305837764009
-          ]
-        },
-        "mean_skill": null,
-        "ci95": null,
-        "_mean_skill_note": "null by design: single seed, and this card's aggregation axis is the HF-subset draw, not the seed. Draw-level aggregation is published by the probe only for the EFFECT (E_raw_draw_mean) and as paired per-test-sample bootstrap CIs; no arm-skill draw-mean is minted here.",
-        "E_raw_per_draw": [
-          761.9029864810122,
-          36.25405281245489,
-          98.5501881360482
-        ],
-        "E_raw_draw_mean": 298.9024091431718,
-        "E_raw_persample_ci95": [
-          205.45285317806102,
-          408.9047313002976
-        ],
-        "best_achievable_control_by_draw": {
-          "d0": "a0_split_ensemble",
-          "d1": "ref_linear_hfonly",
-          "d2": "a0_head_ridge_cond_train"
-        },
-        "best_achievable_control_skill_by_draw": {
-          "d0": 431.79864759557205,
-          "d1": 236.01359392329263,
-          "d2": 311.28072871028667
-        },
-        "E_free_per_draw": [
-          219.01700978812704,
-          23.64146786828445,
-          98.55014493388578
-        ],
-        "absorbed_share_achievable_per_draw": [
-          0.7125395048000834,
-          0.34789448256768274,
-          4.3837726997485284e-07
-        ],
-        "E_free_worst_draw": 23.64146786828445,
-        "E_free_worst_draw_over_mce": 26.87432198251524,
-        "E_free_persample_ci95": [
-          75.77863256917865,
-          158.09764242546663
-        ],
-        "E_free_passes_mce_on_every_draw": true,
-        "ceilings_on_A0_only": {
-          "global_test": {
-            "E_per_draw": [
-              448.4176307588933,
-              42.86773201459266,
-              114.82290677088153
-            ],
-            "absorbed_share_per_draw": [
-              0.41145048816517726,
-              -0.18242592728462292,
-              -0.16512113211157842
-            ],
-            "E_worst_draw": 42.86773201459266
-          },
-          "ridge_cond_loo_test": {
-            "E_per_draw": [
-              424.61893073217084,
-              143.8431853701995,
-              171.9751978622194
-            ],
-            "absorbed_share_per_draw": [
-              0.4426863547374309,
-              -2.9676442828147187,
-              -0.7450519488081364
-            ],
-            "E_worst_draw": 143.8431853701995
-          },
-          "per_sample_oracle": {
-            "E_per_draw": [
-              -9.706018312212649,
-              -29.439640701630765,
-              -7.169129378081834
-            ],
-            "absorbed_share_per_draw": [
-              1.0127391787201698,
-              1.8120372321937186,
-              1.072745973535686
-            ],
-            "E_worst_draw": -29.439640701630765
-          }
-        },
-        "E_ceil_class_wide": {
-          "best_control_by_draw": {
-            "d0": "ref_nn_condition_n5@per_sample_oracle",
-            "d1": "ref_nn_condition_n5@per_sample_oracle",
-            "d2": "ref_train_mean_n5@per_sample_oracle"
-          },
-          "E_per_draw": [
-            -38.99745641916269,
-            -32.79393531909878,
-            -52.29620995780479
-          ],
-          "absorbed_share_per_draw": [
-            1.0511842808219976,
-            1.9045591533929855,
-            1.5306556075327837
-          ],
-          "E_worst_draw": -52.29620995780479,
-          "passes_mce_on_every_draw": false
-        },
-        "readings_recount_pass_over_available": {
-          "raw": [
-            3,
-            7
-          ],
-          "substituted_best_achievable": [
-            3,
-            7
-          ],
-          "ceiling_corrected": [
-            0,
-            7
-          ]
-        },
-        "readings_unavailable": [],
-        "primary_reading_worst_split_vs_mce_verdicts": {
-          "raw": true,
-          "raw_exact_from_leg_json": true,
-          "substituted_best_achievable": true,
-          "ceiling_corrected": false
-        },
-        "arm_symmetry_A1_worst_draw": {
-          "raw": 212.37212605500818,
-          "head_identity": 212.37212605500818,
-          "head_global_train": 211.87653479162782,
-          "head_ridge_cond_train": 211.81316510799732,
-          "head_knn_cond_train": 211.8336458447687,
-          "global_test": 183.74178251801217,
-          "ridge_cond_loo_test": 228.03135727670096,
-          "per_sample_oracle": 171.0033974265535
-        },
-        "split_ensemble_non_budget_matched": {
-          "available": true,
-          "n_splits_averaged": 3,
-          "label": "non_budget_matched_upper_bound_15hf_rows_3x_compute",
-          "skill_raw": 431.79864759557205,
-          "skill_by_ceiling": {
-            "global_test": 444.80468737380176,
-            "ridge_cond_loo_test": 430.4305223498406,
-            "per_sample_oracle": 183.3657752360661
-          }
-        },
-        "F3_memorization_max_over_legs": 0.0021683687004001918,
-        "F3_fires": false,
-        "lf_touch_attempts": 0,
-        "seconds": 24.65,
-        "result_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B4/eval/substitution_sharp__allen_cahn_2d.json"
-      },
-      "sharp__phase_field_crystal_2d": {
-        "reference_type": "copylf",
-        "skill_denominator": 0.00738077856100695,
-        "mce": 0.21302734961699343,
-        "report_only": false,
-        "caveats": [
-          "band_limited_denominator",
-          "adr_r2_0003"
-        ],
-        "draws": [
-          "d0",
-          "d1",
-          "d2"
-        ],
-        "n_test": 100,
-        "per_seed_nrmse": {
-          "seed0_per_draw_A0_nolf": [
-            0.45372253553673625,
-            0.42440586045926737,
-            0.4819785101607259
-          ],
-          "seed0_per_draw_A1_lf_cov": [
-            0.4813088754283072,
-            0.46607869850660777,
-            0.46937749770008375
-          ],
-          "source": "B3 leg JSON record, re-derived from the dumps and seam-gated (F4)"
-        },
-        "per_seed_skill": {
-          "seed0_per_draw_A0_nolf": [
-            61.47353314916895,
-            57.50150298525773,
-            65.30185212533597
-          ],
-          "seed0_per_draw_A1_lf_cov": [
-            65.21112528305453,
-            63.147633363359056,
-            63.59457797309218
-          ]
-        },
-        "mean_skill": null,
-        "ci95": null,
-        "_mean_skill_note": "null by design: single seed, and this card's aggregation axis is the HF-subset draw, not the seed. Draw-level aggregation is published by the probe only for the EFFECT (E_raw_draw_mean) and as paired per-test-sample bootstrap CIs; no arm-skill draw-mean is minted here.",
-        "E_raw_per_draw": [
-          -3.7375921338855775,
-          -5.646130378101326,
-          1.7072741522437909
-        ],
-        "E_raw_draw_mean": -2.5588161199143706,
-        "E_raw_persample_ci95": [
-          -5.398741297955149,
-          0.5462110972146004
-        ],
-        "best_achievable_control_by_draw": {
-          "d0": "a0_split_ensemble",
-          "d1": "a0_split_ensemble",
-          "d2": "a0_split_ensemble"
-        },
-        "best_achievable_control_skill_by_draw": {
-          "d0": 54.55236930467282,
-          "d1": 54.55236930467282,
-          "d2": 54.55236930467282
-        },
-        "E_free_per_draw": [
-          -10.658755978381706,
-          -8.595264058686233,
-          -9.042208668419356
-        ],
-        "absorbed_share_achievable_per_draw": [
-          -1.8517707648589599,
-          -0.5223282997543246,
-          6.2962839369035155
-        ],
-        "E_free_worst_draw": -10.658755978381706,
-        "E_free_worst_draw_over_mce": -50.03468332843327,
-        "E_free_persample_ci95": [
-          -11.983261365366085,
-          -6.838225891247229
-        ],
-        "E_free_passes_mce_on_every_draw": false,
-        "ceilings_on_A0_only": {
-          "global_test": {
-            "E_per_draw": [
-              9.66031571560218,
-              3.959520796765325,
-              16.553004962031615
-            ],
-            "absorbed_share_per_draw": [
-              3.584636142617139,
-              1.7012804401617145,
-              -8.695575218705661
-            ],
-            "E_worst_draw": 3.959520796765325
-          },
-          "ridge_cond_loo_test": {
-            "E_per_draw": [
-              5.846359087729553,
-              2.4717353380517793,
-              15.940612910650025
-            ],
-            "absorbed_share_per_draw": [
-              2.564204674642151,
-              1.4377751083535857,
-              -8.336879428356612
-            ],
-            "E_worst_draw": 2.4717353380517793
-          },
-          "per_sample_oracle": {
-            "E_per_draw": [
-              -11.741568816651366,
-              -10.591964248890996,
-              -8.418701583523081
-            ],
-            "absorbed_share_per_draw": [
-              -2.141479432761141,
-              -0.875968767914433,
-              5.931077748971232
-            ],
-            "E_worst_draw": -11.741568816651366
-          }
-        },
-        "E_ceil_class_wide": {
-          "best_control_by_draw": {
-            "d0": "a0_split_ensemble@per_sample_oracle",
-            "d1": "a0_split_ensemble@per_sample_oracle",
-            "d2": "a0_split_ensemble@per_sample_oracle"
-          },
-          "E_per_draw": [
-            -13.425965373778546,
-            -11.362473454083073,
-            -11.809418063816196
-          ],
-          "absorbed_share_per_draw": [
-            -2.5921429874749324,
-            -1.0124355431381364,
-            7.917118758165247
-          ],
-          "E_worst_draw": -13.425965373778546,
-          "passes_mce_on_every_draw": false
-        },
-        "readings_recount_pass_over_available": {
-          "raw": [
-            0,
-            7
-          ],
-          "substituted_best_achievable": [
-            0,
-            7
-          ],
-          "ceiling_corrected": [
-            0,
-            7
-          ]
-        },
-        "readings_unavailable": [],
-        "primary_reading_worst_split_vs_mce_verdicts": {
-          "raw": false,
-          "raw_exact_from_leg_json": false,
-          "substituted_best_achievable": false,
-          "ceiling_corrected": false
-        },
-        "arm_symmetry_A1_worst_draw": {
-          "raw": 63.147633363359056,
-          "head_identity": 63.147633363359056,
-          "head_global_train": 63.15508479689154,
-          "head_ridge_cond_train": 63.151577918245735,
-          "head_knn_cond_train": 63.151722185293714,
-          "global_test": 72.28115904974354,
-          "ridge_cond_loo_test": 73.45002234150719,
-          "per_sample_oracle": 55.268453746938526
-        },
-        "split_ensemble_non_budget_matched": {
-          "available": true,
-          "n_splits_averaged": 3,
-          "label": "non_budget_matched_upper_bound_15hf_rows_3x_compute",
-          "skill_raw": 54.55236930467282,
-          "skill_by_ceiling": {
-            "global_test": 61.671631271431814,
-            "ridge_cond_loo_test": 60.83802336463401,
-            "per_sample_oracle": 51.78515990927598
-          }
-        },
-        "F3_memorization_max_over_legs": 0.0007244069438092519,
-        "F3_fires": false,
-        "lf_touch_attempts": 0,
-        "seconds": 7.67,
-        "result_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B4/eval/substitution_sharp__phase_field_crystal_2d.json"
-      },
-      "ext__helmholtz_2d": {
-        "reference_type": "copylf",
-        "skill_denominator": 0.2990332650411058,
-        "mce": 2.95299157437233,
-        "report_only": true,
-        "caveats": [],
-        "draws": [
-          "d0",
-          "d1",
-          "d2"
-        ],
-        "n_test": 100,
-        "per_seed_nrmse": {
-          "seed0_per_draw_A0_nolf": [
-            2.281939569389837,
-            5.425353131668044,
-            1.50651753959406
-          ],
-          "seed0_per_draw_A1_lf_cov": [
-            1.0752953522855813,
-            1.781956818584442,
-            1.227987217823707
-          ],
-          "source": "B3 leg JSON record, re-derived from the dumps and seam-gated (F4)"
-        },
-        "per_seed_skill": {
-          "seed0_per_draw_A0_nolf": [
-            7.631055926423963,
-            18.142975267056865,
-            5.037959704539794
-          ],
-          "seed0_per_draw_A1_lf_cov": [
-            3.5959054660282335,
-            5.959058830259203,
-            4.10652379311347
-          ]
-        },
-        "mean_skill": null,
-        "ci95": null,
-        "_mean_skill_note": "null by design: single seed, and this card's aggregation axis is the HF-subset draw, not the seed. Draw-level aggregation is published by the probe only for the EFFECT (E_raw_draw_mean) and as paired per-test-sample bootstrap CIs; no arm-skill draw-mean is minted here.",
-        "E_raw_per_draw": [
-          4.03515046039573,
-          12.183916436797663,
-          0.9314359114263242
-        ],
-        "E_raw_draw_mean": 5.7168342695399055,
-        "E_raw_persample_ci95": [
-          4.6814760198944,
-          6.8283571435585495
-        ],
-        "best_achievable_control_by_draw": {
-          "d0": "ref_zero",
-          "d1": "ref_zero",
-          "d2": "ref_zero"
-        },
-        "best_achievable_control_skill_by_draw": {
-          "d0": 3.3441095587226317,
-          "d1": 3.3441095587226317,
-          "d2": 3.3441095587226317
-        },
-        "E_free_per_draw": [
-          -0.25179590730560175,
-          -2.6149492715365716,
-          -0.7624142343908384
-        ],
-        "absorbed_share_achievable_per_draw": [
-          1.0624006241593549,
-          1.2146230471212807,
-          1.8185364393169468
-        ],
-        "E_free_worst_draw": -2.6149492715365716,
-        "E_free_worst_draw_over_mce": -0.8855254766828752,
-        "E_free_persample_ci95": [
-          -1.7351445553540499,
-          -0.7636985202855165
-        ],
-        "E_free_passes_mce_on_every_draw": false,
-        "ceilings_on_A0_only": {
-          "global_test": {
-            "E_per_draw": [
-              -0.25286804706184984,
-              -1.7677741885324805,
-              -0.7737335536884884
-            ],
-            "absorbed_share_per_draw": [
-              1.0626663242284777,
-              1.1450908004583387,
-              1.8306889869681495
-            ],
-            "E_worst_draw": -1.7677741885324805
-          },
-          "ridge_cond_loo_test": {
-            "E_per_draw": [
-              1.2228568299173364,
-              3.5769827330697774,
-              -0.22888328394270552
-            ],
-            "absorbed_share_per_draw": [
-              0.6969488890390942,
-              0.7064176571117451,
-              1.2457316505997846
-            ],
-            "E_worst_draw": -0.22888328394270552
-          },
-          "per_sample_oracle": {
-            "E_per_draw": [
-              -0.5848001546236237,
-              -3.1248786937404187,
-              -1.1395567856676183
-            ],
-            "absorbed_share_per_draw": [
-              1.1449264805273882,
-              1.2564757161582882,
-              2.223440895598061
-            ],
-            "E_worst_draw": -3.1248786937404187
-          }
-        },
-        "E_ceil_class_wide": {
-          "best_control_by_draw": {
-            "d0": "ref_train_mean_n5@per_sample_oracle",
-            "d1": "ref_nn_condition_n5@per_sample_oracle",
-            "d2": "ref_nn_condition_n5@per_sample_oracle"
-          },
-          "E_per_draw": [
-            -0.8271303358577722,
-            -3.2548621329399725,
-            -1.2325026128346592
-          ],
-          "absorbed_share_per_draw": [
-            1.204981287309087,
-            1.267144160896384,
-            2.323228573984555
-          ],
-          "E_worst_draw": -3.2548621329399725,
-          "passes_mce_on_every_draw": false
-        },
-        "readings_recount_pass_over_available": {
-          "raw": [
-            2,
-            7
-          ],
-          "substituted_best_achievable": [
-            0,
-            7
-          ],
-          "ceiling_corrected": [
-            0,
-            7
-          ]
-        },
-        "readings_unavailable": [],
-        "primary_reading_worst_split_vs_mce_verdicts": {
-          "raw": false,
-          "raw_exact_from_leg_json": false,
-          "substituted_best_achievable": false,
-          "ceiling_corrected": false
-        },
-        "arm_symmetry_A1_worst_draw": {
-          "raw": 3.5959054660282335,
-          "head_identity": 3.5959054660282335,
-          "head_global_train": 3.5959229779309747,
-          "head_ridge_cond_train": 3.59590109959557,
-          "head_knn_cond_train": 3.5959135969531273,
-          "global_test": 3.2980746886399546,
-          "ridge_cond_loo_test": 3.330040765462849,
-          "per_sample_oracle": 2.639763428808447
-        },
-        "split_ensemble_non_budget_matched": {
-          "available": true,
-          "n_splits_averaged": 3,
-          "label": "non_budget_matched_upper_bound_15hf_rows_3x_compute",
-          "skill_raw": 7.234773836256585,
-          "skill_by_ceiling": {
-            "global_test": 4.1273846187454115,
-            "ridge_cond_loo_test": 4.442670314482152,
-            "per_sample_oracle": 2.876831599853192
-          }
-        },
-        "F3_memorization_max_over_legs": 0.00018092393677579516,
-        "F3_fires": false,
-        "lf_touch_attempts": 0,
-        "seconds": 6.53,
-        "result_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B4/eval/substitution_ext__helmholtz_2d.json"
-      }
-    },
-    "panel_geomean_skill": {
-      "per_seed": null,
-      "mean": null,
-      "ci95": null,
-      "_note": "n/a by construction: no model is trained and no panel geomean is produced by this card. The probe emits per-(dataset,draw) contrasts only; diagnostic.json contains no panel aggregate. Panel-level skill for the underlying arms lives on the B3 card."
-    },
-    "vs_anchor": {
-      "anchor_file": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round2/state/anchors/r2s3_lf_train_signal.json",
-      "anchor_type": "best_floor_panel_geomean",
-      "anchor_value": 23.063616857615774,
-      "delta": null,
-      "beyond_ci": false,
-      "beyond_noise_floor": null,
-      "_note": "The anchor is NOT contested by this card: nothing is trained, so there is no panel geomean to compare. The only anchor-facing check performed is the seam one, and it passed: the full-row training-free floors read back from B3's leg JSONs match state/anchors/floors.json exactly (max abs diff 0.0, tol 1e-9) on all 6 datasets, so the denominators behind the anchor are unchanged. Anchor file left untouched.",
-      "per_dataset_effect_vs_certified_noise_floor": {
-        "definition": "worst-draw effect over that dataset's certified min_claimable_effect (state/noise_floor.json, certified 2026-07-31T16:49:04Z)",
-        "achievable_gate_E_free_worst_draw_over_mce": {
-          "ifc_poisson": 1.4122908468193878,
-          "sharp__cahn_hilliard": 113.48564446298083,
-          "sharp__fisher_kpp_2d": -3597.1923919690626,
-          "sharp__allen_cahn_2d": 26.87432198251524,
-          "sharp__phase_field_crystal_2d": -50.03468332843327,
-          "ext__helmholtz_2d": -0.8855254766828752
-        },
-        "resolvable_above_floor_achievable_gate": [
-          "ifc_poisson",
-          "sharp__cahn_hilliard",
-          "sharp__allen_cahn_2d"
-        ],
-        "resolvable_above_floor_ceiling_gate_class_wide": [
-          "sharp__cahn_hilliard"
-        ]
-      }
-    },
-    "claimable_set_impact_on_criterion_1": {
-      "pre_registered_expectation": "achievable-control gate yields {sharp__cahn_hilliard, sharp__allen_cahn_2d, ifc_poisson} with sharp__fisher_kpp_2d retiring; ceiling gate leaves only {sharp__cahn_hilliard}",
-      "measured_achievable_gate": [
-        "ifc_poisson",
-        "sharp__cahn_hilliard",
-        "sharp__allen_cahn_2d"
-      ],
-      "measured_ceiling_gate_class_wide_E_ceil": [
-        "sharp__cahn_hilliard"
-      ],
-      "measured_ceiling_gate_ceilings_on_A0_only_per_sample_oracle": [
-        "sharp__cahn_hilliard"
-      ],
-      "expectation_met": true,
-      "retired_vs_B3": [
-        "sharp__fisher_kpp_2d"
-      ],
-      "_retirement_evidence": "fk keeps a raw \u00b1LF effect (E_raw draw-mean 1.3132, worst draw 0.7532, 3/3 sign-consistent, mce 0.0007137) but the best ACHIEVABLE LF-free control (ref_train_mean_n5, 5 HF rows, no LF) beats the LF arm on every draw: E_free = -2.0880 / -2.5672 / -1.2097, absorbed share 223% / 441% / 181%. Its 7-reading recount collapses from 6/7 (raw) to 0/7 (substituted).",
-      "_unchanged_vs_B3": "ifc_poisson and sharp__cahn_hilliard survive the achievable gate; sharp__allen_cahn_2d enters it (B3's claimable set was {ifc, ch, fk}), so the membership changes but the count stays at three.",
-      "_margin_caveats": "ifc survives on a thin margin only: E_free 1.3243 = 1.41x its mce 0.9377, on its single native draw, with the paired per-test-sample bootstrap CI [0.7735, 1.9182] excluding zero (the clause's extra requirement for ifc) but with the median-statistic reading FAILING (0.2882 < 0.9377) -> 5/6 readings. ac survives the achievable gate at 26.9x mce on its worst draw but only 3/7 readings agree, and on draw d2 the absorbed share is 4.4e-07 (the best achievable control is the identity-like a0_head_ridge_cond_train, i.e. nothing is absorbed there) while d0 absorbs 71.3% via the non-budget-matched split ensemble. ch is the only dataset that is unanimous (7/7 readings) on all three contrasts."
-    },
-    "substitution_and_absorption_summary": {
-      "columns": "E_raw (draw-mean) | best achievable LF-free control | E_free (worst draw) | E_free/mce | ceilings_on_A0_only.per_sample_oracle (worst draw) | class-wide E_ceil (worst draw)",
-      "rows": {
-        "ifc_poisson": {
-          "E_raw_draw_mean": 5.984292244151215,
-          "best_achievable_control_by_draw": {
-            "native": "ref_linear_hfonly"
-          },
-          "E_free_worst_draw": 1.32431095834523,
-          "E_free_worst_draw_over_mce": 1.4122908468193878,
-          "ceilings_on_A0_only__per_sample_oracle__worst_draw": 0.6106466783301383,
-          "E_ceil_class_wide_worst_draw": -1.4548754280439837,
-          "absorbed_share_achievable_by_draw": {
-            "native": 0.778702158197646
-          },
-          "absorbed_share_ceiling_by_draw": {
-            "native": 1.2431157050302675
-          }
-        },
-        "sharp__cahn_hilliard": {
-          "E_raw_draw_mean": 14.776178172617817,
-          "best_achievable_control_by_draw": {
-            "d0": "ref_zero",
-            "d1": "ref_zero",
-            "d2": "ref_linear_hfonly"
-          },
-          "E_free_worst_draw": 10.355037714765485,
-          "E_free_worst_draw_over_mce": 113.48564446298083,
-          "ceilings_on_A0_only__per_sample_oracle__worst_draw": 6.632464460018644,
-          "E_ceil_class_wide_worst_draw": 5.843719259647807,
-          "absorbed_share_achievable_by_draw": {
-            "d0": 0.35293862641037854,
-            "d1": 0.22594264125915803,
-            "d2": 0.14807565320743404
-          },
-          "absorbed_share_ceiling_by_draw": {
-            "d0": 0.531993370366291,
-            "d1": 0.5329802336928253,
-            "d2": 0.5192285291230015
-          }
-        },
-        "sharp__fisher_kpp_2d": {
-          "E_raw_draw_mean": 1.3132324025279136,
-          "best_achievable_control_by_draw": {
-            "d0": "ref_train_mean_n5",
-            "d1": "ref_train_mean_n5",
-            "d2": "ref_train_mean_n5"
-          },
-          "E_free_worst_draw": -2.567248880338475,
-          "E_free_worst_draw_over_mce": -3597.1923919690626,
-          "ceilings_on_A0_only__per_sample_oracle__worst_draw": 0.3331733079854473,
-          "E_ceil_class_wide_worst_draw": -2.9639899890677093,
-          "absorbed_share_achievable_by_draw": {
-            "d0": 2.233134422493746,
-            "d1": 4.408534888194285,
-            "d2": 1.810115123739106
-          },
-          "absorbed_share_ceiling_by_draw": {
-            "d0": 2.4606104288448476,
-            "d1": 4.935287834136239,
-            "d2": 2.0671940509319024
-          }
-        },
-        "sharp__allen_cahn_2d": {
-          "E_raw_draw_mean": 298.9024091431718,
-          "best_achievable_control_by_draw": {
-            "d0": "a0_split_ensemble",
-            "d1": "ref_linear_hfonly",
-            "d2": "a0_head_ridge_cond_train"
-          },
-          "E_free_worst_draw": 23.64146786828445,
-          "E_free_worst_draw_over_mce": 26.87432198251524,
-          "ceilings_on_A0_only__per_sample_oracle__worst_draw": -29.439640701630765,
-          "E_ceil_class_wide_worst_draw": -52.29620995780479,
-          "absorbed_share_achievable_by_draw": {
-            "d0": 0.7125395048000834,
-            "d1": 0.34789448256768274,
-            "d2": 4.3837726997485284e-07
-          },
-          "absorbed_share_ceiling_by_draw": {
-            "d0": 1.0511842808219976,
-            "d1": 1.9045591533929855,
-            "d2": 1.5306556075327837
-          }
-        },
-        "sharp__phase_field_crystal_2d": {
-          "E_raw_draw_mean": -2.5588161199143706,
-          "best_achievable_control_by_draw": {
-            "d0": "a0_split_ensemble",
-            "d1": "a0_split_ensemble",
-            "d2": "a0_split_ensemble"
-          },
-          "E_free_worst_draw": -10.658755978381706,
-          "E_free_worst_draw_over_mce": -50.03468332843327,
-          "ceilings_on_A0_only__per_sample_oracle__worst_draw": -11.741568816651366,
-          "E_ceil_class_wide_worst_draw": -13.425965373778546,
-          "absorbed_share_achievable_by_draw": {
-            "d0": -1.8517707648589599,
-            "d1": -0.5223282997543246,
-            "d2": 6.2962839369035155
-          },
-          "absorbed_share_ceiling_by_draw": {
-            "d0": -2.5921429874749324,
-            "d1": -1.0124355431381364,
-            "d2": 7.917118758165247
-          }
-        },
-        "ext__helmholtz_2d": {
-          "E_raw_draw_mean": 5.7168342695399055,
-          "best_achievable_control_by_draw": {
-            "d0": "ref_zero",
-            "d1": "ref_zero",
-            "d2": "ref_zero"
-          },
-          "E_free_worst_draw": -2.6149492715365716,
-          "E_free_worst_draw_over_mce": -0.8855254766828752,
-          "ceilings_on_A0_only__per_sample_oracle__worst_draw": -3.1248786937404187,
-          "E_ceil_class_wide_worst_draw": -3.2548621329399725,
-          "absorbed_share_achievable_by_draw": {
-            "d0": 1.0624006241593549,
-            "d1": 1.2146230471212807,
-            "d2": 1.8185364393169468
-          },
-          "absorbed_share_ceiling_by_draw": {
-            "d0": 1.204981287309087,
-            "d1": 1.267144160896384,
-            "d2": 2.323228573984555
-          }
-        }
-      },
-      "S2_ceiling_column_heterogeneity": "REVIEW SEAM S2 (carried per review_notes[1]): the card's LOCKED part-4 'E_ceil' column is heterogeneous and must never be quoted as one quantity. Two DISTINCT measured columns exist and are named separately here: (i) `ceilings_on_A0_only.per_sample_oracle` worst draw = ifc +0.6106, ch +6.6325, ac -29.4396, pfc -11.7416, fk +0.3332, hz -3.1249; (ii) class-wide `E_ceil` (best over the whole achievable class x ceiling grid) worst draw = ifc -1.4549, ch +5.8437, ac -52.2962, pfc -13.4260, fk -2.9640, hz -3.2549. Part 4's column equals (i) for ifc/ch/ac/pfc and equals E_free for fk (-2.568) and hz (-2.615) - a card-side pre-flight artifact. No verdict moves: fk and hz fail on sign under every column. Never mix (i) and (ii) in one claim sentence.",
-      "split_ensemble_caveat": "`a0_split_ensemble` (15 HF rows, 3x compute, labelled non_budget_matched_upper_bound in every output) is a member of the achievable class and DRIVES the row on pfc (all 3 draws) and on ac d0, and it drives the best ceiling-corrected control on ch d0. It only ever LOWERS E_free, i.e. it is conservative about LF's value; but any statement about those rows must carry the label.",
-      "achievable_heads_are_the_identity": "Measured, as the card predicted: the 4 achievable heads (identity, global_train, ridge_cond_train, knn_cond_train) move A0's skill by <= ~1e-5 relative on every leg - e.g. ch d0 A0 raw 30.078285182 vs a0_head_global_train 30.078286032 - because the arms interpolate their 5 HF train rows (F3 statistics 1.5e-08..2.2e-03 in |log c|). All of the achievable absorption therefore comes from the LF-FREE REFERENCE FLOORS (ref_zero, ref_linear_hfonly, ref_train_mean_n5, ref_nn_condition_n5) and the split ensemble, not from output calibration of A0."
-    },
-    "cratered_verdict": "n/a",
-    "_cratered_note": "No cratered rule applies: card_type is diagnostic, seed 0 is the only seed, no model is trained and no panel geomean skill exists to compare against the stream anchor (23.063616857615774). Per the diagnostic-card spec the measurement-vs-falsification-clause record below replaces the cratered call. Job 66268786 COMPLETED 0:0, empty .err, no NaN/inf, no preemption or requeue.",
-    "falsification_verdict": "confirmed",
-    "falsification_detail": {
-      "clause_verbatim": "FALSIFIED if fewer than 2 of {ifc, ch, ac} keep an LF advantage over the best achievable LF-free control above their certified min_claimable_effect on every draw (ifc 0.9377041289531141 + a paired per-test-sample bootstrap CI excluding zero, since its single native draw makes it mce-only by construction; ch 0.09124535322300886; ac 0.8797047190126648), or if the ceiling-corrected advantage on sharp__cahn_hilliard falls below 0.09124535322300886 on any draw - with the predicted ceiling failures on ifc (+0.611 < 0.9377) and ac (sign reversal) pre-registered as the card's *finding*, plus F3 (the 5-row memorization mechanism: falsified if median |log per-sample optimal scale| on the train rows exceeds 0.05 on >=2 of 6 datasets) and F4 (instrument seam: dump-recomputed skills must match B3's per-leg record to 1e-3 relative - pre-flight max observed 1.31e-4 - and full-row floors must match state/anchors/floors.json at 1e-9).",
-      "S1_disjunction_note": "REVIEW SEAM S1 (review_notes[1]): the clause joins the achievable-control gate and the ch ceiling gate with 'or', but run_diagnostic.py emits verdicts.F1_achievable_control_gate.falsified and verdicts.F2_ceiling_gate.falsified as SEPARATE booleans with no aggregate field. The card-level verdict read as the disjunction is: card_falsified = F1 OR F2 (OR F3, OR F4) = false OR false OR false OR false = FALSE. The card is CONFIRMED, not falsified.",
-      "F1_achievable_control_gate": {
-        "falsified": false,
-        "datasets_evaluated": [
-          "ifc_poisson",
-          "sharp__cahn_hilliard",
-          "sharp__allen_cahn_2d"
-        ],
-        "datasets_passing": [
-          "ifc_poisson",
-          "sharp__cahn_hilliard",
-          "sharp__allen_cahn_2d"
-        ],
-        "deciding_numbers": {
-          "ifc_poisson": "E_free 1.32431095834523 vs mce 0.9377041289531141 (1.4123x) on the single native draw; paired per-test-sample bootstrap CI [0.7735019598728827, 1.9182343001787863] excludes zero -> the clause's ifc-specific extra requirement is met",
-          "sharp__cahn_hilliard": "E_free per draw 11.2871 / 11.4019 / 10.3550 vs mce 0.09124535322300886; worst draw 113.486x mce",
-          "sharp__allen_cahn_2d": "E_free per draw 219.0170 / 23.6415 / 98.5501 vs mce 0.8797047190126648; worst draw 26.874x mce"
-        },
-        "requirement": "at least 2 of 3 must pass on EVERY draw; 3 of 3 passed"
-      },
-      "F2_ceiling_gate": {
-        "falsified": false,
-        "deciding_numbers": "sharp__cahn_hilliard ceiling-corrected advantage (class-wide E_ceil, best over the achievable class x 3 ceilings) per draw 8.1637 / 6.8792 / 5.8437, worst draw 5.843719259647807 = 64.044x mce 0.09124535322300886 -> never falls below mce. Under the narrower ceilings_on_A0_only per-sample oracle the worst draw is 6.632464460018644 (72.7x mce), also above."
-      },
-      "F3_memorization": {
-        "falsified": false,
-        "datasets_firing": [],
-        "deciding_numbers": "max over legs of median |log per-sample optimal scale| on the 5 HF train rows, threshold 0.05: ifc 1.58e-04, ch 1.76e-03, fk 3.00e-04, ac 2.17e-03, pfc 7.24e-04, hz 1.81e-04 - all >=1.4 orders of magnitude below threshold; 0 of 6 datasets fire (>=2 required). A0 legs are 1e-08..3e-06, i.e. the LF-free arms interpolate their 5 train rows essentially exactly."
-      },
-      "F4_instrument_seam": {
-        "falsified": false,
-        "max_arm_skill_rel_diff": 6.196329703138963e-16,
-        "tol_rel": 0.001,
-        "max_full_row_floor_abs_diff": 0.0,
-        "tol_abs": 1e-09,
-        "legs_seam_checked": 32
-      },
-      "pre_registered_findings_that_landed_as_predicted": "Both ceiling failures the card pre-registered as its FINDING (not its falsification) are confirmed: ifc ceilings_on_A0_only.per_sample_oracle = +0.6106466783301383 < mce 0.9377041289531141 (and the class-wide E_ceil is -1.4548754280439837, a sign reversal), and ac shows the predicted sign reversal (ceilings_on_A0_only.per_sample_oracle worst draw -29.439640701630765; class-wide E_ceil worst draw -52.29620995780479). pfc and hz fail on sign at every gate; hz is report-only (ADR r2-0004) regardless."
-    },
-    "b5_trigger_verdict": {
-      "trigger_definition_verbatim": "Pre-registered B5 trigger (brainstormer/r2s3_lf_train_signal/batch_4/iteration_1.md, Status section, echoed in notes/handoff_experiment_starter.md): 'a B5 is warranted only if F3 fires, or if C2_ridge_cond_loo_test absorbs >= 50% on sharp__cahn_hilliard; in either case the confirmatory arm is the LOO-fold achievable head ... If neither fires, the stream closes on B4 with the substitution audit as its final deliverable.'",
-      "F3_fires": false,
-      "ch_C2_ridge_cond_loo_test_absorbed_share_on_A0_by_draw": {
-        "d0": 0.2690050002283056,
-        "d1": 0.1976843926731881,
-        "d2": 0.08236412386324679
-      },
-      "ch_C2_absorbed_share_max_over_draws": 0.2690050002283056,
-      "threshold": 0.5,
-      "trigger_fires": false,
-      "verdict": "NOT TRIGGERED - neither limb fires (F3 false on 6/6 datasets; ch C2 max absorption 26.90% < 50%). On the pre-registered rule the stream closes on B4; the formal call belongs to part 7 (mechanism-analyzer), not to this part.",
-      "supporting_context": "The condition-keyed LOO ridge ceiling is clip-saturated on ch (clip_fraction 1.00 / 1.00 / 0.91 at lambda 100/100/10, LOO R^2 0.0766 / 0.1239 / 0.3339 fitted ON TEST), i.e. even a test-fitted condition law barely beats a single global gain there (global_test absorbs 35.4% / 23.5% / 10.1%). By contrast on ifc_poisson the same ceiling absorbs 79.13% (E 1.249197 vs E_raw 5.984292, LOO-fit on 128 test rows), inside the card's predicted 60-90% band - but ifc is not the trigger dataset and its ceiling is an UPPER BOUND, never a claim."
-    },
-    "guard_flags": [],
-    "_guard_note": "Guard set (heat_local, fluid, sharp__sod_1d) NOT run and not applicable: the guard rule fires only when a card claims a panel win beyond the CI over the stream anchor. This diagnostic trains nothing, mints no score, and makes no panel claim, so there is no regression surface to guard. eval/copylf_baselines.json untouched.",
-    "anomalies": [
-      "NONE affecting numbers. Job 66268786 COMPLETED 0:0 on partition `expansion` (CPU-only, 4 cpus, 32G, node hpc-25-03), elapsed 00:01:38, .err empty (0 bytes), .out 512 lines with no NaN/inf/warning/traceback, no preemption and no requeue. All 6 per-dataset sidecars + diagnostic.json written in one pass; smoke_truncated_test_split=false everywhere.",
-      "PARTITION DEVIATION (already recorded by the orchestrator in review_notes[1]): the site rejected the gres-less submission on partition `gpu`, so the job ran via a `sbatch --partition=expansion` CLI override. No script edit; build commit bd1f746 untouched; CPU-only probe so the numbers are unaffected.",
-      "_no_lf_assert HELD: lf_touch_attempts = 0 in EVERY leg - 0 in diagnostic.json's panel-level block and 0 in each of the 6 substitution_<dataset>.json blocks, with lf_read_anywhere=false, field_input_at_test=false, trained_parameters=0 throughout. LF fidelities poisoned per dataset: ch/fk/ac/pfc 2 each, hz 1, ifc 0 (the ifc_raw loader materialises only the HF fidelity for this leg).",
-      "CARD-TEXT ARITHMETIC SLIP (no numeric impact): part 3 says '33 leg result JSONs' and '33 *_preds.npz dumps'; recipe.env.R2S3B4_LEGS enumerates 32 (ifc 2 + 5 datasets x 6) and the probe seam-checked exactly 32 legs. The leg SET is identical to the recipe's; only the count in the locked prose is off by one.",
-      "S3 PROVENANCE NOTE (review_notes[1]): round2/eval/nrmse.py is described as 'imported, never modified', but controls.rel_l2_per_sample RE-DERIVES the per-sample form locally because nrmse.py exposes only the mean. Definitionally identical and pinned by the F4 seam at max rel diff 6.196329703138963e-16 (tol 1e-3) with per-sample max abs/rel diff dump-vs-leg-JSON = 0.0 on every leg. Also: the resume path validates only _schema_version, not the stored _knobs - moot here, the run completed in one pass with an empty output dir at start.",
-      "READINGS DISAGREEMENT (a finding, not a fault): the 7-reading recount splits on ac and hz. ac raw = 3/7 and substituted = 3/7 (mce_only, persample_ci_excludes_zero and the primary worst_split_vs_mce pass; verbatim_max_mce_spread, paired_se_over_splits, median_stat_verbatim, log_effect_vs_own_range fail) - ac's draw-to-draw spread (E_raw 761.90 / 36.25 / 98.55) is what breaks the spread-based readings. hz raw = 2/7 with the PRIMARY reading failing. ifc has only 6 available readings (log_effect_vs_own_range unavailable: a single native draw has no own-range), and its substituted contrast is 5/6 (median_stat_verbatim fails at 0.2882 < mce).",
-      "TOOL CROSS-CHECKS CLEAN: tools/effect_threshold_readings.py ran as a subprocess on all 6 datasets (status ok, max_abs_diff 0.0 vs the in-probe recount); tools/map_dispersion_scale_shape.py --ensemble ran on the 5 multi-draw datasets (status ok, split-ensemble skill rel_diff 0.0, tol 1e-9) and was legitimately 'skipped' on ifc_poisson (needs >= 2 HF-subset draws; ifc ships one)."
+    "datasets_passing": [
+     "ifc_poisson",
+     "sharp__cahn_hilliard",
+     "sharp__allen_cahn_2d"
     ],
-    "wall_clock_per_seed_min": [
-      1.6333333333333333
-    ],
-    "wall_clock_detail": {
-      "job_id": "66268786",
-      "state": "COMPLETED",
-      "exit_code": "0:0",
-      "partition": "expansion",
-      "node": "hpc-25-03",
-      "elapsed": "00:01:38",
-      "requested_time": "00:40:00",
-      "per_dataset_seconds": {
-        "ifc_poisson": 7.67,
-        "sharp__cahn_hilliard": 25.84,
-        "sharp__fisher_kpp_2d": 24.45,
-        "sharp__allen_cahn_2d": 24.65,
-        "sharp__phase_field_crystal_2d": 7.67,
-        "ext__helmholtz_2d": 6.53
-      },
-      "sum_of_per_dataset_seconds": 96.81,
-      "note": "24x faster than the builder's login-node smoke (896 s) on a dedicated CPU node; the 00:40:00 request was ~24x the actual need. Feed to state/timing_ledger.json as a CPU-only training-free diagnostic data point."
+    "deciding_numbers": {
+     "ifc_poisson": "E_free 1.32431095834523 vs mce 0.9377041289531141 (1.4123x) on the single native draw; paired per-test-sample bootstrap CI [0.7735019598728827, 1.9182343001787863] excludes zero -> the clause's ifc-specific extra requirement is met",
+     "sharp__cahn_hilliard": "E_free per draw 11.2871 / 11.4019 / 10.3550 vs mce 0.09124535322300886; worst draw 113.486x mce",
+     "sharp__allen_cahn_2d": "E_free per draw 219.0170 / 23.6415 / 98.5501 vs mce 0.8797047190126648; worst draw 26.874x mce"
     },
-    "provenance": {
-      "primary_result_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B4/eval/diagnostic.json",
-      "per_dataset_result_jsons": {
-        "ifc_poisson": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B4/eval/substitution_ifc_poisson.json",
-        "sharp__cahn_hilliard": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B4/eval/substitution_sharp__cahn_hilliard.json",
-        "sharp__fisher_kpp_2d": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B4/eval/substitution_sharp__fisher_kpp_2d.json",
-        "sharp__allen_cahn_2d": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B4/eval/substitution_sharp__allen_cahn_2d.json",
-        "sharp__phase_field_crystal_2d": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B4/eval/substitution_sharp__phase_field_crystal_2d.json",
-        "ext__helmholtz_2d": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B4/eval/substitution_ext__helmholtz_2d.json"
-      },
-      "tool_sidecars": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B4/eval/readings_tool_<dataset>.json and /resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B4/eval/dispersion_<dataset>.json",
-      "slurm_out": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B4/slurm/r2-r2s3_lf_train_signal-B4-s0_66268786.out",
-      "slurm_err": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B4/slurm/r2-r2s3_lf_train_signal-B4-s0_66268786.err (0 bytes)",
-      "source_card": "r2s3_lf_train_signal-B3 (build dfcd46c6b51b5fe0bd533b9c670a7cdbf9d13830, job 66196690)",
-      "nrmse_def_hash": "d3d0ade9191c13bacc40702f3eb26ad290e01641cacee22a1d2233b74c035850",
-      "nrmse_def_hash_consistency": "identical across all 32 seam-checked legs and all 6 result JSONs",
-      "copylf_def_hash": "9753ff24e856f595748492dec6cb6c215d748f97e8ec4a679b651f8846da907a",
-      "copylf_def_hash_consistency": "identical across all 6 result JSONs (diagnostic.json._no_lf_assert.per_dataset and every leg seam record); matches state/noise_floor.json._provenance.copylf_def_hash",
-      "certified_noise_floor": {
-        "path": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round2/state/noise_floor.json",
-        "certified_utc": "2026-07-31T16:49:04Z",
-        "source": "r2s4_diag-B1 condition->HF 3-seed spread (family r2s4_cert_min, smoke tier, seeds 0,1,2)"
-      },
-      "frozen_floors_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round2/state/anchors/floors.json (certified 2026-07-31T14:20:17Z; all full-row floor checks abs diff 0.0 at tol 1e-9)",
-      "score_panel_note": "score_panel.py is deliberately NOT the entry point (recipe.epochs 0, diagnostic card). No nRMSE or skill was recomputed by this analyzer: every value above is copied verbatim from the probe's result JSONs, which themselves carry B3's score_panel-recorded skills through the F4 seam.",
-      "seed_note": "seeds_available=[0] is complete for this card: diagnostics run seed 0 only, the probe has no stochastic training, and its only RNG (the paired per-test-sample bootstrap) is pinned by R2S3B4_BOOTSTRAP_SEED=0 with n_boot=10000, so seeds 1-2 would reproduce bit-for-bit."
-    }
+    "requirement": "at least 2 of 3 must pass on EVERY draw; 3 of 3 passed"
+   },
+   "F2_ceiling_gate": {
+    "falsified": false,
+    "deciding_numbers": "sharp__cahn_hilliard ceiling-corrected advantage (class-wide E_ceil, best over the achievable class x 3 ceilings) per draw 8.1637 / 6.8792 / 5.8437, worst draw 5.843719259647807 = 64.044x mce 0.09124535322300886 -> never falls below mce. Under the narrower ceilings_on_A0_only per-sample oracle the worst draw is 6.632464460018644 (72.7x mce), also above."
+   },
+   "F3_memorization": {
+    "falsified": false,
+    "datasets_firing": [],
+    "deciding_numbers": "max over legs of median |log per-sample optimal scale| on the 5 HF train rows, threshold 0.05: ifc 1.58e-04, ch 1.76e-03, fk 3.00e-04, ac 2.17e-03, pfc 7.24e-04, hz 1.81e-04 - all >=1.4 orders of magnitude below threshold; 0 of 6 datasets fire (>=2 required). A0 legs are 1e-08..3e-06, i.e. the LF-free arms interpolate their 5 train rows essentially exactly."
+   },
+   "F4_instrument_seam": {
+    "falsified": false,
+    "max_arm_skill_rel_diff": 6.196329703138963e-16,
+    "tol_rel": 0.001,
+    "max_full_row_floor_abs_diff": 0.0,
+    "tol_abs": 1e-09,
+    "legs_seam_checked": 32
+   },
+   "pre_registered_findings_that_landed_as_predicted": "Both ceiling failures the card pre-registered as its FINDING (not its falsification) are confirmed: ifc ceilings_on_A0_only.per_sample_oracle = +0.6106466783301383 < mce 0.9377041289531141 (and the class-wide E_ceil is -1.4548754280439837, a sign reversal), and ac shows the predicted sign reversal (ceilings_on_A0_only.per_sample_oracle worst draw -29.439640701630765; class-wide E_ceil worst draw -52.29620995780479). pfc and hz fail on sign at every gate; hz is report-only (ADR r2-0004) regardless."
   },
-  "6_analysis": null,
-  "7_gap_and_future": null,
-  "reanalysis_progress": null
+  "b5_trigger_verdict": {
+   "trigger_definition_verbatim": "Pre-registered B5 trigger (brainstormer/r2s3_lf_train_signal/batch_4/iteration_1.md, Status section, echoed in notes/handoff_experiment_starter.md): 'a B5 is warranted only if F3 fires, or if C2_ridge_cond_loo_test absorbs >= 50% on sharp__cahn_hilliard; in either case the confirmatory arm is the LOO-fold achievable head ... If neither fires, the stream closes on B4 with the substitution audit as its final deliverable.'",
+   "F3_fires": false,
+   "ch_C2_ridge_cond_loo_test_absorbed_share_on_A0_by_draw": {
+    "d0": 0.2690050002283056,
+    "d1": 0.1976843926731881,
+    "d2": 0.08236412386324679
+   },
+   "ch_C2_absorbed_share_max_over_draws": 0.2690050002283056,
+   "threshold": 0.5,
+   "trigger_fires": false,
+   "verdict": "NOT TRIGGERED - neither limb fires (F3 false on 6/6 datasets; ch C2 max absorption 26.90% < 50%). On the pre-registered rule the stream closes on B4; the formal call belongs to part 7 (mechanism-analyzer), not to this part.",
+   "supporting_context": "The condition-keyed LOO ridge ceiling is clip-saturated on ch (clip_fraction 1.00 / 1.00 / 0.91 at lambda 100/100/10, LOO R^2 0.0766 / 0.1239 / 0.3339 fitted ON TEST), i.e. even a test-fitted condition law barely beats a single global gain there (global_test absorbs 35.4% / 23.5% / 10.1%). By contrast on ifc_poisson the same ceiling absorbs 79.13% (E 1.249197 vs E_raw 5.984292, LOO-fit on 128 test rows), inside the card's predicted 60-90% band - but ifc is not the trigger dataset and its ceiling is an UPPER BOUND, never a claim."
+  },
+  "guard_flags": [],
+  "_guard_note": "Guard set (heat_local, fluid, sharp__sod_1d) NOT run and not applicable: the guard rule fires only when a card claims a panel win beyond the CI over the stream anchor. This diagnostic trains nothing, mints no score, and makes no panel claim, so there is no regression surface to guard. eval/copylf_baselines.json untouched.",
+  "anomalies": [
+   "NONE affecting numbers. Job 66268786 COMPLETED 0:0 on partition `expansion` (CPU-only, 4 cpus, 32G, node hpc-25-03), elapsed 00:01:38, .err empty (0 bytes), .out 512 lines with no NaN/inf/warning/traceback, no preemption and no requeue. All 6 per-dataset sidecars + diagnostic.json written in one pass; smoke_truncated_test_split=false everywhere.",
+   "PARTITION DEVIATION (already recorded by the orchestrator in review_notes[1]): the site rejected the gres-less submission on partition `gpu`, so the job ran via a `sbatch --partition=expansion` CLI override. No script edit; build commit bd1f746 untouched; CPU-only probe so the numbers are unaffected.",
+   "_no_lf_assert HELD: lf_touch_attempts = 0 in EVERY leg - 0 in diagnostic.json's panel-level block and 0 in each of the 6 substitution_<dataset>.json blocks, with lf_read_anywhere=false, field_input_at_test=false, trained_parameters=0 throughout. LF fidelities poisoned per dataset: ch/fk/ac/pfc 2 each, hz 1, ifc 0 (the ifc_raw loader materialises only the HF fidelity for this leg).",
+   "CARD-TEXT ARITHMETIC SLIP (no numeric impact): part 3 says '33 leg result JSONs' and '33 *_preds.npz dumps'; recipe.env.R2S3B4_LEGS enumerates 32 (ifc 2 + 5 datasets x 6) and the probe seam-checked exactly 32 legs. The leg SET is identical to the recipe's; only the count in the locked prose is off by one.",
+   "S3 PROVENANCE NOTE (review_notes[1]): round2/eval/nrmse.py is described as 'imported, never modified', but controls.rel_l2_per_sample RE-DERIVES the per-sample form locally because nrmse.py exposes only the mean. Definitionally identical and pinned by the F4 seam at max rel diff 6.196329703138963e-16 (tol 1e-3) with per-sample max abs/rel diff dump-vs-leg-JSON = 0.0 on every leg. Also: the resume path validates only _schema_version, not the stored _knobs - moot here, the run completed in one pass with an empty output dir at start.",
+   "READINGS DISAGREEMENT (a finding, not a fault): the 7-reading recount splits on ac and hz. ac raw = 3/7 and substituted = 3/7 (mce_only, persample_ci_excludes_zero and the primary worst_split_vs_mce pass; verbatim_max_mce_spread, paired_se_over_splits, median_stat_verbatim, log_effect_vs_own_range fail) - ac's draw-to-draw spread (E_raw 761.90 / 36.25 / 98.55) is what breaks the spread-based readings. hz raw = 2/7 with the PRIMARY reading failing. ifc has only 6 available readings (log_effect_vs_own_range unavailable: a single native draw has no own-range), and its substituted contrast is 5/6 (median_stat_verbatim fails at 0.2882 < mce).",
+   "TOOL CROSS-CHECKS CLEAN: tools/effect_threshold_readings.py ran as a subprocess on all 6 datasets (status ok, max_abs_diff 0.0 vs the in-probe recount); tools/map_dispersion_scale_shape.py --ensemble ran on the 5 multi-draw datasets (status ok, split-ensemble skill rel_diff 0.0, tol 1e-9) and was legitimately 'skipped' on ifc_poisson (needs >= 2 HF-subset draws; ifc ships one)."
+  ],
+  "wall_clock_per_seed_min": [
+   1.6333333333333333
+  ],
+  "wall_clock_detail": {
+   "job_id": "66268786",
+   "state": "COMPLETED",
+   "exit_code": "0:0",
+   "partition": "expansion",
+   "node": "hpc-25-03",
+   "elapsed": "00:01:38",
+   "requested_time": "00:40:00",
+   "per_dataset_seconds": {
+    "ifc_poisson": 7.67,
+    "sharp__cahn_hilliard": 25.84,
+    "sharp__fisher_kpp_2d": 24.45,
+    "sharp__allen_cahn_2d": 24.65,
+    "sharp__phase_field_crystal_2d": 7.67,
+    "ext__helmholtz_2d": 6.53
+   },
+   "sum_of_per_dataset_seconds": 96.81,
+   "note": "24x faster than the builder's login-node smoke (896 s) on a dedicated CPU node; the 00:40:00 request was ~24x the actual need. Feed to state/timing_ledger.json as a CPU-only training-free diagnostic data point."
+  },
+  "provenance": {
+   "primary_result_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B4/eval/diagnostic.json",
+   "per_dataset_result_jsons": {
+    "ifc_poisson": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B4/eval/substitution_ifc_poisson.json",
+    "sharp__cahn_hilliard": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B4/eval/substitution_sharp__cahn_hilliard.json",
+    "sharp__fisher_kpp_2d": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B4/eval/substitution_sharp__fisher_kpp_2d.json",
+    "sharp__allen_cahn_2d": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B4/eval/substitution_sharp__allen_cahn_2d.json",
+    "sharp__phase_field_crystal_2d": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B4/eval/substitution_sharp__phase_field_crystal_2d.json",
+    "ext__helmholtz_2d": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B4/eval/substitution_ext__helmholtz_2d.json"
+   },
+   "tool_sidecars": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B4/eval/readings_tool_<dataset>.json and /resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B4/eval/dispersion_<dataset>.json",
+   "slurm_out": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B4/slurm/r2-r2s3_lf_train_signal-B4-s0_66268786.out",
+   "slurm_err": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B4/slurm/r2-r2s3_lf_train_signal-B4-s0_66268786.err (0 bytes)",
+   "source_card": "r2s3_lf_train_signal-B3 (build dfcd46c6b51b5fe0bd533b9c670a7cdbf9d13830, job 66196690)",
+   "nrmse_def_hash": "d3d0ade9191c13bacc40702f3eb26ad290e01641cacee22a1d2233b74c035850",
+   "nrmse_def_hash_consistency": "identical across all 32 seam-checked legs and all 6 result JSONs",
+   "copylf_def_hash": "9753ff24e856f595748492dec6cb6c215d748f97e8ec4a679b651f8846da907a",
+   "copylf_def_hash_consistency": "identical across all 6 result JSONs (diagnostic.json._no_lf_assert.per_dataset and every leg seam record); matches state/noise_floor.json._provenance.copylf_def_hash",
+   "certified_noise_floor": {
+    "path": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round2/state/noise_floor.json",
+    "certified_utc": "2026-07-31T16:49:04Z",
+    "source": "r2s4_diag-B1 condition->HF 3-seed spread (family r2s4_cert_min, smoke tier, seeds 0,1,2)"
+   },
+   "frozen_floors_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round2/state/anchors/floors.json (certified 2026-07-31T14:20:17Z; all full-row floor checks abs diff 0.0 at tol 1e-9)",
+   "score_panel_note": "score_panel.py is deliberately NOT the entry point (recipe.epochs 0, diagnostic card). No nRMSE or skill was recomputed by this analyzer: every value above is copied verbatim from the probe's result JSONs, which themselves carry B3's score_panel-recorded skills through the F4 seam.",
+   "seed_note": "seeds_available=[0] is complete for this card: diagnostics run seed 0 only, the probe has no stochastic training, and its only RNG (the paired per-test-sample bootstrap) is pinned by R2S3B4_BOOTSTRAP_SEED=0 with n_boot=10000, so seeds 1-2 would reproduce bit-for-bit."
+  }
+ },
+ "6_analysis": {
+  "_provenance": "Three training-free, LF-free mechanism probes on B3's shipped dumps, run by the mechanism-analyzer. Every number below traces to worktrees/r2s3_lf_train_signal/B4/scratchpad/reanalysis_turn_{1,2,3}_results.md and the JSON each cites. No score is minted: arm skills are B3's score_panel record, and each probe carries a reproduction seam against part 5 (turn 2 ceilings: <=5.8e-13 on the absorbed share; turn 3: E_raw 5.7e-14, E_free 4.3e-5). All probes reuse the card's own heads.py / controls.py / lf_guard.py, so they inherit B4's no-LF audit.",
+  "findings": [
+   "TURN 1 - the achievable gain heads are the identity because their FIT SET is informationally empty, not because the head class is weak. sd(log per-sample optimal scale) on the 5 HF train rows is <= 2.0e-06 on all 16 A0 legs (<= 2.9e-03 on the 16 A1 legs) against 0.028-6.52 on the test rows: a 4-9 decade gap. The arm interpolates exactly those rows (train rel-L2 4.6e-04 ... 1.76e-02), so the calibration label is a constant 1.",
+   "TURN 1 - the train-fitted ridge head's out-of-fit R^2 against the true test log-gain is NEGATIVE on all 32 legs (-3.6027 ... -0.0029) and the gain it emits has sd(log g) 5.72e-09 ... 1.37e-03, i.e. it IS the constant 1 to 3-8 decimals. This is the head-side confirmation of part 5's <=1e-5 score shift.",
+   "TURN 1 - given REAL labels the same head class works where the law exists. Share of the per-sample-oracle repair absorbed at n_fit = 5/10/20/40 genuinely labelled held-out rows (40 random fit sets, draw-mean; the shipped head absorbs 0.000 everywhere): ifc 0.251/0.792/0.850/0.866; fk 0.481/0.696/0.757/0.793; ch 0.358/0.355/0.309/0.386; hz 0.446/0.505/0.568/0.574; ac -0.306/-0.343/-0.457/-0.560; pfc -2.316/-1.327/-1.447/-1.546. Held-out R^2 at n_fit = 40: ifc 0.927 (plateau; the card's C2 reports 0.937 on all 128 rows), fk 0.165-0.581, ch -0.010...+0.139, ac -0.080...-0.053, hz -0.093...+0.001.",
+   "TURN 2 - effect decomposition into an amplitude and a structural channel (E_struct = the A0-vs-A1 effect surviving perfect per-sample amplitude calibration on BOTH arms; a mechanism split, NOT a gated claim): ifc E_raw 5.984 = E_amp 3.984 + E_struct 2.000 (amplitude share 0.666; E_struct 2.1x mce). ch 17.444/14.730/12.155 with E_struct 11.406/10.433/9.066 (amplitude share 0.346/0.292/0.254; E_struct 125.0/114.3/99.4x mce). ac E_struct 32.072/11.514/26.093 (36.5/13.1/29.7x mce). fk E_struct 0.985/0.412/1.359 (1380/578/1905x mce). pfc E_struct -1.822/-2.713/-0.668. hz E_struct 0.371/0.131/0.109 = 0.13/0.04/0.04x mce.",
+   "TURN 2 - what LF restores on ch is PHASE, not scale. Median per-sample cosine with the HF truth: ch A0 0.0385/0.0003/0.0280 (cos p10 -0.464/-0.434/-0.625; 76/70/66 % of samples below cos 0.3) vs ch A1 0.9641/0.9627/0.9622 (24/22/24 %). ifc A0 0.9972 vs A1 0.9996. ch A0's median ||p||/||y|| is 0.802/0.717/0.550, so the control is NOT amplitude-blown-up; its tiny optimal scale is the cos~0 factor. The best CONSTANT gain for ch A0 is 0.049/0.166/0.389, scoring 23.90/23.78/23.47 against the zero field's 23.92 - the optimal thing to do with the no-LF prediction is discard it.",
+   "TURN 2 - the no-LF arm systematically under-produces across-sample variation: fluctuation ratio (||P-Pbar||_F / ||Y-Ybar||_F) A0 0.503 on ifc and 0.426-0.594 on ch, against A1 1.060 and 0.767-0.774.",
+   "TURN 2 - CLIP CAVEAT. The card's law-keyed ceiling ridge_cond_loo_test clips exp(law) to [0.5, 2]. Scored against a zero-information CONSTANT gain of 0.5, in part 5's own absorbed-share-of-E_raw units: ch d0 0.2690 vs 0.2690, ch d1 0.1977 vs 0.1977, ac d0 0.4427 vs 0.4427, hz d0/d1/d2 0.6969/0.7064/1.2457 vs identical - BIT-IDENTICAL, because the clip fraction is 1.00 and the law never evaluates. ch d2 0.0824 vs null 0.1027, ac d1 -2.9676 vs -2.9386, ac d2 -0.7451 vs -0.7246. Only ifc (law 0.7913 vs null -0.8787, clip fraction 0.01, LOO R^2 0.937) and fk (law 0.3948/0.4796/0.1056 vs null -5.14/-12.90/-6.98, clip fraction 0.00) carry genuine condition-keyed content. The per_sample_oracle and global_test ceilings are UNAFFECTED - turn 1 verified they are unclipped exact minimisers, and ch's surviving ceiling gate rides on per_sample_oracle.",
+   "TURN 3 - H2 confirmed: ac's draw dispersion is a TAIL LOTTERY. Median per-sample effect 305/14/71 x mce against E_raw 866/41/112 x mce; 8/5/16 of 100 samples carry half the effect; the top 10 % hold 55.5/50.8/37.3 % of the positive effect; A0's frac(cos < 0.3) is 0.32/0.09/0.09 with cos p10 -0.918/0.596/0.428. The top-10 contributor sets overlap across draws at Jaccard 0.18/0.18/0.25, so the broken subset is largely different every draw. ac d1's raw effect is not sign-significant (win rate 0.58, p = 0.133).",
+   "TURN 3 - per-sample anatomy of the CLAIMED quantity E_free (best achievable LF-free control minus A1). ifc: 1.41x mce, median 0.27x mce, win rate 0.56, sign-test p = 0.185, top 10 % hold 53.0 %, 8 of 128 samples carry half, and the effect falls BELOW its own mce after deleting the 6 most favourable samples (0.79x mce at 5 % trim, 0.44x at 10 %). ch: 123.70/124.96/113.49 x mce with MEDIAN per-sample 181.2/176.3/131.3 x mce (median exceeds mean), win rate 0.76/0.78/0.79, sign-test p <= 1.8e-07, top 10 % hold 16.3/16.1/22.6 %, 30/30/24 samples to halve, 10 %-trim 113.0/114.3/95.4 x mce. ac: 248.97/26.87/112.03 x mce, median 76.8/9.3/71.2, win rate 0.67/0.56/0.88, sign-test p 8.7e-04/0.271/1.9e-15, top 10 % hold 60.5/56.8/37.3 %, 10 %-trim 98.2/5.5/76.2 x mce.",
+   "TURN 3 - control provenance inside the confirmed set: ifc native = ref_linear_hfonly; ch d0/d1 = ref_zero, d2 = ref_linear_hfonly; ac d0 = a0_split_ensemble (labelled non-budget-matched, 15 HF rows / 3x compute), ac d1 = ref_linear_hfonly, ac d2 = a0_head_ridge_cond_train, i.e. A0 with the identity head, so E_free is IDENTICALLY E_raw on that draw. Only ac d1 is priced against a genuine LF-free floor, and that is the draw whose sign test does not reject.",
+   "TURN 3 - the three retiring datasets retire on every per-sample reading too: fk, pfc and hz have negative E_free on all nine draws, with the LF arm improving only 9-48 % of test samples."
+  ],
+  "interpretation": [
+   "ESTABLISHED - the round's central negative result about post-hoc calibration is structural, not incidental. A calibration head fitted on the same HF rows the arm was trained on is the identity BY CONSTRUCTION: the arm has already driven its calibration residual to zero on exactly those rows. This holds for any architecture and any dataset in the N=5 regime, and it is why B3 part 7's 'output-calibration trick' alternative could never have fired. The correct statement of the value of LF is therefore sharper than B3's dichotomy: LF supplies its signal at TRAINING time, where it does not compete for the 5 HF rows; a test-time head must buy the same signal with HF labels the budget does not contain, and the rows it does own are informationally empty.",
+   "ESTABLISHED, QUANTIFIED - the price of buying that signal post-hoc instead. On ifc, the only dataset with a condition-learnable gain law (held-out R^2 0.927 at n=40, 0.937 with all rows), a head given REAL labels absorbs 0.251 of the oracle repair at 5 rows and 0.792 at 10. Recovering most of ifc's amplitude channel without LF would need roughly 10 genuinely labelled held-out HF rows - TRIPLE this stream's HF budget.",
+   "ESTABLISHED - the +-LF effect is not one mechanism. On ifc it is two thirds amplitude on a field that is already structurally right (median cos 0.997 without LF). On ch it is three quarters STRUCTURAL, and the mechanism is that the no-LF arm is near-orthogonal to the truth (median cos 0.0003-0.0385) while the LF arm is aligned (0.962-0.964): LF is supplying the field's phase, which 5 HF rows plus a 19-D condition vector do not determine. On ac it is catastrophe avoidance - LF removes a heavy tail of samples on which the no-LF prediction becomes orthogonal-to-anticorrelated. On hz it is essentially pure amplitude (share 0.88-0.99) and vanishes to 0.04-0.13x mce once both arms are amplitude-calibrated, which disqualifies hz on its own terms independently of ADR r2-0004's report-only status; both hz arms are also collapsed (fluctuation ratio 0.036-0.282) and near-orthogonal (median cos 0.00-0.21), so its effect is a contest between two failed predictors.",
+   "ESTABLISHED - the B5 trigger's non-firing is MORE robust than part 5 read it. Part 5 declined to fire partly on 'ch ridge-LOO ceiling max 26.9 % < 50 %'. Turn 2 shows that 26.9 % is entirely the [0.5, 2] clip: ch's gain law has essentially zero condition content (LOO R^2 0.077-0.334) and, unclipped, is actively harmful on d2 (-0.626). There is no condition-keyed calibration headroom on ch to chase.",
+   "JUDGMENT (mechanism-analyzer's, evidence attached in turn 3) - honesty grades on the confirmed set. ch = A: broad-based (median per-sample effect exceeds the mean), sign-significant on every draw, unanimous 7/7 readings in part 5, survives a 10 % adversarial trim at ~100x mce, mechanistically clean. Its honest phrasing is 'the LF arm beats the zero field on samples where the no-LF arm does not', which is what the gate was built to test. ifc = B: real and CI-supported (paired per-sample CI95 [0.7735, 1.9182] excludes zero) but narrow at 1.41x mce, mean-driven rather than typical-sample (win rate 0.56, sign-test p 0.185), trim-fragile below its own mce at 5 %, single native draw, 5/6 readings; its value is mechanistic rather than magnitudinal. ac = C: passes the primary reading on every draw and survives a 10 % trim, but is tail-carried (5-16 of 100 samples hold half the effect), 3/7 readings, sign test fails on d1 - the ONE draw priced against a genuine LF-free floor - and two of three draws are priced against A0-derived controls; it also carries the ADR r2-0003 caveat and should never be quoted without its tail statistic.",
+   "GENERALIZABLE INSTRUMENT LESSON - three separate B4 readings were shaped by instrument choices rather than by physics, and each needed an explicit null to expose: (i) the achievable heads are the identity because their fit rows are empty, not because the class is weak; (ii) the ceiling absorbed shares on ch/ac/hz are the clip, reproduced bit-identically by a constant gain carrying no condition information; (iii) the effect magnitudes on ifc and ac are mean statistics over concentrated per-sample distributions, visible only under trimming and a sign test. The rule this card earns for the round: every diagnostic number a card GATES on should be published next to the score of the zero-information version of the same instrument.",
+   "RECOMMENDED CAVEAT WORDING for any downstream quotation of a ridge_cond_loo_test absorbed share on ch, ac or hz: 'clip-saturated - reproduced to within 3 % by a constant gain carrying no condition information'. The per_sample_oracle and global_test ceilings need no such caveat."
+  ],
+  "falsification_postmortem": "The card's S1 disjunction (F1 v F2 v F3 v F4) was FALSE and part 5 recorded CONFIRMED; turns 1-3 explain why each clause could not fire, at mechanism level. F1/F2 asked whether fewer than 2 of {ifc, ch, ac} keep an LF advantage over the best achievable LF-free control above their certified mce on every draw. Three survived. The reason is that the achievable control class contains no instrument capable of absorbing a TRAINING-time signal: its calibration heads are provably the identity (turn 1: sd(log c) <= 2.0e-06 on the fit rows; out-of-fit R^2 negative on all 32 legs), so the entire class reduces to the LF-free reference floors and the labelled split ensemble - and those floors are condition-only predictors that cannot supply phase (ch) or per-sample amplitude (ifc). F3 (5-row memorization, threshold median |log c| > 0.05 on >= 2 datasets) could not fire because the observed statistic is 1e-08 to 2e-03, i.e. the memorization it was written to detect is present at a level 1-5 orders of magnitude BELOW the threshold - the clause was calibrated for partial interpolation and the arms interpolate essentially exactly. F4 (instrument seam) held at 6.2e-16, and turns 2-3 add three independent reproductions of part 5's own numbers (ceiling absorbed shares <= 5.8e-13, E_raw 5.7e-14, E_free 4.3e-5). The card's PREDICTED findings also held: the achievable heads added ~0.00 on every leg exactly as pre-registered, and C2 on ifc landed at 79.1 % inside the predicted 60-90 % band with the round-1 LOO-linear R^2 = 0.919 prior confirmed at 0.937. The one prediction that turns out to have been right for the wrong reason is the predicted 20-45 % C2 absorption on ch: the realised 26.9/19.8/8.2 % is inside the band but is entirely a clip artifact, not the condition learning the prediction envisaged.",
+  "surprises": [
+   "The achievable heads are the identity for a reason nobody wrote down in advance: not head-class capacity and not sample size, but that a post-hoc calibration head fitted on the rows the arm interpolated has a CONSTANT label. The card's F3 clause was written to catch memorization as a THREAT; it is actually the mechanism that makes the whole achievable head class vacuous.",
+   "ch's no-LF arm is near-ORTHOGONAL to the truth (median cos 0.0003-0.0385), not mis-scaled - and the optimal constant gain for it is 0.049-0.389, scoring within 0.4 % of the zero field. The surviving criterion-1 claim is therefore 'LF supplies structure that 5 HF rows plus a 19-dimensional condition vector do not determine', which is a stronger and more interesting statement than the amplitude-calibration story the stream started from. This also corrected an inference I published in turn 1 (that ch/hz controls overshoot amplitude by 1.5-3 decades) - withdrawn and marked in the turn-1 results file.",
+   "Six of sixteen draws' ceiling absorbed shares are BIT-IDENTICAL to what a constant gain of 0.5 delivers. A headline diagnostic of the card turned out to be reporting its own clip on the datasets where it mattered most.",
+   "ifc's claimed effect does not survive deleting the 6 most favourable of 128 test samples (falls to 0.79x mce at 5 % trim, 0.44x at 10 %) and its sign test does not reject (p = 0.185) - the round's flagship dataset carries its LF advantage in a minority of samples, even though its paired bootstrap CI excludes zero.",
+   "hz fails a purely internal test that has nothing to do with ADR r2-0004: once both arms are amplitude-calibrated its effect is 0.04-0.13x its own mce. Its report-only status turns out to be generous rather than harsh."
+  ]
+ },
+ "7_gap_and_future": null,
+ "reanalysis_progress": "turn_3"
 }
