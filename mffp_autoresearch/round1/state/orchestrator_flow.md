@@ -3675,3 +3675,14 @@ degenerate-dataset evidence across the repo rather than re-deriving from scratch
 - `dataset_characterization.csv`'s `degenerate` column itself is NOT used as the exclusion criterion
   (it's an OR of `mf_useless` and `operator_hard`; operator_hard datasets are legitimately difficult,
   not broken benchmarks — using `mf_useless=1` plus round1's own helmholtz finding instead).
+
+- 2026-08-01 (post-close) TOP-3 SEED-CONFIRM OUTCOMES (jobs 66165252-57, submitted 2026-07-31 at
+  commit ddf5ddb): s6_local-B2 s1/s2 COMPLETED; s1_poisson-B3 s1/s2 COMPLETED;
+  s4_hybrid_routing-B3 s1/s2 trained to completion but FAILED their own 02_verify_gates.py —
+  V1 pfc dc_raw rel_dev 0.188 vs tol 0.10, V5 ifc_poisson dc_raw/lsi_alone rel_dev 0.0062/0.0071 vs
+  the 1.9e-4 independent-training-envelope tol (gate log itself notes bitwise equality is not
+  decidable on GPU; independent seeds land ~30x outside the certified envelope). Recorded as a
+  seed-sensitivity finding, NOT patched into a pass; relaxing the gates and re-verifying is an
+  operator/mentor decision. Full logs:
+  mffp_autoresearch_outputs/round1/s4_hybrid_routing/B3/slurm/r1-s4_hybrid_routing-B3-s{1,2}-*.err
+  and gates_s{1,2}.json. See round2 ADR r2-0004 §6.

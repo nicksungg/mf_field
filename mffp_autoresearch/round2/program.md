@@ -107,6 +107,12 @@ copying a real coarse solve. Standing caveats: helmholtz's best floor is the
 zero field (report-only discipline continues); pfc has essentially no
 fidelity gap under a band-limited reference (denominator caveat in
 `eval/copylf_baselines.json _notes.pfc`) — pfc claims carry it.
+Additional helmholtz caveat (carried forward 2026-08-01 from r1 ADRs
+0009/0010, ADR r2-0004): its HF test fields reproduce from the condition
+vector alone to 2.2e-13 via two FFTs — an exact-operator closed-form solve
+trivialises the dataset outright, so helmholtz cannot support a
+multi-fidelity or learning claim of any kind; it stays report-only and every
+mention of a helmholtz number carries this flag.
 
 **Guard set** (`heat_local`, `fluid`, `sharp__sod_1d`): not part of the
 objective; run at contract tier for any experiment claiming a panel win; a
@@ -314,6 +320,23 @@ the noise floor for the dataset(s) — while `state/noise_floor.json` is
 provisional, judge falsification clauses directly (§4.3); cite the
 websearcher's prior-art verdict; every proposal carries a complete `recipe`
 block; floor arms mandatory on model cards (§2.2).
+
+Two further conventions, added 2026-08-01 between batches (ADR r2-0004):
+
+- **Registration of model-side lifts.** Any family or instrument code that
+  resamples a field between grids (LF→HF lift, working-grid cap, prediction
+  resample) MUST use the ADR r2-0001 per-dataset conventions — vendor the
+  interpolators from `eval/panel_data.py` (the r2s2-B1/r2s3-B2 precedent) or
+  use `factory_mffp/models/_common/lf_registration.py`. A bare
+  `F.interpolate`/`zoom` on a panel dataset is the (r−1)/2 registration
+  defect and is a reviewer FAIL.
+- **Target-scaler pre-flight.** Any model card that trains on
+  `ext__helmholtz_2d` or `sharp__phase_field_crystal_2d` runs
+  `tools/target_scale_spread_audit.py` on those datasets pre-flight; an
+  `OUTLIER_DOMINATED` or `NEAR_ZERO_TARGETS` verdict requires per-sample
+  target normalisation (or a card-recorded justification for keeping a
+  global scaler). Round 1's `lf_resid_fno` helmholtz 4.14 / pfc 8206×-noise
+  failures were exactly these two verdicts left unhandled.
 
 ### 12.1 `r2s1_direct` (gap)
 
