@@ -46,7 +46,7 @@ factorisation that a gain head implicitly assumes.
 
 - **"Debiasing Machine Learning Predictions for Causal Inference Without
   Additional Ground Truth Data: 'One Map, Many Trials'"** —
-  https://arxiv.org/abs/2508.01341 **[curl-fetched: abstract + HTML body]**.
+  https://arxiv.org/abs/2508.01341 **[curl-fetched: abstract https://arxiv.org/abs/2508.01341 + HTML body https://arxiv.org/html/2508.01341]**.
   Verbatim from the abstract: "because standard training objectives prioritize
   overall predictive accuracy, these predictions often suffer from
   **shrinkage toward the mean**, leading to attenuated estimates…"; "We

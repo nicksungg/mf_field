@@ -3334,3 +3334,197 @@ arm-vs-arm gap is claimable.
 (the per-sample gain/cosine decomposition); card
 `experiment_cards/r2s3_lf_train_signal/batch_3/B3.json` part 6, findings T2-5,
 T3-1, T3-2, T3-3, T3-5 and interpretations M1, M1b, M5.
+
+---
+
+## `ledger_contamination_audit.py`  *(round 2)*
+
+**Measures.** For any paired-arm reading `delta = skill(baseline) - skill(arm)`
+adjudicated against a threshold, the two ways that reading can be an artifact.
+
+- **Could it have fired?** With
+  `D(a,b) := mean_i ||a_i-b_i||_2 / ||y_i||_2 / skill_denominator` (the round's
+  nRMSE kernel with the TRUTH denominator held fixed, so a
+  prediction-to-prediction distance is on the same scale as either one's
+  distance to the truth), the triangle inequality gives
+  `|delta| <= D(arm, baseline)` **identically**. `headroom = ceiling/threshold`;
+  `could_not_fire` fires when headroom < 1, i.e. the clause was arithmetically
+  incapable of breaching and its surviving null is guaranteed by construction.
+- **Is it contaminated?** With a `--control` column (the ARM's estimator fitted
+  on the SAME rows but on the BASELINE's target),
+  `delta = [skill(baseline) - skill(control)]` (**function-class term**)
+  `+ [skill(control) - skill(arm)]` (**target term**). Only the target term
+  answers "what did the treatment's target buy"; the function-class term is an
+  architecture comparison that survives deleting the treatment.
+  `contaminated_fraction > 0.5` raises `CONTAMINATED`.
+- **Row-count bias.** `--matched` (the arm refitted at the baseline's row count)
+  prices the sample-size asymmetry and raises `ROW_COUNT_ARTIFACT` when the
+  reading clears its threshold unmatched and fails matched.
+
+Also reports the mean per-sample cosine between the two arms' error fields
+(≈1 ⇒ the arms are the same function making the same mistakes).
+
+**Why.** r2s4-B3's ledger read `advantage_reachable = skill(T0) - skill(proj_best)`
+and fired its F3 clause. Turn 1 found the one estimator that would have flipped
+the verdict (`proj_ridge` on `sharp__cahn_hilliard`, +0.247047 vs a 0.184746
+threshold); turn 2 showed 72 % of that was the 320-vs-280 row asymmetry and
+99.2 % of the remainder was function class. The exhibit for why the raw quantity
+is unsafe is helmholtz, where the two terms were **-21.721113** and
+**+21.047550** skill units and nearly cancelled — the reported -0.673563 was the
+residue of two large unrelated effects. Separately, the ceiling reading showed
+pfc's F1 cell could never have breached (`headroom` 0.265) while the
+F3-adjudicating cell had real headroom (5.751), so the two nulls are NOT equally
+informative.
+
+**Read it as.** No flag → quote `delta`. `COULD_NOT_FIRE` → the cell is not
+evidence, drop it from the "n of m clauses survived" count rather than reporting
+it as a survival. `CONTAMINATED` → quote `decomposition.target_term`, never
+`delta`; and note that when the arm's estimator IS the baseline's (same
+architecture, budget and rows) the function-class term is identically zero, so
+that column was already clean. `ROW_COUNT_ARTIFACT` → the effect is a sample-size
+bias; match `n_fit` before any claim.
+
+**Invoke.**
+```bash
+source "$PROJECT_ROOT/.venv/bin/activate"
+python tools/ledger_contamination_audit.py \
+    --truth  <outputs>/preds_oof_<ds>_e200_s0.npz:hf_true \
+    --baseline T0=<same npz>:T0_cond_only \
+    --arm      ridge=<same npz>:proj_ridge \
+    [--control ridge_on_hf=<control npz>:pred] \
+    [--matched ridge_n280=<matched npz>:pred] \
+    --dataset <ds> --threshold <skill units> --out audit.json
+```
+`NAME=path.npz[:key]` everywhere (key defaults to `pred`), so BOTH dump layouts
+work: one npz holding every arm (r2s4) or one npz per arm (r2s1). Threshold from
+`--threshold`, or `--noise_floor state/noise_floor.json --dataset ...`.
+Denominator from `eval/copylf_baselines.json` via `--dataset`, or
+`--skill_denominator`. Pure numpy on the login node, ~2-15 s per dataset —
+it does no fitting, so the `nproc`-1 contention that kills forward-pass tools
+(see the `condition_predictability_ceiling_fast.py` cost note) does not bite.
+The one real cost is memory: it holds 4 arrays of `(N, n_cells)` float64
+simultaneously (~840 MB at 400×256²), so pass a sample subset on bigger dumps.
+
+**Verified.** Run 2026-08-01 from `round2/`. (a) **On data it was not developed
+on** — r2s1_direct-B3's `ext__helmholtz_2d` test dumps (different card, different
+npz layout, one file per arm): `ref_decoder_big` 3.532216 vs
+`stage_blend_decoder` 3.344110, delta 0.188106, ceiling 1.865910, headroom
+0.6319 → `COULD_NOT_FIRE`; with `stage_wiener_decoder` as control, function-class
+term +0.225449 vs target term -0.037342 → `CONTAMINATED` (85.8 %),
+`identity_residual` exactly 0.0. (b) **Regression against the source card** —
+r2s4-B3 `sharp__cahn_hilliard`, baseline `T0_cond_only` / arm `proj_ridge`:
+skill 13.418637515037988 / 13.171591306116005, delta 0.24704620892198292,
+ceiling 5.183183702052, headroom 28.0557, all matching card part 6 findings T1-2,
+T1-6 and turn 1's `D(proj_ridge, T0)` = 5.183184 exactly.
+
+**Provenance.** `worktrees/r2s4_diag/B3/scratchpad/reanalysis_turn_1.py` (ceiling,
+headroom, error-field cosines) and `.../reanalysis_turn_2.py` (row-count and
+capacity controls); card `experiment_cards/r2s4_diag/batch_3/B3.json` part 6,
+findings T1-2 … T1-6 and T2-1 … T2-5, interpretations 1-3.
+
+---
+
+## `band_retention_probe.py`  *(round 2)*
+
+**Measures.** Per log-spaced radial wavenumber band, from prediction dumps only:
+`hf_energy_share` (where the truth's energy actually lives),
+`retained_energy_ratio = E_arm(b)/E_truth(b)` (does the arm produce energy in
+this band at all), and the decisive `band_relative_error = E_{truth-arm}(b)/E_truth(b)`
+— **1.00 means the arm contributes EXACTLY ZERO useful energy in that band**
+(identical to predicting zero there), > 1 means it injects wrong energy, « 1
+means the band is genuinely reconstructed. Raises
+`contributes_nothing_above_lowest_band` when that holds in every live band.
+`--advantage A:B` adds the per-band share of `E_{truth-A}(b) - E_{truth-B}(b)`,
+i.e. WHERE an arm-vs-arm gap lives, with a `localised` flag.
+
+Real `rfft2` with the Hermitian double-count correction on interior columns, so
+band energies are exact. Bands below `--min_energy_share` are flagged
+`meaningless` (round-off; ratios there routinely reach 1e9) and excluded from
+verdicts.
+
+**Why.** r2s4-B3's condition-only arm posted skills of 11-148× copy-LF, which
+reads as "a model doing poorly". The band audit showed its `band_relative_error`
+is **~1.00 in every band above the lowest** on 3 of the 4 sharp datasets
+(pfc 1.20/1.04/1.00/1.01/1.77; allen_cahn 1.03/1.01/1.01/1.01/1.08; fisher_kpp
+1.01/1.00/1.00/1.00/1.00) while the LF field reproduces the truth to 1e-2-1e-16
+band relative error — not a model doing poorly, a model contributing nothing
+above the spatial mean, and the panel's whole gap is realisation structure
+carried only by LF. The same probe located the LF teacher's advantage to 1-2
+bands (83-100 % of it, a quantitative target for spectral gating) and explained
+a primary arm losing to its own zero-field floor (it retained 0.5 % of the
+truth's energy in EVERY band, i.e. it had collapsed toward zero).
+
+**Read it as.** `contributes_nothing_above_lowest_band` → the arm is a
+spatial-mean predictor; no amount of tuning inside that function class is the
+lever, and any claim about its "structure" is unfounded. Compare the retained
+ratio of a privileged arm against it to see the information the score cannot
+resolve. `advantage.localised` → a band-selective architecture (gate those
+bands, learn only a correction) has a quantified target; spread → it does not.
+Read `band_relative_error` against `hf_energy_share`: a spectacular ratio in a
+band holding 1e-9 of the energy is nothing (use `band_weight_counterfactual.py`
+to price it).
+
+**Invoke.**
+```bash
+source "$PROJECT_ROOT/.venv/bin/activate"
+python tools/band_retention_probe.py \
+    --truth <outputs>/preds_oof_<ds>_e200_s0.npz:hf_true \
+    --arm T0=<same npz>:T0_cond_only --arm I1=<same npz>:I1_lf_teacher \
+    --dataset <ds> [--advantage T0:I1] [--bands 8] [--grid HxW] --out bands.json
+```
+`--arm NAME=path.npz[:key]` repeatable; 2-D datasets only. Grid from
+`data_adapters.geometry.resolve_grid`, else `--grid`, else the square root.
+Knobs: `--bands`, `--min_energy_share`, `--dc_tol` (how close to 1.00 counts as
+"contributes nothing"), `--skill_denominator`. Pure numpy FFT on the login node,
+~5 s (96²×100) to ~110 s (256²×400 with 3 arms) per dataset — comfortably inside
+a 20-minute cap, unlike any tool that refits an estimator per fold (see the
+standing note below).
+
+**Verified.** Run 2026-08-01 from `round2/` **on data it was not developed on** —
+r2s1_direct-B3's `ext__helmholtz_2d` test dumps (96², 100 rows, one npz per arm):
+`ref_decoder_big` retained 1.283/0.044/0.011/…, `stage_blend_decoder` retained
+**0.000 in all 8 bands** with `band_relative_error` exactly 1.000 everywhere →
+`contributes_nothing_above_lowest_band` fired, and the `ref-blend` advantage came
+out BAND-LOCALISED with band 0 carrying 115.9 %. Follow-up confirmed the flag is
+literally true: that arm's `pred` array has `max|pred| = 0.0` and its skill
+3.3441095587226317 equals r2s4-B3's certified helmholtz `ref_zero` floor
+3.3441095587226317 to every digit — **the tool detected a zero-field arm in
+another stream's shipped dump on its first foreign run**. Reported to r2s1 as a
+cross-stream note; not adjudicated here.
+
+**Provenance.** `worktrees/r2s4_diag/B3/scratchpad/reanalysis_turn_3.py`;
+card `experiment_cards/r2s4_diag/batch_3/B3.json` part 6, findings T3-1 … T3-6
+and interpretation 4-5.
+
+---
+
+## Standing note the two r2s4-B3 tools encode
+
+**A ledger quantity is only as trustworthy as the estimator symmetry behind it.**
+Both tools exist because r2s4-B3's `advantage_reachable = skill(T0) - skill(proj_best)`
+looked like one number and was two. The rule they encode, for any card that
+compares arms produced by different procedures:
+
+1. Before reading a difference against a threshold, check the **ceiling**
+   `D(armA, armB)`. If it is below the threshold, the comparison cannot fire and
+   a surviving null is not evidence (`ledger_contamination_audit.py`).
+2. If the two arms come from different estimators, ship the **control column**
+   (each estimator also fitted on the other's target) or the difference is
+   uninterpretable. When the estimators match, the function-class term is
+   identically zero and no control is needed — that symmetry is a feature to
+   design for, not an accident.
+3. Match `n_fit` across arms, or price the gap explicitly. r2s4-B3's 320-vs-280
+   asymmetry alone moved a falsification clause across its threshold.
+4. Before concluding an arm "predicts structure badly", check that it produces
+   structure at all (`band_retention_probe.py`). A `band_relative_error` of 1.00
+   is not a bad prediction, it is no prediction.
+
+**Row-order caveat both tools carry.** Prediction dumps are not always in dataset
+row order — r2s4-B3's `preds_oof_*.npz` carry an `oof_row_index` PERMUTATION
+(`[2, 5, 18, 19, 36, …]`). Both tools only ever compare arrays taken from the
+dumps passed on the command line, so they are safe by construction; a probe that
+joins a dump to loader-ordered data (LF fields, conditions, params) must permute
+first and assert against a pre-registered value. r2s4-B3 turn 3 hit exactly this
+and the card's own `prereg_*.json::copylf_train_rel_l2_mean` caught it — that
+pre-registered column is a cross-check on downstream ANALYSIS, not just on the
+experiment, and is worth reproducing to `rtol=1e-6` in any probe that touches LF.
