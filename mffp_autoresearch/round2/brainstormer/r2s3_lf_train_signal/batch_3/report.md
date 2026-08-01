@@ -1,0 +1,354 @@
+# Brainstormer Report — Stream `r2s3_lf_train_signal`, Batch 3
+
+**Stream**: `r2s3_lf_train_signal` (lever)
+**Batch**: 3
+**Total iterations**: 1
+**Slot filled**: 1 / 1 (not skipped)
+**Reopen candidates resolved**: 0 of 0 (none exist — all 9 round-2 cards carry `reopen_candidate: false`)
+
+## Slot
+
+- **Category**: `lf_train_signal / panel completion of the matched budget-equal ±LF contrast at N_hf = 5 (coverage arm), with the m = 0 extension as the discriminating test of the affine-coverage reading`
+
+- **Card type**: `model` (trained arms scored on the panel in copy-LF skill units; floor arms mandatory per §2.2). PRIMARY scored arm = `A1_lf_cov`.
+
+- **Motivation**: the batch-3 prior-art verdict **supersedes** B2's `novel` verdict for E5 and reframes this deliverable as a regime-specific composition. Verbatim from `websearches/r2s3_lf_train_signal/batch_3/report.md` "## Prior-art verdict":
+
+  > **P1** — panel-completion: matched, step/budget-matched ±LF contrast (`A0_nolf` vs `A1_lf_cov`) for a condition→field neural surrogate at N_hf = 5, all 6 panel datasets, per-dataset claimability vs certified `min_claimable_effect`, reported in copy-LF skill units | **preempted-but-MF-composition-open** — **supersedes batch 2's `novel` verdict for E5** | https://arxiv.org/html/2511.01830v1 (fetched: fidelity-mix sweep 0→100% HF at fixed capacity + fixed budget vs a full-HF reference; coverage-beats-accuracy under tight budgets); https://arxiv.org/html/2408.17075v1 (fetched: MF vs "their tested single-fidelity counterparts" over 5 functional-output test cases); https://arxiv.org/html/2510.23111v1 (fetched: LF-trained emulator scored against the solver that produced its data); https://iopscience.iop.org/article/10.1088/1741-4326/adfdfb (fetched: LF→HF transfer, order-of-magnitude gain at small data, no matched ablation) | (a) **condition-vector-only test input, LF strictly out of the prediction path** (the three preemptors are field-in emulators or keep LF in the pipeline); (b) **N_hf ≈ 5**; (c) a **certified 3-seed claimability threshold** per dataset; (d) the **copy-the-LF-solve denominator** — "is the model worth more than running the coarse solver"; (e) a panel spanning PDE families that **differ in condition completeness** (ADR r2-0003). The claim is the composition (a)+(d)+(e), not the ablation genre.
+
+  and, for the coverage story the card measures but must not claim:
+
+  > **P2** — the coverage result: LF at conditions with no HF row is what pays; LF replicated at the 5 HF conditions does not (B2 M5) | **preempted** | https://arxiv.org/html/2408.17075v1 (fetched: mapping needs snapshots at "the same input variable vectors" …) | Only the quantified **neural** instance … Report as measurement with these citations; never card as mechanism.
+
+  Within-stream driver: B2's part 7 `next_direction` — "B3 should be a MEASUREMENT-COMPLETION card, not a new mechanism … the arm that carries it is the simple coverage arm A1_lf_cov, not the card's PRIMARY A2". B2's anomaly M1 prices that penalty as net harmful (ifc −1.2860 = 1.37× the certified floor; ch −0.7080 = 7.8×), so the round's affirmative value-of-LF evidence currently rests on two clean legs (ifc; ch draw 0) at one seed. The sibling accounting card `r2s4_diag-B2` came back **falsified** (LF as an auxiliary *target* moved nothing: |T1−T0| inside the operative threshold in 15/15 cells), which makes this the round's only live route to success criterion 1.
+
+- **Concrete config**: new family `models_r2/r2s3_coverage_panel/` (worktree `worktrees/r2s3_lf_train_signal/B3`), condition-only at test, stripped view only, no LF tensor on any test path. Code is a **within-stream continuation** vendored with provenance comments from `worktrees/r2s3_lf_train_signal/B2/models_r2/r2s3_null_supply/`, with the null-direction penalty, its ridge-affine LF law, its rung tie-break and the `A2/A3/A5` arms **deleted**; the backbone (`CoverageDecoder`, width 64, 4 blocks, coord channels at forward time, FFT `norm="forward"`), the mode policy `pinned_min_rung_nyquist` (α = 4 on ifc_poisson, 12 elsewhere), the per-rung `max|y|` scaler, the step-matched budget (`steps = epochs × 25`, identical in both arms), AdamW(1e-3, wd 1e-5)+cosine+clip 1.0 and the `_step_rng(seed, step)` resume contract are preserved byte-for-byte so the reproduction check (F3) is meaningful.
+  - **Arms**: `A0_nolf` (HF only) and `A1_lf_cov` (HF + all LF rungs at all 400 conditions), both at the same steps, same normalization, same HF batch.
+  - **Grid**: 6 panel datasets × 3 HF-subset draws × 2 arms (ifc_poisson is native N_hf = 5, so 2 legs) + 1 contract-tier guard leg = **33 legs, one SLURM job, training seed 0**.
+  - **Pre-flight already executed by this brainstormer** (B2 part 7 demanded it before any extension), `tools/design_coverage_audit.py` at the exact draws:
+
+    | dataset | d | rank[X,1] | **m** | κ | verdict | uncovered LF rows/rung |
+    |---|---|---|---|---|---|---|
+    | ifc_poisson | 5 | 5 | **1** | 58.7 | FULL_POOL_COMPLETES + DISJOINT | 100 / 50 / 20 |
+    | sharp__cahn_hilliard | 19 | 5 | **15** | 2.0–2.4 | FULL_POOL_COMPLETES | 395 |
+    | sharp__fisher_kpp_2d | 2 | 3 | **0** | 50 382–78 566 | NO_DEFICIT_TO_FIX | 395 |
+    | ext__helmholtz_2d | 3 | 4 | **0** | 221–251 | NO_DEFICIT_TO_FIX | 395 |
+    | sharp__allen_cahn_2d | 3 | 4 | **0** | 234–1175 | NO_DEFICIT_TO_FIX | 395 |
+    | sharp__phase_field_crystal_2d | 2 | 3 | **0** | 14–25 | NO_DEFICIT_TO_FIX | 395 |
+
+    4 of 6 panel datasets have **no affine coverage deficit at N_hf = 5** — which is exactly what makes the extension a discriminating test rather than measurement bulk.
+  - **Floor / reference splits** (never named `test*`): `ref_zero`, `ref_train_mean_n5`, `ref_nn_condition_n5` (in-regime) + `ref_nn_condition_full` / `ref_train_mean_full` seam-checked at 1e-9 against `state/anchors/floors.json` (RAISE on mismatch) + `ref_linear_hfonly` (HF-only information limit) + `ref_linear_mf` (the P2/E1 preempted linear channel, cited baseline).
+  - **Declared baseline** (§12.3): `mf_fno_transfer_film`, **cited not re-run** — ifc_poisson, 200 ep, seed 0, nRMSE 0.055637439592454, skill 1.5454844331237223, hashes `d3d0ade9…` / `9753ff24…`.
+  - **Instruments** (reported, never switches): per-rung affine-LOO at the rung's own resolution, `m` / rank / singular values of `[X_hf,1]`, covered vs uncovered counts, train-vs-test gap, and `*_preds.npz` dumps for `tools/null_family_ceiling_audit.py` at analysis time.
+
+- **Recipe**:
+
+```json
+{
+  "base_family": "none (new from-scratch family for round 2; NOT vendored from any round-1 family. Code is a WITHIN-STREAM continuation vendored with provenance comments from this stream's own round-2 family worktrees/r2s3_lf_train_signal/B2/models_r2/r2s3_null_supply, with the null-direction penalty, its ridge-affine LF law, its rung tie-break and the A2/A3/A5 arms DELETED - see iteration_1.md 'Alternatives weighed and rejected' and immutables item 10)",
+  "base_commit": "9e10d414e35a96398f7b091bc84ddf936d88acc7",
+  "family_dir": "models_r2/r2s3_coverage_panel",
+  "datasets": "ifc_poisson,sharp__cahn_hilliard,sharp__fisher_kpp_2d,sharp__allen_cahn_2d,sharp__phase_field_crystal_2d,ext__helmholtz_2d",
+  "epochs": 200,
+  "seeds": [
+    0
+  ],
+  "env": {
+    "R2S3B3_ARM": "A1_lf_cov",
+    "R2S3B3_SPLIT_SEED": "0",
+    "R2S3B3_N_HF": "5",
+    "R2S3B3_WIDTH": "64",
+    "R2S3B3_BLOCKS": "4",
+    "R2S3B3_MODES_CAP": "12",
+    "R2S3B3_MODE_POLICY": "pinned_min_rung_nyquist",
+    "R2S3B3_SCALER": "per_rung_max",
+    "R2S3B3_STEPS_PER_EPOCH": "25",
+    "R2S3B3_HF_BATCH": "5",
+    "R2S3B3_LF_BATCH": "16",
+    "R2S3B3_LR": "1e-3",
+    "R2S3B3_WD": "1e-5",
+    "R2S3B3_SCHED": "cosine",
+    "R2S3B3_CLIP": "1.0",
+    "R2S3B3_LAMBDA_LF": "1.0",
+    "R2S3B3_LF_LIFT": "match_copylf_convention",
+    "R2S3B3_RANK_TOL": "1e-10",
+    "R2S3B3_REF_ARMS": "linear_mf,linear_hfonly,nn_condition_n5,train_mean_n5,zero,nn_condition_full,train_mean_full",
+    "R2S3B3_FLOORS_JSON": "mffp_autoresearch/round2/state/anchors/floors.json",
+    "R2S3B3_FLOOR_TOL": "1e-9",
+    "R2S3B3_NOISE_FLOOR_JSON": "mffp_autoresearch/round2/state/noise_floor.json",
+    "R2S3B3_GATE_REPORT": "1",
+    "R2S3B3_DUMP_TRAIN_PREDS": "1",
+    "R2S3B3_CKPT_EVERY_STEPS": "250",
+    "R2S3B3_GUARD_NSUB": "off",
+    "_note": "keys prefixed _ are card directives, NOT passed to --env. The --env set is exactly the 26 R2S3B3_* keys above; each leg overrides only R2S3B3_ARM and R2S3B3_SPLIT_SEED (the guard leg also sets epochs=2). Env keys R2S3B3_LAMBDA_NULL / _NULL_BATCH / _NULL_T / _NULL_RUNG_SELECT MUST NOT EXIST in this family - the penalty is deleted, and smoke_eval must raise if any of them is set.",
+    "_primary_arm": "A1_lf_cov (PRIMARY scored arm for cratered screening; A0_nolf is the matched control and may legitimately sit above 1.5x the anchor)",
+    "_hf_subset_draws": "SPLIT_SEED in {0,1,2} draws 5 of the 400 HF train rows via np.sort(np.random.default_rng(s).permutation(400)[:5]) -> d0 = 55,88,133,202,293; d1 = 39,45,51,198,379; d2 = 11,157,162,211,355. These are DRAWS, not training seeds (training seed is 0 for every leg); part 5 must repeat B2's seed_semantics sentence.",
+    "_legs": [
+      {
+        "tag": "ifc_A0",
+        "datasets": "ifc_poisson",
+        "R2S3B3_ARM": "A0_nolf",
+        "R2S3B3_SPLIT_SEED": "native"
+      },
+      {
+        "tag": "ifc_A1",
+        "datasets": "ifc_poisson",
+        "R2S3B3_ARM": "A1_lf_cov",
+        "R2S3B3_SPLIT_SEED": "native"
+      },
+      {
+        "tag": "ch_A0_d0",
+        "datasets": "sharp__cahn_hilliard",
+        "R2S3B3_ARM": "A0_nolf",
+        "R2S3B3_SPLIT_SEED": "0"
+      },
+      {
+        "tag": "ch_A0_d1",
+        "datasets": "sharp__cahn_hilliard",
+        "R2S3B3_ARM": "A0_nolf",
+        "R2S3B3_SPLIT_SEED": "1"
+      },
+      {
+        "tag": "ch_A0_d2",
+        "datasets": "sharp__cahn_hilliard",
+        "R2S3B3_ARM": "A0_nolf",
+        "R2S3B3_SPLIT_SEED": "2"
+      },
+      {
+        "tag": "ch_A1_d0",
+        "datasets": "sharp__cahn_hilliard",
+        "R2S3B3_ARM": "A1_lf_cov",
+        "R2S3B3_SPLIT_SEED": "0"
+      },
+      {
+        "tag": "ch_A1_d1",
+        "datasets": "sharp__cahn_hilliard",
+        "R2S3B3_ARM": "A1_lf_cov",
+        "R2S3B3_SPLIT_SEED": "1"
+      },
+      {
+        "tag": "ch_A1_d2",
+        "datasets": "sharp__cahn_hilliard",
+        "R2S3B3_ARM": "A1_lf_cov",
+        "R2S3B3_SPLIT_SEED": "2"
+      },
+      {
+        "tag": "fk_A0_d0",
+        "datasets": "sharp__fisher_kpp_2d",
+        "R2S3B3_ARM": "A0_nolf",
+        "R2S3B3_SPLIT_SEED": "0"
+      },
+      {
+        "tag": "fk_A0_d1",
+        "datasets": "sharp__fisher_kpp_2d",
+        "R2S3B3_ARM": "A0_nolf",
+        "R2S3B3_SPLIT_SEED": "1"
+      },
+      {
+        "tag": "fk_A0_d2",
+        "datasets": "sharp__fisher_kpp_2d",
+        "R2S3B3_ARM": "A0_nolf",
+        "R2S3B3_SPLIT_SEED": "2"
+      },
+      {
+        "tag": "fk_A1_d0",
+        "datasets": "sharp__fisher_kpp_2d",
+        "R2S3B3_ARM": "A1_lf_cov",
+        "R2S3B3_SPLIT_SEED": "0"
+      },
+      {
+        "tag": "fk_A1_d1",
+        "datasets": "sharp__fisher_kpp_2d",
+        "R2S3B3_ARM": "A1_lf_cov",
+        "R2S3B3_SPLIT_SEED": "1"
+      },
+      {
+        "tag": "fk_A1_d2",
+        "datasets": "sharp__fisher_kpp_2d",
+        "R2S3B3_ARM": "A1_lf_cov",
+        "R2S3B3_SPLIT_SEED": "2"
+      },
+      {
+        "tag": "ac_A0_d0",
+        "datasets": "sharp__allen_cahn_2d",
+        "R2S3B3_ARM": "A0_nolf",
+        "R2S3B3_SPLIT_SEED": "0"
+      },
+      {
+        "tag": "ac_A0_d1",
+        "datasets": "sharp__allen_cahn_2d",
+        "R2S3B3_ARM": "A0_nolf",
+        "R2S3B3_SPLIT_SEED": "1"
+      },
+      {
+        "tag": "ac_A0_d2",
+        "datasets": "sharp__allen_cahn_2d",
+        "R2S3B3_ARM": "A0_nolf",
+        "R2S3B3_SPLIT_SEED": "2"
+      },
+      {
+        "tag": "ac_A1_d0",
+        "datasets": "sharp__allen_cahn_2d",
+        "R2S3B3_ARM": "A1_lf_cov",
+        "R2S3B3_SPLIT_SEED": "0"
+      },
+      {
+        "tag": "ac_A1_d1",
+        "datasets": "sharp__allen_cahn_2d",
+        "R2S3B3_ARM": "A1_lf_cov",
+        "R2S3B3_SPLIT_SEED": "1"
+      },
+      {
+        "tag": "ac_A1_d2",
+        "datasets": "sharp__allen_cahn_2d",
+        "R2S3B3_ARM": "A1_lf_cov",
+        "R2S3B3_SPLIT_SEED": "2"
+      },
+      {
+        "tag": "pfc_A0_d0",
+        "datasets": "sharp__phase_field_crystal_2d",
+        "R2S3B3_ARM": "A0_nolf",
+        "R2S3B3_SPLIT_SEED": "0"
+      },
+      {
+        "tag": "pfc_A0_d1",
+        "datasets": "sharp__phase_field_crystal_2d",
+        "R2S3B3_ARM": "A0_nolf",
+        "R2S3B3_SPLIT_SEED": "1"
+      },
+      {
+        "tag": "pfc_A0_d2",
+        "datasets": "sharp__phase_field_crystal_2d",
+        "R2S3B3_ARM": "A0_nolf",
+        "R2S3B3_SPLIT_SEED": "2"
+      },
+      {
+        "tag": "pfc_A1_d0",
+        "datasets": "sharp__phase_field_crystal_2d",
+        "R2S3B3_ARM": "A1_lf_cov",
+        "R2S3B3_SPLIT_SEED": "0"
+      },
+      {
+        "tag": "pfc_A1_d1",
+        "datasets": "sharp__phase_field_crystal_2d",
+        "R2S3B3_ARM": "A1_lf_cov",
+        "R2S3B3_SPLIT_SEED": "1"
+      },
+      {
+        "tag": "pfc_A1_d2",
+        "datasets": "sharp__phase_field_crystal_2d",
+        "R2S3B3_ARM": "A1_lf_cov",
+        "R2S3B3_SPLIT_SEED": "2"
+      },
+      {
+        "tag": "hz_A0_d0",
+        "datasets": "ext__helmholtz_2d",
+        "R2S3B3_ARM": "A0_nolf",
+        "R2S3B3_SPLIT_SEED": "0"
+      },
+      {
+        "tag": "hz_A0_d1",
+        "datasets": "ext__helmholtz_2d",
+        "R2S3B3_ARM": "A0_nolf",
+        "R2S3B3_SPLIT_SEED": "1"
+      },
+      {
+        "tag": "hz_A0_d2",
+        "datasets": "ext__helmholtz_2d",
+        "R2S3B3_ARM": "A0_nolf",
+        "R2S3B3_SPLIT_SEED": "2"
+      },
+      {
+        "tag": "hz_A1_d0",
+        "datasets": "ext__helmholtz_2d",
+        "R2S3B3_ARM": "A1_lf_cov",
+        "R2S3B3_SPLIT_SEED": "0"
+      },
+      {
+        "tag": "hz_A1_d1",
+        "datasets": "ext__helmholtz_2d",
+        "R2S3B3_ARM": "A1_lf_cov",
+        "R2S3B3_SPLIT_SEED": "1"
+      },
+      {
+        "tag": "hz_A1_d2",
+        "datasets": "ext__helmholtz_2d",
+        "R2S3B3_ARM": "A1_lf_cov",
+        "R2S3B3_SPLIT_SEED": "2"
+      },
+      {
+        "tag": "guard_A1",
+        "datasets": "guard",
+        "epochs": 2,
+        "R2S3B3_ARM": "A1_lf_cov",
+        "R2S3B3_SPLIT_SEED": "0",
+        "R2S3B3_GUARD_NSUB": "off"
+      }
+    ],
+    "_sweep": "ONE SLURM job (seed 0) runs the 33 legs serially. For each leg: export ROUND2_EVAL_RESULTS=<OUT_DIR>/eval/results_<tag> (so out_json and ckpt_dir cannot collide across legs), then call score_panel.py --family_dir <worktree>/models_r2/r2s3_coverage_panel --datasets <leg datasets> --epochs <200|2> --seed 0 --env R2S3B3_ARM=<...> --env R2S3B3_SPLIT_SEED=<...> --env <the remaining 24 keys verbatim> --out <OUT_DIR>/eval/result_<datasets>_<tag>_s0.json. score_panel caches per (family,dataset,epochs,seed,code_hash incl. env), so resubmission after preemption skips finished legs - the script is idempotent.",
+    "_walltime": "--time 03:00:00. Basis: state/timing_ledger.json job 66185845 = 17 legs / 3 datasets / 41.63 min on h200 for the SAME backbone WITH the (now deleted) penalty machinery; 33 legs over 6 datasets at ~2.6 min/leg extrapolates to ~85 min, and the three new datasets (helmholtz HF 96x96, pfc 128x128, allen_cahn 256x256 with LF rungs 64/128) are no more expensive per leg than cahn_hilliard.",
+    "_declared_baseline": {
+      "family": "mf_fno_transfer_film",
+      "role": "program.md 12.3 mandatory declared baseline (LF-pretrain -> HF-finetune from the condition vector); CITED, not re-run - ifc_poisson's native N_hf=5 makes B1's existing gate run exactly regime-matched",
+      "cited_numbers_source": "mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B1/eval/result_ifc_poisson_baseline_mf_fno_transfer_film_s0.json (200 epochs, seed 0, round-2 eval layer)",
+      "cited_values": {
+        "ifc_poisson_nRMSE": 0.055637439592454,
+        "ifc_poisson_skill": 1.5454844331237223,
+        "nrmse_def_hash": "d3d0ade9191c13bacc40702f3eb26ad290e01641cacee22a1d2233b74c035850",
+        "copylf_def_hash": "9753ff24e856f595748492dec6cb6c215d748f97e8ec4a679b651f8846da907a"
+      },
+      "differences_from_this_family": "joint step-matched HF+LF rung supervision with per-rung scalers and HF-Nyquist-pinned modes at N_hf=5 with LF at 395 uncovered conditions, versus sequential LF-pretrain -> HF-finetune with no coverage framing; and this card's deliverable is a matched +-LF CONTRAST across the panel, not a champion."
+    },
+    "_seam_asserts": "(1) every result JSON carries nrmse_def_hash d3d0ade9... and copylf_def_hash 9753ff24... (one distinct pair across all 33); (2) ref_nn_condition_full / ref_train_mean_full agree with state/anchors/floors.json to 1e-9, RAISING on mismatch; (3) the LF lift used by ref_linear_mf is verified against the eval-layer copy-LF convention per dataset (max_abs_diff 0.0 expected, RAISE on mismatch); (4) lf_read_at_test=false and field_input_at_test=false in every result JSON."
+  }
+}
+```
+
+- **Expected outcome** (skill units, corrected denominators, training seed 0, `provisional-single-seed`, draw-mean over 3 HF-subset draws):
+
+  | quantity | prediction | vs certified `min_claimable_effect` (`state/noise_floor.json`) |
+  |---|---|---|
+  | ifc_poisson `A0 − A1` | +5 to +7 (best est. +5.97; B2 measured 5.9654) | 0.9377041 → **6.4×** |
+  | cahn_hilliard `A0 − A1` | +12 to +18 (best est. +15; B2 draw 0 = 17.4437) | 0.0912454 → **≥130×** |
+  | fisher_kpp `A0 − A1` | +0.8 to +1.6 (best est. +1.2; B2 = 1.2228 vs A2) | 0.0007137 → **≥1100×** |
+  | allen_cahn `A0 − A1` | +30 to +150 (best est. +70) | 0.8797047 → **≥34×** |
+  | pfc `A0 − A1` | +4 to +30 (best est. +12) | 0.2130273 → **≥19×** |
+  | helmholtz `A0 − A1` | +1 to +6 (best est. +3) | 2.9529916 → **~1.0×, the marginal one** |
+  | relative-effect ordering | ch ≈ ifc (0.55–0.75) > ac ≈ pfc (0.15–0.50) > helmholtz > fk (0.07) | — |
+  | panel geomean `A1_lf_cov` (PRIMARY) | 12–25 | anchor 23.063617; cratered bound 1.5× = 34.60 |
+  | panel geomean `A0_nolf` (control) | 25–60 | control arm, may exceed the cratered bound — not the primary arm |
+
+  Basis for the three new datasets: `A0` at N_hf = 5 should sit 1.4–2.1× above the full-400 condition→HF reference (`r2s4_cert_min`, r2s4-B1: ac 147.32, pfc 47.85, helmholtz 6.94, ch 13.18, fk 11.56), which is the measured N_hf=5-vs-400 ratio on ch (27.36/13.18 = 2.08) and fk (16.56/11.56 = 1.43); `A1`, with 395 uncovered LF conditions per rung, should recover much of that gap. Helmholtz is the exception in both directions: its best floor is the **zero field** (3.3441), so the level channel is worthless there, and its certified threshold (2.9530) is the panel's largest. **Every predicted effect except helmholtz clears its dataset's certified noise floor by ≥6×.**
+
+- **Expected falsification**:
+  **F1 (primary)** — falsified if the draw-mean effect `A0_nolf − A1_lf_cov` fails to be positive and to exceed `max(certified min_claimable_effect, in-job paired 3-draw spread of the effect)` on **at least 5 of the 6** panel datasets (ifc 0.9377041, ch 0.0912454, fk 0.0007137, ac 0.8797047, pfc 0.2130273, helmholtz 2.9529916).
+  **F2 (structural, discriminating)** — falsified if fewer than **2 of the 4 m = 0 datasets** (`sharp__fisher_kpp_2d`, `ext__helmholtz_2d`, `sharp__allen_cahn_2d`, `sharp__phase_field_crystal_2d`) show a relative effect `1 − skill(A1)/skill(A0) > 0.15` that also clears that dataset's operative threshold in absolute units — i.e. falsified if claimable LF value is confined to the two datasets with an affine coverage deficit.
+  **F3 (instrument / reproduction seam)** — falsified if any of the 8 legs repeating a B2 configuration (`ifc A0`, `ifc A1`, `ch A0` draws 0/1/2, `ch A1` draw 0, `fk A0` draws 0/1) deviates from its B2-recorded skill by more than 1% relative **and** more than that dataset's certified `min_claimable_effect`; the card then reports B3-internal contrasts only and flags a code-identity break.
+  **F4 (channel pre-registration)** — falsified if, on **every** m = 0 dataset with a claimable effect, the level channel accounts for ≥ 70% of the effect (measured post hoc from the prediction dumps with `tools/null_family_ceiling_audit.py`), i.e. if LF at m = 0 is only ever a better estimate of the mean field, as it was on fisher_kpp (76.8%).
+  **F5 (floor arms — has it learned anything)** — falsified if `A1_lf_cov` fails to beat the best in-regime N = 5 floor (over `nn_condition_n5`, `train_mean_n5`, `zero`) on **EACH of** `ifc_poisson` and `sharp__cahn_hilliard`. Frozen 400-row floors are seam-checked in-job at 1e-9 and reported beside every arm on all six datasets. Pre-registered expectation (reported, not claimed): both arms lose the in-regime floor on `sharp__fisher_kpp_2d` (B2: 15.25/15.43 vs 13.16/12.87) and plausibly on `sharp__phase_field_crystal_2d` and `sharp__allen_cahn_2d` — ADR r2-0003 bounds every deterministic arm there by the conditional-mean floor.
+
+- **Prior-art verdict quoted**: see the Motivation block above — row **P1** `preempted-but-MF-composition-open` (supersedes E5's `novel`), verbatim with its four fetched citations (https://arxiv.org/html/2511.01830v1, https://arxiv.org/html/2408.17075v1, https://arxiv.org/html/2510.23111v1, https://iopscience.iop.org/article/10.1088/1741-4326/adfdfb) and its five open items (a)–(e); plus row **P2** `preempted` (the coverage story travels as a quantified neural instance with https://arxiv.org/html/2408.17075v1 attached, never as a mechanism claim). Rows **P4** (amplitude-corrected penalty) and **P5** (gated LF weighting) are `preempted` and are **not** proposed — see "Reopen candidates / open questions".
+
+- **Immutables self-check**: **pass (11/11)**, positive evidence recorded per item in [iteration_1.md](iteration_1.md) §"Immutables self-check". Highlights: (1) N_hf = 5 is a subset of existing train rows, no data written, LF is the on-disk coarse consistent solve; (3) all new code under `models_r2/`, floors/lift are *read* not edited; (6) one training seed (0), draws are draws; (9) every clause priced against the certified per-dataset `min_claimable_effect` with helmholtz explicitly flagged marginal; (10) the nearest net-negative mechanism (B2's null penalty) is **deleted, not retuned**; (11) in-regime and frozen floor arms on every leg with a 1e-9 raising seam check.
+
+- **Anchor reference**: `null` (program.md §4.5 — lever stream; own-stream anchor 23.063616857615774 implicit).
+
+- **Source iteration**: [iteration_1.md](iteration_1.md)
+
+## Reopen candidates
+
+| Candidate | Verdict | Eased conditions | Source iteration |
+|---|---|---|---|
+| (none — all 9 round-2 cards carry `reopen_candidate: false`) | n/a | n/a | n/a |
+
+**Prior open question resolved (not a reopen candidate, but recorded):** B2's part-7 `open_question` asks whether an amplitude-corrected, finest-rung null penalty (`A1′`) beats plain `A1` on `sharp__cahn_hilliard`. **Verdict: drop**, on B2's own turn-3 numbers — the cahn_hilliard defect is *alignment* (Frobenius cos +0.2172), not amplitude (ratio 0.8861), so the correction attacks the 11%-wrong quantity and leaves the 78%-wrong one untouched; and on ifc the same turn bounds the best possible retune at 2.6349, still worse than penalty-free `A1` (2.1690). Prior art independently rates it `preempted` (P4). Dropping it also removes the whole penalty/ridge-law/lift-target code surface, which was the main build risk across three new datasets.
+
+## Skipped slot
+
+Not applicable — the slot is filled. The close-on-B2 fallback that B2's part 7 authorises was weighed explicitly (iteration_1.md, "Should there be a B3 at all?") and rejected on four recorded grounds: (1) the round's only positive value-of-LF evidence flows through a mechanism B2 itself measured net-negative, and the sibling `r2s4_diag-B2` came back falsified; (2) criterion 1 currently rests on 3 of 6 datasets, one of which is a pure level effect that loses its floor; (3) the `design_coverage_audit.py` pre-flight turned the extension into a discriminating test (m = 0 on all three extension datasets); (4) the cost is ~85 min of h200, extrapolated from the measured 41.63 min / 17-leg B2 job.
+
+## Summary table
+
+| Slot | Category | One-liner | Status |
+|---|---|---|---|
+| 1 | `lf_train_signal / panel completion of the matched ±LF contrast at N_hf = 5` | 33-leg `A0_nolf` vs `A1_lf_cov` sweep over all 6 panel datasets × 3 HF-subset draws, penalty mechanism deleted, with a pre-registered structural clause on the four m = 0 datasets | filled |

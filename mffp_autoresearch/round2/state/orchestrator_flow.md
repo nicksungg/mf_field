@@ -611,3 +611,35 @@
   the one live question, needs training); B3 = measurement-completion card (ch draws 1-2 +
   coverage-audited extension) with explicit close-on-B2 fallback if timing forces.
   SIXTH CARD CLOSED. -> B3 websearcher dispatched (batch counter -> 3).
+
+- 2026-08-01 ~13:3x PDT r2s3-B3 websearcher SUCCESS (7/7, cap hit, pdf-rule honored): E5's
+  novel verdict SUPERSEDED (±LF-ablation genre published: 2511.01830 fixed-budget fidelity
+  sweep, 2408.17075); P2 mechanism claim preempted (survey states it); P3 taxonomy open only
+  in the level channel + measured shares; P4/P5 preempted. B3 = regime-specific composition
+  or close-on-B2 skip. -> brainstormer dispatched with both options live.
+
+- 2026-08-01 ~14:0x PDT r2s1-B2 mechanism turn 2 (7/7): allen_cahn L1 = POST-HOC-STAGE
+  ARTIFACT (head beats decoder RAW +26.70 = 30.3x mce; blend = error-decorrelation ensemble
+  — head error cos 0.998 with dc_only so blend pays it nothing; 65% of "winning decoder"
+  prediction = (d+1)-param ridge); 10-param per-mode OOF quadratic beats 15.85M decoder
+  23.6x mce there. ch: nonlinearity refuted (affine selected all modes), residual 8.55x mce
+  with H2 (spatial bias on unidentifiable modes 2-3) needing decoder preds. pfc/fisher empty
+  cells (0/30 identifiable post-DC). -> turn 3 dispatched (part 6).
+
+- 2026-08-01 ~14:4x PDT r2s3-B3 brainstormer SUCCESS (12/12): 33-leg measurement-completion
+  model card (A0 vs A1 ±LF, 6 panel datasets x 3 draws, penalty DELETED); pre-flight
+  coverage audit RUN pre-design — all 3 extension datasets m_reduction_full=0, so F2
+  discriminates direction-supply vs pure-coverage; close-on-B2 REJECTED (4 grounds incl.
+  r2s4-B2 falsification making this the only live criterion-1 route); A1' dropped on B2's
+  own numbers (alignment not amplitude defect); helmholtz marginal (~1.0x mce) -> F1 needs
+  5/6. ~85 min est. -> starter dispatched.
+
+- 2026-08-01 ~15:1x PDT r2s1-B2 mechanism turn 3 (6/6): closed-form decorrelation-payoff law
+  fitted (1 param, resid <=0.047) — allen_cahn head IS dc_only numerically (rho=1.0000) so
+  blend can't pay it; equal-rho counterfactual REVERSES L1 there (head wins 2.1-7.2x mce);
+  ch control clean (blend moves delta 0.0000; 8.55x residual stands, H2 needs decoder
+  preds). Part 6 written (15 findings, 4-part postmortem: L1 was effectively ">=2 of 3"
+  after empty cells). -> register turn dispatched.
+
+- 2026-08-01 ~15:3x PDT r2s3-B3 starter SUCCESS (15/15): B3.json drafted, no TBDs; P1
+  supersession recorded on card. -> builder dispatched.
