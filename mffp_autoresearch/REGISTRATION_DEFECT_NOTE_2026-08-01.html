@@ -388,7 +388,7 @@
       <div><dt>Found</dt><dd>2026-07-30 · s3_warp-B1</dd></div>
       <div><dt>Confirmed</dt><dd>Closed form, no fitting</dd></div>
       <div><dt>Repaired in</dt><dd>round2/eval/ · 2026-07-31</dd></div>
-      <div><dt>Still open</dt><dd>Generators · model code</dd></div>
+      <div><dt>Still open</dt><dd>Generators · model code · 2 datasets</dd></div>
     </dl>
   </header>
 
@@ -787,7 +787,34 @@
       </div>
 
       <div class="fixitem">
-        <div class="fixhead"><h3>5 · Two deferred plumbing repairs</h3><span class="pill part">Deferred</span></div>
+        <div class="fixhead"><h3>5 · Helmholtz is solvable without a model at all</h3><span class="pill open">Open</span></div>
+        <p>
+          Same class as the item above, and worse. Its high-fidelity test fields reproduce from the
+          condition vector to <code>2.2e-13</code> via two FFTs — an exact-operator method trivialises
+          the dataset outright, no learning involved. This is a recorded round-1 integrity flag and
+          part of why the test-time-refinement stream was retired, but unlike the phase-field-crystal
+          caveat it did <em>not</em> carry forward into the round-2 program document. A dataset that a
+          closed-form solve answers exactly cannot support a multi-fidelity claim; it needs a
+          redesign or an explicit exclusion, not silence.
+        </p>
+        <p class="where">round1/docs/adr/0009-unknown-physics-constraint.md · adr/0010-s3-replacement.md</p>
+      </div>
+
+      <div class="fixitem">
+        <div class="fixhead"><h3>6 · The warp premise was never re-audited</h3><span class="pill open">Open</span></div>
+        <p>
+          The measurement that priced the entire warp/displacement hypothesis was taken against the
+          misregistered reference — and the constant half-cell offset turned out to be most of what it
+          measured. Re-running the panel audit against the corrected reference is item 6 on the
+          round-1 fix list; the tool was carried into round 2, but there is no record of it having
+          been re-run. Until it is, the residual warp ceiling — the part that is genuine transport
+          rather than registration — is unknown.
+        </p>
+        <p class="where">round2/tools/warp_premise_audit.py --datasets PANEL</p>
+      </div>
+
+      <div class="fixitem">
+        <div class="fixhead"><h3>7 · Two deferred plumbing repairs</h3><span class="pill part">Deferred</span></div>
         <p>
           The corrector's <em>input</em> wrap seam (deliberately excluded twice, because fixing it
           mid-round would have confounded a paired contrast) and permuting queries before chunking in
@@ -796,6 +823,46 @@
         </p>
       </div>
 
+    </div>
+
+    <h3>Also on the round-1 record, for completeness</h3>
+    <p>
+      Three further integrity findings from the same round. None is a registration problem, and
+      none is still owed work — but a reader of this note should not have to discover them
+      elsewhere.
+    </p>
+
+    <div class="tablewrap">
+      <table>
+        <thead>
+          <tr><th>Finding</th><th>Where it stands</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <strong>The zero predictor beat the champion on helmholtz.</strong> Substituting an
+              all-zeros field for the round champion's helmholtz prediction improved the illustrative
+              panel geomean 7.10 → 5.24. A dataset where nothing-at-all outperforms every trained
+              model contributes amplitude-calibration noise to a geometric mean, not signal.
+            </td>
+            <td><span class="pill fixed">Closed</span> Round 2 scores a zero floor on every dataset; helmholtz's best floor <em>is</em> the zero field, at 3.344, and it stays report-only.</td>
+          </tr>
+          <tr>
+            <td>
+              <strong>Some floors are unclearable by construction.</strong> Copy-LF-referenced floors
+              above 1.0 exist that a perfect model could not clear.
+            </td>
+            <td><span class="pill part">Semantics</span> Not a model failure and not a bug — but any "failed to clear the floor" verdict has to be read against it.</td>
+          </tr>
+          <tr>
+            <td>
+              <strong>The 0.018 bar is a stretch reference.</strong> A paper-bar provenance
+              misattribution, not a like-for-like comparison.
+            </td>
+            <td><span class="pill part">Caveated</span> ADR 0002 keeps the published bars frozen and records the caveat rather than restating them.</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </section>
 
@@ -826,7 +893,7 @@
   <footer>
     Sources — s3_warp-B1 mechanism analysis (parts 5–6) and its turn-1 reanalysis;
     round-1 report §5; the mentor-facing registration note of 2026-07-30 and its two addenda;
-    round-2 program §2.2–2.3 and launch gates G1/G2/G3-r2.
+    round-2 program §2.2–2.3 and launch gates G1/G2/G3-r2; ADRs 0002, 0009 and 0010.
     The <code>F.interpolate</code> comparison in §02 was run fresh for this note.
     Round-1 scores remain frozen; nothing here alters a recorded number.
   </footer>
