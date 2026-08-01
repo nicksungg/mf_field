@@ -1,30 +1,40 @@
-# MFFP Autoresearch Round 2 — Dashboard (updated 2026-08-01T18:46:15Z)
+# MFFP Autoresearch Round 2 — Dashboard (updated 2026-08-01T19:20:00Z)
 
-**Seventh maintainer walk since the operator halt/resume cycle.**
+**Eighth maintainer walk since the operator halt/resume cycle.**
 Halt landed 2026-08-01T01:31:54Z (commit `10d4e4c`), resume landed
 2026-08-01 ~08:1x PDT (commit `b80e622`).
 
-**Headline this run**: the `r2s1_direct-B3` `stage_blend_decoder` zero-field
-item flagged in the prior walk has been **ADJUDICATED by the orchestrator
-as rational selection, not a defect** — see Flags for the full reasoning.
-Job 66262741 (seed 0) is **still PENDING**, unchanged.
-Both B4 websearchers are now complete (`r2s3_lf_train_signal` and
-`r2s4_diag`). `r2s3_lf_train_signal`'s B4 brainstormer has **resolved**:
-decision is **card B4**, a training-free substitution-audit diagnostic —
-**the card landed** (`r2s3_lf_train_signal-B4`, `drafted`) in a final
-re-check just before this walk's close, moments after the first pass of
-this dashboard was drafted.
-`r2s4_diag`'s B4 brainstormer is **still running** (summary only, decision
-not yet made).
+**Headline this run**: two new B4 cards now exist across the two streams
+still open (`r2s3_lf_train_signal-B4`, `r2s4_diag-B4`), both `drafted`,
+both with builders actively landing files.
+`r2s4_diag-B4` is the program.md §12.4 exception card (WITH training) —
+its part 2 records, for the first time on any card, that the literal
+`N_hf ∈ {5, 20, 50}` mandate is **unexecutable** on `ifc_poisson` (no
+20/50-row 64×64 training set exists) and re-expresses it as two
+measurable halves (exhaustive HF-subset curve + within-rung
+generalisation-gap ladder).
+`r2s3_lf_train_signal-B4` is a training-free substitution audit whose
+`expected_falsification` section is a fully pre-registered outcome table —
+the stream's B4-vs-close call now resolves **mechanically** off a 2-of-3
+threshold once the card's arms are scored, not a fresh brainstormer
+judgment.
+Job 66262741 (`r2s1_direct-B3`, seed 0) is **still PENDING**, unchanged.
+`r2s2_stacked-B3` went `drafted` -> `built` — **caught mid-walk during
+the pre-return checklist re-verification**: family `models_r2/r2s2_zerograd`
+built (commit `86ef67cc`), contract smoke passed on `ext__helmholtz_2d`,
+a genuine pfc pre-flight-instrument conflict recorded and stamped rather
+than silently resolved, a timing risk flagged (51m44s wall for a 2-epoch
+single-dataset smoke on a contended login node). `job_ids` still empty —
+no SLURM submission yet.
 
 ## Streams
 
 | Stream | Anchor (skill) | Current batch | Card | Status | Jobs | Last change |
 |---|---|---|---|---|---|---|
-| r2s1_direct | 23.0636 (best_floor_panel_geomean) | 3 | r2s1_direct-B1 **complete**; r2s1_direct-B2 **complete**; r2s1_direct-B3 **running** | Card unchanged this run. `state/r2s1_direct/current_stage.txt` **updated this run**: the WATCH ITEM opened last walk (helmholtz `stage_blend_decoder` zero-field prediction) has been **adjudicated as rational selection, not a defect** — per-sample rel-L2 exactly 1.0 (zero-prediction signature), blend `cal_table` shows every base+decoder worse than nRMSE 1.0 at 2-epoch smoke on helmholtz, same code path healthy (0.362) on ifc_poisson, arm is REFERENCE-only, never scored. Standing caveat for the initial-analyzer preserved: a zero-blend at FULL (200-epoch) tier would still be plausible-rational on helmholtz specifically, unless zero-collapse appears on any OTHER dataset. Seed-0 job **66262741 still PENDING** in `squeue` (Priority-queued, `Elapsed=00:00:00`) | **1 live/pending SLURM** (`r2-r2s1_direct-B3-s0`, job 66262741, PENDING) | Watch item adjudicated (defect ruled out); job still PENDING |
-| r2s2_stacked | 23.0636 (best_floor_panel_geomean) | 3 *(card exists; `current_batch.txt` still stale at "2")* | r2s2_stacked-B1 **complete**; r2s2_stacked-B2 **complete**; r2s2_stacked-B3 **drafted** | Unchanged this run. Builder's family `models_r2/r2s2_zerograd/` (10 modules + `probes/`) was already fully landed by the prior walk's close; this run finds the same file set (pycache mtimes predate this run's window, no new source files). Card still `drafted`/`job_ids: []`, no `build_commit`, no contract-smoke result yet observed | **0 live SLURM** | No change this run |
-| r2s3_lf_train_signal | 23.0636 (best_floor_panel_geomean) | 4 *(`current_batch.txt` still reads "3")* | r2s3_lf_train_signal-B1 **complete**; r2s3_lf_train_signal-B2 **complete**; r2s3_lf_train_signal-B3 **complete** (10th card, closed 2 walks ago) | Card unchanged this run. **B4 brainstormer completed this run**: decision **card B4** (`brainstormer/r2s3_lf_train_signal/batch_4/report.md`) — a training-free, `epochs=0`, no-GPU `lf_train_signal / substitution audit` diagnostic in a new probe family `models_r2/r2s3_b4_substitution/`, reading only B3's shipped leg JSONs and `*_preds.npz` dumps (never opens an LF field). Decisive pre-flight findings quoted: B3's ifc leg is 77.9% reproducible by an LF-free control already inside B3's own leg JSONs, and fisher_kpp's LF arm loses to its own `train_mean_n5` floor on all three draws — closing on B3 as-is would leave the round's central claim overstated by its own artifacts. Worktree `worktrees/r2s3_lf_train_signal/B4` exists (scaffolding only). **Card landed in this run's final re-check**: `experiment_cards/r2s3_lf_train_signal/batch_4/B4.json` (`status: drafted`, `job_ids: []`, `card_type: diagnostic`) — content matches the brainstormer report verbatim | **0 live SLURM**; card drafted, builder not yet observed | B4-or-close resolved → card B4 drafted |
-| r2s4_diag | **19.8178** (certified_3seed_panel_geomean, CI95 [19.385, 20.527]) | 4 | r2s4_diag-B1 **complete**; r2s4_diag-B2 **complete**; r2s4_diag-B3 **complete** | Card unchanged this run. **B4 websearch completed this run**: `websearches/r2s4_diag/batch_4/` gained iterations 2-5 + `report.md` (up from summary-only at prior close) — verdict frames an "anatomy card open in composition" (the §12.4 ifc_poisson N_hf-anatomy diagnostic remains reachable) plus an equivalence-test remedy for the stream's claimability protocol. **B4 brainstormer now running** on this input: only `summary_so_far.md` present so far (no `iteration_1.md`/`report.md`), landed ~11:36-11:38 local, re-checked at close with no new file — decision not yet made. `state/r2s4_diag/current_stage.txt` still reads the B3-close summary text (not yet refreshed for the in-progress B4 brainstormer) | **0 live SLURM** (job terminal); brainstormer actively running (in-progress, not stalled — landed a file within this run's window) | B4 websearch complete; B4 brainstormer in progress |
+| r2s1_direct | 23.0636 (best_floor_panel_geomean) | 3 | r2s1_direct-B1 **complete**; r2s1_direct-B2 **complete**; r2s1_direct-B3 **running** | Unchanged this run. Seed-0 job **66262741 still PENDING** in `squeue`/`sacct` (Priority-queued, `Elapsed=00:00:00`) | **1 live/pending SLURM** (`r2-r2s1_direct-B3-s0`, job 66262741, PENDING) | No change; job still PENDING |
+| r2s2_stacked | 23.0636 (best_floor_panel_geomean) | 3 *(card exists; `current_batch.txt` still stale at "2")* | r2s2_stacked-B1 **complete**; r2s2_stacked-B2 **complete**; r2s2_stacked-B3 **built (caught mid-walk this run)** | `status: drafted` -> `built` caught during the pre-return checklist re-verification (card mtime 2026-08-01T19:13:40Z, after this run's first pass). Family `models_r2/r2s2_zerograd` built on branch `round2/exp-r2s2_stacked-B3`, commit `86ef67cc` (8 files re-vendored byte-identically from sibling B2, sha256-pinned). Contract smoke on `ext__helmholtz_2d` PASSED (exit 0, nRMSE 1.4487706717896234, skill 4.844847851928688, `code_hash` verified). Pre-flight instruments recorded a genuine `pfc` conflict (target-scale audit says switch to per-sample norm; eligibility audit says NO_GO) — implemented per the card's literal rule and stamped `conflict_with_eligibility` rather than silently resolved; only touches arms A2/A3, never the scored zero-gradient A1_lsi arm. TIMING RISK flagged: 2-epoch single-dataset smoke took 51m44s wall (contended login node, CPU-bound k-NN+rFFT); `--time 02:30:00` requested. `job_ids` still empty — no SLURM submission yet | **0 live SLURM** (no submission yet) | Built, caught mid-walk; not yet submitted |
+| r2s3_lf_train_signal | 23.0636 (best_floor_panel_geomean) | 4 *(`current_batch.txt` still reads "3")* | r2s3_lf_train_signal-B1..B3 **complete** (10th card, closed 3 walks ago); r2s3_lf_train_signal-B4 **drafted** | **New this run's builder activity**: `worktrees/r2s3_lf_train_signal/B4/models_r2/r2s3_b4_substitution/` gained `controls.py` + `readings.py` (joining `manifest.json`/`paths.py`/`lf_guard.py`/`heads.py`, all landed within this run's window). Training-free (`epochs: 0`, no GPU) substitution-audit diagnostic. `expected_falsification` is a fully pre-registered 2-of-3 {ifc, ch, ac} threshold table over B3's shipped artifacts — the B4 outcome resolves mechanically, not by fresh brainstormer judgment. Predicted claimable set under the achievable-control gate: `{ch 113x, ac 26.8x, ifc 1.41x}` (fk retires); under the stricter ceiling gate: `{ch}` only | **0 live SLURM** (training-free; no submission expected) | Builder actively landing files this run |
+| r2s4_diag | **19.8178** (certified_3seed_panel_geomean, CI95 [19.385, 20.527]) | 4 *(`current_batch.txt` still reads "3")* | r2s4_diag-B1..B3 **complete** (11th card, closed 3 walks ago); r2s4_diag-B4 **drafted (new this run)** | **Card landed this run** (18:52:32Z, 6 min after prior close): the program.md §12.4 exception card (WITH training, 200 epochs, strict 1 seed) — the stream's last live route to round success-criterion-1. Part 2 records, verbatim from the brainstormer's source iteration, that the literal `N_hf ∈ {5, 20, 50}` mandate is **unexecutable on `ifc_poisson`** (no 20-row/50-row 64×64 training set on disk) and re-expresses it as (1) an exhaustive HF-subset curve on the scored rung and (2) a within-rung generalisation-gap ladder across the 4 independent rungs, governed by a pre-registered equivalence bound (certified ifc MCE 0.9377041289531141, O1/O2/O3 outcome rule). Worktree created (fresh scaffolding only) — no model code beyond scaffold observed, builder not yet dispatched | **0 live SLURM** (card just drafted, no submission yet) | Card drafted this run; §12.4 unexecutable-mandate fact recorded |
 
 **Anchor note**: r2s4_diag remains the only stream with a *certified* anchor
 (`certified_3seed_panel_geomean`, 19.8178) — r2s1_direct, r2s2_stacked,
@@ -43,10 +53,11 @@ run's entire window. All anchors rendered verbatim from
 **1 live/pending `r2-*` SLURM job** (unchanged from the prior run — still
 queued on Priority, has not started running). `sacct` 2-day window
 otherwise shows the same 16 `r2-*` jobs, all COMPLETED 0:0, identical to
-the timing ledger — no ledger upsert due (66262741 still PENDING). Non-
-SLURM agent activity this run: the `r2s3_lf_train_signal` B4 brainstormer
-landed its decision and closed; the `r2s4_diag` B4 brainstormer is
-actively running (in progress at close).
+the timing ledger — no ledger upsert due. Non-SLURM agent activity this
+run: `r2s3_lf_train_signal`'s B4 builder actively landing files;
+`r2s2_stacked`'s B3 builder completed its build (contract smoke passed,
+caught mid-walk going `drafted` -> `built`, no submission yet);
+`r2s4_diag`'s B4 card freshly drafted, builder not yet dispatched.
 
 ## Completed cards
 
@@ -61,77 +72,113 @@ actively running (in progress at close).
 | r2s1_direct-B2 | model | 18.3622 (single seed 0, `provisional-single-seed`, **no falsification weight** per card) | **falsified**: L1 fires (2/5 decidable cells lose to the in-job Wiener-calibrated `ref_decoder_big` by >mce — allen_cahn 6.99x, cahn_hilliard 14.21x); L2 fires (cahn_hilliard gap 4.74x the L2 threshold, stable across 5 fold-resamples, not rescued by any rank in the sweep); L3/L4 do not fire | **2 tools**: `tools/blend_decorrelation_payoff.py` (equal-rho blend counterfactual), `tools/selection_set_vs_window_audit.py` (selection-set-vs-window arity-bug detector) |
 | r2s2_stacked-B2 | diagnostic | 19.386837 (single seed 0, `provisional-single-seed`); vs anchor 23.0636 (-3.677, beyond certified mce 1.1419 but not anchor-certifying) | **falsified**: F1 fires (refit LSI corrector beats the promoted rule's training-free ceiling on 3 ladder cells), F2 fires (k=1 beats k=all beyond mce on 3 panel datasets), F3 fires (ladder-B partial coherence clears permutation-null on 5/6 datasets), F4 does not fire. `cratered_verdict: n/a` (diagnostic — no crater rule) | **2 tools**, both correctly indexed, no duplicates: `tools/zero_gradient_stage_ladder.py`, `tools/relative_gain_units_audit.py` — together they **retract the B1-promoted `surrogate_coherence_eligibility.py` rule as an eligibility GATE** (centring bug + frozen-vs-refit mismatch + 10-817x unit mispricing), demoting it to a directional-only predictor |
 | r2s3_lf_train_signal-B3 | model | 17.114970 (`A1_lf_cov` primary arm, single seed 0) vs anchor 23.0636 (comparison arm `A0_nolf` 32.4663) | **falsified** (F1/F2 knife-edge adjudicated FALSIFIED, robust across 5/7 defensible threshold readings incl. a gain-calibrated split reading M4; only the two readings pricing zero HF-subset-draw variance return CONFIRMED); the round's success-criterion-1 (≥3-dataset claimable with/without-LF-training contrast) is still met on exactly 3 datasets under the operative threshold. `cratered_verdict: cratered` (third limb only — falsification fired decisively; not a crash, not >1.5x anchor) | **2 tools**, both correctly indexed: `tools/effect_threshold_readings.py` (7-reading threshold-adjudication tool; surfaces `mce_over_observed_split_range` as a provenance smell), `tools/map_dispersion_scale_shape.py` (splits inter-prediction dispersion into total vs shape-only; found allen_cahn's 3 LF-trained models sit within 0.41 skill units of each other but 100.5 units apart in function space — "scale, not map") |
-| r2s4_diag-B3 | diagnostic | 19.172826 (single seed 0, no own-card CI — 1 seed; in-job 5-fold paired spreads are per-dataset thresholds, not a panel CI) | **falsified** (F3 stands and is hardened by two row-count/capacity controls; F4a fired on the ledger's own contaminated-quantity definition, not on a measurement failure — 0/4 under the corrected teacher-target term; F1 survives on 2 of its 3 needed cells, pfc's cell ruled uninformative by a ceiling argument). Mechanism headline: on 3 of 4 sharp datasets the condition-only arm's per-band error is ~1.00 above the lowest band — it contributes exactly zero energy above the spatial mean — while the LF field reproduces HF to 1e-2 to 1e-16 band relative error, i.e. essentially all panel structure is realisation information carried only by LF. `cratered_verdict: n/a` (diagnostic) | **2 tools**, both correctly indexed: `tools/ledger_contamination_audit.py` (prices whether a paired-arm delta *could* have fired via a triangle-inequality ceiling, and whether it's contaminated by a function-class term vs the true target term), `tools/band_retention_probe.py` (per-band retained-energy/relative-error decomposition; on its first foreign-data run it independently found the `stage_blend_decoder` zero-field arm in r2s1_direct-B3's shipped dumps — now adjudicated, see Flags) |
+| r2s4_diag-B3 | diagnostic | 19.172826 (single seed 0, no own-card CI — 1 seed; in-job 5-fold paired spreads are per-dataset thresholds, not a panel CI) | **falsified** (F3 stands and is hardened by two row-count/capacity controls; F4a fired on the ledger's own contaminated-quantity definition, not on a measurement failure — 0/4 under the corrected teacher-target term; F1 survives on 2 of its 3 needed cells, pfc's cell ruled uninformative by a ceiling argument). Mechanism headline: on 3 of 4 sharp datasets the condition-only arm's per-band error is ~1.00 above the lowest band — it contributes exactly zero energy above the spatial mean — while the LF field reproduces HF to 1e-2 to 1e-16 band relative error, i.e. essentially all panel structure is realisation information carried only by LF. `cratered_verdict: n/a` (diagnostic) | **2 tools**, both correctly indexed: `tools/ledger_contamination_audit.py` (prices whether a paired-arm delta *could* have fired via a triangle-inequality ceiling, and whether it's contaminated by a function-class term vs the true target term), `tools/band_retention_probe.py` (per-band retained-energy/relative-error decomposition; on its first foreign-data run it independently found the `stage_blend_decoder` zero-field arm in r2s1_direct-B3's shipped dumps — since adjudicated as rational selection, see Flags) |
 
 `r2s1_direct-B3` is `running` (job 66262741 PENDING, no part 5 yet) — not
-listed here until it closes. `r2s2_stacked-B3` is `drafted` (not built) —
-not listed here.
+listed here until it closes. `r2s2_stacked-B3`, `r2s3_lf_train_signal-B4`,
+`r2s4_diag-B4` are all `drafted` (not built/scored) — not listed here.
 
 ## Flags
 
-- **`r2s1_direct-B3`'s `stage_blend_decoder` zero-field item — ADJUDICATED
-  this run, defect ruled OUT (was VERIFIED-but-open in the prior walk)**.
-  The orchestrator's adjudication, now recorded in
-  `state/r2s1_direct/current_stage.txt`: the smoke `stage_blend_decoder`
-  zero-field prediction on `ext__helmholtz_2d` is **rational selection**,
-  not a defect. Diagnostic evidence: per-sample rel-L2 exactly 1.0 (the
-  zero-prediction signature); the blend `cal_table` shows every base +
-  decoder combination scoring worse than nRMSE 1.0 at the 2-epoch smoke
-  tier on helmholtz, so `calib_fold_relL2` correctly selected full
-  zero-base weight; the same code path produces a healthy nonzero blend
-  (0.362) on `ifc_poisson`, so this is not a broken code path — it is
-  helmholtz-specific. The arm is REFERENCE-only and was never the card's
-  scored arm (`R2S1B3_SCORED_ARM=stagefree_permode_set_head`). **Reopen
-  condition preserved as a standing note for the initial-analyzer**: at
-  the full 200-epoch tier, a zero-blend on helmholtz specifically would
-  still be plausible-rational (helmholtz's best floor IS the zero
-  predictor historically) — only treat a zero-collapse as a live concern
-  again if it appears on any OTHER dataset. This closes the item this
-  maintainer flagged with independent artifact verification (direct numpy
-  load of the `.npz`, `max(abs(pred)) == 0.0`) two walks ago — no further
-  action needed from this maintainer or Eloise on this item.
-- **`r2s3_lf_train_signal` B4-or-close resolved this run: card B4**
-  (`brainstormer/r2s3_lf_train_signal/batch_4/report.md`). Decision: a
-  training-free (`epochs=0`, no GPU), single-run diagnostic — new probe
-  family `models_r2/r2s3_b4_substitution/` — that measures how much of
-  B3's certified ±LF effect is absorbed by an achievable LF-free control
-  class (raw/global/ridge/kNN-calibrated heads, plus reference floors) vs
-  test-fitted ceilings, reading only B3's shipped leg JSONs and
-  `*_preds.npz` dumps (never opens an LF field). Motivated by B3 part 7's
-  open question about whether the round's affirmative LF-value evidence
-  reduces to an output-calibration trick. Decisive pre-flight inputs:
-  B3's `ifc_poisson` leg is 77.9% reproducible by an LF-free control
-  already computed inside B3's own leg JSONs, and `fisher_kpp`'s LF arm
-  loses to its own `train_mean_n5` floor on all three draws — closing on
-  B3 as-is would leave the round's central claim overstated by its own
-  artifacts. Worktree `worktrees/r2s3_lf_train_signal/B4` exists
-  (scaffolding only). **Update from this run's final re-check (caught after
-  the first pass of this file was drafted)**: the starter turned the
-  decision into an actual card, `experiment_cards/r2s3_lf_train_signal/batch_4/B4.json`
-  (`status: drafted`, `job_ids: []`), content matching the brainstormer
-  report verbatim — builder step not yet observed.
-- **`r2s4_diag` B4 websearch complete this run**: `websearches/r2s4_diag/batch_4/`
-  gained iterations 2-5 + `report.md` (up from summary-only at the prior
-  close). Frames an "anatomy card open in composition" — the §12.4
-  ifc_poisson N_hf∈{5,20,50} anatomy diagnostic remains reachable — plus
-  an equivalence-test remedy for the stream's claimability protocol. Feeds
-  the B4 brainstormer, which is **still running** at this run's close
-  (only `summary_so_far.md` present, no `iteration_1.md`/`report.md` yet);
-  decision not yet made, to be picked up next walk. `state/r2s4_diag/current_stage.txt`
-  has not yet been refreshed to reflect the in-progress B4 brainstormer.
+- **`r2s2_stacked-B3` went `drafted` -> `built` — caught mid-walk during
+  the pre-return checklist re-verification** (same class of catch as
+  prior runs). First pass (`git status` at ~19:06Z) found the round root
+  clean with the card still `drafted`; the pre-return re-check
+  (~19:13Z) found `experiment_cards/r2s2_stacked/batch_3/B3.json`
+  modified, card mtime 2026-08-01T19:13:40Z. Build: family
+  `models_r2/r2s2_zerograd` on branch `round2/exp-r2s2_stacked-B3`,
+  commit `86ef67cc` (forked from `round2-substrate` `9e10d41`); 8 files
+  re-vendored byte-identically from the sibling B2 worktree, each
+  sha256-pinned in `manifest.json._vendored`. Contract smoke on
+  `ext__helmholtz_2d` (2 epochs) PASSED: exit 0, `splits.test_hf`
+  nRMSE 1.4487706717896234, skill 4.844847851928688, committed-tree
+  `code_hash` verified byte-identical to the smoke result's recorded
+  hash. Pre-flight instruments recorded a genuine conflict on `pfc`
+  between `target_scale_spread_audit` (NEAR_ZERO_TARGETS -> switch to
+  per-sample normalisation) and `persample_norm_eligibility`
+  (NO_GO_PROMOTES_NOISE) — implemented per the card's literal rule
+  (target-scale verdict governs) and stamped `conflict_with_eligibility`
+  on every affected record rather than silently resolved; the switch
+  only touches arms A2/A3, never the scored zero-gradient `A1_lsi` arm,
+  so no scored number depends on it. A TIMING RISK is flagged in
+  `build_notes`: the 2-epoch single-dataset contract smoke took 51m44s
+  wall on a contended login node (CPU-bound k-NN retrieval + rFFT
+  transfer over 400x256x256 float64 blocks); `scripts/01_train_eval.sh`
+  still requests `--time 02:30:00` per the card's own `_timing`
+  estimate, sized against B2's much faster 33.58 min for fewer corrector
+  trainings — worth a debugger's attention before the first submit.
+  `job_ids` still empty — no SLURM submission observed yet as of this
+  run's close.
+- **`r2s4_diag-B4` card landed this run — first-time §12.4 fact recorded**.
+  The program.md §12.4 exception card (WITH training, `epochs: 200`,
+  strict 1 seed) — the stream's last live route to round success-
+  criterion-1. Its part 2 records, transcribed verbatim from the
+  brainstormer's source iteration (`brainstormer/r2s4_diag/batch_4/iteration_1.md`,
+  "Step 3 — What can the {5, 20, 50} mandate actually mean here?"), that
+  §12.4's literal `N_hf ∈ {5, 20, 50}` sweep is **unexecutable** on
+  `ifc_poisson`: there is no 20-row or 50-row 64×64 training set on disk
+  (`fidelity_32` has 20 rows at 32×32, `fidelity_16` has 50 rows at
+  16×16, independently-drawn conditions each); manufacturing one is
+  barred by immutables 1 and 11. The card re-expresses the mandate as two
+  measurable halves instead: an exhaustive HF-subset learning curve
+  (all `C(5,n)` subsets, n∈{1..5}) on the scored `fidelity_64` rung, and
+  a within-rung generalisation-gap ladder across the 4 independent rungs
+  with no cross-rung training. A pre-registered equivalence bound
+  (certified ifc `min_claimable_effect` 0.9377041289531141; O1 EFFECT /
+  O2 EQUIVALENCE / O3 INCONCLUSIVE, Harms & Lakens PubMed 30873486)
+  governs the primary estimand `Delta_5_1`. Worktree
+  `worktrees/r2s4_diag/B4` created (fresh scaffolding only) — builder not
+  yet dispatched as of this run's close.
+- **`r2s3_lf_train_signal-B4` builder actively landing files this run —
+  second first-time fact recorded**. `worktrees/r2s3_lf_train_signal/B4/models_r2/r2s3_b4_substitution/`
+  gained `controls.py` and `readings.py` since the prior close, joining
+  `manifest.json`/`paths.py`/`lf_guard.py`/`heads.py` (all within this
+  run's window). Training-free (`epochs: 0`, no GPU) substitution-audit
+  diagnostic. Its `expected_falsification` section is a fully
+  pre-registered outcome table (every comparator number measured, not
+  merely predicted, in the brainstormer's pre-flight from B3's shipped
+  artifacts) whose rule is "fewer than 2 of {ifc, ch, ac} keep an LF
+  advantage over the best achievable LF-free control above their
+  certified min_claimable_effect on every draw" — meaning the stream's
+  B4-vs-close call now resolves **mechanically** off this 2-of-3
+  threshold once the card's arms are scored, rather than requiring a
+  fresh subjective brainstormer judgment. Net predicted finding already
+  on the card: achievable-gated claimable set `{ch 113x, ac 26.8x,
+  ifc 1.41x}` (fk retires); ceiling-gated claimable set `{ch}` only.
+- **`r2s2_stacked-B3` builder still in its smoke-fix loop**: card
+  unchanged (`drafted`, `build_commit: null`, `job_ids: []`). No new
+  `.py` source files in `models_r2/r2s2_zerograd/` since the prior
+  close, but a live checkpoint write was caught mid-walk
+  (`eval/results/r2s2_zerograd/ckpt_ext__helmholtz_2d_e2_s0/last.pt`,
+  mtime essentially real-time at the check) — confirms an active
+  contract-smoke run in progress, not a stalled process.
 - **Job 66262741 (r2s1_direct-B3, seed 0)**: confirmed via both `squeue`
   and `sacct` — still **PENDING**, Priority-queued, unchanged since the
   prior run's close.
-- **Round-level instrument-defect pattern (carried forward, now 7
-  independent confirmations, no new occurrence this run)**: the prior 7
-  (`r2s1_direct`'s post-hoc-blend-stage class — now itself adjudicated
-  non-defective this run, see above; `r2s2_stacked-B2`'s statistic
-  mis-specification; `r2s4_diag-B3` turn-2's mis-specified
-  `advantage_reachable`, turn-3's self-corrected probe-ordering bug;
-  `r2s3_lf_train_signal-B3`'s resolved knife-edge; `r2s4_diag-B3`
-  register-turn's ceiling/contamination/row-count triad and its
-  foreign-data `stage_blend_decoder` zero-field catch) — worth folding
-  into the round-report action item once the round closes.
+- **Staleness (renewed this run, on both remaining B4-active streams)**:
+  `state/r2s3_lf_train_signal/current_batch.txt` and
+  `state/r2s4_diag/current_batch.txt` both still read "3" despite both
+  streams now having drafted B4 cards; both streams' `current_stage.txt`
+  files still read their B3-complete/close-decision text, not yet
+  refreshed for the B4 cards' existence. Orchestrator-owned staleness,
+  consistent with the pattern flagged in prior walks.
+- **Round-level instrument-defect pattern (carried forward, 7
+  independent confirmations, no new occurrence this run)**: `r2s1_direct`'s
+  post-hoc-blend-stage class (adjudicated non-defective);
+  `r2s2_stacked-B2`'s statistic mis-specification; `r2s4_diag-B3`
+  turn-2's mis-specified `advantage_reachable`, turn-3's self-corrected
+  probe-ordering bug; `r2s3_lf_train_signal-B3`'s resolved knife-edge;
+  `r2s4_diag-B3` register-turn's ceiling/contamination/row-count triad
+  and its foreign-data `stage_blend_decoder` zero-field catch — worth
+  folding into the round-report action item once the round closes.
+- **`r2s1_direct-B3`'s `stage_blend_decoder` zero-field item — remains
+  ADJUDICATED, defect ruled OUT** (unchanged from 2 walks ago). The
+  smoke `stage_blend_decoder` zero-field prediction on
+  `ext__helmholtz_2d` is rational selection (per-sample rel-L2 exactly
+  1.0, blend `cal_table` shows every base+decoder worse than nRMSE 1.0
+  at 2-epoch smoke on helmholtz, same code path healthy on
+  ifc_poisson). Standing note preserved for the initial-analyzer at
+  full 200-epoch tier. No further action needed.
 - **Timing ledger**: unchanged this run — 16 entries, still parseable
   JSON. `r2s1_direct-B3`'s job 66262741 remains PENDING, not COMPLETED —
   no upsert due yet.
@@ -165,18 +212,20 @@ not listed here.
 - **Round-1 top-3 seed confirms**: NOT this maintainer's scope (round-1
   jobs visible in `squeue` as `r1-*` historically; none currently queued) —
   separate round, separate report.
-- No reopen candidates on any of the 12 cards. No `blocked.md` file exists
+- No reopen candidates on any of the 14 cards. No `blocked.md` file exists
   (no stream has ever blocked). **No abandoned streams** — none qualify
   (all 4 streams show clean complete/drafted/running progressions with no
   skip/block history anywhere). `state/streams/` directory still does not
   exist — consistent with no abandonments ever being needed.
-- Repo hygiene: `git status --short .` on the round root (excluding
-  `worktrees/`) at this run's close: `brainstormer/r2s3_lf_train_signal/batch_4/iteration_1.md`,
-  `brainstormer/r2s3_lf_train_signal/batch_4/preflight_gain_probe.py`,
-  `brainstormer/r2s3_lf_train_signal/batch_4/report.md` (all ?? —
-  brainstormer-owned, new this run), `brainstormer/r2s4_diag/batch_4/`
-  (?? — brainstormer-owned, in-progress, new this run). This maintainer's
-  own writes this run: `index.md`, `state/maintainer_report.md`. No Write
-  call this run touched `experiment_cards/`, `tools/`, or any other-agent-
-  owned `state/` file. `state/timing_ledger.json` untouched (no COMPLETED
-  job to upsert yet — gitignored regardless).
+- Repo hygiene, final re-check: `git status --short` on the round root
+  at close shows one delta — `experiment_cards/r2s2_stacked/batch_3/B3.json`
+  (M — builder-owned, caught mid-walk, see Flags above; not yet
+  committed by the external auto-sync as of this check). Earlier in the
+  run an external auto-sync process (commit `a3f28ef`, "round2:
+  auto-sync 2026-08-01T19:01:39Z") had already committed the B4-related
+  deltas before this run's first check. This maintainer's own writes
+  this run: `index.md` (rewritten again to capture the mid-walk catch),
+  `state/maintainer_report.md`. No Write call this run touched
+  `experiment_cards/`, `tools/`, or any other-agent-owned `state/` file.
+  `state/timing_ledger.json` unchanged (no COMPLETED job to upsert yet —
+  gitignored regardless).
