@@ -560,3 +560,54 @@
   the unpublished composition; D2 selection preempted (gating open); mean-of-ratios artifact
   must be presented PROJECT-LOCAL. -> B3 brainstormer dispatched (strict-1-seed operator
   note included per Eloise's structure question).
+
+- 2026-08-01 ~10:0x PDT r2s1-B2 initial-analyzer SUCCESS (6/6): FALSIFIED (L1 2/5: allen_cahn
+  +6.15=7x mce, ch +1.30=14x mce vs in-job decoder; L2 4.7x, every resample >4x) — B1's
+  "capacity buys nothing" OVERTURNED on ch (advantage grew 0.55->1.30; no rank rescues;
+  band-3 gain pinned on grid edge as B1 reviewer predicted). L3/L4 not fired (floors beaten
+  everywhere; selection rule vindicated on distinguishable cells). pfc/fisher = dead cells
+  (all arms collapse to dc_only). geomean 18.3622 (informational). -> mechanism-analyzer
+  dispatched (real-capacity characterization on ch is THE question).
+
+- 2026-08-01 ~10:3x PDT r2s3-B2 mechanism turn 3 (6/6): ch three-channel anatomy — 68.3% of
+  A0-A2 gap = the 15 unseeable affine directions (coverage-of-design fact, not curriculum:
+  A3's pool leaves design rank BIT-IDENTICAL while fields differ 0.398); LF calibrates
+  amplitude but does NOT teach direction on ch; dimension control shows "condition-response
+  repair" not "null-aligned defect". Part 6 written incl. all 4 postmortem items; M5:
+  A0-vs-A1 COVERAGE CONTRAST is the claimable deliverable (ifc +5.97, ch +17.44), A2
+  reported beside as pre-registered-mechanism-that-failed. -> register turn dispatched.
+
+- 2026-08-01 ~11:0x PDT r2s4-B3 brainstormer SUCCESS (10/10): D1 teacher-projection ledger
+  (advantage_reachable/unreachable split, OOF-target two-level folds — vacuity-proofed);
+  STRICT 1-SEED argued via 5-fold paired deltas + imported B2 spread (no §12.4 exception —
+  per operator structure preference); B2's non-implementable test-side phrasing FIXED
+  (measured on held-out train per §5.9); free test-split distillation contrast; ch predicted
+  the one reachable-component dataset (2nd test of support rule). 184 legs, ~60-110 min.
+  -> starter dispatched.
+
+- 2026-08-01 ~11:3x PDT r2s4-B3 starter SUCCESS (12/12): B3.json drafted, no TBDs, strict
+  1-seed (no seeds-2-3 leg). -> builder dispatched.
+
+- 2026-08-01 ~11:5x PDT r2s1-B2 mechanism turn 1 (7/7): ch L2 deficit >=40% = SELECTION-RULE
+  ARITY BUG (rule kept cardinality, fitted window {0,1,2,3} vs identifiable SET {0,1,12,13};
+  modes 12-13 = 43-47% DC energy; set-head DC cos 0.9948 vs window 0.0593; recovers 0.513 =
+  5.6x mce non-oracle). Band-3 pinning = calibration overfit (Wiener stage COST 0.098 test;
+  oracle band headroom only 1.0x mce). Basis NOT bottleneck (decoder worse than oracle
+  rank-2; edge = coefficient accuracy). Non-contiguous identifiable sets on 3/6 datasets.
+  Residual 0.784 = coefficient-map question. -> turn 2 dispatched.
+
+- 2026-08-01 ~12:3x PDT r2s2-B2 mechanism turn 2 (6/6): F3 surviving firings = ESTIMATOR BIAS
+  (intermediate sigma(cond)-measurable -> true statistic 0 by DPI; zero-information control
+  reproduces firings to <=0.005; excess anti-correlates with conditioner residual -0.560);
+  F2 = endpoint comparison (interior k beats both ends 4/4; job's k* already interior).
+  ALL THREE fired clauses now traced to statistic defects. Real lead: training-free
+  interior-k LF average beats trained corrector on ac/ch. -> turn 3 dispatched (part 6:
+  card falsified its own instruments; calibration deliverable = centred repair + artifact
+  taxonomy).
+
+- 2026-08-01 ~13:0x PDT r2s3-B2 COMPLETE (register 5/5; disk-verified; 2 tools promoted —
+  identifiability/coverage family now SIX instruments with standing relationship note).
+  Part 7: penalty family dead on ifc, inverted premise on ch (amplitude-corrected A1' =
+  the one live question, needs training); B3 = measurement-completion card (ch draws 1-2 +
+  coverage-audited extension) with explicit close-on-B2 fallback if timing forces.
+  SIXTH CARD CLOSED. -> B3 websearcher dispatched (batch counter -> 3).

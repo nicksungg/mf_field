@@ -66,6 +66,8 @@ tool: name, what it measures, invocation, provenance card.
 | `ladder_pair_alignment_audit.py` | ROUND-2: are the fidelity rungs PAIRED BY CONDITION or only by ROW INDEX? training-free pre-flight for every `lf = lf[:n_hf]` construction (copy-LF reference, aux LF target, LF teacher input, residual target): paired-vs-nearest condition distance, fraction of rows paired to their nearest, and the disjoint-condition SUPPLY count the truncation discards; `--fail-on` makes it a build gate | r2s4_diag-B2 turn 2 |
 | `shrinkage_curve_anatomy.py` | ROUND-2: decomposes any shipped shrinkage curve into its LEVEL (own-mean broadcast) and its FLUCTUATION (condition response: amplitude, effective alignment, λ_opt), and reports whether an arm contrast SIGN-FLIPS between the two — schema-free curve discovery, works on any card that ships `grid` + `*_curve` | r2s4_diag-B2 turns 2-3 |
 | `condition_predictability_ceiling_fast.py` | ROUND-2: `condition_predictability_ceiling.py` with a float32 / capped-pair estimator path (imports the frozen tool unmodified; same schema), plus a `--validate` mode that runs BOTH paths and prints the difference. Use when the exact path will not finish inside a turn budget | r2s4_diag-B2 turn 1 |
+| `null_family_ceiling_audit.py` | ROUND-2: where does a shipped arm's error live relative to what its HF training rows could constrain? the m-generalised ORACLE ceiling over the NULL family of affine functionals that vanish at every training condition, the complementary ROW family and the full affine family, each with a mandatory RANDOM m-dim subspace control (`null_over_random`), plus the implicit-law null-block amplitude/cosine and an optional LEVEL channel — the three-channel decomposition of an arm-vs-arm gap | r2s3_lf_train_signal-B2 turn 3 |
+| `design_coverage_audit.py` | ROUND-2: does this LF pool ADD DESIGN ROWS or only replicate the HF conditions? per rung, rank / null dimension / singular values of `[X,1]` for the HF training rows, the PAIRED pool, the FULL pool and their union, covered-vs-uncovered condition counts, `m_reduction_paired` vs `m_reduction_full`, and (`--fields`) the lifted-LF-vs-HF discrepancy at the covered conditions that decides whether a paired LF target is CONTRADICTORY | r2s3_lf_train_signal-B2 turn 3 |
 
 ---
 
@@ -2629,3 +2631,199 @@ script on the same split.
 (`loo_knn_curve_fast` / `pair_extrapolation_fast`, validation artefact
 `scratchpad/t1_fast_helmholtz_validation.json`); the estimators are
 r2s4_diag-B1's (card part 6, T2-F1...T2-F6).
+
+---
+
+## `null_family_ceiling_audit.py`  *(round 2)*
+
+**Measures.** For one or more shipped arms (predictions only — training-free, no
+checkpoint surgery), where their test error lives relative to what their HF
+TRAINING rows could ever have constrained. With `[X_hf, 1]` of rank `r` and null
+dimension `m = d + 1 - r`, every affine functional in that null space vanishes at
+ALL training conditions, so an ORACLE may edit a prediction along it without
+touching a single training-row fit. Per arm: raw skill; the ORACLE ceiling over
+the `m`-dim **NULL** family, over the complementary `r`-dim **ROW** family and
+over the full `(d+1)`-dim **AFFINE** family, reported as `error_null_borne` /
+`error_row_borne` / `error_affine_borne`; a mandatory **random `m`-dim subspace
+control** (`null_over_random`); the arm's **implicit affine law** (fitted on its
+own test predictions) split into the same two blocks and compared with the ORACLE
+(test-fitted) law — null-block amplitude ratio, Frobenius cosine, row-block
+rel-L2, non-affinity; and with `--level` the third channel (own mean field
+swapped for the HF-train mean / lifted LF-rung means / the N-selected-row mean /
+the ORACLE test mean). `--contrast A:B` attributes an already-measured arm gap to
+the three channels.
+
+**Why the random control is not optional.** An `m`-dim oracle edit is powerful by
+DIMENSION alone: on `sharp__cahn_hilliard` (m = 15 of 20) the null family removes
+0.89-1.05x what a random 15-dim subspace of the same affine family removes, so
+the honest statement there is "LF coverage repairs the whole condition response,
+of which 15 directions happen to be unreachable", not "the defect is
+null-ALIGNED". On the exactly-affine `ifc_poisson` (m = 1 of 6) the same ratio is
+**17.9x** for the no-LF arm. Reporting a null-family ceiling without this control
+turns arithmetic into a mechanism claim.
+
+**Read it as.** `null_over_random >> 1` -> the arm's error really is concentrated
+in the directions its rows could not see: an identifiability problem, and only
+new CONDITIONS (LF rows elsewhere, `design_coverage_audit.py`) can fix it.
+`null_over_random ~ 1` -> isotropic error; read the level/row channels and treat
+"null" as a dimension count, not a diagnosis. Implicit-law null block with
+`recovery_ratio >> 1` and `cos < 0` -> confident wrong-way extrapolation in the
+unseeable subspace (worse than a min-norm solution, which puts zero there);
+`ratio ~ 1` at `cos ~ 0` -> the arm was merely stopped from inventing a large
+wrong component — calibration, not direction transfer; `ratio ~ 1` at `cos ~ +1`
+-> genuine direction supply. `m = 0` -> the null half is identically zero by
+construction and the tool prints the note; run with `--level`, because that is
+where a value-of-LF effect can still live (r2s3-B2 turn 2: 77 % of the
+`sharp__fisher_kpp_2d` effect).
+
+**Invoke.**
+```bash
+source "$PROJECT_ROOT/.venv/bin/activate"
+python tools/null_family_ceiling_audit.py --dataset sharp__cahn_hilliard \
+    --arm A0_nolf=<outputs>/results_ch_A0_s0/<family>/<ds>_e200_s0_preds.npz \
+    --arm A2_lf_cov_null=<outputs>/results_ch_A2_s0/<family>/<ds>_e200_s0_preds.npz \
+    --contrast A0_nolf:A2_lf_cov_null --level --out ceilings.json
+```
+`--arm NAME=path[:key]` repeatable (`.npy` or `.npz:key`, default key
+`pred_test`; `(N,H,W)` or `(N,n_cells)`). The HF design comes from the first
+arm's `cond_hf_train_raw` unless `--hf_cond path[:key]` / `--hf_rows i,j,...`.
+Knobs: `--n_random` (default 5), `--seed`, `--rank_tol`, `--max_test`,
+`--skill_denominator`, `--data_root`. Pure numpy (torch only inside the shared
+rung loader). 114 s on `sharp__cahn_hilliard` (4 arms, 100 x 256^2, `--level`),
+13 s on `sharp__fisher_kpp_2d`, 4 s on `ifc_poisson`.
+
+**Verified.** Run 2026-08-01 from `round2/` on r2s3-B2's shipped dumps (outputs
+kept at `worktrees/r2s3_lf_train_signal/B2/scratchpad/register_toolcheck_nullfamily_{ch,ifc,fk}.json`).
+`sharp__cahn_hilliard` draw 0, m = 15: null-borne error A0_nolf **12.136507**,
+A1_lf_cov **0.365526**, A2_lf_cov_null **0.703992**, A3_lf_paired **12.746983**;
+row-borne 6.916788 / 0.092938 / 0.225536 / 7.615289; `null_over_random` 0.930 /
+0.892 / 1.048 / 0.896; implicit-law null-block ratios 2.1053 / 0.8861 / 0.9925 /
+2.7215 at cos -0.4033 / +0.2172 / +0.0463 / -0.3311; level swap
+30.0783 -> 26.2729 (HF-train mean) and 26.27297 (LF rung-1 mean); contrast
+A0-A2 gap 16.735753 = 68.3 % null-borne / 40.0 % row-borne / 22.7 % level. Every
+one of these matches the source probe (turn 3 T3.3-T3.6, T3.9) to <= 3e-14 — the
+tool builds the null basis by SVD of the design where the probe read it from the
+family's gate report, so the subspace, and the ceiling, are the same object.
+`ifc_poisson` m = 1: null-borne 3.598827 / 0.038837 / 0.665357 / -1.305000
+reproduces turn 1d exactly, `null_over_random` **17.877** (A0) vs 0.047 (A1), and
+the coordinate-free `A0-A1` contrast is **59.7 %** null-borne — the tool-native
+version of turn 1's 57-60 % direction-supply share. `sharp__fisher_kpp_2d` m = 0:
+null columns empty as designed, level references `hf_train_mean_full` 11.993111,
+`lf_rung2_mean_lifted` 11.991433, `hf_train_mean_n_selected` 13.162407 and the
+A0 level swap 16.9436 -> 16.0546, all identical to turn 2 T2.3-T2.5.
+
+**Provenance.** `worktrees/r2s3_lf_train_signal/B2/scratchpad/reanalysis_turn_3.py`
+(functional ceilings, level ladder, three-channel contrasts),
+`.../reanalysis_turn_3b.py` (blocks 2-3: dimension control, implicit-law null
+block) and `.../reanalysis_turn_1d.py` (the m = 1 original); card
+`experiment_cards/r2s3_lf_train_signal/batch_2/B2.json` part 6, findings 2/3/7/8/9
+and interpretations M1/M2.
+
+---
+
+## `design_coverage_audit.py`  *(round 2)*
+
+**Measures.** Training-free, from condition vectors alone (seconds; fields only
+under `--fields`): whether an LF pool changes the AFFINE IDENTIFIABILITY of the
+HF training design. Per LF rung — rank, null dimension `m` and singular values of
+`[X, 1]` for (a) the HF training rows actually used, (b) the **paired** pool (LF
+rows at exactly those conditions), (c) the **full** pool, (d) the union of (a)
+and (c); the covered / uncovered condition counts (the disjoint SUPPLY);
+`m_reduction_paired` vs `m_reduction_full`; a
+`paired_pool_singular_values_identical_to_hf` flag; and with `--fields` the
+lifted-LF-vs-HF rel-L2 (per condition, mean, max) and cosine at the covered
+conditions. Verdicts per rung: `FULL_POOL_COMPLETES` / `FULL_POOL_REDUCES_DEFICIT`
+/ `PAIRED_POOL_ADDS_NO_RANK` / `NO_DEFICIT_TO_FIX` / `POOL_LEAVES_DEFICIT`, plus
+`CONTRADICTORY_PAIRED_TARGET` and `DISJOINT_DESIGN_NO_COVERED_CONDITIONS`.
+
+**Why.** LF budget is a design choice before it is an architecture choice. LF rows
+at conditions that already carry an HF row cannot reduce `m` — they span the same
+row space, and r2s3-B2 verified the singular values are bit-identical — so a
+"curriculum"/paired arm has zero access to the deficient subspace; and where the
+coarse solve is a genuinely different field rather than a blurred one, those rows
+are a CONTRADICTORY target on exactly the rows the HF loss supervises
+(`sharp__cahn_hilliard` rung 1: mean rel-L2 0.398, one condition 1.398 — a
+different phase-separation morphology). That arm finished 0.83 skill units WORSE
+than training with no LF at all. The transportable rule the tool operationalises:
+spend the LF budget on NEW CONDITIONS.
+
+**Read it as.** `m_reduction_paired = 0` with `m_reduction_full > 0` -> the value
+of the pool is coverage, and any ablation that pairs LF to the HF rows is testing
+nothing (it is the no-LF control plus noise). `NO_DEFICIT_TO_FIX` (m = 0) -> no
+identifiability story is available on this dataset; look at the level channel
+(`null_family_ceiling_audit.py --level`). `CONTRADICTORY_PAIRED_TARGET` -> do not
+build an `hf - lf` residual target, an LF-teacher loss or a paired auxiliary loss
+at that rung; the rung is not a blurred HF. `DISJOINT_DESIGN_NO_COVERED_CONDITIONS`
+-> a paired arm is not even definable (ifc_poisson).
+
+**Complements, does not duplicate.** Four axes, run what you need:
+`ladder_pair_alignment_audit.py` (r2s4-B2) — are the rungs paired by CONDITION or
+only by ROW INDEX, and what does `lf[:n_hf]` discard; **this tool** — given the
+pairing, does the pool change the design's RANK / null dimension, and is a paired
+LF field a contradictory target; `affine_ladder_voi.py` (r2s3-B1) — the same
+deficiency priced in SKILL units with the fields (law energy in the null space,
+what each rung recovers, the HF-only information limit);
+`null_family_ceiling_audit.py` (this card) — where a TRAINED arm's error actually
+sits with respect to that null space. The field-basis and model-output axes are
+`condition_identifiable_rank.py` (r2s1-B1) and `reachable_set_rank_audit.py`
+(r2s2-B1).
+
+**Invoke.**
+```bash
+source "$PROJECT_ROOT/.venv/bin/activate"
+python tools/design_coverage_audit.py --dataset sharp__cahn_hilliard \
+    --hf_rows_from <outputs>/results_ch_A3_s0/<family>/<ds>_e200_s0_preds.npz \
+    --fields --out coverage_ch.json
+python tools/design_coverage_audit.py --dataset ifc_poisson        # whole HF split
+```
+`--hf_rows_from path[:key]` (default key `selected_train_rows`) or
+`--hf_rows i,j,...`; default is the whole HF train split. Knobs:
+`--max_covered_scored` (25), `--contradiction_tol` (0.2), `--match_decimals`
+(12), `--rank_tol`, `--data_root`. Without `--fields` it never loads a field
+upsample: 2.4 s on `ifc_poisson`, 5.0 s with fields on `sharp__fisher_kpp_2d`,
+12.8 s with fields on `sharp__cahn_hilliard`.
+
+**Verified.** Run 2026-08-01 from `round2/` (outputs kept at
+`worktrees/r2s3_lf_train_signal/B2/scratchpad/register_toolcheck_coverage_{ch,ifc,fk,fk_all}.json`).
+`sharp__cahn_hilliard` on the A3 arm's own 5 training rows: HF design rank **5**
+of 20, m = **15**, singular values 3.940326/3.026555/2.578849/2.059855/1.655111;
+both rungs' paired pools rank 5, m 15, singular values identical (flag `true`),
+`m_reduction_paired` **0** vs `m_reduction_full` **15**; covered-condition rel-L2
+**0.398227** (max **1.398046**, cos 0.8061) at rung 1 and **0.053** at rung 2 ->
+`FULL_POOL_COMPLETES+CONTRADICTORY_PAIRED_TARGET` / `FULL_POOL_COMPLETES`. All
+identical to turn 3 T3.7/T3.8. `ifc_poisson`: rank 5/6, m = 1, **0** covered
+conditions at every rung with 100/50/20 uncovered LF rows — matching
+`affine_ladder_voi`'s verified overlap counts and
+`ladder_pair_alignment_audit`'s 170 disjoint rows. `sharp__fisher_kpp_2d`:
+m = **0** (`NO_DEFICIT_TO_FIX`), and over the whole HF split the covered-condition
+discrepancy is 0.1676 / 0.0615, reproducing turn 3b's cross-dataset block
+exactly; restricted to the arm's 5 training rows the same statistic is
+0.1703 / 0.0625 — the number is sample-set dependent, so quote the row set.
+
+**Provenance.** `worktrees/r2s3_lf_train_signal/B2/scratchpad/reanalysis_turn_3b.py`
+blocks (1) and (4), plus `.../reanalysis_turn_3.py`'s
+`lf_vs_hf_discrepancy_at_covered_conditions`; card
+`experiment_cards/r2s3_lf_train_signal/batch_2/B2.json` part 6, findings 10/12
+and interpretation M3.
+
+---
+
+## Standing note the identifiability / coverage family encodes
+
+`condition_identifiable_rank.py` (field basis), `affine_ladder_voi.py`
+(condition-side design, priced in skill), `reachable_set_rank_audit.py` (model
+output family), `ladder_pair_alignment_audit.py` (rung pairing),
+`design_coverage_audit.py` (does the LF pool change the design's rank) and
+`null_family_ceiling_audit.py` (where a trained arm's error sits w.r.t. that
+design) are six views of one question — *what could these rows have determined,
+and did the model get it?* Two shared limitations. (1) They all take the AFFINE
+model of `cond -> field` seriously; that is exact on `ifc_poisson` (affine-LOO
+3.2e-08) and only half true on the sharp datasets (rung LOO ~0.54 on
+`sharp__cahn_hilliard`), where "null-borne error" is a localisation, not an
+accounting identity — which is exactly what
+`null_family_ceiling_audit`'s random-subspace control exists to expose. (2) They
+assume the round-2 setting `N_hf` small: with hundreds of HF training rows the
+design is full rank, `m = 0`, and the null halves return empty by construction
+(not a bug — see `NO_DEFICIT_TO_FIX`). Every `_ORACLE` key in either new tool is
+fitted on the test split and is a CEILING; only DIFFERENCES between two arms'
+ceilings are quotable, and never as an arm score.
