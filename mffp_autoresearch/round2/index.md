@@ -1,35 +1,37 @@
-# MFFP Autoresearch Round 2 — Dashboard (updated 2026-08-01T01:00:28Z)
+# MFFP Autoresearch Round 2 — Dashboard (updated 2026-08-01T01:17:18Z)
 
 ## Streams
 
 | Stream | Anchor (skill) | Current batch | Card | Status | Jobs | Last change |
 |---|---|---|---|---|---|---|
-| r2s1_direct | 23.0636 (best_floor_panel_geomean) | **3** | r2s1_direct-B1 **complete**; r2s1_direct-B2 **complete** | **B1: unchanged, still COMPLETE.** **B2: `analyzing` -> `complete` this run** (register turn landed 8/8, seventh card closed). `falsification_verdict: falsified` — H-r2s1-B2 (training-free ~10^2-param closed-form head matches a 10^7-param decoder everywhere, incl. cahn_hilliard) is FALSIFIED: **L1 fires** (loses to the in-job Wiener-calibrated `ref_decoder_big` by >mce on 2/5 decidable cells: `sharp__allen_cahn_2d` +6.151 skill/6.99x mce, `sharp__cahn_hilliard` +1.296 skill/14.21x mce), **L2 fires** (cahn_hilliard gap 4.74x the L2 threshold = 14.21x mce, stable across all 5 fold-resamples, no rank in the sweep rescues it), L3/L4 do not fire (clears every training-free floor; selection rule beats its own alternative on only 1/6 datasets). Panel geomean 18.3622 — single-seed, **no falsification weight** (card's own disclaimer), vs anchor -20% (not a claim) and vs B1 -1.2822 (1.12x the min_claimable_effect — **not claimable**). `anchor_updated: false`. 2 tools promoted (`blend_decorrelation_payoff.py`, `selection_set_vs_window_audit.py`). Part 7 flags a round-level **post-hoc-blend-stage instrument-error class** as prerequisite to any further capacity claim. Stream advanced to **batch 3**: B3 websearcher dispatched (B3-or-close decision deferred to the brainstormer), `websearches/r2s1_direct/batch_3/` created but empty at this check (no `iteration_1.md` yet) | **0 live SLURM** (both seed-0 jobs terminal, unchanged); 0 live local processes for this stream at this check | `r2s1_direct-B2` register-turn completion (7th card closed); stream advanced to batch 3, B3 websearcher dispatched |
-| r2s2_stacked | 23.0636 (best_floor_panel_geomean) | **2** | r2s2_stacked-B1 **complete**; r2s2_stacked-B2 **analyzing** | **B1: unchanged, still COMPLETE.** **B2: no card-content delta this run** (still `reanalysis_progress: turn_2`, `6_analysis: null` — write-ordering lag persists, now spanning 3 checks). Landed-so-far (per `orchestrator_flow.md`, not yet on-card): turn 1 traced F1 to a statistic mis-specification (centred repair flips `B:all`'s gamma to 0.99-1.00, F1 fires on 0 cells); turn 2 traced the 2 surviving F3 cells to ESTIMATOR BIAS (zero-information control reproduces the firings to <=0.005) and F2 to an endpoint-comparison artifact — all three fired falsification clauses now traced to statistic/instrument defects, not a real model deficiency; candidate real lead flagged (a training-free interior-k LF average beats the trained corrector on allen_cahn/cahn_hilliard). **Turn-3 mechanism script confirmed live and progressing this run** (PID 232585, a fresh per-dataset loop invocation; `cahn_hilliard` and `phase_field_crystal_2d` legs already wrote outputs, now on the `fisher_kpp` leg 3/4, `allen_cahn` remaining) | 0 live SLURM (both legs terminal, unchanged); **1 live local process** (turn-3 mechanism script, PID 232585, leg 3/4) | No card-content delta; turn-3 script progressing (2/4 dataset legs written this run) |
-| r2s3_lf_train_signal | 23.0636 (best_floor_panel_geomean) | **3** | r2s3_lf_train_signal-B1 **complete**; r2s3_lf_train_signal-B2 **complete**; r2s3_lf_train_signal-B3 **drafted** | **B1/B2: unchanged this run, both still COMPLETE.** **B3.json newly created this run** (mtime inside this run's window; captured by a mid-run auto-sync commit `5c40c02`): starter landed 15/15 — a 33-leg **measurement-completion** model card (`models_r2/r2s3_coverage_panel`, all 6 panel datasets, A0-vs-A1 matched-budget ±LF contrast, 3 draws/dataset, the cratering-avoidance penalty deleted). Close-on-B2 explicitly considered and rejected (4 grounds, incl. r2s4-B2's target-side null making this the only live criterion-1 route). **Builder now running** — mandatory contract-smoke evidence in progress (PID 234088, `ext__helmholtz_2d`, epochs=2); family files on disk (`model.py`, `affine_probe.py`, `lf_reference.py`, `refs.py`), no `scripts/` or git commit yet | **0 live SLURM** (seed-0 jobs from B1/B2 terminal, unchanged; B3 not yet built to a submittable state); **1 live local process** (B3 builder contract-smoke run, PID 234088) | New: `r2s3_lf_train_signal-B3.json` drafted (33-leg measurement-completion card); builder dispatched and running |
-| r2s4_diag | **19.8178** (certified_3seed_panel_geomean, CI95 [19.385, 20.527]) | **3** | r2s4_diag-B1 **complete**; r2s4_diag-B2 **complete**; r2s4_diag-B3 **drafted** | **B1/B2: unchanged, both still COMPLETE.** **B3: no card change this run** (still `status: drafted`, `job_ids: []`, `build_commit: null`). Builder progressed substantially this run: 3/4 guard-set debug legs now landed on disk (`dbg_fluid.json`, `dbg_ifc_poisson.json`, `dbg_sharp__sod_1d.json`, plus a fresh `contract_smoke.json` and `scratchpad/smoke_arms/`), **currently running the 4th and last guard leg** (`heat_local`, PID 235830); `scripts/{01_train_eval.sh, 03_ledger.sh, submit.sh}` all now present (new this run) — **SLURM submission looks imminent but has not fired yet**, no git commit yet | **0 live SLURM** (all prior seeds terminal, unchanged; B3 not yet submitted); **1 live local process** (builder's `heat_local` guard-leg debug run, PID 235830, last of 4 guard legs) | Builder landed 3/4 guard legs + all SLURM scripts; now running the last leg, submission imminent |
+| r2s1_direct | 23.0636 (best_floor_panel_geomean) | **3** | r2s1_direct-B1 **complete**; r2s1_direct-B2 **complete** | **B1/B2: unchanged this run, both still COMPLETE** (both card mtimes strictly before this run's window). **B3 websearcher completed this run** (report.md + iteration_5.md landed after the prior run's close, cap hit 7/7, pdf-rule honored): C2 (blend = Bates-Granger 1969 minimum-variance combination; the "evaluation-artifact" reading of the round's own finding remains unpublished) is the best-supported composition; C1 open-but-thin; C3 PREEMPTED (supervised-PCA — bug-fix-only reading); C4 unchecked (diagnostic-only). **B3 brainstormer now dispatched** with the B3-or-close + instrument-repair-card option framed (`state/r2s1_direct/current_stage.txt`); `brainstormer/r2s1_direct/batch_3/` exists but is still empty at this check (no `iteration_1.md` yet, no local process observed for it via `ps aux` — likely an LLM-subagent stage not a background script) | **0 live SLURM** (both seed-0 jobs terminal, unchanged); 0 live local processes for this stream at this check | B3 websearcher SUCCESS (7/7); B3 brainstormer dispatched, not yet producing output |
+| r2s2_stacked | 23.0636 (best_floor_panel_geomean) | **2** | r2s2_stacked-B1 **complete**; r2s2_stacked-B2 **analyzing** | **B1: unchanged, still COMPLETE.** **B2: no card-content delta this run** (still `reanalysis_progress: turn_2`, `6_analysis: null` — write-ordering lag persists, now spanning 4 checks). Landed-so-far (per `orchestrator_flow.md`, not yet on-card): turn 1 traced F1 to a statistic mis-specification; turn 2 traced the 2 surviving F3 cells to estimator bias + an endpoint-comparison artifact — all three fired falsification clauses now traced to statistic/instrument defects. **Turn-3 mechanism script progressed further this run**: now on its 4th and LAST dataset leg (`sharp__allen_cahn_2d`, PID 237590, a fresh per-leg invocation distinct from the prior run's PID 232585 which has since exited after completing the `fisher_kpp` leg) — `cahn_hilliard`, `phase_field_crystal_2d`, `fisher_kpp_2d` legs all confirmed written to disk this run, only `allen_cahn_2d` remains | 0 live SLURM (both legs terminal, unchanged); **1 live local process** (turn-3 mechanism script, PID 237590, on the last/4th leg) | No card-content delta; turn-3 script wrote its 3rd leg (`fisher_kpp`) and started the 4th/last (`allen_cahn`) |
+| r2s3_lf_train_signal | 23.0636 (best_floor_panel_geomean) | **3** | r2s3_lf_train_signal-B1 **complete**; r2s3_lf_train_signal-B2 **complete**; r2s3_lf_train_signal-B3 **built** | **B1/B2: unchanged this run, both still COMPLETE.** **B3: `drafted` -> `built` this run** (card mtime inside this run's window): builder landed 10/10 — build commit `dfcd46c`, mandatory contract smokes exit 0 (including an A0-arm resume test on `ifc_poisson` reproducing bit-identically from checkpoint), deleted-surface negative tests correctly RAISE (`SystemExit` on any of the 4 deleted null-penalty env keys), 26/26 env keys + 33/33 legs verified present, the null-direction-penalty family confirmed fully deleted per the card's spec. `review_notes: []` — **code-reviewer now dispatched** (`state/r2s3_lf_train_signal/current_stage.txt`), not yet landed; no live local process for it observed via `ps aux` (likely LLM-subagent stage). Still no SLURM job (`job_ids: []`) | **0 live SLURM** (B1/B2 seed-0 jobs terminal, unchanged; B3 not yet submitted, awaiting code review before SLURM dispatch) | `drafted` -> `built` (builder SUCCESS 10/10); code-reviewer dispatched next |
+| r2s4_diag | **19.8178** (certified_3seed_panel_geomean, CI95 [19.385, 20.527]) | **3** | r2s4_diag-B1 **complete**; r2s4_diag-B2 **complete**; r2s4_diag-B3 **built** | **B1/B2: unchanged, both still COMPLETE.** **B3: `drafted` -> `built` this run** (mtime landed ~29s after this run's initial RUN END, caught during final pre-return re-verification): builder landed its full deliverable — new from-scratch family `models_r2/r2s4_b3_projection/` (FiLM-FNO backbone, width 32/2 blocks/16 modes, provenance-commented from B1/B2, no round-1 reuse; B2's auxiliary-LF head removed, no aux arm on this card) + probe `probes/teacher_projection_ledger.py`; mandatory contract smoke exit 0 (`ext__helmholtz_2d`, nRMSE 2.0065/skill 6.7100, 2-epoch plumbing number); all 36 legs ran (1 primary T0 + 5 outer folds × [T0_k, I1_k, 4 inner teachers, proj_nn_k]); ledger identity verified exactly (`advantage_reachable + advantage_unreachable - advantage_total = 0.0`); checkpoint-resume certified beyond the contract minimum (full 36/36-leg replay bit-identical in 46s, plus a partial-deletion re-derive test also bit-identical); the `heat_local` debug leg that was still running at this run's earlier checks (PID 235830) evidently completed and fed into this build. `review_notes: []`, `job_ids: []` — code-reviewer presumably dispatched next (mirroring r2s3-B3's pattern), but `state/r2s4_diag/current_stage.txt` and `orchestrator_flow.md` are NOT yet updated to reflect this completion (same write-ordering lag seen repeatedly this round) | **0 live SLURM** (all prior seeds terminal, unchanged; B3 not yet submitted); 0 live local processes for this stream at this final check (builder process has exited) | `drafted` -> `built` (builder SUCCESS, build `fb00237f`); code-reviewer presumably dispatched next (stage file not yet updated) |
 
 **Anchor note**: r2s4_diag remains the only stream with a *certified* anchor
 (`certified_3seed_panel_geomean`, 19.8178, replacing the training-free floor)
 — r2s1_direct, r2s2_stacked, r2s3_lf_train_signal remain on the launch-time
 `best_floor_panel_geomean` anchor (23.0636, `certified_utc` 2026-07-31T14:20:17Z,
-unchanged). `r2s1_direct-B2`'s completion does **not** update the r2s1_direct
-anchor (`anchor_updated: false` on-card — single seed, non-claimable per S2e).
-No anchor deltas this run. All anchors rendered verbatim from
+unchanged). No anchor deltas this run. All anchors rendered verbatim from
 `state/anchors/*.json`.
 
-**This run's headline**: **2 card-content deltas** — (1) `r2s1_direct-B2`
-closed (`analyzing`->`complete`, **seventh card of the round**, falsified
-verdict with L1+L2 firing, 2 tools promoted, stream advanced to batch 3);
-(2) `r2s3_lf_train_signal-B3.json` newly drafted (33-leg measurement-completion
-card, builder now running). Sub-card activity: `r2s2_stacked-B2`'s turn-3
-script wrote 2 more dataset legs (now on leg 3/4); `r2s4_diag-B3`'s builder
-landed 3/4 guard legs plus all its SLURM scripts and is running the last leg.
-SLURM state (0 live, 14 total COMPLETED), timing ledger, anchors, gates, and
-noise floor are all unchanged. A mid-run auto-sync commit (`5c40c02`,
-2026-08-01T00:44:16Z) landed inside this run's window, capturing the B3 card
-draft and websearcher/brainstormer batch-3 outputs — noted for repo-hygiene
-accounting, not itself a maintainer write.
+**This run's headline**: **2 card-status deltas** — `r2s3_lf_train_signal-B3`
+`drafted` -> `built` (builder SUCCESS 10/10, build `dfcd46c`, code-reviewer
+dispatched) and `r2s4_diag-B3` `drafted` -> `built` (builder SUCCESS, build
+`fb00237f`, caught during this run's final pre-return re-verification — landed
+~29s after the initial RUN END timestamp). No card reached
+`complete`/`analyzing` transitions this run (all 10 cards' `status` otherwise
+unchanged from the prior check). Sub-card progress: `r2s1_direct-B3`'s
+websearcher **completed** (report.md + iteration_5 landed after the prior
+run's close, cap hit 7/7) and its brainstormer was dispatched (not yet
+producing output); `r2s2_stacked-B2`'s turn-3 mechanism script wrote its 3rd
+of 4 dataset legs and started the 4th (last). SLURM state (0 live, 14 total
+COMPLETED, byte-identical across three cross-checks this run), timing
+ledger, anchors, gates, and noise floor are all unchanged. A mid-run
+auto-sync commit (`8cae345`, 2026-08-01T01:14:18Z) landed inside this run's
+window, capturing the r2s3-B3 build + websearcher/tool outputs — noted for
+repo-hygiene accounting, not itself a maintainer write.
 
 ## Running / pending jobs
 
@@ -37,17 +39,15 @@ accounting, not itself a maintainer write.
 |---|---|---|---|---|
 | (none — 0 live SLURM `r2-*` jobs) | — | — | — | — |
 
-**0 live `r2-*` SLURM jobs** at this check (squeue + sacct cross-checked twice,
-~4 min apart, no transient-empty false positives — `sacct` shows all 14
-`r2-*` jobs COMPLETED, byte-identical to the last check; `squeue` shows 0
-`r2-*` entries, only unrelated interactive `bash` jobs and round-1 `r1-*`
-PENDING seed-confirm jobs, out of this maintainer's scope). **3 live local
-(non-SLURM) processes** confirmed via `ps aux` at this check, all confirmed
-progressing (not stalled): PID 232585 (`r2s2_stacked-B2` turn-3 mechanism
-script, on the `fisher_kpp` leg, 3/4 dataset legs), PID 234088
-(`r2s3_lf_train_signal-B3` builder's mandatory contract-smoke evidence run on
-`models_r2/r2s3_coverage_panel`), PID 235830 (`r2s4_diag-B3` builder's last
-guard-set debug leg, `heat_local`).
+**0 live `r2-*` SLURM jobs** at this check (squeue + sacct cross-checked
+three times across this run, no transient-empty false positives — `sacct`
+shows all 14 `r2-*` jobs COMPLETED, byte-identical throughout; `squeue` shows
+0 `r2-*` entries, only unrelated interactive `bash` jobs and round-1 `r1-*`
+PENDING seed-confirm jobs, out of this maintainer's scope). **0 live local
+(non-SLURM) processes** at this final check (down from 2 mid-run — the
+`r2s2_stacked-B2` turn-3 script and the `r2s4_diag-B3` builder's last debug
+leg have both since completed/exited; the r2s3-B3 builder process had
+already exited earlier this run).
 
 ## Completed cards
 
@@ -62,68 +62,62 @@ guard-set debug leg, `heat_local`).
 | r2s1_direct-B2 | model | 18.3622 (single seed 0, `provisional-single-seed`, **no falsification weight** per card) | **falsified**: L1 fires (2/5 decidable cells lose to the in-job Wiener-calibrated `ref_decoder_big` by >mce — allen_cahn 6.99x, cahn_hilliard 14.21x); L2 fires (cahn_hilliard gap 4.74x the L2 threshold, stable across 5 fold-resamples, not rescued by any rank in the sweep); L3/L4 do not fire | **2 tools**: `tools/blend_decorrelation_payoff.py` (equal-rho blend counterfactual), `tools/selection_set_vs_window_audit.py` (selection-set-vs-window arity-bug detector) |
 
 `r2s2_stacked-B2` (`analyzing`, `reanalysis_progress: turn_2`, turn-3 script
-progressing, 3/4 dataset legs written), `r2s3_lf_train_signal-B3` (`drafted`,
-builder running the mandatory contract-smoke evidence, no SLURM job yet) and
-`r2s4_diag-B3` (`drafted`, builder running its last guard leg with all
-scripts written, submission imminent) are all actively open but none has
-part 7 written (or, for B3 cards, any build/job yet) — not listed here
-until each card itself closes.
+on its last dataset leg), `r2s3_lf_train_signal-B3` (`built`, code-reviewer
+dispatched, no SLURM job yet) and `r2s4_diag-B3` (`built`, code-reviewer
+presumably next, no SLURM job yet) are all actively open but none has part 7
+written (or, for B3 cards, a review/job/complete state yet) — not listed
+here until each card itself closes.
 
 ## Flags
 
-- **`r2s1_direct-B2` closed this run — seventh card of the round**: register
-  turn landed 8/8 (`analyzing`->`complete`). Falsified verdict overturns
-  B1's implicit-architecture reading specifically via the `cahn_hilliard`
-  cell (L1+L2 both fire there, 14.21x mce, stable across all 5 fold-resamples
-  — not a fold-draw artifact). 2 tools promoted, both indexed in
-  `tools/index.md` (confirmed via `git diff`). `anchor_updated: false`
-  (single seed, card explicitly disclaims the panel-geomean number as a
-  claim). Part 7 poses a possible B3 as instrument-repair-first, not
-  capacity-first.
-- **NEW round-level pattern flagged by `r2s1_direct-B2` part 7**: a
-  **post-hoc-blend-stage instrument-error class** — the blend/floor-hedge
-  stage's payoff is a closed-form monotone function of the arm-vs-base error
-  correlation rho, so a "capacity win" can be entirely a decorrelation
-  artifact (allen_cahn: the selected head IS `dc_only` numerically, rho=1.0000,
-  so the blend structurally cannot pay it; the L1 "loss" reverses under an
-  equal-rho counterfactual, 2.1-7.2x mce in the head's favor). This is now
-  the **third independent instrument-defect finding this round**, alongside
-  `r2s2_stacked-B2`'s statistic mis-specification (turn 1) and estimator-bias
-  /endpoint-artifact (turn 2) — flagged as a round-level methodology risk
-  worth a cross-stream write-up, not yet a round report action.
-- **`r2s3_lf_train_signal-B3` newly drafted this run**: a 33-leg
-  measurement-completion card (all 6 panel datasets, matched-budget ±LF
-  contrast); close-on-B2 explicitly rejected on 4 grounds. Builder dispatched
-  and actively running the mandatory contract-smoke evidence; no SLURM job
-  yet.
-- **`r2s4_diag-B3` builder progressing toward a SLURM submission**: 3/4
-  guard-set debug legs landed this run (`fluid`, `ifc_poisson`,
-  `sharp__sod_1d`), now running the last (`heat_local`); all three SLURM
-  scripts (`01_train_eval.sh`, `03_ledger.sh`, `submit.sh`) now present on
-  disk — worth watching next cycle for an actual `sbatch` submission.
-- **`r2s2_stacked-B2` write-ordering lag — persists, now spanning 3
+- **`r2s3_lf_train_signal-B3` builder SUCCESS this run**: `drafted` ->
+  `built`, build `dfcd46c`, contract smokes exit 0 (incl. an A0-arm
+  checkpoint-resume test on `ifc_poisson` reproducing bit-identically),
+  deleted-surface negative tests correctly RAISE on all 4 removed
+  null-penalty env keys, 26/26 env keys + 33/33 legs verified. Code-reviewer
+  now dispatched next (`review_notes: []` still, not yet landed).
+- **`r2s4_diag-B3` builder SUCCESS this run** (caught during final
+  pre-return re-verification, ~29s after the initial RUN END): `drafted` ->
+  `built`, build `fb00237f`, new from-scratch family
+  `models_r2/r2s4_b3_projection/`, contract smoke exit 0, all 36 legs ran,
+  ledger identity exact, checkpoint-resume certified beyond the mandatory
+  minimum (full replay + partial-deletion re-derive both bit-identical).
+  `state/r2s4_diag/current_stage.txt` and `orchestrator_flow.md` NOT yet
+  updated to reflect this — worth watching next cycle for the code-review
+  dispatch to land visibly.
+- **`r2s1_direct-B3` websearcher SUCCESS this run**: cap hit 7/7, pdf-rule
+  honored. Best-supported composition (C2): the blend stage is a
+  Bates-Granger (1969) minimum-variance combination; the round's own
+  "evaluation-artifact" reading of the blend's payoff (from B2 part 7)
+  remains unpublished in this genre. Brainstormer now dispatched with a
+  B3-or-close + instrument-repair-card option explicitly framed; no
+  brainstormer output yet.
+- **`r2s2_stacked-B2` write-ordering lag — persists, now spanning 4
   consecutive checks**: `6_analysis` is still `null` on-card even though
-  `reanalysis_progress` has read `turn_2` since two checks ago and a turn-3
-  mechanism script (now PID 232585, distinct from the prior run's PID
-  221177 — a fresh per-dataset-loop invocation, not evidence of a restart
-  from scratch) continues writing per-dataset outputs. Confirmed not stalled
-  (2 new dataset legs written this run). Flagged for continued watching.
+  `reanalysis_progress` has read `turn_2` since three checks ago and the
+  turn-3 mechanism script (now on its 4th/last dataset leg) continues
+  writing per-dataset outputs steadily (3/4 legs confirmed written this
+  run). Confirmed not stalled through this run's checks. Flagged for
+  continued watching — turn 3 should close out and land on-card soon.
 - **Real lead flagged inside `r2s2_stacked-B2` turn 2** (not yet a card
   claim): a training-free interior-k LF average reportedly beats the trained
   corrector on `allen_cahn`/`cahn_hilliard` — worth tracking into part 6/7
   once it lands on-card.
-- **Mid-run auto-sync commit noted**: `5c40c02` (2026-08-01T00:44:16Z) landed
-  inside this run's window and captured `r2s3_lf_train_signal-B3.json`, its
-  brainstormer/websearcher batch-3 outputs, plus an EARLIER partial version
-  of `r2s1_direct-B2.json` (pre-completion) — `git show --stat` cross-checked
-  (11 files, 1753 insertions). Not a maintainer write; noted for repo-hygiene
-  accounting only.
+- **NEW round-level pattern carried forward from last run**: a
+  **post-hoc-blend-stage instrument-error class** flagged by
+  `r2s1_direct-B2` part 7, now potentially reinforced by this run's
+  `r2s1_direct-B3` websearch finding (C2: blend = textbook Bates-Granger
+  minimum-variance combination) — alongside `r2s2_stacked-B2`'s statistic
+  mis-specification and estimator-bias/endpoint-artifact findings, this is
+  the round's recurring instrument-defect class across 2 independent
+  streams; still not yet a round-report action.
 - **Timing ledger**: **no upsert this run** — no new terminal `r2-*` SLURM
-  states (all 14 jobs in `sacct` were already COMPLETED and ledgered; neither
-  `r2s3_lf_train_signal-B3` nor `r2s4_diag-B3` has submitted anything to
-  SLURM yet). Still **14 entries** total, JSON re-validated as parseable.
-- **Analyzer caveat carried forward (r2s1_direct-B1, from code-review)**: the
-  D3 certificate's aleatoric-floor estimate is window-sensitive — at the
+  states (all 14 jobs in `sacct` were already COMPLETED and ledgered; both
+  `r2s3_lf_train_signal-B3` and `r2s4_diag-B3` are now `built` but neither
+  has submitted anything to SLURM yet — both awaiting code review first).
+  Still **14 entries** total, JSON re-validated as parseable.
+- **Analyzer caveat (r2s1_direct-B1, from code-review)**, carried forward:
+  the D3 certificate's aleatoric-floor estimate is window-sensitive — at the
   recipe's window (1000 closest pairs), `ext__helmholtz_2d` reads 1.200,
   worse than the zero predictor. Must not be reported as a ceiling for
   helmholtz; `allen_cahn`'s ceiling must be reported as a range
@@ -152,20 +146,18 @@ until each card itself closes.
   visible in `squeue` as `r1-*`, PENDING) — separate round, separate report.
 - No reopen candidates on any of the 10 cards. No `blocked.md` file exists
   (no stream has ever blocked). No abandoned streams — none are possible yet
-  (r2s1 now at batch 3 with 2 clean closes B1/B2; r2s2 at batch 2 with a
-  clean B1 close; r2s3/r2s4 at batch 3, all prior batches clean closes — no
-  skip/block history anywhere). `state/streams/` directory still does not
-  exist — consistent with no abandonments ever being needed.
+  (r2s1/r2s3/r2s4 at batch 3 with clean prior closes; r2s2 at batch 2 with a
+  clean B1 close — no skip/block history anywhere). `state/streams/`
+  directory still does not exist — consistent with no abandonments ever
+  being needed.
 - Repo hygiene: `git status --short .` (round root, excluding `worktrees/`),
-  checked twice ~4 min apart with identical results: 5 modified files —
-  `experiment_cards/r2s1_direct/batch_2/B2.json` (the register-turn
-  completion itemized above; a mid-run auto-sync commit captured an earlier
-  partial version, so this is not a double-count), `state/orchestrator_flow.md`,
-  `state/r2s1_direct/current_batch.txt`, `state/r2s1_direct/current_stage.txt`
-  (stream-advance-to-batch-3 bookkeeping), `tools/index.md` (the 2 new tool
-  entries) — plus 2 untracked new tool files (`tools/blend_decorrelation_payoff.py`,
-  `tools/selection_set_vs_window_audit.py`). None of these 7 were touched by
-  this maintainer. This maintainer's own writes this run: `index.md`,
-  `state/maintainer_report.md` (`state/timing_ledger.json` content unchanged,
-  gitignored, not part of the git-status comparison). No Write call this run
-  touched `experiment_cards/`.
+  final check after a mid-run auto-sync commit (`8cae345`,
+  2026-08-01T01:14:18Z) landed: only 1 remaining modified card file —
+  `experiment_cards/r2s4_diag/batch_3/B3.json` (the `drafted`->`built` delta
+  caught in this run's final re-verification, itemized above; postdates the
+  auto-sync commit so was not captured by it) — plus the still-empty,
+  untracked `brainstormer/r2s1_direct/batch_3/` (other-agent-owned,
+  mid-flight). This maintainer's own writes this run: `index.md`,
+  `state/maintainer_report.md` (`state/timing_ledger.json` content
+  unchanged, gitignored, not part of the git-status comparison). No Write
+  call this run touched `experiment_cards/`.

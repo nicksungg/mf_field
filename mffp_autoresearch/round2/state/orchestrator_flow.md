@@ -661,3 +661,52 @@
 - 2026-08-01 ~17:0x PDT r2s3-B3 builder SUCCESS (10/10): build dfcd46c; smokes exit 0 (incl.
   A0 resume bit-identical); deleted-surface negative tests RAISE; 26/26 env keys + 33/33
   legs verified; penalty family fully deleted per card. -> code-reviewer dispatched.
+
+- 2026-08-01 ~17:4x PDT r2s4-B3 builder SUCCESS (10/10): build fb00237; smoke exit 0 (36 legs,
+  ledger identity residual 0.0); full+partial resume bit-identical; pair-alignment pre-flight
+  PAIRED_ALIGNED 5/5; builder caught card's ridge-arithmetic error (degree-fallback fires on
+  ch, correctly implemented as carded rule). -> code-reviewer dispatched.
+
+- 2026-08-01 ~18:1x PDT r2s1-B3 brainstormer SUCCESS (13/13): B3 chosen over close (4 grounds:
+  converts post-hoc findings to pre-registered OOS tests; lifts preds gate; measured cost
+  ~17 min; instrument value is stream's remaining value). Stage-free scored column (no
+  Wiener/blend on scored arm); Bates-Granger prelude written from calib moments BEFORE test
+  read (L2: predict realized post-stage skill within 1.5x mce on >=2); SET repair L3; the
+  ~19.1-worse-than-staged-18.36 expectation PRE-REGISTERED as part of the claim. -> starter
+  dispatched.
+
+- 2026-08-01 ~18:4x PDT r2s3-B3 code-reviewer PASS (6/6 — round's first clean PASS; AST-level
+  F3 seam verification; draws exact; walltime overrun pre-classified INFRA). ORCHESTRATOR
+  SUBMITTED seed 0: job 66196690 (h200). Card -> running.
+
+- 2026-08-01 ~19:0x PDT r2s1-B3 starter SUCCESS (23/23): B3.json drafted, no TBDs; C2 headline
+  verdict transcribed unnormalized; 5 build gates in _build_gates. -> builder dispatched.
+
+- 2026-08-01 ~19:3x PDT r2s2-B2 mechanism turn 3 (8/8): scored stack's value = closed-form
+  LSI Wiener (100/97/77/33% of gain; CNN rejected OOF 5/8 cells; lambda inert 3/4); B1's
+  corrector-futility calibration off by 7-180x at scored rungs; rule's 0.05 relative floor
+  = 0.6-9.5 skill units = 10-817x mce (UNITS defect — dimensionless thresholds don't price
+  decisions). Part 6 written. -> register turn dispatched (decision-cost audit = exportable
+  fix; close recommendation acceptable).
+
+- 2026-08-01 ~19:5x PDT r2s4-B3 code-reviewer SUGGEST (6/6): fold construction verified
+  leakage-free BY EXECUTION; degree-fallback = card's own rule; 320-vs-280 proj_best data
+  advantage flagged as UPWARD bias on advantage_reachable (analyzer standing caveat);
+  PRE-ANALYSIS ACTION OWED: signed-reach fix in teacher_projection_ledger.py (abs->signed;
+  03_ledger.sh re-runs standalone). ORCHESTRATOR SUBMITTED seed 0: job 66197075 (h200).
+  Card -> running. Both B3 SLURM jobs now on cluster.
+
+- 2026-08-01 ~20:1x PDT OPERATOR HALT (Eloise: "halt everything (except currently running
+  slurm jobs)"). Actions: 3 crons DELETED (orchestrator pulse 03a7cf19, maintainer 60625c6e,
+  auto-sync 13995fd8); in-flight agents KILLED: r2s1-B3 builder (mid-build — worktree may
+  hold partial family code, card still 'drafted'; REBUILD FROM SCRATCH on resume, distrust
+  partials), r2s2-B2 register turn (mid-tool-promotion — part 7 NOT written, card still
+  'analyzing'/turn_3; tools/index.md may hold a partial entry — VERIFY before trusting;
+  re-dispatch register turn on resume), maintainer walk (read-only, no cleanup needed);
+  2 SLURM monitors stopped. LEFT RUNNING per operator: jobs 66196690 (r2s3-B3-s0) and
+  66197075 (r2s4-B3-s0) — both checkpoint-resume-safe.
+  RESUME CHECKLIST: (1) check job outcomes via sacct; (2) re-dispatch r2s2-B2 register turn
+  (verify/clean partial index entry first); (3) re-dispatch r2s1-B3 builder fresh;
+  (4) on job completion: r2s4-B3 needs the SIGNED-REACH probe fix (03_ledger.sh re-run)
+  BEFORE its initial-analyzer; (5) re-create crons per HOW_TO_LAUNCH §2-3; (6) commit this
+  state (auto-sync cron is gone — manual git add mffp_autoresearch/round2 + push).

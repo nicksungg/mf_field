@@ -1,0 +1,151 @@
+# Brainstormer Report — Stream `r2s1_direct`, Batch 3
+
+**Stream**: `r2s1_direct` (class: gap)
+**Batch**: 3
+**Total iterations**: 1
+**Slot filled**: 1 (model card) — B3-OR-CLOSE decided in favour of **B3**
+**Reopen candidates resolved**: 0 (none exist — all 10 round-2 cards carry `reopen_candidate: false`)
+
+## Slot
+
+- **Category**: gap / instrument-repair and stage-free re-pricing — Bates-Granger decorrelation accounting as an evaluation-protocol defect detector, with a per-mode out-of-fold-selected closed-form head as the standing control
+- **Card type**: `model`
+- **Motivation**: The batch-3 prior-art verdict names this shape as the strongest available. **C2 row, verbatim**: **`preempted-but-MF-composition-open (cite)` — best-supported novel composition for B3**; "The **mechanism is preempted and must be named as Bates-Granger combination in the card.** Open: its use as an **evaluation-protocol defect detector** — appending a shared floor-blend stage to every arm of a benchmark converts an architecture comparison into a decorrelation comparison (arm class that IS the base at rho = 1.0000 unpayable; decisive cell reverses by 2.07-7.15x mce; lambda <= 0.25 => reporting the base). One targeted search returned **no usable results**; the fetched combination literature never treats a candidate as a benchmark's shared post-hoc stage." The scored arm's form is **C1, verbatim**: **`preempted-but-MF-composition-open (cite)`** — "One-regressor-per-mode is **presumed prior art (do not claim)** ... Open after 3 targeted refutation searches with zero named sources: per-mode **family** selection by OOF R^2, used as the standing ~10^1-10^2-parameter control arm a 10^7-parameter decoder must beat on a **copy-LF-skill panel under the stripped no-LF-at-test view**, with the per-mode ORACLE ceiling reported." C3 (`preempted (cite)` — "Ship as a bug fix / instrument, never as a contribution") enters only as a recipe-level bug fix; C4 ("NOT PRIOR-ART-CHECKED THIS LOOP ... must not be headlined as novel") enters only as a diagnostic. The card also discharges B2 part 7's three PREREQUISITE instrument repairs and its `preds_test.npz` build gate.
+- **Concrete config**: New from-scratch family `models_r2/r2s1_stagefree_permode` (worktree `worktrees/r2s1_direct/B3`), condition-only forward signature, stripped view only, leakage tripwire, no LF at any stage. Per dataset: disjoint fit 80% / model-selection 10% / calibration 10% folds, asserted disjoint (LOO + fixed-epoch when `N_train < 20`, i.e. ifc_poisson); no test quantity is consulted in any fit or selection step.
+  **The load-bearing move**: the scored column is **stage-free**. `test_hf` = closed-form head with **no Wiener gains and no blend**; the shared post-hoc stage is demoted to `stage_*` reference splits and becomes the measured object.
+  **Head (C1 + C3 repairs)**: centering form by `ratio = ||mean_i y_i|| / geomean_i ||y_i||`, tau = 1.0 (`fact` / `add`); direction bank = {DC / spatial-mean direction} u {POD modes 0-49 of the **DC-removed** fit-fold residual, computed in the **selected centering form** — fixes B2's hardcoded-add-basis defect T1-F7}; per direction a 5-fold OOF R^2 from the condition under the map bank {affine, quadratic, RBF kernel ridge, k-NN}, best family selected out of fold; fitted **SET** = directions clearing tau = 0.1 (min 1, max 32) — **SET indexing replaces B2's window indexing** (worth 5.62x mce on cahn_hilliard). Including the DC direction as an explicit OOF candidate makes `dc_only` a *selected special case* of the head rather than a competitor picked on test.
+  **Reference splits** (never prefixed `test`): `ref_head_set_affine` (affine-only — isolates the map bank), `ref_head_window_affine` (B2's rule — isolates the arity repair), `ref_decoder_big` (FiLM-FNO w64/b4/modes16/latent16, 200 epochs, early-stopped on the model fold, RAW), `stage_wiener_{head,decoder}`, `stage_blend_{head,decoder}` (decorrelation-audited base set), `stage_bg_{head,decoder}` (**Bates-Granger 1969** minimum-variance weights `w=(1'S^-1 1)^-1 1 S^-1` from the calibration-fold prediction-error covariance, Ledoit-Wolf shrunk), floors `ref_dc_only`, `ref_zero`, `ref_train_mean`, `ref_nn_condition` (the last three seam-checked to `state/anchors/floors.json` at 1e-9, RAISING on mismatch). Guards `heat_local, fluid, sharp__sod_1d` at contract tier.
+  **Build gates**: (G-A) every decoder arm ships `preds_test.npz` per dataset — HARD gate, B2 part 7 item 4; (G-B) the rho-prelude JSON (calibration-fold sigma_arm, sigma_base, rho, lambda*, and the Bates-Granger predicted post-stage test error per arm x base) is written **before any test tensor is read**; (G-C) floor seam check raises; (G-D) Wiener grid **capped at [0, 1.5]** (NOT widened — B2 part 7 item 3) with an explicit stand-down (identity) candidate and the least-squares-optimal per-band gain reported alongside; (G-E) any blend base with calibration-fold `|rho| > 0.95` to an arm's error is DROPPED for that arm and the drop recorded.
+  **Diagnostics (JSON, non-scored)**: per-direction OOF R^2 x map-family table with the selected family and the per-mode ORACLE ceiling explicitly labelled ORACLE; SET-vs-window index sets per dataset; the rho matrix with predicted-vs-realized stage payoff; Wiener gains vs LS-optimal gains; the H2 projection of the decoder's own test predictions onto the fit-fold basis, split into fitted-SET / in-window-complement / basis-orthogonal energy (cahn_hilliard, allen_cahn) — **diagnostic only, C4 is not prior-art-checked and must not be headlined**.
+- **Recipe**:
+```json
+{
+  "base_family": "none (new from-scratch family on the round2-substrate; condition-only forward signature; no round-1 code and no factory model code vendored; sole factory contact is a read-only import of mf_field/factory_mffp/data_adapters/loaders.py)",
+  "base_commit": "9e10d414e35a96398f7b091bc84ddf936d88acc7",
+  "family_dir": "models_r2/r2s1_stagefree_permode",
+  "datasets": "panel",
+  "epochs": 200,
+  "seeds": [0],
+  "env": {
+    "R2S1B3_SCORED_ARM": "stagefree_permode_set_head",
+    "R2S1B3_STAGE_POLICY": "scored_arm_is_stage_free",
+    "R2S1B3_DIRECTION_BANK": "dc_meanfield,pod_0_49",
+    "R2S1B3_POD_BASIS_N": "50",
+    "R2S1B3_POD_DC_ORTHOGONALIZE": "1",
+    "R2S1B3_CENTER_STAT": "norm_meanfield_over_geomean_norm_y",
+    "R2S1B3_CENTER_TAU": "1.0",
+    "R2S1B3_CENTER_FORMS": "fact,add",
+    "R2S1B3_BASIS_FORM_MATCHED": "1",
+    "R2S1B3_SELECT_INDEXING": "set",
+    "R2S1B3_SELECT_STAT": "oof_r2_per_direction_best_family",
+    "R2S1B3_SELECT_TAU": "0.1",
+    "R2S1B3_SELECT_KFOLD": "5",
+    "R2S1B3_SELECT_MIN": "1",
+    "R2S1B3_SELECT_MAX": "32",
+    "R2S1B3_MAP_BANK": "affine,quadratic,rbf_kernel_ridge,knn",
+    "R2S1B3_MAP_SELECT": "oof_r2_per_direction",
+    "R2S1B3_MAP_RIDGE_ALPHA": "exact_loo_grid_1e-6:1e2:13",
+    "R2S1B3_MAP_KNN_K": "1,2,4,8",
+    "R2S1B3_MAP_RBF_GAMMA": "median_heuristic",
+    "R2S1B3_ORACLE_CEILING": "1",
+    "R2S1B3_WIENER_BANDS": "6",
+    "R2S1B3_WIENER_GRID": "0:1.5:31",
+    "R2S1B3_WIENER_PASSES": "2",
+    "R2S1B3_WIENER_STANDDOWN": "1",
+    "R2S1B3_WIENER_FIT": "calib_fold_coord_descent",
+    "R2S1B3_WIENER_APPLY_TO": "stage_arms_only",
+    "R2S1B3_WIENER_REPORT_LS_OPTIMAL": "1",
+    "R2S1B3_BLEND_BASES": "zero,train_mean,nn_condition,dc_only",
+    "R2S1B3_BLEND_DECORR_AUDIT": "1",
+    "R2S1B3_BLEND_DECORR_RHO_MAX": "0.95",
+    "R2S1B3_BLEND_GRID": "0:1:21",
+    "R2S1B3_BLEND_SELECT": "calib_fold_relL2",
+    "R2S1B3_BLEND_APPLY_TO": "stage_arms_only",
+    "R2S1B3_BG_COMBINE": "1",
+    "R2S1B3_BG_COV_SOURCE": "calib_fold_prediction_error_covariance",
+    "R2S1B3_BG_SHRINKAGE": "ledoit_wolf",
+    "R2S1B3_BG_CITATION": "bates_granger_1969_minimum_variance_combination",
+    "R2S1B3_RHO_LAW_PRELUDE": "1",
+    "R2S1B3_RHO_LAW_FORM": "bates_granger_two_forecast",
+    "R2S1B3_RHO_LAW_PRELUDE_BEFORE_TEST": "1",
+    "R2S1B3_FOLD_MODEL_FRAC": "0.10",
+    "R2S1B3_FOLD_CALIB_FRAC": "0.10",
+    "R2S1B3_FOLD_DISJOINT": "1",
+    "R2S1B3_FOLD_RESAMPLES": "5",
+    "R2S1B3_SMALL_N_PROTOCOL": "loo",
+    "R2S1B3_SMALL_N_THRESHOLD": "20",
+    "R2S1B3_DECODER_ARMS": "big",
+    "R2S1B3_DEC_BIG": "width64,blocks4,modes16,latent16,film128",
+    "R2S1B3_DEC_SELECT": "model_fold_best_epoch",
+    "R2S1B3_DEC_LR": "1e-3",
+    "R2S1B3_DEC_WD": "1e-5",
+    "R2S1B3_DEC_BATCH": "16",
+    "R2S1B3_DEC_CLIP": "1.0",
+    "R2S1B3_DEC_SCHED": "cosine",
+    "R2S1B3_DEC_LOSS": "rel_l2",
+    "R2S1B3_DEC_DENOM_FLOOR": "p25_median",
+    "R2S1B3_DEC_WORK_CAP": "256",
+    "R2S1B3_DEC_CKPT_EVERY_EPOCH": "1",
+    "R2S1B3_DEC_CKPT_RNG_STATE": "1",
+    "R2S1B3_DEC_DUMP_PREDS": "1",
+    "R2S1B3_PREDS_OUT_PATTERN": "preds_test_{arm}_{dataset}_s{seed}.npz",
+    "R2S1B3_REF_ARMS": "head_set_affine,head_window_affine,decoder_big,stage_wiener_head,stage_wiener_decoder,stage_blend_head,stage_blend_decoder,stage_bg_head,stage_bg_decoder,dc_only,zero,train_mean,nn_condition",
+    "R2S1B3_FLOOR_ARMS": "nn_condition,train_mean,zero",
+    "R2S1B3_FLOOR_SEAM_TOL": "1e-9",
+    "R2S1B3_FLOOR_SEAM_RAISE": "1",
+    "R2S1B3_H2_PROJECTION": "1",
+    "R2S1B3_H2_DATASETS": "sharp__cahn_hilliard,sharp__allen_cahn_2d",
+    "R2S1B3_SET_VS_WINDOW_AUDIT": "1",
+    "R2S1B3_LEAKAGE_TRIPWIRE": "1",
+    "R2S1B3_NRMSE_IMPORT": "round2_eval_nrmse",
+    "R2S1B3_DIAG_OUT": "mffp_autoresearch_outputs/round2/r2s1_direct/B3/eval",
+    "_scored_arm": "stagefree_permode_set_head",
+    "_scored_split": "test_hf",
+    "_ref_split_prefix": "ref_ and stage_ - extra splits MUST NOT start with 'test'",
+    "_guard_tier": "contract (2 epochs) on heat_local,fluid,sharp__sod_1d",
+    "_build_gates": "G-A per-arm preds_test.npz for every decoder arm (HARD gate, B2 part 7 item 4); G-B rho-prelude JSON written from calib-fold-only quantities BEFORE any test tensor is read; G-C floor seam check vs state/anchors/floors.json at 1e-9 RAISES on mismatch; G-D Wiener grid capped at [0,1.5] with stand-down candidate + LS-optimal per-band gain reported; G-E any blend base with calib-fold |rho| > 0.95 to an arm's error is DROPPED for that arm and the drop recorded",
+    "_sbatch_time": "03:00:00 (B2's measured 16.83 min panel+guard on an H200 used 9.4% of the same budget; B3 drops decoder_small and the 8-point rank sweep)",
+    "_prior_art_declarations": "one-regressor-per-mode = presumed prior art (do not claim); ASAMS https://pmc.ncbi.nlm.nih.gov/articles/PMC7571090/ = automatic model selection over trained candidates; blend/combination mechanism = Bates & Granger 1969 minimum-variance combination https://search.r-project.org/CRAN/refmans/MuMIn/html/BGweights.html; SET/predictability-ordered basis = preempted by supervised PCA https://arxiv.org/abs/2011.05309 and shipped as a BUG FIX only; H2 projection (C4) NOT prior-art-checked - diagnostic only, must not be headlined",
+    "_note": "keys prefixed _ are card directives, NOT passed to --env"
+  }
+}
+```
+- **Expected outcome** (seed 0, 200 epochs, skill units, all `provisional-single-seed`; anchor = best-floor panel geomean 23.0636):
+
+| dataset | best floor (arm) | B2 raw head | B2 raw decoder | expected `test_hf` | expected `ref_decoder_big` | certified mce |
+|---|---|---|---|---|---|---|
+| `ext__helmholtz_2d` | 3.3441 (zero) | 4.91600 | 3.11507 | 3.5-5.0 **report-only**, zero-floor column + r2s4-B2 energy-pooled note | 3.0-3.4 | 2.95299 |
+| `sharp__phase_field_crystal_2d` | 59.8118 (mean) | 55.42589 | 48.89325 | 47.4-49.0 (SET empty after DC -> DC head; variant-C denominator caveat 0.007381, no fidelity gap band-limited) | 48-50 | 0.21303 |
+| `sharp__allen_cahn_2d` | 269.1959 (NN) | 175.46241 | 202.15898 | 145-165 | 195-210 | 0.87970 |
+| `sharp__fisher_kpp_2d` | 11.9931 (mean) | 11.59581 | 11.58186 | 11.55-11.60 | 11.55-11.62 | 0.00071 |
+| `sharp__cahn_hilliard` | 23.1803 (NN) | 13.15523 | 12.06357 | 12.60-12.90 | 11.90-12.25 | 0.09125 |
+| `ifc_poisson` | 10.0549 (NN) | 10.60818 | 20.11772 | 10.0-10.8 **anecdote-grade** (N_hf = 5) | 12-21 | 0.93770 |
+
+  Which metric moves and by how much vs the anchor: the scored per-dataset skill of `test_hf` in the **raw** frame. Panel geomean point estimate **~19.1** vs the anchor **23.0636** (-17%), **reported with no falsification weight** and explicitly NOT claimable against B2's 18.3622 (difference ~0.76 < certified panel mce **1.14187**). The card states in advance that the stage-free geomean is expected to be *worse* than B2's staged one — the hedge buys score, not accuracy attribution; that is the point of the protocol claim.
+  Mechanism predictions (the actual content): the <= 10^2-parameter stage-free head beats the ~1.5e7-parameter raw decoder on **4 of 5** non-helmholtz cells (all but cahn_hilliard); on allen_cahn the predicted margin is ~50 skill units = **~57x** the certified mce 0.87970, a **sign reversal** of B2's staged verdict (which said the head lost by 6.99x mce); the arity repair is worth ~0.45 on cahn_hilliard (~5x mce 0.09125); the Bates-Granger prelude predicts realized post-stage test skill within 1.5x mce on pfc / allen_cahn / cahn_hilliard; and (diagnostic, no weight) the surviving cahn_hilliard residual (~0.65 = ~7x mce) projects predominantly onto the condition-unidentifiable complement of the fitted SET. **Vs the noise floor**: every threshold used below is 1.5x-5x its dataset's certified `min_claimable_effect`, and every predicted effect is 5x-145x it (item 9 of the self-check lists the numbers).
+  ADR r2-0003 honoured: no clause assumes skill -> 1 on pfc / fisher_kpp / allen_cahn; the comparison target there is the conditional-mean / floor level.
+- **Expected falsification**: H-r2s1-B3 — "this stream's head-vs-decoder verdicts were decided by a shared post-hoc stage rather than by accuracy; with the scored column stage-free and the arity/basis defects repaired, a <= 10^2-parameter per-mode out-of-fold-selected closed-form head beats a ~1.5e7-parameter FiLM decoder on allen_cahn, the cahn_hilliard capacity residual survives every repair, and the Bates-Granger decorrelation law predicts the stage's payoff out of sample" — is FALSIFIED if **(L1)** on `sharp__allen_cahn_2d` the stage-free `test_hf` fails to beat the raw `ref_decoder_big` by more than **4.39852** skill units (5x the certified mce 0.87970; predicted ~50), **or (L2)** the calibration-fold Bates-Granger prelude mispredicts the realized post-stage test skill of `test_hf` or `ref_decoder_big` by more than **1.5x** that dataset's certified mce on **>= 2 of 3** of {`sharp__phase_field_crystal_2d` 0.31954, `sharp__allen_cahn_2d` 1.31956, `sharp__cahn_hilliard` 0.13687} (`sharp__fisher_kpp_2d` excluded: its mce 0.00071 is below any 40-sample estimator's resolution; `ifc_poisson` excluded: calibration fold = all of N = 5; `ext__helmholtz_2d` report-only), **or (L3)** on `sharp__cahn_hilliard` the SET-indexed head fails to beat the window-indexed `ref_head_window_affine` by more than **0.18250** skill units (2x mce 0.09125; predicted ~0.45), **or (L4)** the stage-free `test_hf` is worse than 1.05x the best frozen floor on `sharp__phase_field_crystal_2d` (> 62.80234), `sharp__allen_cahn_2d` (> 282.65567), `sharp__fisher_kpp_2d` (> 12.59277) or `sharp__cahn_hilliard` (> 24.33936), or worse than 1.15x on `ifc_poisson` (> 11.56312); `ext__helmholtz_2d` is report-only with the zero-floor column (3.3441) and carries no falsification weight (its certified mce 2.95299 exceeds any effect available against that floor, and r2s4-B2 shows the mce there is mostly metric); the H2 projection (C4) is diagnostic only and carries no falsification weight; every number is `provisional-single-seed`.
+- **Prior-art verdict quoted** (verbatim from `websearches/r2s1_direct/batch_3/report.md`, "Prior-art verdict" table):
+  - **C2** — "**instrument/protocol**: a shared post-hoc baseline-blend / floor-hedge stage pays off as a closed form in rho, so comparisons decided there are **decorrelation** verdicts; hence pre-stage scoring + blend-base decorrelation audit as a benchmark requirement" | **`preempted-but-MF-composition-open (cite)` — best-supported novel composition for B3** | Citations: "Bates & Granger (1969) minimum-variance combination `w_BG=(1'S^-1 1)^-1 1 S^-1` from the prediction-error covariance, weights may leave [0,1] — https://search.r-project.org/CRAN/refmans/MuMIn/html/BGweights.html ; weight-constraint/covariance-shrinkage theory, candidates treated symmetrically with 'none receives special "baseline" status' — https://arxiv.org/html/2510.26456" | Open: "its use as an **evaluation-protocol defect detector** ... One targeted search returned **no usable results**; the fetched combination literature never treats a candidate as a benchmark's shared post-hoc stage."
+  - **C1** — "per-mode **out-of-fold model-family selection** over a bank ({affine, quadratic, kernel ridge, k-NN}) for condition->POD-coefficient regression, priced against a trained decoder **before** any shared post-hoc stage" | **`preempted-but-MF-composition-open (cite)`** | Citations: "ASAMS whole-model automatic selection by grid+LOOCV over **trained** candidates — https://pmc.ncbi.nlm.nih.gov/articles/PMC7571090/ ; McGreivy & Hakim weak baselines — https://arxiv.org/abs/2407.07218 ; POD-NN/PCA-Net — https://arxiv.org/html/2504.18513v1/" | "One-regressor-per-mode is **presumed prior art (do not claim)**"; bound to state Lanthaler et al. https://arxiv.org/abs/2210.01074.
+  - **C3** — "identified-**SET** indexing / predictability-ordered output basis" | **`preempted (cite)`** (https://arxiv.org/abs/2011.05309; https://pmc.ncbi.nlm.nih.gov/articles/PMC9633505/) | "Nothing claimable ... **Ship as a bug fix / instrument, never as a contribution**."
+  - **C4** — H2 test | "**NOT PRIOR-ART-CHECKED THIS LOOP** (cap reached) ... Must not be headlined as novel. Admissible only as a diagnostic inside a C1/C2-claimed card, and it requires the build gate B2 missed: every decoder arm ships `preds_test.npz`."
+- **Immutables self-check**: **pass (11/11)** — every item carries positive evidence in [iteration_1.md](iteration_1.md) ("Immutables self-check"). Headlines: stripped view + leakage tripwire (1, 9-r2); panel and guards unchanged, "3 datasets not 6" applied to falsification legs only (2); zero edits outside `models_r2/` (3, 7); single `test_hf` scored through `round2/eval/nrmse.py` (4); six-arg CLI, all knobs as `R2S1B3_*` env (5); `seeds:[0]`, smoke 200 / guard contract 2 (6); `last.pt` every epoch incl. shuffle RNG state, closing B2 code-review F5c (8); thresholds 1.5x-5x mce with all margins listed (9); not a pre-falsified lever — differences from B2's falsified composition enumerated, and the Wiener grid is **narrowed**, not widened (10); floor arms `nn_condition/train_mean/zero` from `state/anchors/floors.json` seam-checked at 1e-9 and L4 written entirely against them, plus `ref_dc_only` (11).
+- **Anchor reference**: `null` (program.md 4.5 — all four round-2 streams are gap/lever/diag; the own-stream anchor 23.0636 is implicit)
+- **Source iteration**: [iteration_1.md](iteration_1.md)
+
+## Reopen candidates
+
+| Candidate | Verdict (retry/drop) | Eased conditions | Source iteration |
+|---|---|---|---|
+| *(none)* | n/a — `reopen_candidate: false` on all 10 round-2 cards, verified by reading each card back from disk | n/a | [iteration_1.md](iteration_1.md) |
+
+## Skipped slot
+
+Not applicable — the slot is filled. The **B3-or-close** decision posed by B2 part 7 was taken explicitly in favour of B3 on four recorded grounds (iteration_1.md, "Step 0"): (1) the stream's two headline findings are currently post-hoc curve fits and B3 converts them into a pre-registered out-of-sample test; (2) the `preds_test.npz` build gate is otherwise permanently unlifted and the one honest deficit on this panel stays untestable; (3) the cost is measured, not guessed — B2's full panel+guard job was 16.83 min on an H200 and B3 removes work (drops `decoder_small` and the rank sweep); (4) criterion 1 runs through r2s3-B3/r2s4 and criterion 2 is unreachable for any arm in this regime, so the stream's remaining value is exactly the instrument/measurement value B3 delivers.
+
+## Summary table
+
+| Slot | Category | One-liner | Status |
+|---|---|---|---|
+| B3 | gap / instrument-repair + stage-free re-pricing (C2 headline, C1 scored arm, C3 bug fix, C4 diagnostic) | Score the closed-form per-mode OOF-selected head with **no post-hoc stage**, demote the Bates-Granger blend to a measured reference split with a calibration-fold prediction written before test, repair SET indexing / form-matched basis / the Wiener grid, and ship `preds_test.npz` so the cahn_hilliard capacity residual becomes testable | filled |
