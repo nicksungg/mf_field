@@ -70,6 +70,8 @@ tool: name, what it measures, invocation, provenance card.
 | `design_coverage_audit.py` | ROUND-2: does this LF pool ADD DESIGN ROWS or only replicate the HF conditions? per rung, rank / null dimension / singular values of `[X,1]` for the HF training rows, the PAIRED pool, the FULL pool and their union, covered-vs-uncovered condition counts, `m_reduction_paired` vs `m_reduction_full`, and (`--fields`) the lifted-LF-vs-HF discrepancy at the covered conditions that decides whether a paired LF target is CONTRADICTORY | r2s3_lf_train_signal-B2 turn 3 |
 | `blend_decorrelation_payoff.py` | ROUND-2: what a post-hoc floor-BLEND stage actually pays and WHICH ARM CLASS it pays — fits the one free parameter ρ (arm-vs-base error correlation) of the two-member ensemble model to each shipped calibration λ-surface, with the fit residual, the test-side implied ρ, per-cell `COLLINEAR_WITH_BASE` / `BASE_DOMINATED` verdicts, and an equal-ρ counterfactual between two arms. Decomposes the blend PAYOFF by decorrelation, where `shrinkage_curve_anatomy.py` decomposes a shrinkage curve into level vs fluctuation | r2s1_direct-B2 turn 3 |
 | `selection_set_vs_window_audit.py` | ROUND-2: does a training-free selection rule fit the SET its own diagnostic identifies, or only that set's CARDINALITY (the leading window)? reconstructs `{i: stat_i > tau}` vs `{0..r_sel-1}` from the shipped selection diagnostics, prices the mismatch in the rule's own statistic (and optionally in basis energy), and raises `FORM_MISMATCH` when the statistic was measured on a different basis/centering form than the one fitted | r2s1_direct-B2 turn 1 |
+| `zero_gradient_stage_ladder.py` | ROUND-2: how much of a TRAINED stack's test-side value is reachable with ZERO gradient steps — an out-of-fold stage ladder (raw intermediate / global gain / closed-form LSI Wiener / two blend rungs / free joint `(k, base, lam)`) read on TEST against the shipped trained arm, ATTRIBUTING the scored gain to {closed-form, gradient, blend} in percent and in skill units vs the certified mce, plus per-rung geometry (cosine / amplitude / structure-only error) and the fitted transfer's dyadic band gains. Seam-checks the shipped calib k-sweep, the frozen floors and `nrmse_after_lsi` rather than assuming them | r2s2_stacked-B2 turn 3 |
+| `relative_gain_units_audit.py` | ROUND-2: can a DIMENSIONLESS eligibility threshold ("if the available value-add is below X %, don't build the stage") be stated in this benchmark's claim units? prices the threshold, the realised gain and the cost of OBEYING the rule in skill units and in certified `min_claimable_effect`, with panel verdicts `EXPRESSIBLE` / `COARSE` / `PANEL_INCONSISTENT` / `MISCALIBRATED`. Run it on any rule BEFORE exporting it as a gate | r2s2_stacked-B2 turn 3 |
 
 ---
 
@@ -2994,3 +2996,181 @@ the composition before attributing anything to capacity — a rule that reports 
 summary number can hide a set-vs-window bug, and a "fair because identical for
 every arm" stage can still score arms on a quantity the card never intended to
 test.
+
+---
+
+## `zero_gradient_stage_ladder.py`  *(round 2)*
+
+**Measures.** Inside a stack that has already been trained, WHICH OF ITS OWN
+STAGES earned the leaderboard number. Rebuilds the stack's intermediates from the
+family's own modules and walks a ladder, every choice selected OUT OF FOLD on a
+calibration split and read on TEST: `S0 raw` (the intermediate, 0 parameters),
+`S1 gain` (one calib-fitted scalar), `S2 lsi` (closed-form Wiener transfer fitted
+on the fit fold + the family's own out-of-fold `alpha` line search — **0 gradient
+steps**), `S3/S4 blend_raw/blend_lsi` (`lam` and floor `base` on calib),
+`S5 free_joint` (joint `(k, base, lam)` on calib, nothing fitted), against the
+shipped `S6 arm` / `S7 scored`. Then ATTRIBUTES the scored arm's test-side
+improvement over `S0` to {closed-form stage, gradient stage, blend stage} in
+percent, in skill units (`nRMSE / copy-LF reference`) and in multiples of the
+certified `min_claimable_effect`. Also per-rung geometry (mean cosine, amplitude
+ratio, per-sample-gain-oracle = structure-only error) and the fitted transfer's
+dyadic band gains `|1 + alpha·T(k)|`. Four seams (shipped calib k-sweep, frozen
+floor arms, `nrmse_after_lsi` on the ladder-eval fold, shipped scored/arm nRMSE)
+are RECOMPUTED and reported as `abs_dev` — the tool asserts nothing.
+
+**Read it as.** `attribution.pct_of_total.closed_form_lsi` near 100 → the
+"trained" arm is a closed-form filter with a decorative network; report the
+filter, not the architecture, and treat the gradient stage as an unpaid cost.
+`gradient_pct` large on ONE dataset only → a dataset-specific rescue, not a class
+property (check it at 3 seeds before believing it). `delta_skill_free_minus_scored
+<= 0` → the training-free selection ladder beats the trained stack outright.
+Amplitude-only improvement with falling cosine → the stage is exploiting the
+relative-error metric's amplitude channel (pair with
+`field_error_decomposition.py`). Band gains far from 1 in the SHARP bands → the
+closed-form stage is undoing an over-smoothing that the intermediate introduced.
+Neighbours: `surrogate_coherence_eligibility.py` gives the training-free CEILING
+for the `S2` class and this gives its realised out-of-fold VALUE against the
+trained alternative; `posthoc_repair_ladder.py` asks the complementary question
+from outside (predictions only, no folds); `relative_gain_units_audit.py`
+converts this tool's attribution into a decision statement.
+
+**Needs a family interface, not a prediction dump** (`--family_dir`):
+`folds.make_folds`, `ladders.{cond_scaler,neighbour_order,effective_ks,ladder_b_fields}`,
+`floors.build`/`floors.FLOOR_ARMS`, `lsi_filter.{fit_transfer,apply_transfer}`,
+`local_corrector.fit_alpha`, `bands.band_masks`/`bands.N_BANDS`,
+`upsample.upsample_fields` (the round-2 `r2s2_correctability` family and any
+descendant). The diagnostics JSON must carry `M3.kstar.raw_calib_nrmse`,
+`M3.{scored_rung,arm_test_nrmse,scored_test_nrmse,reference_splits,blend}`,
+`M1[rung].verdict.label`, `M1c[rung].nrmse_after_lsi`. Nothing is fitted on test
+and no test-side LF array is ever constructed (the test rung is built from the
+TRAIN LF pool + test conditions).
+
+**Invoke.**
+```bash
+source "$PROJECT_ROOT/.venv/bin/activate"
+python tools/zero_gradient_stage_ladder.py \
+    --family_dir worktrees/r2s2_stacked/B2/models_r2/r2s2_correctability \
+    --diag_dir "$OUTPUTS_ROOT/r2s2_stacked/B2/eval" \
+    --datasets sharp__cahn_hilliard --out ladder.json
+```
+**One leg per dataset.** A 4-dataset invocation exceeds the 20-min turn cap, and
+on a contended login shell (`nproc = 1`, load ~40) even a single dataset on the
+full default `--ks 1,2,4,8,16,64,256,all` does — the cheap configuration is
+`--ks <k*> --rungs kstar --gain_step 0.05 --n_lambda 5`, which leaves every seam
+and the attribution exact (they do not depend on the gain/λ grids) and finishes
+in minutes. Every knob is a CLI arg (`--rungs --ks --fracs --fold_seed --bases
+--epochs --seed --diag_pattern --factory_root --eval_dir --stripped_data
+--floors_json --copylf_json --noise_floor_json`).
+
+**Verified.** Run 2026-08-01 from `round2/` on r2s2-B2's shipped diagnostics with
+the cheap configuration above (`--datasets sharp__cahn_hilliard --ks 16 --rungs
+kstar --gain_step 0.05 --n_lambda 5`; outputs kept at
+`worktrees/r2s2_stacked/B2/scratchpad/register_toolcheck_ladder.{json,log}`):
+`B:16` raw **0.76101**, gain 0.69858 (`a* = 1.500`), LSI **0.65160**
+(`alpha = 1.000`), blend 0.65160; attribution **97.0 % closed-form / 3.0 %
+gradient / 0.0 % blend** = 2.617 / 0.081 / 0.000 skill units (28.7× / 0.89× /
+0× mce); `S5 free_joint` k=16 base=`zero` λ=1.00 → 0.76101 against the scored
+0.64823, `delta_skill_free_minus_scored` **+2.6981**; seams
+`raw_calib_max_abs_dev` **0.0**, all three frozen floors **0.0**,
+`S2.seam_ladder_eval.abs_dev` **0.0** (0.6180310429001807 both sides); shipped
+`rule_label_kstar` `CORRECTOR_FUTILE`. Identical to card part 6 findings T3/F3.3,
+T3/F3.5 and T3/F3.7 and to the source probe's own log.
+
+**Provenance.** `worktrees/r2s2_stacked/B2/scratchpad/reanalysis_turn_3.py`; card
+`experiment_cards/r2s2_stacked/batch_2/B2.json` part 6, findings T3/F3.1-T3/F3.6
+and interpretation H-STAGE.
+
+---
+
+## `relative_gain_units_audit.py`  *(round 2)*
+
+**Measures.** Whether a rule of the shape *"if the available value-add is below
+X, the stage is not worth building"* can be stated in this benchmark's claim
+units at all. The threshold is DIMENSIONLESS (a fraction of the arm's own error);
+the round's claim currency is `skill = nRMSE / copy-LF reference` above a
+certified `min_claimable_effect`. The conversion factor is
+`raw_nrmse / copylf_ref / mce` and it is not constant across a panel. Per dataset
+the tool reports `threshold_in_skill_units` and `threshold_over_mce` (how many
+minimum claimable effects the gate discards in one step),
+`realised_relative_gain` / `realised_gain_over_mce`, `realised_over_calibration`
+(how far the gain actually available exceeds the number the threshold was
+calibrated on) and `decision_cost_skill_units` / `decision_cost_over_mce` — what
+OBEYING the rule costs, i.e. the arm it selects minus the arm it rejects. Panel
+verdicts: `EXPRESSIBLE`, `COARSE` (`threshold_over_mce > --coarse_factor`),
+`PANEL_INCONSISTENT` (max/min ratio > `--spread_factor`), `MISCALIBRATED`
+(`realised/calibration > --calibration_factor`); several can fire at once.
+
+**Read it as.** `COARSE` or `PANEL_INCONSISTENT` → the rule **cannot be exported
+as an eligibility gate**; keep it as a DIRECTIONAL predictor and price
+eligibility in skill units per dataset instead. A large
+`decision_cost_over_mce` is the strongest form of the failure: obeying the rule
+as written throws away value the round would have certified as a claim.
+`MISCALIBRATED` almost always means the calibration used a FROZEN component where
+the decision applies to a REFIT one — the rule measured transferability, not
+attainability. Note the asymmetry: `EXPRESSIBLE` is a statement about the
+THRESHOLD's units only. It never licenses the rule's science.
+
+**Invoke.**
+```bash
+source "$PROJECT_ROOT/.venv/bin/activate"
+# arms.json:  {"<dataset>": {"raw_nrmse":…, "improved_nrmse":…,
+#                            "rule_selected_nrmse":…, "rejected_nrmse":…,
+#                            "statistic":… }}
+python tools/relative_gain_units_audit.py \
+    --arms arms.json --threshold_relative_gain 0.05 \
+    --calibration_relative_gain 0.0008 \
+    --rule_name "r2s2-B1 coherence eligibility (GAMMA_FUTILE=0.52)" \
+    --out units.json
+```
+`raw_nrmse` is the denominator the dimensionless threshold is written against;
+`rule_selected_nrmse` / `rejected_nrmse` are the two arms the DECISION picks
+between (default: selected = raw, rejected = improved). `--copylf_json` and
+`--noise_floor_json` default to this round's. Pure JSON arithmetic, < 1 s, no
+data or model access — it can audit a rule from another stream's numbers.
+
+**Verified.** Run 2026-07-31 from `round2/` on the r2s2-B1 coherence eligibility
+rule with r2s2-B2's four sharp-panel arms (inputs/outputs kept at
+`worktrees/r2s2_stacked/B2/scratchpad/register_toolcheck_{arms,units_audit}.json`):
+`threshold_over_mce` **10.8 / 10.0 / 816.6 / 11.8** (allen_cahn / cahn_hilliard /
+fisher_kpp / pfc), spread **81.9×**, `decision_cost_over_mce` **21.9 / 29.6 /
+116.1 / 8.8**, `realised_over_calibration` **41.2 / 179.7 / 6.9 / 46.4**, panel
+verdict **COARSE + PANEL_INCONSISTENT + MISCALIBRATED**. Identical to card part 6
+findings T3/F3.7-T3/F3.9.
+
+**Provenance.** `worktrees/r2s2_stacked/B2/scratchpad/reanalysis_turn_3b.py`;
+card `experiment_cards/r2s2_stacked/batch_2/B2.json` part 6, findings
+T3/F3.7-T3/F3.9 and interpretation H-RULE-UNITS.
+
+---
+
+## Standing amendment the r2s2-B2 tools make to `surrogate_coherence_eligibility.py`
+
+*(This does not rewrite the r2s2-B1 entry above; it records what r2s2-B2 measured
+about the rule that entry ships.)*
+
+`surrogate_coherence_eligibility.py`'s `CORRECTOR_ELIGIBLE` / `CORRECTOR_FUTILE`
+LABELS are **not usable as a gate on the round-2 panel**, for three separately
+measured reasons (card `r2s2_stacked/batch_2/B2.json` part 6, H-RULE-UNITS).
+(1) **Centring.** The gamma statistic must be computed on ensemble-CENTRED fields
+and its ceiling taken over the AFFINE class the corrector actually spans; the
+uncentered form degenerates to the target's mean-energy share when the input is
+dominated by a row-invariant field (r2s2-B2 turn 1: centring moved gamma from
+0.16 to 1.00 on the `B:all` rungs and flipped every verdict there).
+(2) **Frozen vs refit.** `GAMMA_FUTILE = 0.52` was calibrated on a FROZEN
+corrector at "value-add ≤ 0.08 %"; a REFIT closed-form LSI at centred gamma
+0.10–0.35 removed 0.55–14.38 % of the test error, 7–180× that bound.
+(3) **Units.** The rule's 0.05 relative-gain floor is worth 0.58–9.47 skill units
+across the sharp panel — 10× to 817× the certified `min_claimable_effect`, and
+82× inconsistent between datasets. Applied as written it labelled every scored
+rung of r2s2-B2 `CORRECTOR_FUTILE` and obeying it cost 8.8–116× mce.
+
+**Standing rules this leaves.** (a) The coherence statistic stays useful as a
+DIRECTIONAL predictor (high centred gamma → large corrector value-add) — never as
+an eligibility gate. (b) Any dimensionless threshold, in any stream, gets run
+through `relative_gain_units_audit.py` before it is exported. (c) Before
+attributing a stacked arm's number to its trained stage, run
+`zero_gradient_stage_ladder.py`: on this panel 33–100 % of the scored gain was a
+zero-gradient closed-form Wiener filter and the gated CNN was rejected out of
+fold (`alpha_nn = 0`) on 5 of 8 rung cells. (d) Never build a ladder rung that is
+leave-one-out on TRAIN and no-self on TEST (r2s2-B2's `B:all`): it is train/test
+inconsistent by construction and it fooled three independent clauses at once.
