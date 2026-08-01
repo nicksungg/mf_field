@@ -1,0 +1,195 @@
+{
+  "checks": {
+    "allen_cahn_2d_sample.h5": {
+      "convention": "node_periodic",
+      "a_raw_bit_identical": "PASS",
+      "a_hf_aligned_bit_identical": "PASS",
+      "b_new_vs_eval_recon_maxabs": 1.4901161193847656e-08,
+      "b_recon": "PASS",
+      "b_exact_nesting_new_maxabs": 0.0,
+      "b_exact_nesting_old_maxabs": 0.0778353214263916,
+      "b_nesting": "PASS",
+      "b_old_fails_nesting": "PASS",
+      "c_shift_old_vs_new_hf_cells": {
+        "32": 1.5,
+        "64": 0.5
+      }
+    },
+    "cahn_hilliard_sample.h5": {
+      "convention": "node_periodic",
+      "a_raw_bit_identical": "PASS",
+      "a_hf_aligned_bit_identical": "PASS",
+      "b_new_vs_eval_recon_maxabs": 1.1920928955078125e-07,
+      "b_recon": "PASS",
+      "b_exact_nesting_new_maxabs": 0.0,
+      "b_exact_nesting_old_maxabs": 0.9033827185630798,
+      "b_nesting": "PASS",
+      "b_old_fails_nesting": "PASS",
+      "c_shift_old_vs_new_hf_cells": {
+        "32": 1.5,
+        "64": 0.5
+      }
+    },
+    "helmholtz_2d_sample.h5": {
+      "convention": "node_dirichlet",
+      "a_raw_bit_identical": "PASS",
+      "a_hf_aligned_bit_identical": "PASS",
+      "b_new_vs_eval_recon_maxabs": 9.313225746154785e-10,
+      "b_recon": "PASS",
+      "c_shift_old_vs_new_hf_cells": {
+        "32": 0.05,
+        "64": 0.0
+      }
+    },
+    "real_sharp__allen_cahn_2d": {
+      "lf_grid": 128,
+      "hf_grid": 256,
+      "eval_layer_exact_nesting_maxabs": 0.0,
+      "b_real_nesting": "PASS",
+      "patched_ladder_vs_eval_layer_maxabs": 0.0,
+      "b_real_agreement": "PASS"
+    },
+    "c_index_ramp_probe": {
+      "r=2": {
+        "old_cell_map_offset_hf_cells": -0.5,
+        "new_node_map_offset_hf_cells": 0.0,
+        "expected_old_offset": -0.5
+      },
+      "r=4": {
+        "old_cell_map_offset_hf_cells": -1.5,
+        "new_node_map_offset_hf_cells": 0.0,
+        "expected_old_offset": -1.5
+      }
+    },
+    "d_fidelity_gap_metrics": {
+      "allen_cahn_2d": {
+        "old": {
+          "32": {
+            "rel_l2": 0.17776898676172792,
+            "linf": 0.055541521264335966,
+            "wasserstein1": 0.0007532128032929889,
+            "interface_position": 1.2789407377527413,
+            "spectral_band": 0.013607414107464638,
+            "conservation": 0.0025474021029233775,
+            "ssim": 0.2520852102400602
+          },
+          "64": {
+            "rel_l2": 0.05839875253842064,
+            "linf": 0.01385697932290823,
+            "wasserstein1": 0.0003838478459038325,
+            "interface_position": 0.42100139892598104,
+            "spectral_band": 0.0032158120616811573,
+            "conservation": 0.0005332169307503477,
+            "ssim": 0.040487048821293475
+          }
+        },
+        "new": {
+          "32": {
+            "rel_l2": 0.05623316111103429,
+            "linf": 0.01690188229602249,
+            "wasserstein1": 0.0007083231530168868,
+            "interface_position": 0.3277966906121813,
+            "spectral_band": 0.01218812136004254,
+            "conservation": 0.000370025155292815,
+            "ssim": 0.048084197360224706
+          },
+          "64": {
+            "rel_l2": 0.012491731206286612,
+            "linf": 0.003539749680845519,
+            "wasserstein1": 0.00016920732498790057,
+            "interface_position": 0.06620140278402997,
+            "spectral_band": 0.010596329717735992,
+            "conservation": 5.7479898340618795e-05,
+            "ssim": 0.002505183368662567
+          }
+        }
+      },
+      "cahn_hilliard": {
+        "old": {
+          "32": {
+            "rel_l2": 1.3509511528679767,
+            "linf": 2.1178033752962717,
+            "wasserstein1": 0.09423729459771882,
+            "interface_position": 21.513172786922116,
+            "spectral_band": 0.014999078775746716,
+            "conservation": 0.12041374208926693,
+            "ssim": 0.9769847821289042
+          },
+          "64": {
+            "rel_l2": 0.2454902413704491,
+            "linf": 1.1966585223374837,
+            "wasserstein1": 0.004364177030245893,
+            "interface_position": 2.2778771291477273,
+            "spectral_band": 0.0028494958509363466,
+            "conservation": 0.0018608743459708813,
+            "ssim": 0.16978094156449297
+          }
+        },
+        "new": {
+          "32": {
+            "rel_l2": 1.3500052095432982,
+            "linf": 2.005703444424759,
+            "wasserstein1": 0.09380171317901596,
+            "interface_position": 21.455252688854436,
+            "spectral_band": 0.01400095028472699,
+            "conservation": 7.83819070386837e-14,
+            "ssim": 0.9766938680733726
+          },
+          "64": {
+            "rel_l2": 0.2410249104515745,
+            "linf": 1.1487389753945605,
+            "wasserstein1": 0.002697873112857071,
+            "interface_position": 2.2796549733933045,
+            "spectral_band": 0.00802210595968964,
+            "conservation": 3.089177054630003e-14,
+            "ssim": 0.16318597316580286
+          }
+        }
+      },
+      "helmholtz_2d": {
+        "old": {
+          "32": {
+            "rel_l2": 4.78462134104718,
+            "linf": 0.004353686901375931,
+            "wasserstein1": 0.001010251012609589,
+            "interface_position": 33.91093395006589,
+            "spectral_band": 0.011993590260304682,
+            "conservation": 0.9539918231441764,
+            "ssim": 0.792474770323359
+          },
+          "64": {
+            "rel_l2": 1.5556176006683193,
+            "linf": 0.0023426235205853893,
+            "wasserstein1": 0.00045538247674666753,
+            "interface_position": 3.3841138936310995,
+            "spectral_band": 0.00426652653837391,
+            "conservation": 1.1787359342052288,
+            "ssim": 0.4011901874345182
+          }
+        },
+        "new": {
+          "32": {
+            "rel_l2": 4.785329102593863,
+            "linf": 0.00445565864880314,
+            "wasserstein1": 0.00101128047777563,
+            "interface_position": 34.25039132928166,
+            "spectral_band": 0.045833065247426426,
+            "conservation": 1.381738561800276,
+            "ssim": 0.7737630417025043
+          },
+          "64": {
+            "rel_l2": 1.5422464380419163,
+            "linf": 0.0023915628825913683,
+            "wasserstein1": 0.0004534521590463118,
+            "interface_position": 3.3896148918838453,
+            "spectral_band": 0.018428048979315312,
+            "conservation": 1.2568764356838633,
+            "ssim": 0.3776846468524289
+          }
+        }
+      }
+    }
+  },
+  "hard_failures": [],
+  "verdict": "PASS"
+}

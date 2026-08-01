@@ -1,0 +1,80 @@
+[
+  {
+    "pde": "allen_cahn_2d",
+    "out_path": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/ladder_fix_proposal/sample_round/new/allen_cahn_2d_sample.h5",
+    "hf_res": 128,
+    "n": 4,
+    "lf_vs_hf": {
+      "32": {
+        "rel_l2": 0.05623316111103429,
+        "linf": 0.01690188229602249,
+        "wasserstein1": 0.0007083231530168868,
+        "interface_position": 0.3277966906121813,
+        "spectral_band": 0.01218812136004254,
+        "conservation": 0.000370025155292815,
+        "ssim": 0.048084197360224706
+      },
+      "64": {
+        "rel_l2": 0.012491731206286612,
+        "linf": 0.003539749680845519,
+        "wasserstein1": 0.00016920732498790057,
+        "interface_position": 0.06620140278402997,
+        "spectral_band": 0.010596329717735992,
+        "conservation": 5.7479898340618795e-05,
+        "ssim": 0.002505183368662567
+      }
+    }
+  },
+  {
+    "pde": "cahn_hilliard",
+    "out_path": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/ladder_fix_proposal/sample_round/new/cahn_hilliard_sample.h5",
+    "hf_res": 128,
+    "n": 4,
+    "lf_vs_hf": {
+      "32": {
+        "rel_l2": 1.3500052095432982,
+        "linf": 2.005703444424759,
+        "wasserstein1": 0.09380171317901596,
+        "interface_position": 21.455252688854436,
+        "spectral_band": 0.01400095028472699,
+        "conservation": 7.83819070386837e-14,
+        "ssim": 0.9766938680733726
+      },
+      "64": {
+        "rel_l2": 0.2410249104515745,
+        "linf": 1.1487389753945605,
+        "wasserstein1": 0.002697873112857071,
+        "interface_position": 2.2796549733933045,
+        "spectral_band": 0.00802210595968964,
+        "conservation": 3.089177054630003e-14,
+        "ssim": 0.16318597316580286
+      }
+    }
+  },
+  {
+    "pde": "helmholtz_2d",
+    "out_path": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/ladder_fix_proposal/sample_round/new/helmholtz_2d_sample.h5",
+    "hf_res": 128,
+    "n": 4,
+    "lf_vs_hf": {
+      "32": {
+        "rel_l2": 4.785329102593863,
+        "linf": 0.00445565864880314,
+        "wasserstein1": 0.00101128047777563,
+        "interface_position": 34.25039132928166,
+        "spectral_band": 0.045833065247426426,
+        "conservation": 1.381738561800276,
+        "ssim": 0.7737630417025043
+      },
+      "64": {
+        "rel_l2": 1.5422464380419163,
+        "linf": 0.0023915628825913683,
+        "wasserstein1": 0.0004534521590463118,
+        "interface_position": 3.3896148918838453,
+        "spectral_band": 0.018428048979315312,
+        "conservation": 1.2568764356838633,
+        "ssim": 0.3776846468524289
+      }
+    }
+  }
+]

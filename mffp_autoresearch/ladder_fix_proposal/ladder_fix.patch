@@ -1,0 +1,586 @@
+diff --git a/mf_field_eloise_data/SURF_2026-main/mffp_sharp/scripts/ch_sharpness_sweep.py b/mf_field_eloise_data/SURF_2026-main/mffp_sharp/scripts/ch_sharpness_sweep.py
+index d1e879f..4c5f21a 100644
+--- a/mf_field_eloise_data/SURF_2026-main/mffp_sharp/scripts/ch_sharpness_sweep.py
++++ b/mf_field_eloise_data/SURF_2026-main/mffp_sharp/scripts/ch_sharpness_sweep.py
+@@ -46,7 +46,7 @@ def main():
+     print(f"{'eps':>6} {'cells@256':>9} {'HFslope':>8} {'E>k12':>9} {'relL2_128':>10} {'relL2_64':>9}")
+     for eps in EPS:
+         fields = {r: ch._solve(ch._spectral_interp(ic, r), eps, 1.0, 1.0, T, dt=DT) for r in LADDER}
+-        b = ladder.assemble_sample(fields, HF)
++        b = ladder.assemble_sample(fields, HF, pde="cahn_hilliard")
+         hf = b["aligned"][HF]
+         if not np.isfinite(hf).all():
+             print(f"{eps:6.3f} {eps*HF:9.1f}   UNSTABLE (solver overflow at dt={DT:g})", flush=True)
+diff --git a/mf_field_eloise_data/SURF_2026-main/mffp_sharp/scripts/explain_ks_chaos.py b/mf_field_eloise_data/SURF_2026-main/mffp_sharp/scripts/explain_ks_chaos.py
+index 7592772..aea958f 100644
+--- a/mf_field_eloise_data/SURF_2026-main/mffp_sharp/scripts/explain_ks_chaos.py
++++ b/mf_field_eloise_data/SURF_2026-main/mffp_sharp/scripts/explain_ks_chaos.py
+@@ -27,7 +27,7 @@ SPEC = {"L": 30.0, "ic_amplitude": 0.1, "seed": 42}
+ 
+ def fields_at(T):
+     raw, _, _ = ks.generate_sample(SPEC, [32, 128], 128, T)
+-    b = ladder.assemble_sample(raw, 128)
++    b = ladder.assemble_sample(raw, 128, pde="kuramoto_sivashinsky")
+     lf, hf = b["aligned"][32], b["aligned"][128]
+     return lf, hf, metrics.rel_l2(lf, hf)
+ 
+diff --git a/mf_field_eloise_data/SURF_2026-main/mffp_sharp/src/mffp_sharp/common/io.py b/mf_field_eloise_data/SURF_2026-main/mffp_sharp/src/mffp_sharp/common/io.py
+index 03fef6b..82ea1f4 100644
+--- a/mf_field_eloise_data/SURF_2026-main/mffp_sharp/src/mffp_sharp/common/io.py
++++ b/mf_field_eloise_data/SURF_2026-main/mffp_sharp/src/mffp_sharp/common/io.py
+@@ -51,6 +51,10 @@ def write_dataset(
+         hf0 = np.asarray(samples[0]["aligned"][hf_res])
+         f.attrs["ndim"] = int(hf0.ndim)
+         f.attrs["spatial_shape"] = list(hf0.shape)
++        # Provenance: which registration convention built the aligned arrays
++        # (registration-defect note 2026-08-01, item 2).
++        if samples[0].get("convention"):
++            f.attrs["alignment_convention"] = samples[0]["convention"]
+ 
+         f.create_dataset("fidelity_index", data=np.asarray(resolutions, dtype=np.int32))
+         f.create_dataset("condition", data=condition.astype(np.float32))
+diff --git a/mf_field_eloise_data/SURF_2026-main/mffp_sharp/src/mffp_sharp/common/ladder.py b/mf_field_eloise_data/SURF_2026-main/mffp_sharp/src/mffp_sharp/common/ladder.py
+index 27b4278..cbc2ac5 100644
+--- a/mf_field_eloise_data/SURF_2026-main/mffp_sharp/src/mffp_sharp/common/ladder.py
++++ b/mf_field_eloise_data/SURF_2026-main/mffp_sharp/src/mffp_sharp/common/ladder.py
+@@ -1,17 +1,90 @@
+ """Fidelity ladder: resolution levels and dyadic up-interpolation to the HF grid.
+ 
+ Every fidelity is interpolated up onto the HF grid so residuals (HF - LF) are
+-well-defined. The ladder is dyadic (each level doubles), so coarse grid points
+-land exactly on HF grid points and the up-interpolation is a clean nested
+-operation rather than an artifact-prone resample.
++well-defined. The ladder is dyadic (each level doubles), so on node-sampled
++grids coarse points land exactly on HF grid points and the up-interpolation is
++a clean nested operation rather than an artifact-prone resample.
+ 
+ We keep BOTH the raw native-grid field (provenance) and the up-interpolated
+ version (for residuals), per the methodology template in TO-DO.md.
++
++REGISTRATION CONVENTIONS (registration-defect fix, 2026-08-01 note item 2).
++The old implementation applied ONE coordinate map — cell-centred, x_j =
++(j+0.5)/n — to every PDE.  That map is only correct for finite-volume solver
++output (PyClaw cell averages).  The pseudo-spectral / periodic-FD solvers in
++this package sample their fields at NODES x_j = j/n, and helmholtz on interior
++Dirichlet nodes x_j = (j+1)/(n+1); pushing node data through the cell-centred
++map displaces every value by (r-1)/2 HF cells (half a coarse cell at r=2),
++baking a registration shift into the stored aligned arrays and into the
++LF-vs-HF fidelity-gap metrics computed from them.  The raw native-grid arrays
++were always correct.
++
++This module now dispatches per PDE, mirroring the audited implementations in
++`mffp_autoresearch/round2/eval/panel_data.py` (ADR r2-0001) and
++`mf_field/factory_mffp/models/_common/lf_registration.py`:
++
++  - node_periodic  : HF node k samples LF index k*h/H exactly, periodic wrap
++                     (variant C).  Exact at shared nodes on a nested ladder:
++                     up[::r, ::r] == lf.
++  - node_dirichlet : interior-node coordinate map x_j = (j+1)/(n+1), clamped
++                     at the boundary (variant E; helmholtz).
++  - cell_centered  : the original cell-centred map, kept verbatim — it is the
++                     CORRECT convention for finite-volume (PyClaw) output.
++
++An unclassified PDE RAISES (convention assignment is a design decision, never
++a default), matching the eval layer's policy.
+ """
+ from __future__ import annotations
+ 
+ import numpy as np
+ from scipy.interpolate import RegularGridInterpolator
++from scipy.ndimage import map_coordinates
++
++# ── per-PDE convention classification ────────────────────────────────────────
++# Keyed by solver module name (`pdes/<name>.py`, the `module:` field of a
++# config block).  Grounds: pseudo-spectral (np.fft) and periodic np.roll-stencil
++# solvers evaluate on nodes x_j = j*L/n; PyClaw solvers store cell averages at
++# p_centers x_j = (j+0.5)*L/n; helmholtz solves on interior Dirichlet nodes
++# x_j = (j+1)*h, h = L/(n+1).
++PERIODIC_NODE_PDES = {
++    "allen_cahn",
++    "cahn_hilliard",
++    "fisher_kpp",
++    "gray_scott",
++    "kdv",
++    "kuramoto_sivashinsky",
++    "nls",
++    "phase_field_crystal",
++    "porous_medium",
++    "sine_gordon",
++    "swift_hohenberg",
++}
++DIRICHLET_NODE_PDES = {"helmholtz"}
++CELL_CENTERED_PDES = {"burgers", "euler", "shallow_water", "sod"}
++
++CONVENTIONS = ("node_periodic", "node_dirichlet", "cell_centered")
++
++
++def convention_for_pde(pde: str) -> str:
++    """Return the registration convention for a solver module name.
++
++    Raises on an unclassified PDE — mirroring the eval layer
++    (`panel_data.copylf_prediction`), a convention is assigned by audit of the
++    solver's grid, never defaulted.
++    """
++    if pde in PERIODIC_NODE_PDES:
++        return "node_periodic"
++    if pde in DIRICHLET_NODE_PDES:
++        return "node_dirichlet"
++    if pde in CELL_CENTERED_PDES:
++        return "cell_centered"
++    raise ValueError(
++        f"PDE module {pde!r} has no grid-registration convention assigned; "
++        "classify it in mffp_sharp.common.ladder (PERIODIC_NODE_PDES / "
++        "DIRICHLET_NODE_PDES / CELL_CENTERED_PDES) after auditing the "
++        "solver's grid. Refusing to default (registration-defect note "
++        "2026-08-01, item 2)."
++    )
+ 
+ 
+ def _cell_centers(n: int) -> np.ndarray:
+@@ -19,22 +92,18 @@ def _cell_centers(n: int) -> np.ndarray:
+     return (np.arange(n) + 0.5) / n
+ 
+ 
+-def upsample_to_hf(field: np.ndarray, hf_res: int, order: str = "linear") -> np.ndarray:
+-    """Interpolate an LF field up onto the HF grid.
+-
+-    Accepts a 1D field (length res) or a square 2D field (res x res). Uses
+-    cell-center coordinates on the unit domain so LF and HF share the same physical
+-    domain. `order` is "linear" (default) or "nearest".
++def _map_order(order: str) -> int:
++    if order == "linear":
++        return 1
++    if order == "nearest":
++        return 0
++    raise ValueError(f"unsupported order {order!r}; expected 'linear' or 'nearest'")
+ 
+-    1D uses np.interp (endpoint-clamped at the boundary cell centers); 2D uses
+-    RegularGridInterpolator with linear extrapolation, unchanged from before.
+-    """
+-    field = np.asarray(field, dtype=np.float64)
+ 
++def _upsample_cell_centered(field: np.ndarray, hf_res: int, order: str) -> np.ndarray:
++    """The original (pre-fix) map, verbatim: correct for finite-volume data."""
+     if field.ndim == 1:
+         res = field.shape[0]
+-        if res == hf_res:
+-            return field.copy()
+         src = _cell_centers(res)
+         dst = _cell_centers(hf_res)
+         if order == "nearest":
+@@ -42,35 +111,98 @@ def upsample_to_hf(field: np.ndarray, hf_res: int, order: str = "linear") -> np.
+             return field[idx]
+         return np.interp(dst, src, field)
+ 
++    res = field.shape[0]
++    src = (_cell_centers(res), _cell_centers(res))
++    interp = RegularGridInterpolator(
++        src, field, method=order, bounds_error=False, fill_value=None
++    )
++    yy, xx = np.meshgrid(_cell_centers(hf_res), _cell_centers(hf_res), indexing="ij")
++    pts = np.stack([yy.ravel(), xx.ravel()], axis=-1)
++    return interp(pts).reshape(hf_res, hf_res)
++
++
++def _upsample_node_periodic(field: np.ndarray, hf_res: int, order: str) -> np.ndarray:
++    """Variant C (panel_data/lf_registration): HF node k samples LF index
++    k*h/H, linear, periodic wrap.  Exact at shared nodes when nested."""
++    res = field.shape[0]
++    if hf_res % res:
++        raise ValueError(
++            f"node_periodic requires a nested (dyadic) ladder, got {res} -> {hf_res}"
++        )
++    if field.ndim == 1:
++        coords = [np.arange(hf_res, dtype=np.float64) * (res / hf_res)]
++        return map_coordinates(field, coords, order=_map_order(order), mode="grid-wrap")
++    ax = np.arange(hf_res, dtype=np.float64) * (res / hf_res)
++    coords = np.meshgrid(ax, ax, indexing="ij")
++    return map_coordinates(field, coords, order=_map_order(order), mode="grid-wrap")
++
++
++def _upsample_node_dirichlet(field: np.ndarray, hf_res: int, order: str) -> np.ndarray:
++    """Variant E (panel_data/lf_registration): interior Dirichlet nodes
++    x_j = (j+1)/(n+1), clamped at the boundary."""
++    res = field.shape[0]
++    idx = (np.arange(hf_res, dtype=np.float64) + 1.0) * (res + 1) / (hf_res + 1) - 1.0
++    if field.ndim == 1:
++        return map_coordinates(field, [idx], order=_map_order(order), mode="nearest")
++    coords = np.meshgrid(idx, idx, indexing="ij")
++    return map_coordinates(field, coords, order=_map_order(order), mode="nearest")
++
++
++_UPSAMPLERS = {
++    "node_periodic": _upsample_node_periodic,
++    "node_dirichlet": _upsample_node_dirichlet,
++    "cell_centered": _upsample_cell_centered,
++}
++
++
++def upsample_to_hf(
++    field: np.ndarray, hf_res: int, order: str = "linear", *, convention: str
++) -> np.ndarray:
++    """Interpolate an LF field up onto the HF grid under an explicit convention.
++
++    Accepts a 1D field (length res) or a square 2D field (res x res). `order`
++    is "linear" (default) or "nearest".  `convention` is required — one of
++    CONVENTIONS; use `convention_for_pde()` to look it up from the solver
++    module name.  There is deliberately no default (registration-defect note
++    2026-08-01, item 2).
++    """
++    if convention not in CONVENTIONS:
++        raise ValueError(
++            f"unknown convention {convention!r}; expected one of {CONVENTIONS}"
++        )
++    field = np.asarray(field, dtype=np.float64)
++    if field.ndim not in (1, 2):
++        raise ValueError(f"unsupported field.ndim={field.ndim}; expected 1 or 2")
+     if field.ndim == 2:
+         res = field.shape[0]
+         assert field.shape == (res, res), f"expected square field, got {field.shape}"
+-        if res == hf_res:
+-            return field.copy()
+-        src = (_cell_centers(res), _cell_centers(res))
+-        interp = RegularGridInterpolator(
+-            src, field, method=order, bounds_error=False, fill_value=None
+-        )
+-        yy, xx = np.meshgrid(_cell_centers(hf_res), _cell_centers(hf_res), indexing="ij")
+-        pts = np.stack([yy.ravel(), xx.ravel()], axis=-1)
+-        return interp(pts).reshape(hf_res, hf_res)
++    if field.shape[0] == hf_res:
++        return field.copy()
++    return _UPSAMPLERS[convention](field, hf_res, order)
+ 
+-    raise ValueError(f"unsupported field.ndim={field.ndim}; expected 1 or 2")
+ 
+-
+-def assemble_sample(raw_fields: dict[int, np.ndarray], hf_res: int) -> dict:
++def assemble_sample(raw_fields: dict[int, np.ndarray], hf_res: int, *, pde: str) -> dict:
+     """Bundle a single sample's per-resolution raw fields into the stored layout.
+ 
+     Parameters
+     ----------
+     raw_fields : {resolution: native-grid field}
+     hf_res     : the high-fidelity resolution (the common grid for residuals)
++    pde        : solver module name; selects the registration convention
++                 (raises on an unclassified PDE)
+ 
+-    Returns a dict with both the raw fields and HF-aligned versions, ready for io.py.
++    Returns a dict with both the raw fields and HF-aligned versions, ready for
++    io.py, plus the convention used (provenance).
+     """
+-    aligned = {res: upsample_to_hf(f, hf_res) for res, f in raw_fields.items()}
++    convention = convention_for_pde(pde)
++    aligned = {
++        res: upsample_to_hf(f, hf_res, convention=convention)
++        for res, f in raw_fields.items()
++    }
+     return {
+         "raw": raw_fields,        # native-grid fields, for provenance
+         "aligned": aligned,       # all on the HF grid, for residuals/training
+         "hf_res": hf_res,
++        "pde": pde,
++        "convention": convention,
+     }
+diff --git a/mf_field_eloise_data/SURF_2026-main/mffp_sharp/src/mffp_sharp/generate.py b/mf_field_eloise_data/SURF_2026-main/mffp_sharp/src/mffp_sharp/generate.py
+index 8b9802f..f7f0eb1 100644
+--- a/mf_field_eloise_data/SURF_2026-main/mffp_sharp/src/mffp_sharp/generate.py
++++ b/mf_field_eloise_data/SURF_2026-main/mffp_sharp/src/mffp_sharp/generate.py
+@@ -62,7 +62,7 @@ def generate_dataset(name: str, block: dict, top: dict) -> dict:
+ 
+     for i, spec in enumerate(specs):
+         raw, cond, names = mod.generate_sample(spec, resolutions, hf_res, T)
+-        bundle = ladder.assemble_sample(raw, hf_res)
++        bundle = ladder.assemble_sample(raw, hf_res, pde=block["module"])
+         samples.append(bundle)
+         conds.append(cond)
+         hf = bundle["aligned"][hf_res]
+diff --git a/mf_field_eloise_data/SURF_2026-main/mffp_sharp/tests/conftest.py b/mf_field_eloise_data/SURF_2026-main/mffp_sharp/tests/conftest.py
+index 925a055..b0caef2 100644
+--- a/mf_field_eloise_data/SURF_2026-main/mffp_sharp/tests/conftest.py
++++ b/mf_field_eloise_data/SURF_2026-main/mffp_sharp/tests/conftest.py
+@@ -20,14 +20,22 @@ def ramp_2d():
+ 
+ @pytest.fixture
+ def bundle_1d(ramp_1d):
+-    """A two-level 1D bundle (res 4 -> HF 8) via the real ladder."""
++    """A two-level 1D bundle (res 4 -> HF 8) via the real ladder.
++
++    Uses a cell-centred (finite-volume) PDE so the fixture numerics match the
++    pre-fix golden behaviour; the node conventions are covered in test_ladder.
++    """
+     hf = np.linspace(0.0, 3.0, 8)
+-    return ladder.assemble_sample({4: ramp_1d, 8: hf}, hf_res=8)
++    return ladder.assemble_sample({4: ramp_1d, 8: hf}, hf_res=8, pde="sod")
+ 
+ 
+ @pytest.fixture
+ def bundle_2d(ramp_2d):
+-    """A two-level 2D bundle (res 4 -> HF 8) via the real ladder."""
++    """A two-level 2D bundle (res 4 -> HF 8) via the real ladder.
++
++    Uses a cell-centred (finite-volume) PDE so the fixture numerics match the
++    pre-fix golden behaviour; the node conventions are covered in test_ladder.
++    """
+     x = np.linspace(0.0, 3.0, 8)
+     hf = np.add.outer(x, x)
+-    return ladder.assemble_sample({4: ramp_2d, 8: hf}, hf_res=8)
++    return ladder.assemble_sample({4: ramp_2d, 8: hf}, hf_res=8, pde="euler")
+diff --git a/mf_field_eloise_data/SURF_2026-main/mffp_sharp/tests/test_io.py b/mf_field_eloise_data/SURF_2026-main/mffp_sharp/tests/test_io.py
+index 376c85a..c2cde79 100644
+--- a/mf_field_eloise_data/SURF_2026-main/mffp_sharp/tests/test_io.py
++++ b/mf_field_eloise_data/SURF_2026-main/mffp_sharp/tests/test_io.py
+@@ -13,7 +13,7 @@ def _make_samples(ndim, n=3):
+             x = np.linspace(0, 1, 4) + i
+             xh = np.linspace(0, 1, 8) + i
+             raw = {4: np.add.outer(x, x), 8: np.add.outer(xh, xh)}
+-        samples.append(ladder.assemble_sample(raw, 8))
++        samples.append(ladder.assemble_sample(raw, 8, pde="sod" if ndim == 1 else "euler"))
+         conds.append([float(i), 0.5])
+     return samples, np.array(conds)
+ 
+diff --git a/mf_field_eloise_data/SURF_2026-main/mffp_sharp/tests/test_ladder.py b/mf_field_eloise_data/SURF_2026-main/mffp_sharp/tests/test_ladder.py
+index 3e96df8..12f8554 100644
+--- a/mf_field_eloise_data/SURF_2026-main/mffp_sharp/tests/test_ladder.py
++++ b/mf_field_eloise_data/SURF_2026-main/mffp_sharp/tests/test_ladder.py
+@@ -1,18 +1,21 @@
+ import numpy as np
++import pytest
+ 
+ from mffp_sharp.common import ladder
+ 
+ 
++# ── cell-centred path: behaviour identical to the pre-fix implementation ─────
++
+ def test_1d_constant_preserved():
+     f = np.full(4, 2.0)
+-    out = ladder.upsample_to_hf(f, 8)
++    out = ladder.upsample_to_hf(f, 8, convention="cell_centered")
+     assert out.shape == (8,)
+     assert np.allclose(out, 2.0)
+ 
+ 
+ def test_1d_linear_matches_np_interp():
+     f = np.linspace(0.0, 3.0, 4)
+-    out = ladder.upsample_to_hf(f, 8)
++    out = ladder.upsample_to_hf(f, 8, convention="cell_centered")
+     src = (np.arange(4) + 0.5) / 4
+     dst = (np.arange(8) + 0.5) / 8
+     assert np.allclose(out, np.interp(dst, src, f))
+@@ -20,33 +23,150 @@ def test_1d_linear_matches_np_interp():
+ 
+ def test_1d_identity_when_same_res():
+     f = np.linspace(0.0, 3.0, 4)
+-    out = ladder.upsample_to_hf(f, 4)
++    out = ladder.upsample_to_hf(f, 4, convention="cell_centered")
+     assert out.shape == (4,)
+     assert np.allclose(out, f)
+ 
+ 
+ def test_1d_nearest_order():
+     f = np.array([0.0, 1.0, 2.0, 3.0])
+-    out = ladder.upsample_to_hf(f, 8, order="nearest")
++    out = ladder.upsample_to_hf(f, 8, order="nearest", convention="cell_centered")
+     assert out.shape == (8,)
+     assert set(np.unique(out)).issubset(set(f.tolist()))
+ 
+ 
+ def test_2d_unchanged_constant():
+     f = np.full((4, 4), 2.0)
+-    out = ladder.upsample_to_hf(f, 8)
++    out = ladder.upsample_to_hf(f, 8, convention="cell_centered")
+     assert out.shape == (8, 8)
+     assert np.allclose(out, 2.0)
+ 
+ 
+ def test_assemble_sample_1d():
+-    b = ladder.assemble_sample({4: np.linspace(0, 3, 4), 8: np.linspace(0, 3, 8)}, 8)
++    b = ladder.assemble_sample(
++        {4: np.linspace(0, 3, 4), 8: np.linspace(0, 3, 8)}, 8, pde="sod"
++    )
+     assert b["aligned"][4].shape == (8,)
+     assert b["aligned"][8].shape == (8,)
+     assert b["raw"][4].shape == (4,)
++    assert b["convention"] == "cell_centered"
+ 
+ 
+ def test_unsupported_ndim_raises():
+-    import pytest
+     with pytest.raises(ValueError):
+-        ladder.upsample_to_hf(np.zeros((2, 2, 2)), 4)
++        ladder.upsample_to_hf(np.zeros((2, 2, 2)), 4, convention="cell_centered")
++
++
++# ── registration-defect fix (2026-08-01 note item 2): dispatch policy ────────
++
++def test_convention_is_required():
++    with pytest.raises(TypeError):
++        ladder.upsample_to_hf(np.zeros(4), 8)  # no convention kwarg
++
++
++def test_unknown_convention_raises():
++    with pytest.raises(ValueError):
++        ladder.upsample_to_hf(np.zeros(4), 8, convention="bilinear")
++
++
++def test_unclassified_pde_raises():
++    with pytest.raises(ValueError):
++        ladder.assemble_sample({4: np.zeros(4)}, 8, pde="navier_stokes")
++
++
++def test_every_generator_module_is_classified():
++    """Every solver module wired into generate.py has an assigned convention."""
++    from mffp_sharp import generate
++
++    for name in generate._MODULES:
++        assert ladder.convention_for_pde(name) in ladder.CONVENTIONS
++
++
++def test_convention_for_pde_examples():
++    assert ladder.convention_for_pde("allen_cahn") == "node_periodic"
++    assert ladder.convention_for_pde("cahn_hilliard") == "node_periodic"
++    assert ladder.convention_for_pde("helmholtz") == "node_dirichlet"
++    assert ladder.convention_for_pde("euler") == "cell_centered"
++
++
++# ── node_periodic: the invariant that would have caught the defect on day 1 ──
++# (mirrors models/_common/test_lf_registration.py and panel_data variant C)
++
++def test_node_periodic_exact_nesting_2d():
++    rng = np.random.default_rng(0)
++    f = rng.standard_normal((4, 4))
++    up = ladder.upsample_to_hf(f, 8, convention="node_periodic")
++    assert np.array_equal(up[::2, ::2], f)
++
++
++def test_node_periodic_exact_nesting_1d():
++    rng = np.random.default_rng(1)
++    f = rng.standard_normal(8)
++    up = ladder.upsample_to_hf(f, 32, convention="node_periodic")
++    assert np.array_equal(up[::4], f)
++
++
++def test_node_periodic_index_ramp_probe():
++    """Bilinear interp of the index ramp returns the source coordinate each
++    output pixel read: up[k] == k*h/H away from the periodic seam."""
++    h, H = 4, 8
++    f = np.arange(h, dtype=np.float64)
++    up = ladder.upsample_to_hf(f, H, convention="node_periodic")
++    k = np.arange(H)
++    interior = k <= (h - 1) * (H // h)
++    assert np.allclose(up[interior], (k * h / H)[interior], atol=1e-12)
++    # seam pixel wraps: between f[h-1] and f[0]
++    assert np.isclose(up[-1], (f[-1] + f[0]) / 2.0)
++
++
++def test_node_periodic_periodic_wrap_no_clamp():
++    """The seam interpolates across the periodic boundary, not clamp-extends."""
++    f = np.zeros((4, 4))
++    f[0, 0] = 1.0
++    up = ladder.upsample_to_hf(f, 8, convention="node_periodic")
++    # pixel (7,0) sits between rows 3 and 0 -> sees half of f[0,0] via wrap
++    assert np.isclose(up[7, 0], 0.5)
++
++
++def test_node_periodic_requires_nested():
++    with pytest.raises(ValueError):
++        ladder.upsample_to_hf(np.zeros(3), 8, convention="node_periodic")
++
++
++def test_half_cell_shift_gone_on_node_data():
++    """A node-sampled periodic sine keeps its phase under node_periodic but is
++    displaced by the old cell-centred map — the defect this fix removes."""
++    h, H = 32, 64
++    truth = np.sin(2 * np.pi * np.arange(H) / H)
++    coarse = np.sin(2 * np.pi * np.arange(h) / h)
++    up_new = ladder.upsample_to_hf(coarse, H, convention="node_periodic")
++    up_old = ladder.upsample_to_hf(coarse, H, convention="cell_centered")
++    shared = np.arange(0, H, H // h)
++    err_new = np.max(np.abs(up_new[shared] - truth[shared]))
++    err_old = np.max(np.abs(up_old[shared] - truth[shared]))
++    assert err_new < 1e-12                 # exact at shared nodes
++    assert err_old > 0.04                  # ~half-coarse-cell phase shift
++
++
++# ── node_dirichlet (variant E; helmholtz) ────────────────────────────────────
++
++def test_node_dirichlet_linear_exact_interior():
++    """A linear field on interior nodes x_j=(j+1)/(h+1) is reproduced exactly
++    wherever the target coordinate falls inside the source node range."""
++    h, H = 4, 8
++    f = (np.arange(h) + 1.0) / (h + 1.0)          # f(x) = x on interior nodes
++    up = ladder.upsample_to_hf(f, H, convention="node_dirichlet")
++    x_dst = (np.arange(H) + 1.0) / (H + 1.0)
++    inside = (x_dst >= 1.0 / (h + 1.0)) & (x_dst <= h / (h + 1.0))
++    assert np.allclose(up[inside], x_dst[inside], atol=1e-12)
++    # outside the source range values are clamped, not extrapolated
++    assert np.all(up >= f[0] - 1e-12) and np.all(up <= f[-1] + 1e-12)
++
++
++def test_node_dirichlet_2d_matches_separable_1d():
++    rng = np.random.default_rng(2)
++    a = rng.standard_normal(4)
++    f2 = np.add.outer(a, a)
++    up2 = ladder.upsample_to_hf(f2, 8, convention="node_dirichlet")
++    up1 = ladder.upsample_to_hf(a, 8, convention="node_dirichlet")
++    assert np.allclose(up2, np.add.outer(up1, up1), atol=1e-12)
+diff --git a/mf_field_eloise_data/SURF_2026-main/mffp_sharp/tests/test_regression_2d.py b/mf_field_eloise_data/SURF_2026-main/mffp_sharp/tests/test_regression_2d.py
+index 872c57f..8103f72 100644
+--- a/mf_field_eloise_data/SURF_2026-main/mffp_sharp/tests/test_regression_2d.py
++++ b/mf_field_eloise_data/SURF_2026-main/mffp_sharp/tests/test_regression_2d.py
+@@ -13,10 +13,10 @@ def _golden_2d_field(res, seed=0):
+ 
+ def test_2d_upsample_is_deterministic_and_shaped():
+     f = _golden_2d_field(4)
+-    out = ladder.upsample_to_hf(f, 8)
++    out = ladder.upsample_to_hf(f, 8, convention="cell_centered")
+     assert out.shape == (8, 8)
+     # linear up-interp of a known field reproduces a stored corner exactly enough
+-    again = ladder.upsample_to_hf(f, 8)
++    again = ladder.upsample_to_hf(f, 8, convention="cell_centered")
+     assert np.allclose(out, again)
+ 
+ 
+@@ -34,7 +34,7 @@ def test_2d_full_pipeline_roundtrip(tmp_path):
+     samples, conds = [], []
+     for i in range(4):
+         raw = {4: _golden_2d_field(4, i), 8: _golden_2d_field(8, 100 + i)}
+-        samples.append(ladder.assemble_sample(raw, 8))
++        samples.append(ladder.assemble_sample(raw, 8, pde="cahn_hilliard"))
+         conds.append([float(i)])
+     p = str(tmp_path / "reg.h5")
+     io.write_dataset(p, "cahn_hilliard", samples, np.array(conds), ["eps"],
+diff --git a/mf_field_eloise_data/SURF_2026-main/mffp_sharp/tests/test_screen_report.py b/mf_field_eloise_data/SURF_2026-main/mffp_sharp/tests/test_screen_report.py
+index b3aa09b..ab2b45b 100644
+--- a/mf_field_eloise_data/SURF_2026-main/mffp_sharp/tests/test_screen_report.py
++++ b/mf_field_eloise_data/SURF_2026-main/mffp_sharp/tests/test_screen_report.py
+@@ -20,7 +20,7 @@ def _write(tmp, name, mod, spec, T):
+     hf = 32
+     samples, conds, cond_names = [], [], None
+     raw, cond, cond_names = mod.generate_sample(spec, res, hf, T)
+-    samples.append(ladder.assemble_sample(raw, hf))
++    samples.append(ladder.assemble_sample(raw, hf, pde=mod.__name__.rsplit(".", 1)[-1]))
+     conds.append(cond)
+     io.write_dataset(
+         os.path.join(tmp, f"{name}_sample.h5"),
+diff --git a/mf_field_eloise_data/SURF_2026-main/mffp_sharp/tests/test_visualize.py b/mf_field_eloise_data/SURF_2026-main/mffp_sharp/tests/test_visualize.py
+index db16633..2956871 100644
+--- a/mf_field_eloise_data/SURF_2026-main/mffp_sharp/tests/test_visualize.py
++++ b/mf_field_eloise_data/SURF_2026-main/mffp_sharp/tests/test_visualize.py
+@@ -22,7 +22,7 @@ def test_radial_spectrum_2d_unchanged():
+ 
+ def test_one_pager_1d_writes_png(tmp_path):
+     raw = {4: np.linspace(0, 1, 4), 8: np.sin(np.linspace(0, 2 * np.pi, 8))}
+-    b = ladder.assemble_sample(raw, 8)
++    b = ladder.assemble_sample(raw, 8, pde="kuramoto_sivashinsky")
+     out = str(tmp_path / "onepager_1d.png")
+     visualize.one_pager(b, [4, 8], 8, ["rel_l2", "linf", "spectral_band",
+                         "interface_position"], "kuramoto_sivashinsky", 0, out,
+@@ -34,7 +34,7 @@ def test_one_pager_2d_writes_png(tmp_path):
+     x = np.linspace(0, 1, 4)
+     xh = np.linspace(0, 1, 8)
+     raw = {4: np.add.outer(x, x), 8: np.add.outer(xh, xh)}
+-    b = ladder.assemble_sample(raw, 8)
++    b = ladder.assemble_sample(raw, 8, pde="cahn_hilliard")
+     out = str(tmp_path / "onepager_2d.png")
+     visualize.one_pager(b, [4, 8], 8, ["rel_l2", "linf", "spectral_band",
+                         "interface_position"], "cahn_hilliard", 0, out,
