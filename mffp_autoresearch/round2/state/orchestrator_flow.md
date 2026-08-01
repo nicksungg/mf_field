@@ -643,3 +643,21 @@
 
 - 2026-08-01 ~15:3x PDT r2s3-B3 starter SUCCESS (15/15): B3.json drafted, no TBDs; P1
   supersession recorded on card. -> builder dispatched.
+
+- 2026-08-01 ~16:0x PDT r2s1-B2 COMPLETE (register 8/8; disk-verified; 2 tools promoted:
+  blend_decorrelation_payoff [equal-rho counterfactual], selection_set_vs_window_audit
+  [arity-bug detector]). SEVENTH CARD CLOSED. Part 7: ch residual 8.55x mce untestable
+  without decoder preds (standing build gate); three instrument repairs prerequisite to any
+  further capacity claim; B3-or-close explicitly posed. Round instrument-defect section now
+  has r2s1-B2's 3 defects + r2s2-B2's 3 statistic defects. -> B3 websearcher dispatched
+  (brainstormer owns the close decision per §4.6).
+
+- 2026-08-01 ~16:4x PDT r2s1-B3 websearcher SUCCESS (7/7, cap hit, pdf-rule honored): C2
+  (blend = Bates-Granger 1969 minimum-variance combination; evaluation-artifact reading
+  unpublished) = best-supported composition; C1 open-but-thin; C3 PREEMPTED (supervised-PCA
+  — bug fix only); C4 unchecked (diagnostic only). -> B3 brainstormer dispatched with
+  B3-or-close + instrument-repair-card option framed.
+
+- 2026-08-01 ~17:0x PDT r2s3-B3 builder SUCCESS (10/10): build dfcd46c; smokes exit 0 (incl.
+  A0 resume bit-identical); deleted-surface negative tests RAISE; 26/26 env keys + 33/33
+  legs verified; penalty family fully deleted per card. -> code-reviewer dispatched.

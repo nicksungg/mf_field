@@ -68,6 +68,8 @@ tool: name, what it measures, invocation, provenance card.
 | `condition_predictability_ceiling_fast.py` | ROUND-2: `condition_predictability_ceiling.py` with a float32 / capped-pair estimator path (imports the frozen tool unmodified; same schema), plus a `--validate` mode that runs BOTH paths and prints the difference. Use when the exact path will not finish inside a turn budget | r2s4_diag-B2 turn 1 |
 | `null_family_ceiling_audit.py` | ROUND-2: where does a shipped arm's error live relative to what its HF training rows could constrain? the m-generalised ORACLE ceiling over the NULL family of affine functionals that vanish at every training condition, the complementary ROW family and the full affine family, each with a mandatory RANDOM m-dim subspace control (`null_over_random`), plus the implicit-law null-block amplitude/cosine and an optional LEVEL channel — the three-channel decomposition of an arm-vs-arm gap | r2s3_lf_train_signal-B2 turn 3 |
 | `design_coverage_audit.py` | ROUND-2: does this LF pool ADD DESIGN ROWS or only replicate the HF conditions? per rung, rank / null dimension / singular values of `[X,1]` for the HF training rows, the PAIRED pool, the FULL pool and their union, covered-vs-uncovered condition counts, `m_reduction_paired` vs `m_reduction_full`, and (`--fields`) the lifted-LF-vs-HF discrepancy at the covered conditions that decides whether a paired LF target is CONTRADICTORY | r2s3_lf_train_signal-B2 turn 3 |
+| `blend_decorrelation_payoff.py` | ROUND-2: what a post-hoc floor-BLEND stage actually pays and WHICH ARM CLASS it pays — fits the one free parameter ρ (arm-vs-base error correlation) of the two-member ensemble model to each shipped calibration λ-surface, with the fit residual, the test-side implied ρ, per-cell `COLLINEAR_WITH_BASE` / `BASE_DOMINATED` verdicts, and an equal-ρ counterfactual between two arms. Decomposes the blend PAYOFF by decorrelation, where `shrinkage_curve_anatomy.py` decomposes a shrinkage curve into level vs fluctuation | r2s1_direct-B2 turn 3 |
+| `selection_set_vs_window_audit.py` | ROUND-2: does a training-free selection rule fit the SET its own diagnostic identifies, or only that set's CARDINALITY (the leading window)? reconstructs `{i: stat_i > tau}` vs `{0..r_sel-1}` from the shipped selection diagnostics, prices the mismatch in the rule's own statistic (and optionally in basis energy), and raises `FORM_MISMATCH` when the statistic was measured on a different basis/centering form than the one fitted | r2s1_direct-B2 turn 1 |
 
 ---
 
@@ -2827,3 +2829,168 @@ design is full rank, `m = 0`, and the null halves return empty by construction
 (not a bug — see `NO_DEFICIT_TO_FIX`). Every `_ORACLE` key in either new tool is
 fitted on the test split and is a CEILING; only DIFFERENCES between two arms'
 ceilings are quotable, and never as an arm score.
+
+---
+
+## `blend_decorrelation_payoff.py`  *(round 2)*
+
+**Measures.** For every (dataset, arm, base) cell of a post-hoc blend stage
+`pred_final = λ·arm + (1−λ)·base`, the single free parameter of the two-member
+ensemble model
+
+```
+c(λ)² = λ²a² + (1−λ)²b² + 2λ(1−λ)·ρ·a·b      a = c(1) arm alone, b = c(0) base alone
+λ*    = (b² − ρab)/(a² + b² − 2ρab)          c_min = ab√(1−ρ²)/√(a² + b² − 2ρab)
+```
+
+fitted by least squares over the **shipped calibration λ-surface**
+(`blend_full[arm].cal_table[base]`, typically 21 constraints for 1 parameter),
+plus: the fit RMS residual relative to the arm's own nRMSE (the audit number for
+the aggregate-norm approximation — the round's nRMSE is a mean of per-sample
+relative L2, not a global norm), the λ-clipped `c_min`, the predicted and actual
+test-side payoff, the ρ **implied on test** by the shipped `(a, b, λ, final)`
+quadruple as an independent second estimate, per-cell verdicts
+(`COLLINEAR_WITH_BASE` ρ ≥ 0.99 / `BASE_DOMINATED` λ ≤ 0.25 / `ENSEMBLE_ACTIVE`),
+and with `--counterfactual ARM:REF_ARM:BASE` the **equal-ρ counterfactual**: what
+ARM would have scored with its own `(a, b)` had its errors been as decorrelated
+from the base as REF_ARM's, against REF_ARM's shipped final, in skill and mce
+multiples.
+
+**Why.** A floor-blend stage is shipped as a fairness device (identical code path
+for every arm) and is not one. Its payoff at fixed `(a, b)` is **monotone in ρ**,
+and ρ differs between arm classes *by construction*: a closed-form
+condition-regression head can BE the closed-form base (r2s1-B2, allen_cahn: arm
+and `dc_only` agree to 1.8e-5, fitted ρ = 1.0000 with RMS residual 1.0e-6, so no
+λ can pay it), while a trained decoder sits at ρ ≈ 0.69–0.78 and collects 8.13
+skill. That card's decisive falsification cell was decided entirely at this
+stage, against a raw comparison of the OPPOSITE sign and 4.3× the magnitude. Any
+card with a post-hoc blend, floor-hedge, or ensemble stage should run this before
+reading an arm contrast.
+
+**Read it as.** `rho_fit ≥ 0.99` → that arm is unpayable by this stage; a
+contrast against an arm at lower ρ is a decorrelation verdict, not an accuracy
+verdict. `shipped_lambda ≤ 0.25` → the reported score is mostly the BASE (r2s1-B2
+`ifc_poisson`: the decoder was 95 % replaced by a `(d+1)`-parameter ridge), so the
+cell compares two bases, not two arms. Both arms COLLINEAR and λ ≈ 0 → a dead
+cell: report it as such rather than as evidence. Large `Δρ` between arm classes on
+exactly the datasets where the blend moves the verdict → instrument bias, and the
+counterfactual block prices it. `fit_rms_resid_rel_to_a` above ~5 % (small
+calibration folds) → treat that cell's ρ as indicative only.
+
+Not an achievable arm: ρ is not a free knob. The counterfactual is an ACCOUNTING
+decomposition of a shipped comparison, and must be labelled as such wherever it
+is quoted.
+
+**Invoke.**
+```bash
+source "$PROJECT_ROOT/.venv/bin/activate"
+python tools/blend_decorrelation_payoff.py \
+    --diag '<outputs>/r2s1_direct/B2/eval/diag_*_e200_s0.json' \
+    --arms test_hf,ref_decoder_big --counterfactual test_hf:ref_decoder_big:dc_only \
+    --skill --out payoff.json
+```
+`--skill` converts with `eval/copylf_baselines.json`; mce multiples come from
+`state/noise_floor.json` (both paths default relative to the tool, overridable
+with `--copylf` / `--noise_floor`). Every schema assumption is a flag
+(`--blend_key --cal_table_key --lambda_grid_key --arm_table_key --arm_nrmse_key
+--arm_post_field --final_field --base_field --lambda_field --base_key_prefix`), so
+it runs on any card whose blend surface has a different key layout. Runtime ~3 s
+for 6 datasets × 21 arms × 4 bases.
+
+**Verified.** Run 2026-08-01 on r2s1-B2's six shipped panel diag JSONs (outputs
+kept at `worktrees/r2s1_direct/B2/scratchpad/register_toolcheck_blend_payoff.{json,log}`,
+all 21 arms x 4 bases, 3 s). Worst relative fit residual per dataset
+`ifc_poisson` **0.0472** / `ext__helmholtz_2d` 0.0161 / `pfc` 0.0152 /
+`sharp__cahn_hilliard` 0.0104 / `sharp__allen_cahn_2d` 0.0101 /
+`sharp__fisher_kpp_2d` 0.0014, identical to card part 6 T3-F1. allen_cahn
+ρ(head, `dc_only`) **1.0000** vs ρ(`ref_decoder_big`) **0.7833** cal-fit /
+**0.6885** test-implied, `ref_decoder_small` 0.7586/0.8076 (T3-F3); counterfactual
+175.2523 / 165.6534 / 161.1891 skill against the decoder's shipped 167.4768, i.e.
+**+1.8234 (2.07× mce)** and **+6.2877 (7.15× mce)** (T3-F4); pfc 0.9937/0.9946 and
+fisher_kpp 1.0000/0.9985 both `COLLINEAR_WITH_BASE` (T3-F7); `ifc_poisson` decoder
+λ = 0.05 `BASE_DOMINATED` (T3-F6).
+
+**Provenance.** `worktrees/r2s1_direct/B2/scratchpad/reanalysis_turn_3.py`; card
+`experiment_cards/r2s1_direct/batch_2/B2.json` part 6, findings T2-F2 / T3-F1…F7
+and interpretation I1.
+
+---
+
+## `selection_set_vs_window_audit.py`  *(round 2)*
+
+**Measures.** Given a card's shipped selection diagnostics — a per-component
+statistic (per-POD-mode out-of-fold R², per-band SNR, per-channel gain…), its
+threshold `tau`, and the count `r_sel` the rule shipped — it reconstructs the
+**identified SET** `{i : stat_i > tau}` and the **fitted WINDOW** `{0..r_sel−1}`,
+lists the identifiable-but-not-fitted and fitted-but-not-identifiable components
+with their statistic values, prices the mismatch as displaced statistic mass (and
+energy share, with `--energy_key`), reports what a SET-indexed rule would have
+fitted, and raises `FORM_MISMATCH` when `--stat_form` (the basis/centering form
+the statistic was computed on, read off the code) differs from the form actually
+fitted.
+
+**Why.** The rule shape "count how many components clear tau, then fit the leading
+that-many" is extremely common and its two halves are not the same object. Under
+an ENERGY-ordered basis they diverge exactly when the predictable content is
+low-energy: on r2s1-B2's `sharp__cahn_hilliard` the identifiable set is
+{0, 1, 12, 13} (the condition-predictable DC direction sits at modes 12–13,
+0.45 % of basis energy) while the rule fitted {0, 1, 2, 3}, buying two noise modes
+at OOF R² −0.008/+0.025 and discarding the spatial mean — worth **5.6× mce**
+(39.6 % of that card's L2 gap) on a refit with the SAME parameter count and no
+test quantity. The defect is invisible in every summary the rule reports, because
+the rule reports `r_sel`.
+
+**Read it as.** `ARITY_DEFECT` → the rule's indexing, not its cardinality, is
+wrong; the repair is train-side and free (refit on `set_rule_would_fit`), and any
+capacity claim resting on that cell is premature until it is applied.
+`stat_mass_missed >> stat_mass_spurious` → the window is throwing away real
+signal. `contiguous_from_zero: false` on an energy-ordered basis → expect this
+defect on every future card using the same rule family.
+`FORM_MISMATCH` → the indices are being transferred across incommensurable
+decompositions; the numerical damage may be nil (≤ 0.013× mce on r2s1-B2's
+helmholtz) but the rule is not doing what it says. This is a DETECTOR: the refit
+and rescore need the family's own code and belong in the experiment's scratchpad.
+
+**Invoke.**
+```bash
+source "$PROJECT_ROOT/.venv/bin/activate"
+python tools/selection_set_vs_window_audit.py \
+    --diag '<outputs>/r2s1_direct/B2/eval/diag_*_e200_s0.json' \
+    --stat_form add --out setwindow.json
+```
+Defaults target the r2s1-B2 schema
+(`selection_stage.rank.{mode_r2_oof,rank_tau,r_sel}`, form at
+`selection_stage.selected_form`); every one is a dotted-path flag
+(`--stat_key --tau_key --count_key --form_key --energy_key --tau`), and `--auto`
+walks the JSON for any numeric list whose key contains `--stat_name`. Runtime
+< 1 s.
+
+**Verified.** Run 2026-08-01 on r2s1-B2's six shipped panel diag JSONs (outputs
+kept at `worktrees/r2s1_direct/B2/scratchpad/register_toolcheck_setwindow.{json,log}`):
+`ext__helmholtz_2d` r_sel 3, SET {8, 9, 20} vs WINDOW
+{0,1,2} (`ARITY_DEFECT+FORM_MISMATCH`, missed stat mass 1.2435 against a window
+mass of −0.0387); `sharp__cahn_hilliard` r_sel 4, SET {0, 1, 12, 13} with modes
+12/13 at +0.4744/+0.3658 and the bought modes 2/3 at −0.0083/+0.0249
+(`ARITY_DEFECT`); `sharp__phase_field_crystal_2d` SET {0, 1, 7};
+`sharp__allen_cahn_2d` / `sharp__fisher_kpp_2d` / `ifc_poisson`
+`SET_EQUALS_WINDOW`. Identical to card part 6 T1-F2 and T1-F7.
+
+**Provenance.** `worktrees/r2s1_direct/B2/scratchpad/reanalysis_turn_1.py`
+(SET-vs-WINDOW audit) and `reanalysis_turn_1b.py` (cross-form check); card
+`experiment_cards/r2s1_direct/batch_2/B2.json` part 6, findings T1-F2 / T1-F3 /
+T1-F4 / T1-F7 and interpretation I3.
+
+---
+
+## Standing note the two r2s1-B2 instrument tools encode
+
+`blend_decorrelation_payoff.py` and `selection_set_vs_window_audit.py` are
+**instrument audits**, not model diagnostics: they measure defects in the SCORING
+and SELECTION machinery a card ships around its arms. Both were found only
+because a falsified card was re-read at mechanism level, and both changed what
+the falsification licensed without changing the verdict. The standing lesson: when
+a card composes a pre-registered selection rule with shared post-hoc stages, audit
+the composition before attributing anything to capacity — a rule that reports one
+summary number can hide a set-vs-window bug, and a "fair because identical for
+every arm" stage can still score arms on a quantity the card never intended to
+test.

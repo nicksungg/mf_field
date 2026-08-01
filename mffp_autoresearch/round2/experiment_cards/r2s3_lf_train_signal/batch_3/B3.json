@@ -285,15 +285,34 @@
       "_seam_asserts": "(1) every result JSON carries nrmse_def_hash d3d0ade9... and copylf_def_hash 9753ff24... (one distinct pair across all 33); (2) ref_nn_condition_full / ref_train_mean_full agree with state/anchors/floors.json to 1e-9, RAISING on mismatch; (3) the LF lift used by ref_linear_mf is verified against the eval-layer copy-LF convention per dataset (max_abs_diff 0.0 expected, RAISE on mismatch); (4) lf_read_at_test=false and field_input_at_test=false in every result JSON."
     }
   },
-  "status": "drafted",
+  "status": "built",
   "skipped_reason": null,
   "reopen_candidate": false,
-  "scripts_path": {},
-  "output_paths": {},
-  "build_commit": null,
+  "scripts_path": {
+    "submit": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round2/worktrees/r2s3_lf_train_signal/B3/scripts/submit.sh",
+    "seeds_2_3": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round2/worktrees/r2s3_lf_train_signal/B3/scripts/submit_seeds_2_3.sh",
+    "train_eval": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round2/worktrees/r2s3_lf_train_signal/B3/scripts/01_train_eval.sh"
+  },
+  "output_paths": {
+    "training": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B3/training",
+    "eval": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B3/eval",
+    "slurm": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B3/slurm",
+    "per_leg_eval_results": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B3/eval/results_<tag>/r2s3_coverage_panel/  (one dir per leg; ROUND2_EVAL_RESULTS, holds the per-(dataset,epochs,seed) result JSON, the R2S3B3_DUMP_TRAIN_PREDS npz and ckpt_*/last.pt)",
+    "per_leg_summary_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B3/eval/result_<datasets>_<tag>_s<seed>.json  (33 legs, tags exactly as recipe.env._legs: ifc_A0, ifc_A1, ch_A0_d0..d2, ch_A1_d0..d2, fk_A0_d0..d2, fk_A1_d0..d2, ac_A0_d0..d2, ac_A1_d0..d2, pfc_A0_d0..d2, pfc_A1_d0..d2, hz_A0_d0..d2, hz_A1_d0..d2, guard_A1)"
+  },
+  "build_commit": "dfcd46c6b51b5fe0bd533b9c670a7cdbf9d13830",
   "job_ids": [],
   "logs": {},
-  "build_notes": [],
+  "build_notes": [
+    "Family models_r2/r2s3_coverage_panel: WITHIN-STREAM continuation vendored with provenance comments from worktrees/r2s3_lf_train_signal/B2/models_r2/r2s3_null_supply at commit 945ee65a1f47460db2cf892e0e8ead1248b58aeb (branch round2/exp-r2s3_lf_train_signal-B2), per recipe.base_family. DELETED as the card requires: the null-direction penalty (loss_null term + build_null_target's Theta_LF branch), its ridge-affine LF law (affine_probe.theta_lf), its rung tie-break (affine_probe.select_rung / R2S3B2_NULL_RUNG_SELECT), and the A2_lf_cov_null / A3_lf_paired / A5_lf_norepair arms. Remaining arms: A0_nolf, A1_lf_cov (PRIMARY). Rename NullSupplyDecoder -> CoverageDecoder and env prefix R2S3B2_ -> R2S3B3_ are the ONLY other changes to model.py / refs.py / lf_reference.py, so the backbone, optimizer, step-matched loop and the per-step RNG consumption order (HF batch drawn first, then LF) are byte-preserved and the card's F3 reproduction seam against B2's 8 overlapping legs is meaningful.",
+    "Contract-tier smoke (MANDATORY, login node, CPU): `python ${EVAL_DIR}/score_panel.py --family_dir models_r2/r2s3_coverage_panel --datasets ext__helmholtz_2d --epochs 2 --seed 0 --out scratchpad/contract_smoke.json --no_cache` -> exit 0, nRMSE 1.0403367492444782, skill 3.479000067438889, split test_hf, metric_source per_sample_mean, nrmse_def_hash d3d0ade9..., copylf_def_hash 9753ff24... (evidence: <worktree>/scratchpad/contract_smoke.json). Wall time 6.6 min at 2 epochs -- the cost is the training-free reference machinery (400 LF rows lifted to the HF grid + exact-LOO ridge), which is CPU-bound and does not shrink on GPU.",
+    "Second contract smoke exercising the A0 arm and the checkpoint-resume contract, ifc_poisson (native N_hf=5): `--env R2S3B3_ARM=A0_nolf R2S3B3_SPLIT_SEED=native` -> nRMSE 0.28918759487295653, skill 8.032988746471016 (scratchpad/contract_smoke_ifc_A0.json). Re-running the same leg against the same ROUND2_EVAL_RESULTS with --no_cache resumed from the `done` checkpoint and reproduced the number BIT-IDENTICALLY (scratchpad/contract_smoke_ifc_A0_resume.json; the leg JSON scratchpad/contract_smoke_ifc_A0_leg_result.json records resumed_from_step 50/50).",
+    "In-job seam asserts all fire and all pass on the smokes (card recipe.env._seam_asserts): floor seam check vs state/anchors/floors.json abs_diff 0.0 on nn_condition/train_mean/zero; LF-lift verification vs eval/panel_data.py::copylf_prediction max_abs_diff 0.0 (dirichlet_node on helmholtz); lf_read_at_test=false and field_input_at_test=false in every result JSON; certified min_claimable_effect echoed (helmholtz 2.95299157437233, _provisional false). Reported instruments reproduce the card's pre-flight exactly: helmholtz m=0 rank=4 with 395 uncovered LF rows on rung 1; ifc_poisson m=1 rank=5 with alpha=4 under pinned_min_rung_nyquist.",
+    "Deletion is enforced, not just documented: setting any of R2S3B3_LAMBDA_NULL / _NULL_BATCH / _NULL_T / _NULL_RUNG_SELECT raises SystemExit before anything runs, and R2S3B3_ARM=A2_lf_cov_null raises with the deleted-arm list. Both verified by running score_panel.py with those --env values (each surfaced as a ScoreContractError).",
+    "BUILDER RESOLUTION (not a card hyperparameter, flagged for the reviewer): recipe.env.R2S3B3_REF_ARMS still requests `linear_mf`, but the env knob that chose which rung's channel is echoed into splits.ref_linear_mf (R2S3B2_NULL_RUNG_SELECT) is deleted. The rule is therefore FROZEN in code as affine_probe.reference_rung = smallest in-rung LOO residual -- byte-identical to B2's estimator, so the number stays comparable, and deliberately NOT an env knob. It selects no trained arm and no scored split; the full per-rung ladder is still reported in gate_report.linear_mf_ladder.per_rung, which is what B2's reviewer/analyzer said to quote (never splits.ref_linear_mf).",
+    "SLURM: scripts/01_train_eval.sh takes SEED=$1 and runs the card's 33 legs SERIALLY in recipe.env._legs order, each with its own ROUND2_EVAL_RESULTS (own out_json, ckpt_dir and score-cache key) so legs cannot collide and a resubmission after preemption skips finished legs. The --env set is exactly the 26 R2S3B3_* keys of recipe.env, passed in ONE --env flag (score_panel.py's --env is nargs=\"*\" without append); only ARM and SPLIT_SEED vary per leg, plus epochs=2 on guard_A1. Verified programmatically: 26/26 keys byte-equal to recipe.env, 33/33 legs matching _legs on (tag, datasets, arm, split_seed, epoch tier). Headers per slurm_rules.md: partition gpu, gres gpu:nvidia_h200:1 (project.yaml), mem 32G, job-name r2-r2s3_lf_train_signal-B3-s0 in the header with both submitters overriding --job-name per seed, logs under the outputs root. --time 03:00:00 is the card's recipe.env._walltime verbatim (basis: timing_ledger job 66185845 = 17 legs / 41.63 min on h200 for the same backbone WITH the now-deleted penalty machinery). All three scripts pass `bash -n`.",
+    "Derived / operational constants carried verbatim from B2 and declared here because they are in neither recipe nor part 3: PRED_CHUNK=32 and LOG_POINTS=50 (inference chunking is exact under per-sample GroupNorm; the log stride only controls printing), film_hidden=width=64, CosineAnnealingLR eta_min=0, affine_probe ALPHAS/RESID_ALPHAS grids from tools/affine_ladder_voi.py, SpectralConv init scale 1/channels, zero-init FiLM output layer, GroupNorm(min(8, C)). Identical in both arms, so the matched contrast is unaffected."
+  ],
   "review_notes": [],
   "debug_notes": [],
   "5_actual_result": null,
