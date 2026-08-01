@@ -1,47 +1,48 @@
-# MFFP Autoresearch Round 2 — Dashboard (updated 2026-08-01T19:43:11Z)
+# MFFP Autoresearch Round 2 — Dashboard (updated 2026-08-01T20:14:35Z)
 
-**Ninth maintainer walk since the operator halt/resume cycle.**
+**Eleventh maintainer walk since the operator halt/resume cycle.**
 Halt landed 2026-08-01T01:31:54Z (commit `10d4e4c`), resume landed
 2026-08-01 ~08:1x PDT (commit `b80e622`).
 
-**Headline this run**: the code-reviewer's `r2s2_stacked-B3` verdict
-landed (SUGGEST — submit as-is) just before this walk started, and the
-orchestrator acted on it **live, inside this run's window**:
-`r2s2_stacked-B3` went `built` → `running`, with **panel job 66267438 and
-guard job 66267441 both submitted** (PENDING, Priority-queued).
-The code-reviewer's own R1 finding (a job-name collision once the guard
-job renames itself mid-run — `01_train_eval.sh` ignores `$DATASETS` when
-constructing the name) was **not** code-fixed; the orchestrator took the
-reviewer's documented workaround instead (track both legs by job ID, not
-name) and recorded it verbatim in `state/r2s2_stacked/current_stage.txt`.
-This is a live watch item: once the guard job actually starts running,
-its name will collide with the panel job's name in `squeue`/`sacct` — job
-IDs remain the only reliable disambiguator.
-Both remaining B4 builders continued: `r2s3_lf_train_signal-B4`'s
-training-free substitution audit is mid-sweep across the panel
-(`ifc_poisson` done, `sharp__cahn_hilliard` running); `r2s4_diag-B4`'s
-anatomy card exercised its full contract path on a 2-epoch smoke
-(`ext__helmholtz_2d`, panel_geomean_skill 7.545), including a `last.pt`
-checkpoint write, plus separate exploratory `ifc_poisson` full-tier
-shakeout/midleg runs in scratchpad (not yet wired into the family's
-contract path).
-Job 66262741 (`r2s1_direct-B3`, seed 0) remains **PENDING**, unchanged
-across this entire run.
-`current_stage.txt` was refreshed by the orchestrator this run for all
-three streams this maintainer had flagged as stale (r2s2/r2s3/r2s4) —
-that staleness item is resolved. `current_batch.txt` counters, however,
-still read stale values for all three (r2s2 "2", r2s3 "3", r2s4 "3")
-despite each stream having moved past those batches — a separate,
-narrower staleness item, carried forward below.
+**Headline this run**: `r2s3_lf_train_signal-B4` cleared code review
+(verdict SUGGEST, submit-as-is) and was submitted — job 66268786, forced
+onto the `expansion` partition after the `gpu` partition rejected the
+gres-less submit (CLI `--partition` override per the builder's
+pre-flagged fallback; build commit `bd1f746` untouched). The job already
+**COMPLETED** per `sacct` (98s wall, training-free CPU diagnostic) —
+card still reads `status: running`, so this is flagged as a staleness
+item below rather than silently treated as closed; timing ledger
+upserted regardless.
+`r2s4_diag-B4` cleared its first review round with verdict
+**`reviewed_fail`** — a real, non-cosmetic defect: `smoke_eval.py`'s
+`_repo_root()` resolver treats the git worktree itself as the repo root
+(a worktree is a full checkout carrying `project.yaml`), so the
+diagnostic JSON the anatomy script expects at
+`${OUTPUTS_ROOT}/r2s4_diag/B4/eval` is instead written under
+`<worktree>/mffp_autoresearch_outputs/...`; the failure is masked by a
+non-fatal `|| echo [warn]` in `03_anatomy.sh`, so **the job would exit 0
+with no diagnostic.json at the carded output path** — a one-token
+regression versus B3's working same-stream pattern (minimal fix:
+`WORKTREE_ROOT.parents` only, not `[WORKTREE_ROOT] + .parents`). The
+reviewer separately **endorsed** the builder's O1/O2/O3
+pre-registration-gap handling as correct and must-preserve (not a FAIL
+cause) — the locked CI-outcome clause doesn't partition the space, and
+re-registering now would be a data-peeked amendment since the 2-epoch CI
+already straddles the gap. No SLURM submission was ever made for this
+card (`job_ids: []`); a re-review is required after the fix commit lands.
+Both r2s1/r2s2 B3 SLURM jobs remain **PENDING**, unchanged: 66262741
+(`r2s1_direct-B3`, seed 0), 66267438 / 66267441 (`r2s2_stacked-B3` panel /
+guard) — all Priority-queued, `Elapsed=00:00:00`, verified by both
+`squeue` and `sacct` at this run's check.
 
 ## Streams
 
 | Stream | Anchor (skill) | Current batch | Card | Status | Jobs | Last change |
 |---|---|---|---|---|---|---|
 | r2s1_direct | 23.0636 (best_floor_panel_geomean) | 3 | r2s1_direct-B1 **complete**; r2s1_direct-B2 **complete**; r2s1_direct-B3 **running** | Unchanged this run. Seed-0 job **66262741 still PENDING** in `squeue`/`sacct` (Priority-queued, `Elapsed=00:00:00`) | **1 live/pending SLURM** (`r2-r2s1_direct-B3-s0`, job 66262741, PENDING) | No change; job still PENDING |
-| r2s2_stacked | 23.0636 (best_floor_panel_geomean) | 3 *(card exists; `current_batch.txt` still stale at "2")* | r2s2_stacked-B1 **complete**; r2s2_stacked-B2 **complete**; r2s2_stacked-B3 **running (caught mid-walk this run)** | `status: built` → `running` — code-reviewer's SUGGEST verdict landed ~19:38Z (build commit `86ef67cc`, all 8 review questions PASS, Q5 SLURM SUGGEST on the job-name-collision finding R1). Orchestrator submitted **panel job 66267438 + guard job 66267441** this run (both PENDING). `current_stage.txt` refreshed with the reviewer's 3 analyzer caveats: match by job ID not name (R1 workaround); no ceiling column owed on any surviving null (P2/R5, `alpha_nn==0` degenerate `could_not_fire` check); pfc pre-flight conflict biases toward the card's hypothesis, re-check any "≥2 of 4" verdict with pfc dropped (P1) | **2 live/pending SLURM** (`r2-r2s2_stacked-B3-s0` 66267438, `r2-r2s2_stacked-B3-guard-s0` 66267441, both PENDING) | Submitted this run, minutes before close |
-| r2s3_lf_train_signal | 23.0636 (best_floor_panel_geomean) | 4 *(`current_batch.txt` still reads "3")* | r2s3_lf_train_signal-B1..B3 **complete**; r2s3_lf_train_signal-B4 **drafted** | Builder mid-sweep this run: `models_r2/r2s3_b4_substitution/` gained `readings.py` + `run_diagnostic.py` (joining `controls.py`/`manifest.json`/`paths.py`/`lf_guard.py`/`heads.py`). Smoke log shows `ifc_poisson` (1 draw) done in 54.21s, `sharp__cahn_hilliard` (3 draws) running at last check. Training-free (`epochs: 0`, no GPU) substitution-audit diagnostic; `expected_falsification` remains a fully pre-registered 2-of-3 {ifc, ch, ac} threshold table over B3's shipped artifacts | **0 live SLURM** (training-free; no submission expected) | Smoke sweep in progress this run |
-| r2s4_diag | **19.8178** (certified_3seed_panel_geomean, CI95 [19.385, 20.527]) | 4 *(`current_batch.txt` still reads "3")* | r2s4_diag-B1..B3 **complete**; r2s4_diag-B4 **drafted** | Builder exercised the full contract path this run: `models_r2/r2s4_b4_anatomy/` gained `smoke_eval.py`/`subsets.py`/`rung_cv.py`/`lf_registration.py`/`model.py`; contract smoke on `ext__helmholtz_2d` (2 epochs) passed with `panel_geomean_skill` 7.545451722377857 and a `last.pt` checkpoint written. Separate exploratory `ifc_poisson` full-tier runs (`shakeout`, `midleg`) also landed in scratchpad — pre-registration/anatomy dry-runs, not yet the family's scored contract path | **0 live SLURM** (card drafted, no submission yet) | Contract-smoke path exercised this run, incl. checkpoint |
+| r2s2_stacked | 23.0636 (best_floor_panel_geomean) | 3 | r2s2_stacked-B1 **complete**; r2s2_stacked-B2 **complete**; r2s2_stacked-B3 **running** | Unchanged this run — still `running`, job_ids `['66267438','66267441']`. Both jobs remain PENDING; the standing watch item (guard job's name will collide with the panel job's name once RUNNING; match by ID) still applies | **2 live/pending SLURM** (`r2-r2s2_stacked-B3-s0` 66267438, `r2-r2s2_stacked-B3-guard-s0` 66267441, both PENDING) | No change; both jobs still PENDING |
+| r2s3_lf_train_signal | 23.0636 (best_floor_panel_geomean) | 4 | r2s3_lf_train_signal-B1..B3 **complete**; r2s3_lf_train_signal-B4 **running (reviewed SUGGEST, submitted this run)** | `status: built` → `running` (review verdict SUGGEST, submit-as-is; 3 analyzer seams S1-S3 recorded on `review_notes`). Job **66268786 submitted on the `expansion` partition** (CLI override — `gpu` partition rejected the gres-less job). `sacct` already shows this job **COMPLETED** (98s wall) — card `status` has not yet caught up; see Flags | **0 live SLURM** (job already COMPLETED per sacct, 1.63 min, training-free CPU diagnostic; ledger upserted this run) | Reviewed + submitted + completed, all within this run's window |
+| r2s4_diag | **19.8178** (certified_3seed_panel_geomean, CI95 [19.385, 20.527]) | 4 | r2s4_diag-B1..B3 **complete**; r2s4_diag-B4 **reviewed_fail (this run)** | `status: built` → `reviewed_fail`. Blocking root cause: worktree-vs-repo-root path resolution bug masked by a non-fatal anatomy-script fallback — job would exit 0 with the deliverable diagnostic.json never written. O1/O2/O3 pre-registration-gap handling **ENDORSED** by the reviewer as correct (not the fail cause; do not re-register). `job_ids: []` — never submitted | **0 live SLURM** (card blocked pending fix + re-review) | Reviewed this run — needs a debugger/builder pass on the fix before resubmission |
 
 **Anchor note**: r2s4_diag remains the only stream with a *certified* anchor
 (`certified_3seed_panel_geomean`, 19.8178) — r2s1_direct, r2s2_stacked,
@@ -59,14 +60,14 @@ run's entire window. All anchors rendered verbatim from
 | 66267438 | r2s2_stacked-B3 (seed 0, panel) | PENDING | 0:00 | (Priority) |
 | 66267441 | r2s2_stacked-B3 (seed 0, guard) | PENDING | 0:00 | (Priority) |
 
-**3 live/pending `r2-*` SLURM jobs** (up from 1 at the prior close — the
-new pair submitted this run following the code-reviewer's SUGGEST
-verdict). `sacct` 2-day window otherwise shows the same 16 `r2-*` jobs,
-all COMPLETED 0:0, identical to the timing ledger — no ledger upsert due
-(all 3 live jobs are PENDING, none COMPLETED yet). Non-SLURM agent
-activity this run: `r2s3_lf_train_signal`'s B4 builder mid-sweep through
-its training-free panel; `r2s4_diag`'s B4 builder exercised its full
-contract-smoke path including checkpoint resume machinery.
+**3 live/pending `r2-*` SLURM jobs**, unchanged from the prior close — all
+still PENDING at this run's check, confirmed by both `squeue` and
+`sacct`. One additional `r2-*` job (66268786, `r2s3_lf_train_signal-B4`,
+`expansion` partition) submitted and **COMPLETED** entirely within this
+run's window (98s wall) — not "live" at this check, upserted into the
+timing ledger. `sacct` 2-day window otherwise shows the same 16
+pre-existing `r2-*` jobs, all COMPLETED 0:0, identical to the prior
+ledger set.
 
 ## Completed cards
 
@@ -83,96 +84,110 @@ contract-smoke path including checkpoint resume machinery.
 | r2s3_lf_train_signal-B3 | model | 17.114970 (`A1_lf_cov` primary arm, single seed 0) vs anchor 23.0636 (comparison arm `A0_nolf` 32.4663) | **falsified** (F1/F2 knife-edge adjudicated FALSIFIED, robust across 5/7 defensible threshold readings incl. a gain-calibrated split reading M4; only the two readings pricing zero HF-subset-draw variance return CONFIRMED); the round's success-criterion-1 (≥3-dataset claimable with/without-LF-training contrast) is still met on exactly 3 datasets under the operative threshold. `cratered_verdict: cratered` (third limb only — falsification fired decisively; not a crash, not >1.5x anchor) | **2 tools**, both correctly indexed: `tools/effect_threshold_readings.py` (7-reading threshold-adjudication tool; surfaces `mce_over_observed_split_range` as a provenance smell), `tools/map_dispersion_scale_shape.py` (splits inter-prediction dispersion into total vs shape-only; found allen_cahn's 3 LF-trained models sit within 0.41 skill units of each other but 100.5 units apart in function space — "scale, not map") |
 | r2s4_diag-B3 | diagnostic | 19.172826 (single seed 0, no own-card CI — 1 seed; in-job 5-fold paired spreads are per-dataset thresholds, not a panel CI) | **falsified** (F3 stands and is hardened by two row-count/capacity controls; F4a fired on the ledger's own contaminated-quantity definition, not on a measurement failure — 0/4 under the corrected teacher-target term; F1 survives on 2 of its 3 needed cells, pfc's cell ruled uninformative by a ceiling argument). Mechanism headline: on 3 of 4 sharp datasets the condition-only arm's per-band error is ~1.00 above the lowest band — it contributes exactly zero energy above the spatial mean — while the LF field reproduces HF to 1e-2 to 1e-16 band relative error, i.e. essentially all panel structure is realisation information carried only by LF. `cratered_verdict: n/a` (diagnostic) | **2 tools**, both correctly indexed: `tools/ledger_contamination_audit.py` (prices whether a paired-arm delta *could* have fired via a triangle-inequality ceiling, and whether it's contaminated by a function-class term vs the true target term), `tools/band_retention_probe.py` (per-band retained-energy/relative-error decomposition; on its first foreign-data run it independently found the `stage_blend_decoder` zero-field arm in r2s1_direct-B3's shipped dumps — since adjudicated as rational selection, see Flags) |
 
-`r2s1_direct-B3` and `r2s2_stacked-B3` are `running` (no part 5 yet) — not
-listed here until they close. `r2s3_lf_train_signal-B4`,
-`r2s4_diag-B4` are `drafted`/builder-active (not built/scored) — not
-listed here.
+`r2s1_direct-B3` and `r2s2_stacked-B3` are `running` (no part 5 yet) —
+not listed here until they close. `r2s3_lf_train_signal-B4` is
+`running`/reviewed-SUGGEST (job already COMPLETED per sacct, but no part
+5/6/7 yet visible on the card) — not listed here until it closes.
+`r2s4_diag-B4` is `reviewed_fail` (blocked pending fix + re-review, never
+submitted) — not listed here.
 
 ## Flags
 
-- **`r2s2_stacked-B3` went `built` → `running` — the code-reviewer's
-  SUGGEST verdict and the orchestrator's submission both landed inside
-  this run's window** (verdict ~19:38Z, submission moments later,
-  caught within a few minutes of it happening). Verdict: **SUGGEST —
-  submit as-is**. All 8 review questions PASS except Q5 (SLURM
-  correctness), which is SUGGEST on finding **R1**: `01_train_eval.sh`
-  renames *any* job to `r2-r2s2_stacked-B3-s${SEED}` unconditionally
-  (ignores `$DATASETS`), so `submit_guard.sh`'s distinct
-  `--job-name=r2-r2s2_stacked-B3-guard-s0` is overwritten mid-run to
-  collide with the panel job's name — violating slurm_rules §6 (one job
-  name = one card+seed), the key this maintainer matches jobs on. The
-  code fix was **not** applied; the orchestrator took the reviewer's
-  documented workaround instead — track both legs by job ID, not name —
-  and recorded this in `state/r2s2_stacked/current_stage.txt`. **Both
-  jobs submitted this run**: panel `66267438` (`r2-r2s2_stacked-B3-s0`)
-  and guard `66267441` (`r2-r2s2_stacked-B3-guard-s0`), both currently
-  **PENDING** and still distinctly named in `squeue` (the collision only
-  manifests once the guard leg actually starts running via its in-script
-  `scontrol update`) — **watch item for the next walk**: confirm via job
-  ID, not name, once either job transitions to RUNNING.
-  Other review findings, no action required before submit: P1 (pfc
-  pre-flight conflict is real but structurally confined to arms A2/A3,
-  never the scored `A1_lsi` arm — carries a directional caveat toward
-  confirming the card's hypothesis, re-check any "≥2 of 4" verdict with
-  pfc dropped); P2/R5 (no ceiling/headroom column and no prediction
-  dumps shipped — `ledger_contamination_audit.py` and
-  `band_retention_probe.py` cannot run post-hoc on this card, though
-  `alpha_nn==0` degenerate-null cases remain detectable from the shipped
-  record); P3 (the `--time 02:30:00` request is credible — the 51m44s
-  smoke ran CPU-bound on a contended login node with a 23% duty cycle,
-  while `state/timing_ledger.json`'s in-family comparator `r2s2_stacked-B2`
-  (33.58 min actual, same panel/lineage) scales to ~56 min, well inside
-  the requested window — do not raise it).
-- **`r2s3_lf_train_signal-B4` builder mid-sweep this run**:
-  `models_r2/r2s3_b4_substitution/` gained `readings.py` and
-  `run_diagnostic.py`. Smoke log confirms `ifc_poisson` (1 draw)
-  completed in 54.21s with `certified_min_claimable_effect`
-  0.9377041289531141 correctly read from `state/anchors/floors.json`;
-  `sharp__cahn_hilliard` (3 draws) was running at last check. No status
-  change on the card yet (still `drafted`, `job_ids: []`, training-free
-  so no SLURM submission expected).
-- **`r2s4_diag-B4` builder exercised the full contract path this run**:
-  `models_r2/r2s4_b4_anatomy/` gained `smoke_eval.py`, `subsets.py`,
-  `rung_cv.py`, `lf_registration.py`, `model.py`. Contract smoke on
-  `ext__helmholtz_2d` (2 epochs) passed — `panel_geomean_skill`
-  7.545451722377857 — with a `last.pt` checkpoint written under
-  `scratchpad/eval_results/`, confirming the checkpoint-resume
-  contract requirement is exercised. Separate exploratory `ifc_poisson`
-  full-tier runs (`shakeout`, `midleg`, plus 31-subset `ifc_full_ckpt`
-  prediction dumps) also landed in scratchpad — these look like
-  pre-registration/anatomy dry-runs for the card's exhaustive-subset
-  design, not yet wired into the scored contract path. No status change
-  on the card yet (still `drafted`, `job_ids: []`).
+- **`r2s4_diag-B4` REVIEWED_FAIL this run — needs a debugger/builder
+  pass, then re-review** (build commit `dc0d7ae`, review verdict
+  `reviewed_fail`, `worktrees/r2s4_diag/B4/notes/handoff_code_reviewer.md`,
+  landed 2026-08-01T20:12:29Z, ~4 min before this walk). **Blocking root
+  cause**: `smoke_eval.py:331`'s `_repo_root()` iterates
+  `[WORKTREE_ROOT] + WORKTREE_ROOT.parents`; because a git worktree of
+  this repo is itself a full checkout carrying
+  `mffp_autoresearch/round2/project.yaml`, the resolver returns the
+  WORKTREE itself, so the diagnostic JSON lands at
+  `<worktree>/mffp_autoresearch_outputs/round2/r2s4_diag/B4/eval` instead
+  of the carded `${OUTPUTS_ROOT}/r2s4_diag/B4/eval`; `03_anatomy.sh`'s
+  final `|| echo [warn] ...` makes this non-fatal, so **the job would
+  exit 0 with no `diagnostic.json` written at the scored path** — a
+  one-token regression versus B3's same-stream `_diag_out_dir()`, which
+  iterates `.parents` only and is unaffected. **Minimal fix** per the
+  reviewer: `for anc in WORKTREE_ROOT.parents:` (drop the
+  `[WORKTREE_ROOT] +`), harden the anatomy-script call to be fatal /
+  assert `diagnostic.json` is non-empty, then re-verify once at contract
+  tier **without** any `R2S4B4_DIAG_OUT` override (neither of the
+  builder's two verification runs exercised the seam that actually
+  broke — both passed an absolute scratchpad path). **Not blocking**:
+  reviewer independently **endorsed** the builder's handling of the
+  O1/O2/O3 pre-registration-gap (the locked CI-outcome clause doesn't
+  partition the space; the probe correctly reports `O_UNCLASSIFIED` with
+  `prereg_gap=true` rather than forcing a verdict) — explicitly **not**
+  the fail cause, and re-registering now would be a data-peeked
+  amendment since the 2-epoch CI ([0.14594, 1.55431], half-width 0.70419
+  < bound 0.93770) already straddles the gap. Downstream obligations for
+  the initial-analyzer recorded verbatim on the card (record
+  `O_UNCLASSIFIED`+`prereg_gap=true` as-is; watch for the CI-below-bound
+  second lobe too; a successor card must pre-register a 4-way partition
+  before any run). `job_ids: []` — no SLURM submission was ever made.
+  `state/r2s4_diag/current_stage.txt` already anticipates a fix-and-
+  resubmit cycle ("builder re-engaged with reviewer's 3 required fixes")
+  but as of this run's close no new commit exists on top of `dc0d7ae` in
+  `worktrees/r2s4_diag/B4` — **watch item for the next walk**: confirm
+  the fix lands and a re-review verdict is produced.
+- **`r2s3_lf_train_signal-B4` reviewed SUGGEST and submitted this run,
+  then completed within this same run's window** (build commit
+  `bd1f746`, review verdict SUGGEST/submit-as-is, 3 analyzer seams S1-S3
+  transcribed onto `review_notes` for the initial-analyzer). Job
+  **66268786** was submitted on the **`expansion` partition** — the
+  `gpu` partition rejected the gres-less submit, so the orchestrator used
+  a CLI `--partition` override per the builder's pre-flagged fallback
+  (build itself untouched). `sacct` shows the job **COMPLETED** already
+  (`Start` 13:09:11 PDT / `End` 13:10:49 PDT, 98s wall, ~4 min before
+  this walk) — training-free CPU-only diagnostic, no GPU, no checkpoint
+  contract. **Staleness item**: the card's `status` field still reads
+  `running` and `job_ids` still lists only `66268786` with no part
+  5/6/7 populated — the card has not yet caught up to the job's actual
+  completion. Timing ledger upserted this run regardless (17th entry).
+  **Watch item for the next walk**: confirm the card transitions to
+  reflect the completed job and that part 5's measured values are picked
+  up by the initial-analyzer.
+- **`r2s2_stacked-B3` job-name-collision watch item, unchanged**: panel
+  job 66267438 (`r2-r2s2_stacked-B3-s0`) and guard job 66267441
+  (`r2-r2s2_stacked-B3-guard-s0`) remain distinctly named in `squeue`
+  because both are still PENDING — the collision (reviewer finding R1,
+  not code-fixed, tracked by job ID per the orchestrator's documented
+  workaround) will only manifest once the guard leg starts RUNNING and
+  its in-script `scontrol update` fires. Re-verify by job ID, not name,
+  once either job transitions state.
 - **Job 66262741 (r2s1_direct-B3, seed 0)**: confirmed via both `squeue`
-  and `sacct` at two checks this run — still **PENDING**, Priority-queued,
-  unchanged since the prior run's close.
+  and `sacct` this run — still **PENDING**, Priority-queued, unchanged
+  since the prior run's close.
 - **Jobs 66267438 / 66267441 (r2s2_stacked-B3, seed 0 panel + guard)**:
-  new this run, confirmed via both `squeue` and `sacct` at final
-  re-check — both **PENDING**, Priority-queued, distinctly named as of
-  this check (see job-name-collision watch item above).
-- **Staleness, narrower now**: `current_stage.txt` was refreshed by the
-  orchestrator this run for all three streams previously flagged
-  (r2s2/r2s3/r2s4) — **that item is resolved**. `current_batch.txt`
-  counters remain stale, however: `state/r2s2_stacked/current_batch.txt`
-  reads "2" (card is on batch 3), `state/r2s3_lf_train_signal/current_batch.txt`
-  and `state/r2s4_diag/current_batch.txt` both read "3" (cards are on
-  batch 4). Orchestrator-owned; carried forward as a narrower, still-open
-  item.
+  confirmed via both `squeue` and `sacct` this run — both still
+  **PENDING**, Priority-queued, unchanged since the prior run's close.
+- **Job 66268786 (r2s3_lf_train_signal-B4, seed 0, expansion
+  partition)**: confirmed via `squeue` (absent — no longer live) and
+  `sacct` (COMPLETED 0:0, 98s wall) this run — see the dedicated flag
+  above for the card-vs-job staleness gap.
+- **Staleness — `r2s3_lf_train_signal-B4` card status lags its job's
+  actual completion (new this run)**: see flag above; carried forward
+  until the card catches up.
 - **Round-level instrument-defect pattern (carried forward, 7 independent
-  confirmations, no new occurrence this run)**: `r2s1_direct`'s
-  post-hoc-blend-stage class (adjudicated non-defective);
-  `r2s2_stacked-B2`'s statistic mis-specification; `r2s4_diag-B3`
-  turn-2's mis-specified `advantage_reachable`, turn-3's self-corrected
-  probe-ordering bug; `r2s3_lf_train_signal-B3`'s resolved knife-edge;
-  `r2s4_diag-B3` register-turn's ceiling/contamination/row-count triad
-  and its foreign-data `stage_blend_decoder` zero-field catch — worth
-  folding into the round-report action item once the round closes.
+  confirmations; this run's `r2s4_diag-B4` code-review finding is a
+  distinct SLURM/path-resolution defect class, not folded into this
+  count since it was caught pre-submission by review rather than in a
+  scored run)**: `r2s1_direct`'s post-hoc-blend-stage class (adjudicated
+  non-defective); `r2s2_stacked-B2`'s statistic mis-specification;
+  `r2s4_diag-B3` turn-2's mis-specified `advantage_reachable`, turn-3's
+  self-corrected probe-ordering bug; `r2s3_lf_train_signal-B3`'s resolved
+  knife-edge; `r2s4_diag-B3` register-turn's ceiling/contamination/
+  row-count triad and its foreign-data `stage_blend_decoder` zero-field
+  catch — worth folding into the round-report action item once the round
+  closes.
 - **`r2s1_direct-B3`'s `stage_blend_decoder` zero-field item — remains
-  ADJUDICATED, defect ruled OUT** (unchanged from 3 walks ago). No
+  ADJUDICATED, defect ruled OUT** (unchanged from several walks ago). No
   further action needed.
-- **Timing ledger**: unchanged this run — 16 entries, still parseable
-  JSON. All 3 live SLURM jobs remain PENDING, not COMPLETED — no upsert
-  due yet.
+- **Timing ledger**: upserted this run — 17 entries (was 16), still
+  parseable JSON. New entry: job 66268786 (`r2s3_lf_train_signal-B4`
+  seed 0, `models_r2/r2s3_b4_substitution`, CPU-only, `expansion`
+  partition, 1.63 min). The 3 previously-tracked live SLURM jobs remain
+  PENDING, not COMPLETED — no further upsert due for them.
 - **Analyzer caveat (r2s1_direct-B1, from code-review)**, carried forward:
   the D3 certificate's aleatoric-floor estimate is window-sensitive — at
   the recipe's window (1000 closest pairs), `ext__helmholtz_2d` reads
@@ -191,10 +206,17 @@ listed here.
   card-locked design, not a build defect); F1 is epoch-matched but not
   step-matched (confound C2). r2s3-B2's card shipped a step-matched,
   per-rung-scaled repair of both confounds this round (now closed).
-- **Analyzer caveat (r2s2_stacked-B3, from this run's code-review, new)**:
+- **Analyzer caveat (r2s2_stacked-B3, from code-review, carried forward)**:
   pfc's pre-flight-instrument conflict directionally biases F1/F2/F3
-  toward confirming the card's hypothesis (see Flags above) — re-check
-  any "≥2 of 4 decidable" verdict with pfc dropped once part 6/7 land.
+  toward confirming the card's hypothesis — re-check any "≥2 of 4
+  decidable" verdict with pfc dropped once part 6/7 land.
+- **Analyzer caveat (r2s4_diag-B4, from code-review, new this run)**:
+  `recipe.env R2S4B4_NOISE_FLOOR_JSON` is echoed into `resolved_recipe`
+  but never read by the family, and resolves (if it ever were read) to
+  the worktree's stale `noise_floor.json` (`ifc_poisson.min_claimable_effect`
+  0.2399, not the certified 0.9377) — inert today since the probe reads
+  the main tree's file via an absolute path, but a future analyst quoting
+  `resolved_recipe` verbatim could pick up the wrong number.
 - **Timestamp-ahead-of-clock / clock-skew anomaly class (carried forward,
   no new distinct occurrence flagged this run)**: prior runs flagged
   `review_notes[0].utc` fields reading ahead of the actual check time, and
@@ -209,18 +231,16 @@ listed here.
   separate round, separate report.
 - No reopen candidates on any of the 14 cards. No `blocked.md` file exists
   (no stream has ever blocked). **No abandoned streams** — none qualify
-  (all 4 streams show clean complete/drafted/running progressions with no
-  skip/block history anywhere). `state/streams/` directory still does not
-  exist — consistent with no abandonments ever being needed.
-- Repo hygiene, final re-check: `git status --short .` on the round root
-  at close shows two deltas — `experiment_cards/r2s2_stacked/batch_3/B3.json`
-  (M — orchestrator-owned, `built`→`running`, job_ids populated, caught
-  mid-walk) and `state/r2s2_stacked/current_stage.txt` (M — orchestrator-
-  owned refresh with the reviewer's caveats). The r2s3/r2s4
-  `current_stage.txt` refreshes observed earlier in this run were already
-  committed by the external auto-sync (`1b2da59`, "round2: auto-sync
-  2026-08-01T19:32:26Z") before this run's final check. This maintainer's
-  own writes this run: `index.md`, `state/maintainer_report.md`. No Write
-  call this run touched `experiment_cards/`, `tools/`, or any other-
-  agent-owned `state/` file. `state/timing_ledger.json` unchanged (no
-  COMPLETED job to upsert yet — gitignored regardless).
+  (all 4 streams show clean complete/running/reviewed_fail progressions
+  with no skip/block history anywhere). `state/streams/` directory still
+  does not exist — consistent with no abandonments ever being needed.
+- Repo hygiene, final check: `git status --short .` on the round root at
+  close shows `experiment_cards/r2s3_lf_train_signal/batch_4/B4.json` and
+  `experiment_cards/r2s4_diag/batch_4/B4.json` (both M — orchestrator/
+  reviewer-owned, `built` → `running`/`reviewed_fail` this run), plus
+  `state/r2s3_lf_train_signal/current_stage.txt` and
+  `state/r2s4_diag/current_stage.txt` (both M — orchestrator-owned
+  refresh, already matching the cards' new statuses at this run's open),
+  and this maintainer's own writes: `index.md`, `state/maintainer_report.md`,
+  `state/timing_ledger.json`. No Write call this run touched
+  `experiment_cards/`, `tools/`, or any other-agent-owned `state/` file.
