@@ -1861,3 +1861,15 @@ Pure JSON parsing, < 1 s.
 **Provenance.** `worktrees/s4_hybrid_routing/B3/scratchpad/reanalysis_turn_3.py`; card
 `experiment_cards/s4_hybrid_routing/batch_3/B3.json` part 6, findings F10 / F11 and
 interpretation H6.
+
+## `aggregate_seed_confirm.py` — end-of-round top-3 seed-confirm aggregation (added 2026-08-01)
+
+Parses the per-seed eval artifacts in `mffp_autoresearch_outputs/round1/` for the top-3
+slate (s4-B3 diags, s6-B2 diags, s1-B3 result JSONs), re-derives seed 0 and requires
+exact (1e-9) agreement with the cards before trusting seeds 1–2, then writes
+`state/seed_confirm_2026-08-01.json` with per-arm 3-seed panel-geomean stats
+(mean, sd, min/max, t-based 95% CI, df=2) plus per-seed gate outcomes.
+`--update-cards` folds the stats into the three cards' part 5 (`seed_confirm` block;
+`mean`/`ci95` promoted to 3-seed only where every check passed).
+
+**Provenance.** `round1_report.md` §8 step 2; seed-confirm jobs 66165252–57.

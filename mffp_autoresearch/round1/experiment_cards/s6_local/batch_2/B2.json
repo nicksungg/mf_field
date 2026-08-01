@@ -216,9 +216,12 @@
     },
     "guard_flags": [],
     "panel_geomean_skill": {
-      "ci95": null,
-      "ci95_note": "ADR 0004: single seed in-round, no seed CI. A CI would come from the end-of-round top-3 confirmation pass.",
-      "mean": 0.19257491364521565,
+      "ci95": [
+        0.18377626023682855,
+        0.21023055889419942
+      ],
+      "ci95_note": "t-interval over n=3 independent training seeds (df=2); supersedes the in-round single-seed note",
+      "mean": 0.197003409565514,
       "per_arm": {
         "b1_replica": 0.23457046590844713,
         "circ_repair": 0.19257491364521565,
@@ -227,7 +230,9 @@
         "trust_head_circ": 0.1875881964408575
       },
       "per_seed": [
-        0.19257491364521565
+        0.19257491364521556,
+        0.19552399359816727,
+        0.20291132145315913
       ],
       "prediction_check": "card part 4 predicted circ_repair -19.82% and lsi_ctrl -15.92% vs B1. Observed -17.90% and -15.92%. lsi_ctrl is EXACT (it is a zero-gradient-step closed form, so this is arithmetic, not luck); circ_repair landed 1.9 points short of its ideal-repair upper bound, i.e. the repair realised ~90% of the energy-share arithmetic's ideal gain.",
       "primary_arm": "circ_repair",
@@ -237,7 +242,8 @@
         "lsi_ctrl": -15.923,
         "pointwise_ctrl_circ": 330.148,
         "trust_head_circ": -20.029
-      }
+      },
+      "mean_basis": "3-seed mean (seed confirm 2026-08-01, all checks passed)"
     },
     "per_dataset": {
       "ext__helmholtz_2d": {
@@ -627,7 +633,9 @@
     },
     "provisional_claim": "provisional-single-seed (ADR 0004). Circular padding on data-verified-periodic panel datasets removes 46.4% / 28.0% / 21.2% of the B1 defect corrector's test nRMSE on pfc / allen_cahn / fisher_kpp and improves the panel geomean by 17.9% (0.234572 -> 0.192575), beyond the 13.183% certified geomean floor. But the same batch's zero-parameter closed-form registration filter reaches 0.197220 with ZERO gradient steps, and the trained corrector's resolvable advantage over it survives on exactly ONE of six panel datasets. The neural content of H2 is refuted on the panel, as pre-registered.",
     "seeds_available": [
-      0
+      0,
+      1,
+      2
     ],
     "surplus_over_lsi": {
       "definition": "registration-independent quantity per the round context: (trained arm) minus (lsi_ctrl, the zero-parameter closed-form half-cell registration filter). Reported in skill units AND in relative nRMSE, each judged against that dataset's CERTIFIED relative floor = min_claimable_effect / certified mean_skill from state/noise_floor.json (10.000% on all four defect datasets; 70.165% helmholtz; 15.323% ifc_poisson; 13.183% on the geomean). Negative = the trained model beats the closed form.",
@@ -805,7 +813,119 @@
     },
     "wall_clock_per_seed_min": [
       59.87
-    ]
+    ],
+    "seed_confirm": {
+      "date_utc": "2026-08-01T16:32:16Z",
+      "jobs": {
+        "1": 66165254,
+        "2": 66165255
+      },
+      "slurm_state": {
+        "1": "COMPLETED",
+        "2": "COMPLETED"
+      },
+      "confirmed": true,
+      "gates": {
+        "0": {
+          "defined": true,
+          "all_pass": true,
+          "failures": []
+        },
+        "1": {
+          "defined": true,
+          "all_pass": true,
+          "failures": []
+        },
+        "2": {
+          "defined": true,
+          "all_pass": true,
+          "failures": []
+        }
+      },
+      "per_arm_panel_geomean_skill": {
+        "b1_replica": {
+          "per_seed": [
+            0.23457046590844718,
+            0.23243902941919298,
+            0.2408694409985195
+          ],
+          "mean": 0.2359596454420532,
+          "sd": 0.0043835287932957765,
+          "min": 0.23243902941919298,
+          "max": 0.2408694409985195,
+          "ci95": [
+            0.22507035625567423,
+            0.24684893462843216
+          ],
+          "ci95_basis": "t-interval, df=2, over n=3 independent training seeds"
+        },
+        "circ_repair": {
+          "per_seed": [
+            0.19257491364521556,
+            0.19552399359816727,
+            0.20291132145315913
+          ],
+          "mean": 0.197003409565514,
+          "sd": 0.005324644147392339,
+          "min": 0.19257491364521556,
+          "max": 0.20291132145315913,
+          "ci95": [
+            0.18377626023682855,
+            0.21023055889419942
+          ],
+          "ci95_basis": "t-interval, df=2, over n=3 independent training seeds"
+        },
+        "lsi_ctrl": {
+          "per_seed": [
+            0.19721982148169734,
+            0.1958486044397271,
+            0.2007032974641976
+          ],
+          "mean": 0.19792390779520733,
+          "sd": 0.002502761323641294,
+          "min": 0.1958486044397271,
+          "max": 0.2007032974641976,
+          "ci95": [
+            0.191706704007406,
+            0.20414111158300866
+          ],
+          "ci95_basis": "t-interval, df=2, over n=3 independent training seeds"
+        },
+        "pointwise_ctrl_circ": {
+          "per_seed": [
+            1.0090004249071922,
+            1.007203769919101,
+            1.0436445267912615
+          ],
+          "mean": 1.0199495738725182,
+          "sd": 0.02054008489886674,
+          "min": 1.007203769919101,
+          "max": 1.0436445267912615,
+          "ci95": [
+            0.968925174370771,
+            1.0709739733742654
+          ],
+          "ci95_basis": "t-interval, df=2, over n=3 independent training seeds"
+        },
+        "trust_head_circ": {
+          "per_seed": [
+            0.18758819644085742,
+            0.19527895296166686,
+            0.2026912801453206
+          ],
+          "mean": 0.19518614318261496,
+          "sd": 0.007551969583315402,
+          "min": 0.18758819644085742,
+          "max": 0.2026912801453206,
+          "ci95": [
+            0.1764260107420042,
+            0.2139462756232257
+          ],
+          "ci95_basis": "t-interval, df=2, over n=3 independent training seeds"
+        }
+      },
+      "source": "tools/aggregate_seed_confirm.py (validates seed 0 against this card before trusting seeds 1-2)"
+    }
   },
   "6_analysis": {
     "_provenance": "3 probe turns, read-only re-analysis of the shipped 200-epoch seed-0 checkpoints (job 66056503) through round1/eval/{nrmse,panel_data}.py. No retraining, no SLURM, no worktree code edits, no touch to part 5 or any locked field. Every number traces to worktrees/s6_local/B2/scratchpad/{reanalysis_turn_1_results.json, reanalysis_turn_2_results.json, reanalysis_turn_3_results.json} and the three reanalysis_turn_{1,2,3}_results.md, with raw stdout in turn1.log / turn2.log / turn3.log / turn3b.log. Shared loader: scratchpad/replay.py, which rebuilds each arm's prediction on CPU from its last.pt (pred = LF_up + alpha*(g*Delta) for trained arms, LF_up + alpha*irfft2(rfft2(LF_up)*T) for lsi_ctrl) using the family's own modules and eval/panel_data.py::copylf_prediction. SEAM: every replay is checked against the shipped scored value (splits.test_hf.rel_l2_mean, the round's metric) BEFORE any number is used - lsi_ctrl reproduces bit-exactly (rel dev 0.00e+00 on 7/7 datasets) and the torch arms to 1.3e-05...5.0e-03 relative (CPU vs H100 float32 reduction order; 2-4 orders below every effect read). Single nrmse_def_hash d3d0ade9... throughout. NOT re-run for cost (single-CPU login node, nproc=1, ~10-25 min per 256^2 CPU forward): b1_replica on sharp__cahn_hilliard and ext__helmholtz_2d, neither of which carries a contrast.",

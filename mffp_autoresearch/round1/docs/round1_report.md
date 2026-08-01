@@ -22,17 +22,39 @@ program should be read.
   matched* spectral cleaning stage; the routing and trust-head machinery added exactly
   zero on the panel, for a structural reason (§4, s4).
 
-## 2. Final leaderboard (claimable, seed-0, pending 3-seed confirm)
+## 2. Final leaderboard (re-issued 2026-08-01 with the top-3 seed confirms)
 
-| Rank | Model / arm | Panel geomean skill | Stream | Note |
-|---|---|---|---|---|
-| 1 | `dc_cleaned` (BC-matched spectral clean + local corrector) | **0.1233** | s4-B3 | router/head contribute 0.000000; gain is D3 alone |
-| 2 | `trust_head` / `circ_repair` (DC lineage) | 0.1876–0.1926 | s6-B2 | previous best; 4/5 sharp < 1 |
-| 3 | `self_only__none` (ifc_poisson slate) | 0.6087 (ifc_poisson) | s1-B3 | criterion-1 model; f_src fragility protocol note |
+| Rank | Model / arm | Seed-0 skill | 3-seed mean [95% CI] | Confirm status | Stream |
+|---|---|---|---|---|---|
+| 1 | `dc_cleaned` (BC-matched spectral clean + local corrector) | **0.1233\*** | 0.1258 [0.119, 0.133] — spread only, not claimable | seeds 1–2 FAILED V1/V5 gates | s4-B3 |
+| 2 | `trust_head` / `circ_repair` (DC lineage) | 0.1876–0.1926 | 0.1952 [0.176, 0.214] / 0.1970 [0.184, 0.210] | CONFIRMED | s6-B2 |
+| 3 | `self_only__none` (ifc_poisson slate) | 0.6087 | 0.8018 [0.262, 1.342] | CONFIRMED, strongly seed-sensitive | s1-B3 |
 
-Proposed top-3 seed-confirm slate (awaiting operator go, `submit_seeds_2_3.sh`, smoke
-tier): the three rows above. Helmholtz remains report-only (certified floor 9.695; see §5,
-zero-predictor finding).
+Helmholtz remains report-only (certified floor 9.695; see §5, zero-predictor finding).
+
+### Seed-confirm addendum (2026-08-01, jobs 66165252–57 at commit ddf5ddb)
+
+Full per-arm data: `state/seed_confirm_2026-08-01.json` (written by
+`tools/aggregate_seed_confirm.py`, which re-derives seed 0 from the eval artifacts and
+requires exact agreement with the cards before trusting seeds 1–2).
+The figure `docs/figures/error_comparison.png` now carries seed-range whiskers.
+
+- **s4-B3 (`dc_cleaned`)\*** — both confirm seeds trained to completion but failed the
+  card's own `02_verify_gates.py`: V1 (`dc_raw` pfc rel. deviation 18.8% / 28.3% vs 10%
+  tol) and V5 (ifc reproducibility envelope 0.0062/0.0071 and 3.3e-4 vs the 1.9e-4
+  certified independent-training envelope). The panel geomean itself is seed-stable
+  (0.1233 / 0.1253 / 0.1288), so the failure is gate-level, not headline-level; per
+  protocol only seed 0 is claimable and no 3-seed CI is issued. Relaxing the gates and
+  re-verifying is an operator/mentor decision (no retraining needed — the artifacts are
+  on disk).
+- **s6-B2** — all validity gates pass on all 3 seeds; the DC lineage is confirmed at
+  3-seed geomeans `trust_head` 0.1952, `circ_repair` 0.1970 (vs 0.1876/0.1926 at seed 0).
+- **s1-B3** — no per-seed gate script exists on this card; both jobs COMPLETED. The slate
+  is strongly seed-sensitive: `self_only__none` skill 0.609 / 0.759 / 1.037 — seed 2
+  crosses paper-bar parity. The confirmed criterion-1 number is the 3-seed mean 0.8018;
+  the `gain__ladder_level_intercept` arm is both better and more stable across seeds
+  (0.7613 [0.557, 0.966]) and is the honest criterion-1 representative going forward.
+  Criterion 1's "met" margin is therefore not seed-robust; it rests on seed 0.
 
 ## 3. Stream closures (one paragraph each)
 
@@ -134,8 +156,10 @@ chunking fix.
 1. Freeze the provisional leaderboard (§2) — done in this report.
 2. On Eloise's go: seeds 1–2 for the top-3 slate at smoke tier via each card's
    `submit_seeds_2_3.sh`; re-issue the leaderboard with 3-seed means and the certified
-   seed spreads.
-3. Human-approved 2500-epoch full runs for survivors.
+   seed spreads. — **DONE 2026-08-01** (§2 addendum; jobs 66165252–57).
+3. Human-approved 2500-epoch full runs for survivors. — **ON HOLD per operator
+   (2026-08-01)**; the open s4 gate-relaxation decision (§2 addendum) is a prerequisite
+   for s4's slot anyway.
 4. Between-rounds fix list (§5) before any round-2 numbers are generated.
 5. **Round 2** (condition-vector → HF; spec
    `docs/superpowers/specs/2026-07-30-mffp-autoresearch-round2-design.md`, commit

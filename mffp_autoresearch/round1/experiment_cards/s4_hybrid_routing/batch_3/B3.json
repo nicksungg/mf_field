@@ -278,7 +278,9 @@
       "recomputation_policy": "every nRMSE and skill in this part 5 is PARSED from the score_panel.py result JSONs; nothing is recomputed by hand. Ratios/percentages between arms are arithmetic on those parsed numbers."
     },
     "seeds_available": [
-      0
+      0,
+      1,
+      2
     ],
     "per_dataset": {
       "ext__helmholtz_2d": {
@@ -1308,11 +1310,13 @@
     "panel_geomean_skill": {
       "primary_arm": "router",
       "per_seed": [
-        0.12330796353386629
+        0.12330796353386629,
+        0.12533546310180452,
+        0.1288372071846238
       ],
       "mean": 0.12330796353386629,
       "ci95": null,
-      "ci95_note": "ADR 0004: single seed in-round, no seed CI. A CI would come from the end-of-round top-3 confirmation pass. The per-dataset per_sample_rel_l2_ci95 values recorded above are SAMPLING CIs over test samples, NOT seed CIs.",
+      "ci95_note": "no 3-seed CI issued: seeds 1-2 failed V1/V5 gates, so a CI over them would launder non-verified runs into the claim",
       "per_arm": {
         "lsi_alone": 0.19721724552168773,
         "dc_raw": 0.19257695455895224,
@@ -1330,7 +1334,8 @@
       "ranking": "router = dc_cleaned = router_forced_wrong 0.12330796 << dc_raw 0.19257695 < lsi_alone 0.19721725",
       "identity_note": "router, router_forced_wrong and dc_cleaned have BIT-IDENTICAL panel geomeans (0.12330796353386629) and bit-identical per-dataset nRMSE on all six panel datasets. Cause, read off the diags, is structural, not a copy error: (a) on pfc/allen_cahn/fisher_kpp the OOF selector picks dc AND the rho-rule complement also picks dc (the rule predicted lsi), so the two router arms coincide by construction; (b) on cahn_hilliard the two arms pick DIFFERENT branches (router lsi, forced_wrong dc) but the branches are numerically identical (branch_test_nrmse.lsi == branch_test_nrmse.dc == 0.03856875162347986: dc_cleaned's pixel gate collapsed onto the LSI prediction there); (c) on helmholtz both pick lsi and alpha_LSI = 0 collapses everything onto copy-LF; (d) on ifc_poisson all five arms take the champion fallback. The per-sample head then contributed EXACTLY ZERO on the panel: head_selected == 'branch' with alpha == 1.0 on all five LF-bearing panel datasets because CHANGE 2(b)'s promotion gate fired (the CV winner did not beat the unmodified branch by more than the certified relative floor).",
       "prediction_check": "card part 4 item 2 predicted a panel geomean in [0.165, 0.200]. Observed 0.12330796 - BELOW the predicted band, i.e. better than the card's own optimistic end by 25.3%. The card explicitly declared this NOT the claim ('Explicitly NOT the claim - it is inherited from the s6/DC lineage'), so this is context, not a scored prediction.",
-      "round_context": "0.12330796 is the lowest panel geomean skill recorded in round 1 to date; the previous best was s6_local-B2 trust_head_circ 0.18758820 (-34.27% relative, beyond the 13.184% certified geomean relative floor). The entire gain is attributable to the D3 LSI pre-stage (dc_cleaned), NOT to the router: the router arm's panel numbers are bit-identical to its dc_cleaned donor."
+      "round_context": "0.12330796 is the lowest panel geomean skill recorded in round 1 to date; the previous best was s6_local-B2 trust_head_circ 0.18758820 (-34.27% relative, beyond the 13.184% certified geomean relative floor). The entire gain is attributable to the D3 LSI pre-stage (dc_cleaned), NOT to the router: the router arm's panel numbers are bit-identical to its dc_cleaned donor.",
+      "mean_basis": "seed 0 (in-round claimable value). Seeds 1-2 trained to completion but FAILED the card's own verification gates \u2014 NOT claimable; recorded as a seed-sensitivity finding. 3-seed spread in seed_confirm."
     },
     "vs_anchor": {
       "anchor_source": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round1/state/anchors/s4_hybrid_routing.json (champion_panel_geomean, mf_fno_transfer_film, batch0, 3-seed, certified 2026-07-29T14:28:45Z)",
@@ -2291,7 +2296,161 @@
       "for_the_timing_ledger": "5 arms x {panel, guard}, seed 0, 200 ep, 1x H100, 57.37 min wall. Only dc_raw and dc_cleaned take gradient steps: 20.75 and 20.65 min per panel leg (5.57 / 5.55 min per guard leg), matching s6_local-B2's 18.05-20.42 min/panel-leg on the same family lineage. The LSI pre-stage adds essentially nothing (20.65 vs 20.75 min). The three zero-gradient arms cost 1.38 / 1.02 / 1.00 min per panel leg - borrowing via borrow_partner_stages is a ~20x saving per arm. The card's own ~63 min estimate was accurate to 9%.",
       "leg_boundaries_utc": "sweep start 2026-07-31T02:44:47Z, gates 03:42:09Z, all done 03:42:09Z (leg timestamps parsed from the '=== [ts] arm=<a> datasets=<d> ===' markers in the .out)."
     },
-    "provisional_claim": "provisional-single-seed (ADR 0004). The PRIMARY no-harm claim holds exactly: the availability-keyed discrete super learner never loses to the better of its two library members on any panel dataset - router / min(lsi_alone, dc_cleaned) = 1.000000 on all four sharp panel datasets and router / branch_oracle = 1.0000 on all six. But it also never GAINS: the router's panel numbers are bit-identical to its dc_cleaned donor and to the rule-inverted control, so the routing layer's measured panel contribution is exactly zero, and the per-sample head's is exactly zero too (its promotion gate declined on 5/5). The batch's entire panel movement - a round-best geomean of 0.12331, 34.3% below the previous best - comes from D3, the LSI pre-stage: training the corrector on R - C_LSI instead of R cuts nRMSE by 23.8% / 53.8% / 79.0% on fisher_kpp / pfc / allen_cahn (subject to the reviewer's verbatim caveat that 'the D3 contrast is mildly asymmetric - dc_cleaned consumes val_idx twice, dc_raw once'), while making things 11.9-92.8% WORSE on all three guard datasets. That same D3 gain is what falsifies the card's routing clause: the rho rule, calibrated on the raw-residual corrector, predicts LSI on all four sharp panel datasets and is wrong on the three where the gap is now resolvable (3 disagreements vs a pre-registered 1; Spearman -0.464 vs a required <= -0.714) - yet reproduces its pre-registered -0.857 EXACTLY when scored against dc_raw. The router is a correct, useless selector over a library one of whose members this batch made uniformly dominant on the panel."
+    "provisional_claim": "provisional-single-seed (ADR 0004). The PRIMARY no-harm claim holds exactly: the availability-keyed discrete super learner never loses to the better of its two library members on any panel dataset - router / min(lsi_alone, dc_cleaned) = 1.000000 on all four sharp panel datasets and router / branch_oracle = 1.0000 on all six. But it also never GAINS: the router's panel numbers are bit-identical to its dc_cleaned donor and to the rule-inverted control, so the routing layer's measured panel contribution is exactly zero, and the per-sample head's is exactly zero too (its promotion gate declined on 5/5). The batch's entire panel movement - a round-best geomean of 0.12331, 34.3% below the previous best - comes from D3, the LSI pre-stage: training the corrector on R - C_LSI instead of R cuts nRMSE by 23.8% / 53.8% / 79.0% on fisher_kpp / pfc / allen_cahn (subject to the reviewer's verbatim caveat that 'the D3 contrast is mildly asymmetric - dc_cleaned consumes val_idx twice, dc_raw once'), while making things 11.9-92.8% WORSE on all three guard datasets. That same D3 gain is what falsifies the card's routing clause: the rho rule, calibrated on the raw-residual corrector, predicts LSI on all four sharp panel datasets and is wrong on the three where the gap is now resolvable (3 disagreements vs a pre-registered 1; Spearman -0.464 vs a required <= -0.714) - yet reproduces its pre-registered -0.857 EXACTLY when scored against dc_raw. The router is a correct, useless selector over a library one of whose members this batch made uniformly dominant on the panel.",
+    "seed_confirm": {
+      "date_utc": "2026-08-01T16:32:16Z",
+      "jobs": {
+        "1": 66165252,
+        "2": 66165253
+      },
+      "slurm_state": {
+        "1": "FAILED",
+        "2": "FAILED"
+      },
+      "confirmed": false,
+      "gates": {
+        "0": {
+          "defined": true,
+          "all_pass": true,
+          "failures": []
+        },
+        "1": {
+          "defined": true,
+          "all_pass": false,
+          "failures": [
+            {
+              "gate": "V1",
+              "dataset": "sharp__phase_field_crystal_2d",
+              "arm": "dc_raw",
+              "rel_dev": 0.18786605672305912,
+              "tol": 0.1,
+              "nrmse": 0.0008557537373796224
+            },
+            {
+              "gate": "V5",
+              "dataset": "ifc_poisson",
+              "arm": "dc_raw",
+              "rel_dev": 0.006226298016647524,
+              "tol": 0.00019,
+              "nrmse": 0.05232358949935024
+            },
+            {
+              "gate": "V5",
+              "dataset": "ifc_poisson",
+              "arm": "lsi_alone",
+              "rel_dev": 0.007110555379233186,
+              "tol": 0.00019,
+              "nrmse": 0.05236957072578301
+            }
+          ]
+        },
+        "2": {
+          "defined": true,
+          "all_pass": false,
+          "failures": [
+            {
+              "gate": "V1",
+              "dataset": "sharp__phase_field_crystal_2d",
+              "arm": "dc_raw",
+              "rel_dev": 0.2825639628325489,
+              "tol": 0.1,
+              "nrmse": 0.0009239753071572609
+            },
+            {
+              "gate": "V5",
+              "dataset": "ifc_poisson",
+              "arm": "dc_raw",
+              "rel_dev": 0.00032519535934461295,
+              "tol": 0.00019,
+              "nrmse": 0.061076264063120965
+            }
+          ]
+        }
+      },
+      "per_arm_panel_geomean_skill": {
+        "dc_cleaned": {
+          "per_seed": [
+            0.12330796353386629,
+            0.12533546310180452,
+            0.1288372071846238
+          ],
+          "mean": 0.1258268779400982,
+          "sd": 0.0027971861298154536,
+          "min": 0.12330796353386629,
+          "max": 0.1288372071846238,
+          "ci95": [
+            0.11887828238797736,
+            0.13277547349221905
+          ],
+          "ci95_basis": "t-interval, df=2, over n=3 independent training seeds"
+        },
+        "dc_raw": {
+          "per_seed": [
+            0.19257695455895218,
+            0.1955619376282096,
+            0.20289246780209264
+          ],
+          "mean": 0.1970104533297515,
+          "sd": 0.0053081165841154555,
+          "min": 0.19257695455895218,
+          "max": 0.20289246780209264,
+          "ci95": [
+            0.18382436074428707,
+            0.21019654591521594
+          ],
+          "ci95_basis": "t-interval, df=2, over n=3 independent training seeds"
+        },
+        "lsi_alone": {
+          "per_seed": [
+            0.19721724552168773,
+            0.19599359519724746,
+            0.20069517792895825
+          ],
+          "mean": 0.19796867288263117,
+          "sd": 0.0024392011714618883,
+          "min": 0.19599359519724746,
+          "max": 0.20069517792895825,
+          "ci95": [
+            0.19190936126582925,
+            0.2040279844994331
+          ],
+          "ci95_basis": "t-interval, df=2, over n=3 independent training seeds"
+        },
+        "router": {
+          "per_seed": [
+            0.12330796353386629,
+            0.12533546310180452,
+            0.1288372071846238
+          ],
+          "mean": 0.1258268779400982,
+          "sd": 0.0027971861298154536,
+          "min": 0.12330796353386629,
+          "max": 0.1288372071846238,
+          "ci95": [
+            0.11887828238797736,
+            0.13277547349221905
+          ],
+          "ci95_basis": "t-interval, df=2, over n=3 independent training seeds"
+        },
+        "router_forced_wrong": {
+          "per_seed": [
+            0.12330796353386629,
+            0.12533546310180452,
+            0.1288372071846238
+          ],
+          "mean": 0.1258268779400982,
+          "sd": 0.0027971861298154536,
+          "min": 0.12330796353386629,
+          "max": 0.1288372071846238,
+          "ci95": [
+            0.11887828238797736,
+            0.13277547349221905
+          ],
+          "ci95_basis": "t-interval, df=2, over n=3 independent training seeds"
+        }
+      },
+      "source": "tools/aggregate_seed_confirm.py (validates seed 0 against this card before trusting seeds 1-2)"
+    }
   },
   "6_analysis": {
     "_provenance": {

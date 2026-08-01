@@ -285,7 +285,7 @@
       "_seam_asserts": "(1) every result JSON carries nrmse_def_hash d3d0ade9... and copylf_def_hash 9753ff24... (one distinct pair across all 33); (2) ref_nn_condition_full / ref_train_mean_full agree with state/anchors/floors.json to 1e-9, RAISING on mismatch; (3) the LF lift used by ref_linear_mf is verified against the eval-layer copy-LF convention per dataset (max_abs_diff 0.0 expected, RAISE on mismatch); (4) lf_read_at_test=false and field_input_at_test=false in every result JSON."
     }
   },
-  "status": "running",
+  "status": "analyzing",
   "skipped_reason": null,
   "reopen_candidate": false,
   "scripts_path": {
@@ -337,8 +337,1438 @@
     }
   ],
   "debug_notes": [],
-  "5_actual_result": null,
+  "5_actual_result": {
+    "label": "single-training-seed, 33-leg matched +/-LF contrast (measurement-completion card); NOT a leaderboard entry",
+    "seeds_available": [
+      0
+    ],
+    "seed_semantics": "ONE training seed (--seed 0) on all 33 legs. The d0/d1/d2 suffixes are R2S3B3_SPLIT_SEED HF-SUBSET DRAWS (which 5 of the 400 HF train rows are used), NOT training seeds; ifc_poisson is 'native' (single draw). Per the card recipe and the in-job note (leg JSON coverage_panel.seed_semantics) draws must never be bootstrapped as a seed CI, so every ci95 below is null.",
+    "job": {
+      "job_id": "66196690",
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "elapsed": "00:54:57",
+      "start_utc_cluster_local": "2026-07-31T18:21:49",
+      "end_utc_cluster_local": "2026-07-31T19:16:46",
+      "node": "hpc-sm-01-04",
+      "gpu": "NVIDIA H200",
+      "legs_expected": 33,
+      "legs_found": 33,
+      "sum_of_per_leg_train_seconds": 3025.9,
+      "slurm_out": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B3/slurm/r2-r2s3_lf_train_signal-B3-s0_66196690.out",
+      "slurm_err": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B3/slurm/r2-r2s3_lf_train_signal-B3-s0_66196690.err (0 bytes)",
+      "note": "ran through the 2026-08-01 operator halt window; result JSONs disk-verified after the halt."
+    },
+    "seam_assertions": {
+      "nrmse_def_hash": "d3d0ade9191c13bacc40702f3eb26ad290e01641cacee22a1d2233b74c035850",
+      "copylf_def_hash": "9753ff24e856f595748492dec6cb6c215d748f97e8ec4a679b651f8846da907a",
+      "distinct_hash_pairs_across_33_result_jsons": 1,
+      "matches_noise_floor_provenance_hashes": true,
+      "matches_floor_anchor_frozen_nrmse_def_hash": true,
+      "in_job_floor_seam_check_max_abs_diff": 0.0,
+      "in_job_lf_lift_verification_max_abs_diff": 0.0,
+      "in_job_lf_lift_tol": 1e-09
+    },
+    "per_dataset": {
+      "ifc_poisson": {
+        "per_seed_nrmse": [
+          0.07740329672823923
+        ],
+        "per_seed_skill": [
+          2.150091575784423
+        ],
+        "mean_skill": 2.150091575784423,
+        "ci95": null,
+        "ci95_note": "ONE training seed (0); the 3 values per dataset are R2S3B3_SPLIT_SEED HF-subset DRAWS, not seeds. Card recipe forbids bootstrapping draws as a seed CI (leg JSON coverage_panel.seed_semantics). per_seed_* therefore hold the single-seed DRAW-MEAN of the primary arm A1_lf_cov.",
+        "primary_arm": "A1_lf_cov",
+        "reference_type": "paper_bar",
+        "split": "test_hf",
+        "metric_source": "per_sample_mean",
+        "cached": false,
+        "m_null_dim": 1,
+        "numerical_rank": 5,
+        "hf_subset_draws": [
+          "native"
+        ],
+        "arms": {
+          "A0_nolf": {
+            "per_draw_nrmse": [
+              0.29283781751768306
+            ],
+            "per_draw_skill": [
+              8.13438381993564
+            ],
+            "draw_mean_nrmse": 0.29283781751768306,
+            "draw_mean_skill": 8.13438381993564,
+            "draw_spread_skill": null,
+            "in_regime_floors_n5_skill_per_draw": {
+              "native": {
+                "nn_condition_n5": 10.054890929609687,
+                "train_mean_n5": 11.206332455369639,
+                "zero": 27.77777777777778
+              }
+            },
+            "beats_best_in_regime_floor_per_draw": {
+              "native": true
+            },
+            "summary_json": {
+              "native": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B3/eval/result_ifc_poisson_ifc_A0_s0.json"
+            },
+            "leg_json": {
+              "native": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B3/eval/results_ifc_A0/r2s3_coverage_panel/ifc_poisson_e200_s0.json"
+            }
+          },
+          "A1_lf_cov": {
+            "per_draw_nrmse": [
+              0.07740329672823923
+            ],
+            "per_draw_skill": [
+              2.150091575784423
+            ],
+            "draw_mean_nrmse": 0.07740329672823923,
+            "draw_mean_skill": 2.150091575784423,
+            "draw_spread_skill": null,
+            "in_regime_floors_n5_skill_per_draw": {
+              "native": {
+                "nn_condition_n5": 10.054890929609687,
+                "train_mean_n5": 11.206332455369639,
+                "zero": 27.77777777777778
+              }
+            },
+            "beats_best_in_regime_floor_per_draw": {
+              "native": true
+            },
+            "summary_json": {
+              "native": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B3/eval/result_ifc_poisson_ifc_A1_s0.json"
+            },
+            "leg_json": {
+              "native": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B3/eval/results_ifc_A1/r2s3_coverage_panel/ifc_poisson_e200_s0.json"
+            }
+          }
+        },
+        "effect_A0_minus_A1_skill_units": {
+          "per_draw": [
+            5.984292244151218
+          ],
+          "draw_mean": 5.984292244151218,
+          "in_job_paired_3draw_spread": null,
+          "certified_min_claimable_effect": 0.9377041289531141,
+          "operative_threshold_max_mce_spread": 0.9377041289531141,
+          "F1_pass_operative_threshold": true,
+          "F1_pass_mce_only_sensitivity": true,
+          "relative_effect_1_minus_skillA1_over_skillA0": 0.7356786176581677
+        },
+        "anchor_per_dataset": {
+          "arm": "nn_condition",
+          "skill": 10.054890929609687
+        }
+      },
+      "sharp__cahn_hilliard": {
+        "per_seed_nrmse": [
+          0.5261418870468288
+        ],
+        "per_seed_skill": [
+          12.58623440151999
+        ],
+        "mean_skill": 12.58623440151999,
+        "ci95": null,
+        "ci95_note": "ONE training seed (0); the 3 values per dataset are R2S3B3_SPLIT_SEED HF-subset DRAWS, not seeds. Card recipe forbids bootstrapping draws as a seed CI (leg JSON coverage_panel.seed_semantics). per_seed_* therefore hold the single-seed DRAW-MEAN of the primary arm A1_lf_cov.",
+        "primary_arm": "A1_lf_cov",
+        "reference_type": "copylf",
+        "split": "test_hf",
+        "metric_source": "per_sample_mean",
+        "cached": false,
+        "m_null_dim": 15,
+        "numerical_rank": 5,
+        "hf_subset_draws": [
+          "0",
+          "1",
+          "2"
+        ],
+        "arms": {
+          "A0_nolf": {
+            "per_draw_nrmse": [
+              1.25736143313939,
+              1.1391260131894858,
+              1.0350022891965012
+            ],
+            "per_draw_skill": [
+              30.07828518225339,
+              27.249887089099484,
+              24.759065451060554
+            ],
+            "draw_mean_nrmse": 1.1438299118417923,
+            "draw_mean_skill": 27.36241257413781,
+            "draw_spread_skill": 5.319219731192835,
+            "in_regime_floors_n5_skill_per_draw": {
+              "0": {
+                "nn_condition_n5": 33.208119346206956,
+                "train_mean_n5": 25.223876382746255,
+                "zero": 23.92174945843033
+              },
+              "1": {
+                "nn_condition_n5": 29.041665683541446,
+                "train_mean_n5": 25.405277439235515,
+                "zero": 23.92174945843033
+              },
+              "2": {
+                "nn_condition_n5": 28.03894684208946,
+                "train_mean_n5": 25.876000843263764,
+                "zero": 23.92174945843033
+              }
+            },
+            "beats_best_in_regime_floor_per_draw": {
+              "0": false,
+              "1": false,
+              "2": false
+            },
+            "summary_json": {
+              "0": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B3/eval/result_sharp__cahn_hilliard_ch_A0_d0_s0.json",
+              "1": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B3/eval/result_sharp__cahn_hilliard_ch_A0_d1_s0.json",
+              "2": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B3/eval/result_sharp__cahn_hilliard_ch_A0_d2_s0.json"
+            },
+            "leg_json": {
+              "0": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B3/eval/results_ch_A0_d0/r2s3_coverage_panel/sharp__cahn_hilliard_e200_s0.json",
+              "1": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B3/eval/results_ch_A0_d1/r2s3_coverage_panel/sharp__cahn_hilliard_e200_s0.json",
+              "2": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B3/eval/results_ch_A0_d2/r2s3_coverage_panel/sharp__cahn_hilliard_e200_s0.json"
+            }
+          },
+          "A1_lf_cov": {
+            "per_draw_nrmse": [
+              0.5281654373456512,
+              0.5233679056709178,
+              0.5268923181239173
+            ],
+            "per_draw_skill": [
+              12.634641264784952,
+              12.519875914043096,
+              12.604186025731922
+            ],
+            "draw_mean_nrmse": 0.5261418870468288,
+            "draw_mean_skill": 12.58623440151999,
+            "draw_spread_skill": 0.11476535074185534,
+            "in_regime_floors_n5_skill_per_draw": {
+              "0": {
+                "nn_condition_n5": 33.208119346206956,
+                "train_mean_n5": 25.223876382746255,
+                "zero": 23.92174945843033
+              },
+              "1": {
+                "nn_condition_n5": 29.041665683541446,
+                "train_mean_n5": 25.405277439235515,
+                "zero": 23.92174945843033
+              },
+              "2": {
+                "nn_condition_n5": 28.03894684208946,
+                "train_mean_n5": 25.876000843263764,
+                "zero": 23.92174945843033
+              }
+            },
+            "beats_best_in_regime_floor_per_draw": {
+              "0": true,
+              "1": true,
+              "2": true
+            },
+            "summary_json": {
+              "0": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B3/eval/result_sharp__cahn_hilliard_ch_A1_d0_s0.json",
+              "1": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B3/eval/result_sharp__cahn_hilliard_ch_A1_d1_s0.json",
+              "2": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B3/eval/result_sharp__cahn_hilliard_ch_A1_d2_s0.json"
+            },
+            "leg_json": {
+              "0": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B3/eval/results_ch_A1_d0/r2s3_coverage_panel/sharp__cahn_hilliard_e200_s0.json",
+              "1": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B3/eval/results_ch_A1_d1/r2s3_coverage_panel/sharp__cahn_hilliard_e200_s0.json",
+              "2": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B3/eval/results_ch_A1_d2/r2s3_coverage_panel/sharp__cahn_hilliard_e200_s0.json"
+            }
+          }
+        },
+        "effect_A0_minus_A1_skill_units": {
+          "per_draw": [
+            17.443643917468435,
+            14.730011175056388,
+            12.154879425328632
+          ],
+          "draw_mean": 14.776178172617819,
+          "in_job_paired_3draw_spread": 5.288764492139803,
+          "certified_min_claimable_effect": 0.09124535322300886,
+          "operative_threshold_max_mce_spread": 5.288764492139803,
+          "F1_pass_operative_threshold": true,
+          "F1_pass_mce_only_sensitivity": true,
+          "relative_effect_1_minus_skillA1_over_skillA0": 0.5400173735624414
+        },
+        "anchor_per_dataset": {
+          "arm": "nn_condition",
+          "skill": 23.180342227117514
+        }
+      },
+      "sharp__fisher_kpp_2d": {
+        "per_seed_nrmse": [
+          0.32155076001946825
+        ],
+        "per_seed_skill": [
+          14.991058316323134
+        ],
+        "mean_skill": 14.991058316323134,
+        "ci95": null,
+        "ci95_note": "ONE training seed (0); the 3 values per dataset are R2S3B3_SPLIT_SEED HF-subset DRAWS, not seeds. Card recipe forbids bootstrapping draws as a seed CI (leg JSON coverage_panel.seed_semantics). per_seed_* therefore hold the single-seed DRAW-MEAN of the primary arm A1_lf_cov.",
+        "primary_arm": "A1_lf_cov",
+        "reference_type": "copylf",
+        "split": "test_hf",
+        "metric_source": "per_sample_mean",
+        "cached": false,
+        "m_null_dim": 0,
+        "numerical_rank": 3,
+        "hf_subset_draws": [
+          "0",
+          "1",
+          "2"
+        ],
+        "arms": {
+          "A0_nolf": {
+            "per_draw_nrmse": [
+              0.3634316813540858,
+              0.34718578736522965,
+              0.3385393609588949
+            ],
+            "per_draw_skill": [
+              16.943594003163312,
+              16.18619214171848,
+              15.783086011671351
+            ],
+            "draw_mean_nrmse": 0.3497189432260701,
+            "draw_mean_skill": 16.304290718851046,
+            "draw_spread_skill": 1.1605079914919614,
+            "in_regime_floors_n5_skill_per_draw": {
+              "0": {
+                "nn_condition_n5": 16.249592463190172,
+                "train_mean_n5": 13.162406874668484,
+                "zero": 46.62112543417874
+              },
+              "1": {
+                "nn_condition_n5": 15.933050065231448,
+                "train_mean_n5": 12.865760746150269,
+                "zero": 46.62112543417874
+              },
+              "2": {
+                "nn_condition_n5": 16.355761345701435,
+                "train_mean_n5": 13.080050106348434,
+                "zero": 46.62112543417874
+              }
+            },
+            "beats_best_in_regime_floor_per_draw": {
+              "0": false,
+              "1": false,
+              "2": false
+            },
+            "summary_json": {
+              "0": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B3/eval/result_sharp__fisher_kpp_2d_fk_A0_d0_s0.json",
+              "1": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B3/eval/result_sharp__fisher_kpp_2d_fk_A0_d1_s0.json",
+              "2": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B3/eval/result_sharp__fisher_kpp_2d_fk_A0_d2_s0.json"
+            },
+            "leg_json": {
+              "0": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B3/eval/results_fk_A0_d0/r2s3_coverage_panel/sharp__fisher_kpp_2d_e200_s0.json",
+              "1": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B3/eval/results_fk_A0_d1/r2s3_coverage_panel/sharp__fisher_kpp_2d_e200_s0.json",
+              "2": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B3/eval/results_fk_A0_d2/r2s3_coverage_panel/sharp__fisher_kpp_2d_e200_s0.json"
+            }
+          },
+          "A1_lf_cov": {
+            "per_draw_nrmse": [
+              0.32711295988194705,
+              0.33103039625839964,
+              0.30650892391805806
+            ],
+            "per_draw_skill": [
+              15.25037433380173,
+              15.43300962648874,
+              14.289790988678932
+            ],
+            "draw_mean_nrmse": 0.32155076001946825,
+            "draw_mean_skill": 14.991058316323134,
+            "draw_spread_skill": 1.1432186378098077,
+            "in_regime_floors_n5_skill_per_draw": {
+              "0": {
+                "nn_condition_n5": 16.249592463190172,
+                "train_mean_n5": 13.162406874668484,
+                "zero": 46.62112543417874
+              },
+              "1": {
+                "nn_condition_n5": 15.933050065231448,
+                "train_mean_n5": 12.865760746150269,
+                "zero": 46.62112543417874
+              },
+              "2": {
+                "nn_condition_n5": 16.355761345701435,
+                "train_mean_n5": 13.080050106348434,
+                "zero": 46.62112543417874
+              }
+            },
+            "beats_best_in_regime_floor_per_draw": {
+              "0": false,
+              "1": false,
+              "2": false
+            },
+            "summary_json": {
+              "0": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B3/eval/result_sharp__fisher_kpp_2d_fk_A1_d0_s0.json",
+              "1": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B3/eval/result_sharp__fisher_kpp_2d_fk_A1_d1_s0.json",
+              "2": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B3/eval/result_sharp__fisher_kpp_2d_fk_A1_d2_s0.json"
+            },
+            "leg_json": {
+              "0": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B3/eval/results_fk_A1_d0/r2s3_coverage_panel/sharp__fisher_kpp_2d_e200_s0.json",
+              "1": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B3/eval/results_fk_A1_d1/r2s3_coverage_panel/sharp__fisher_kpp_2d_e200_s0.json",
+              "2": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B3/eval/results_fk_A1_d2/r2s3_coverage_panel/sharp__fisher_kpp_2d_e200_s0.json"
+            }
+          }
+        },
+        "effect_A0_minus_A1_skill_units": {
+          "per_draw": [
+            1.6932196693615822,
+            0.7531825152297387,
+            1.4932950229924185
+          ],
+          "draw_mean": 1.3132324025279132,
+          "in_job_paired_3draw_spread": 0.9400371541318435,
+          "certified_min_claimable_effect": 0.0007136812826775696,
+          "operative_threshold_max_mce_spread": 0.9400371541318435,
+          "F1_pass_operative_threshold": true,
+          "F1_pass_mce_only_sensitivity": true,
+          "relative_effect_1_minus_skillA1_over_skillA0": 0.08054520280416433
+        },
+        "anchor_per_dataset": {
+          "arm": "train_mean",
+          "skill": 11.99311063309952
+        }
+      },
+      "sharp__allen_cahn_2d": {
+        "per_seed_nrmse": [
+          0.37864098282288394
+        ],
+        "per_seed_skill": [
+          212.62811587961804
+        ],
+        "mean_skill": 212.62811587961804,
+        "ci95": null,
+        "ci95_note": "ONE training seed (0); the 3 values per dataset are R2S3B3_SPLIT_SEED HF-subset DRAWS, not seeds. Card recipe forbids bootstrapping draws as a seed CI (leg JSON coverage_panel.seed_semantics). per_seed_* therefore hold the single-seed DRAW-MEAN of the primary arm A1_lf_cov.",
+        "primary_arm": "A1_lf_cov",
+        "reference_type": "copylf",
+        "split": "test_hf",
+        "metric_source": "per_sample_mean",
+        "cached": false,
+        "m_null_dim": 0,
+        "numerical_rank": 4,
+        "hf_subset_draws": [
+          "0",
+          "1",
+          "2"
+        ],
+        "arms": {
+          "A0_nolf": {
+            "per_draw_nrmse": [
+              1.7356855303739798,
+              0.44274512019460743,
+              0.5543183079208849
+            ],
+            "per_draw_skill": [
+              974.6846242884573,
+              248.62617886746318,
+              311.2807719124491
+            ],
+            "draw_mean_nrmse": 0.9109163194964907,
+            "draw_mean_skill": 511.53052502278985,
+            "draw_spread_skill": 726.0584454209941,
+            "in_regime_floors_n5_skill_per_draw": {
+              "0": {
+                "nn_condition_n5": 1194.5099928715033,
+                "train_mean_n5": 619.0375741761671,
+                "zero": 561.5560003420935
+              },
+              "1": {
+                "nn_condition_n5": 705.9255287464064,
+                "train_mean_n5": 583.0197673942754,
+                "zero": 561.5560003420935
+              },
+              "2": {
+                "nn_condition_n5": 693.2178551915674,
+                "train_mean_n5": 805.921935126739,
+                "zero": 561.5560003420935
+              }
+            },
+            "beats_best_in_regime_floor_per_draw": {
+              "0": false,
+              "1": true,
+              "2": true
+            },
+            "summary_json": {
+              "0": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B3/eval/result_sharp__allen_cahn_2d_ac_A0_d0_s0.json",
+              "1": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B3/eval/result_sharp__allen_cahn_2d_ac_A0_d1_s0.json",
+              "2": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B3/eval/result_sharp__allen_cahn_2d_ac_A0_d2_s0.json"
+            },
+            "leg_json": {
+              "0": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B3/eval/results_ac_A0_d0/r2s3_coverage_panel/sharp__allen_cahn_2d_e200_s0.json",
+              "1": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B3/eval/results_ac_A0_d1/r2s3_coverage_panel/sharp__allen_cahn_2d_e200_s0.json",
+              "2": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B3/eval/results_ac_A0_d2/r2s3_coverage_panel/sharp__allen_cahn_2d_e200_s0.json"
+            }
+          },
+          "A1_lf_cov": {
+            "per_draw_nrmse": [
+              0.3789143694980034,
+              0.378185124770519,
+              0.3788234542001295
+            ],
+            "per_draw_skill": [
+              212.78163780744492,
+              212.37212605500824,
+              212.73058377640095
+            ],
+            "draw_mean_nrmse": 0.37864098282288394,
+            "draw_mean_skill": 212.62811587961804,
+            "draw_spread_skill": 0.4095117524366856,
+            "in_regime_floors_n5_skill_per_draw": {
+              "0": {
+                "nn_condition_n5": 1194.5099928715033,
+                "train_mean_n5": 619.0375741761671,
+                "zero": 561.5560003420935
+              },
+              "1": {
+                "nn_condition_n5": 705.9255287464064,
+                "train_mean_n5": 583.0197673942754,
+                "zero": 561.5560003420935
+              },
+              "2": {
+                "nn_condition_n5": 693.2178551915674,
+                "train_mean_n5": 805.921935126739,
+                "zero": 561.5560003420935
+              }
+            },
+            "beats_best_in_regime_floor_per_draw": {
+              "0": true,
+              "1": true,
+              "2": true
+            },
+            "summary_json": {
+              "0": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B3/eval/result_sharp__allen_cahn_2d_ac_A1_d0_s0.json",
+              "1": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B3/eval/result_sharp__allen_cahn_2d_ac_A1_d1_s0.json",
+              "2": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B3/eval/result_sharp__allen_cahn_2d_ac_A1_d2_s0.json"
+            },
+            "leg_json": {
+              "0": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B3/eval/results_ac_A1_d0/r2s3_coverage_panel/sharp__allen_cahn_2d_e200_s0.json",
+              "1": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B3/eval/results_ac_A1_d1/r2s3_coverage_panel/sharp__allen_cahn_2d_e200_s0.json",
+              "2": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B3/eval/results_ac_A1_d2/r2s3_coverage_panel/sharp__allen_cahn_2d_e200_s0.json"
+            }
+          }
+        },
+        "effect_A0_minus_A1_skill_units": {
+          "per_draw": [
+            761.9029864810124,
+            36.254052812454944,
+            98.55018813604815
+          ],
+          "draw_mean": 298.90240914317184,
+          "in_job_paired_3draw_spread": 725.6489336685574,
+          "certified_min_claimable_effect": 0.8797047190126648,
+          "operative_threshold_max_mce_spread": 725.6489336685574,
+          "F1_pass_operative_threshold": false,
+          "F1_pass_mce_only_sensitivity": true,
+          "relative_effect_1_minus_skillA1_over_skillA0": 0.5843295649460118
+        },
+        "anchor_per_dataset": {
+          "arm": "nn_condition",
+          "skill": 269.19587575878967
+        }
+      },
+      "sharp__phase_field_crystal_2d": {
+        "per_seed_nrmse": [
+          0.4722550238783329
+        ],
+        "per_seed_skill": [
+          63.984445539835264
+        ],
+        "mean_skill": 63.984445539835264,
+        "ci95": null,
+        "ci95_note": "ONE training seed (0); the 3 values per dataset are R2S3B3_SPLIT_SEED HF-subset DRAWS, not seeds. Card recipe forbids bootstrapping draws as a seed CI (leg JSON coverage_panel.seed_semantics). per_seed_* therefore hold the single-seed DRAW-MEAN of the primary arm A1_lf_cov.",
+        "primary_arm": "A1_lf_cov",
+        "reference_type": "copylf",
+        "split": "test_hf",
+        "metric_source": "per_sample_mean",
+        "cached": false,
+        "m_null_dim": 0,
+        "numerical_rank": 3,
+        "hf_subset_draws": [
+          "0",
+          "1",
+          "2"
+        ],
+        "arms": {
+          "A0_nolf": {
+            "per_draw_nrmse": [
+              0.45372253553673625,
+              0.42440586045926737,
+              0.4819785101607259
+            ],
+            "per_draw_skill": [
+              61.47353314916895,
+              57.50150298525772,
+              65.30185212533597
+            ],
+            "draw_mean_nrmse": 0.45336896871890986,
+            "draw_mean_skill": 61.42562941992088,
+            "draw_spread_skill": 7.8003491400782465,
+            "in_regime_floors_n5_skill_per_draw": {
+              "0": {
+                "nn_condition_n5": 72.82927034142611,
+                "train_mean_n5": 75.35976490048415,
+                "zero": 135.48706166081905
+              },
+              "1": {
+                "nn_condition_n5": 64.0837143402046,
+                "train_mean_n5": 70.6299209364798,
+                "zero": 135.48706166081905
+              },
+              "2": {
+                "nn_condition_n5": 82.14358142726816,
+                "train_mean_n5": 78.0826635451715,
+                "zero": 135.48706166081905
+              }
+            },
+            "beats_best_in_regime_floor_per_draw": {
+              "0": true,
+              "1": true,
+              "2": true
+            },
+            "summary_json": {
+              "0": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B3/eval/result_sharp__phase_field_crystal_2d_pfc_A0_d0_s0.json",
+              "1": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B3/eval/result_sharp__phase_field_crystal_2d_pfc_A0_d1_s0.json",
+              "2": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B3/eval/result_sharp__phase_field_crystal_2d_pfc_A0_d2_s0.json"
+            },
+            "leg_json": {
+              "0": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B3/eval/results_pfc_A0_d0/r2s3_coverage_panel/sharp__phase_field_crystal_2d_e200_s0.json",
+              "1": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B3/eval/results_pfc_A0_d1/r2s3_coverage_panel/sharp__phase_field_crystal_2d_e200_s0.json",
+              "2": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B3/eval/results_pfc_A0_d2/r2s3_coverage_panel/sharp__phase_field_crystal_2d_e200_s0.json"
+            }
+          },
+          "A1_lf_cov": {
+            "per_draw_nrmse": [
+              0.4813088754283072,
+              0.46607869850660777,
+              0.46937749770008375
+            ],
+            "per_draw_skill": [
+              65.21112528305453,
+              63.14763336335906,
+              63.5945779730922
+            ],
+            "draw_mean_nrmse": 0.4722550238783329,
+            "draw_mean_skill": 63.984445539835264,
+            "draw_spread_skill": 2.0634919196954655,
+            "in_regime_floors_n5_skill_per_draw": {
+              "0": {
+                "nn_condition_n5": 72.82927034142611,
+                "train_mean_n5": 75.35976490048415,
+                "zero": 135.48706166081905
+              },
+              "1": {
+                "nn_condition_n5": 64.0837143402046,
+                "train_mean_n5": 70.6299209364798,
+                "zero": 135.48706166081905
+              },
+              "2": {
+                "nn_condition_n5": 82.14358142726816,
+                "train_mean_n5": 78.0826635451715,
+                "zero": 135.48706166081905
+              }
+            },
+            "beats_best_in_regime_floor_per_draw": {
+              "0": true,
+              "1": true,
+              "2": true
+            },
+            "summary_json": {
+              "0": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B3/eval/result_sharp__phase_field_crystal_2d_pfc_A1_d0_s0.json",
+              "1": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B3/eval/result_sharp__phase_field_crystal_2d_pfc_A1_d1_s0.json",
+              "2": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B3/eval/result_sharp__phase_field_crystal_2d_pfc_A1_d2_s0.json"
+            },
+            "leg_json": {
+              "0": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B3/eval/results_pfc_A1_d0/r2s3_coverage_panel/sharp__phase_field_crystal_2d_e200_s0.json",
+              "1": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B3/eval/results_pfc_A1_d1/r2s3_coverage_panel/sharp__phase_field_crystal_2d_e200_s0.json",
+              "2": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B3/eval/results_pfc_A1_d2/r2s3_coverage_panel/sharp__phase_field_crystal_2d_e200_s0.json"
+            }
+          }
+        },
+        "effect_A0_minus_A1_skill_units": {
+          "per_draw": [
+            -3.7375921338855775,
+            -5.64613037810134,
+            1.7072741522437695
+          ],
+          "draw_mean": -2.5588161199143826,
+          "in_job_paired_3draw_spread": 7.353404530345109,
+          "certified_min_claimable_effect": 0.21302734961699343,
+          "operative_threshold_max_mce_spread": 7.353404530345109,
+          "F1_pass_operative_threshold": false,
+          "F1_pass_mce_only_sensitivity": false,
+          "relative_effect_1_minus_skillA1_over_skillA0": -0.041657141230441175
+        },
+        "anchor_per_dataset": {
+          "arm": "train_mean",
+          "skill": 59.8117544948052
+        }
+      },
+      "ext__helmholtz_2d": {
+        "per_seed_nrmse": [
+          1.3617464628979101
+        ],
+        "per_seed_skill": [
+          4.553829363133635
+        ],
+        "mean_skill": 4.553829363133635,
+        "ci95": null,
+        "ci95_note": "ONE training seed (0); the 3 values per dataset are R2S3B3_SPLIT_SEED HF-subset DRAWS, not seeds. Card recipe forbids bootstrapping draws as a seed CI (leg JSON coverage_panel.seed_semantics). per_seed_* therefore hold the single-seed DRAW-MEAN of the primary arm A1_lf_cov.",
+        "primary_arm": "A1_lf_cov",
+        "reference_type": "copylf",
+        "split": "test_hf",
+        "metric_source": "per_sample_mean",
+        "cached": false,
+        "m_null_dim": 0,
+        "numerical_rank": 4,
+        "hf_subset_draws": [
+          "0",
+          "1",
+          "2"
+        ],
+        "arms": {
+          "A0_nolf": {
+            "per_draw_nrmse": [
+              2.281939569389837,
+              5.425353131668044,
+              1.50651753959406
+            ],
+            "per_draw_skill": [
+              7.63105592642396,
+              18.14297526705687,
+              5.037959704539797
+            ],
+            "draw_mean_nrmse": 3.071270080217314,
+            "draw_mean_skill": 10.270663632673543,
+            "draw_spread_skill": 13.105015562517071,
+            "in_regime_floors_n5_skill_per_draw": {
+              "0": {
+                "nn_condition_n5": 6.238323957656381,
+                "train_mean_n5": 4.0075117138904774,
+                "zero": 3.3441095587226317
+              },
+              "1": {
+                "nn_condition_n5": 15.301365737559884,
+                "train_mean_n5": 5.24299024799601,
+                "zero": 3.3441095587226317
+              },
+              "2": {
+                "nn_condition_n5": 5.154463563021807,
+                "train_mean_n5": 4.009754160779086,
+                "zero": 3.3441095587226317
+              }
+            },
+            "beats_best_in_regime_floor_per_draw": {
+              "0": false,
+              "1": false,
+              "2": false
+            },
+            "summary_json": {
+              "0": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B3/eval/result_ext__helmholtz_2d_hz_A0_d0_s0.json",
+              "1": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B3/eval/result_ext__helmholtz_2d_hz_A0_d1_s0.json",
+              "2": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B3/eval/result_ext__helmholtz_2d_hz_A0_d2_s0.json"
+            },
+            "leg_json": {
+              "0": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B3/eval/results_hz_A0_d0/r2s3_coverage_panel/ext__helmholtz_2d_e200_s0.json",
+              "1": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B3/eval/results_hz_A0_d1/r2s3_coverage_panel/ext__helmholtz_2d_e200_s0.json",
+              "2": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B3/eval/results_hz_A0_d2/r2s3_coverage_panel/ext__helmholtz_2d_e200_s0.json"
+            }
+          },
+          "A1_lf_cov": {
+            "per_draw_nrmse": [
+              1.0752953522855813,
+              1.781956818584442,
+              1.227987217823707
+            ],
+            "per_draw_skill": [
+              3.595905466028232,
+              5.959058830259203,
+              4.106523793113469
+            ],
+            "draw_mean_nrmse": 1.3617464628979101,
+            "draw_mean_skill": 4.553829363133635,
+            "draw_spread_skill": 2.363153364230971,
+            "in_regime_floors_n5_skill_per_draw": {
+              "0": {
+                "nn_condition_n5": 6.238323957656381,
+                "train_mean_n5": 4.0075117138904774,
+                "zero": 3.3441095587226317
+              },
+              "1": {
+                "nn_condition_n5": 15.301365737559884,
+                "train_mean_n5": 5.24299024799601,
+                "zero": 3.3441095587226317
+              },
+              "2": {
+                "nn_condition_n5": 5.154463563021807,
+                "train_mean_n5": 4.009754160779086,
+                "zero": 3.3441095587226317
+              }
+            },
+            "beats_best_in_regime_floor_per_draw": {
+              "0": false,
+              "1": false,
+              "2": false
+            },
+            "summary_json": {
+              "0": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B3/eval/result_ext__helmholtz_2d_hz_A1_d0_s0.json",
+              "1": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B3/eval/result_ext__helmholtz_2d_hz_A1_d1_s0.json",
+              "2": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B3/eval/result_ext__helmholtz_2d_hz_A1_d2_s0.json"
+            },
+            "leg_json": {
+              "0": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B3/eval/results_hz_A1_d0/r2s3_coverage_panel/ext__helmholtz_2d_e200_s0.json",
+              "1": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B3/eval/results_hz_A1_d1/r2s3_coverage_panel/ext__helmholtz_2d_e200_s0.json",
+              "2": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B3/eval/results_hz_A1_d2/r2s3_coverage_panel/ext__helmholtz_2d_e200_s0.json"
+            }
+          }
+        },
+        "effect_A0_minus_A1_skill_units": {
+          "per_draw": [
+            4.035150460395728,
+            12.183916436797666,
+            0.9314359114263278
+          ],
+          "draw_mean": 5.716834269539907,
+          "in_job_paired_3draw_spread": 11.25248052537134,
+          "certified_min_claimable_effect": 2.95299157437233,
+          "operative_threshold_max_mce_spread": 11.25248052537134,
+          "F1_pass_operative_threshold": false,
+          "F1_pass_mce_only_sensitivity": true,
+          "relative_effect_1_minus_skillA1_over_skillA0": 0.5566178071836791
+        },
+        "anchor_per_dataset": {
+          "arm": "zero",
+          "skill": 3.3441095587226317
+        }
+      }
+    },
+    "panel_geomean_skill": {
+      "per_seed": [
+        17.114970449162033
+      ],
+      "mean": 17.114970449162033,
+      "ci95": null,
+      "arm": "A1_lf_cov (recipe._primary_arm)",
+      "definition": "geometric mean over the 6 panel datasets of each dataset's DRAW-MEAN copy-LF/paper-bar skill for the primary arm",
+      "comparison_arm_A0_nolf_panel_geomean": 32.46634797335625,
+      "per_draw_panel_geomean": {
+        "A1_lf_cov": [
+          16.566372185506122,
+          17.927647841629934,
+          16.677092358497756
+        ],
+        "A0_nolf": [
+          35.179259963658104,
+          31.246024570802962,
+          26.2279221475032
+        ],
+        "note": "one geomean per HF-subset draw (ifc_poisson held at its single native leg). Reported for shape only; draws are not seeds and are never bootstrapped."
+      }
+    },
+    "vs_anchor": {
+      "anchor_file": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round2/state/anchors/r2s3_lf_train_signal.json",
+      "anchor_type": "best_floor_panel_geomean",
+      "anchor_value": 23.063616857615774,
+      "measured_panel_geomean_skill": 17.114970449162033,
+      "delta": 5.94864640845374,
+      "delta_sign_convention": "positive delta = primary arm A1_lf_cov BEATS (is below) the anchor in skill units (lower skill is better)",
+      "beyond_ci": false,
+      "beyond_ci_note": "no CI is computable from one training seed; the card's 3 values per dataset are HF-subset draws, not seeds. beyond_ci is therefore False by construction, not because the effect is small.",
+      "beyond_noise_floor": true,
+      "noise_floor_panel_min_claimable_effect": 1.1418668211296108,
+      "comparison_arm_A0_nolf_delta": -9.402731115740476,
+      "note": "informational only. anchor_reference on this card is null (lever-stream policy, program.md 4.5) and this is a +/-LF contrast card, not an anchor challenger. No anchor update performed (2e requires a 3-seed result)."
+    },
+    "cratered_verdict": "cratered",
+    "cratered_verdict_basis": "Third limb of the cratered rule ONLY: 'the falsification clause already fired decisively'. The first two limbs do NOT fire -- the job COMPLETED 0:0 with no crash, and the primary arm's panel geomean skill 17.114970 is well BELOW 1.5 x anchor = 34.595425 (it is in fact 5.948646 below the anchor itself). Read as 'do not spend seeds 1-2 confirming this hypothesis', NOT as 'the run failed': the 33-leg measurement itself is complete and clean.",
+    "cratered_rule_inputs": {
+      "crash": false,
+      "panel_geomean_skill": 17.114970449162033,
+      "anchor_value": 23.063616857615774,
+      "cratered_skill_factor": 1.5,
+      "cratered_threshold": 34.59542528642366,
+      "exceeds_cratered_threshold": false,
+      "falsification_fired_decisively": true
+    },
+    "falsification_verdict": "falsified",
+    "falsification_detail": {
+      "F1_primary": {
+        "clause_verbatim": "F1 (primary) - falsified if the draw-mean effect `A0_nolf - A1_lf_cov` fails to be positive and to exceed `max(certified min_claimable_effect, in-job paired 3-draw spread of the effect)` on at least 5 of the 6 panel datasets (ifc 0.9377041, ch 0.0912454, fk 0.0007137, ac 0.8797047, pfc 0.2130273, helmholtz 2.9529916).",
+        "verdict": "FALSIFIED",
+        "datasets_passing": 3,
+        "datasets_required": 5,
+        "passing": [
+          "ifc_poisson",
+          "sharp__cahn_hilliard",
+          "sharp__fisher_kpp_2d"
+        ],
+        "failing": [
+          "sharp__allen_cahn_2d",
+          "sharp__phase_field_crystal_2d",
+          "ext__helmholtz_2d"
+        ],
+        "deciding_numbers": {
+          "ifc_poisson": "effect +5.984292 > thr 0.937704 (mce; single native draw, no spread term) - PASS",
+          "sharp__cahn_hilliard": "effect +14.776178 > thr 5.288764 (spread 5.288764 > mce 0.0912454) - PASS",
+          "sharp__fisher_kpp_2d": "effect +1.313232 > thr 0.940037 (spread 0.940037 > mce 0.0007137) - PASS",
+          "sharp__allen_cahn_2d": "effect +298.902409 < thr 725.648934 (spread 725.648934 > mce 0.8797047) - FAIL",
+          "sharp__phase_field_crystal_2d": "effect -2.558816 is NEGATIVE (LF supply HURTS) and < thr 7.353405 - FAIL on both conditions",
+          "ext__helmholtz_2d": "effect +5.716834 < thr 11.252481 (spread 11.252481 > mce 2.9529916) - FAIL"
+        },
+        "decisiveness": "Decisive. pfc's draw-mean effect is sign-wrong, so 6/6 is unreachable and 5/6 requires BOTH ac and hz to clear a spread term that exceeds their effect by 2.4x and 2.0x respectively. The binding term is the in-job 3-draw spread, not the certified mce.",
+        "sensitivity_mce_only_reading": {
+          "note": "KNIFE EDGE - flagged for the mechanism-analyzer. If the threshold is read as the certified min_claimable_effect alone (dropping the `in-job paired 3-draw spread` term of the clause), exactly 5 of 6 datasets pass (ifc, ch, fk, ac, hz; pfc still fails on sign) and F1 would read CONFIRMED at the minimum margin. The pre-registered clause says max(mce, spread), so the recorded verdict is FALSIFIED; the entire verdict turns on the spread term.",
+          "datasets_passing_mce_only": 5,
+          "passing_mce_only": [
+            "ifc_poisson",
+            "sharp__cahn_hilliard",
+            "sharp__fisher_kpp_2d",
+            "sharp__allen_cahn_2d",
+            "ext__helmholtz_2d"
+          ]
+        }
+      },
+      "F2_structural_discriminating": {
+        "clause_verbatim": "F2 (structural, discriminating) - falsified if fewer than 2 of the 4 m = 0 datasets (`sharp__fisher_kpp_2d`, `ext__helmholtz_2d`, `sharp__allen_cahn_2d`, `sharp__phase_field_crystal_2d`) show a relative effect `1 - skill(A1)/skill(A0) > 0.15` that also clears that dataset's operative threshold in absolute units - i.e. falsified if claimable LF value is confined to the two datasets with an affine coverage deficit.",
+        "verdict": "FALSIFIED",
+        "m_null_dim_measured_in_job": {
+          "sharp__fisher_kpp_2d": 0,
+          "ext__helmholtz_2d": 0,
+          "sharp__allen_cahn_2d": 0,
+          "sharp__phase_field_crystal_2d": 0,
+          "ifc_poisson": 1,
+          "sharp__cahn_hilliard": 15
+        },
+        "datasets_passing": 0,
+        "datasets_required": 2,
+        "deciding_numbers": {
+          "sharp__fisher_kpp_2d": "rel +0.0805 (NOT > 0.15) - FAIL on the relative gate",
+          "ext__helmholtz_2d": "rel +0.5566 > 0.15 PASS, but effect +5.716834 < operative threshold 11.252481 - FAIL on absolute",
+          "sharp__allen_cahn_2d": "rel +0.5843 > 0.15 PASS, but effect +298.902409 < operative threshold 725.648934 - FAIL on absolute",
+          "sharp__phase_field_crystal_2d": "rel -0.0417 (negative) - FAIL on both"
+        },
+        "sensitivity_mce_only_reading": {
+          "note": "KNIFE EDGE - same ambiguity as F1. If 'operative threshold in absolute units' means the certified mce alone rather than F1's max(mce, spread), then ext__helmholtz_2d (5.7168 > 2.9530) and sharp__allen_cahn_2d (298.90 > 0.8797) both pass, giving exactly 2 of 4 and F2 would read CONFIRMED at the minimum margin. Recorded verdict uses the F1-consistent operative threshold.",
+          "datasets_passing_mce_only": 2,
+          "passing_mce_only": [
+            "ext__helmholtz_2d",
+            "sharp__allen_cahn_2d"
+          ]
+        }
+      },
+      "F3_instrument_reproduction_seam": {
+        "clause_verbatim": "F3 (instrument / reproduction seam) - falsified if any of the 8 legs repeating a B2 configuration (`ifc A0`, `ifc A1`, `ch A0` draws 0/1/2, `ch A1` draw 0, `fk A0` draws 0/1) deviates from its B2-recorded skill by more than 1% relative and more than that dataset's certified `min_claimable_effect`; the card then reports B3-internal contrasts only and flags a code-identity break.",
+        "verdict": "NOT FALSIFIED (seam holds)",
+        "legs_firing": 0,
+        "legs_checked": 8,
+        "max_relative_deviation": "-0.871177% (ifc A1: B2 2.16898730 -> B3 2.15009158, abs 0.01889573 vs mce 0.9377041 - under BOTH gates, so the clause does not fire)",
+        "bit_identical_legs": 6,
+        "per_leg": [
+          {
+            "leg": "ifc A0",
+            "dataset": "ifc_poisson",
+            "b2_skill": 8.13438381993564,
+            "b3_skill": 8.13438381993564,
+            "rel_deviation": 0.0,
+            "abs_deviation": 0.0,
+            "certified_min_claimable_effect": 0.9377041289531141,
+            "clause_fires": false,
+            "b2_summary_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B2/eval/result_ifc_poisson_ifc_A0_s0.json",
+            "b3_summary_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B3/eval/result_ifc_poisson_ifc_A0_s0.json"
+          },
+          {
+            "leg": "ifc A1",
+            "dataset": "ifc_poisson",
+            "b2_skill": 2.1689873025768684,
+            "b3_skill": 2.150091575784423,
+            "rel_deviation": -0.00871177381720785,
+            "abs_deviation": 0.018895726792445444,
+            "certified_min_claimable_effect": 0.9377041289531141,
+            "clause_fires": false,
+            "b2_summary_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B2/eval/result_ifc_poisson_ifc_A1_s0.json",
+            "b3_summary_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B3/eval/result_ifc_poisson_ifc_A1_s0.json"
+          },
+          {
+            "leg": "ch A0 draw0",
+            "dataset": "sharp__cahn_hilliard",
+            "b2_skill": 30.07828518225339,
+            "b3_skill": 30.07828518225339,
+            "rel_deviation": 0.0,
+            "abs_deviation": 0.0,
+            "certified_min_claimable_effect": 0.09124535322300886,
+            "clause_fires": false,
+            "b2_summary_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B2/eval/result_sharp__cahn_hilliard_ch_A0_s0_s0.json",
+            "b3_summary_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B3/eval/result_sharp__cahn_hilliard_ch_A0_d0_s0.json"
+          },
+          {
+            "leg": "ch A0 draw1",
+            "dataset": "sharp__cahn_hilliard",
+            "b2_skill": 27.249887089099484,
+            "b3_skill": 27.249887089099484,
+            "rel_deviation": 0.0,
+            "abs_deviation": 0.0,
+            "certified_min_claimable_effect": 0.09124535322300886,
+            "clause_fires": false,
+            "b2_summary_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B2/eval/result_sharp__cahn_hilliard_ch_A0_s1_s0.json",
+            "b3_summary_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B3/eval/result_sharp__cahn_hilliard_ch_A0_d1_s0.json"
+          },
+          {
+            "leg": "ch A0 draw2",
+            "dataset": "sharp__cahn_hilliard",
+            "b2_skill": 24.759065451060554,
+            "b3_skill": 24.759065451060554,
+            "rel_deviation": 0.0,
+            "abs_deviation": 0.0,
+            "certified_min_claimable_effect": 0.09124535322300886,
+            "clause_fires": false,
+            "b2_summary_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B2/eval/result_sharp__cahn_hilliard_ch_A0_s2_s0.json",
+            "b3_summary_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B3/eval/result_sharp__cahn_hilliard_ch_A0_d2_s0.json"
+          },
+          {
+            "leg": "ch A1 draw0",
+            "dataset": "sharp__cahn_hilliard",
+            "b2_skill": 12.634572549713253,
+            "b3_skill": 12.634641264784952,
+            "rel_deviation": 5.438654250320244e-06,
+            "abs_deviation": 6.871507169847746e-05,
+            "certified_min_claimable_effect": 0.09124535322300886,
+            "clause_fires": false,
+            "b2_summary_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B2/eval/result_sharp__cahn_hilliard_ch_A1_s0_s0.json",
+            "b3_summary_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B3/eval/result_sharp__cahn_hilliard_ch_A1_d0_s0.json"
+          },
+          {
+            "leg": "fk A0 draw0",
+            "dataset": "sharp__fisher_kpp_2d",
+            "b2_skill": 16.943594003163312,
+            "b3_skill": 16.943594003163312,
+            "rel_deviation": 0.0,
+            "abs_deviation": 0.0,
+            "certified_min_claimable_effect": 0.0007136812826775696,
+            "clause_fires": false,
+            "b2_summary_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B2/eval/result_sharp__fisher_kpp_2d_fk_A0_s0_s0.json",
+            "b3_summary_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B3/eval/result_sharp__fisher_kpp_2d_fk_A0_d0_s0.json"
+          },
+          {
+            "leg": "fk A0 draw1",
+            "dataset": "sharp__fisher_kpp_2d",
+            "b2_skill": 16.18619214171848,
+            "b3_skill": 16.18619214171848,
+            "rel_deviation": 0.0,
+            "abs_deviation": 0.0,
+            "certified_min_claimable_effect": 0.0007136812826775696,
+            "clause_fires": false,
+            "b2_summary_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B2/eval/result_sharp__fisher_kpp_2d_fk_A0_s1_s0.json",
+            "b3_summary_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B3/eval/result_sharp__fisher_kpp_2d_fk_A0_d1_s0.json"
+          }
+        ]
+      },
+      "F4_channel_pre_registration": {
+        "clause_verbatim": "F4 (channel pre-registration) - falsified if, on every m = 0 dataset with a claimable effect, the level channel accounts for >= 70% of the effect (measured post hoc from the prediction dumps with `tools/null_family_ceiling_audit.py`), i.e. if LF at m = 0 is only ever a better estimate of the mean field, as it was on fisher_kpp (76.8%).",
+        "verdict": "DEFERRED - post-hoc probe, not an in-job measurement",
+        "note": "Requires running tools/null_family_ceiling_audit.py against the R2S3B3_DUMP_TRAIN_PREDS npz dumps; that is a mechanism-analyzer turn, not a results-extraction step. Dumps exist for all 33 legs at <eval>/results_<tag>/r2s3_coverage_panel/<dataset>_e200_s0_preds.npz. NOTE: under the operative-threshold reading, NO m=0 dataset has a claimable effect, so F4's antecedent ('on every m = 0 dataset with a claimable effect') is vacuous; under the mce-only reading its candidate set is {ext__helmholtz_2d, sharp__allen_cahn_2d}."
+      },
+      "F5_floor_arms": {
+        "clause_verbatim": "F5 (floor arms - has it learned anything) - falsified if `A1_lf_cov` fails to beat the best in-regime N = 5 floor (over `nn_condition_n5`, `train_mean_n5`, `zero`) on EACH of `ifc_poisson` and `sharp__cahn_hilliard`.",
+        "verdict": "NOT FALSIFIED (confirmed)",
+        "deciding_numbers": {
+          "ifc_poisson": "A1 skill 2.150092 < best in-regime floor 10.054890 (nn_condition_n5) - BEATS",
+          "sharp__cahn_hilliard": "A1 skill 12.634641 / 12.519876 / 12.604186 (draws 0/1/2) all < best in-regime floor 23.921745 (zero) - BEATS on all 3 draws"
+        },
+        "detail": {
+          "ifc_poisson": {
+            "per_draw": [
+              {
+                "draw": "native",
+                "a1_skill": 2.150091575784423,
+                "best_in_regime_floor_skill": 10.054890929609687,
+                "best_floor_arm": "nn_condition_n5",
+                "floors": {
+                  "nn_condition_n5": 10.054890929609687,
+                  "train_mean_n5": 11.206332455369639,
+                  "zero": 27.77777777777778
+                },
+                "a1_beats_floor": true
+              }
+            ],
+            "a1_beats_on_all_draws": true
+          },
+          "sharp__cahn_hilliard": {
+            "per_draw": [
+              {
+                "draw": "0",
+                "a1_skill": 12.634641264784952,
+                "best_in_regime_floor_skill": 23.92174945843033,
+                "best_floor_arm": "zero",
+                "floors": {
+                  "nn_condition_n5": 33.208119346206956,
+                  "train_mean_n5": 25.223876382746255,
+                  "zero": 23.92174945843033
+                },
+                "a1_beats_floor": true
+              },
+              {
+                "draw": "1",
+                "a1_skill": 12.519875914043096,
+                "best_in_regime_floor_skill": 23.92174945843033,
+                "best_floor_arm": "zero",
+                "floors": {
+                  "nn_condition_n5": 29.041665683541446,
+                  "train_mean_n5": 25.405277439235515,
+                  "zero": 23.92174945843033
+                },
+                "a1_beats_floor": true
+              },
+              {
+                "draw": "2",
+                "a1_skill": 12.604186025731922,
+                "best_in_regime_floor_skill": 23.92174945843033,
+                "best_floor_arm": "zero",
+                "floors": {
+                  "nn_condition_n5": 28.03894684208946,
+                  "train_mean_n5": 25.876000843263764,
+                  "zero": 23.92174945843033
+                },
+                "a1_beats_floor": true
+              }
+            ],
+            "a1_beats_on_all_draws": true
+          }
+        },
+        "pre_registered_expectation_check": {
+          "expected": "both arms lose the in-regime floor on sharp__fisher_kpp_2d (B2: 15.25/15.43 vs 13.16/12.87) and plausibly on sharp__phase_field_crystal_2d and sharp__allen_cahn_2d",
+          "observed_fisher_kpp": "CONFIRMED - A0 16.944/16.186/15.783 and A1 15.250/15.433/14.290 all lose to train_mean_n5 13.162/12.866/13.080",
+          "observed_phase_field_crystal": "NOT observed - BOTH arms BEAT the best in-regime floor on all 3 draws (A0 61.47/57.50/65.30 and A1 65.21/63.15/63.59 vs floors 72.83/64.08/78.08)",
+          "observed_allen_cahn": "MIXED - A1 beats the zero floor 561.556 on all 3 draws (212.78/212.37/212.73); A0 loses on draw 0 (974.68) and beats on draws 1/2 (248.63/311.28)",
+          "observed_helmholtz_not_pre_registered": "BOTH arms LOSE to the zero floor 3.344110 on every draw (A0 7.631/18.143/5.038, A1 3.596/5.959/4.107) - at N_hf=5 helmholtz is not learnable by either arm"
+        },
+        "all_datasets_reported": {
+          "ifc_poisson": {
+            "A0_nolf": [
+              {
+                "draw": "native",
+                "arm_skill": 8.13438381993564,
+                "best_floor_skill": 10.054890929609687,
+                "best_floor_arm": "nn_condition_n5",
+                "beats": true
+              }
+            ],
+            "A1_lf_cov": [
+              {
+                "draw": "native",
+                "arm_skill": 2.150091575784423,
+                "best_floor_skill": 10.054890929609687,
+                "best_floor_arm": "nn_condition_n5",
+                "beats": true
+              }
+            ]
+          },
+          "sharp__cahn_hilliard": {
+            "A0_nolf": [
+              {
+                "draw": "0",
+                "arm_skill": 30.07828518225339,
+                "best_floor_skill": 23.92174945843033,
+                "best_floor_arm": "zero",
+                "beats": false
+              },
+              {
+                "draw": "1",
+                "arm_skill": 27.249887089099484,
+                "best_floor_skill": 23.92174945843033,
+                "best_floor_arm": "zero",
+                "beats": false
+              },
+              {
+                "draw": "2",
+                "arm_skill": 24.759065451060554,
+                "best_floor_skill": 23.92174945843033,
+                "best_floor_arm": "zero",
+                "beats": false
+              }
+            ],
+            "A1_lf_cov": [
+              {
+                "draw": "0",
+                "arm_skill": 12.634641264784952,
+                "best_floor_skill": 23.92174945843033,
+                "best_floor_arm": "zero",
+                "beats": true
+              },
+              {
+                "draw": "1",
+                "arm_skill": 12.519875914043096,
+                "best_floor_skill": 23.92174945843033,
+                "best_floor_arm": "zero",
+                "beats": true
+              },
+              {
+                "draw": "2",
+                "arm_skill": 12.604186025731922,
+                "best_floor_skill": 23.92174945843033,
+                "best_floor_arm": "zero",
+                "beats": true
+              }
+            ]
+          },
+          "sharp__fisher_kpp_2d": {
+            "A0_nolf": [
+              {
+                "draw": "0",
+                "arm_skill": 16.943594003163312,
+                "best_floor_skill": 13.162406874668484,
+                "best_floor_arm": "train_mean_n5",
+                "beats": false
+              },
+              {
+                "draw": "1",
+                "arm_skill": 16.18619214171848,
+                "best_floor_skill": 12.865760746150269,
+                "best_floor_arm": "train_mean_n5",
+                "beats": false
+              },
+              {
+                "draw": "2",
+                "arm_skill": 15.783086011671351,
+                "best_floor_skill": 13.080050106348434,
+                "best_floor_arm": "train_mean_n5",
+                "beats": false
+              }
+            ],
+            "A1_lf_cov": [
+              {
+                "draw": "0",
+                "arm_skill": 15.25037433380173,
+                "best_floor_skill": 13.162406874668484,
+                "best_floor_arm": "train_mean_n5",
+                "beats": false
+              },
+              {
+                "draw": "1",
+                "arm_skill": 15.43300962648874,
+                "best_floor_skill": 12.865760746150269,
+                "best_floor_arm": "train_mean_n5",
+                "beats": false
+              },
+              {
+                "draw": "2",
+                "arm_skill": 14.289790988678932,
+                "best_floor_skill": 13.080050106348434,
+                "best_floor_arm": "train_mean_n5",
+                "beats": false
+              }
+            ]
+          },
+          "sharp__allen_cahn_2d": {
+            "A0_nolf": [
+              {
+                "draw": "0",
+                "arm_skill": 974.6846242884573,
+                "best_floor_skill": 561.5560003420935,
+                "best_floor_arm": "zero",
+                "beats": false
+              },
+              {
+                "draw": "1",
+                "arm_skill": 248.62617886746318,
+                "best_floor_skill": 561.5560003420935,
+                "best_floor_arm": "zero",
+                "beats": true
+              },
+              {
+                "draw": "2",
+                "arm_skill": 311.2807719124491,
+                "best_floor_skill": 561.5560003420935,
+                "best_floor_arm": "zero",
+                "beats": true
+              }
+            ],
+            "A1_lf_cov": [
+              {
+                "draw": "0",
+                "arm_skill": 212.78163780744492,
+                "best_floor_skill": 561.5560003420935,
+                "best_floor_arm": "zero",
+                "beats": true
+              },
+              {
+                "draw": "1",
+                "arm_skill": 212.37212605500824,
+                "best_floor_skill": 561.5560003420935,
+                "best_floor_arm": "zero",
+                "beats": true
+              },
+              {
+                "draw": "2",
+                "arm_skill": 212.73058377640095,
+                "best_floor_skill": 561.5560003420935,
+                "best_floor_arm": "zero",
+                "beats": true
+              }
+            ]
+          },
+          "sharp__phase_field_crystal_2d": {
+            "A0_nolf": [
+              {
+                "draw": "0",
+                "arm_skill": 61.47353314916895,
+                "best_floor_skill": 72.82927034142611,
+                "best_floor_arm": "nn_condition_n5",
+                "beats": true
+              },
+              {
+                "draw": "1",
+                "arm_skill": 57.50150298525772,
+                "best_floor_skill": 64.0837143402046,
+                "best_floor_arm": "nn_condition_n5",
+                "beats": true
+              },
+              {
+                "draw": "2",
+                "arm_skill": 65.30185212533597,
+                "best_floor_skill": 78.0826635451715,
+                "best_floor_arm": "train_mean_n5",
+                "beats": true
+              }
+            ],
+            "A1_lf_cov": [
+              {
+                "draw": "0",
+                "arm_skill": 65.21112528305453,
+                "best_floor_skill": 72.82927034142611,
+                "best_floor_arm": "nn_condition_n5",
+                "beats": true
+              },
+              {
+                "draw": "1",
+                "arm_skill": 63.14763336335906,
+                "best_floor_skill": 64.0837143402046,
+                "best_floor_arm": "nn_condition_n5",
+                "beats": true
+              },
+              {
+                "draw": "2",
+                "arm_skill": 63.5945779730922,
+                "best_floor_skill": 78.0826635451715,
+                "best_floor_arm": "train_mean_n5",
+                "beats": true
+              }
+            ]
+          },
+          "ext__helmholtz_2d": {
+            "A0_nolf": [
+              {
+                "draw": "0",
+                "arm_skill": 7.63105592642396,
+                "best_floor_skill": 3.3441095587226317,
+                "best_floor_arm": "zero",
+                "beats": false
+              },
+              {
+                "draw": "1",
+                "arm_skill": 18.14297526705687,
+                "best_floor_skill": 3.3441095587226317,
+                "best_floor_arm": "zero",
+                "beats": false
+              },
+              {
+                "draw": "2",
+                "arm_skill": 5.037959704539797,
+                "best_floor_skill": 3.3441095587226317,
+                "best_floor_arm": "zero",
+                "beats": false
+              }
+            ],
+            "A1_lf_cov": [
+              {
+                "draw": "0",
+                "arm_skill": 3.595905466028232,
+                "best_floor_skill": 3.3441095587226317,
+                "best_floor_arm": "zero",
+                "beats": false
+              },
+              {
+                "draw": "1",
+                "arm_skill": 5.959058830259203,
+                "best_floor_skill": 3.3441095587226317,
+                "best_floor_arm": "zero",
+                "beats": false
+              },
+              {
+                "draw": "2",
+                "arm_skill": 4.106523793113469,
+                "best_floor_skill": 3.3441095587226317,
+                "best_floor_arm": "zero",
+                "beats": false
+              }
+            ]
+          }
+        }
+      }
+    },
+    "guard_flags": [
+      "heat_local: contract-tier (2-epoch) guard nRMSE 0.045299 is 18.86x the recorded copy-LF guard reference 0.002402 (>2x threshold). CONTEXT (no auto-reject, program.md guard rule): this is a 2-epoch contract-tier leg of an N_hf=5 condition->field arm, not a trained deployment run, and it reproduces B2's same-dataset guard leg to 0.0004% relative -- i.e. not a B3-introduced regression. heat_local has the round's smallest copy-LF denominator (0.0024015), so any untrained arm flags here."
+    ],
+    "guard_set": {
+      "tier": "contract (2 epochs)",
+      "arm": "A1_lf_cov",
+      "run": "in-job leg guard_A1 (not re-run by the analyzer; program.md guard re-run is required only when the card claims a panel win, which this card does not)",
+      "summary_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B3/eval/result_guard_guard_A1_s0.json",
+      "per_dataset": {
+        "fluid": {
+          "nRMSE": 0.2474338462107592,
+          "skill": 1.13470751557489,
+          "copylf_guard_reference_nrmse": 0.21805958171115042,
+          "ratio_vs_guard_reference": 1.13470751557489,
+          "regressed_more_than_2x": false,
+          "b2_same_leg_skill": 1.1347029163214304,
+          "rel_vs_b2": 4.053266624665433e-06
+        },
+        "heat_local": {
+          "nRMSE": 0.04529879600613395,
+          "skill": 18.862539800069527,
+          "copylf_guard_reference_nrmse": 0.00240152155999517,
+          "ratio_vs_guard_reference": 18.862539800069527,
+          "regressed_more_than_2x": true,
+          "b2_same_leg_skill": 18.862612472228857,
+          "rel_vs_b2": -3.8527091322721695e-06
+        },
+        "sharp__sod_1d": {
+          "nRMSE": 0.03457883966749751,
+          "skill": 1.04498806970661,
+          "copylf_guard_reference_nrmse": 0.03309017650048946,
+          "ratio_vs_guard_reference": 1.04498806970661,
+          "regressed_more_than_2x": false,
+          "b2_same_leg_skill": 1.0453183148418035,
+          "rel_vs_b2": -0.0003159278188322927
+        }
+      }
+    },
+    "anomalies": [
+      "sharp__allen_cahn_2d A0_nolf draw 0 is a large outlier: skill 974.685 vs 248.626 / 311.281 on draws 1/2 (draw-CV 0.787). Its in-job train_vs_test_gap is 1.735 at train nRMSE 4.6e-4 -- a memorize-5-rows / no-generalization leg, not a NaN. It single-handedly sets ac's 3-draw effect spread (725.649) and thereby fails ac under F1.",
+      "ext__helmholtz_2d A0_nolf draw 1 is the second outlier: skill 18.143 vs 7.631 / 5.038 (draw-CV 0.676), setting hz's spread to 11.252 and failing hz under F1.",
+      "Arm-asymmetric draw stability: A1_lf_cov is far more draw-stable than A0_nolf on 4 of 5 draw datasets (draw-spread A1 vs A0 -- ac 0.410 vs 726.058, ch 0.115 vs 5.319, pfc 2.064 vs 7.800, hz 2.363 vs 13.105; fk is the exception, 1.143 vs 1.161). The F1/F2 thresholds are built from the spread of the EFFECT, which inherits A0's instability, so the pre-registered gate penalizes exactly the datasets where LF supply is acting as a variance reducer.",
+      "sharp__phase_field_crystal_2d is the only sign-reversal: LF supply makes the model WORSE on draws 0 and 1 (-3.738, -5.646) and marginally better on draw 2 (+1.707).",
+      "F3 seam: 6 of 8 repeated B2 legs are BIT-IDENTICAL; ch A1 draw 0 differs by +5.4e-6 relative; ifc A1 differs by -0.871% relative (2.168987 -> 2.150092, and train nRMSE 0.00395755 -> 0.00393500). Both are far under the clause's dual gate, but the ifc A1 drift is the only non-negligible one and is worth a look: A0 legs (which never touch the LF path) reproduce exactly, so the drift is localised to the LF-consuming arm on the one dataset whose LF pool has 3 rungs (vs 1-2 elsewhere).",
+      "All 33 legs: resumed_from_step = 0 (no preemption, no resume), 0 non-finite loss values, 0 lines matching nan/traceback/error/preempt/requeue/out-of-memory in the SLURM .out, .err is 0 bytes.",
+      "Every arm memorizes its 5 HF rows (train nRMSE 4.6e-4 to 1.8e-2 on all panel legs); the entire panel is in the pure-interpolation / no-generalization regime that ADR r2-0003 bounds by the conditional-mean floor."
+    ],
+    "wall_clock_per_seed_min": [
+      54.95
+    ],
+    "provenance": {
+      "all_numbers_parsed_from": "score_panel.py result JSONs under /resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B3/eval/ (33 x result_*_s0.json) plus their per-leg full JSONs under results_<tag>/r2s3_coverage_panel/",
+      "no_metric_recomputed": "nRMSE and skill are taken verbatim from the result JSONs. Only aggregation (draw means, geometric means, differences) and the floor-skill rescale (ref split rel_l2_mean / the dataset's per-sample-mean reference denominator, denominator itself derived as nRMSE/skill from the same result JSON and cross-checked against state/anchors/floors.json -- ext__helmholtz_2d zero floor reproduces 3.3441095587 exactly) were performed here.",
+      "analysis_scripts": "worktrees/r2s3_lf_train_signal/B3/scratchpad/{analyze_s0,analyze2,analyze3,analyze4,analyze5,build_part5,write_card}.py"
+    }
+  },
   "6_analysis": null,
   "7_gap_and_future": null,
-  "reanalysis_progress": null
+  "reanalysis_progress": "turn_1"
 }

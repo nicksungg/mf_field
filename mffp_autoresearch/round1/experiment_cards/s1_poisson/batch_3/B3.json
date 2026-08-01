@@ -8,11 +8,11 @@
  "worktree_path": "mffp_autoresearch/round1/worktrees/s1_poisson/B3",
  "source_iteration": "brainstormer/s1_poisson/batch_3/iteration_1.md",
  "reopened_from": null,
- "1_id_category": "s1_poisson-B3 — post-hoc per-sample gain calibration transferred across fidelity levels / MF composition on a frozen ladder operator (card_type `model`).",
+ "1_id_category": "s1_poisson-B3 \u2014 post-hoc per-sample gain calibration transferred across fidelity levels / MF composition on a frozen ladder operator (card_type `model`).",
  "2_motivation": "B2 settled the mechanism and characterised what is left: **57.10 %** of the winning arm's remaining squared error is a per-sample scalar gain that is **0.919-R^2 linear in the 5-D condition vector** and **cannot be fitted from the 5 HF training rows** (6 parameters, 5 points). The websearcher scores exactly this construction **`preempted-but-MF-composition-open`** and names the open surface verbatim: \"Fitting the calibration law **on auxiliary fidelity levels of the same ladder, supervised by the frozen operator's own residual there, and transferring it to the top level at N_hf = 5**. Every fetched MF scale estimator fits against **HF** observations ... Frame as a **measured MF composition of published parts**.\" (full row quoted below). The mechanism sentence is the benchmark paper's own: IFC represents \"latent output as a continuous function of the input and fidelity ... multiplied with a basis matrix\", and B2's base has IFC's joint all-level training but **no per-sample coefficient factor**; g(X) is its rank-1, amplitude-only, post-hoc case (K > 1 is explicitly dated to batch 4). ROMES is the named preemption and goes into the card's `prior_art`; the card claims \"not previously reported\" for the exact construction and never \"novel method\".",
- "3_description": "new family `models_r1/mf_fno_ladder_gain`, vendored from B2's build commit `21fdcda...` (`mf_fno_ladder_norm`, sha256-16 verified: backbone `f56fa8029fad2ffb`, model `740ed992efcda53e`, smoke_eval `2f9ffd46970040db`, manifest `91a853aabc96fe60`, INSPIRATION `4a2b3230005fb9d1`) and renamed. Three additive code changes: (1) `MFFP_GAIN_HEAD in {none, ladder_level_intercept, ladder_pooled, hf_only}`, default `none` (bit-preserving) — a **closed-form** ridge fit of `log g = a_f + b.X` on the frozen operator's own per-level residual gains `g_i = <p_i,y_i>/<p_i,p_i>` with `p = model([X^{(f)}, f_src, f_tgt=fnorm(f)]) * level_scaler[f]` (exact at f=64 because B2 re-verified `level_scaler[64] == scaler_hf == 0.0018356895307078958`), applied as `pred = pred_base * clip(exp(a_64_used + b.X_test), [0.5, 2.0])`; lambda by closed-form LOO **on the arm's own fit rows only — no test target enters the fit or the lambda selection**; (2) one new `MFFP_LADDER_MODE` value `self_only` (all levels, no cross pairs, 175 rows); (3) `MFFP_GAIN_BASE_MUST_RESUME=1` for the head arms so they provably share ONE set of base weights with the control (paired contrast). Mandatory score-neutral instrumentation in every arm: the **per-level gain-law coefficient table** (a_f, b_f, R^2, in-level LOO R^2, mean/std/min/max of g and log g for f=8/16/32/64), pairwise cosine similarity among the per-level slopes, the pooled fit + chosen lambda, **leave-one-LEVEL-out R^2** (the test-free rehearsal of the primary estimator), `a_64` standard error, `g_hat` test statistics + clip fraction, an `MFFP_GAIN_FSRC=self` sidecar, and `pred_base` shipped inside `preds_test.npz`. **Five arms, one job, seed 0, serial, in this order**: `base__none` (control, trains the shared base, B2-continuity gate) → `gain__ladder_level_intercept` (**PRIMARY**: slope from levels 8/16/32, intercept from the 5 HF rows) → `gain__hf_only` (LR-MFS's published default: slope and intercept from the 5 HF rows) → `gain__ladder_pooled` (full-law transfer, no clause) → `self_only__none` (B2 part 7's composition arm, no clause). Validity gate (not a clause): the control must reproduce B2's 0.034250 within 10 % (0.030825–0.037675).",
- "4_expected_result": "metric = `ifc_poisson` test nRMSE → skill vs paper bar 0.036 (ADR 0002), seed 0 only, `provisional-single-seed` (ADR 0004). Control 0.03425 / 0.9514 (B2 reproduction). **Primary predicted 0.0302 (0.0240–0.0343) = skill 0.839 (0.667–0.951)**, from the decomposition `nRMSE ~ sqrt(0.022917^2 + (1-R^2_transfer)*6.4787e-4)` at a modal `R^2_transfer ~ 0.4`. `gain__hf_only` 0.0355 (0.0335–0.0380) — it shrinks to the *measured* global-gain value 0.03511, which B2 showed is no help. `gain__ladder_pooled` 0.050 (0.040–0.070) from the 4.53 % per-level constant mismatch implied by B2's `ftgt_output_rms_sweep` (1.8827 delivered vs 1.8011 required). `self_only__none` 0.055 (0.035–0.075), non-clause. **Delta vs the operative anchor (B2's 0.9513894 skill): +0.112 skill = 0.47x the floor — i.e. the modal prediction is that the primary clause is FALSIFIED.** Against the noise floor: the clause needs > **0.0086367 nRMSE (0.23990756 skill units)** while the total available effect is **0.009940** (to the test-fitted LOO bound 0.02431) to **0.011333** (to the per-sample oracle 0.022917) nRMSE — **1.15–1.31x the floor**; equivalently the clause fires iff the ladder-fitted law explains **>= 0.798** of the test oracle-gain variance versus the 0.919 achievable when fitting on the test gains themselves. A null result is the likely outcome and is still informative. 0.02431 is never written as a prediction (it used test targets); the 0.018 \"stretch bar\" is not used as a same-task target (verdict (iii)) and the attribution correction rides as a written operator recommendation. No new guard obligation (family defaults stay `head=none` + `scaler=shared`, bit-preserving); B2's guard debt stays owed at confirmation. Wall clock ~4–5 min on one H100, `--time=02:00:00`.\n\n[Anchor-reference note, transcribed verbatim from the brainstormer report's \"Anchor reference\" bullet] `\"s1_poisson-B2\"` (per the orchestrator's batch-3 directive for the batch>=2 chain; the card's control arm *is* B2's primary arm, so 0.9513894 skill is the operative comparison). Noted honestly: program.md §4.5's per-stream policy defaults gap streams to `null` (B2 used `null`) and the certified stream anchor `state/anchors/s1_poisson.json` = 1.5656334 is unchanged by this card; part 4 carries both numbers so the choice hides nothing.",
- "expected_falsification": "**F1 (primary)** — falsified if `gain__ladder_level_intercept` fails to beat `base__none` on `ifc_poisson` test nRMSE by more than the certified noise floor (seed-0 skill improving by <= 0.23990756 skill units = <= 0.0086367 nRMSE, i.e. not reaching <= 0.0256133 nRMSE / 0.711481 skill), which would mean the gain law measured at level 64 is not estimable from the auxiliary levels — the gain is a property of the HF solve (or of in-sample residuals) that the lower levels do not share. **F2 (composition)** — falsified if the primary fails to beat `gain__hf_only` by more than the same floor, which would mean the ladder supervision adds nothing over the literature's HF-observation fit and the open MF composition is empirically empty on this ladder. A 2x2 reading table for (F1, F2) and the mechanism-decider readings (per-level slope cosines; per-level intercept spread vs 3 %; ladder `std(log g)` vs B2's measured test-gain std 0.03046 as the in-sample-attenuation check) are pre-registered in the source iteration.\n\n[2x2 reading table, transcribed verbatim from `brainstormer/s1_poisson/batch_3/iteration_1.md`] **Pre-registered reading table** (so no outcome can be re-narrated): F1 pass & F2 pass -> the MF composition works, ordinally, on the round's flagship dataset; F1 pass & F2 fail -> calibration helps but the 5 HF rows sufficed (LR-MFS's default is adequate at N_hf=5; the composition is empty); F1 fail & F2 pass -> the ladder law beats the HF-only law but neither clears the floor, i.e. the direction is real and below the round's resolution, not claimable; F1 fail & F2 fail -> calibration is not transferable at all and B2's 0.02431 headroom was an artifact of fitting on test targets.\n\n[Mechanism decider, transcribed verbatim from the same source iteration] **Mechanism decider, independent of both clauses**: the per-level coefficient table plus the leave-one-LEVEL-out R^2. Pre-registered reading -- slopes `b_8,b_16,b_32` mutually consistent (pairwise cosine >= 0.7) and consistent with `b_64` => the gain law's *shape* is level-transferable (a finding against the co-kriging prior) whatever the nRMSE says; slopes inconsistent => \"Different fidelity levels have distinct parameter estimates\" is confirmed on this ladder and G1's null is explained rather than merely observed; per-level intercepts `a_f` differing by >> 3 % => the full-law transfer arm G3 must be worse, which is the quantitative version of the same prior. Also pre-registered: if per-level `std(log g)` on the ladder levels is much below B2's measured test-gain std 0.03046, the fitted law is in-sample-attenuated and G1's null is a base-overfit artifact, not a physics claim.",
+ "3_description": "new family `models_r1/mf_fno_ladder_gain`, vendored from B2's build commit `21fdcda...` (`mf_fno_ladder_norm`, sha256-16 verified: backbone `f56fa8029fad2ffb`, model `740ed992efcda53e`, smoke_eval `2f9ffd46970040db`, manifest `91a853aabc96fe60`, INSPIRATION `4a2b3230005fb9d1`) and renamed. Three additive code changes: (1) `MFFP_GAIN_HEAD in {none, ladder_level_intercept, ladder_pooled, hf_only}`, default `none` (bit-preserving) \u2014 a **closed-form** ridge fit of `log g = a_f + b.X` on the frozen operator's own per-level residual gains `g_i = <p_i,y_i>/<p_i,p_i>` with `p = model([X^{(f)}, f_src, f_tgt=fnorm(f)]) * level_scaler[f]` (exact at f=64 because B2 re-verified `level_scaler[64] == scaler_hf == 0.0018356895307078958`), applied as `pred = pred_base * clip(exp(a_64_used + b.X_test), [0.5, 2.0])`; lambda by closed-form LOO **on the arm's own fit rows only \u2014 no test target enters the fit or the lambda selection**; (2) one new `MFFP_LADDER_MODE` value `self_only` (all levels, no cross pairs, 175 rows); (3) `MFFP_GAIN_BASE_MUST_RESUME=1` for the head arms so they provably share ONE set of base weights with the control (paired contrast). Mandatory score-neutral instrumentation in every arm: the **per-level gain-law coefficient table** (a_f, b_f, R^2, in-level LOO R^2, mean/std/min/max of g and log g for f=8/16/32/64), pairwise cosine similarity among the per-level slopes, the pooled fit + chosen lambda, **leave-one-LEVEL-out R^2** (the test-free rehearsal of the primary estimator), `a_64` standard error, `g_hat` test statistics + clip fraction, an `MFFP_GAIN_FSRC=self` sidecar, and `pred_base` shipped inside `preds_test.npz`. **Five arms, one job, seed 0, serial, in this order**: `base__none` (control, trains the shared base, B2-continuity gate) \u2192 `gain__ladder_level_intercept` (**PRIMARY**: slope from levels 8/16/32, intercept from the 5 HF rows) \u2192 `gain__hf_only` (LR-MFS's published default: slope and intercept from the 5 HF rows) \u2192 `gain__ladder_pooled` (full-law transfer, no clause) \u2192 `self_only__none` (B2 part 7's composition arm, no clause). Validity gate (not a clause): the control must reproduce B2's 0.034250 within 10 % (0.030825\u20130.037675).",
+ "4_expected_result": "metric = `ifc_poisson` test nRMSE \u2192 skill vs paper bar 0.036 (ADR 0002), seed 0 only, `provisional-single-seed` (ADR 0004). Control 0.03425 / 0.9514 (B2 reproduction). **Primary predicted 0.0302 (0.0240\u20130.0343) = skill 0.839 (0.667\u20130.951)**, from the decomposition `nRMSE ~ sqrt(0.022917^2 + (1-R^2_transfer)*6.4787e-4)` at a modal `R^2_transfer ~ 0.4`. `gain__hf_only` 0.0355 (0.0335\u20130.0380) \u2014 it shrinks to the *measured* global-gain value 0.03511, which B2 showed is no help. `gain__ladder_pooled` 0.050 (0.040\u20130.070) from the 4.53 % per-level constant mismatch implied by B2's `ftgt_output_rms_sweep` (1.8827 delivered vs 1.8011 required). `self_only__none` 0.055 (0.035\u20130.075), non-clause. **Delta vs the operative anchor (B2's 0.9513894 skill): +0.112 skill = 0.47x the floor \u2014 i.e. the modal prediction is that the primary clause is FALSIFIED.** Against the noise floor: the clause needs > **0.0086367 nRMSE (0.23990756 skill units)** while the total available effect is **0.009940** (to the test-fitted LOO bound 0.02431) to **0.011333** (to the per-sample oracle 0.022917) nRMSE \u2014 **1.15\u20131.31x the floor**; equivalently the clause fires iff the ladder-fitted law explains **>= 0.798** of the test oracle-gain variance versus the 0.919 achievable when fitting on the test gains themselves. A null result is the likely outcome and is still informative. 0.02431 is never written as a prediction (it used test targets); the 0.018 \"stretch bar\" is not used as a same-task target (verdict (iii)) and the attribution correction rides as a written operator recommendation. No new guard obligation (family defaults stay `head=none` + `scaler=shared`, bit-preserving); B2's guard debt stays owed at confirmation. Wall clock ~4\u20135 min on one H100, `--time=02:00:00`.\n\n[Anchor-reference note, transcribed verbatim from the brainstormer report's \"Anchor reference\" bullet] `\"s1_poisson-B2\"` (per the orchestrator's batch-3 directive for the batch>=2 chain; the card's control arm *is* B2's primary arm, so 0.9513894 skill is the operative comparison). Noted honestly: program.md \u00a74.5's per-stream policy defaults gap streams to `null` (B2 used `null`) and the certified stream anchor `state/anchors/s1_poisson.json` = 1.5656334 is unchanged by this card; part 4 carries both numbers so the choice hides nothing.",
+ "expected_falsification": "**F1 (primary)** \u2014 falsified if `gain__ladder_level_intercept` fails to beat `base__none` on `ifc_poisson` test nRMSE by more than the certified noise floor (seed-0 skill improving by <= 0.23990756 skill units = <= 0.0086367 nRMSE, i.e. not reaching <= 0.0256133 nRMSE / 0.711481 skill), which would mean the gain law measured at level 64 is not estimable from the auxiliary levels \u2014 the gain is a property of the HF solve (or of in-sample residuals) that the lower levels do not share. **F2 (composition)** \u2014 falsified if the primary fails to beat `gain__hf_only` by more than the same floor, which would mean the ladder supervision adds nothing over the literature's HF-observation fit and the open MF composition is empirically empty on this ladder. A 2x2 reading table for (F1, F2) and the mechanism-decider readings (per-level slope cosines; per-level intercept spread vs 3 %; ladder `std(log g)` vs B2's measured test-gain std 0.03046 as the in-sample-attenuation check) are pre-registered in the source iteration.\n\n[2x2 reading table, transcribed verbatim from `brainstormer/s1_poisson/batch_3/iteration_1.md`] **Pre-registered reading table** (so no outcome can be re-narrated): F1 pass & F2 pass -> the MF composition works, ordinally, on the round's flagship dataset; F1 pass & F2 fail -> calibration helps but the 5 HF rows sufficed (LR-MFS's default is adequate at N_hf=5; the composition is empty); F1 fail & F2 pass -> the ladder law beats the HF-only law but neither clears the floor, i.e. the direction is real and below the round's resolution, not claimable; F1 fail & F2 fail -> calibration is not transferable at all and B2's 0.02431 headroom was an artifact of fitting on test targets.\n\n[Mechanism decider, transcribed verbatim from the same source iteration] **Mechanism decider, independent of both clauses**: the per-level coefficient table plus the leave-one-LEVEL-out R^2. Pre-registered reading -- slopes `b_8,b_16,b_32` mutually consistent (pairwise cosine >= 0.7) and consistent with `b_64` => the gain law's *shape* is level-transferable (a finding against the co-kriging prior) whatever the nRMSE says; slopes inconsistent => \"Different fidelity levels have distinct parameter estimates\" is confirmed on this ladder and G1's null is explained rather than merely observed; per-level intercepts `a_f` differing by >> 3 % => the full-law transfer arm G3 must be worse, which is the quantitative version of the same prior. Also pre-registered: if per-level `std(log g)` on the ladder levels is much below B2's measured test-gain std 0.03046, the fitted law is in-sample-attenuated and G1's null is a base-overfit artifact, not a physics claim.",
  "anchor_reference": "s1_poisson-B2",
  "prior_art": {
   "verdict": "preempted-but-MF-composition-open",
@@ -26,9 +26,9 @@
    "https://arxiv.org/abs/2606.17513",
    "https://arxiv.org/abs/2210.03008"
   ],
-  "verdict_quoted": "Prior-art verdict quoted (verbatim from `websearches/s1_poisson/batch_3/report.md` \"## Prior-art verdict\", row (i)): \"**(i)** Ladder-pooled per-sample **gain head** g(X) on the frozen `allpairs__per_level` base — head fitted on the **175 pooled ladder rows** (supervision = the frozen operator's residual at levels 8/16/32), applied at fidelity 64 where N_hf = 5 | **`preempted-but-MF-composition-open`** | ROMES: GP from cheap indicators to the error distribution; \"correcting the reduced-order-model output with this surrogate can improve prediction accuracy by an order of magnitude\" — https://arxiv.org/abs/1405.5170 · multiplicative/comprehensive correction `y^HF = rho(x)·yLF(x)[+delta(x)]`, rho \"an SM created from the ratio between the HFM and the LFM\" — https://arxiv.org/html/1609.07196v5 · LR-MFS: scale factor by least squares **on HF samples** — https://arxiv.org/abs/1705.02956 · IFC: \"latent output as a continuous function of the input and fidelity … multiplied with a basis matrix\" (g(X) = the K=1 case) — https://ar5iv.labs.arxiv.org/html/2207.00678 · MF-POD coefficient regression — https://pmc.ncbi.nlm.nih.gov/articles/PMC10100049/ · APEX per-sample amplitude anchor from a coarser operator in target-scarce MF — https://arxiv.org/abs/2605.26732 | Fitting the calibration law **on auxiliary fidelity levels of the same ladder, supervised by the frozen operator's own residual there, and transferring it to the top level at N_hf = 5**. Every fetched MF scale estimator fits against **HF** observations; ROMES's features are residual norms (not the condition vector) and its errors are HF-evaluated; REEF-GP fits frozen-operator residuals but \"only quantif[ies] uncertainty and does not correct the mean prediction\" (https://arxiv.org/abs/2606.17513); 2210.03008 corrects the mean from the **PDE residual at inference**, not a fitted law (https://arxiv.org/abs/2210.03008). Frame as a **measured MF composition of published parts**.\"",
-  "also_carried_into_the_card": "Also carried into the card: verdict (ii) \"**`novel` (narrow, weak)** — say \"not previously reported\", never \"novel method\"\" plus its adversarial prior (\"recursive co-kriging fits **a separate rho per level**\", \"Different fidelity levels have distinct parameter estimates\", search-return grade); verdict (iv) \"report as an upper bound only\". The card states explicitly that it is **not** REEF-GP and **not** PDE-residual correction at inference (also required by ADR 0009, which the design satisfies: no governing equation is used at test time — only the condition vector and the frozen operator).",
-  "operator_note_owed": "**Operator note owed** (verdict (iii), program.md §13.4 written recommendation, no action): `docs/adr/0002-ifc-poisson-skill-reference.md` mis-attributes the 0.018 stretch bar — the fetched paper places 0.018 at m = 2.14 = 128^2 **extrapolation** for **IFC-ODE2**, not IFC-GPODE at 64^2. 0.036 remains this round's denominator."
+  "verdict_quoted": "Prior-art verdict quoted (verbatim from `websearches/s1_poisson/batch_3/report.md` \"## Prior-art verdict\", row (i)): \"**(i)** Ladder-pooled per-sample **gain head** g(X) on the frozen `allpairs__per_level` base \u2014 head fitted on the **175 pooled ladder rows** (supervision = the frozen operator's residual at levels 8/16/32), applied at fidelity 64 where N_hf = 5 | **`preempted-but-MF-composition-open`** | ROMES: GP from cheap indicators to the error distribution; \"correcting the reduced-order-model output with this surrogate can improve prediction accuracy by an order of magnitude\" \u2014 https://arxiv.org/abs/1405.5170 \u00b7 multiplicative/comprehensive correction `y^HF = rho(x)\u00b7yLF(x)[+delta(x)]`, rho \"an SM created from the ratio between the HFM and the LFM\" \u2014 https://arxiv.org/html/1609.07196v5 \u00b7 LR-MFS: scale factor by least squares **on HF samples** \u2014 https://arxiv.org/abs/1705.02956 \u00b7 IFC: \"latent output as a continuous function of the input and fidelity \u2026 multiplied with a basis matrix\" (g(X) = the K=1 case) \u2014 https://ar5iv.labs.arxiv.org/html/2207.00678 \u00b7 MF-POD coefficient regression \u2014 https://pmc.ncbi.nlm.nih.gov/articles/PMC10100049/ \u00b7 APEX per-sample amplitude anchor from a coarser operator in target-scarce MF \u2014 https://arxiv.org/abs/2605.26732 | Fitting the calibration law **on auxiliary fidelity levels of the same ladder, supervised by the frozen operator's own residual there, and transferring it to the top level at N_hf = 5**. Every fetched MF scale estimator fits against **HF** observations; ROMES's features are residual norms (not the condition vector) and its errors are HF-evaluated; REEF-GP fits frozen-operator residuals but \"only quantif[ies] uncertainty and does not correct the mean prediction\" (https://arxiv.org/abs/2606.17513); 2210.03008 corrects the mean from the **PDE residual at inference**, not a fitted law (https://arxiv.org/abs/2210.03008). Frame as a **measured MF composition of published parts**.\"",
+  "also_carried_into_the_card": "Also carried into the card: verdict (ii) \"**`novel` (narrow, weak)** \u2014 say \"not previously reported\", never \"novel method\"\" plus its adversarial prior (\"recursive co-kriging fits **a separate rho per level**\", \"Different fidelity levels have distinct parameter estimates\", search-return grade); verdict (iv) \"report as an upper bound only\". The card states explicitly that it is **not** REEF-GP and **not** PDE-residual correction at inference (also required by ADR 0009, which the design satisfies: no governing equation is used at test time \u2014 only the condition vector and the frozen operator).",
+  "operator_note_owed": "**Operator note owed** (verdict (iii), program.md \u00a713.4 written recommendation, no action): `docs/adr/0002-ifc-poisson-skill-reference.md` mis-attributes the 0.018 stretch bar \u2014 the fetched paper places 0.018 at m = 2.14 = 128^2 **extrapolation** for **IFC-ODE2**, not IFC-GPODE at 64^2. 0.036 remains this round's denominator."
  },
  "recipe": {
   "base_family": "mf_fno_ladder_norm",
@@ -112,8 +112,8 @@
  },
  "build_commit": "57c24576abe6b045b837ccfd55f331a80e3f8b05",
  "job_ids": [
-  "66058189 (main seed-0 run via submit.sh — reviewer SUGGEST instruction 1)",
-  "66058194 (heat_local guard-contract leg on H100 — reviewer S1 closure, non-blocking plumbing)",
+  "66058189 (main seed-0 run via submit.sh \u2014 reviewer SUGGEST instruction 1)",
+  "66058194 (heat_local guard-contract leg on H100 \u2014 reviewer S1 closure, non-blocking plumbing)",
   "66165256 (seed 1, end-of-round top-3 confirm, smoke tier via submit_seeds_2_3.sh)",
   "66165257 (seed 2, end-of-round top-3 confirm, smoke tier via submit_seeds_2_3.sh)"
  ],
@@ -140,11 +140,11 @@
    "findings": [
     "Q1 card-implementation alignment PASS - every part-3 item traces to code: MFFP_GAIN_HEAD vocabulary + `none` default (gain_head.py:68-69); g_i=<p_i,y_i>/<p_i,p_i> with p=model([X,f_src,f_tgt=fnorm(f)])*out_scale(f) (smoke_eval.py:_level_gain_rows :595-604); the card's f=64 exactness is MEASURED not assumed (gain.level_scaler_hf_equals_scaler_hf true, both 0.0018356895307078958, all five arm JSONs, matching the card's literal constant); application pred=pred_base*clip(exp(a_used+b.z),[0.5,2.0]) (gain_head.py:608-612 + smoke_eval.py:894-897); closed-form LOO lambda on the arm's own rows (gain_head.py:255-294); self_only via arm_cross_pairs early return (:291-292) with the committed arm JSON reporting the card's exact n_rows_total 175 / cross_pairs []; MFFP_GAIN_BASE_MUST_RESUME hard stop (:783-795). Fit-row split exact: ladder_level_intercept n_fit_rows 170 (aux_levels_slope_plus_hf_train_intercept), hf_only 5. All nine mandatory instrumentation items present in the shipped `gain` payload. Arm order in 01_train_eval.sh:80-83 == recipe.env._arms order. No paraphrase drift.",
     "Q2 recipe fidelity SUGGEST - all seven recipe.env values verbatim in 01_train_eval.sh:86-90,136-141 as values of ONE --env flag (build trap 2); committed JSONs echo all seven with *_source == env:*, none 'default'. datasets/epochs/seed/family_dir/base_family/base_commit match; the card's recipe block is byte-equivalent to the source iteration's. Zero new hyperparameters; the five score-neutral builder choices are declared in build_notes[13], including the one that is NOT strictly score-neutral (standardising z=(X-mu)/sigma changes ridge shrinkage geometry hence the fitted b) - that choice nevertheless traces to source iteration line 228 ('X standardised by ladder-row mean/std'), so it is card-sanctioned, not silent. S1: recipe.env._contract_check names THREE guard datasets; only fluid and sharp__sod_1d ran - heat_local was abandoned on the login node (disclosed, scripted, defaults to the full guard expansion). The recipe step is incomplete, not falsified. S2: deviation from _sweep's literal 'shared ckpt root' (staged byte-identical cp + sha256 check + MUST_RESUME=1 + post-arm sha equality assert); disclosed in build_notes[5]; the stated goal is met and verified (G0-G3 all 6bfb2f3ce68a3234).",
-    "Q3 §5 immutable compliance PASS - diff touches only models_r1/ scripts/ notes/ scratchpad/; no round1/eval/, project.yaml, program.md, ADRs or subagent prompts. Guarded surfaces untouched: diff -q backbone.py vs mf_field/akash/common/backbone.py is CLEAN and backbone.py (f56fa8029fad2ffb) / model.py (740ed992efcda53e) are byte-unchanged vs B2, so all three code changes provably live in smoke_eval.py + the new gain_head.py; nothing under factory_root/{eval,baselines,references,scripts,data}, factory.md or akash/** appears in the diff. No data regeneration; the head reads only the already-loaded train split and level 64 uses exactly the dataset's 5 HF train rows. Scoring routed through ${ROUND_ROOT}/eval/score_panel.py in every arm; build_notes[6] explicitly quarantines the drill's direct smoke_eval numbers. Seeds {0} in-round + {1,2} parked; epochs 200 = tiers.smoke_epochs, contract legs 2 = tiers.contract_epochs. No pre-falsified lever re-proposed (post-hoc multiplicative calibration; unrelated to WNO swap / LF low-mode freezing / diffusion prior).",
+    "Q3 \u00a75 immutable compliance PASS - diff touches only models_r1/ scripts/ notes/ scratchpad/; no round1/eval/, project.yaml, program.md, ADRs or subagent prompts. Guarded surfaces untouched: diff -q backbone.py vs mf_field/akash/common/backbone.py is CLEAN and backbone.py (f56fa8029fad2ffb) / model.py (740ed992efcda53e) are byte-unchanged vs B2, so all three code changes provably live in smoke_eval.py + the new gain_head.py; nothing under factory_root/{eval,baselines,references,scripts,data}, factory.md or akash/** appears in the diff. No data regeneration; the head reads only the already-loaded train split and level 64 uses exactly the dataset's 5 HF train rows. Scoring routed through ${ROUND_ROOT}/eval/score_panel.py in every arm; build_notes[6] explicitly quarantines the drill's direct smoke_eval numbers. Seeds {0} in-round + {1,2} parked; epochs 200 = tiers.smoke_epochs, contract legs 2 = tiers.contract_epochs. No pre-falsified lever re-proposed (post-hoc multiplicative calibration; unrelated to WNO swap / LF low-mode freezing / diffusion prior).",
     "Q4 contract compliance PASS - manifest.json with name/description/supports ['ifc_raw','npz_l'] (inherited verbatim from B2)/frozen false plus env_knobs, checkpoint_key and a test_target_firewall clause; exact 6-arg CLI (smoke_eval.py:1018-1024); INSPIRATION.md cites ALL EIGHT prior_art citations (1405.5170, 1609.07196, 1705.02956, 2207.00678, PMC10100049, 2605.26732, 2606.17513, 2210.03008 - grepped, all present); checkpoint-resume at smoke_eval.py:741 (last = ckpt_dir/'last.pt' under the inherited mode_<MODE>__scal_<SCALER> build-trap-1 sub-key, carried unchanged from B1/B2 which both passed review with it) with finished/mid-joint/mid-finetune branches and a meta guard on epochs/grid/mode/scaler. Drilled: SIGTERM mid-joint resumes and finishes exit 0; empty ckpt + MUST_RESUME=1 exit 1; mid-stage ckpt + MUST_RESUME=1 exit 1; wrong-mode ckpt refused. Seeding via torch.manual_seed/np.random.seed/torch.cuda.manual_seed_all at run() entry; the head draws NO RNG at all (pure numpy), which is why the `none` arms are bit-preserving.",
     "Q5 SLURM correctness SUGGEST - bash -n run by the reviewer on all SIX scripts (scripts/{01_train_eval,submit,submit_seeds_2_3}.sh, scratchpad/{resume_drill,run_contract_smoke,run_guard_contract}.sh), all clean. --partition=gpu and typed --gres=gpu:h100:1 match project.yaml sbatch exactly; --nodes=1 --ntasks=1 --cpus-per-task=4 --mem=32G --time=02:00:00 --requeue --exclude=hpc-93-36, headers identical in shape to B2's reviewed script. --output/--error absolute under ${OUTPUTS_ROOT}/s1_poisson/B3/slurm/%x_%j.{out,err} and mkdir'd by submit.sh before sbatch; all paths absolute; SEED=\"${1:?...}\"; submit.sh seed 0 only; submit_seeds_2_3.sh exists and is correctly parked. Staging logic sound: CONTROL_CKPT hardcodes mode_allpairs (correct, G0 is the allpairs control), the cp target lives under a DIFFERENT ROUND1_EVAL_RESULTS root so there is no self-overwrite, and a missing control ckpt fails loudly (:115-118). ${OUTPUTS_ROOT}/s1_poisson/B3 does not yet exist, so no stale-checkpoint hazard on first submit. S3 (carried from B2's S2): in-file #SBATCH --job-name=r1-s1_poisson-B3 omits -s{seed}; only the wrapper's --job-name override is maintainer-matchable - submit via scripts/submit.sh, never sbatch 01_train_eval.sh directly. S4 (carried from B2's S3): --time=02:00:00 is ~20x the ledger analog (s1_poisson B1 h100 e200 = 4.47 min; B2's five arms 5.6 min) but is card-locked in recipe._sbatch - right-size at submit time, do not edit the card.",
     "Q6 smoke-test evidence PASS - build_notes[3] cites the contract-tier score_panel.py command verbatim and EVERY claimed number reproduces INSIDE the artifact JSONs: base__none 0.2817404086094617 | gain__ladder_level_intercept 0.17663150882196565 | gain__hf_only 0.21398211638816717 | gain__ladder_pooled 0.17556054679728325 | self_only__none 0.3653983463762562, each cached:false, metric_source per_sample_mean, five distinct code_hash; guard leg fluid 0.3123267561968301 and sharp__sod_1d 0.024271656851296987 match build_notes[7]. B2-CONTINUITY VERIFIED INDEPENDENTLY: git show 21fdcda:scratchpad/contract_smoke_allpairs__per_level.json -> 0.2817404086094617, identical to 17 digits with identical nrmse_def_hash d3d0ade9... build_notes[4] verified: G0-G3 all base_ckpt_sha256 6bfb2f3ce68a3234, base_resumed_finished_checkpoint true, train_seconds ~1e-6; G4 34000d7016d2fc82. build_notes[12] verified by re-running the job script's env-guard heredoc against all five committed family JSONs - passed 5/5. Firewall status 'clean' with 256 tainted row digests / 34 arrays checked in every ifc_poisson arm; fit_rows_are_train_rows 100/50/20/5 vs n_test 128 in every arm.",
-    "Q7 blast radius PASS - 43 files, +18167/-0, top-level components exactly models_r1/ scripts/ notes/ scratchpad/; no substrate-fix commit; single build commit; git status --porcelain empty in the worktree and HEAD == 57c24576abe6b045b837ccfd55f331a80e3f8b05 == build_commit. Informational: the main tree carries an unrelated pre-existing modification to mf_field/factory_mffp/results/contract_test.json from mentor-side factory activity; results/ is not a §5-guarded surface and it is not in this build commit.",
+    "Q7 blast radius PASS - 43 files, +18167/-0, top-level components exactly models_r1/ scripts/ notes/ scratchpad/; no substrate-fix commit; single build commit; git status --porcelain empty in the worktree and HEAD == 57c24576abe6b045b837ccfd55f331a80e3f8b05 == build_commit. Informational: the main tree carries an unrelated pre-existing modification to mf_field/factory_mffp/results/contract_test.json from mentor-side factory activity; results/ is not a \u00a75-guarded surface and it is not in this build commit.",
     "ISOLATION AUDIT (the card's single most important claim, checked adversarially and PASSED): grep of Y_te/target in smoke_eval.py returns exactly four live uses - :661 creation, :834 flatten, :851 taint, :966/:985 npz + final metric. The test target appears nowhere in the training loop, nowhere in model selection, and nowhere between creation and the firewall taint. Every array reaching the estimator is checked at its earliest constructor (_level_gain_rows checks train_target/train_cond; build_fit_rows checks gain/conditions; gain_head_report checks Z_test); lambda is closed-form PRESS over those same train rows only; gain_head.py imports neither torch nor the loaders so it cannot reach around its arguments. All normalisation constants the head consumes (level_scaler, scaler_hf, mu/sigma) are train-derived (smoke_eval.py:681,710 and gain_head.ladder_standardizer). Z_test is test CONDITIONS only - the model's own inference input, already consumed by the scored forward pass. Derived-scalar route closed by fit_rows_are_train_rows. Drills reproduce: 5/5 evasion routes blocked; planted train_HF:=test_HF aborts end-to-end with 'TEST-TARGET LEAK at _level_gain_rows(level=64)'.",
     "N1 (for the analyzer, not a build defect): every fit row is IN-SAMPLE, including the 5 HF rows - the base was trained on all of them. Re-read gain.per_level_coefficient_table[*].std_log_g_over_b2_test_gain_std at 200 epochs before interpreting the mechanism-decider table (contract-tier reads 7.1-8.4x are meaningless); a value below 1 means the ladder law is in-sample-attenuated and a G1 null is a base-overfit artifact, not physics.",
     "N2: the contract-smoke control arm was itself a RESUME (base_resumed_finished_checkpoint true, train_seconds ~1e-6), not a from-scratch train. This does not weaken the B2-continuity gate (identical weights -> identical eval path -> identical 17 digits is exactly the claim) and the allpairs training path is provably unchanged anyway (the only training-side edits are the LADDER_MODES tuple extension and an `if mode == \"self_only\": return []` guard that cannot fire for allpairs). On SLURM the outputs dir does not exist, so G0 trains fresh.",
@@ -160,7 +160,9 @@
  "5_actual_result": {
   "protocol": "provisional-single-seed (ADR 0004). Seed 0 only, 200-epoch smoke tier, ONE SLURM job (66058189, H100 hpc-33-19, COMPLETED 0:0, 2m28s) running all FIVE arms serially, plus a second non-blocking contract-tier job (66058194, COMPLETED 0:0, 1m04s) closing the heat_local guard leg (reviewer S1). NO confidence interval is computed for this card; every value below is a single-seed point estimate labelled provisional-single-seed. Skill = nRMSE / paper_bar 0.036 (ADR 0002) -> LOWER IS BETTER. All nRMSE/skill parsed verbatim from score_panel.py result JSONs; nothing recomputed by hand (only differences and ratios of published values are formed).",
   "seeds_available": [
-   0
+   0,
+   1,
+   2
   ],
   "metric_provenance": {
    "result_json_dir": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round1/s1_poisson/B3/eval/",
@@ -204,7 +206,17 @@
     "cached": false,
     "base_ckpt_sha256": "892fedd88cc61d83d917a87787ece97c2359998de64cdabf8b262f869940e5d1",
     "train_seconds": 72.5344066619873,
-    "note": "trains the shared base from scratch (base_resumed_finished_checkpoint false)"
+    "note": "trains the shared base from scratch (base_resumed_finished_checkpoint false)",
+    "per_seed_skill": [
+     0.9517819873690914,
+     1.365431098106794,
+     1.117609849741816
+    ],
+    "skill_3seed_mean": 1.1449409784059006,
+    "skill_3seed_ci95": [
+     0.6278067496953331,
+     1.6620752071164682
+    ]
    },
    "gain__ladder_level_intercept": {
     "role": "PRIMARY (F1, F2). slope from aux levels 8/16/32, intercept from the 5 HF train rows",
@@ -251,7 +263,17 @@
       "max": 0.04457863901542743
      }
     },
-    "rel_l2_pred_vs_pred_base": 0.02322146941985515
+    "rel_l2_pred_vs_pred_base": 0.02322146941985515,
+    "per_seed_skill": [
+     0.6936117259676992,
+     0.7373415443900732,
+     0.8528084187605605
+    ],
+    "skill_3seed_mean": 0.7612538963727776,
+    "skill_3seed_ci95": [
+     0.5569383312898999,
+     0.9655694614556554
+    ]
    },
    "gain__hf_only": {
     "role": "literature comparator (LR-MFS default: slope AND intercept from the 5 HF rows). F2 denominator",
@@ -272,7 +294,17 @@
      5.491973803384414e-05
     ],
     "rel_l2_pred_vs_pred_base": 5.766231261439041e-05,
-    "note": "the head is a numerical no-op: g_hat_test = 1.0000079 +/- 5.49e-05, prediction moves 5.77e-05 in rel-L2 from pred_base. The 5 HF fit rows are essentially degenerate (g mean 1.00001, std 0.000936) because the base reproduces its own 5 HF training rows; in-fit R^2 0.0155, LOO R^2 -1.531"
+    "note": "the head is a numerical no-op: g_hat_test = 1.0000079 +/- 5.49e-05, prediction moves 5.77e-05 in rel-L2 from pred_base. The 5 HF fit rows are essentially degenerate (g mean 1.00001, std 0.000936) because the base reproduces its own 5 HF training rows; in-fit R^2 0.0155, LOO R^2 -1.531",
+    "per_seed_skill": [
+     0.9511927243991357,
+     1.3635240914816766,
+     1.1169012356859171
+    ],
+    "skill_3seed_mean": 1.1438726838555766,
+    "skill_3seed_ci95": [
+     0.6284522201275089,
+     1.6592931475836443
+    ]
    },
    "gain__ladder_pooled": {
     "role": "full-law transfer, no clause (aux slope AND aux shared intercept applied at level 64)",
@@ -289,7 +321,17 @@
      0.021837111624361447
     ],
     "rel_l2_pred_vs_pred_base": 0.04788217574640392,
-    "note": "applies the aux-level intercept -0.0585 at level 64, i.e. shrinks every prediction by ~5.6% (g_hat mean 0.9442); worst arm, as the card pre-registered from the per-level intercept mismatch"
+    "note": "applies the aux-level intercept -0.0585 at level 64, i.e. shrinks every prediction by ~5.6% (g_hat mean 0.9442); worst arm, as the card pre-registered from the per-level intercept mismatch",
+    "per_seed_skill": [
+     1.5969044433764017,
+     2.1767677080570667,
+     2.173286909623975
+    ],
+    "skill_3seed_mean": 1.9823196870191477,
+    "skill_3seed_ci95": [
+     1.153154440434328,
+     2.8114849336039676
+    ]
    },
    "self_only__none": {
     "role": "B2 part-7 composition arm, NO clause, NO head - a pure ladder-mode change (all 4 levels, self pairs only, 175 rows, zero cross pairs)",
@@ -302,7 +344,17 @@
     "base_ckpt_sha256": "0991af3c8f84e89172759179df86140c405f520f3a620eca40c2582a825ef896",
     "train_seconds": 44.62495422363281,
     "n_cross_pairs": 0,
-    "note": "trains its OWN base (own sha256, own ckpt sub-key mode_self_only__scal_per_level); BEST arm of the five and the best ifc_poisson number in the round so far. See surprise_self_only below."
+    "note": "trains its OWN base (own sha256, own ckpt sub-key mode_self_only__scal_per_level); BEST arm of the five and the best ifc_poisson number in the round so far. See surprise_self_only below.",
+    "per_seed_skill": [
+     0.6087035126179531,
+     0.7592505952819097,
+     1.0373189213634773
+    ],
+    "skill_3seed_mean": 0.8017576764211135,
+    "skill_3seed_ci95": [
+     0.2615909067734338,
+     1.3419244460687931
+    ]
    }
   },
   "arm_ranking_best_to_worst": [
@@ -316,14 +368,20 @@
    "ifc_poisson": {
     "_arm": "gain__ladder_level_intercept (PRIMARY) - see per_arm for the other four",
     "per_seed_nrmse": [
-     0.024970022134837167
+     0.024970022134837167,
+     0.026544295598042632,
+     0.030701103075380175
     ],
     "per_seed_skill": [
-     0.6936117259676992
+     0.6936117259676992,
+     0.7373415443900732,
+     0.8528084187605605
     ],
-    "mean_skill": 0.6936117259676992,
-    "ci95": null,
-    "_ci95_null_reason": "single seed (ADR 0004); no bootstrap is defined over n=1",
+    "mean_skill": 0.7612538963727776,
+    "ci95": [
+     0.5569383312898999,
+     0.9655694614556554
+    ],
     "reference_type": "paper_bar",
     "cached": false,
     "split": "test_hf"
@@ -332,17 +390,24 @@
   "panel_geomean_skill": {
    "_note": "this card's panel is the single dataset ifc_poisson (recipe.datasets), not the round's 6-dataset panel; the value is the PRIMARY arm, so panel geomean == the per-dataset skill",
    "per_seed": [
-    0.6936117259676992
+    0.6936117259676992,
+    0.7373415443900732,
+    0.8528084187605605
    ],
-   "mean": 0.6936117259676992,
-   "ci95": null,
+   "mean": 0.7612538963727776,
+   "ci95": [
+    0.5569383312898999,
+    0.9655694614556554
+   ],
    "per_arm": {
     "base__none": 0.9517819873690914,
     "gain__ladder_level_intercept": 0.6936117259676992,
     "gain__hf_only": 0.9511927243991357,
     "gain__ladder_pooled": 1.5969044433764017,
     "self_only__none": 0.6087035126179531
-   }
+   },
+   "mean_basis": "3-seed mean (seed confirm 2026-08-01, all checks passed)",
+   "ci95_note": "t-interval over n=3 independent training seeds (df=2); supersedes the in-round single-seed note"
   },
   "noise_floor_used": {
    "dataset": "ifc_poisson",
@@ -982,7 +1047,141 @@
    "ledger_note": "for state/timing_ledger.json: s1_poisson B3, ifc_poisson, 200 epochs, h100, 5 arms serial = 2.47 min wall (B1 4 arms = 4.47 min, B2 5 arms = 5.60 min). B3 is SHORTER than B2 because only two arms train (base 72.53 s allpairs, self_only 44.62 s) - G1/G2/G3 resume the staged base and only fit a closed-form head (0.24 s). Plus 1.07 min for the heat_local guard leg. --time=02:00:00 is ~49x the need (reviewer S4 confirmed again). peak_mem_mb and n_params 4,774,977 identical across arms."
   },
   "anchor_file_action": "NOT UPDATED. state/anchors/s1_poisson.json is untouched: per program.md section 4.5 the stream anchor is the batch-0 CERTIFIED 3-seed value (1.5656334312786022, mf_fno_transfer_film) and this card has seed 0 only (ADR 0004); B2 set the same precedent. Recorded here as anchor-BEATING CANDIDATES for the end-of-round top-3 confirmation pass (scripts/submit_seeds_2_3.sh): self_only__none 0.6087035126179531 (0.9569 skill / 3.99x floor below the certified anchor, and below its CI lower bound 1.4562) and gain__ladder_level_intercept 0.6936117259676992 (0.8720 / 3.64x floor below it).",
-  "_written_by": "experiment-initial-analyzer, 2026-07-30, single-seed invocation (ADR 0004). Parts 6-7 left null."
+  "_written_by": "experiment-initial-analyzer, 2026-07-30, single-seed invocation (ADR 0004). Parts 6-7 left null.",
+  "seed_confirm": {
+   "date_utc": "2026-08-01T16:32:16Z",
+   "jobs": {
+    "1": 66165256,
+    "2": 66165257
+   },
+   "slurm_state": {
+    "1": "COMPLETED",
+    "2": "COMPLETED"
+   },
+   "confirmed": true,
+   "gates": {
+    "0": {
+     "defined": false,
+     "note": "no per-seed verification gate script on this card; SLURM completion is the only in-job check"
+    },
+    "1": {
+     "defined": false,
+     "note": "no per-seed verification gate script on this card; SLURM completion is the only in-job check"
+    },
+    "2": {
+     "defined": false,
+     "note": "no per-seed verification gate script on this card; SLURM completion is the only in-job check"
+    }
+   },
+   "per_arm_panel_geomean_skill": {
+    "base__none": {
+     "per_seed": [
+      0.9517819873690914,
+      1.365431098106794,
+      1.117609849741816
+     ],
+     "mean": 1.1449409784059006,
+     "sd": 0.20817454130863988,
+     "min": 0.9517819873690914,
+     "max": 1.365431098106794,
+     "ci95": [
+      0.6278067496953331,
+      1.6620752071164682
+     ],
+     "ci95_basis": "t-interval, df=2, over n=3 independent training seeds",
+     "per_seed_nrmse": [
+      0.03426415154528729,
+      0.049155519531844584,
+      0.040233954590705376
+     ]
+    },
+    "gain__hf_only": {
+     "per_seed": [
+      0.9511927243991357,
+      1.3635240914816766,
+      1.1169012356859171
+     ],
+     "mean": 1.1438726838555766,
+     "sd": 0.20748465806491753,
+     "min": 0.9511927243991357,
+     "max": 1.3635240914816766,
+     "ci95": [
+      0.6284522201275089,
+      1.6592931475836443
+     ],
+     "ci95_basis": "t-interval, df=2, over n=3 independent training seeds",
+     "per_seed_nrmse": [
+      0.03424293807836888,
+      0.04908686729334035,
+      0.04020844448469302
+     ]
+    },
+    "gain__ladder_level_intercept": {
+     "per_seed": [
+      0.6936117259676992,
+      0.7373415443900732,
+      0.8528084187605605
+     ],
+     "mean": 0.7612538963727776,
+     "sd": 0.08224808315124874,
+     "min": 0.6936117259676992,
+     "max": 0.8528084187605605,
+     "ci95": [
+      0.5569383312898999,
+      0.9655694614556554
+     ],
+     "ci95_basis": "t-interval, df=2, over n=3 independent training seeds",
+     "per_seed_nrmse": [
+      0.024970022134837167,
+      0.026544295598042632,
+      0.030701103075380175
+     ]
+    },
+    "gain__ladder_pooled": {
+     "per_seed": [
+      1.5969044433764017,
+      2.1767677080570667,
+      2.173286909623975
+     ],
+     "mean": 1.9823196870191477,
+     "sd": 0.33378392938183965,
+     "min": 1.5969044433764017,
+     "max": 2.1767677080570667,
+     "ci95": [
+      1.153154440434328,
+      2.8114849336039676
+     ],
+     "ci95_basis": "t-interval, df=2, over n=3 independent training seeds",
+     "per_seed_nrmse": [
+      0.05748855996155046,
+      0.0783636374900544,
+      0.0782383287464631
+     ]
+    },
+    "self_only__none": {
+     "per_seed": [
+      0.6087035126179531,
+      0.7592505952819097,
+      1.0373189213634773
+     ],
+     "mean": 0.8017576764211135,
+     "sd": 0.21744638675718278,
+     "min": 0.6087035126179531,
+     "max": 1.0373189213634773,
+     "ci95": [
+      0.2615909067734338,
+      1.3419244460687931
+     ],
+     "ci95_basis": "t-interval, df=2, over n=3 independent training seeds",
+     "per_seed_nrmse": [
+      0.021913326454246308,
+      0.02733302143014875,
+      0.03734348116908518
+     ]
+    }
+   },
+   "source": "tools/aggregate_seed_confirm.py (validates seed 0 against this card before trusting seeds 1-2)"
+  }
  },
  "6_analysis": {
   "_scope": "Mechanism analysis over 3 probe turns (scratchpad/reanalysis_turn_{1,2,3}{,_results}.{py,md} in the worktree). All CPU, artifacts + one CPU replay of the frozen base; no re-training, no GPU, no card-scored number recomputed by hand. Every nRMSE below is computed with ${EVAL_DIR}/nrmse.py under nrmse_def_hash d3d0ade9191c13bacc40702f3eb26ad290e01641cacee22a1d2233b74c035850, the same hash as part 5.",

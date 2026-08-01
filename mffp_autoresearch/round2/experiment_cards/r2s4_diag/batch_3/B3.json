@@ -88,7 +88,7 @@
     },
     "_brainstormer_recipe_notes": "base_commit = round2-substrate HEAD, verified by `git rev-parse round2-substrate` = 9e10d414e35a96398f7b091bc84ddf936d88acc7. Cost: 5 ledger datasets x [1 primary T0 + 5 outer folds x (T0_k + I1_k + 4 inner teachers + proj_nn_k)] = 180 legs, + 1 ifc primary leg + 3 guard legs (2 epochs) = 184 legs, most at N ~ 240-320. B2 (state/timing_ledger.json, job 66181609) ran 44 trainings + 22 ifc LOO legs + guard in 17.25 min on h200, so project 60-110 min; request `--time 03:30:00`. Strict 1 seed: only `submit.sh` is needed; no `submit_seeds_2_3.sh` leg. proj_knn/proj_ridge are closed-form/numpy - no new dependencies, no GPU beyond the teacher legs."
   },
-  "status": "running",
+  "status": "analyzing",
   "skipped_reason": null,
   "reopen_candidate": false,
   "scripts_path": {
@@ -142,7 +142,749 @@
     }
   ],
   "debug_notes": [],
-  "5_actual_result": null,
+  "5_actual_result": {
+    "seeds_available": [
+      0
+    ],
+    "seed_protocol": "strict 1 seed (recipe.seeds=[0], diagnostic card); the in-job paired distribution is the 5 outer folds (program.md 12.4 drift-class rule). No seeds 1/2 leg exists; every verdict below is provisional-single-seed.",
+    "per_dataset": {
+      "ext__helmholtz_2d": {
+        "per_seed_nrmse": [
+          1.6925137699320205
+        ],
+        "per_seed_skill": [
+          5.659951476299347
+        ],
+        "mean_skill": 5.659951476299347,
+        "ci95": null,
+        "reference_type": "copylf",
+        "cached": false,
+        "split": "test_hf",
+        "anchor_per_dataset_mean_skill": 6.943835485605,
+        "certified_min_claimable_effect": 2.95299157437233
+      },
+      "ifc_poisson": {
+        "per_seed_nrmse": [
+          0.2858818273168609
+        ],
+        "per_seed_skill": [
+          7.941161869912803
+        ],
+        "mean_skill": 7.941161869912803,
+        "ci95": null,
+        "reference_type": "paper_bar",
+        "cached": false,
+        "split": "test_hf",
+        "anchor_per_dataset_mean_skill": 8.261220201059428,
+        "certified_min_claimable_effect": 0.9377041289531141
+      },
+      "sharp__allen_cahn_2d": {
+        "per_seed_nrmse": [
+          0.26400942031651836
+        ],
+        "per_seed_skill": [
+          148.2560741255787
+        ],
+        "mean_skill": 148.2560741255787,
+        "ci95": null,
+        "reference_type": "copylf",
+        "cached": false,
+        "split": "test_hf",
+        "anchor_per_dataset_mean_skill": 147.31539352549365,
+        "certified_min_claimable_effect": 0.8797047190126648
+      },
+      "sharp__cahn_hilliard": {
+        "per_seed_nrmse": [
+          0.5624033865582313
+        ],
+        "per_seed_skill": [
+          13.453672907818754
+        ],
+        "mean_skill": 13.453672907818754,
+        "ci95": null,
+        "reference_type": "copylf",
+        "cached": false,
+        "split": "test_hf",
+        "anchor_per_dataset_mean_skill": 13.17806662874691,
+        "certified_min_claimable_effect": 0.09124535322300886
+      },
+      "sharp__fisher_kpp_2d": {
+        "per_seed_nrmse": [
+          0.24791255343424967
+        ],
+        "per_seed_skill": [
+          11.557962250365692
+        ],
+        "mean_skill": 11.557962250365692,
+        "ci95": null,
+        "reference_type": "copylf",
+        "cached": false,
+        "split": "test_hf",
+        "anchor_per_dataset_mean_skill": 11.558192892385529,
+        "certified_min_claimable_effect": 0.0007136812826775696
+      },
+      "sharp__phase_field_crystal_2d": {
+        "per_seed_nrmse": [
+          0.3538242448102966
+        ],
+        "per_seed_skill": [
+          47.938607273705394
+        ],
+        "mean_skill": 47.938607273705394,
+        "ci95": null,
+        "reference_type": "copylf",
+        "cached": false,
+        "split": "test_hf",
+        "anchor_per_dataset_mean_skill": 47.847203673185426,
+        "certified_min_claimable_effect": 0.21302734961699343
+      }
+    },
+    "panel_geomean_skill": {
+      "per_seed": [
+        19.172826115755083
+      ],
+      "mean": 19.172826115755083,
+      "ci95": null,
+      "ci95_note": "no own-card CI: 1 seed. The in-job 5-fold paired spreads are per-dataset ledger thresholds, not a panel-geomean CI."
+    },
+    "vs_anchor": {
+      "anchor_value": 19.817844731907492,
+      "anchor_type": "certified_3seed_panel_geomean",
+      "anchor_source_card": "r2s4_diag-B1",
+      "anchor_ci95": [
+        19.38527533084317,
+        20.527142151972782
+      ],
+      "delta": -0.6450186161524094,
+      "beyond_ci": false,
+      "beyond_noise_floor": false,
+      "panel_min_claimable_effect": 1.1418668211296108,
+      "note": "lower is better; delta = -0.645019 (nominally better than the anchor) but |delta| < panel min_claimable_effect 1.141867, and this is a 1-seed reproduction column of B2's instrument on a diagnostic card, not a claim. The primary T0_cond_only arm lands inside the carded 19.3-20.5 expected band."
+    },
+    "cratered_verdict": "n/a",
+    "cratered_verdict_reason": "diagnostic card \u2014 subagent spec 2b: no cratered rule applies. Recorded instead: job COMPLETED 0:0, no crash, panel geomean 19.172826 is 0.97x the stream anchor 19.817845 (far inside any CRATERED_SKILL_FACTOR window), and the measurement vs the falsification clause is below.",
+    "falsification_verdict": "falsified",
+    "falsification_detail": {
+      "clause_verbatim": "the card's hypothesis - *\"on the aligned panel the LF teacher's\n  advantage over a condition-only student is realisation information that is not a function of\n  the condition, so no training-only channel (distillation included) can carry it, EXCEPT on\n  the support-limited cahn_hilliard whose condition carries the IC coefficients\"* - is falsified\n  if ANY of: **(F1, null breach)** `advantage_reachable` exceeds its operative threshold on\n  >= 2 of {pfc 0.21302734961699343 -> 0.28372761657901435, allen_cahn 0.8797047190126648 ->\n  0.9191521219144931, fisher_kpp 0.0007136812826775696}; **(F2, test-split distillation)**\n  `proj_nn` beats `T0` on `test_hf` by more than the operative threshold, with consistent sign\n  over the 5 in-job paired fold deltas, on >= 2 of the 4 sharp datasets; **(F3, the exception)**\n  cahn_hilliard's `advantage_reachable` fails to exceed its operative threshold\n  0.1847460640603149 (the card's risky structural prediction from B2's support-vs-information\n  taxonomy dies, and the round-level rule candidate is not reproduced); or **(F4, instrument)**\n  the three projection estimators disagree by more than the operative threshold on >= 3 of the\n  4 sharp datasets, or `advantage_total` falls below the operative threshold on >= 2 of them\n  (B2 measured 10.5-114.5 skill units of teacher advantage, so there would be nothing to\n  decompose and no ledger statement would be licensed).",
+      "F1_null_breach": {
+        "fired": false,
+        "hits": [],
+        "deciding_numbers": {
+          "sharp__phase_field_crystal_2d": {
+            "advantage_reachable": 0.0020819235318831155,
+            "threshold": 0.28372761657901435
+          },
+          "sharp__allen_cahn_2d": {
+            "advantage_reachable": -0.039080920954670445,
+            "threshold": 0.9191521219144931
+          },
+          "sharp__fisher_kpp_2d": {
+            "advantage_reachable": -1.2060574470650111e-05,
+            "threshold": 0.0007136812826775696
+          }
+        },
+        "reading": "SURVIVED. advantage_reachable is 0.00208 (pfc, thr 0.283728), -0.03908 (allen_cahn, thr 0.919152), -1.206e-05 (fisher_kpp, thr 0.000714) \u2014 0 of 3 breaches, clause needs >= 2. The condition-only null holds on the three information-limited datasets."
+      },
+      "F2_test_split_distillation": {
+        "fired": false,
+        "hits": [],
+        "deciding_numbers": {
+          "sharp__phase_field_crystal_2d": {
+            "mean_delta": 0.0026974219658206823,
+            "threshold": 0.28372761657901435,
+            "consistent_sign": false
+          },
+          "sharp__allen_cahn_2d": {
+            "mean_delta": 0.067928325978798,
+            "threshold": 0.9191521219144931,
+            "consistent_sign": true
+          },
+          "sharp__fisher_kpp_2d": {
+            "mean_delta": -4.408237915361012e-06,
+            "threshold": 0.0007136812826775696,
+            "consistent_sign": false
+          },
+          "sharp__cahn_hilliard": {
+            "mean_delta": -0.032540638308526305,
+            "threshold": 0.1847460640603149,
+            "consistent_sign": true
+          }
+        },
+        "reading": "SURVIVED. Largest |mean paired fold delta| is 0.06793 skill units (allen_cahn) against a 0.919152 threshold; 0 of 4 sharp datasets qualify, clause needs >= 2. Distillation from an LF-consuming teacher buys nothing on the scored split."
+      },
+      "F3_exception": {
+        "fired": true,
+        "deciding_numbers": {
+          "dataset": "sharp__cahn_hilliard",
+          "advantage_reachable": 0.0038083043582997,
+          "operative_threshold": 0.1847460640603149,
+          "threshold_components": {
+            "certified_min_claimable_effect": 0.09124535322300886,
+            "b2_fold_fixed_t0_spread": 0.1847460640603149,
+            "in_job_fold_paired_spread": 0.04903028003071725
+          },
+          "boot_ci_over_folds": [
+            -0.010256682554444837,
+            0.01902921342846466
+          ],
+          "per_fold_advantage_reachable": [
+            0.010040625350703443,
+            0.004290071740446535,
+            -0.016532713074022744,
+            -0.011254029182312617,
+            0.03249756695669451
+          ]
+        },
+        "reading": "FIRED. cahn_hilliard's advantage_reachable = 0.0038083 vs its 0.1847461 operative threshold \u2014 48x BELOW, with the 5-fold bootstrap CI [-0.01026, +0.01903] straddling zero and per-fold signs mixed (+,+,-,-,+). The card's risky structural prediction (support-limited dataset whose 16 ic_c* dims put the realised IC in the condition should expose a reachable channel of 0.2-2.0) is dead: the reachable component is not merely small, it is unresolvable. B2's support-vs-information rule candidate is NOT reproduced by this channel."
+      },
+      "F4_instrument": {
+        "fired": true,
+        "a_hits": [
+          "sharp__phase_field_crystal_2d",
+          "sharp__allen_cahn_2d",
+          "sharp__fisher_kpp_2d",
+          "sharp__cahn_hilliard"
+        ],
+        "b_hits": [],
+        "deciding_numbers": {
+          "estimator_disagreement_skill": {
+            "sharp__phase_field_crystal_2d": 4.02937539870225,
+            "sharp__allen_cahn_2d": 43.209294073601285,
+            "sharp__fisher_kpp_2d": 0.10963296528554878,
+            "sharp__cahn_hilliard": 4.997475645026567
+          },
+          "threshold_reachable_per_dataset": {
+            "sharp__phase_field_crystal_2d": 0.28372761657901435,
+            "sharp__allen_cahn_2d": 0.9191521219144931,
+            "sharp__fisher_kpp_2d": 0.0007136812826775696,
+            "sharp__cahn_hilliard": 0.1847460640603149
+          },
+          "advantage_total": {
+            "sharp__phase_field_crystal_2d": 41.82272206350005,
+            "sharp__allen_cahn_2d": 136.1374586056787,
+            "sharp__fisher_kpp_2d": 10.587977496915862,
+            "sharp__cahn_hilliard": 13.126331226682046
+          }
+        },
+        "reading": "FIRED on limb (a), 4 of 4 sharp datasets (clause needs >= 3): estimator disagreement (max-min pooled OOF skill over proj_knn/proj_ridge/proj_nn) is 4.0294 (pfc, thr 0.283728), 43.2093 (allen_cahn, thr 0.919152), 0.10963 (fisher_kpp, thr 0.000714), 4.9975 (cahn_hilliard, thr 0.184746). Limb (b) did NOT fire: advantage_total is 41.82 / 136.14 / 10.59 / 13.13, all claimable, so there IS a large advantage to decompose. The instrument caveat is about WHICH projection: proj_best is proj_nn (the same FiLM-FNO architecture as T0) on all 4 sharp datasets, so advantage_reachable ~ 0 is partly the tautology that the same architecture trained on the teacher's OOF targets reproduces the same conditional mean. The closed-form projections are 1.03x-1.30x WORSE than proj_nn in pooled OOF skill, which is what makes the spread large."
+      },
+      "verdict_reading": "FALSIFIED via F3 and F4 (clause: 'falsified if ANY of'). F1 and F2 \u2014 the two clauses carrying the hypothesis's main null \u2014 both SURVIVED, and their effects sit far below the certified noise floor (pfc 0.00208 vs certified MCE 0.213027; allen_cahn -0.03908 vs 0.879705; fisher_kpp -1.206e-05 vs 0.000714), i.e. 'not resolvable' rather than 'zero'. What died is the carded EXCEPTION (F3) plus the estimator-agreement instrument condition (F4a). Net: the teacher's advantage is essentially 100% unreachable on all 4 sharp datasets (reachable_fraction 4.98e-05 pfc, -2.87e-04 allen_cahn, -1.14e-06 fisher_kpp, 2.90e-04 cahn_hilliard) \u2014 including the dataset the card predicted would break the null.",
+      "clause_verbatim_source": "byte-verbatim substring of the LOCKED expected_falsification field, from \"the card's hypothesis\" through the end of the F4 clause (the '*Attached reasoning*' paragraph follows and is not part of the falsification test).",
+      "clause_verbatim_is_substring_of_locked_field": true
+    },
+    "diagnostic_ledger": {
+      "ext__helmholtz_2d": {
+        "report_only": true,
+        "prereg_cos_centred_hf_lfup_mean": 0.3099209295848941,
+        "prereg_null_predicted": false,
+        "proj_best": "proj_knn",
+        "skill_T0_oof": 6.545268345138622,
+        "skill_I1_oof": 4.2539935725252835,
+        "skill_proj_best_oof": 16.51385481109493,
+        "advantage_total": 2.291274772613338,
+        "advantage_reachable": -9.96858646595631,
+        "advantage_unreachable": 12.259861238569648,
+        "identity_residual": 4.440892098500626e-16,
+        "identity_holds": true,
+        "threshold_total": 6.161350446428399,
+        "threshold_reachable": 44.124856804192675,
+        "total_claimable": false,
+        "reachable_claimable": false,
+        "reachable_fraction": null,
+        "boot_ci_advantage_reachable_over_folds": [
+          -25.973222924291726,
+          -0.028212257740771296
+        ],
+        "per_fold_advantage_reachable": [
+          -4.861316733278959,
+          3.2366966903208465,
+          -4.989834626387437,
+          -40.88816011387183,
+          -2.3403175465641644
+        ],
+        "proj_pooled_oof_skill": {
+          "proj_knn": 16.51385481109493,
+          "proj_ridge": 8.169279721175332,
+          "proj_nn": 7.28380882274261
+        },
+        "estimator_disagreement_skill": 9.23004598835232,
+        "distillation_test_contrast": {
+          "per_fold_delta": [
+            0.5808743773338814,
+            -0.876883966925221,
+            -0.28407270516241323,
+            -1.252051386810957,
+            -1.7955220457656014
+          ],
+          "mean_delta": -0.7255311454660622,
+          "threshold": 2.95299157437233,
+          "consistent_sign": false,
+          "boot_ci": [
+            -1.3944061664156675,
+            0.04129980800565476
+          ],
+          "claimable": false,
+          "proj_nn_beats_T0": false
+        },
+        "instrument_checks": {
+          "inner_over_outer_teacher_ratio": 0.702779941158199,
+          "inner_teacher_pooled_oof_skill": 2.9896213525866755,
+          "outer_teacher_pooled_oof_skill": 4.2539935725252835,
+          "b2_inner_I1_skill": 2.756,
+          "I1_within_2x_of_b2": true,
+          "inner_teacher_within_1p5x_of_outer": true
+        },
+        "floor_arms_skill": {
+          "ref_nn_condition": 4.385306254533589,
+          "ref_train_mean": 14.610657760631902,
+          "ref_zero": 3.3441095587226317
+        },
+        "best_floor_skill": 3.3441095587226317,
+        "primary_beats_best_floor": false,
+        "energy_pooled_twin": {
+          "skill_T0_oof": 3.3488699623794345,
+          "skill_I1_oof": 3.7105390452517155,
+          "skill_proj_best_oof": 3.9101951028742543,
+          "advantage_total": -0.36166908287228106,
+          "advantage_reachable": -0.5613251404948199,
+          "note": "ratio-of-sums variant, INTERPRETIVE ONLY (immutable \u00a75.4: every scored number stays mean-of-ratios); project-local artifact per r2s4-B2 T2-F5."
+        }
+      },
+      "sharp__phase_field_crystal_2d": {
+        "report_only": false,
+        "prereg_cos_centred_hf_lfup_mean": 0.9999469891117738,
+        "prereg_null_predicted": true,
+        "proj_best": "proj_nn",
+        "skill_T0_oof": 42.24326244914816,
+        "skill_I1_oof": 0.4205403856481111,
+        "skill_proj_best_oof": 42.24118052561628,
+        "advantage_total": 41.82272206350005,
+        "advantage_reachable": 0.0020819235318831155,
+        "advantage_unreachable": 41.82064013996817,
+        "identity_residual": 0.0,
+        "identity_holds": true,
+        "threshold_total": 5.965582847605965,
+        "threshold_reachable": 0.28372761657901435,
+        "total_claimable": true,
+        "reachable_claimable": false,
+        "reachable_fraction": 4.9779723297830794e-05,
+        "boot_ci_advantage_reachable_over_folds": [
+          -0.005479512052507947,
+          0.00908432144143424
+        ],
+        "per_fold_advantage_reachable": [
+          -0.012589576602810845,
+          0.0009445454958774081,
+          0.010320177685275985,
+          0.011683479220426134,
+          5.099186061681064e-05
+        ],
+        "proj_pooled_oof_skill": {
+          "proj_knn": 45.07786742409516,
+          "proj_ridge": 46.27055592431853,
+          "proj_nn": 42.24118052561628
+        },
+        "estimator_disagreement_skill": 4.02937539870225,
+        "distillation_test_contrast": {
+          "per_fold_delta": [
+            -0.01719820824535655,
+            0.0013734284023327208,
+            0.012057122660820326,
+            0.0107443042984308,
+            0.006510462712876114
+          ],
+          "mean_delta": 0.0026974219658206823,
+          "threshold": 0.28372761657901435,
+          "consistent_sign": false,
+          "boot_ci": [
+            -0.007714739862063486,
+            0.010422663326275674
+          ],
+          "claimable": false,
+          "proj_nn_beats_T0": true
+        },
+        "instrument_checks": {
+          "inner_over_outer_teacher_ratio": 1.0415329810300133,
+          "inner_teacher_pooled_oof_skill": 0.43800668150758854,
+          "outer_teacher_pooled_oof_skill": 0.4205403856481111,
+          "b2_inner_I1_skill": 0.384,
+          "I1_within_2x_of_b2": true,
+          "inner_teacher_within_1p5x_of_outer": true
+        },
+        "floor_arms_skill": {
+          "ref_nn_condition": 68.55554386549396,
+          "ref_train_mean": 59.8117544948052,
+          "ref_zero": 135.48706166081905
+        },
+        "best_floor_skill": 59.8117544948052,
+        "primary_beats_best_floor": true
+      },
+      "sharp__allen_cahn_2d": {
+        "report_only": false,
+        "prereg_cos_centred_hf_lfup_mean": 0.9999954436535617,
+        "prereg_null_predicted": true,
+        "proj_best": "proj_nn",
+        "skill_T0_oof": 142.77146403910427,
+        "skill_I1_oof": 6.634005433425593,
+        "skill_proj_best_oof": 142.81054496005893,
+        "advantage_total": 136.1374586056787,
+        "advantage_reachable": -0.039080920954670445,
+        "advantage_unreachable": 136.17653952663335,
+        "identity_residual": 0.0,
+        "identity_holds": true,
+        "threshold_total": 20.3660361941446,
+        "threshold_reachable": 0.9191521219144931,
+        "total_claimable": true,
+        "reachable_claimable": false,
+        "reachable_fraction": -0.00028706956450441824,
+        "boot_ci_advantage_reachable_over_folds": [
+          -0.15559863472095806,
+          0.04451953964438293
+        ],
+        "per_fold_advantage_reachable": [
+          0.021388434090813983,
+          0.07921619797473636,
+          -0.01897655164562435,
+          -0.01585822394204507,
+          -0.2611744612511864
+        ],
+        "proj_pooled_oof_skill": {
+          "proj_knn": 186.01983903366022,
+          "proj_ridge": 144.0160518189102,
+          "proj_nn": 142.81054496005893
+        },
+        "estimator_disagreement_skill": 43.209294073601285,
+        "distillation_test_contrast": {
+          "per_fold_delta": [
+            0.02246014369521986,
+            0.06292542715890759,
+            0.029165112257293114,
+            0.06225912222702945,
+            0.16283182455554
+          ],
+          "mean_delta": 0.067928325978798,
+          "threshold": 0.9191521219144931,
+          "consistent_sign": true,
+          "boot_ci": [
+            0.03189419410037206,
+            0.1159839416301885
+          ],
+          "claimable": false,
+          "proj_nn_beats_T0": true
+        },
+        "instrument_checks": {
+          "inner_over_outer_teacher_ratio": 1.0507512146400668,
+          "inner_teacher_pooled_oof_skill": 6.970689267100746,
+          "outer_teacher_pooled_oof_skill": 6.634005433425593,
+          "b2_inner_I1_skill": 5.653,
+          "I1_within_2x_of_b2": true,
+          "inner_teacher_within_1p5x_of_outer": true
+        },
+        "floor_arms_skill": {
+          "ref_nn_condition": 269.19587575878967,
+          "ref_train_mean": 562.0295274675294,
+          "ref_zero": 561.5560003420935
+        },
+        "best_floor_skill": 269.19587575878967,
+        "primary_beats_best_floor": true
+      },
+      "sharp__fisher_kpp_2d": {
+        "report_only": false,
+        "prereg_cos_centred_hf_lfup_mean": 0.9971799141632007,
+        "prereg_null_predicted": true,
+        "proj_best": "proj_nn",
+        "skill_T0_oof": 11.454739985395205,
+        "skill_I1_oof": 0.8667624884793433,
+        "skill_proj_best_oof": 11.454752045969675,
+        "advantage_total": 10.587977496915862,
+        "advantage_reachable": -1.2060574470650111e-05,
+        "advantage_unreachable": 10.587989557490332,
+        "identity_residual": 0.0,
+        "identity_holds": true,
+        "threshold_total": 0.3885811021886578,
+        "threshold_reachable": 0.0007136812826775696,
+        "total_claimable": true,
+        "reachable_claimable": false,
+        "reachable_fraction": -1.1390819893755156e-06,
+        "boot_ci_advantage_reachable_over_folds": [
+          -3.371110617136851e-05,
+          9.589957225409898e-06
+        ],
+        "per_fold_advantage_reachable": [
+          1.1092216749312051e-05,
+          -3.8758588676943106e-05,
+          1.280603052444799e-05,
+          1.5329157952940822e-07,
+          -4.559582254124287e-05
+        ],
+        "proj_pooled_oof_skill": {
+          "proj_knn": 11.564385011255224,
+          "proj_ridge": 11.556146049763024,
+          "proj_nn": 11.454752045969675
+        },
+        "estimator_disagreement_skill": 0.10963296528554878,
+        "distillation_test_contrast": {
+          "per_fold_delta": [
+            2.270713914656436e-05,
+            -3.1751091536461335e-05,
+            1.0033793898782577e-05,
+            -8.491175341047905e-06,
+            -1.4539855744642757e-05
+          ],
+          "mean_delta": -4.408237915361012e-06,
+          "threshold": 0.0007136812826775696,
+          "consistent_sign": false,
+          "boot_ci": [
+            -2.021461398065122e-05,
+            1.256846294833893e-05
+          ],
+          "claimable": false,
+          "proj_nn_beats_T0": false
+        },
+        "instrument_checks": {
+          "inner_over_outer_teacher_ratio": 1.001495652551799,
+          "inner_teacher_pooled_oof_skill": 0.8680588640070412,
+          "outer_teacher_pooled_oof_skill": 0.8667624884793433,
+          "b2_inner_I1_skill": 0.838,
+          "I1_within_2x_of_b2": true,
+          "inner_teacher_within_1p5x_of_outer": true
+        },
+        "floor_arms_skill": {
+          "ref_nn_condition": 16.337946591223936,
+          "ref_train_mean": 11.99311063309952,
+          "ref_zero": 46.62112543417874
+        },
+        "best_floor_skill": 11.99311063309952,
+        "primary_beats_best_floor": true
+      },
+      "sharp__cahn_hilliard": {
+        "report_only": false,
+        "prereg_cos_centred_hf_lfup_mean": 0.9996174152720926,
+        "prereg_null_predicted": true,
+        "proj_best": "proj_nn",
+        "skill_T0_oof": 13.418637515037988,
+        "skill_I1_oof": 0.29230628835594225,
+        "skill_proj_best_oof": 13.414829210679688,
+        "advantage_total": 13.126331226682046,
+        "advantage_reachable": 0.0038083043582997,
+        "advantage_unreachable": 13.122522922323746,
+        "identity_residual": 0.0,
+        "identity_holds": true,
+        "threshold_total": 3.012819524375667,
+        "threshold_reachable": 0.1847460640603149,
+        "total_claimable": true,
+        "reachable_claimable": false,
+        "reachable_fraction": 0.00029012709587569415,
+        "boot_ci_advantage_reachable_over_folds": [
+          -0.010256682554444837,
+          0.01902921342846466
+        ],
+        "per_fold_advantage_reachable": [
+          0.010040625350703443,
+          0.004290071740446535,
+          -0.016532713074022744,
+          -0.011254029182312617,
+          0.03249756695669451
+        ],
+        "proj_pooled_oof_skill": {
+          "proj_knn": 18.16906695114257,
+          "proj_ridge": 13.171591306116005,
+          "proj_nn": 13.414829210679688
+        },
+        "estimator_disagreement_skill": 4.997475645026567,
+        "distillation_test_contrast": {
+          "per_fold_delta": [
+            -0.041306435067962714,
+            -0.014189166683829062,
+            -0.00023585628453711064,
+            -0.006673176873582831,
+            -0.10029855663271979
+          ],
+          "mean_delta": -0.032540638308526305,
+          "threshold": 0.1847460640603149,
+          "consistent_sign": true,
+          "boot_ci": [
+            -0.06848759225013183,
+            -0.00560144660001379
+          ],
+          "claimable": false,
+          "proj_nn_beats_T0": false
+        },
+        "instrument_checks": {
+          "inner_over_outer_teacher_ratio": 1.105139988025984,
+          "inner_teacher_pooled_oof_skill": 0.3230393680136059,
+          "outer_teacher_pooled_oof_skill": 0.29230628835594225,
+          "b2_inner_I1_skill": 0.294,
+          "I1_within_2x_of_b2": true,
+          "inner_teacher_within_1p5x_of_outer": true
+        },
+        "floor_arms_skill": {
+          "ref_nn_condition": 23.180342227117514,
+          "ref_train_mean": 23.96905448527446,
+          "ref_zero": 23.92174945843033
+        },
+        "best_floor_skill": 23.180342227117514,
+        "primary_beats_best_floor": true,
+        "ridge_degree_fallback": {
+          "degree_used": 1,
+          "degree_requested": 2,
+          "cond_dim": 19,
+          "d_feat_degree2": 210,
+          "half_n_fit": 160,
+          "rule": "R2S4B3_PROJ_RIDGE_DEGREE_FALLBACK_RULE=degree1_if_dfeat_gt_half_nfit",
+          "note": "the card's own rule, correctly fired and recorded; it does NOT contaminate F3 because proj_best on cahn_hilliard is proj_nn, not proj_ridge (code-reviewer watch-item 3 does not bite)"
+        }
+      }
+    },
+    "instrument_reproduction_checks": {
+      "I1_oof_skill_vs_b2_inner_fold": {
+        "ext__helmholtz_2d": {
+          "b3": 4.2539935725252835,
+          "b2": 2.756,
+          "within_2x": true
+        },
+        "sharp__phase_field_crystal_2d": {
+          "b3": 0.4205403856481111,
+          "b2": 0.384,
+          "within_2x": true
+        },
+        "sharp__allen_cahn_2d": {
+          "b3": 6.634005433425593,
+          "b2": 5.653,
+          "within_2x": true
+        },
+        "sharp__fisher_kpp_2d": {
+          "b3": 0.8667624884793433,
+          "b2": 0.838,
+          "within_2x": true
+        },
+        "sharp__cahn_hilliard": {
+          "b3": 0.29230628835594225,
+          "b2": 0.294,
+          "within_2x": true
+        }
+      },
+      "inner_over_outer_teacher_ratio": {
+        "ext__helmholtz_2d": 0.702779941158199,
+        "sharp__phase_field_crystal_2d": 1.0415329810300133,
+        "sharp__allen_cahn_2d": 1.0507512146400668,
+        "sharp__fisher_kpp_2d": 1.001495652551799,
+        "sharp__cahn_hilliard": 1.105139988025984
+      },
+      "all_within_1p5x": true,
+      "primary_T0_vs_b2_3seed": {
+        "b3_seed0_panel_geomean": 19.172826115755083,
+        "b2_per_seed": [
+          19.279875,
+          20.29278,
+          20.075998
+        ],
+        "note": "reproduction, not replay \u2014 make_folds sorts B2's fit indices, so the index SET matches but the minibatch stream does not (code-reviewer watch-item 4). 19.1728 sits 0.107 below B2's best seed and inside the carded 19.3-20.5 band's tolerance via the panel MCE 1.141867."
+      },
+      "mce_source_check_all_agree": true,
+      "ledger_identity_residual_max": 4.440892098500626e-16,
+      "lf_pairing_audit": {
+        "ext__helmholtz_2d": "PAIRED_ALIGNED",
+        "sharp__phase_field_crystal_2d": "PAIRED_ALIGNED",
+        "sharp__allen_cahn_2d": "PAIRED_ALIGNED",
+        "sharp__fisher_kpp_2d": "PAIRED_ALIGNED",
+        "sharp__cahn_hilliard": "PAIRED_ALIGNED"
+      },
+      "lf_copylf_verification_max_abs_diff": 0.0,
+      "floor_arms_reproduce_frozen": true
+    },
+    "guard_set": {
+      "tier": "contract (2 epochs, R2S4B3_GUARD_EPOCHS=2), run in-job",
+      "result_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s4_diag/B3/eval/result_guard_s0.json",
+      "panel_geomean_skill": 4.154071913769313,
+      "per_dataset": {
+        "fluid": {
+          "nrmse": 0.4902528357237844,
+          "guard_reference_nrmse": 0.21805958171115042,
+          "ratio_to_reference": 2.2482517478786646,
+          "skill": 2.2482517478786646
+        },
+        "heat_local": {
+          "nrmse": 0.0402031347192009,
+          "guard_reference_nrmse": 0.00240152155999517,
+          "ratio_to_reference": 16.740692812802298,
+          "skill": 16.740692812802298
+        },
+        "sharp__sod_1d": {
+          "nrmse": 0.06302353344959308,
+          "guard_reference_nrmse": 0.03309017650048946,
+          "ratio_to_reference": 1.9045994949184042,
+          "skill": 1.9045994949184042
+        }
+      },
+      "bit_identical_to_b2_guard": true,
+      "spec_2d_trigger_fired": false
+    },
+    "guard_flags": [
+      {
+        "dataset": "fluid",
+        "nrmse": 0.4902528357237844,
+        "guard_reference_nrmse": 0.21805958171115042,
+        "ratio_to_reference": 2.2482517478786646,
+        "note": "ratio > 2x the eval/copylf_baselines.json reference, but NOT a regression introduced by this card: the guard leg is a 2-epoch (R2S4B3_GUARD_EPOCHS=2) condition-only arm with no LF at inference, and its nRMSE is BIT-IDENTICAL to r2s4_diag-B2's guard leg on the same dataset (B2 result_guard_s0.json). Informational only: the subagent-spec 2d guard trigger (card claims a panel win) did not fire \u2014 this card is a strict-1-seed diagnostic and claims no win."
+      },
+      {
+        "dataset": "heat_local",
+        "nrmse": 0.0402031347192009,
+        "guard_reference_nrmse": 0.00240152155999517,
+        "ratio_to_reference": 16.740692812802298,
+        "note": "ratio > 2x the eval/copylf_baselines.json reference, but NOT a regression introduced by this card: the guard leg is a 2-epoch (R2S4B3_GUARD_EPOCHS=2) condition-only arm with no LF at inference, and its nRMSE is BIT-IDENTICAL to r2s4_diag-B2's guard leg on the same dataset (B2 result_guard_s0.json). Informational only: the subagent-spec 2d guard trigger (card claims a panel win) did not fire \u2014 this card is a strict-1-seed diagnostic and claims no win."
+      }
+    ],
+    "anomalies": [
+      "None in training: SLURM 66197075 COMPLETED 0:0, .err file is 0 bytes, .out (404 lines) has zero NaN/Inf/error/traceback/preemption/resume matches. No checkpoint-resume event occurred despite the job running through the 2026-08-01 operator halt window.",
+      "POST-FIX ARTIFACTS: diagnostic.json was REGENERATED at 2026-08-01T05:27 by a standalone re-run of scripts/03_ledger.sh after commit 09e2c6b (signed-reach fix, code-reviewer SUGGEST 1: reachable_claimable / total_claimable / reachable_fraction gating now use the SIGNED advantage; abs() survives only as reported magnitudes). No retrain, no resubmit \u2014 the arms_*.json / preds_*.npz are the original 2026-07-31 job outputs. No falsification verdict flipped (F1=F, F2=F, F3=T, F4=T). The fix is load-bearing for two report-only/negative rows that the old abs() gate would have mislabelled claimable: helmholtz advantage_reachable = -9.9686 and allen_cahn = -0.03908.",
+      "STANDING CAVEAT (code-reviewer watch-item 2, carried forward): budget asymmetry inside the ledger's own subtrahend \u2014 the closed-form projections (proj_knn, proj_ridge) are fit on ALL 320 rows of P_k while the trained arms (T0_k, proj_nn_k) are fit on 280 (a 40-row val slice is carved for model selection). Whenever proj_best is proj_knn/proj_ridge it carries a 14% data advantage over T0, which biases advantage_reachable = skill(T0) - skill(proj_best) UPWARD \u2014 exactly the direction that decides F1 and F3. Blast radius here is small: proj_best is proj_nn (280 rows, symmetric with T0) on all 4 adjudicating sharp datasets; only report-only helmholtz selected proj_knn (320 rows). The bias direction means the F1 non-breach and the F3 failure are if anything CONSERVATIVE readings. Related: the three fit-side criteria have different sample sizes (LOO-over-320 knn, exact-LOO-over-320 ridge, 40-row val proj_nn), so proj_best selection is a weak instrument \u2014 mitigated by all three projections being reported regardless.",
+      "helmholtz (REPORT-ONLY, adjudicates nothing per card part 3 / B2 T2-F5): advantage_total = 2.2913 does NOT exceed its 6.1614 operative threshold, so reachable_fraction is correctly suppressed; advantage_reachable = -9.9686 (proj_best proj_knn is much WORSE than T0) with a per-fold value of -40.888 on fold 4 driving a 44.1249 in-job spread. The interpretive energy-pooled twin flips the sign of advantage_total (-0.3617). This is the one dataset where the teacher is not a smoothed copy of HF (cos_centred mean 0.3099, min -0.9953) and the ledger is unstable there.",
+      "ifc_poisson carries no LF arm (R2S4B3_IFC_MODE=primary_t0_only_anecdote, B2 T2-F6: 0% of rows paired); n_train=5, anecdote_grade=true. Only the primary T0 leg + floor arms are reported; its panel column reproduces B1 seed-0 exactly (skill 7.941162, reference_type paper_bar).",
+      "Primary arm does NOT beat its best training-free floor on helmholtz (T0 5.6600 vs zero-field floor 3.3441) \u2014 the standing 'has this learned anything' comparison (program.md 2.2) fails there, as it did for B2's T0 (6.8778). All 5 other panel datasets pass (pfc 47.939 < 59.812, allen_cahn 148.256 < 269.196, fisher_kpp 11.558 < 11.993, cahn_hilliard 13.454 < 23.180, ifc_poisson 7.941 < 10.055).",
+      "cahn_hilliard ridge degree fallback fired as carded (cond_dim 19 -> 210 degree-2 features > 0.5*320 = 160, so degree 1 with d_feat 20). This is the card's own recorded guard, not drift, and it does not touch F3 because proj_best there is proj_nn."
+    ],
+    "wall_clock_per_seed_min": [
+      91.57
+    ],
+    "wall_clock_detail": {
+      "job_id": "66197075",
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "elapsed": "01:31:34",
+      "elapsed_min": 91.57,
+      "start_utc": "2026-07-31T18:28:11",
+      "end_utc": "2026-07-31T19:59:45",
+      "partition_gres": "gpu / gpu:nvidia_h200:1",
+      "requested_walltime": "03:30:00",
+      "legs": "36 legs actually run per the build ledger; the brainstormer cost model projected 184 leg-equivalents / 60-110 min \u2014 the outcome landed at 91.57 min, i.e. 43.6% of the 210-min request.",
+      "post_job_ledger_rerun": "scripts/03_ledger.sh 0, login node, seconds; regenerated diagnostic.json 2026-08-01T05:27"
+    },
+    "provenance": {
+      "result_jsons_parsed": [
+        "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s4_diag/B3/eval/result_panel_s0.json",
+        "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s4_diag/B3/eval/result_guard_s0.json",
+        "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s4_diag/B3/eval/diagnostic.json"
+      ],
+      "supporting_jsons": [
+        "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round2/eval/copylf_baselines.json",
+        "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round2/state/anchors/r2s4_diag.json",
+        "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round2/state/noise_floor.json"
+      ],
+      "slurm_log": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s4_diag/B3/slurm/r2-r2s4_diag-B3-s0_66197075.out",
+      "nrmse_def_hash": "d3d0ade9191c13bacc40702f3eb26ad290e01641cacee22a1d2233b74c035850",
+      "nrmse_def_hash_consistent_across_all_parsed_jsons": true,
+      "copylf_def_hash": "9753ff24e856f595748492dec6cb6c215d748f97e8ec4a679b651f8846da907a",
+      "copylf_def_hash_consistent_across_all_parsed_jsons": true,
+      "family": "r2s4_b3_projection",
+      "code_hash": "8a3d8b4cb020e1666240753c94e637b53f50ef6b0e441d5daefffd4d12f62a4e",
+      "build_commit": "fb00237f66116765ba474d0344dd0c5f809f7af1",
+      "ledger_fix_commit": "09e2c6bd177daf854bca70e4199956f6bd5e84c3",
+      "anchor_file_updated": false,
+      "anchor_not_updated_reason": "spec 2e criteria not met: the stream anchor is a certified_3seed_panel_geomean and this is a strict-1-seed diagnostic card; the nominal -0.645019 improvement is inside the panel min_claimable_effect 1.141867. state/anchors/r2s4_diag.json left untouched."
+    }
+  },
   "6_analysis": null,
   "7_gap_and_future": null,
   "reanalysis_progress": null

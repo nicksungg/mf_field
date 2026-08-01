@@ -1,0 +1,424 @@
+{
+ "generated_utc": "2026-08-01T16:27:16Z",
+ "protocol": "round1_report.md \u00a78 step 2 \u2014 top-3 seed confirms, smoke tier (200 epochs), submit_seeds_2_3.sh verbatim at commit ddf5ddb",
+ "seeds": [
+  0,
+  1,
+  2
+ ],
+ "streams": {
+  "s4_hybrid_routing": {
+   "panel_datasets": [
+    "ext__helmholtz_2d",
+    "sharp__phase_field_crystal_2d",
+    "sharp__allen_cahn_2d",
+    "sharp__fisher_kpp_2d",
+    "sharp__cahn_hilliard",
+    "ifc_poisson"
+   ],
+   "per_arm_panel_geomean_skill": {
+    "dc_cleaned": {
+     "per_seed": [
+      0.12330796353386629,
+      0.12533546310180452,
+      0.1288372071846238
+     ],
+     "mean": 0.1258268779400982,
+     "sd": 0.0027971861298154536,
+     "min": 0.12330796353386629,
+     "max": 0.1288372071846238,
+     "ci95": [
+      0.11887828238797736,
+      0.13277547349221905
+     ],
+     "ci95_basis": "t-interval, df=2, over n=3 independent training seeds"
+    },
+    "dc_raw": {
+     "per_seed": [
+      0.19257695455895218,
+      0.1955619376282096,
+      0.20289246780209264
+     ],
+     "mean": 0.1970104533297515,
+     "sd": 0.0053081165841154555,
+     "min": 0.19257695455895218,
+     "max": 0.20289246780209264,
+     "ci95": [
+      0.18382436074428707,
+      0.21019654591521594
+     ],
+     "ci95_basis": "t-interval, df=2, over n=3 independent training seeds"
+    },
+    "lsi_alone": {
+     "per_seed": [
+      0.19721724552168773,
+      0.19599359519724746,
+      0.20069517792895825
+     ],
+     "mean": 0.19796867288263117,
+     "sd": 0.0024392011714618883,
+     "min": 0.19599359519724746,
+     "max": 0.20069517792895825,
+     "ci95": [
+      0.19190936126582925,
+      0.2040279844994331
+     ],
+     "ci95_basis": "t-interval, df=2, over n=3 independent training seeds"
+    },
+    "router": {
+     "per_seed": [
+      0.12330796353386629,
+      0.12533546310180452,
+      0.1288372071846238
+     ],
+     "mean": 0.1258268779400982,
+     "sd": 0.0027971861298154536,
+     "min": 0.12330796353386629,
+     "max": 0.1288372071846238,
+     "ci95": [
+      0.11887828238797736,
+      0.13277547349221905
+     ],
+     "ci95_basis": "t-interval, df=2, over n=3 independent training seeds"
+    },
+    "router_forced_wrong": {
+     "per_seed": [
+      0.12330796353386629,
+      0.12533546310180452,
+      0.1288372071846238
+     ],
+     "mean": 0.1258268779400982,
+     "sd": 0.0027971861298154536,
+     "min": 0.12330796353386629,
+     "max": 0.1288372071846238,
+     "ci95": [
+      0.11887828238797736,
+      0.13277547349221905
+     ],
+     "ci95_basis": "t-interval, df=2, over n=3 independent training seeds"
+    }
+   },
+   "jobs": {
+    "1": 66165252,
+    "2": 66165253
+   },
+   "slurm_state": {
+    "1": "FAILED",
+    "2": "FAILED"
+   },
+   "gates": {
+    "0": {
+     "defined": true,
+     "all_pass": true,
+     "failures": []
+    },
+    "1": {
+     "defined": true,
+     "all_pass": false,
+     "failures": [
+      {
+       "gate": "V1",
+       "dataset": "sharp__phase_field_crystal_2d",
+       "arm": "dc_raw",
+       "rel_dev": 0.18786605672305912,
+       "tol": 0.1,
+       "nrmse": 0.0008557537373796224
+      },
+      {
+       "gate": "V5",
+       "dataset": "ifc_poisson",
+       "arm": "dc_raw",
+       "rel_dev": 0.006226298016647524,
+       "tol": 0.00019,
+       "nrmse": 0.05232358949935024
+      },
+      {
+       "gate": "V5",
+       "dataset": "ifc_poisson",
+       "arm": "lsi_alone",
+       "rel_dev": 0.007110555379233186,
+       "tol": 0.00019,
+       "nrmse": 0.05236957072578301
+      }
+     ]
+    },
+    "2": {
+     "defined": true,
+     "all_pass": false,
+     "failures": [
+      {
+       "gate": "V1",
+       "dataset": "sharp__phase_field_crystal_2d",
+       "arm": "dc_raw",
+       "rel_dev": 0.2825639628325489,
+       "tol": 0.1,
+       "nrmse": 0.0009239753071572609
+      },
+      {
+       "gate": "V5",
+       "dataset": "ifc_poisson",
+       "arm": "dc_raw",
+       "rel_dev": 0.00032519535934461295,
+       "tol": 0.00019,
+       "nrmse": 0.061076264063120965
+      }
+     ]
+    }
+   },
+   "confirmed": false
+  },
+  "s6_local": {
+   "panel_datasets": [
+    "ext__helmholtz_2d",
+    "ifc_poisson",
+    "sharp__allen_cahn_2d",
+    "sharp__cahn_hilliard",
+    "sharp__fisher_kpp_2d",
+    "sharp__phase_field_crystal_2d"
+   ],
+   "per_arm_panel_geomean_skill": {
+    "b1_replica": {
+     "per_seed": [
+      0.23457046590844718,
+      0.23243902941919298,
+      0.2408694409985195
+     ],
+     "mean": 0.2359596454420532,
+     "sd": 0.0043835287932957765,
+     "min": 0.23243902941919298,
+     "max": 0.2408694409985195,
+     "ci95": [
+      0.22507035625567423,
+      0.24684893462843216
+     ],
+     "ci95_basis": "t-interval, df=2, over n=3 independent training seeds"
+    },
+    "circ_repair": {
+     "per_seed": [
+      0.19257491364521556,
+      0.19552399359816727,
+      0.20291132145315913
+     ],
+     "mean": 0.197003409565514,
+     "sd": 0.005324644147392339,
+     "min": 0.19257491364521556,
+     "max": 0.20291132145315913,
+     "ci95": [
+      0.18377626023682855,
+      0.21023055889419942
+     ],
+     "ci95_basis": "t-interval, df=2, over n=3 independent training seeds"
+    },
+    "lsi_ctrl": {
+     "per_seed": [
+      0.19721982148169734,
+      0.1958486044397271,
+      0.2007032974641976
+     ],
+     "mean": 0.19792390779520733,
+     "sd": 0.002502761323641294,
+     "min": 0.1958486044397271,
+     "max": 0.2007032974641976,
+     "ci95": [
+      0.191706704007406,
+      0.20414111158300866
+     ],
+     "ci95_basis": "t-interval, df=2, over n=3 independent training seeds"
+    },
+    "pointwise_ctrl_circ": {
+     "per_seed": [
+      1.0090004249071922,
+      1.007203769919101,
+      1.0436445267912615
+     ],
+     "mean": 1.0199495738725182,
+     "sd": 0.02054008489886674,
+     "min": 1.007203769919101,
+     "max": 1.0436445267912615,
+     "ci95": [
+      0.968925174370771,
+      1.0709739733742654
+     ],
+     "ci95_basis": "t-interval, df=2, over n=3 independent training seeds"
+    },
+    "trust_head_circ": {
+     "per_seed": [
+      0.18758819644085742,
+      0.19527895296166686,
+      0.2026912801453206
+     ],
+     "mean": 0.19518614318261496,
+     "sd": 0.007551969583315402,
+     "min": 0.18758819644085742,
+     "max": 0.2026912801453206,
+     "ci95": [
+      0.1764260107420042,
+      0.2139462756232257
+     ],
+     "ci95_basis": "t-interval, df=2, over n=3 independent training seeds"
+    }
+   },
+   "jobs": {
+    "1": 66165254,
+    "2": 66165255
+   },
+   "slurm_state": {
+    "1": "COMPLETED",
+    "2": "COMPLETED"
+   },
+   "gates": {
+    "0": {
+     "defined": true,
+     "all_pass": true,
+     "failures": []
+    },
+    "1": {
+     "defined": true,
+     "all_pass": true,
+     "failures": []
+    },
+    "2": {
+     "defined": true,
+     "all_pass": true,
+     "failures": []
+    }
+   },
+   "confirmed": true
+  },
+  "s1_poisson": {
+   "panel_datasets": [
+    "ifc_poisson"
+   ],
+   "per_arm_panel_geomean_skill": {
+    "base__none": {
+     "per_seed": [
+      0.9517819873690914,
+      1.365431098106794,
+      1.117609849741816
+     ],
+     "mean": 1.1449409784059006,
+     "sd": 0.20817454130863988,
+     "min": 0.9517819873690914,
+     "max": 1.365431098106794,
+     "ci95": [
+      0.6278067496953331,
+      1.6620752071164682
+     ],
+     "ci95_basis": "t-interval, df=2, over n=3 independent training seeds",
+     "per_seed_nrmse": [
+      0.03426415154528729,
+      0.049155519531844584,
+      0.040233954590705376
+     ]
+    },
+    "gain__hf_only": {
+     "per_seed": [
+      0.9511927243991357,
+      1.3635240914816766,
+      1.1169012356859171
+     ],
+     "mean": 1.1438726838555766,
+     "sd": 0.20748465806491753,
+     "min": 0.9511927243991357,
+     "max": 1.3635240914816766,
+     "ci95": [
+      0.6284522201275089,
+      1.6592931475836443
+     ],
+     "ci95_basis": "t-interval, df=2, over n=3 independent training seeds",
+     "per_seed_nrmse": [
+      0.03424293807836888,
+      0.04908686729334035,
+      0.04020844448469302
+     ]
+    },
+    "gain__ladder_level_intercept": {
+     "per_seed": [
+      0.6936117259676992,
+      0.7373415443900732,
+      0.8528084187605605
+     ],
+     "mean": 0.7612538963727776,
+     "sd": 0.08224808315124874,
+     "min": 0.6936117259676992,
+     "max": 0.8528084187605605,
+     "ci95": [
+      0.5569383312898999,
+      0.9655694614556554
+     ],
+     "ci95_basis": "t-interval, df=2, over n=3 independent training seeds",
+     "per_seed_nrmse": [
+      0.024970022134837167,
+      0.026544295598042632,
+      0.030701103075380175
+     ]
+    },
+    "gain__ladder_pooled": {
+     "per_seed": [
+      1.5969044433764017,
+      2.1767677080570667,
+      2.173286909623975
+     ],
+     "mean": 1.9823196870191477,
+     "sd": 0.33378392938183965,
+     "min": 1.5969044433764017,
+     "max": 2.1767677080570667,
+     "ci95": [
+      1.153154440434328,
+      2.8114849336039676
+     ],
+     "ci95_basis": "t-interval, df=2, over n=3 independent training seeds",
+     "per_seed_nrmse": [
+      0.05748855996155046,
+      0.0783636374900544,
+      0.0782383287464631
+     ]
+    },
+    "self_only__none": {
+     "per_seed": [
+      0.6087035126179531,
+      0.7592505952819097,
+      1.0373189213634773
+     ],
+     "mean": 0.8017576764211135,
+     "sd": 0.21744638675718278,
+     "min": 0.6087035126179531,
+     "max": 1.0373189213634773,
+     "ci95": [
+      0.2615909067734338,
+      1.3419244460687931
+     ],
+     "ci95_basis": "t-interval, df=2, over n=3 independent training seeds",
+     "per_seed_nrmse": [
+      0.021913326454246308,
+      0.02733302143014875,
+      0.03734348116908518
+     ]
+    }
+   },
+   "jobs": {
+    "1": 66165256,
+    "2": 66165257
+   },
+   "slurm_state": {
+    "1": "COMPLETED",
+    "2": "COMPLETED"
+   },
+   "gates": {
+    "0": {
+     "defined": false,
+     "note": "no per-seed verification gate script on this card; SLURM completion is the only in-job check"
+    },
+    "1": {
+     "defined": false,
+     "note": "no per-seed verification gate script on this card; SLURM completion is the only in-job check"
+    },
+    "2": {
+     "defined": false,
+     "note": "no per-seed verification gate script on this card; SLURM completion is the only in-job check"
+    }
+   },
+   "confirmed": true
+  }
+ }
+}

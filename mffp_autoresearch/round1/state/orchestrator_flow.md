@@ -3686,3 +3686,29 @@ degenerate-dataset evidence across the repo rather than re-deriving from scratch
   operator/mentor decision. Full logs:
   mffp_autoresearch_outputs/round1/s4_hybrid_routing/B3/slurm/r1-s4_hybrid_routing-B3-s{1,2}-*.err
   and gates_s{1,2}.json. See round2 ADR r2-0004 §6.
+
+## Seed-confirm aggregation + leaderboard re-issue — 2026-08-01 (operator: option A, 2500-epoch runs on hold)
+
+Eloise's direction on the confirm outcomes: report honestly (option A), do NOT launch the
+2500-epoch full runs. Executed §8 step 2's back half:
+- New `tools/aggregate_seed_confirm.py`: re-derives seed 0 from the outputs-repo eval
+  artifacts (s4/s6 diag `nrmse_trained` / card `reference_nrmse`; s1 result JSONs) and
+  validated it reproduces every card number exactly before trusting seeds 1-2. Wrote
+  `state/seed_confirm_2026-08-01.json`; `--update-cards` folded 3-seed stats into the
+  three cards' part 5 (`seed_confirm` block; `mean`/`ci95` promoted to 3-seed means only
+  for s6-B2 and s1-B3, which passed all checks).
+- Headline outcomes: s6 confirmed (trust 0.1952, circ 0.1970 3-seed geomeans; all
+  validity gates pass x3 seeds). s1 confirmed-but-seed-sensitive: self_only 0.609/0.759/
+  1.037 (seed 2 crosses paper-bar parity); confirmed criterion-1 number is the 3-seed
+  mean 0.8018, and gain__ladder_level_intercept (0.7613, tighter spread) is the honest
+  representative. s4 seeds 1-2 FAILED own V1/V5 gates (recorded 2026-08-01 above): only
+  seed 0 claimable; panel geomean itself seed-stable 0.1233-0.1288; no CI issued.
+- `docs/round1_report.md` §2 re-issued with 3-seed columns + dated addendum; §8 step 2
+  marked DONE, step 3 marked ON HOLD per operator (s4's slot additionally blocked on the
+  gate-relaxation decision).
+- `tools/render_error_comparison.py` extended: seed-range whiskers (keyed in title),
+  confirm outcome in title, seed-confirm note in footer; figure re-rendered.
+- NOT done (explicitly): 2500-epoch full runs (operator hold), s4 gate relaxation
+  (operator/mentor decision), full-benchmark + Elo step (also pending the BENCH_FULL
+  baseline comparability decision — pre-round1 baseline scores predate the model-side
+  registration fix, ADR r2-0004).
