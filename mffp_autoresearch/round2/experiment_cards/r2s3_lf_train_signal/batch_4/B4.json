@@ -1,0 +1,97 @@
+{
+  "id": "r2s3_lf_train_signal-B4",
+  "stream": "r2s3_lf_train_signal",
+  "batch": 4,
+  "category": "lf_train_signal / substitution audit — pricing the certified ±LF effect against the LF-free control class (achievable heads vs test-fitted calibration ceilings) on B3's shipped dumps",
+  "card_type": "diagnostic",
+  "created_utc": "2026-08-01T18:40:33Z",
+  "worktree_path": "mffp_autoresearch/round2/worktrees/r2s3_lf_train_signal/B4",
+  "source_iteration": "mffp_autoresearch/round2/brainstormer/r2s3_lf_train_signal/batch_4/iteration_1.md",
+  "reopened_from": null,
+
+  "1_id_category": "r2s3_lf_train_signal-B4 — lf_train_signal / substitution audit — pricing the certified ±LF effect against the LF-free control class (achievable heads vs test-fitted calibration ceilings) on B3's shipped dumps",
+
+  "2_motivation": "quotes the batch-4 prior-art verdict row (a) verbatim (see \"Prior-art verdict quoted\" below) and B3 part 7's open question — \"whether an ACHIEVABLE gain head … recovers most of it. If yes, the round's affirmative value-of-LF evidence largely reduces to an output-calibration trick that costs no LF data at all … if no, LF supplies a calibration signal that 5 HF rows provably cannot\". The card delivers the *measured absorbed share*, never a head.",
+
+  "3_description": "new probe family `models_r2/r2s3_b4_substitution/`, `epochs 0`, seed 0, no training and no GPU maths. Reads B3's 33 leg result JSONs (exact `rel_l2_per_sample`, floor splits), B3's 33 `*_preds.npz` dumps (`pred_test`, `cond_test_raw`, `pred_hf_train`, `target_hf_train`, `cond_hf_train_raw`, `selected_train_rows`), HF test targets through `round2/eval/panel_data.py` (offline reference path), and the two frozen state files. Never opens an LF field.\n  **Achievable LF-free control class** (no test targets in any fit): `A0_raw`; `A0 + H_global_train`; `A0 + H_ridge_cond_train` (LOO-λ over the 5 rows); `A0 + H_knn_cond_train`; `ref_linear_hfonly`; `ref_nn_condition_n5`; `ref_train_mean_n5`; `ref_zero`; `A0_split_ensemble` (**labelled non-budget-matched**, 15 HF rows / 3× compute — verdict (b) rides as an arm, never a claim).\n  **Ceilings** (TEST-FITTED, labelled on every line, never claims): `C1_global_test`, `C2_ridge_cond_loo_test`, `C3_per_sample_oracle`.\n  **Deliverables**: per (dataset, draw) the raw effect, the substituted effect, the ceiling-substituted effect and each absorbed share; the 7-reading claimability recount (`tools/effect_threshold_readings.py`, primary reading `worst_split_vs_mce`); paired per-test-sample bootstrap CIs where the draw axis does not exist; the arm-symmetry column (same heads on A1); the memorization statistics; `tools/map_dispersion_scale_shape.py --ensemble`. Floor arms are reported next to every calibrated variant. Standing caveats carried per row: helmholtz report-only (ADR r2-0004); pfc band-limited denominator; ac/fk/pfc ADR r2-0003 conditional-mean bound + M2 shrinkage reward; everything `provisional-single-seed`.",
+
+  "4_expected_result": "(skill units, corrected denominators, seed 0, `provisional-single-seed`; every figure below **measured in the brainstormer pre-flight** from B3's shipped artifacts unless marked *predicted*):\n\n  | dataset | `E_raw` (draw-mean) | best achievable LF-free control | `E_free` worst draw | vs certified mce | `E_ceil` worst draw (per-sample oracle) |\n  |---|---|---|---|---|---|\n  | `ifc_poisson` | +5.9843 | `ref_linear_hfonly` 3.4744 | **+1.3243** (single native draw) | 0.9377041 → **1.41×** | +0.6106 → **below mce** |\n  | `sharp__cahn_hilliard` | +14.7762 | `ref_zero` 23.9217 / `ref_linear_hfonly` 22.959 | **+10.3548** | 0.0912454 → **113×** | +6.632 → **72.7×** |\n  | `sharp__allen_cahn_2d` | +298.902 | `ref_zero` 561.482 / `ref_linear_hfonly` 235.983 / `A0` 311.281 | **+23.611** | 0.8797047 → **26.8×** | −29.44 → **sign reversal** |\n  | `sharp__fisher_kpp_2d` | +1.3132 | `ref_train_mean_n5` 12.865–13.162 | **−2.568** | fails on sign | −2.568 |\n  | `sharp__phase_field_crystal_2d` | −2.5588 | `A0` / split-ensemble 54.55 | **−10.7** | fails on sign (M2 predicted) | −11.74 |\n  | `ext__helmholtz_2d` (report-only) | +5.7169 | `ref_zero` 3.3441 | **−2.615** | fails on sign; report-only regardless | −2.615 |\n\n  *Predicted* additions the card measures: the achievable heads add **≈ 0.00** on every leg (the arms interpolate their 5 HF train rows — per-sample optimal scale 1.0000 on 5/5 rows, train rel-L2 0.0005–0.0026 — so the train-fitted heads are the identity); the decisive unknown is `C2_ridge_cond_loo_test` on `ifc_poisson`, bracketed by `C1_global_test` (0% absorbed, actively harmful: 8.1344 → 8.1844) and `C3_per_sample_oracle` (89.8% absorbed), with a documented prior of LOO-linear R² = 0.919 on exactly this dataset's 5-D condition vector (`tools/residual_gain_learnability.py` header, round-1 `s1_poisson-B2`) — I predict 60–90% on ifc and 20–45% on ch.\n  **Net expected finding**: under the achievable-control gate the criterion-1 claimable set becomes **{ch 113×, ac 26.8×, ifc 1.41×}** — still three datasets but different membership from B3's {ifc, ch, fk}, with fk retiring; under the ceiling gate only **{ch}** survives. Anchor context: the stream anchor is the best-floor panel geomean **23.063616857615774**; B3's primary arm landed at 17.115.",
+
+  "expected_falsification": "FALSIFIED if fewer than 2 of {ifc, ch, ac} keep an LF advantage over the **best achievable LF-free control** above their certified `min_claimable_effect` on **every** draw (ifc 0.9377041289531141 + a paired per-test-sample bootstrap CI excluding zero, since its single native draw makes it mce-only by construction; ch 0.09124535322300886; ac 0.8797047190126648), or if the ceiling-corrected advantage on `sharp__cahn_hilliard` falls below 0.09124535322300886 on any draw — with the predicted ceiling failures on ifc (+0.611 < 0.9377) and ac (sign reversal) pre-registered as the card's *finding*, plus F3 (the 5-row memorization mechanism: falsified if median |log per-sample optimal scale| on the train rows exceeds 0.05 on ≥2 of 6 datasets) and F4 (instrument seam: dump-recomputed skills must match B3's per-leg record to 1e-3 relative — pre-flight max observed 1.31e-4 — and full-row floors must match `state/anchors/floors.json` at 1e-9).",
+
+  "anchor_reference": null,
+
+  "prior_art": {
+    "verdict": "preempted-but-MF-composition-open",
+    "verdict_quote": "> **(a)** LF-free **gain/amplitude head** conditioned on the condition vector, fitted on the same 5 HF rows, used as a **substitution test** for LF's train-time value (training-free probe on shipped dumps first, then one confirmatory arm) | **preempted-but-MF-composition-open** | https://arxiv.org/abs/2601.09143 (**curl-fetched**; DiSOL Methods §4.1: per-sample amplitude u_lim, dimensionless pattern, \"optional **amplitude regressor**\" — the mechanism verbatim, in PDE operator learning); https://arxiv.org/abs/2508.01341 (**curl-fetched**; LCC = affine de-shrinkage on a small held-out calibration split, Tweedie local de-shrinkage, no new labels, domain-general); https://distill.pub/2018/feature-wise-transformations/ (search return; FiLM γ = learned scale, \"specialized HyperNetwork\"); https://arxiv.org/abs/2606.20771 (**curl-fetched**; controlled amplitude normalization + \"mean relative L² … may obscure\"); https://arxiv.org/abs/2202.03365 (**curl-fetched**; control-baseline discipline) | Only the **composition**: using the head as a **control that prices auxiliary low-fidelity training data**. No retrieved MF ablation output-scale-corrects its single-fidelity baseline (turn 4 t1), and the direct query \"is the auxiliary-data gain just calibration?\" returned **no usable results** (turn 3 t2). Plus the round's four standing openers: condition-vector-only test input with genuine coarse consistent solves at train; N_hf = 5; the **copy-LF denominator**; a panel varying condition completeness (ADR r2-0003). **The deliverable is the measured share of the ±LF effect the LF-free head absorbs — never the head itself.**",
+    "citations": [
+      "https://arxiv.org/abs/2601.09143",
+      "https://arxiv.org/abs/2508.01341",
+      "https://distill.pub/2018/feature-wise-transformations/",
+      "https://arxiv.org/abs/2606.20771",
+      "https://arxiv.org/abs/2202.03365"
+    ],
+    "supporting_rows_quote": "Also honoured: row (b) `preempted-but-MF-composition-open` (weak) — the ensemble \"carries as a control arm, not a claim\"; row (c) `preempted` — Bouthillier et al. adopted as the card's statistics section and cited, not carded; row (S) `preempted (cite)` — the regime is LUPI / privileged-information distillation (Mazloom et al., DOI 10.1016/j.engappai.2025.113398, metadata-only citation).",
+    "source": "mffp_autoresearch/round2/websearches/r2s3_lf_train_signal/batch_4/report.md — \"## Prior-art verdict\", row (a)"
+  },
+
+  "recipe": {
+    "base_family": "none (training-free diagnostic probe; no model family is trained or scored. Reads ONLY r2s3_lf_train_signal-B3's shipped artifacts, build_commit dfcd46c6b51b5fe0bd533b9c670a7cdbf9d13830, job 66196690. NO round-1 reuse of any kind; reuses only round2/eval/panel_data.py + eval/nrmse.py read-only and four tools/ probes adapted to round-2 paths)",
+    "base_commit": "9e10d414e35a96398f7b091bc84ddf936d88acc7",
+    "family_dir": "models_r2/r2s3_b4_substitution",
+    "datasets": "ifc_poisson,sharp__cahn_hilliard,sharp__fisher_kpp_2d,sharp__allen_cahn_2d,sharp__phase_field_crystal_2d,ext__helmholtz_2d",
+    "epochs": 0,
+    "seeds": [0],
+    "env": {
+      "R2S3B4_DUMP_ROOT": "mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B3/eval",
+      "R2S3B4_SOURCE_FAMILY": "r2s3_coverage_panel",
+      "R2S3B4_LEGS": "ifc_A0,ifc_A1,ch_A0_d0,ch_A0_d1,ch_A0_d2,ch_A1_d0,ch_A1_d1,ch_A1_d2,fk_A0_d0,fk_A0_d1,fk_A0_d2,fk_A1_d0,fk_A1_d1,fk_A1_d2,ac_A0_d0,ac_A0_d1,ac_A0_d2,ac_A1_d0,ac_A1_d1,ac_A1_d2,pfc_A0_d0,pfc_A0_d1,pfc_A0_d2,pfc_A1_d0,pfc_A1_d1,pfc_A1_d2,hz_A0_d0,hz_A0_d1,hz_A0_d2,hz_A1_d0,hz_A1_d1,hz_A1_d2",
+      "R2S3B4_TREATMENT_ARM": "A1_lf_cov",
+      "R2S3B4_CONTROL_ARM": "A0_nolf",
+      "R2S3B4_ACHIEVABLE_HEADS": "identity,global_train,ridge_cond_train,knn_cond_train",
+      "R2S3B4_CEILING_HEADS": "global_test,ridge_cond_loo_test,per_sample_oracle",
+      "R2S3B4_ACHIEVABLE_CONTROLS": "a0_raw,a0_head,ref_linear_hfonly,ref_nn_condition_n5,ref_train_mean_n5,ref_zero,a0_split_ensemble",
+      "R2S3B4_ENSEMBLE_LABEL": "non_budget_matched_upper_bound_15hf_rows_3x_compute",
+      "R2S3B4_HEAD_TARGET": "per_sample_optimal_scale",
+      "R2S3B4_HEAD_CLIP": "0.5,2.0",
+      "R2S3B4_RIDGE_LAMBDAS": "1e-6,1e-5,1e-4,1e-3,1e-2,1e-1,1,10,100",
+      "R2S3B4_KNN_K": "1,2,3",
+      "R2S3B4_CAL_FOLDS": "loo5",
+      "R2S3B4_SYMMETRY_ARM": "A1_lf_cov",
+      "R2S3B4_READINGS": "verbatim_max_mce_spread,mce_only,paired_se_over_splits,persample_ci_excludes_zero,median_stat_verbatim,worst_split_vs_mce,log_effect_vs_own_range",
+      "R2S3B4_PRIMARY_READING": "worst_split_vs_mce",
+      "R2S3B4_NOISE_FLOOR_JSON": "mffp_autoresearch/round2/state/noise_floor.json",
+      "R2S3B4_FLOORS_JSON": "mffp_autoresearch/round2/state/anchors/floors.json",
+      "R2S3B4_FLOOR_TOL": "1e-9",
+      "R2S3B4_SEAM_TOL_REL": "1e-3",
+      "R2S3B4_BOOTSTRAP_B": "10000",
+      "R2S3B4_BOOTSTRAP_SEED": "0",
+      "R2S3B4_REPORT_ONLY_DATASETS": "ext__helmholtz_2d",
+      "R2S3B4_CAVEAT_DATASETS": "sharp__phase_field_crystal_2d:band_limited_denominator,sharp__allen_cahn_2d:adr_r2_0003,sharp__fisher_kpp_2d:adr_r2_0003,sharp__phase_field_crystal_2d:adr_r2_0003",
+      "R2S3B4_STREAM_PER_DATASET": "1",
+      "R2S3B4_DIAG_OUT": "mffp_autoresearch_outputs/round2/r2s3_lf_train_signal/B4/eval",
+      "_note": "keys prefixed _ are card directives, NOT passed to --env. The --env set is exactly the 27 R2S3B4_* keys above. epochs=0: the probe trains nothing and calls no optimizer; score_panel.py is NOT the entry point (round-1 epochs-0 precedent: s2_beyond_copy-B1). Tools to adapt to round-2 eval paths and re-promote via the register turn: tools/residual_gain_learnability.py, tools/gain_calibration_ceiling.py, tools/effect_threshold_readings.py, tools/map_dispersion_scale_shape.py — their round-1 headers point at round1/eval/panel_data.py.",
+      "_walltime": "--time 00:40:00. Basis: the brainstormer pre-flight computed 9 of the 33 legs (ch x3, ac x3, ifc, fk, pfc) including per-sample oracle scales and target loads in under 4 minutes on the login node; the full job is numpy-only and I/O-bound over 4.1 GB of dumps. CPU-only: no GPU maths is performed. Partition/gres per project.yaml; the orchestrator may drop the gres request since no CUDA kernel is launched.",
+      "_memory": "R2S3B4_STREAM_PER_DATASET=1 means one dataset is resident at a time (largest: allen_cahn 6 legs x 100 x 65536 float32 + targets ~200 MB).",
+      "_no_lf_assert": "the probe must RAISE if any code path opens an LF field or any file under stripped-out LF keys; every output JSON records lf_read_anywhere=false, field_input_at_test=false, trained_parameters=0.",
+      "_declared_baseline": "program.md 12.3's mandatory declared baseline mf_fno_transfer_film is CITED, not re-run (ifc_poisson, 200 ep, seed 0, nRMSE 0.055637439592454, skill 1.5454844331237223, hashes d3d0ade9... / 9753ff24..., from r2s3-B1). This card trains nothing, so the rebadge question is answered by construction: no family is created."
+    }
+  },
+
+  "status": "drafted",
+  "skipped_reason": null,
+  "reopen_candidate": false,
+  "scripts_path": {},
+  "output_paths": {},
+  "build_commit": null,
+  "job_ids": [],
+  "logs": {},
+  "build_notes": [],
+  "review_notes": [],
+  "debug_notes": [],
+
+  "5_actual_result": null,
+  "6_analysis": null,
+  "7_gap_and_future": null,
+  "reanalysis_progress": null
+}
