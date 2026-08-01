@@ -1,0 +1,837 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>*{margin:0;padding:0;box-sizing:border-box}</style>
+<title>The half-cell registration defect — MFFP</title>
+
+<style>
+  :root {
+    --paper:        #F5F7F3;
+    --paper-raised: #FFFFFF;
+    --ink:          #12181A;
+    --ink-soft:     #4A555A;
+    --ink-faint:    #7C878B;
+    --rule:         #D6DDD6;
+    --grid:         #E4EAE2;
+
+    --node:         #0F6F72;   /* correct convention: node-aligned */
+    --node-wash:    #DCEDEC;
+    --cell:         #C0432A;   /* the defective convention: cell-centred */
+    --cell-wash:    #F7E2DC;
+    --pending:      #9A6A12;
+    --pending-wash: #F4EAD4;
+
+    --mono: ui-monospace, "SF Mono", SFMono-Regular, "Cascadia Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+    --body: Charter, "Bitstream Charter", "Sitka Text", Cambria, Georgia, "Times New Roman", serif;
+
+    --measure: 66ch;
+    --gutter: clamp(1.1rem, 4vw, 3rem);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper:        #0E1315;
+      --paper-raised: #161D20;
+      --ink:          #E7EBE5;
+      --ink-soft:     #A3AFB1;
+      --ink-faint:    #75817F;
+      --rule:         #2A3438;
+      --grid:         #1B2427;
+
+      --node:         #5FC5BF;
+      --node-wash:    #12302F;
+      --cell:         #EF8163;
+      --cell-wash:    #331A14;
+      --pending:      #D9A94C;
+      --pending-wash: #2E2413;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --paper:        #0E1315;
+    --paper-raised: #161D20;
+    --ink:          #E7EBE5;
+    --ink-soft:     #A3AFB1;
+    --ink-faint:    #75817F;
+    --rule:         #2A3438;
+    --grid:         #1B2427;
+    --node:         #5FC5BF;
+    --node-wash:    #12302F;
+    --cell:         #EF8163;
+    --cell-wash:    #331A14;
+    --pending:      #D9A94C;
+    --pending-wash: #2E2413;
+  }
+
+  :root[data-theme="light"] {
+    --paper:        #F5F7F3;
+    --paper-raised: #FFFFFF;
+    --ink:          #12181A;
+    --ink-soft:     #4A555A;
+    --ink-faint:    #7C878B;
+    --rule:         #D6DDD6;
+    --grid:         #E4EAE2;
+    --node:         #0F6F72;
+    --node-wash:    #DCEDEC;
+    --cell:         #C0432A;
+    --cell-wash:    #F7E2DC;
+    --pending:      #9A6A12;
+    --pending-wash: #F4EAD4;
+  }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--body);
+    font-size: 17px;
+    line-height: 1.62;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap {
+    max-width: 60rem;
+    margin: 0 auto;
+    padding: clamp(2rem, 6vw, 4.5rem) var(--gutter) 6rem;
+    display: flex;
+    flex-direction: column;
+    gap: 3.25rem;
+  }
+
+  /* ---------- masthead ---------- */
+
+  .masthead {
+    display: flex;
+    flex-direction: column;
+    gap: 1.4rem;
+    padding-bottom: 2rem;
+    border-bottom: 2px solid var(--ink);
+  }
+
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+
+  h1 {
+    font-family: var(--mono);
+    font-size: clamp(1.65rem, 4.6vw, 2.6rem);
+    line-height: 1.14;
+    letter-spacing: -0.025em;
+    font-weight: 600;
+    text-wrap: balance;
+    max-width: 22ch;
+  }
+
+  .standfirst {
+    font-size: clamp(1.02rem, 2.2vw, 1.16rem);
+    color: var(--ink-soft);
+    max-width: var(--measure);
+  }
+
+  .meta {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+    gap: 1rem 1.75rem;
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    padding-top: 0.5rem;
+  }
+  .meta div { display: flex; flex-direction: column; gap: 0.25rem; }
+  .meta dt { color: var(--ink-faint); letter-spacing: 0.08em; text-transform: uppercase; font-size: 0.68rem; }
+  .meta dd { color: var(--ink); }
+
+  /* ---------- sections ---------- */
+
+  section { display: flex; flex-direction: column; gap: 1.15rem; }
+
+  h2 {
+    font-family: var(--mono);
+    font-size: 1.24rem;
+    letter-spacing: -0.01em;
+    font-weight: 600;
+    text-wrap: balance;
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem;
+    padding-top: 0.5rem;
+  }
+  h2 .marker {
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    color: var(--ink-faint);
+    font-weight: 500;
+    flex: none;
+  }
+
+  h3 {
+    font-family: var(--mono);
+    font-size: 0.94rem;
+    font-weight: 600;
+    letter-spacing: 0.005em;
+    margin-top: 0.4rem;
+  }
+
+  p { max-width: var(--measure); }
+  p + p { margin-top: -0.2rem; }
+
+  a { color: var(--node); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+  a:focus-visible, summary:focus-visible { outline: 2px solid var(--node); outline-offset: 3px; border-radius: 2px; }
+
+  code, .num {
+    font-family: var(--mono);
+    font-size: 0.86em;
+    font-variant-numeric: tabular-nums;
+  }
+  p code, li code, td code, th code { background: color-mix(in srgb, var(--ink) 7%, transparent); padding: 0.08em 0.32em; border-radius: 3px; }
+
+  strong { font-weight: 700; }
+
+  ul, ol { max-width: var(--measure); padding-left: 1.3rem; display: flex; flex-direction: column; gap: 0.5rem; }
+  li::marker { color: var(--ink-faint); }
+
+  /* ---------- verdict strip ---------- */
+
+  .verdict {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+    gap: 1px;
+    background: var(--rule);
+    border: 1px solid var(--rule);
+  }
+  .verdict > div {
+    background: var(--paper-raised);
+    padding: 1.15rem 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+  }
+  .verdict .tag {
+    font-family: var(--mono);
+    font-size: 0.66rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+  .verdict .fixed  .tag { color: var(--node); }
+  .verdict .open   .tag { color: var(--cell); }
+  .verdict .part   .tag { color: var(--pending); }
+  .verdict p { font-size: 0.93rem; color: var(--ink-soft); max-width: none; }
+
+  /* ---------- figures on graph paper ---------- */
+
+  figure {
+    background:
+      repeating-linear-gradient(to right, var(--grid) 0 1px, transparent 1px 22px),
+      repeating-linear-gradient(to bottom, var(--grid) 0 1px, transparent 1px 22px),
+      var(--paper-raised);
+    border: 1px solid var(--rule);
+    padding: 1.5rem 1.35rem 1.15rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    overflow-x: auto;
+  }
+  figcaption {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    line-height: 1.55;
+    color: var(--ink-soft);
+    border-top: 1px solid var(--rule);
+    padding-top: 0.8rem;
+  }
+  figcaption b { color: var(--ink); font-weight: 600; }
+  figure svg { display: block; width: 100%; height: auto; min-width: 30rem; }
+
+  .legend { display: flex; flex-wrap: wrap; gap: 0.4rem 1.4rem; font-family: var(--mono); font-size: 0.72rem; color: var(--ink-soft); }
+  .legend span { display: inline-flex; align-items: center; gap: 0.45rem; }
+  .swatch { width: 0.72rem; height: 0.72rem; border-radius: 50%; flex: none; }
+  .swatch.n { background: var(--node); }
+  .swatch.c { background: var(--cell); }
+
+  /* ---------- code block ---------- */
+
+  .probe {
+    background: var(--paper-raised);
+    border: 1px solid var(--rule);
+    border-left: 3px solid var(--node);
+    padding: 1.1rem 1.25rem;
+    overflow-x: auto;
+    font-family: var(--mono);
+    font-size: 0.79rem;
+    line-height: 1.85;
+    font-variant-numeric: tabular-nums;
+    white-space: pre;
+    color: var(--ink-soft);
+  }
+  .probe b { color: var(--ink); font-weight: 600; }
+  .probe .bad { color: var(--cell); font-weight: 600; }
+  .probe .good { color: var(--node); font-weight: 600; }
+
+  /* ---------- tables ---------- */
+
+  .tablewrap { overflow-x: auto; border: 1px solid var(--rule); background: var(--paper-raised); }
+  table { border-collapse: collapse; width: 100%; font-size: 0.85rem; min-width: 34rem; }
+  th, td { text-align: left; padding: 0.62rem 0.9rem; border-bottom: 1px solid var(--rule); vertical-align: top; }
+  thead th {
+    font-family: var(--mono);
+    font-size: 0.66rem;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  tbody tr:last-child td { border-bottom: none; }
+  td.n, th.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align: right; white-space: nowrap; }
+  td.name { font-family: var(--mono); font-size: 0.8rem; }
+
+  .pill {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 0.64rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-weight: 600;
+    padding: 0.18em 0.55em;
+    border-radius: 2px;
+    white-space: nowrap;
+  }
+  .pill.fixed { color: var(--node); background: var(--node-wash); }
+  .pill.open  { color: var(--cell); background: var(--cell-wash); }
+  .pill.part  { color: var(--pending); background: var(--pending-wash); }
+
+  /* ---------- callout ---------- */
+
+  .callout {
+    border-left: 3px solid var(--cell);
+    background: var(--cell-wash);
+    padding: 1rem 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+  .callout .tag {
+    font-family: var(--mono);
+    font-size: 0.66rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: var(--cell);
+  }
+  .callout p { max-width: none; }
+
+  /* ---------- fix list ---------- */
+
+  .fixlist { display: flex; flex-direction: column; gap: 1px; background: var(--rule); border: 1px solid var(--rule); }
+  .fixitem { background: var(--paper-raised); padding: 1.1rem 1.25rem; display: flex; flex-direction: column; gap: 0.5rem; }
+  .fixhead { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.6rem 0.9rem; }
+  .fixhead h3 { margin: 0; }
+  .fixitem p { font-size: 0.92rem; color: var(--ink-soft); max-width: none; }
+  .fixitem .where { font-family: var(--mono); font-size: 0.73rem; color: var(--ink-faint); word-break: break-word; }
+
+  footer {
+    border-top: 1px solid var(--rule);
+    padding-top: 1.4rem;
+    font-family: var(--mono);
+    font-size: 0.74rem;
+    line-height: 1.7;
+    color: var(--ink-faint);
+    max-width: var(--measure);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .verdict > div, .fixitem { transition: background-color 120ms ease; }
+  }
+</style>
+<style>
+  @page { size: Letter; margin: 0.62in 0.6in 0.68in; }
+  html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  body { font-size: 11.4pt; line-height: 1.55; background: var(--paper); }
+  .wrap { max-width: none; padding: 0; gap: 2.1rem; }
+  h1 { font-size: 25pt; }
+  h2 { font-size: 13.5pt; }
+  h3 { font-size: 10.8pt; }
+  .standfirst { font-size: 11.8pt; }
+  figure svg { min-width: 0; }
+  table { min-width: 0; }
+  .probe { font-size: 8.4pt; line-height: 1.75; }
+  figure, .tablewrap, .probe, .callout, .verdict > div, .fixitem,
+  h2, h3, figcaption, footer { break-inside: avoid; }
+  h2, h3 { break-after: avoid; }
+  section { break-before: auto; }
+  a { color: var(--ink); text-decoration: none; }
+  * { transition: none !important; }
+</style>
+
+</head>
+<body>
+
+
+<div class="wrap">
+
+  <header class="masthead">
+    <div class="eyebrow">MFFP benchmark integrity · note 01</div>
+    <h1>The half-cell registration defect</h1>
+    <p class="standfirst">
+      For the whole of round 1, the benchmark compared a low-fidelity field against a
+      high-fidelity field that was sitting half a grid cell away from it. Nothing was
+      noisy, nothing was random, and no optimiser was involved — two pieces of code
+      simply disagreed about where a grid point <em>is</em>. This note explains the
+      disagreement, what it cost, what has been repaired, and what has not.
+    </p>
+    <dl class="meta">
+      <div><dt>Found</dt><dd>2026-07-30 · s3_warp-B1</dd></div>
+      <div><dt>Confirmed</dt><dd>Closed form, no fitting</dd></div>
+      <div><dt>Repaired in</dt><dd>round2/eval/ · 2026-07-31</dd></div>
+      <div><dt>Still open</dt><dd>Generators · model code</dd></div>
+    </dl>
+  </header>
+
+  <div class="verdict">
+    <div class="fixed">
+      <span class="tag">Repaired</span>
+      <p>The round-2 scoring reference. Copy-LF is now rebuilt from native-grid LF under a per-dataset grid convention, and the construction is hash-sealed.</p>
+    </div>
+    <div class="open">
+      <span class="tag">Still broken</span>
+      <p>The dataset generators, and every model that upsamples LF itself. The models carry the identical defect — and fixing the reference stopped it from cancelling out.</p>
+    </div>
+    <div class="part">
+      <span class="tag">Handled by caveat</span>
+      <p>Two datasets that the corrected reference exposes as degenerate or scale-broken. Documented, not repaired.</p>
+    </div>
+  </div>
+
+  <section>
+    <h2><span class="marker">01</span> Where a grid point is</h2>
+
+    <p>
+      A solver stores a field as a list of numbers. What those numbers <em>mean</em>
+      is a convention, and there are two common ones.
+    </p>
+
+    <p>
+      Under the <strong style="color:var(--node)">node convention</strong>, entry <code>j</code>
+      is the value of the solution <em>at a point</em>: <code>x_j = j·L/n</code>. This is what a
+      pseudo-spectral solver produces — it works with Fourier coefficients of a function
+      sampled at points. Under the <strong style="color:var(--cell)">cell-centred convention</strong>,
+      entry <code>j</code> is the average over a little box, and the box centre sits at
+      <code>x_j = (j+½)·L/n</code>. This is what a finite-volume solver produces.
+    </p>
+
+    <p>
+      The two conventions put the samples in physically different places, and the gap
+      between them depends on the resolution. Halve the grid spacing and the node
+      positions stay put, but the cell centres move. That is the entire bug.
+    </p>
+
+    <figure>
+      <svg viewBox="0 0 800 260" role="img" aria-label="Diagram comparing node-aligned and cell-centred sampling of a coarse grid onto a fine grid at refinement ratio two.">
+        <g font-family="ui-monospace, monospace" font-size="11" fill="var(--ink-faint)">
+
+          <!-- ============ panel A: node convention ============ -->
+          <text x="0" y="14" fill="var(--node)" font-size="11.5" font-weight="600" letter-spacing="1.2">A · WHAT THE DATA IS — NODE SAMPLES</text>
+
+          <!-- HF axis -->
+          <line x1="40" y1="72" x2="680" y2="72" stroke="var(--rule)" stroke-width="1.5"/>
+          <!-- HF ticks: 9 nodes, spacing 80 -->
+          <g stroke="var(--ink-faint)" stroke-width="1">
+            <line x1="40"  y1="66" x2="40"  y2="78"/><line x1="120" y1="66" x2="120" y2="78"/>
+            <line x1="200" y1="66" x2="200" y2="78"/><line x1="280" y1="66" x2="280" y2="78"/>
+            <line x1="360" y1="66" x2="360" y2="78"/><line x1="440" y1="66" x2="440" y2="78"/>
+            <line x1="520" y1="66" x2="520" y2="78"/><line x1="600" y1="66" x2="600" y2="78"/>
+            <line x1="680" y1="66" x2="680" y2="78"/>
+          </g>
+          <text x="694" y="76">HF, n=8</text>
+          <text x="40" y="94" text-anchor="middle">k=0</text>
+          <text x="200" y="94" text-anchor="middle">2</text>
+          <text x="360" y="94" text-anchor="middle">4</text>
+          <text x="520" y="94" text-anchor="middle">6</text>
+          <text x="680" y="94" text-anchor="middle">8</text>
+
+          <!-- LF nodes sitting exactly on every other HF node -->
+          <g fill="var(--node)">
+            <circle cx="40"  cy="44" r="5.5"/><circle cx="200" cy="44" r="5.5"/>
+            <circle cx="360" cy="44" r="5.5"/><circle cx="520" cy="44" r="5.5"/>
+            <circle cx="680" cy="44" r="5.5"/>
+          </g>
+          <g stroke="var(--node)" stroke-width="1.4" stroke-dasharray="3 3">
+            <line x1="40"  y1="50" x2="40"  y2="66"/><line x1="200" y1="50" x2="200" y2="66"/>
+            <line x1="360" y1="50" x2="360" y2="66"/><line x1="520" y1="50" x2="520" y2="66"/>
+            <line x1="680" y1="50" x2="680" y2="66"/>
+          </g>
+          <text x="694" y="48" fill="var(--node)">LF, n=4</text>
+
+          <!-- ============ panel B: cell-centred reading ============ -->
+          <text x="0" y="162" fill="var(--cell)" font-size="11.5" font-weight="600" letter-spacing="1.2">B · WHAT THE CODE ASSUMED — CELL CENTRES</text>
+
+          <line x1="40" y1="220" x2="680" y2="220" stroke="var(--rule)" stroke-width="1.5"/>
+          <g stroke="var(--ink-faint)" stroke-width="1">
+            <line x1="40"  y1="214" x2="40"  y2="226"/><line x1="120" y1="214" x2="120" y2="226"/>
+            <line x1="200" y1="214" x2="200" y2="226"/><line x1="280" y1="214" x2="280" y2="226"/>
+            <line x1="360" y1="214" x2="360" y2="226"/><line x1="440" y1="214" x2="440" y2="226"/>
+            <line x1="520" y1="214" x2="520" y2="226"/><line x1="600" y1="214" x2="600" y2="226"/>
+            <line x1="680" y1="214" x2="680" y2="226"/>
+          </g>
+          <text x="694" y="224">HF centres</text>
+
+          <!-- LF cell centres: shifted right by half an LF cell = 40px -->
+          <g fill="var(--cell)">
+            <circle cx="80"  cy="192" r="5.5"/><circle cx="240" cy="192" r="5.5"/>
+            <circle cx="400" cy="192" r="5.5"/><circle cx="560" cy="192" r="5.5"/>
+          </g>
+          <g stroke="var(--cell)" stroke-width="1.4" stroke-dasharray="3 3">
+            <line x1="80"  y1="198" x2="80"  y2="214"/><line x1="240" y1="198" x2="240" y2="214"/>
+            <line x1="400" y1="198" x2="400" y2="214"/><line x1="560" y1="198" x2="560" y2="214"/>
+          </g>
+          <text x="694" y="196" fill="var(--cell)">LF centres</text>
+
+          <!-- offset bracket -->
+          <g stroke="var(--cell)" stroke-width="1.4">
+            <line x1="40" y1="244" x2="80" y2="244"/>
+            <line x1="40" y1="239" x2="40" y2="249"/>
+            <line x1="80" y1="239" x2="80" y2="249"/>
+          </g>
+          <text x="90" y="248" fill="var(--cell)" font-weight="600">(r−1)/2 = ½ HF cell of error, everywhere</text>
+        </g>
+      </svg>
+
+      <div class="legend">
+        <span><i class="swatch n"></i> node sample — where the solver actually evaluated</span>
+        <span><i class="swatch c"></i> cell centre — where the interpolator looked</span>
+      </div>
+
+      <figcaption>
+        <b>The sharp datasets are panel A; the code read them as panel B.</b>
+        Because the ladder is dyadic and nested, LF node <code>j</code> lands exactly on HF
+        node <code>r·j</code> — the coarse field already agrees with the fine one at every
+        shared point, and no interpolation error is needed there at all. Reading the same
+        array as cell averages displaces every value by <code>(r−1)/2</code> HF cells:
+        half a cell at <code>r=2</code>, one and a half at <code>r=4</code>.
+      </figcaption>
+    </figure>
+  </section>
+
+  <section>
+    <h2><span class="marker">02</span> How we know — a probe with no physics in it</h2>
+
+    <p>
+      The defect surfaced as an anomaly, not a hunt. The <code>s3_warp</code> experiment
+      fitted a displacement field to warp the coarse prediction onto the fine truth. Its
+      answer came back as a near-constant <code>+0.5</code> cells on both axes across every
+      sharp dataset — carrying 89–98% of the total displacement energy on two of them. A
+      "warp" that is almost entirely a constant is not transport.
+    </p>
+
+    <p>
+      Three properties said <em>convention</em> rather than <em>physics</em>: the shift was
+      identical in cell units at both 128² and 256² (physics would scale with grid spacing,
+      not with the grid), it was isotropic to within 0.05 cells in 100 of 100 samples, and
+      it vanished on the one dataset from a different generator.
+    </p>
+
+    <p>
+      What settled it was a probe containing no PDE and no data. Feed a
+      <strong>linear index ramp</strong> through the real upsampling function. Bilinear
+      interpolation of a linear function is exact, so the output <em>is</em> the source
+      coordinate that each output pixel read from. Here is that probe, run at
+      <code>r=2</code>, showing which coarse index each fine pixel samples:
+    </p>
+
+    <div class="probe"><b>sampled LF index at HF rows 0…5</b>
+
+<span class="bad">  scipy zoom(grid_mode=True)      0.00   0.25   0.75   1.25   1.75   2.25</span>
+<span class="bad">  torch F.interpolate(ac=False)   0.00   0.25   0.75   1.25   1.75   2.25</span>
+  torch F.interpolate(ac=True)    0.00   0.47   0.93   1.40   1.87   2.33
+<span class="good">  node-aligned  (k / r)           0.00   0.50   1.00   1.50   2.00   2.50</span>
+
+  max | zoom − F.interpolate(ac=False) |  =  <b>0.0</b>   ← bit-identical
+</div>
+
+    <p>
+      The correct answer for nested node data is the last row: fine pixel <code>k</code>
+      reads coarse index <code>k/r</code>, so every other fine pixel lands exactly on a
+      coarse sample. The eval layer was computing <code>(k+0.5)/r − 0.5</code> instead —
+      a quarter of a coarse cell short, which is half a fine cell. Deviation from that
+      formula: <code>0.0</code>, on the 128→256, 64→128 and 24→96 maps alike.
+    </p>
+
+    <p>
+      Note the third row. <code>align_corners=True</code> is the reflex fix and it is also
+      wrong — it stretches the coarse grid to span the fine grid's endpoints, which is a
+      different error, not the absence of one.
+    </p>
+
+    <h3>Four independent confirmations</h3>
+    <ul>
+      <li>The generators' own interpolator satisfies <code>up[::2,::2] == coarse</code> to <code>8.9e-16</code> — node, unambiguously.</li>
+      <li>On real test data, <code>nRMSE(LF, HF[::2,::2])</code> beats <code>nRMSE(LF, block-mean)</code> by 2.2–7.7× — and by 150,000× on one dataset. The data votes node.</li>
+      <li>Closed-form Lucas–Kanade, sharing no code with the original fitter, measures <code>(+0.4995, +0.4996)</code> on allen_cahn and <code>(+0.5020, +0.4889)</code> on cahn_hilliard.</li>
+      <li>Helmholtz, the apparent counterexample, is the same defect in disguise: its non-nested Dirichlet interior-node grid at <code>r=4</code> predicts a zero-mean ±1.5-cell <em>stretch</em> rather than a constant offset — and the recorded displacement has the predicted sign, the predicted slope to 15%, and the predicted zero mean. A constant-offset statistic structurally cannot see it.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2><span class="marker">03</span> Why it survived a whole round</h2>
+
+    <p>
+      Three things had to line up, and all three did.
+    </p>
+
+    <ul>
+      <li>
+        <strong>The bug was upstream of the eval layer.</strong> The dataset generator's own
+        helper makes the same cell-centred assumption — and its docstring claims the opposite
+        ("coarse grid points land exactly on HF grid points"), which is only true under the
+        convention it does not use. The eval layer inherited a benchmark-construction error;
+        reading the eval code alone would not reveal it.
+      </li>
+      <li>
+        <strong>The self-test could not see it.</strong> The warp rig's validation synthesised
+        its fake coarse field <em>on the fine grid</em>. The coarse→fine upsample was therefore
+        never in the tested path — the one operation under suspicion was the one operation the
+        test skipped.
+      </li>
+      <li>
+        <strong>The defect partly cancelled.</strong> Models that upsample LF used the same
+        convention as the reference, so both sides were shifted together. A comparison between
+        two equally-wrong things looks healthy. The models were even rewarded for it — one
+        celebrated corrector turned out to be 87–98% explained as having learned the analytic
+        half-cell phase ramp.
+      </li>
+    </ul>
+
+    <p>
+      The structural lesson is narrow and actionable: <em>the metric was hashed and sealed;
+      the construction of the reference it divides by was not.</em> Round 2 closes that specific
+      hole with a separate <code>copylf_def_hash</code>, and the loader now refuses to score a
+      dataset that has no grid convention explicitly assigned to it.
+    </p>
+  </section>
+
+  <section>
+    <h2><span class="marker">04</span> What it cost</h2>
+
+    <p>
+      Skill is <code>nRMSE(model) / nRMSE(copy-LF)</code>. A misregistered copy-LF is an
+      artificially bad denominator, so every skill number in round 1 flattered its model.
+      Correcting the reference — with zero trained parameters, just the right coordinate map —
+      moves the denominator by these factors:
+    </p>
+
+    <div class="tablewrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Panel dataset</th>
+            <th class="n">Round-1 reference</th>
+            <th class="n">Corrected</th>
+            <th class="n">Denominator inflation</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td class="name">sharp__allen_cahn_2d</td><td class="n">0.016152</td><td class="n">0.001781</td><td class="n">9.1×</td></tr>
+          <tr><td class="name">sharp__phase_field_crystal_2d</td><td class="n">0.044780</td><td class="n">0.007381</td><td class="n">6.1×</td></tr>
+          <tr><td class="name">sharp__fisher_kpp_2d</td><td class="n">0.062632</td><td class="n">0.021450</td><td class="n">2.9×</td></tr>
+          <tr><td class="name">sharp__cahn_hilliard</td><td class="n">0.087660</td><td class="n">0.041803</td><td class="n">2.1×</td></tr>
+          <tr><td class="name">ext__helmholtz_2d</td><td class="n">0.329450</td><td class="n">0.299033</td><td class="n">1.1×</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>
+      Two consequences point in opposite directions, and both matter.
+    </p>
+
+    <p>
+      Every <strong>failure</strong> claim in round 1 survives and gets worse — the models were
+      losing to a reference that was itself half a cell out, so the true gap to an honest
+      coarse-solution passthrough is 2–9× larger than recorded. Every <strong>win</strong> claim
+      on the sharp panel has to be re-read: one model's headline result was measured, by direct
+      field projection, at 95.9–100% registration repair, and a fixed zero-parameter resample
+      beat the trained model by 10.3×.
+    </p>
+
+    <p>
+      Contrasts <em>within</em> a card remain valid throughout — both arms shared the reference,
+      so it cancels exactly. The round-1 metric stays frozen for internal consistency; this is
+      interpretation debt, not a retraction.
+    </p>
+
+    <div class="callout">
+      <span class="tag">Exposed by the fix</span>
+      <p>
+        Under a correct reference, <code>sharp__phase_field_crystal_2d</code> has essentially
+        <strong>no fidelity gap at all</strong>. Its solver uses a resolution-independent
+        continuous symbol on a spectrally-resolved state, so the coarse and fine solves are the
+        same solution — the fraction of fine-grid energy outside the coarse band is
+        <code>4.9e-16</code>. Its entire round-1 "error" was the interpolation convention. The
+        dataset needs a redesign (a coarser LF rung, or a resolution-dependent symbol) before it
+        can carry a multi-fidelity claim.
+      </p>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="marker">05</span> What has been repaired</h2>
+
+    <p>
+      All of this landed in <code>round2/eval/</code> before round 2 launched, and none of it
+      touches the frozen round-1 numbers.
+    </p>
+
+    <div class="fixlist">
+      <div class="fixitem">
+        <div class="fixhead"><h3>Per-dataset convention dispatch</h3><span class="pill fixed">Done</span></div>
+        <p>
+          <code>copylf_prediction</code> now rebuilds the reference from <em>native-grid</em> LF
+          and picks the coordinate map by dataset: node-aligned bilinear with periodic wrap for
+          the nested pseudo-spectral sets, a Dirichlet interior-node map for helmholtz, the legacy
+          map only where an audit certified it consistent. An unclassified dataset raises rather
+          than defaulting — the convention is an explicit decision, not a fallback.
+        </p>
+        <p class="where">round2/eval/panel_data.py</p>
+      </div>
+
+      <div class="fixitem">
+        <div class="fixhead"><h3>The wrap seam, folded in</h3><span class="pill fixed">Done</span></div>
+        <p>
+          The old call clamped at the domain edge on periodic fields. The replacement wraps.
+          Worth 0.12–0.74% of copy-LF error — real, and two orders of magnitude below the
+          registration shift on the same datasets.
+        </p>
+      </div>
+
+      <div class="fixitem">
+        <div class="fixhead"><h3>References and floors re-baselined and sealed</h3><span class="pill fixed">Done</span></div>
+        <p>
+          Corrected denominators recomputed with seam checks (datasets that should be unchanged
+          reproduce round 1 bit-for-bit). Floor arms — nearest-condition, train-mean, and zero —
+          recomputed under the corrected reference and frozen before any round-2 experiment ran.
+          Result JSONs now carry the reference-construction hash independently of the metric hash,
+          and cross-hash comparison is refused.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="marker">06</span> What still needs fixing</h2>
+
+    <p>
+      Ranked by how much each one distorts a live number. The first item is the one that
+      the repair itself created exposure to.
+    </p>
+
+    <div class="fixlist">
+
+      <div class="fixitem">
+        <div class="fixhead"><h3>1 · The models carry the same defect</h3><span class="pill open">Open</span></div>
+        <p>
+          Every model-side coarse→fine upsample in the repo calls
+          <code>F.interpolate(mode="bilinear", align_corners=False)</code> — verified above to be
+          <em>bit-identical</em> to the defective <code>zoom(grid_mode=True)</code>. In round 1 this
+          cancelled against an equally-shifted reference. Under round 2's corrected reference it no
+          longer does: a model feeds itself a half-cell-shifted coarse field and is then scored
+          against a correctly registered one, so it must spend capacity learning an inverse phase
+          ramp before it can learn any physics. This lands squarely on the stream studying what
+          signal the coarse solve actually carries.
+        </p>
+        <p>
+          The fix is not a global flag flip. <code>align_corners=False</code> is <em>correct</em> for
+          genuinely cell-centred data, and only the sharp panel has been proven node-sampled — so
+          this needs the same per-dataset dispatch the eval layer got, with the index-ramp probe run
+          once per dataset to decide.
+        </p>
+        <p class="where">factory_mffp/models/*/smoke_eval.py · models/_common/fire_core.py · akash/common/mffp.py · akash/models/mf_fno_*/model.py</p>
+      </div>
+
+      <div class="fixitem">
+        <div class="fixhead"><h3>2 · The generators still write shifted arrays</h3><span class="pill open">Open</span></div>
+        <p>
+          The dataset builder stores a set of pre-aligned coarse fields alongside the raw ones, and
+          builds them with the defective interpolator — so the defect is baked into the arrays on
+          disk, and into the fidelity-gap metrics the datasets report about themselves. Round-2 eval
+          sidesteps this by rebuilding from raw, but anything that reads the stored aligned arrays
+          inherits it, and any regeneration reintroduces it. This surface is mentor-owned; the note
+          is a recommendation, not an action.
+        </p>
+        <p class="where">mffp_sharp/common/ladder.py — upsample_to_hf, assemble_sample</p>
+      </div>
+
+      <div class="fixitem">
+        <div class="fixhead"><h3>3 · Two target-scaling defects in the model families</h3><span class="pill open">Open</span></div>
+        <p>
+          Surfaced by the same analysis and unrelated to grids. On helmholtz, one training sample of
+          400 carries 89.2% of the loss energy under the family's single global target scaler — an
+          effective sample size of 1.2; a single train-fitted scalar turns a 4.14 failure into 0.995.
+          On phase-field-crystal the global scaler is 79,000× the median per-sample magnitude, so
+          targets are numerically zero and the model emits a noise floor 8,206× the truth. Round 2
+          has the eligibility <em>rule</em> for per-sample normalisation; these two concrete defects
+          are unrepaired.
+        </p>
+      </div>
+
+      <div class="fixitem">
+        <div class="fixhead"><h3>4 · Phase-field-crystal needs a redesign</h3><span class="pill part">Caveated</span></div>
+        <p>
+          Currently handled by a mandatory caveat on every claim rather than a fix. Under the
+          corrected reference it has no fidelity gap to predict; it should get a coarser LF rung or a
+          resolution-dependent symbol, or be moved to report-only.
+        </p>
+      </div>
+
+      <div class="fixitem">
+        <div class="fixhead"><h3>5 · Two deferred plumbing repairs</h3><span class="pill part">Deferred</span></div>
+        <p>
+          The corrector's <em>input</em> wrap seam (deliberately excluded twice, because fixing it
+          mid-round would have confounded a paired contrast) and permuting queries before chunking in
+          the attention family (recovers the unchunked forward pass to 0.014% at zero cost). Both are
+          small; both are still owed.
+        </p>
+      </div>
+
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="marker">07</span> The check, for any future dataset</h2>
+
+    <p>
+      This class of bug is invisible in every aggregate metric and takes about a minute to rule out.
+      The recipe generalises to any resampling code in any repo:
+    </p>
+
+    <ol>
+      <li>Push a <strong>linear index ramp</strong> through the resampler. The output is literally the
+        source coordinate each output element read.</li>
+      <li>Compare against <code>k/r</code>. Any constant difference is a registration offset; any
+        slope is a stretch.</li>
+      <li>Cross-check against the data itself: is the coarse field closer to a decimation of the
+        fine field, or to a block average of it? The winner names the convention.</li>
+      <li>Assert the invariant in a test. For nested node data:
+        <code>upsample(coarse)[::r, ::r] == coarse</code>, exactly.</li>
+    </ol>
+
+    <p>
+      Step 4 is the one that would have caught this on day one — and it is one line.
+    </p>
+  </section>
+
+  <footer>
+    Sources — s3_warp-B1 mechanism analysis (parts 5–6) and its turn-1 reanalysis;
+    round-1 report §5; the mentor-facing registration note of 2026-07-30 and its two addenda;
+    round-2 program §2.2–2.3 and launch gates G1/G2/G3-r2.
+    The <code>F.interpolate</code> comparison in §02 was run fresh for this note.
+    Round-1 scores remain frozen; nothing here alters a recorded number.
+  </footer>
+
+</div>
+
+</body>
+</html>
