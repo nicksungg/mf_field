@@ -710,3 +710,19 @@
   (4) on job completion: r2s4-B3 needs the SIGNED-REACH probe fix (03_ledger.sh re-run)
   BEFORE its initial-analyzer; (5) re-create crons per HOW_TO_LAUNCH §2-3; (6) commit this
   state (auto-sync cron is gone — manual git add mffp_autoresearch/round2 + push).
+
+- 2026-08-01 ~08:1x PDT OPERATOR RESUME (Eloise, after restart-vs-resume + contamination
+  review: resume approved; generator ladder.py fix runs as a parallel mentor-gated proposal
+  track, NO retraining — no model trains on the stored pre-aligned arrays). Checklist walked:
+  (1) sacct: 66196690 r2s3-B3-s0 COMPLETED 0:0 54:57; 66197075 r2s4-B3-s0 COMPLETED 0:0
+  1:31:34. (4) already satisfied in halt window (signed-reach fix 09e2c6b, 03_ledger.sh
+  re-run, diagnostic.json regenerated, no verdict flip). tools/index.md re-verified clean
+  (mtime predates killed register turn). r2s1-B3 worktree partials (untracked models_r2/,
+  notes/) archived to state/halt_partials/r2s1_B3/ — worktree git-clean at 9e10d41; builder
+  must not reuse them. DISPATCHED (background): r2s2-B2 register turn (re-dispatch),
+  r2s1-B3 builder (fresh), r2s3-B3 initial-analyzer (s0), r2s4-B3 initial-analyzer (s0,
+  post-fix artifacts, 320-vs-280 upward-bias caveat carried), + off-round ladder-fix
+  proposal agent (mentor package under mffp_autoresearch/ladder_fix_proposal/; no pushes,
+  sample-round only). (5) crons re-created (session-only, 7-day auto-expiry): orchestrator
+  pulse 8de33a00 (4-59/10), maintainer 75c00bb0 (9-59/20), auto-sync f14a9d81 (17-59/30).
+  (6) this commit.
