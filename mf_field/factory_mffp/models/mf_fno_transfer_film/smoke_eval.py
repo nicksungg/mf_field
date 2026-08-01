@@ -44,6 +44,9 @@ from data_adapters import load_mf_dataset  # noqa: E402
 from data_adapters.geometry import resolve_grid  # noqa: E402
 from data_adapters.metrics import finalize_and_write  # noqa: E402
 
+sys.path.insert(0, str(HERE.parent))  # models/ -> _common package
+from _common.lf_registration import resample_fields  # noqa: E402
+
 WORK_CAP = 256
 SMOKE = dict(hidden_channels=64, n_blocks=4, modes_cap=12, batch_size=16,
              lr_pretrain=1e-3, lr_finetune=3e-4, weight_decay=1e-5, grad_clip=1.0)
@@ -63,14 +66,12 @@ def _modes(grid, cap):
     return (min(cap, max(H // 2, 1)), min(cap, W // 2 + 1))
 
 
-def _to_grid(y_flat: np.ndarray, src_grid, dst_grid) -> np.ndarray:
-    """(N, prod(src)) flat -> (N, Hd, Wd) on the working grid (bilinear)."""
-    Hs, Ws = int(src_grid[0]), int(src_grid[1])
-    Hd, Wd = int(dst_grid[0]), int(dst_grid[1])
-    t = torch.from_numpy(np.ascontiguousarray(y_flat, dtype=np.float32)).view(-1, 1, Hs, Ws)
-    if (Hs, Ws) != (Hd, Wd):
-        t = F.interpolate(t, size=(Hd, Wd), mode="bilinear", align_corners=False)
-    return t.squeeze(1).numpy().astype(np.float32)
+def _to_grid(y_flat: np.ndarray, src_grid, dst_grid, dataset_name: str) -> np.ndarray:
+    """(N, prod(src)) flat -> (N, Hd, Wd) on the working grid, resampled
+    under the dataset's registration convention (node-aligned for the sharp
+    panel, Dirichlet interior-node for helmholtz, the historic cell-centred
+    bilinear elsewhere — registration defect note item 1, ADR r2-0001)."""
+    return resample_fields(y_flat, src_grid, dst_grid, dataset_name)
 
 
 def _train(model, X, Y, scaler, epochs, lr, p, device, tag):
@@ -123,13 +124,13 @@ def run(args, out_path: Path) -> dict:
 
     # LF training data: cond + field, field upsampled to the working grid.
     X_lf = train["cond_by_fid"][lf].astype(np.float32)
-    Y_lf = _to_grid(train["field_by_fid"][lf], lf_grid_native, grid)
+    Y_lf = _to_grid(train["field_by_fid"][lf], lf_grid_native, grid, args.dataset_name)
     # HF training data.
     X_hf = train["cond_by_fid"][hf].astype(np.float32)
-    Y_hf = _to_grid(train["field_by_fid"][hf], hf_grid_native, grid)
+    Y_hf = _to_grid(train["field_by_fid"][hf], hf_grid_native, grid, args.dataset_name)
     # HF test.
     X_te = test["cond_by_fid"][hf].astype(np.float32)
-    Y_te = _to_grid(test["field_by_fid"][hf], hf_grid_native, grid)
+    Y_te = _to_grid(test["field_by_fid"][hf], hf_grid_native, grid, args.dataset_name)
 
     cond_dim = int(X_hf.shape[1])
     # Per-stage output scaler from that stage's training fields (max|y|).

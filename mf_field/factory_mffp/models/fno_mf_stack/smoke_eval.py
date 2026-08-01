@@ -151,6 +151,16 @@ def resolve_fidelity_weights(dataset_name: str, p: dict) -> tuple[float, float]:
 
 
 def run(args):
+    from _common.lf_registration import convention_for
+    conv = convention_for(args.dataset_name)
+    if conv != "legacy_cell_centred":
+        # This family lifts coarse fields inside hf_predict with a
+        # cell-centred bilinear map; on a node-registered dataset that is the
+        # (r-1)/2 registration defect (note item 1). Refuse rather than
+        # silently mis-register (assert-don't-default).
+        raise NotImplementedError(
+            f"{args.dataset_name} is {conv}-registered; fno_mf_stack's "
+            "internal coarse->fine lifts are cell-centred only")
     torch.manual_seed(args.seed)
     np.random.seed(args.seed)
     p = SMOKE_DEFAULTS

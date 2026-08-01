@@ -103,14 +103,20 @@ def _modes_for_grid(grid, cap: int):
     return (min(cap, max(H // 2, 1)), min(cap, W // 2 + 1))
 
 
-def _resample_to(y2d: torch.Tensor, target) -> torch.Tensor:
-    """y2d: (H, W) tensor → (target_h, target_w). No-op if already there."""
+sys.path.insert(0, str(HERE.parent))  # models/ -> _common package
+from _common.lf_registration import resample_fields  # noqa: E402
+
+
+def _resample_to(y2d: torch.Tensor, target, dataset_name: str) -> torch.Tensor:
+    """y2d: (H, W) tensor → (target_h, target_w) under the dataset's
+    registration convention (models/_common/lf_registration.py; registration
+    defect note item 1). No-op if already there."""
     th, tw = target
     if y2d.shape[0] == th and y2d.shape[1] == tw:
         return y2d
-    up = F.interpolate(y2d.unsqueeze(0).unsqueeze(0), size=(th, tw),
-                       mode="bilinear", align_corners=False)
-    return up.squeeze(0).squeeze(0)
+    out = resample_fields(y2d.numpy().reshape(1, -1),
+                          tuple(y2d.shape), (th, tw), dataset_name)
+    return torch.from_numpy(out[0])
 
 
 class AdapterMFDataset(Dataset):
@@ -123,6 +129,7 @@ class AdapterMFDataset(Dataset):
 
     def __init__(self, data: dict, dataset_name: str, target_grid):
         self.target_grid = (int(target_grid[0]), int(target_grid[1]))
+        self.dataset_name = dataset_name
         self.cond_dim = int(data["cond_dim"])
         fids = list(data["fids"])
         n_fids = len(fids)
@@ -164,7 +171,7 @@ class AdapterMFDataset(Dataset):
         fid_id, row = self.index[idx]
         X = self._xs_by_fid[fid_id][row]
         y2d = torch.from_numpy(self._y2d_by_fid[fid_id][row]).float()
-        y = _resample_to(y2d, self.target_grid)
+        y = _resample_to(y2d, self.target_grid, self.dataset_name)
         m = float(self.t_list[fid_id])
         return (torch.from_numpy(X).float(), y, torch.tensor(m, dtype=torch.float32))
 

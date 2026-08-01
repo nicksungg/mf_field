@@ -66,12 +66,14 @@ def _modes(grid, cap):
     return (min(cap, max(H // 2, 1)), min(cap, W // 2 + 1))
 
 
-def _to_grid(y_flat, src, dst):
-    Hs, Ws = int(src[0]), int(src[1]); Hd, Wd = int(dst[0]), int(dst[1])
-    t = torch.from_numpy(np.ascontiguousarray(y_flat, dtype=np.float32)).view(-1, 1, Hs, Ws)
-    if (Hs, Ws) != (Hd, Wd):
-        t = F.interpolate(t, size=(Hd, Wd), mode="bilinear", align_corners=False)
-    return t.squeeze(1).numpy().astype(np.float32)
+sys.path.insert(0, str(HERE.parent))  # models/ -> _common package
+from _common.lf_registration import resample_fields  # noqa: E402
+
+
+def _to_grid(y_flat, src, dst, dataset_name):
+    """Resample under the dataset's registration convention
+    (models/_common/lf_registration.py; registration defect note item 1)."""
+    return resample_fields(y_flat, src, dst, dataset_name)
 
 
 def _train(model, X, target, scaler, epochs, lr, p, device, seed):
@@ -183,11 +185,11 @@ def run(args, out_path: Path) -> dict:
     grid = _cap_grid(hf_native); mh, mw = _modes(grid, p["modes_cap"])
 
     X_lf = train["cond_by_fid"][lf].astype(np.float32)
-    Y_lf = _to_grid(train["field_by_fid"][lf], lf_native, grid)
+    Y_lf = _to_grid(train["field_by_fid"][lf], lf_native, grid, args.dataset_name)
     X_hf = train["cond_by_fid"][hf].astype(np.float32)
-    Y_hf = _to_grid(train["field_by_fid"][hf], hf_native, grid)
+    Y_hf = _to_grid(train["field_by_fid"][hf], hf_native, grid, args.dataset_name)
     X_te = test["cond_by_fid"][hf].astype(np.float32)
-    Y_te = _to_grid(test["field_by_fid"][hf], hf_native, grid)
+    Y_te = _to_grid(test["field_by_fid"][hf], hf_native, grid, args.dataset_name)
     cond_dim = int(X_hf.shape[1])
     s_lf = max(float(np.abs(Y_lf).max()), 1e-8) if Y_lf.size else 1.0
     s_hf = max(float(np.abs(Y_hf).max()), 1e-8) if Y_hf.size else 1.0

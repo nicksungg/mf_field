@@ -26,6 +26,11 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+try:  # imported as _common.fire_core (models/ on sys.path — the family pattern)
+    from _common.lf_registration import resample_fields
+except ImportError:  # imported with models/_common/ itself on sys.path
+    from lf_registration import resample_fields
+
 Grid = Tuple[int, int]
 QUANTILES = (0.1, 0.5, 0.9)
 AUG_CH = 5  # [mu, sigma, q10, q50, q90]
@@ -149,12 +154,17 @@ def modes(grid, c):
     return (min(c, max(H // 2, 1)), min(c, W // 2 + 1))
 
 
-def to_grid(y_flat, src, dst):
-    Hs, Ws = int(src[0]), int(src[1]); Hd, Wd = int(dst[0]), int(dst[1])
-    t = torch.from_numpy(np.ascontiguousarray(y_flat, dtype=np.float32)).view(-1, 1, Hs, Ws)
-    if (Hs, Ws) != (Hd, Wd):
-        t = F.interpolate(t, size=(Hd, Wd), mode="bilinear", align_corners=False)
-    return t.squeeze(1).numpy().astype(np.float32)
+def to_grid(y_flat, src, dst, dataset_name=None):
+    """Field resample under the dataset's registration convention
+    (models/_common/lf_registration.py). dataset_name=None keeps the historic
+    cell-centred bilinear path bit-for-bit (registration defect note, item 1)."""
+    if dataset_name is None:
+        Hs, Ws = int(src[0]), int(src[1]); Hd, Wd = int(dst[0]), int(dst[1])
+        t = torch.from_numpy(np.ascontiguousarray(y_flat, dtype=np.float32)).view(-1, 1, Hs, Ws)
+        if (Hs, Ws) != (Hd, Wd):
+            t = F.interpolate(t, size=(Hd, Wd), mode="bilinear", align_corners=False)
+        return t.squeeze(1).numpy().astype(np.float32)
+    return resample_fields(y_flat, src, dst, dataset_name)
 
 
 def pack_aug(mu, sigma, q10, q50, q90, s_lf):
@@ -242,9 +252,9 @@ def fire_run(args, out_path, model_name, make_lf, extra_meta, p, calib_frac=0.0,
     lf_native = resolve_grid(args.dataset_name, int(train["n_cells_by_fid"][lf]))
     grid = cap_grid(hf_native); mh, mw = modes(grid, p["modes_cap"])
 
-    X_lf = train["cond_by_fid"][lf].astype(np.float32); Y_lf = to_grid(train["field_by_fid"][lf], lf_native, grid)
-    X_hf = train["cond_by_fid"][hf].astype(np.float32); Y_hf = to_grid(train["field_by_fid"][hf], hf_native, grid)
-    X_te = test["cond_by_fid"][hf].astype(np.float32); Y_te = to_grid(test["field_by_fid"][hf], hf_native, grid)
+    X_lf = train["cond_by_fid"][lf].astype(np.float32); Y_lf = to_grid(train["field_by_fid"][lf], lf_native, grid, args.dataset_name)
+    X_hf = train["cond_by_fid"][hf].astype(np.float32); Y_hf = to_grid(train["field_by_fid"][hf], hf_native, grid, args.dataset_name)
+    X_te = test["cond_by_fid"][hf].astype(np.float32); Y_te = to_grid(test["field_by_fid"][hf], hf_native, grid, args.dataset_name)
     cond_dim = int(X_hf.shape[1])
     s_lf = max(float(np.abs(Y_lf).max()), 1e-8) if Y_lf.size else 1.0
 

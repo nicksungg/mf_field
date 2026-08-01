@@ -175,6 +175,16 @@ def evaluate_val(model, val_loaders, scaler_tensor, device):
 
 
 def run(args) -> dict:
+    from _common.lf_registration import convention_for
+    conv = convention_for(args.dataset_name)
+    if conv != "legacy_cell_centred":
+        # This family lifts coarse fields inside hf_predict with a
+        # cell-centred bilinear map; on a node-registered dataset that is the
+        # (r-1)/2 registration defect (note item 1). Refuse rather than
+        # silently mis-register (assert-don't-default).
+        raise NotImplementedError(
+            f"{args.dataset_name} is {conv}-registered; fno_coreg_residual's "
+            "internal coarse->fine lifts are cell-centred only")
     torch.manual_seed(args.seed)
     np.random.seed(args.seed)
     p = dict(SMOKE_DEFAULTS)
