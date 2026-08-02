@@ -74,6 +74,8 @@ tool: name, what it measures, invocation, provenance card.
 | `relative_gain_units_audit.py` | ROUND-2: can a DIMENSIONLESS eligibility threshold ("if the available value-add is below X %, don't build the stage") be stated in this benchmark's claim units? prices the threshold, the realised gain and the cost of OBEYING the rule in skill units and in certified `min_claimable_effect`, with panel verdicts `EXPRESSIBLE` / `COARSE` / `PANEL_INCONSISTENT` / `MISCALIBRATED`. Run it on any rule BEFORE exporting it as a gate | r2s2_stacked-B2 turn 3 |
 | `effect_threshold_readings.py` | ROUND-2: is a paired A-vs-B effect measured over REPEATED SPLITS claimable, and does the verdict depend on how the threshold is read? separates the TEST-SAMPLE variance component (paired per-sample bootstrap) from the SPLIT variance component (range, range-derived sd/SE via the control-chart `d2`, log-units), then recounts the verdict under 7 threshold readings and reports `readings_agree` plus `mce_over_observed_split_range` (a provenance smell when « 1). Run it on any falsification clause whose threshold mixes a certified constant with an in-job spread | r2s3_lf_train_signal-B3 turn 1 |
 | `map_dispersion_scale_shape.py` | ROUND-2: across repeated training splits, does an arm's learned MAP change or only its SCALE? per split-pair inter-prediction dispersion split into total vs shape-only (`min_a ‖a·p_d − p_d'‖`, i.e. what survives the best per-sample rescale), in `‖y‖` and skill units; plus each split's score at the ORACLE per-sample gain (how much of a score AND of its split-range is the amplitude channel alone) and the split-ENSEMBLE arm as a deliberately non-budget-matched upper bound on any variance-only explanation | r2s3_lf_train_signal-B3 turns 2-3 |
+| `hf_row_shapley_value.py` | ROUND-2: what is each TRAINING ROW worth? exact closed-form Shapley over an EXHAUSTIVE `C(m,n)` subset dump (no sampling), per replicate and on the mean, with the marginal-value profile by coalition size (complement vs passenger), every leave-one-out design, the per-TEST-SAMPLE Shapley localised on the nearest-condition-neighbour partition (`concentration_ratio` = does the row buy COVERAGE?), the interference test, an optional amplitude/structure channel split of row value, and the decisive `coverage_spearman` of every descriptive row statistic against measured value | r2s4_diag-B4 turns 2-3 |
+| `gain_channel_ladder.py` | ROUND-2: is an arm's headroom a PER-SAMPLE SCALE, and does it move along the design axis? the exact amplitude/structure split and the global-vs-per-sample oracle-gain ladder read across a whole sweep (N_train / width / seed), plus the across-test-row dispersion ratio, the TREND of both against the axis, and the matched-axis two-group CONTRAST split by channel. The ladder form of `field_error_decomposition.py` / `gain_calibration_ceiling.py` (which price ONE arm) | r2s4_diag-B4 turn 3 |
 
 ---
 
@@ -3653,3 +3655,133 @@ statistic (r2s3-B4's F3) can be *inverted* by the mechanism it was meant to
 police — memorization was not the threat to the reading, it was the reason the
 whole achievable head class was vacuous. Check which side of the clause the
 mechanism actually lands on before reading a surviving null as evidence.
+
+---
+
+## `hf_row_shapley_value.py`
+
+**Measures.** What each TRAINING ROW (atom / source / rung) is actually worth,
+from an **exhaustive** `C(m, n)` subset dump. With every coalition trained, the
+game `v(S) = value of training on subset S` is known everywhere, so the Shapley
+value is closed-form — no sampling, no surrogate, no retraining.
+
+| key | meaning |
+|---|---|
+| `scalar_shapley.phi` / `phi_share_pct` / `phi_in_mce_units` | each player's exact value in the dump's own metric, its share, and its size in claim units; `efficiency_check_sum_phi_minus_v_full` must be 0 |
+| `marginals_by_coalition_size` | mean marginal contribution at every `|S|`. **A FLAT profile is a COMPLEMENT** (value that does not decay as the coalition grows); a profile decaying to ≤ 0 is a substitute/passenger |
+| `leave_one_out` | every `(m-1)`-player design scored, best/worst named, and `redundant_players_negative_marginal_at_full` |
+| `complement_signature` | is the top player the WORST alone and the BEST in company? |
+| `per_sample_shapley` | the same exact Shapley on the per-test-sample error vector |
+| `nn_partition.concentration_ratio` | ≫ 1 ⇒ the player buys COVERAGE of a test region no other player serves; `interference_test.interferes_off_partition` ⇒ it costs the rows it does not serve |
+| `channels` | (`--channels`) row value split into AMPLITUDE vs STRUCTURE on the energy-metric twin, with an additivity check; `players_with_negative_structure_value` |
+| `coverage_spearman.spearman_vs_phi` | **the headline warning**: rank correlation of each descriptive statistic (NN share, solo value, anything in `--descriptive_json`) against measured value |
+| `verdict` | `COVERAGE_ANTI_INFORMATIVE` / `REDUNDANT_PLAYER` / `TOP_PLAYER_IS_COMPLEMENT` / `NO_FLAG` |
+
+**Read it as.** `COVERAGE_ANTI_INFORMATIVE` ⇒ do **not** select or weight
+training rows on a representativeness statistic on this dataset — it picks the
+wrong rows. A flat marginal profile plus a high `concentration_ratio` is data
+GEOMETRY, not estimator capacity; confirm by re-running on a second
+capacity/width arm. The tool refuses a non-exhaustive coalition set (it prints
+the missing subsets and exits 2) and requires `v(empty)` to be declared, because
+the Shapley axioms are meaningless without it.
+
+```bash
+python tools/hf_row_shapley_value.py \
+    --legs_json <anatomy.json> --legs_path anatomy.group_A_curve \
+    --value_key test_skill --zero_json_path floor_arms.skill.ref_zero \
+    --filter width=32 \
+    --preds_npz <preds_test.npz> --truth_key hf_true --ref 0.036 \
+    --cond_train stripped_data/<ds>/train/fidelity_64/Xs.npy \
+    --cond_test  stripped_data/<ds>/test/fidelity_64/Xs.npy \
+    --noise_floor_json state/noise_floor.json --dataset ifc_poisson \
+    --channels --out shapley.json
+```
+
+**Verified.** Run 2026-08-02 (UTC) from `round2/` and from a foreign cwd with
+absolute paths, on its provenance card (r2s4_diag-B4, ifc_poisson, 31 coalitions
+× 3 inits): reproduces turn 2 exactly
+— `phi = {0: 3.5287, 1: 3.6169, 2: 3.7560, 3: 4.2318, 4: 4.3831}`, efficiency
+`0.0`, seam `max_abs_diff_mean_persample_vs_eval_nrmse = 0.0` over 93/93 legs,
+best LOO design `1234` = 8.2346 vs worst `0123` = 9.9525, row 0's marginal at
+`|S| = 4` = **−0.0266** (`REDUNDANT_PLAYER`), row 4's partition concentration
+2.4396 with no off-partition interference, and
+`coverage_spearman.nn_share_of_test = −0.60` (`COVERAGE_ANTI_INFORMATIVE`).
+`--channels` reproduces turn 3 section D: structure φ negative for rows 0-3,
+positive only for row 4; full-design channel gain amplitude **+0.8637**,
+structure **−0.0433**; additivity ≤ 1e-16. The abort path was exercised on the
+same dump filtered to `width=8` (15 of 31 subsets missing → exit 2).
+
+**Runtime.** Seconds (`2^m` scalar lookups; the per-sample path is `2^m × N`
+vector ops). Refuses `m > 16`. **Caveats**: the value key must be the SAME metric
+for every leg; a replicate mean is taken before the game is played unless you
+pass `--filter` down to one replicate; the channel split lives on the
+energy-metric twin and is never the round's nRMSE.
+
+---
+
+## `gain_channel_ladder.py`
+
+**Measures.** Whether an arm's remaining error is a PER-SAMPLE SCALE, read
+across a whole sweep rather than on one arm. Per `(group, axis)` cell:
+`skill_raw`, the exact `rel_l2² = (1−g)² + ‖p − g y‖²/‖y‖²` channel split,
+`skill_after_global_gain` vs `skill_after_per_sample_gain` (both ORACLES),
+`frac_removed_*`, the mean gain `g`, and the across-test-row `dispersion_ratio`
+(`‖P − mean_row P‖_F / ‖Y − mean_row Y‖_F`). Then the two readings that only
+exist along an axis: `trend.*` (Spearman + monotonicity of the removable
+fraction and of the dispersion against the axis) and `contrast.*` (matched-axis
+two-group delta split by channel, with `channel_signs_disagree` when no single
+share exists).
+
+**Read it as.** `frac_removed_per_sample ≫ frac_removed_global` ⇒ the headroom
+is genuinely per-sample; a global rescale, a loss reweighting or an output
+scaler cannot reach it, and the arm needs a per-sample signal (LF field at
+inference, a calibration head). Rising `dispersion_ratio` along a SAMPLE-COUNT
+axis with a flat/inverted one along a CAPACITY axis ⇒ the conditional-mean
+collapse is few-sample regularisation, not a representational limit — adding
+parameters will not move it. `contrast.amplitude_share_of_penalty ≈ 0` ⇒ the
+change cost SHAPE only. Verdict flags: `PER_SAMPLE_GAIN_HEADROOM`,
+`GLOBALLY_MISCALED`, `COLLAPSED_TOWARD_MEAN_FIELD`, `DISPERSION_RISES_WITH_AXIS`.
+
+**How it differs from the round-1 pair.** `field_error_decomposition.py` and
+`gain_calibration_ceiling.py` price ONE prediction. This is the ladder: it reads
+a whole sweep out of a multi-leg dump in one call and adds the trend and the
+matched-axis channel contrast. Use those two for a single arm; use this one when
+the question is "does the channel move with N / width / seed?".
+
+```bash
+# A) multi-leg dump (one npz key per leg)
+python tools/gain_channel_ladder.py \
+    --legs_json <anatomy.json> --legs_path anatomy.group_A_curve \
+    --preds_npz <preds_test.npz> --truth_key hf_true \
+    --leg_key leg --axis_key n --group_key width --metric_key test_nrmse \
+    --ref 0.036 --noise_floor_json state/noise_floor.json --dataset ifc_poisson \
+    --out ladder.json
+
+# B) one arm per npz, or per KEY inside a multi-arm npz
+python tools/gain_channel_ladder.py \
+    --arm_npz "p.npz::armA__outer0" "p.npz::armA__outer2" \
+    --labels a0 a2 --axis_values 0 2 --group_values armA armA \
+    --target_key hf_true --ref 0.2990332650411058 --out ladder.json
+```
+
+**Verified.** Run 2026-08-02 (UTC) from `round2/` and from a foreign cwd with
+absolute paths. On its provenance card (r2s4_diag-B4) mode A reproduces turn 3 sections C/E exactly: w32 n=5
+`8.2612 → 8.2451` global (**0.19 %**) → `2.8584` per-sample (**65.4 %**),
+dispersion `0.2524 / 0.3729 / 0.4378 / 0.4819 / 0.4920` at n = 1..5, w8 n=5
+`8.7624 → 4.3529` (50.3 %), and the matched-n contrast reproduces the w8−w32
+channel deltas (`Δamp² = +0.0121 / −0.0117 / −0.0291`, sign-mirrored because the
+contrast is reported w32−w8). Seams: `max_abs_diff_recomputed_vs_declared_metric
+= 0.0` against both `eval/nrmse.py` and the dump's own `test_nrmse`; identity
+violation 1.8e-15. Mode B was run **on data it was not developed on** —
+r2s4_diag-B3's `ext__helmholtz_2d` OOF arms — giving seam 0.0, dispersion
+0.043-0.344 (`COLLAPSED_TOWARD_MEAN_FIELD` on both groups) and correctly
+*declining* to flag `PER_SAMPLE_GAIN_HEADROOM` where a global rescale already
+removes 59 % (`T0_cond_only` outer 0).
+
+**Runtime.** Seconds per leg-set; dominated by loading the npz. **Caveats**: the
+per-sample oracle is the exact minimiser of the round's metric so
+`frac_removed_per_sample ≥ 0` always, but the GLOBAL scalar minimises total
+squared error, not the mean relative norm, so `frac_removed_global` can be
+slightly negative — a property of the estimator, not a bug. Both gain arms read
+the test truth and are bounds, never scores. All channel quantities live on the
+energy-metric twin.

@@ -846,3 +846,74 @@
   in outputs repo eval/; zero-byte .err). -> initial-analyzer dispatched. r2-* queue now
   empty. In flight: r2s1-B3 initial-analyzer, r2s2-B3 mech turn 1, r2s4-B4 mech turn 3,
   maintainer walk 26.
+
+- 2026-08-02 ~06:4x UTC r2s2-B3 mechanism turn 1 COMPLETE (8/8): seam-exact A0/A1 repro
+  (0.0 dev, 4/4 datasets). Headline 9.2305 ac win = per-sample LEVEL recalibration —
+  52.7% reached by condition-blind pointwise remap (level-only +5.340, pattern-only
+  -0.460; level oracle +36.43 = 3.95x CNN gain). ch = mirror image (pattern channel;
+  free remap 9.89x CNN gain; DC share 0.0045 vs ac 0.981; only ch interface-local 3.64x).
+  A1 band-0-only class (band rel err ~1.00 above k_max/8 all datasets). pfc alpha_nn=0
+  CORRECT. fk 46.84x-mce reading = only 0.16% relative (units flag). Card ships no dumps/
+  ckpts — A2 unreconstructable, stand-ins labelled. -> turn 2 dispatched (alpha_nn calib
+  criterion level-dominance on ch; ac level oracle reachable from condition vector alone?).
+
+- 2026-08-02 ~07:0x UTC r2s4-B4 mechanism turn 3 COMPLETE (8/8), part 6 written (13
+  findings): capacity axis resolved — row-4 complementarity is DATA GEOMETRY not capacity
+  (both widths rank row 4 first; w8 margin larger 1.82x vs 1.65x mce); turn-2 "one effect"
+  conjecture refuted (w8-w32 penalty ANTI-concentrated on row 4's partition); capacity
+  penalty is pure structure while w8's amplitude calib is better at n>=3; the WIDE model
+  is the collapsed one (49.2% of condition-driven variation at best); HF rows = amplitude
+  calibration set (phi_structure negative for rows 0-3); 65.4% of n=5 scored error
+  removable by per-sample oracle gain vs 0.19% global. -> REGISTER turn dispatched
+  (candidates: hf_row_shapley_value.py, gain_channel_ladder.py; cross-stream flags H4/H5
+  into part 7).
+
+- 2026-08-02 ~07:2x UTC r2s1-B3 initial-analyzer COMPLETE (14/14): geomean 18.749954 (s0)
+  — best single-seed panel of the round, 4.3137 BETTER than anchor = 3.78x mce; anchor
+  candidate for end-of-round 3-seed confirm (strict 1-seed policy holds — no seeds 1-2
+  now). FALSIFIED via L2: calibration-fold BG prelude misses realized post-stage skill
+  3/3 (needs 2/3), both arms, both correspondences, min miss 2.69x mce; L1 passed 75.1x
+  (10-param dc_meanfield closed-form head beats 15.8M-param FiLM-FNO decoder on ac by
+  66.06); L3 passed narrowly but attribution wrong (T1-F7 basis repair, not arity).
+  sod_1d guard flagged 3.21x (not excused — epoch-independent head). Pre/post-fix panels
+  bit-identical (debugger nil blast radius CONFIRMED). Anchor untouched. -> mechanism
+  turn 1 dispatched (probes: ac 1-direction oracle saturation; ch capacity band; prelude
+  sign bias + two-mode lambda collapse).
+
+- 2026-08-02 ~07:4x UTC r2s4-B4 REGISTER COMPLETE — CARD CLOSED (11th; tools
+  hf_row_shapley_value.py + gain_channel_ladder.py promoted, verified by exact repro +
+  foreign-data smoke; part 7 carries H4/H5 + provenance caveat). r2s4 stream at 4 batches
+  vs ~3-batch budget (program L164): marked CLOSE CANDIDATE in current_stage.txt — no B5
+  without end-of-round decision. ORCHESTRATOR ran the register turn's decidable follow-up
+  (one read-only gain_channel_ladder call on r2s3-B3's shipped ifc A0/A1 preds + stripped
+  test targets; result archived state/adhoc_measurements/r2s4B4_register_followup_*.json):
+  A1_lf_cov raw 2.150 BEATS A0_nolf's per-sample amplitude ORACLE 2.761 => LF moved
+  STRUCTURE, not just per-sample gain (H5 refined, second alternative excluded for
+  amplitude-only; note A1 itself globally amplitude-miscalibrated — global rescale removes
+  46.8% of its error, oracle scalar 0.938, dispersion 1.06 = no collapse). Seam hash
+  d3d0ade9 matches round eval.
+
+- 2026-08-02 ~07:4x UTC r2s1-B3 mechanism turn 1 COMPLETE (8/8): L2 UNPASSABLE BY
+  CONSTRUCTION — 10/12 blend cells degenerate lambda (8x 1.00, 2x 0.00) so the "law"
+  evaluated to identity (law-form error exactly 0 in all 10); 100% of misses =
+  calibration->test transfer of a 40-sample nRMSE estimate, all within 1.16 sigma of its
+  own sampling noise; L2 tolerance only 0.026-0.107 sigma (resolvable test needs 3468-
+  28043 calib samples vs 40). C2 headline neither supported nor refuted by L2 — but the
+  lambda census itself (10/12 degenerate) IS the protocol defect the card set out to
+  detect. NEW separable instrument defect F6: fit-set-asymmetric blend bases (calib bases
+  fit on n=320 fit_idx vs test bases = frozen floors on full 400; signed gap +93.8%
+  helmholtz) — not this falsification's driver but corrupts any future intermediate-
+  lambda card; carry into part 7 as recipe fix. -> turn 2 dispatched (allen_cahn
+  1-direction SET capacity probe).
+
+- 2026-08-02 ~08:0x UTC r2s2-B3 mechanism turn 2 COMPLETE (5/5): headline ac win = partial
+  gradient-trained solve of a CLOSED-FORM scalar regression — 9-feature quadratic ridge on
+  the 3-dim condition vector predicts HF spatial mean to 1-R^2 3.4e-4, worth 34.32 units =
+  96.6% of level oracle = 3.76x the CNN's entire gain (5/5). ch level law EXACT (3.9e-15)
+  but fluctuation headroom condition-UNREACHABLE (all neg held-out R^2) = genuine class
+  ceiling. pfc could_not_fire SUPERSEDED (6.03x mce closed-form channel, 5/5). fk CNN
+  effect IS the scalar (0.99x). Non-scored counterfactual: scalar-law substitution moves
+  geomean only -0.800 = 0.70x panel mce. M4 alpha_nn probe rejected as partly self-
+  refuting (reasoning recorded). -> turn 3 dispatched (residual HF - level_law
+  decomposition: second scalar channel vs field-structured; LF-pool obtainability;
+  part 6 due).

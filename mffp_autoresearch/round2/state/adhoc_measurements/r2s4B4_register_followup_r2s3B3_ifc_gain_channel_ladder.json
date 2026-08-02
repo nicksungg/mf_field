@@ -1,0 +1,110 @@
+{
+  "tool": "gain_channel_ladder.py",
+  "nrmse_def_hash": "d3d0ade9191c13bacc40702f3eb26ad290e01641cacee22a1d2233b74c035850",
+  "inputs": {
+    "legs_json": null,
+    "legs_path": "anatomy.group_A_curve",
+    "preds_npz": null,
+    "truth_key": "hf_true",
+    "leg_key": "leg",
+    "axis_key": "n",
+    "group_key": null,
+    "metric_key": null,
+    "filter": [],
+    "arm_npz": [
+      "/tmp/claude-28156/-resnick-groups-Hippo-ezeng-mf-field/9237f306-9f05-4835-ba0a-ea5e9dc5f6b2/scratchpad/r2s3B3_ifc_arms.npz::pred_A0",
+      "/tmp/claude-28156/-resnick-groups-Hippo-ezeng-mf-field/9237f306-9f05-4835-ba0a-ea5e9dc5f6b2/scratchpad/r2s3B3_ifc_arms.npz::pred_A1"
+    ],
+    "labels": [
+      "A0_nolf",
+      "A1_lf_cov"
+    ],
+    "axis_values": [],
+    "group_values": [],
+    "pred_key": "pred",
+    "target_key": "target",
+    "ref": 0.036,
+    "mce": 0.9377041,
+    "noise_floor_json": null,
+    "dataset": "ifc_poisson",
+    "collapse_threshold": 0.7,
+    "per_sample_threshold": 0.3,
+    "out": "/tmp/claude-28156/-resnick-groups-Hippo-ezeng-mf-field/9237f306-9f05-4835-ba0a-ea5e9dc5f6b2/scratchpad/r2s3B3_ifc_ladder.json"
+  },
+  "definitions": {
+    "channel_split": "rel_l2_i^2 = (1-g_i)^2 + ||p_i - g_i y_i||^2/||y_i||^2, g_i = <p_i,y_i>/<y_i,y_i>; exact and orthogonal. Lives on the ENERGY-METRIC TWIN (mean of SQUARED rel-L2) and is never substituted for the round's nRMSE.",
+    "oracles": "per-sample gain a_i = <p_i,y_i>/<p_i,p_i> (residual rel-L2 = sqrt(1-cos^2)) and one global scalar; BOTH read the test truth and are upper bounds, not scores.",
+    "dispersion_ratio": "||P - mean_row(P)||_F / ||Y - mean_row(Y)||_F"
+  },
+  "mce": 0.9377041,
+  "legs": {
+    "arms": [
+      "A0_nolf",
+      "A1_lf_cov"
+    ]
+  },
+  "seam": {
+    "max_abs_diff_recomputed_vs_declared_metric": 0.0,
+    "max_abs_violation_rel_l2sq_eq_amp_plus_str": 6.661338147750939e-16,
+    "zero_predictor_channel_check": {
+      "amp2": 1.0,
+      "str2": 0.0,
+      "implied_skill": 27.77777777777778
+    },
+    "note": "the recomputed per-sample mean is checked against eval/nrmse.py and, when --metric_key is given, against the dump's own number"
+  },
+  "ladder": {
+    "all": {
+      "A0_nolf": {
+        "n_legs": 1,
+        "nrmse_raw": 0.2928378174615721,
+        "skill_raw": 8.134383818377003,
+        "skill_after_global_gain": 8.184373492324424,
+        "skill_after_per_sample_gain": 2.7607382546566726,
+        "frac_removed_global": -0.006145477649392994,
+        "frac_removed_per_sample": 0.6606088037769156,
+        "mean_amp2": 0.1224763054718779,
+        "mean_str2": 0.044904577661198916,
+        "mean_sq_rel_l2": 0.1673808831330768,
+        "amplitude_share_of_sq_error": 0.7317221846326539,
+        "mean_gain_g": 1.0883083767009123,
+        "frac_samples_gain_below_1": 0.4921875,
+        "mean_global_oracle_scalar": 1.007137023271983,
+        "dispersion_ratio": 0.5030070689872201,
+        "gain_headroom_in_mce_units": 5.730641002551157
+      },
+      "A1_lf_cov": {
+        "n_legs": 1,
+        "nrmse_raw": 0.07740329672097818,
+        "skill_raw": 2.1500915755827275,
+        "skill_after_global_gain": 1.1443696549014637,
+        "skill_after_per_sample_gain": 0.7607719442375996,
+        "frac_removed_global": 0.46775771418419154,
+        "frac_removed_per_sample": 0.6461676549607372,
+        "mean_amp2": 0.00625683391858972,
+        "mean_str2": 0.0009652329988217385,
+        "mean_sq_rel_l2": 0.0072220669174114585,
+        "amplitude_share_of_sq_error": 0.8663494800228605,
+        "mean_gain_g": 1.0696445065500526,
+        "frac_samples_gain_below_1": 0.015625,
+        "mean_global_oracle_scalar": 0.938240091184251,
+        "dispersion_ratio": 1.0596794647986294,
+        "gain_headroom_in_mce_units": 1.4816183819022735
+      }
+    }
+  },
+  "trend": {},
+  "verdict": {
+    "all": {
+      "best_cell": "A1_lf_cov",
+      "flags": [
+        "GLOBALLY_MISCALED"
+      ],
+      "skill_raw": 2.1500915755827275,
+      "skill_after_per_sample_gain": 0.7607719442375996,
+      "frac_removed_per_sample": 0.6461676549607372,
+      "frac_removed_global": 0.46775771418419154,
+      "dispersion_ratio": 1.0596794647986294
+    }
+  }
+}
