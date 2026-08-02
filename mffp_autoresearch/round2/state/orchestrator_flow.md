@@ -766,3 +766,10 @@
   action needed: crons re-created (session-only, 7-day auto-expiry): orchestrator pulse
   aa4dcb66 (4-59/10), maintainer 2c7fed88 (9-59/20), auto-sync a45bd18b (17-59/30).
   Index-clean guard verified before manual sync commit of this entry.
+
+- 2026-08-02 ~05:3x UTC pulse: QUEUE UNSTUCK after ~12h stall — 66262741 (r2s1-B3-s0,
+  limit 3:00:00) and 66267438 (r2s2-B3-s0, limit 2:30:00) transitioned PENDING->RUNNING
+  on hpc-sm-02-17. 66267441 (r2s2-B3-guard-s0) and 66269660 (r2s4-B4-s0) still PENDING.
+  No dispatches due (analyzers gate on COMPLETED). Maintainer resumes full 20-min cadence.
+  On completion: r2s1-B3 -> initial-analyzer (s0); r2s2-B3 -> initial-analyzer once BOTH
+  main and guard jobs are done (guard is part of the B3 design).
