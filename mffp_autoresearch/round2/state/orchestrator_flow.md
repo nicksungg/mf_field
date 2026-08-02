@@ -758,3 +758,11 @@
   Maintainer walks 1-5: clean; walk-3 caught r2s3-B3 F4 producer timeout stall (resolved via
   orchestrator nudge); timing ledger current; auto-sync hazard noted (cron sweeps pre-staged
   index — guard added to orchestrator sync procedure).
+
+- 2026-08-01 ~20:4x PDT OPERATOR RESUME (Eloise: "resume round 2", new session). State on
+  arrival: all 4 round-2 jobs still PENDING on GPU priority (66262741 r2s1-B3-s0,
+  66267438 r2s2-B3-s0, 66267441 r2s2-B3-guard-s0, 66269660 r2s4-B4-s0); r2s3 closed;
+  no agent stages in flight; nothing to advance — round is compute-bound. Only resume
+  action needed: crons re-created (session-only, 7-day auto-expiry): orchestrator pulse
+  aa4dcb66 (4-59/10), maintainer 2c7fed88 (9-59/20), auto-sync a45bd18b (17-59/30).
+  Index-clean guard verified before manual sync commit of this entry.
