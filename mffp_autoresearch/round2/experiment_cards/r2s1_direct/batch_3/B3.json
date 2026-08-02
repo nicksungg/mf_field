@@ -136,7 +136,8 @@
   },
   "build_commit": "2b030f02da70cde80c90de2463935461bd56debb",
   "job_ids": [
-    "66262741"
+    "66262741",
+    "66285051"
   ],
   "logs": {},
   "build_notes": [
@@ -174,7 +175,24 @@
     },
     "orchestrator 2026-08-01: reviewer's pre-sbatch gate discharged \u2014 contract smoke re-run at HEAD (scratchpad/contract_smoke_head.json): exit 0, nRMSE 1.140818334879289 bit-identical to the builder's recorded run; code_hash 1e9abd22 differs from d8cc06f0 ONLY via env inclusion in code_hash() (empty-env hash at HEAD == d8cc06f0 exactly; both builder smokes ran env={}); this re-run additionally exercised the full 72-key ENV_ARGS. Seed 0 submitted: job 66262741."
   ],
-  "debug_notes": [],
+  "debug_notes": [
+    {
+      "attempt": 1,
+      "class": "ALGO",
+      "symptom": "job 66262741 (seed 0) FAILED exit 1:0 after 13:21. The PANEL leg completed green (all 6 datasets, panel_geomean_skill 18.7500, helmholtz nRMSE 1.140818); the GUARD leg then died on heat_local with ScoreContractError wrapping `RuntimeError: direction bank is not orthonormal: max|DD'-I| = 8.351e-01` (basis.py:150, raised from head.selection_stage -> DirectionBank.__init__).",
+      "diagnosis": "Numerical-rank screen in `basis.pod_basis`, not the bank assert. POD is computed by the method of snapshots (eigendecomposition of the n x n Gram), which SQUARES the condition number, but modes were screened with `s_i > sqrt(eps)*s_max` \u2014 exactly the point at which the Gram eigenvalue ratio reaches machine eps, i.e. ZERO margin, so the marginal eigenvector can be pure roundoff. heat_local's DC-removed fit-fold residual decays through that boundary: 33 modes cleared the screen, the last at s/s_max = 1.81e-8, and it came back with ||v|| = 0.366, giving 1 - 0.366^2 = 0.866 = the reported error. Panel datasets never approach the boundary (smallest retained relative singular value: helmholtz 2.0e-3, fluid 1.3e-2, sod_1d 1.3e-4), which is why the bug hid until the guard leg. Reproduced in scratchpad/diagnose_attempt_1.py (worst offdiag at [33,33]; row norm 0.366).",
+      "fix": "`pod_basis` is made SELF-VALIDATING rather than given a tuned threshold: since modes are ordered by decreasing s and the leading r x r block of Vt Vt' IS the Gram of the first r modes, the new `_orthonormal_rank` helper truncates to the largest leading rank whose block satisfies max|VV'-I| <= 1e-9 (POD_ORTHO_TOL). A magic safety factor on the singular-value screen was measured and rejected: a 1e2 margin still leaves heat_local at 3.2e-7, above the bank's own 1e-8 assert. Blast radius measured over all 9 panel+guard datasets (scratchpad/diagnose_attempt_1b.json, verify_attempt_1.json): every SCORED panel dataset keeps an IDENTICAL retained-mode count (50/50/50/50/50/4), as do fluid and sod_1d, so no scored quantity can move; only heat_local changes, 33 -> 17 POD modes, with bank orthonormality error 8.66e-1 -> 2.84e-10. Downstream code already tolerates a narrower bank (smoke_eval.py:132 filters set_indices by bank.m; head.py:90 clips the window by window.m). E2E repro of the exact failing path \u2014 score_panel.py --datasets heat_local --epochs 2 --seed 0 --no_cache \u2014 now exits 0 with heat_local nRMSE 1.6531e-4 (scratchpad/repro_1_heat_local_postfix.json). The panel leg must nonetheless re-run because the family code_hash changed (1e9abd22... -> e7078dee...).",
+      "files_touched": [
+        "models_r2/r2s1_stagefree_permode/basis.py"
+      ],
+      "relaunched_job_ids": [
+        "66285051"
+      ],
+      "next_suggestion": "If the guard leg fails again on heat_local, suspect an arm that assumes a full-width bank (blend/Bates-Granger covariance, or the band-wise Wiener stage over 18 rather than 51 directions) rather than the basis construction. For the analyst: heat_local's SET is now rank-limited (bank has 18 directions) and can never reach the SELECT_MAX=32 clip \u2014 read its clip_rule accordingly; it is a guard dataset, so no falsification clause depends on it. Unrelated and deliberately untouched (reviewer finding 5): 01_train_eval.sh's #SBATCH --job-name lacks the -s$SEED suffix, harmless while submission goes through submit.sh / submit_seeds_2_3.sh.",
+      "utc": "2026-08-02T06:12:00Z",
+      "commit": "568522c"
+    }
+  ],
   "5_actual_result": null,
   "6_analysis": null,
   "7_gap_and_future": null,

@@ -1,50 +1,61 @@
-# MFFP Autoresearch Round 2 — Dashboard (updated 2026-08-02T05:41:00Z)
+# MFFP Autoresearch Round 2 — Dashboard (updated 2026-08-02T06:24:00Z)
 
-**Twenty-fifth maintainer walk since the operator halt/resume cycle —
-fifth walk of the resumed session, and the first FULL walk since the
-stall throttle lifted.**
+**Twenty-sixth maintainer walk since the operator halt/resume cycle —
+sixth walk of the resumed session.**
 Halt landed 2026-08-01T01:31:54Z (commit `10d4e4c`), first resume landed
 2026-08-01 ~08:1x PDT (commit `b80e622`). A second session restart
 happened ~2026-08-01T20:45 PDT (crons re-created: orchestrator pulse
 `aa4dcb66`, maintainer `2c7fed88`, auto-sync `a45bd18b`; commit
 `818faef8`). Walks 21-24 were light/no-delta walks under a queue-stall
-throttle (last pair: `RUN START 2026-08-02T05:14:26Z` /
-`RUN END 2026-08-02T05:20:00Z`, zero deltas). **The queue unstuck during
-the walk-24→25 gap — this walk records real deltas for the first time
-since walk 15, and the stall throttle is lifted; full 20-minute cadence
-resumes.**
+throttle; walk 25 recorded real deltas for the first time since walk 15
+(queue unstuck) and the stall throttle lifted. **This walk (26) continues
+full cadence and records further real deltas: the r2s1_direct-B3 debug
+attempt 1 landed and its relaunch completed, the r2s2_stacked-B3 panel
+leg's timing-ledger upsert was backfilled, and both r2s2_stacked-B3 and
+r2s4_diag-B4 advanced their analysis stages.**
 
 ## Real deltas this walk (see `state/maintainer_report.md` RUN block for full detail)
 
-- **`r2s1_direct-B3` seed-0 job `66262741` transitioned PENDING → RUNNING → FAILED**
-  (exit `1:0`, ran 2026-08-01T22:11:52 → 22:25:13 PDT, elapsed **13:21**).
-  Card `r2s1_direct-B3` status is still `running` in the card file (parts
-  5/7 both empty) — an **experiment-debugger, attempt 1, has been dispatched
-  by the orchestrator and is in flight** (per task brief; no fix commit yet
-  visible in the `r2s1_direct/B3` worktree git log, tip still `2b030f0`).
-  **Flagged for the orchestrator**, not actioned by this read-only walk.
-- **`r2s2_stacked-B3` guard job `66267441` COMPLETED** (0 exit, ran
-  2026-08-01T22:25:38 → 22:26:47 PDT, elapsed **1:09**) — contract-tier
-  (2-epoch) guard leg on heat_local/fluid/sharp__sod_1d, family
-  `r2s2_zerograd`. **Timing ledger upserted this walk** (job id
-  `66267441`, `nvidia_h200`). The panel leg (job `66267438`, 200ep,
-  panel datasets) is still **RUNNING** (~29.5 min elapsed at this walk's
-  check, started 22:11:52 PDT). Card status unchanged (`running`, parts
-  5/7 empty).
-- **`r2s4_diag-B4` seed-0 job `66269660` COMPLETED** (0 exit, ran
-  2026-08-01T22:27:16 → 22:33:14 PDT, elapsed **5:58**) — from-scratch
-  FiLM-FNO family `models_r2/r2s4_b4_anatomy`, ifc_poisson panel, 200
-  epochs, exhaustive 31-subset HF-count ladder. **Timing ledger upserted
-  this walk** (job id `66269660`, `nvidia_h200`). Card status still
-  `running` in the card file (parts 5/7 empty) — no downstream
-  analysis stage has landed yet as of this walk.
-- **Timing ledger**: 17 → **19 entries** after this walk's two upserts
-  (both new jobs cross-confirmed against `sacct -j <id> --format=...,AllocTRES`
-  as `nvidia_h200`). Re-validated as parseable JSON after the write.
-- **squeue now shows only 1 live `r2-*` job** (`66267438`,
-  `r2s2_stacked-B3-s0`, RUNNING on `hpc-sm-02-17`) — down from 4
-  PENDING at walk 24. `66262741` (FAILED) and `66267441`/`66269660`
-  (COMPLETED) have all left the queue.
+- **`r2s1_direct-B3` debugged (experiment-debugger attempt 1, class ALGO
+  1/5) and relaunched.** Diagnosed job `66262741`'s FAILED guard leg
+  (heat_local `RuntimeError: direction bank is not orthonormal`) as a
+  zero-margin numerical-rank screen in `pod_basis` (method-of-snapshots
+  squares the condition number). Fix landed as commit `568522c`
+  (`_orthonormal_rank`, self-validating truncation to `1e-9`); blast
+  radius confirmed narrow (only heat_local's POD rank changes, 33→17
+  modes; all other datasets' scored quantities provably unmoved).
+  Relaunched as seed-0 job **`66285051`**, which **COMPLETED** (0:0,
+  ran 2026-08-01T23:07:45→23:09:34 PDT, elapsed **1:49**) — full
+  panel+guard re-run, `panel_geomean_skill` 18.749953928575028 matches
+  the debug note's stated 18.7500. Card `job_ids` now
+  `['66262741', '66285051']`; status still `running` (parts 5/7 not
+  yet populated — awaiting initial-analyzer). **Timing ledger upserted**
+  (job `66285051`, 1.82 min, `nvidia_h200`).
+- **`r2s2_stacked-B3` panel leg `66267438` timing-ledger entry
+  backfilled** (was COMPLETED at walk 25 but missed that walk's upsert
+  pass — flagged in this walk's task brief). Confirmed via `sacct -j
+  66267438`: exit 0:0, ran 2026-08-01T22:11:52→22:56:38 PDT, elapsed
+  **44:46**, `nvidia_h200`. **Timing ledger upserted.** Card's
+  initial-analyzer has since run: part 5 populated,
+  `panel_geomean_skill` **20.03153609874604** (single seed 0) vs the
+  stream's launch anchor **23.0636** — **falsified in the positive
+  direction** (beats the anchor). Status advanced `running`→
+  `analyzing`; mechanism-analyzer turn 1 now in flight. Job-name-collision
+  watch item (reviewer finding R1) reconfirmed: guard job `66267441`
+  renamed itself to the panel job's name at runtime — this walk's
+  ledger write matched by job ID, not name.
+- **`r2s4_diag-B4` mechanism-analyzer turn 1 complete, turn 2 in
+  flight.** `reanalysis_progress` advanced to **`turn_2`**; part 5
+  (falsified F4, from walk 25) unchanged; parts 6/7 still empty pending
+  turn 2.
+- **Timing ledger**: 19 → **21 entries** after this walk's two upserts
+  (`66267438` panel leg, `66285051` relaunch), both cross-confirmed
+  against `sacct -j <id> --format=...,AllocTRES` (`nvidia_h200`) and
+  each job's `result_panel_s0.json`. Re-validated parseable JSON after
+  each write.
+- **squeue now shows 0 live `r2-*` jobs** — the round's queue is fully
+  drained; only the unrelated long-running interactive `bash` job
+  (`66279812`, ~2:51:37 elapsed) remains.
 - No abandonment trip (`STREAM_ABANDON_CAP`=3 not reached anywhere), no
   anchor deltas (all 4 `state/anchors/*.json` byte-identical, mtimes
   predate this run), no gate changes (G1-r2/G2-r2/G3-r2 all still PASS
@@ -55,10 +66,10 @@ resumes.**
 
 | Stream | Anchor (skill) | Current batch | Card | Status | Jobs | Last change |
 |---|---|---|---|---|---|---|
-| r2s1_direct | 23.0636 (best_floor_panel_geomean) | 3 | r2s1_direct-B1 **complete**; r2s1_direct-B2 **complete**; r2s1_direct-B3 **running** (parts 5/7 empty) | Seed-0 job **66262741 FAILED** (exit 1:0, 13:21 elapsed, ended 2026-08-01T22:25:13 PDT) — no longer in `squeue`. Experiment-debugger attempt 1 dispatched, in flight (orchestrator-owned) | **0 live SLURM**; 1 FAILED job awaiting debugger fix + relaunch | **Job FAILED this walk (was PENDING at walk 24)** |
-| r2s2_stacked | 23.0636 (best_floor_panel_geomean) | 3 | r2s2_stacked-B1 **complete**; r2s2_stacked-B2 **complete**; r2s2_stacked-B3 **running** (parts 5/7 empty) | Guard job **66267441 COMPLETED** (1:09, ledger upserted). Panel job **66267438 RUNNING** on `hpc-sm-02-17` (~29.5 min elapsed of a 2:30:00 budget). Job-name-collision watch item (reviewer finding R1) now live — guard renamed itself to the panel's job name mid-run; matched by job ID throughout | **1 live SLURM** (`r2-r2s2_stacked-B3-s0`, 66267438, RUNNING) | **Guard job COMPLETED this walk (was PENDING at walk 24)** |
+| r2s1_direct | 23.0636 (best_floor_panel_geomean) | 3 | r2s1_direct-B1 **complete**; r2s1_direct-B2 **complete**; r2s1_direct-B3 **running** (parts 5/7 empty) | Seed-0 debugged + relaunched: `66262741` FAILED → fix commit `568522c` → `66285051` **COMPLETED** (1:49, panel_geomean_skill 18.7500). Awaiting initial-analyzer | **0 live SLURM** | **Relaunch COMPLETED this walk (was FAILED-awaiting-debugger at walk 25)** |
+| r2s2_stacked | 23.0636 (best_floor_panel_geomean) | 3 | r2s2_stacked-B1 **complete**; r2s2_stacked-B2 **complete**; r2s2_stacked-B3 **analyzing** (part 5 populated, parts 6/7 empty) | Guard `66267441` and panel `66267438` both **COMPLETED** (44:46 + 1:09). Panel `panel_geomean_skill` 20.0315 vs anchor 23.0636 — **falsified positive direction**. Mechanism-analyzer turn 1 in flight | **0 live SLURM** | **Status advanced running→analyzing this walk; ledger backfilled for 66267438** |
 | r2s3_lf_train_signal | 23.0636 (best_floor_panel_geomean) | 4 | r2s3_lf_train_signal-B1..B4 **all complete** | **CLOSED (registered close, walk 15)**, unchanged this walk. Not an abandonment — `STREAM_ABANDON_CAP` never applied | **0 live SLURM** | No change since walk 15's close |
-| r2s4_diag | **19.8178** (certified_3seed_panel_geomean, CI95 [19.385, 20.527]) | 4 | r2s4_diag-B1..B3 **complete**; r2s4_diag-B4 **running** (parts 5/7 empty) | Seed-0 job **66269660 COMPLETED** (5:58, ledger upserted, ended 2026-08-01T22:33:14 PDT) — no longer in `squeue`. Awaiting downstream analysis-stage dispatch (not yet visible in card) | **0 live SLURM**; 1 COMPLETED job awaiting next stage | **Job COMPLETED this walk (was PENDING at walk 24)** |
+| r2s4_diag | **19.8178** (certified_3seed_panel_geomean, CI95 [19.385, 20.527]) | 4 | r2s4_diag-B1..B3 **complete**; r2s4_diag-B4 **analyzing** (part 5 populated, parts 6/7 empty) | Seed-0 job `66269660` COMPLETED (walk 25, ledger upserted). Falsified F4; mechanism-analyzer turn 1 complete, `reanalysis_progress`=`turn_2`, turn 2 in flight | **0 live SLURM** | **`reanalysis_progress` advanced to turn_2 this walk** |
 
 **Anchor note**: r2s4_diag remains the only stream with a *certified*
 anchor (`certified_3seed_panel_geomean`, 19.8178) — r2s1_direct,
@@ -73,30 +84,23 @@ anchors rendered verbatim from `state/anchors/*.json`.
 
 | Job | Card | State | Elapsed | Node/Reason |
 |---|---|---|---|---|
-| 66267438 | r2s2_stacked-B3 (seed 0, panel) | RUNNING | ~29:32 (started 2026-08-01T22:11:52 PDT) | hpc-sm-02-17 |
+| *(none)* | — | — | — | — |
 
-**Only 1 live/pending `r2-*` SLURM job** — down from 4 PENDING at walk
-24. The other 3 tracked jobs all resolved during the walk-24→25 gap:
+**0 live/pending `r2-*` SLURM jobs** — the queue is fully drained as of
+this walk (down from 1 RUNNING at walk 25). Jobs that resolved during
+the walk-25→26 gap:
 
 | Job | Card | Final state | Elapsed | Ended (PDT) |
 |---|---|---|---|---|
-| 66262741 | r2s1_direct-B3 (seed 0) | **FAILED** (exit 1:0) | 13:21 | 2026-08-01T22:25:13 |
-| 66267441 | r2s2_stacked-B3 (seed 0, guard) | **COMPLETED** | 1:09 | 2026-08-01T22:26:47 |
-| 66269660 | r2s4_diag-B4 (seed 0) | **COMPLETED** | 5:58 | 2026-08-01T22:33:14 |
+| 66285051 | r2s1_direct-B3 (seed 0, relaunch) | **COMPLETED** | 1:49 | 2026-08-01T23:09:34 |
 
-`sacct`'s 2-day window otherwise shows the same 17 pre-existing `r2-*`
-jobs, all COMPLETED 0:0 (including 66268786,
-`r2s3_lf_train_signal-B4-s0`, already in the timing ledger). All 4
-jobs' finish states cross-confirmed by both `squeue` (jobs absent
-except 66267438) and `sacct` (explicit per-job query with
-`AllocTRES`/`Start`/`End`).
+`sacct`'s 2-day window now shows 21 `r2-*` job records total (18
+pre-existing COMPLETED + `66262741` FAILED + `66267438`/`66267441`
+COMPLETED + `66269660` COMPLETED + `66285051` COMPLETED). All states
+cross-confirmed by both `squeue` (empty of `r2-*`) and `sacct` (explicit
+per-job query with `AllocTRES`/`Start`/`End`).
 
 ## Completed cards
-
-*(unchanged this walk — no card transitioned to `complete`; the two
-newly-COMPLETED/FAILED SLURM jobs above have not yet propagated into
-their cards' parts 5/7, which remain empty on all three open-stream B3/B4
-cards.)*
 
 | Card | Type | Panel geomean skill (±CI) | Falsification verdict | Tools promoted |
 |---|---|---|---|---|
@@ -112,36 +116,36 @@ cards.)*
 | r2s4_diag-B3 | diagnostic | 19.172826 (single seed 0) | **falsified** (F3 hardened, F4a fires on corrected definition, F1 partial survival) | `tools/ledger_contamination_audit.py`, `tools/band_retention_probe.py` |
 | r2s3_lf_train_signal-B4 | diagnostic (mechanism/register) | n/a — reuses B3's skills; graded criterion-1 legacy ch=A/ifc=B/ac=C | S1 **CONFIRMED false**; part 7: **formal stream close**, no B5 | `tools/gain_head_feasibility_audit.py`, `tools/effect_concentration_audit.py` |
 
-`r2s1_direct-B3`, `r2s2_stacked-B3`, and `r2s4_diag-B4` all have
-COMPLETED/FAILED SLURM jobs as of this walk but remain `running` at the
-card level (parts 5/7 empty) — not listed here until they close.
+`r2s1_direct-B3` has a COMPLETED SLURM job (relaunch `66285051`) but
+remains `running` at the card level (parts 5/7 empty, awaiting
+initial-analyzer). `r2s2_stacked-B3` and `r2s4_diag-B4` are both
+`analyzing` (part 5 populated, parts 6/7 pending mechanism-analyzer
+turns) — not listed here until they close.
 
 ## Flags
 
-- **STOP-THE-LINE watch item (not a bug, informational)**: `r2s1_direct-B3`
-  seed-0 job **FAILED** this walk (exit 1:0, 13:21 elapsed). Per task
-  brief, an experiment-debugger (attempt 1) is already dispatched by the
-  orchestrator and in flight — this maintainer confirmed no fix commit
-  has yet landed in the `worktrees/r2s1_direct/B3` git log (tip
-  `2b030f0`, unchanged). This is the round's first job-level FAILURE
-  since launch; flagged for the orchestrator to track through the
-  debugger's resolution, not actioned here (read-only for cards).
+- **`r2s1_direct-B3` debug loop resolved (attempt 1/5, class ALGO)**:
+  fix commit `568522c` (self-validating POD rank truncation in
+  `pod_basis`); relaunch `66285051` COMPLETED clean. No further debugger
+  action pending as of this walk; the round's first job-level FAILURE
+  since launch is now resolved at the SLURM level, awaiting
+  initial-analyzer consumption.
 - **Timing ledger upserted this walk**: 2 new COMPLETED-job entries
-  added (17 → 19 total) — `66267441` (r2s2_stacked-B3 guard, 1.15 min,
-  `nvidia_h200`) and `66269660` (r2s4_diag-B4 panel, 5.97 min,
-  `nvidia_h200`). Both cross-confirmed via `sacct -j <id>
-  --format=...,AllocTRES` before writing. JSON re-validated parseable
-  after the write.
-- **`r2s2_stacked-B3` job-name-collision watch item, now MANIFESTED**:
-  guard job 66267441 renamed itself to the panel job's name
-  (`r2-r2s2_stacked-B3-s0`) mid-run per reviewer finding R1 (unfixed,
-  tracked-by-job-ID workaround) — confirmed in the card's own
-  orchestrator note. Both this walk's ledger entries and all queue
-  checks matched by explicit job ID, never by name, per that finding.
-- **Queue unstuck this walk**: all 4 previously-PENDING jobs resolved
-  during the walk-24→25 gap (1 FAILED, 2 COMPLETED, 1 transitioned to
-  RUNNING). Stall throttle lifted; full 20-minute cadence resumes from
-  this walk onward.
+  added (19 → 21 total) — `66267438` (r2s2_stacked-B3 panel, 44.77 min,
+  `nvidia_h200`, **backfilled from walk 25's miss**) and `66285051`
+  (r2s1_direct-B3 relaunch, 1.82 min, `nvidia_h200`). Both
+  cross-confirmed via `sacct -j <id> --format=...,AllocTRES` before
+  writing. JSON re-validated parseable after the write.
+- **`r2s2_stacked-B3` job-name-collision watch item (reviewer finding
+  R1), unchanged**: guard job 66267441 renamed itself to the panel
+  job's name (`r2-r2s2_stacked-B3-s0`) mid-run — confirmed in the
+  card's own orchestrator note. Both this walk's ledger entries and all
+  queue checks matched by explicit job ID, never by name, per that
+  finding.
+- **Queue fully drained this walk**: 0 live/pending `r2-*` SLURM jobs
+  (down from 1 RUNNING at walk 25). All in-flight work is now at the
+  analysis-agent stage (initial-analyzer / mechanism-analyzer), not the
+  SLURM stage.
 - **`r2s3_lf_train_signal` stream CLOSED (walk 15, unchanged)** — a
   legitimate registered trigger-non-fire close, NOT an abandonment.
   `STREAM_ABANDON_CAP` (=3) never applied. `state/streams/` correctly
@@ -167,8 +171,8 @@ card level (parts 5/7 empty) — not listed here until they close.
 - **Analyzer caveat (r2s2_stacked-B3, from code-review, carried
   forward)**: pfc's pre-flight-instrument conflict directionally biases
   F1/F2/F3 toward confirming the card's hypothesis — re-check any "≥2 of
-  4 decidable" verdict with pfc dropped once part 6/7 land (now
-  imminent given the guard leg's completion).
+  4 decidable" verdict with pfc dropped once part 6/7 land (mechanism
+  turn 1 now in flight).
 - **Analyzer caveat (r2s3_lf_train_signal-B4, superseded walk 15,
   unchanged)**: folded into the completed part 6/7 register.
 - **Gates**: G1-r2 PASS, G2-r2 PASS, G3-r2 PASS (all 2026-07-31,
@@ -177,7 +181,10 @@ card level (parts 5/7 empty) — not listed here until they close.
 - No reopen candidates on any of the 14 cards. No `blocked.md` file
   exists. **No abandoned streams** — none qualify. `state/streams/`
   directory still does not exist.
-- Repo hygiene, final check: `git status --short experiment_cards/` on
-  the round root at this run's open/close is fully clean — no card
-  files modified by this walk. Only `index.md`, `state/maintainer_report.md`,
-  and `state/timing_ledger.json` written this run.
+- Repo hygiene, final check: `git status --short experiment_cards/` at
+  this run's close shows 3 modified files (`r2s1_direct/B3.json`,
+  `r2s2_stacked/B3.json`, `r2s4_diag/B4.json`) — all confirmed as
+  legitimate in-flight writes by the experiment-debugger /
+  initial-analyzer / mechanism-analyzer subagents, not this maintainer
+  walk. Only `index.md`, `state/maintainer_report.md`, and
+  `state/timing_ledger.json` written this run.

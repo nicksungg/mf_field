@@ -98,7 +98,7 @@
       "_note": "keys prefixed _ are card directives, NOT passed to --env. score_panel.py --datasets accepts ONLY the exact keyword 'panel' (or 'guard', or a comma-list); the per-dataset lists above are consumed inside the family."
     }
   },
-  "status": "running",
+  "status": "analyzing",
   "skipped_reason": null,
   "reopen_candidate": false,
   "scripts_path": {
@@ -160,8 +160,444 @@
     "orchestrator 2026-08-01: submitted per reviewer's submit-as-is SUGGEST \u2014 panel 66267438, guard 66267441. CAVEATS CARRIED FOR ANALYZER: (1) guard job renames itself to the panel name mid-run (01_train_eval.sh:36-38) \u2014 match ledger entries by JOB ID, not name; (2) no ceiling/headroom column or prediction dumps \u2014 a surviving F1/F2 null needs the alpha_nn==0 degenerate could_not_fire check; (3) pfc pre-flight conflict biases A2/A3 worse, i.e. TOWARD the card's own hypothesis \u2014 re-check any '>=2 of 4 decidable' verdict with pfc dropped. Walltime kept at 02:30:00 per reviewer's ledger analysis (B2 comparator 33.58 min)."
   ],
   "debug_notes": [],
-  "5_actual_result": null,
+  "5_actual_result": {
+    "seeds_available": [
+      0
+    ],
+    "seed_label": "provisional-single-seed (program.md \u00a74.2 strict 1-seed in-round); no CI is computable from n=1, every ci95 below is null by construction, not by omission",
+    "source_files": {
+      "panel": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s2_stacked/B3/eval/result_panel_s0.json",
+      "guard": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s2_stacked/B3/eval/result_guard_s0.json",
+      "diagnostics": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s2_stacked/B3/eval/diagnostic_<dataset>_e200_s0.json (6 files, one per panel dataset)",
+      "guard_reference": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round2/eval/copylf_baselines.json"
+    },
+    "seam_assertions": {
+      "nrmse_def_hash": "d3d0ade9191c13bacc40702f3eb26ad290e01641cacee22a1d2233b74c035850",
+      "nrmse_def_hash_consistent_across_parsed_jsons": true,
+      "nrmse_def_hash_matches_noise_floor_and_copylf_baselines": true,
+      "copylf_def_hash": "9753ff24e856f595748492dec6cb6c215d748f97e8ec4a679b651f8846da907a",
+      "copylf_def_hash_matches_copylf_baselines": true,
+      "code_hash": "58d3a21bcaa6c52ea3c1fec02f8bf27a2eae0961fd1d708ac9be7218366bf98e",
+      "code_hash_note": "differs from the contract smoke's 49ba084c\u2026 because the job passed the 45-key --env block (reviewer R2 predicted exactly this); no stale-cache risk, all panel/guard cells report cached=false",
+      "epochs": 200,
+      "guard_epochs": 2
+    },
+    "per_dataset": {
+      "ext__helmholtz_2d": {
+        "per_seed_nrmse": [
+          1.4487706717896234
+        ],
+        "per_seed_skill": [
+          4.844847851928688
+        ],
+        "mean_skill": 4.844847851928688,
+        "ci95": null,
+        "reference_type": "copylf",
+        "cached": false,
+        "metric_source": "per_sample_mean",
+        "best_floor_arm": "zero",
+        "best_floor_skill": 3.3441095587226317,
+        "scored_minus_best_floor": 1.5007382932060538,
+        "over_mce": 0.5082094734811566,
+        "loses_to_best_floor_by_more_than_mce": false,
+        "note": "report-only per recipe R2S2B3_REPORT_ONLY_DATASETS (ADR r2-0004 exact-solve caveat); carries no falsification weight. Loses to the zero floor by 1.50 skill units = 0.51x its certified mce 2.9529916, i.e. unresolvable, exactly as part 4 predicted (0.31x predicted)."
+      },
+      "ifc_poisson": {
+        "per_seed_nrmse": [
+          0.2995556306070361
+        ],
+        "per_seed_skill": [
+          8.320989739084338
+        ],
+        "mean_skill": 8.320989739084338,
+        "ci95": null,
+        "reference_type": "paper_bar",
+        "cached": false,
+        "metric_source": "per_sample_mean",
+        "best_floor_arm": "nn_condition",
+        "best_floor_skill": 10.054890929609687,
+        "scored_minus_best_floor": -1.7339011905253479,
+        "over_mce": -1.8490919864682012,
+        "loses_to_best_floor_by_more_than_mce": false,
+        "note": "low_n / leave-one-out folds; excluded from clause counting per R2S2B3_LOWN_EXCLUDED_DATASETS. Beats the NN-in-condition floor by 1.73 skill units = 1.85x its certified mce 0.9377041 (part 4 predicted 1.60 / 1.7x)."
+      },
+      "sharp__allen_cahn_2d": {
+        "per_seed_nrmse": [
+          0.3259987826974047
+        ],
+        "per_seed_skill": [
+          183.06657252794582
+        ],
+        "mean_skill": 183.06657252794582,
+        "ci95": null,
+        "reference_type": "copylf",
+        "cached": false,
+        "metric_source": "per_sample_mean",
+        "best_floor_arm": "nn_condition",
+        "best_floor_skill": 269.19587575878967,
+        "scored_minus_best_floor": -86.12930323084393,
+        "over_mce": -97.90706059586792,
+        "loses_to_best_floor_by_more_than_mce": false,
+        "note": "part 4 predicted 183.07 exactly; beats the best floor by 86.13 (97.9x mce) vs the predicted 86.13/98x."
+      },
+      "sharp__cahn_hilliard": {
+        "per_seed_nrmse": [
+          0.6516017339368912
+        ],
+        "per_seed_skill": [
+          15.587453425917094
+        ],
+        "mean_skill": 15.587453425917094,
+        "ci95": null,
+        "reference_type": "copylf",
+        "cached": false,
+        "metric_source": "per_sample_mean",
+        "best_floor_arm": "nn_condition",
+        "best_floor_skill": 23.180342227117514,
+        "scored_minus_best_floor": -7.592888801200425,
+        "over_mce": -83.21397784107396,
+        "loses_to_best_floor_by_more_than_mce": false,
+        "note": "part 4 predicted 15.59."
+      },
+      "sharp__fisher_kpp_2d": {
+        "per_seed_nrmse": [
+          0.2486313960977508
+        ],
+        "per_seed_skill": [
+          11.591475504348217
+        ],
+        "mean_skill": 11.591475504348217,
+        "ci95": null,
+        "reference_type": "copylf",
+        "cached": false,
+        "metric_source": "per_sample_mean",
+        "best_floor_arm": "train_mean",
+        "best_floor_skill": 11.99311063309952,
+        "scored_minus_best_floor": -0.40163512875130714,
+        "over_mce": -562.7653947213855,
+        "loses_to_best_floor_by_more_than_mce": false,
+        "note": "part 4 predicted 11.59."
+      },
+      "sharp__phase_field_crystal_2d": {
+        "per_seed_nrmse": [
+          0.35760997911222375
+        ],
+        "per_seed_skill": [
+          48.451525290502076
+        ],
+        "mean_skill": 48.451525290502076,
+        "ci95": null,
+        "reference_type": "copylf",
+        "cached": false,
+        "metric_source": "per_sample_mean",
+        "best_floor_arm": "train_mean",
+        "best_floor_skill": 59.8117544948052,
+        "scored_minus_best_floor": -11.360229204303145,
+        "over_mce": -53.32756204650695,
+        "loses_to_best_floor_by_more_than_mce": false,
+        "note": "band-limited-denominator caveat applies to every pfc claim (copylf_ref_nrmse 0.00738078). part 4 predicted 48.45."
+      }
+    },
+    "panel_geomean_skill": {
+      "per_seed": [
+        20.03153609874604
+      ],
+      "mean": 20.03153609874604,
+      "ci95": null,
+      "read_from": "result_panel_s0.json::panel_geomean_skill (score_panel.py); reproduces exactly as the geomean of the six reported per-dataset skills"
+    },
+    "vs_anchor": {
+      "anchor_file": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round2/state/anchors/r2s2_stacked.json",
+      "anchor_type": "best_floor_panel_geomean",
+      "anchor_value": 23.063616857615774,
+      "delta": -3.032080758869732,
+      "ratio_to_anchor": 0.8685340301311624,
+      "beyond_ci": null,
+      "beyond_ci_reason": "single seed; no CI exists. Cross-seed resolvability is judged against the noise floor instead.",
+      "beyond_noise_floor": true,
+      "noise_floor_panel_min_claimable_effect": 1.1418668211296108,
+      "abs_delta_over_mce": 2.6553716272009686,
+      "expected_vs_actual": "part 4 predicted 19.65 (band 19.2-20.7); measured 20.0315 lands inside the predicted band. Predicted delta -3.42, measured -3.03."
+    },
+    "arm_table_fold_seed_0": {
+      "_units": "skill = nRMSE / copy-LF reference (lower is better); read from diagnostic_*_e200_s0.json::attribution.per_fold_seed['0'].skill_test",
+      "_seam_check": "A1_lsi at fold seed 0 equals the scored score_panel skill on all six datasets to <1e-9, so the arm table is directly comparable to the scored column",
+      "ext__helmholtz_2d": {
+        "A0_retrieval_raw": 7.6031,
+        "A1_lsi": 4.8448,
+        "A2_lsi_cnn": 4.8448,
+        "A3_base_lsi_cnn": 3.3441
+      },
+      "ifc_poisson": {
+        "A0_retrieval_raw": 92.3778,
+        "A1_lsi": 8.321,
+        "A2_lsi_cnn": 7.6987,
+        "A3_base_lsi_cnn": 10.9142
+      },
+      "sharp__allen_cahn_2d": {
+        "A0_retrieval_raw": 189.3135,
+        "A1_lsi": 183.0666,
+        "A2_lsi_cnn": 174.081,
+        "A3_base_lsi_cnn": 225.9437
+      },
+      "sharp__cahn_hilliard": {
+        "A0_retrieval_raw": 18.2048,
+        "A1_lsi": 15.5875,
+        "A2_lsi_cnn": 15.4746,
+        "A3_base_lsi_cnn": 16.3918
+      },
+      "sharp__fisher_kpp_2d": {
+        "A0_retrieval_raw": 11.6554,
+        "A1_lsi": 11.5915,
+        "A2_lsi_cnn": 11.5729,
+        "A3_base_lsi_cnn": 11.5753
+      },
+      "sharp__phase_field_crystal_2d": {
+        "A0_retrieval_raw": 50.3198,
+        "A1_lsi": 48.4515,
+        "A2_lsi_cnn": 48.4515,
+        "A3_base_lsi_cnn": 49.2823
+      },
+      "_informational_non_scored_geomeans": {
+        "A1_lsi": 20.03153609874604,
+        "A2_lsi_cnn": 19.57956969010059,
+        "A3_base_lsi_cnn": 20.631032389374205,
+        "_caveat": "only A1_lsi is the SCORED arm (R2S2B3_SCORED_ARM); the A2/A3 geomeans are fold-seed-0 counterfactual aggregations of probe-reported arm skills, never a scored panel number and never to be quoted as one."
+      }
+    },
+    "paired_over_5_fold_seeds": {
+      "_units": "skill units; POSITIVE delta_A1_minus_A2 means the trained corrector A2 BEAT the zero-gradient A1; POSITIVE delta_A3_minus_A2 means the no-LF control A3 was WORSE than A2",
+      "sharp__allen_cahn_2d": {
+        "delta_A1_minus_A2_mean": 9.23053049336931,
+        "over_mce": 10.492760006709048,
+        "sign": "5/5 positive",
+        "per_fold_seed": [
+          8.985604582531892,
+          10.014312606513101,
+          8.957298355620736,
+          9.165935016585252,
+          9.029501905595566
+        ],
+        "delta_A3_minus_A2_mean": 54.63467991079949,
+        "delta_A3_minus_A2_sign": "5/5",
+        "alpha_nn_per_fold_seed_A2": [
+          0.7324689938927718,
+          0.7770057698665853,
+          0.7554587090218534,
+          1.0,
+          0.7089168850590503
+        ]
+      },
+      "sharp__fisher_kpp_2d": {
+        "delta_A1_minus_A2_mean": 0.03342608558970248,
+        "over_mce": 46.83615277718287,
+        "sign": "5/5 positive",
+        "per_fold_seed": [
+          0.01857751121840856,
+          0.018733401182762677,
+          0.05571016291223252,
+          0.018875324406041116,
+          0.05523402822906753
+        ],
+        "delta_A3_minus_A2_mean": 0.0042470601462618164,
+        "delta_A3_minus_A2_sign": "5/5",
+        "alpha_nn_per_fold_seed_A2": [
+          0.9580069143831305,
+          1.0640230911715034,
+          0.9639134130776253,
+          1.111528010138388,
+          1.0337072762659603
+        ]
+      },
+      "sharp__cahn_hilliard": {
+        "delta_A1_minus_A2_mean": 0.06516719505511262,
+        "over_mce": 0.7141974111913433,
+        "sign": "5/5 positive",
+        "per_fold_seed": [
+          0.11281617258786625,
+          0.07576148073016853,
+          0.026927345143434422,
+          0.04206976260998729,
+          0.06826121420410658
+        ],
+        "delta_A3_minus_A2_mean": 2.0968401909407968,
+        "delta_A3_minus_A2_sign": "5/5",
+        "alpha_nn_per_fold_seed_A2": [
+          0.5,
+          0.25,
+          0.4171999145061095,
+          0.1044173509701646,
+          0.1400269334417298
+        ]
+      },
+      "sharp__phase_field_crystal_2d": {
+        "delta_A1_minus_A2_mean": 0.008409540506193025,
+        "over_mce": 0.03947634198760264,
+        "sign": "1/5 positive (fails the >=4/5 requirement)",
+        "per_fold_seed": [
+          0.0,
+          0.0,
+          0.042047702530965125,
+          0.0,
+          0.0
+        ],
+        "delta_A3_minus_A2_mean": 0.5367117548704314,
+        "delta_A3_minus_A2_sign": "5/5",
+        "alpha_nn_per_fold_seed_A2": [
+          0.0,
+          0.0,
+          0.25,
+          0.0,
+          0.0
+        ],
+        "degenerate_could_not_fire": "4 of 5 fold seeds have alpha_nn == 0, i.e. A2 is the IDENTICAL FUNCTION to A1 and D(A1,A2) == 0 by construction. Per the reviewer's R5/P2 guidance the pfc F1/F2 non-firing is a could_not_fire, NOT a survival, and must be dropped from any 'n of m clauses survived' count."
+      },
+      "ext__helmholtz_2d": {
+        "delta_A1_minus_A2_mean": 0.0,
+        "sign": "0/5",
+        "delta_A3_minus_A2_mean": -1.5742114910285778,
+        "alpha_nn_per_fold_seed_A2": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "degenerate_could_not_fire": "alpha_nn == 0 on 5/5 fold seeds; A2 identical to A1. Report-only dataset anyway."
+      },
+      "ifc_poisson": {
+        "delta_A1_minus_A2_mean": 0.24545393711526753,
+        "over_mce": 0.26176053782476244,
+        "sign": "5/5 positive",
+        "delta_A3_minus_A2_mean": 2.653163520099658,
+        "delta_A3_minus_A2_sign": "5/5",
+        "note": "low_n LOO branch, excluded from clause counting; A1 is identical (8.321) across all 5 fold seeds because the LOO partition is deterministic."
+      }
+    },
+    "falsification_clause_readings": {
+      "_clause_verbatim": "H-r2s2-B3 is FALSIFIED if (F1, allen_cahn replication) the paired `A1_lsi \u2212 A2_lsi_cnn` skill increment on `sharp__allen_cahn_2d`, averaged over the 5 fold/train seeds, is \u2265 2x its certified min_claimable_effect = 1.7594 skill units with the same sign on \u2265 4/5 fold seeds, or (F2, panel generality) `A2_lsi_cnn` beats `A1_lsi` by more than that dataset's certified min_claimable_effect ... with the same sign on \u2265 4/5 fold seeds on \u2265 2 of the 4 decidable datasets, or (F3, the intermediate is dispensable) the matched no-LF control `A3_base_lsi_cnn` comes within 1 certified mce of `A2_lsi_cnn` (or beats it) on \u2265 2 of the 4 decidable datasets, or (F4, scored-arm validity) the scored `A1_lsi` arm loses to the best training-free floor arm ... by more than that dataset's certified mce on \u2265 2 of the 5 non-helmholtz panel datasets, or its panel geomean exceeds the launch anchor 23.0636 by more than the certified panel mce 1.1418668.",
+      "F1_allen_cahn_replication": {
+        "fires": true,
+        "value": 9.23053049336931,
+        "threshold": 1.7594094380253296,
+        "value_over_threshold": 5.2464,
+        "sign_consistency": "5/5 (>= 4/5 required)",
+        "verdict": "FIRES DECISIVELY \u2014 5.25x the pre-registered 2x-mce threshold, 10.49x the raw mce, unanimous sign. The trained gated corrector adds 9.23 skill units on allen_cahn."
+      },
+      "F2_panel_generality": {
+        "fires": true,
+        "decidable_datasets": [
+          "sharp__phase_field_crystal_2d",
+          "sharp__allen_cahn_2d",
+          "sharp__fisher_kpp_2d",
+          "sharp__cahn_hilliard"
+        ],
+        "dataset_fires": {
+          "sharp__allen_cahn_2d": true,
+          "sharp__fisher_kpp_2d": true,
+          "sharp__cahn_hilliard": false,
+          "sharp__phase_field_crystal_2d": false
+        },
+        "count": "2 of 4 decidable (>= 2 required)",
+        "robustness_pfc_dropped": "still 2 of 3 \u2014 the two firing datasets are allen_cahn (10.49x mce) and fisher_kpp (46.84x mce); neither is pfc, so the reviewer's P1 'recheck with pfc dropped' leaves the verdict unchanged.",
+        "non_firing_detail": "cahn_hilliard 0.0652 = 0.71x its mce 0.0912454 with 5/5 sign \u2014 a genuine sub-mce survival. pfc 0.0084 = 0.039x mce with 1/5 sign \u2014 a DEGENERATE could_not_fire (alpha_nn == 0 on 4/5 fold seeds), not a survival.",
+        "verdict": "FIRES"
+      },
+      "F3_intermediate_dispensable": {
+        "fires": false,
+        "dataset_fires": {
+          "sharp__allen_cahn_2d": false,
+          "sharp__fisher_kpp_2d": false,
+          "sharp__cahn_hilliard": false,
+          "sharp__phase_field_crystal_2d": false
+        },
+        "count": "0 of 4 decidable",
+        "detail": "A3 (matched no-LF base swap) is WORSE than A2 on every decidable dataset with 5/5 sign, by 54.63 (allen_cahn, 62.1x mce), 2.10 (cahn_hilliard, 22.98x mce), 0.537 (pfc, 2.52x mce), 0.00425 (fisher_kpp, 5.95x mce); also +2.65 on the excluded ifc_poisson (2.83x mce). Only on report-only helmholtz is A3 better (-1.574), where A3 collapses onto the zero floor (3.3441 = the certified zero-floor skill exactly).",
+        "verdict": "DOES NOT FIRE \u2014 the LF-derived retrieval intermediate is load-bearing on every decidable dataset. This half of H-r2s2-B3 is strongly supported."
+      },
+      "F4_scored_arm_validity": {
+        "fires": false,
+        "loses_to_best_floor_count": "0 of the 5 non-helmholtz panel datasets (>= 2 required)",
+        "panel_geomean": 20.03153609874604,
+        "anchor_plus_panel_mce": 24.205483678745384,
+        "exceeds_anchor_beyond_panel_mce": false,
+        "verdict": "DOES NOT FIRE \u2014 the scored arm is valid and beats the launch anchor by 2.66x the certified panel mce."
+      }
+    },
+    "falsification_verdict": "falsified",
+    "falsification_verdict_basis": "F1 fires decisively (9.23053 vs the pre-registered 2x-mce threshold 1.75941, 5.25x over, sign 5/5) AND F2 fires (2 of 4 decidable: allen_cahn 10.49x mce, fisher_kpp 46.84x mce, both 5/5 sign; robust to dropping pfc). H-r2s2-B3's 'the trained gated corrector adds nothing that survives fold/train-seed variation' is FALSIFIED. Both effects are well above the certified per-dataset noise floors, so this is resolvable, not floor-level. The hypothesis's other two limbs survive: F3 does not fire on any dataset (the LF-derived intermediate carries the class) and F4 does not fire (the scored arm is valid and beats the anchor).",
+    "cratered_verdict": "cratered",
+    "cratered_verdict_basis": "program.md \u00a74.2: 'cratered = crash / geomean worse than 1.5x anchor / falsification fired'. Third disjunct only. NO crash (both legs COMPLETED 0:0, empty .err, no NaN, no preemption/resume). NOT a performance crater: panel geomean 20.0315 is 0.869x the anchor 23.0636, far below the 1.5x-anchor crater line 34.5954, and is the best scored r2s2_stacked panel geomean recorded so far. The verdict is triggered purely by the pre-registered falsification clause firing (F1 + F2), and the falsifying direction is that the trained stage HELPS \u2014 the counterfactual A2 arm would have scored 19.5796 at fold seed 0. Orchestrator/maintainer: read this as 'hypothesis refuted, scored arm healthy', not 'experiment failed'.",
+    "guard_flags": [
+      {
+        "dataset": "heat_local",
+        "nrmse": 0.009951744647142723,
+        "guard_reference_nrmse": 0.00240152155999517,
+        "ratio_to_reference": 4.1439,
+        "flag": "REGRESSION > 2x vs eval/copylf_baselines.json's recorded guard reference",
+        "context": "copy-LF on heat_local is near-exact (0.0024) and this round's stripped view gives the model no LF at test, so a condition-only arm cannot match it; program.md \u00a72.3's 'floor-level, not model-level' excuse covers fluid and sod_1d but NOT heat_local. Recorded as a flag, no auto-reject."
+      }
+    ],
+    "guard_detail": {
+      "fluid": {
+        "nrmse": 0.1639593091670346,
+        "guard_reference_nrmse": 0.21805958171115042,
+        "ratio_to_reference": 0.7519,
+        "flag": null
+      },
+      "heat_local": {
+        "nrmse": 0.009951744647142723,
+        "guard_reference_nrmse": 0.00240152155999517,
+        "ratio_to_reference": 4.1439,
+        "flag": "regression_gt_2x"
+      },
+      "sharp__sod_1d": {
+        "nrmse": 0.017572608543542756,
+        "guard_reference_nrmse": 0.03309017650048946,
+        "ratio_to_reference": 0.5311,
+        "flag": null
+      },
+      "_guard_panel_geomean_skill": 1.182778976965819,
+      "_tier": "contract (2 epochs), job 66267441"
+    },
+    "anomalies": [
+      "JOB-NAME COLLISION MATERIALISED (reviewer finding R1): sacct shows BOTH 66267438 (panel) and 66267441 (guard) with JobName 'r2-r2s2_stacked-B3-s0' \u2014 01_train_eval.sh:36-38 renamed the guard job over its --job-name. The two legs also ran CONCURRENTLY (guard 22:25:38-22:26:47 sits inside panel 22:11:52-22:56:38) on the same host hpc-sm-02-17. Log files are safe (%j disambiguates) and no number is affected, but the timing ledger and any squeue/sacct bookkeeping must match by JOB ID, never by name.",
+      "pfc PRE-FLIGHT CONFLICT carried into the run as designed: target_scale_spread_audit = NEAR_ZERO_TARGETS (switches per-sample target normalisation ON per R2S2B3_PERSAMPLE_NORM_ON_VERDICT) while persample_norm_eligibility = NO_GO_PROMOTES_NOISE. Touches A2/A3 only; the scored A1_lsi has no corrector target. Direction (reviewer P1): it biases A2/A3 WORSE on pfc, i.e. TOWARD confirming H-r2s2-B3 \u2014 and pfc indeed did not fire F2. The F2 verdict is nevertheless robust to dropping pfc entirely (still 2 of 3).",
+      "DEGENERATE could_not_fire CELLS (reviewer R5): alpha_nn == 0 makes A2 the identical function to A1. helmholtz 5/5 fold seeds, pfc 4/5 (only fs2 has alpha_nn = 0.25). Those cells' F1/F2 nulls are structurally guaranteed and are excluded from any 'survived' count. cahn_hilliard's non-firing is NOT degenerate (alpha_nn in 0.104-0.5 on all 5 seeds) and is a genuine sub-mce reading (0.71x mce).",
+      "No ceiling/headroom column and no prediction dumps anywhere in the family (reviewer R5): ledger_contamination_audit.py and band_retention_probe.py CANNOT be run post-hoc on this card's outputs. The mechanism-analyzer's per-band/per-pixel options are limited to what stage_attribution.py already wrote, unless it regenerates predictions from the per-(fold_seed, arm) checkpoints (tools/regen_preds_from_ckpt.py).",
+      "helmholtz A3_base_lsi_cnn = 3.3441095... at fold seeds 0 and 4, numerically identical to the certified zero-floor skill 3.3441095587226317 \u2014 the no-LF control selected the zero base and shrank alpha_lsi/alpha_nn to 0, i.e. it degenerated to the training-free floor. Report-only dataset, but it is a clean readout of what the base-swap control does when the LF intermediate is removed.",
+      "ifc_poisson's A1_lsi is bit-identical (8.321) across all 5 fold seeds \u2014 the LOO branch has a deterministic partition, so its paired statistics have no fold-seed variation in the A1 column. low_n, excluded from clause counting.",
+      "Clean run otherwise: both .err files are EMPTY (0 lines), no NaN/inf, no traceback, no preemption or checkpoint-resume event, every panel and guard cell cached=false, all 6 panel datasets and all 3 guard datasets present."
+    ],
+    "wall_clock_per_seed_min": [
+      44.77
+    ],
+    "wall_clock_detail": {
+      "panel_leg": {
+        "job_id": "66267438",
+        "elapsed": "00:44:46",
+        "minutes": 44.77,
+        "state": "COMPLETED",
+        "exit_code": "0:0",
+        "requested_time": "02:30:00",
+        "utilisation_of_request": 0.2985,
+        "gpu": "nvidia_h200",
+        "host": "hpc-sm-02-17"
+      },
+      "guard_leg": {
+        "job_id": "66267441",
+        "elapsed": "00:01:09",
+        "minutes": 1.15,
+        "state": "COMPLETED",
+        "exit_code": "0:0",
+        "requested_time": "01:00:00",
+        "tier": "contract (2 epochs)"
+      },
+      "for_the_timing_ledger": "r2s2_stacked-B3 panel = 44.77 min actual on h200 vs the reviewer's 56-min scaled comparator (B2 33.58 min x 1.67); the 02:30:00 request was 3.35x actual. Guard = 1.15 min vs a 01:00:00 request."
+    },
+    "anchor_maintenance": "state/anchors/r2s2_stacked.json LEFT UNTOUCHED. \u00a72e requires a 3-SEED result to establish or beat a stream anchor; this is a single-seed (provisional) result. The scored geomean 20.0315 does beat the launch anchor 23.0636 by 2.66x the certified panel mce, which makes this card a candidate for the end-of-round 3-seed confirmation \u2014 but the anchor file is not written on n=1."
+  },
   "6_analysis": null,
   "7_gap_and_future": null,
-  "reanalysis_progress": null
+  "reanalysis_progress": "turn_1"
 }

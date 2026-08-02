@@ -792,3 +792,57 @@
   copy-LF, but better than own B2/B3 legs at same tier). Ladder-audit exit 2 = by-design
   MISPAIRED certificate. -> mechanism-analyzer turn 1 dispatched (probe menu: fidelity_64
   rung spread; n=1 band floor failures; ~1e-6 B1-seed reproduction instrument check).
+
+- 2026-08-02 ~06:3x UTC pulse: 66267438 r2s2-B3-s0 main COMPLETED 0:0 (44:46) — both r2s2
+  legs done -> initial-analyzer dispatched. In flight: r2s1-B3 debugger attempt 1,
+  r2s4-B4 mechanism turn 1. SLURM queue now empty of r2-* jobs.
+
+- 2026-08-02 ~06:4x UTC r2s4-B4 mechanism turn 1 COMPLETE (6/6): B1-seed reproduction
+  RESOLVED = common random numbers (leg_seed formula makes replicate seeds {0,1,2} = B1
+  card seeds; init-only channel at n=5) — re-implementation equivalence check, not an
+  independent draw. ifc MCE decomposed: design-effect 91.5% / init 2.7% / interaction 5.8%
+  over 31 independent draws (MCE at 48th pct of own sampling dist); F4 re-priced under 8
+  readings (3 fire, 5 don't; all measurement-channel readings clear); fidelity_64 spread
+  82% deterministic fold effect, driven by outlier HF row 4 (3.23x harder than row 3).
+  No existing ifc verdict flips (B4 4.679 = 1.68x max init range; r2s3-B3 5.984 = 2.15x).
+  -> turn 2 dispatched (H1: 5-row design = 4 rows + outlier; row-4 membership vs 91.5%
+  design variance; n=1 band 5/15 floor record same phenomenon?).
+
+- 2026-08-02 ~06:5x UTC r2s1-B3 debugger attempt 1 COMPLETE (6/6, ALGO 1/5): root cause =
+  pod_basis rank screen (s_i > sqrt(eps)*s_max) has zero margin vs Gram squaring; admitted
+  a ||v||=0.366 roundoff eigenvector on heat_local (GUARD leg — panel leg had finished
+  green, geomean skill 18.7500, helmholtz 1.140818 matches contract smoke). Fix: self-
+  validating _orthonormal_rank truncation (tuned-constant fix rejected by margin sweep).
+  Panel invariance verified: all scored datasets identical mode counts; only heat_local
+  changes (33->17 modes, now rank-limited — read clip_rule as rank-limited). Commit
+  568522c; debug_notes[0] appended; RELAUNCHED seed 0 as job 66285051 (PENDING).
+  Pulse: no other transitions; in flight r2s2-B3 initial-analyzer + r2s4-B4 turn 2.
+
+- 2026-08-02 ~07:0x UTC r2s2-B3 initial-analyzer COMPLETE (6/6): FALSIFIED in the positive
+  direction — trained scored stage HELPS. Geomean 20.0315 (s0, provisional) vs anchor
+  23.0636: delta -3.0321 = 2.66x panel mce, inside part-4 predicted band 19.2-20.7.
+  F1 fired 9.2305 vs 1.7594 (5.25x, 5/5 sign); F2 2/4 decidable (ac 10.49x, fk 46.84x;
+  pfc/hz nulls degenerate alpha_nn==0 cells); F3 no-fire (A3 no-LF swap worse everywhere
+  62x/23x/6x/2.5x mce); F4 no-fire. cratered_verdict="cratered" via third disjunct ONLY
+  (falsification fired) — NOT a performance crater; basis recorded. heat_local guard
+  flagged 4.14x (non-blocking). Anchor untouched (needs 3-seed). STRONG end-of-round
+  3-seed candidate. Guard job renamed itself to panel name — ledger match by job ID
+  (reviewer R1 materialized). -> mechanism turn 1 dispatched (ac-vs-ch contrast probe).
+
+- 2026-08-02 ~07:2x UTC r2s4-B4 mechanism turn 2 COMPLETE (6/6): H1 REFUTED at sign level
+  via exact 5-player Shapley (31 coalitions x 3 inits, validated 141/141 legs at 0.0 diff).
+  Row 4 = MOST valuable row (phi 4.383, 22.5%, complement: worst alone/best to add;
+  1[row4]x1[n>=2] interaction lifts design R^2 0.814->0.923); row 0 = redundant/interfering.
+  Coverage stats ANTI-informative (Spearman -0.60 vs row value). n=1 floor record =
+  floor-side artifact. F4 postmortem: treatment effect vs coverage-unevenness statistic.
+  F3 incidentally no-fire. New: H3 (redundant row 0), H4 (coverage-based row selection
+  picks exactly wrong rows — cross-stream actionable). Self-corrected card reformat
+  (indent slip, final diff 1/1). -> turn 3 dispatched (capacity axis, matched-n {1,3,5}
+  sub-lattice; part 6 due).
+
+- 2026-08-02 ~06:2x UTC pulse: 66285051 r2s1-B3-s0 (post-fix relaunch) COMPLETED 0:0 in
+  1:49 — VERIFIED against artifacts before analyzer dispatch (checkpoint resume: panel
+  geomean 18.749954 matches pre-failure leg; all 6 panel + 3 guard result entries fresh
+  in outputs repo eval/; zero-byte .err). -> initial-analyzer dispatched. r2-* queue now
+  empty. In flight: r2s1-B3 initial-analyzer, r2s2-B3 mech turn 1, r2s4-B4 mech turn 3,
+  maintainer walk 26.
