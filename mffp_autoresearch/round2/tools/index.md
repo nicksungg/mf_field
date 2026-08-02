@@ -76,6 +76,10 @@ tool: name, what it measures, invocation, provenance card.
 | `map_dispersion_scale_shape.py` | ROUND-2: across repeated training splits, does an arm's learned MAP change or only its SCALE? per split-pair inter-prediction dispersion split into total vs shape-only (`min_a ‖a·p_d − p_d'‖`, i.e. what survives the best per-sample rescale), in `‖y‖` and skill units; plus each split's score at the ORACLE per-sample gain (how much of a score AND of its split-range is the amplitude channel alone) and the split-ENSEMBLE arm as a deliberately non-budget-matched upper bound on any variance-only explanation | r2s3_lf_train_signal-B3 turns 2-3 |
 | `hf_row_shapley_value.py` | ROUND-2: what is each TRAINING ROW worth? exact closed-form Shapley over an EXHAUSTIVE `C(m,n)` subset dump (no sampling), per replicate and on the mean, with the marginal-value profile by coalition size (complement vs passenger), every leave-one-out design, the per-TEST-SAMPLE Shapley localised on the nearest-condition-neighbour partition (`concentration_ratio` = does the row buy COVERAGE?), the interference test, an optional amplitude/structure channel split of row value, and the decisive `coverage_spearman` of every descriptive row statistic against measured value | r2s4_diag-B4 turns 2-3 |
 | `gain_channel_ladder.py` | ROUND-2: is an arm's headroom a PER-SAMPLE SCALE, and does it move along the design axis? the exact amplitude/structure split and the global-vs-per-sample oracle-gain ladder read across a whole sweep (N_train / width / seed), plus the across-test-row dispersion ratio, the TREND of both against the axis, and the matched-axis two-group CONTRAST split by channel. The ladder form of `field_error_decomposition.py` / `gain_calibration_ceiling.py` (which price ONE arm) | r2s4_diag-B4 turn 3 |
+| `head_subspace_surgery.py` | ROUND-2: is a small arm's win/loss against a big arm a CAPACITY verdict or a COORDINATE verdict? recovers the small arm's fitted subspace `H` from its shipped predictions alone (no model code), then prices the DEPLOYABLE hybrid `small|H + big|H⊥`, the ORACLE truth-in-`H` ceiling, ORACLE gain/level channel repairs on both arms, and the off-subspace usefulness separator `cos(small err, big⊥)` with its ORACLE α sweep. Verdicts `COORDINATE_ONLY` / `COMPLEMENTARY_OFF_SUBSPACE` | r2s1_direct-B3 turn 2 |
+| `coefficient_factorisation_audit.py` | ROUND-2: when a per-mode out-of-fold R² says a coefficient is "condition-unidentifiable", is it the INFORMATION or the FACTORISATION? per basis direction, OOF R² from the CONDITION vs OOF R² from the SELECTED directions' COEFFICIENTS (cross-coefficient structure a per-direction head cannot express) vs an optional trained arm's own test R² on the same coefficient — plus a scored DEPLOYABLE two-stage head with a PROPAGATION-AWARE gate (stage 2 selected on out-of-fold stage-1 predictions). Verdicts `CONDITION_LIMITED` / `FACTORISATION_LIMITED` / `BASIS_LIMITED` | r2s1_direct-B3 turn 3 |
+| `condition_scalar_channel_ladder.py` | ROUND-2: is a trained stage's measured gain just a PER-SAMPLE SCALAR that a closed-form CONDITION regression already delivers? splits an arm into its LEVEL (spatial mean) and FLUCTUATION-GAIN channels, replaces one channel at a time with six condition-only estimators (const / ridge-linear / ridge-quadratic / k-NN / ridge+own-scalar, all fit-fold-fitted with λ on calib) plus a labelled test-truth ORACLE, then RE-SCORES the rebuilt field in skill and certified-mce units and prices it against a MEASURED trained-stage increment. Verdicts `CLOSED_FORM_BEATS_MEASURED_GAIN` / `CONDITION_REACHABLE` / `CONDITION_UNREACHABLE` / `CHANNEL_ABSENT` / `SUB_MCE`. Covers both channels where `dc_pattern_split.py` is descriptive and `residual_gain_learnability.py` prices only the gain | r2s2_stacked-B3 turn 2 |
+| `granted_channel_residual_ladder.py` | ROUND-2: GRANT an arm the condition→level law for free — is there a SECOND channel left, or is the rest field-structured? POD of the granted residual on FIT ROWS ONLY, then a nested rank ladder of condition-PREDICTED vs test-truth-ORACLE coefficients (the knob exists vs the condition can turn it), per-mode held-out R² census, the fit-basis share of TEST residual energy (compact dictionary vs near-white), optional dyadic band anatomy, and an optional LF-POOL OBTAINABILITY block measured on HELD-OUT TRAIN ROWS ONLY (never test LF — immutable 9). Verdicts `SECOND_CHANNEL_REACHABLE` / `CONDITION_UNREACHABLE_DICTIONARY_EXISTS` / `CONDITION_UNREACHABLE_NO_DICTIONARY` / `NO_SECOND_CHANNEL` / `SUB_MCE`. The SEQUENTIAL form of `condition_identifiable_rank.py`; pairs with `coefficient_factorisation_audit.py` (which asks whether an unidentifiable coefficient is information- or factorisation-limited) | r2s2_stacked-B3 turn 3 |
 
 ---
 
@@ -3785,3 +3789,257 @@ squared error, not the mean relative norm, so `frac_removed_global` can be
 slightly negative — a property of the estimator, not a bug. Both gain arms read
 the test truth and are bounds, never scores. All channel quantities live on the
 energy-metric twin.
+
+---
+
+## `head_subspace_surgery.py` (r2s1_direct-B3 turn 2)
+
+**Question it answers.** A card reports "a 10-parameter arm beats a 15 853 057-
+parameter arm by 75× the certified mce". Is that a statement about
+representational CAPACITY, or about who set the coordinates of a subspace both
+arms can represent?
+
+**What it does.** Takes two arms' TEST predictions on one dataset plus the test
+targets (from the stripped view by default). The small arm's predictions are a
+matrix of rank ≤ |basis|; an SVD recovers its fitted subspace `H` with no model
+code, no checkpoint and no training (`pred_energy_outside_H` is the self-check —
+1e-29 on the provenance card). Then it prices, all through `eval/nrmse.py`:
+the two arms; the **DEPLOYABLE** hybrid `small|H + big|H⊥` (the small arm's
+coordinates inside its own subspace, the big arm's structure outside it — no
+test label enters its construction, so it is a real claimable arm); `big|H`;
+the **ORACLE** truth-projected-on-`H` ceiling (nothing confined to `H` can beat
+it); ORACLE global-gain / per-sample-gain / per-sample-level / gain-and-level
+repairs on both arms; and the off-subspace usefulness pair
+`cos(small err, big⊥)` + pooled-LS `α*` with an α sweep of
+`small + α·big⊥`. Per direction of `H` it also regresses each arm's coordinate
+on the truth's (slope / intercept / corr / relative coefficient RMSE) — the
+line that tells you a 75-mce deficit is one affine level bias.
+
+**Read it as.** `|cos| ≲ 0.02` with `α* ≈ 0` ⇒ the big arm contributes nothing
+outside `H`; the parameter-count comparison is measuring coordinates, and the
+right headline is a calibration statement. `cos > 0.1` with `α* ≈ 1` ⇒ genuinely
+complementary arms and the free hybrid deserves to be scored as its own arm.
+Small arm within a few mce of the truth-in-`H` ORACLE ⇒ it has exhausted its
+subspace; the lever is the estimator or the subspace, never the fit.
+
+```bash
+python tools/head_subspace_surgery.py \
+    --dataset sharp__cahn_hilliard \
+    --small_arm <outputs>/preds_test_test_hf_sharp__cahn_hilliard_s0.npz \
+    --big_arm   <outputs>/preds_test_ref_decoder_big_sharp__cahn_hilliard_s0.npz \
+    --dataset sharp__allen_cahn_2d \
+    --small_arm <outputs>/preds_test_test_hf_sharp__allen_cahn_2d_s0.npz \
+    --big_arm   <outputs>/preds_test_ref_decoder_big_sharp__allen_cahn_2d_s0.npz \
+    --out surgery.json
+```
+
+**Verified.** Run 2026-08-02 (UTC) from `round2/`. Reproduces its provenance
+card's turn-2 numbers exactly: `sharp__cahn_hilliard` dim_H 4, head 0.529228 /
+decoder 0.503634 / DEPLOY hybrid 0.488229 (skill 12.6601 / 12.0478 / **11.6793**,
+i.e. the hybrid beats BOTH arms), truth-in-`H` ORACLE 9.9738, cos **+0.2342**,
+α* **+0.713**, verdict `COMPLEMENTARY_OFF_SUBSPACE`; `sharp__allen_cahn_2d`
+dim_H 2, 146.8636 / 212.9261 / 150.5516, ORACLE 145.0050, cos **−0.0050**,
+α* −0.023, verdict `COORDINATE_ONLY`.
+
+**Runtime.** Seconds; dominated by the SVD of the small arm's prediction matrix
+(100 × 65 536 on the panel). **Caveats**: every `*_ORACLE` key consults the test
+truth and is a ceiling, never an arm score. The recovered `H` is the small arm's
+REACHABLE set on the test conditions, which equals its fitted basis only when the
+arm is linear in a fixed basis — check `pred_energy_outside_H_share ≈ 0` before
+believing the surgery. `--rank auto` uses a 1e-8 relative singular-value cut.
+
+---
+
+## `coefficient_factorisation_audit.py` (r2s1_direct-B3 turn 3)
+
+**Question it answers.** Half of this round's tooling scores a per-mode
+out-of-fold R² of `condition → coefficient` and reads a low value as "the
+condition does not determine this mode". That reading has a hidden premise: that
+a PER-DIRECTION function of the CONDITION is the right factorisation of the law.
+This tool tests the premise.
+
+**What it does.** Rebuilds the round's standard closed-form control from the
+stripped view (disjoint 80/10/10 folds, `add`/`fact` centering by the
+‖mean field‖/geomean‖y‖ rule, DC + 50 POD modes of the DC-removed fit-fold
+residual, the four-family map bank {affine, quadratic, kNN, RBF-KRR} with
+per-direction 5-fold OOF selection at τ = 0.1) and then, per direction, reports
+**(A)** OOF R² from the condition — the usual statistic; **(B)** OOF R² of the
+SAME coefficient from the SELECTED directions' coefficients — field-internal
+cross-coefficient structure that (A) cannot see; **(C)** optionally, a supplied
+trained arm's own test R² on that coefficient (what a big model actually
+learned). It then SCORES a deployable two-stage head
+`condition → SET coefficients → remaining coefficients` through `eval/nrmse.py`
+with the stage-2 gate computed both the optimistic way (`true_input`) and the
+correct way (`propagation_aware`: stage 2 selected AND fitted on out-of-fold
+stage-1 predictions, so the selector sees the input error it will actually be
+fed).
+
+**Read it as.** `FACTORISATION_LIMITED` — (A) low, (B) high — means the
+information is there and a per-direction condition map cannot express it; a
+large decoder that "wins on capacity" here is really winning on factorisation,
+and a ~10³-parameter two-stage head is the cheap lever. `CONDITION_LIMITED` —
+both low — means neither factorisation reaches those coefficients and the lever
+is the condition vector or the sampling design. `BASIS_LIMITED` — most centered
+test energy off the train basis — means neither statistic binds.
+**Always quote the `propagation_aware` arm**: on the provenance card the
+`true_input` gate looked better in-fold and cost `ext__helmholtz_2d` 2.35 skill
+units at test time.
+
+```bash
+python tools/coefficient_factorisation_audit.py \
+    --datasets sharp__cahn_hilliard,sharp__allen_cahn_2d --out factorisation.json
+# add column (C) for one dataset:
+python tools/coefficient_factorisation_audit.py --datasets sharp__cahn_hilliard \
+    --arm_preds <outputs>/preds_test_ref_decoder_big_sharp__cahn_hilliard_s0.npz \
+    --out factorisation_ch.json
+```
+
+**Verified.** Run 2026-08-02 (UTC) from `round2/`. This is an INDEPENDENT
+reimplementation of the provenance card's head (it imports no model code) and it
+reproduces the card's numbers: `sharp__cahn_hilliard` one-stage head nRMSE
+**0.529229** vs the shipped 0.5292277, propagation-aware two-stage
+**0.484111** vs the card's 0.48411 (skill 12.6601 → **11.4148**, 13.6× that
+dataset's certified mce 0.09125, beating the 15 853 057-parameter decoder's
+12.0478), verdict `FACTORISATION_LIMITED` with max OOF R² on the discarded
+directions **+0.0249 from the condition** vs **+0.6424 from the SET
+coefficients**; `sharp__allen_cahn_2d` head **0.261530** (shipped 0.26153),
+two-stage a correct **no-op** (nothing clears τ₂), verdict `CONDITION_LIMITED`.
+
+**Runtime.** ~10-30 s per 400-row / 65 536-cell dataset (KRR is O(n_fit³) per
+alpha). **Caveats**: the reimplemented map bank matches the r2s1 head's families
+but not its exact ridge-α grid, so the one-stage head reproduces to ~1e-6 in
+nRMSE rather than bitwise — treat the tool's one-stage column as its own
+reference arm, not as a seam check of someone else's. Stage-2 statistics are
+fitted on the fit fold only; the only test quantity consumed is the score (and
+column (C), which is descriptive). On `N_hf ≤ 20` datasets the tool falls back to
+fitting on all train rows and its OOF numbers have no resolution.
+
+---
+
+## `condition_scalar_channel_ladder.py` (r2s2_stacked-B3 turn 2)
+
+**Measures.** Whether an arm's remaining value is a PER-SAMPLE SCALAR that a
+closed-form regression on the CONDITION VECTOR already delivers. Two channels:
+
+| channel | target | substitution |
+|---|---|---|
+| `level` | `m_i = mean(HF_i)` | `P_i − dc(P_i) + m̂_i` |
+| `fluct_gain` | `g_i = ⟨f_p, f_y⟩ / ‖f_p‖²` | `dc(P_i) + ĝ_i · f_p` |
+
+Six condition-only estimators of each scalar — `S0` identity · `S1` fit-fold
+constant · `S2` ridge linear · `S3` ridge quadratic (`z`, `z²`, cross terms) ·
+`S4` k-NN in standardised condition space · `S5` ridge on condition + the arm's
+own scalar (the FiLM-expressible map) — every one fitted on the FIT fold with
+λ/k selected on the held-out CALIB fold, plus `OR`, the labelled test-truth
+ORACLE. The rebuilt field is re-scored with `round2/eval/nrmse.py`, so gains
+are reported in skill units, in certified `min_claimable_effect` units, as a
+share of the ORACLE, and as a share of a MEASURED trained-stage increment.
+
+**Invocation.**
+
+```bash
+python tools/condition_scalar_channel_ladder.py \
+    --bundle /path/arm_bundle.npz \
+    --copylf_ref 0.0017807662982691156 --mce 0.8797047 \
+    --measured_gain 9.2305 --fold_seed 0 --out /path/out.json
+```
+
+`--bundle` is one `.npz` with `pred_train`, `hf_train`, `cond_train`,
+`pred_test`, `hf_test`, `cond_test` (fields `(N, n_cells)` or `(N, H, W)`;
+conditions `(N, d)`) and optionally `fit_idx` / `calib_idx` — pass those when
+you want the tool to use a family's own folds instead of deriving them from
+`--fold_seed` / `--fracs`.
+
+**Read it as.** `CLOSED_FORM_BEATS_MEASURED_GAIN` → the trained stage was
+solving a scalar regression badly; report the closed-form arm, not the network.
+`CONDITION_UNREACHABLE` with a large ORACLE → an information ceiling for a
+condition-only class, not a lazy optimiser. `CHANNEL_ABSENT` → the channel does
+not exist on this dataset (check `hf_dc_energy_share` first).
+
+**Verified.** Reproduces r2s2_stacked-B3 turn 2 exactly on
+`sharp__allen_cahn_2d` fold seed 0 through the family's own fold indices:
+`S3` level gain **35.26669725474539** skill units vs the probe's 35.267, level
+ORACLE **36.43182875734228** vs turn 1's 36.43. Also smoke-run on a synthetic
+foreign bundle (32×32, 3-dim condition, `d`-independent noise) →
+`level: CONDITION_REACHABLE`, `fluct_gain: CHANNEL_ABSENT`.
+
+**Runtime.** Seconds to ~1 min per dataset (400 × 65 536 fields; the cost is
+the substitutions and one `nrmse` per estimator). **Caveats**: `S*` are fitted
+on the FIT fold, which is normally also the fold the arm's own stages were
+fitted on — that is a protocol match, not a leak, but say so when quoting.
+`OR` is a per-sample test-truth oracle and must always carry that label. On a
+dataset with a tiny certified mce the `over_mce` columns are meaningless as
+effect sizes; quote ratios.
+
+---
+
+## `granted_channel_residual_ladder.py` (r2s2_stacked-B3 turn 3)
+
+**Measures.** What is left once the arm is GRANTED the condition→level law for
+free, and whether any of it is reachable. `B := P − dc(P) + m̂_cond`, then a POD
+basis of `E = HF − B` built on the FIT ROWS ONLY, then per rank `R` two nested
+ladders on the test split: `PRED_R` (coefficients from a fit-fold condition
+regression, λ on calib) and `ORACLE_R` (test-truth coefficients). ORACLE says
+the **knob exists** in a train-side field basis; PRED says the **condition can
+turn it**. Also: the per-mode held-out `R²` census with
+`n_modes_with_positive_heldout_R2`, the fit-fold modal energy spectrum, the
+share of TEST residual energy the fit basis captures at all (compact dictionary
+vs near-white), an optional dyadic band anatomy (`--grid H W`, same edges and
+Parseval weights as the round's other band probes), and an optional
+**LF-pool obtainability** block whenever the bundle carries `lf_train`.
+
+**The LF block never reads test LF.** Round-2 immutable 9 forbids scripts
+reading the unstripped `data_root` at test time and carves out no probe
+exception, so the block is measured on the held-out `eval_idx` TRAIN rows with
+every estimator fitted on `fit` and selected on `calib`: level from the sample's
+own LF DC vs from the condition, per-sample fluctuation cosine of LF vs of the
+arm, and a training-free `m̂_cond + γ·f_lf` arm scored against the arm on
+IDENTICAL rows. Its absolute skills use the TEST-split copy-LF denominator, so
+only `ratio_arm_over_LF_arm` / `ratio_arm_over_raw_LF` are denominator-free —
+quote those.
+
+**Invocation.**
+
+```bash
+python tools/granted_channel_residual_ladder.py \
+    --bundle /path/arm_bundle.npz \
+    --copylf_ref 0.0017807662982691156 --mce 0.8797047 \
+    --ranks 1,2,4,8,16,32,64 --grid 256 256 --fold_seed 0 --out /path/out.json
+```
+
+Same bundle contract as `condition_scalar_channel_ladder.py`, plus optional
+`eval_idx` and `lf_train` (the paired LF on the TRAIN rows, already upsampled
+onto the HF grid).
+
+**Read it as.** Large ORACLE + flat/negative PRED + a per-mode `R²` census that
+is essentially all-negative → `CONDITION_UNREACHABLE_*`, an information ceiling;
+then read the LF block, because if the paired LF carries the same residual the
+ceiling is the REGIME, not the architecture. `*_NO_DICTIONARY`
+(fit basis captures < 0.5 of test residual energy) → do not propose a low-rank
+coefficient head; there is no compact dictionary to address.
+`SECOND_CHANNEL_REACHABLE` → a coefficient head is worth building.
+
+**Verified.** Reproduces r2s2_stacked-B3 turn 3 exactly on
+`sharp__allen_cahn_2d` fold seed 0 through the family's own fold indices:
+level-law gain **35.2666972547** skill units, held-out `R²` **0.9996571850**,
+rank-1/8/64 PRED **−0.04761437 / −0.20079058 / −0.57443548** and ORACLE
+**0.87624103 / 5.95325251 / 35.79810979**, mode-1 held-out `R²`
+**−0.07728530**, band relative errors **[0.140454, 1.015229, 1.078611,
+6922.310056]**, and every field of the LF block bit-identical to the probe's.
+Run on all four decidable datasets it returns `CONDITION_UNREACHABLE_NO_DICTIONARY`
+(allen_cahn, fisher_kpp) / `CONDITION_UNREACHABLE_DICTIONARY_EXISTS`
+(cahn_hilliard, pfc). Smoke-run on a synthetic foreign bundle →
+`NO_SECOND_CHANNEL`.
+
+**Runtime.** ~1-3 min per 400-row / 65 536-cell dataset (one thin SVD of the
+fit rows plus one ridge selection per mode). **Caveats**: the POD basis is
+fit-fold-only by design — if `test_residual_energy_captured_by_fitbasis` is
+small the ORACLE ladder is itself an underestimate of the true residual, and
+should be read as "even this train-side dictionary already exposes N× mce".
+The per-mode `R²` census is per fold seed; a handful of individually positive
+modes is normal noise and means nothing unless the PRED ladder moves with it
+(measured on this card: 7 / 4 / 1 / 15 of 64 modes weakly positive at fold
+seed 0, PRED still negative at every rung on 4/4 datasets). The LF block's
+transfer to the test split rests on train/test exchangeability of the LF↔HF
+pairing, which the tool does not verify; `raw_LF_skillunits_same_rows` is the
+diagnostic to eyeball (≈ 1.0 means good exchangeability).

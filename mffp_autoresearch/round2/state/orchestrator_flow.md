@@ -930,3 +930,55 @@
   decoder best_epoch 10/200 on the same under-resolved 40-row fold (links to L2 turn 1).
   Register candidate: subspace-surgery probe suite. -> turn 3 dispatched (identifiability
   triad on coefficient headroom; ch complementary cell; part 6 due).
+
+- 2026-08-02 ~14:2x UTC SESSION RESTART RESUME (third resume): prior session died after
+  dispatching both turn-3 mechanism analyzers (~08:0x/08:2x UTC entries above); both cards
+  verified still at reanalysis_progress=turn_2, parts 6/7 null, turn-1/2 scratchpad
+  artifacts intact, 0 live r2-* SLURM jobs, queue fully drained. Resume actions: crons
+  re-created session-only (pulse 707a5d1f @10min, maintainer 838b5b42 @20min, auto-sync
+  e526548f @30min; 7-day auto-expiry); mechanism-analyzer turn 3 + register re-dispatched
+  for BOTH r2s1_direct-B3 and r2s2_stacked-B3 (single dispatch each covers turn 3 then
+  register per agent mandate; agents told to distrust any stale turn_3 partials).
+  Standing operator items unchanged: r2s4_diag CLOSE CANDIDATE adjudication;
+  ladder.py fix proposal awaiting Eloise review -> mentor sign-off.
+
+- 2026-08-02 ~15:1x UTC r2s1-B3 mechanism turn 3 + REGISTER COMPLETE (5/5): turn-2 M9
+  CORRECTED — standing headroom is ESTIMATOR FACTORISATION, not basis width and not an
+  information ceiling. Opening the SET gate to all 51 directions makes the panel WORSE
+  (18.7500 -> 18.8310), yet ch pod_5/pod_6 decoder test R^2 +0.606/+0.565 with OOF-from-
+  condition ~0 are 0.92/0.94 predictable from the head's OWN 3 selected coefficients.
+  Propagation-aware two-stage closed-form head (~3.5e3 params): ch 11.4148 (beats head
+  -13.65x mce AND decoder -6.71x mce), panel geomean 18.6787 (s0, 0.06x panel mce);
+  allen_cahn control correctly no-ops. Part 6 (13 findings) + part 7 written; status
+  complete; reanalysis_progress registered; locked fields + part 5 SHA-verified across
+  writes. Tools promoted: head_subspace_surgery.py, coefficient_factorisation_audit.py.
+  CROSS-STREAM CORRECTION (part 7): low per-mode OOF R^2 does NOT license
+  "unidentifiable" — qualifies r2s1-B1 COEFFICIENT_UNIDENTIFIABLE verdicts and r2s2-B3's
+  ch "condition-unreachable = class ceiling" (flipped to FACTORISATION_LIMITED under this
+  probe; re-test before treating as ceiling). B4 candidate pre-measured: two-stage head
+  as scored arm + 2 recipe repairs (fit-set-symmetric blend bases; tolerances priced vs
+  audited statistic's own sampling error). B4 launch NOT dispatched — stream is at the
+  program's ~3-batch budget (§4.1); held for the same operator adjudication as r2s4's
+  CLOSE CANDIDATE. r2s2-B3 register still in flight.
+
+- 2026-08-02 ~15:3x UTC r2s2-B3 mechanism turn 3 + REGISTER COMPLETE (18/18): granted-
+  level-law residual decomposition — after granting the condition->level law, the
+  residual carries 40-211x each dataset's certified mce of ORACLE value with ZERO usable
+  condition reachability (PRED rank ladder negative at every rung, 4/4 decidable), while
+  the paired LF field carries it almost perfectly (median fluctuation cosine >= 0.997;
+  zero-training m_cond + gamma*f_lf beats the fitted stack 13.3x/78.5x/12.2x/53.4x on
+  identical held-out train rows, 5/5 fold seeds). Class headroom = exactly one scalar
+  deep; that scalar is free from LF. Parts 6+7 written, status complete, progress
+  registered, locked fields + part 5 hash-verified. Tools promoted:
+  condition_scalar_channel_ladder.py, granted_channel_residual_ladder.py.
+  INTEGRITY: stale killed-agent turn_3 partials REJECTED — they read unstripped test LF
+  (immutable 9 violation); re-derived on held-out ladder_eval train fold
+  (_no_test_lf_read=true). Self-caught over-claim corrected in register (full 64-mode
+  census; "no USABLE condition-reachable second channel"). Postmortem: H-r2s2-B3 right
+  about architecture, wrong about arithmetic (9.23-unit win = per-sample DC recal the
+  LSI stage cannot supply). Cross-stream: raw copy-LF beats the fitted arm
+  164.9x/77.0x/12.3x/49.5x; ADR r2-0003 incomplete-condition-vector now measured, extends
+  to cahn_hilliard; dictionary split matches r2s1-B3 turn 2.
+  ROUND STATE: ALL FOUR STREAMS AT BATCH CLOSE (r2s1 B3 complete @3-batch budget, r2s2 B3
+  complete @3-batch budget, r2s3 CLOSED B4, r2s4 complete B4 CLOSE CANDIDATE). No further
+  autonomous dispatches — end-of-round adjudication handed to operator.
