@@ -989,9 +989,23 @@
   WebFetch is not disabled and no settings.json disables it; the context-mode plugin's
   PreToolUse hook INTERCEPTS every WebFetch call and returns an error directing the caller
   to mcp__plugin_context-mode_context-mode__ctx_fetch_and_index. Subagents whose frontmatter
-  listed WebFetch but not the ctx MCP tools could therefore never fetch a page at all —
-  the hook blocked WebFetch and pointed them at a tool outside their tool list — so they
+  listed WebFetch but not the ctx MCP tools therefore could not fetch via WebFetch —
+  the hook blocked it and pointed them at a tool outside their tool list — so they
   fell back to Bash curl/urllib (r2s2-B3 13 fetches, r2s3-B4 12, r2s4-B4 12+2). That
+  DATED REGRESSION, NOT A ROUND-LONG CONDITION (correction to this entry's first draft):
+  WebFetch worked normally for the whole first half of the round — ~87 successful tool
+  calls across r2s1-B1/B2/B3 (9/12/13), r2s2-B1/B2 (16/10), r2s3-B1/B2/B3 (8/12/7), with
+  only ordinary content-level failures (HTTP 403, PDF text-extraction, redirect-not-
+  followed). Last good WebFetch batch: r2s1-B3 report, 2026-07-31 18:05. First redirect:
+  r2s2-B3 iteration_1, 2026-08-01 10:07. So the hook took effect in that ~16h window
+  (settings.json symlink swapped 08-01 04:46, edited 09:13 — corroborating but not proven
+  causal; no PreToolUse matcher is present in settings.linux.json, so the interception
+  ships with the plugin runtime, exact provenance UNRESOLVED and worth a look if it
+  recurs). ALSO: the r2s2-B3 subagent DIAGNOSED IT CORRECTLY in its own iteration_1
+  ("it redirects to a context-mode MCP tool that is not in my tool list"); the loss was in
+  the upward summary, where it compressed to the lossy shorthand "WebFetch disabled in
+  env" and propagated into report.md headlines and this log as settled fact. Lesson is
+  about SUMMARY FIDELITY on tooling claims, not about the leaf agent's diagnosis. That
   fallback returned pages but bypassed the searchable index and pulled raw bytes into
   subagent context. Replacement path VERIFIED before editing: ctx_fetch_and_index on
   arxiv 2010.08895 indexed 16 sections / 9.4KB and returned the FNO abstract.
