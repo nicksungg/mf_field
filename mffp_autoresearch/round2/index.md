@@ -1,23 +1,25 @@
-# MFFP Autoresearch Round 2 — Dashboard (updated 2026-08-02T03:56:00Z)
+# MFFP Autoresearch Round 2 — Dashboard (updated 2026-08-02T04:17:00Z)
 
-**Twenty-first maintainer walk since the operator halt/resume cycle —
-first walk of the resumed session.**
+**Twenty-second maintainer walk since the operator halt/resume cycle —
+second walk of the resumed session.**
 Halt landed 2026-08-01T01:31:54Z (commit `10d4e4c`), first resume landed
 2026-08-01 ~08:1x PDT (commit `b80e622`). A second, separate session
 restart happened ~2026-08-01T20:45 PDT — crons re-created (orchestrator
 pulse `aa4dcb66`, maintainer `2c7fed88`, auto-sync `a45bd18b`; recorded in
-`state/orchestrator_flow.md` and committed as `818faef8`). Prior session's
-last walk (20) closed at 2026-08-01T23:19:00Z; this walk opens
-2026-08-02T03:51Z, a ~4.5 h gap explained entirely by the session restart
-— no orchestrator or agent activity happened in that window.
+`state/orchestrator_flow.md` and committed as `818faef8`). Walk 21
+(first of the resumed session) closed at 2026-08-02T04:02:00Z with zero
+deltas; this walk (22) opens 2026-08-02T04:14:49Z, ~13 min later — well
+inside the normal cron cadence, a light walk per this run's task brief
+(orchestrator pulse 2 min prior confirmed the same 4 jobs still
+PENDING/Priority and no `sacct` transitions).
 
-**No card-level changes since walk 15** (now seven consecutive no-delta
-walks: 15, 16, 17, 18, 19, 20, 21 — the last across a session restart).
-The round remains fully compute-bound: all 14 cards are exactly where
-walk 15 left them (`r2s3_lf_train_signal-B1..B4` all `complete`, the
-stream formally CLOSED; `r2s1_direct-B1`/`B2` and `r2s2_stacked-B1`/`B2`
-`complete`; `r2s1_direct-B3` and `r2s2_stacked-B3` `running` with no
-part 5 yet; `r2s4_diag-B1..B3` `complete`, `r2s4_diag-B4` `running`).
+**No card-level changes since walk 15** (now eight consecutive no-delta
+walks: 15, 16, 17, 18, 19, 20, 21, 22). The round remains fully
+compute-bound: all 14 cards are exactly where walk 15 left them
+(`r2s3_lf_train_signal-B1..B4` all `complete`, the stream formally
+CLOSED; `r2s1_direct-B1`/`B2` and `r2s2_stacked-B1`/`B2` `complete`;
+`r2s1_direct-B3` and `r2s2_stacked-B3` `running` with no part 5 yet;
+`r2s4_diag-B1..B3` `complete`, `r2s4_diag-B4` `running`).
 `r2s3_lf_train_signal`'s close remains a legitimate registered
 trigger-non-fire close, not an abandonment — full mechanism detail is
 preserved in walk 15's `state/maintainer_report.md` entry and is not
@@ -25,17 +27,17 @@ repeated in full here.
 No new analysis agents are in flight; every next stage for the three
 open streams triggers on a SLURM job completion, and none of the four
 tracked jobs has transitioned since walk 15. Queue waits have continued
-to grow through the session gap — the oldest job (66262741) has now been
-Priority-queued **over 10 hours**.
+to grow — the oldest job (66262741) has now been Priority-queued
+**over 10.4 hours**.
 
 ## Streams
 
 | Stream | Anchor (skill) | Current batch | Card | Status | Jobs | Last change |
 |---|---|---|---|---|---|---|
-| r2s1_direct | 23.0636 (best_floor_panel_geomean) | 3 | r2s1_direct-B1 **complete**; r2s1_direct-B2 **complete**; r2s1_direct-B3 **running** | Unchanged since walk 15. Seed-0 job **66262741 still PENDING** in `squeue`/`sacct` (Priority-queued, `Elapsed=00:00:00`), queue wait **~10.12 h** (submitted 2026-08-01T10:47:27 PDT) | **1 live/pending SLURM** (`r2-r2s1_direct-B3-s0`, job 66262741, PENDING) | No change; job still PENDING |
-| r2s2_stacked | 23.0636 (best_floor_panel_geomean) | 3 | r2s2_stacked-B1 **complete**; r2s2_stacked-B2 **complete**; r2s2_stacked-B3 **running** | Unchanged since walk 15 — still `running`, job_ids `['66267438','66267441']`. Both jobs remain PENDING, queue wait **~8.28 h** each (submitted 2026-08-01T12:37:40 PDT); job-name-collision watch item still applies once the guard leg starts running | **2 live/pending SLURM** (`r2-r2s2_stacked-B3-s0` 66267438, `r2-r2s2_stacked-B3-guard-s0` 66267441, both PENDING) | No change; both jobs still PENDING |
+| r2s1_direct | 23.0636 (best_floor_panel_geomean) | 3 | r2s1_direct-B1 **complete**; r2s1_direct-B2 **complete**; r2s1_direct-B3 **running** | Unchanged since walk 15. Seed-0 job **66262741 still PENDING** in `squeue`/`sacct` (Priority-queued, `Elapsed=00:00:00`), queue wait **~10.44 h** (submitted 2026-08-01T10:47:27 PDT) | **1 live/pending SLURM** (`r2-r2s1_direct-B3-s0`, job 66262741, PENDING) | No change; job still PENDING |
+| r2s2_stacked | 23.0636 (best_floor_panel_geomean) | 3 | r2s2_stacked-B1 **complete**; r2s2_stacked-B2 **complete**; r2s2_stacked-B3 **running** | Unchanged since walk 15 — still `running`, job_ids `['66267438','66267441']`. Both jobs remain PENDING, queue wait **~8.60 h** each (submitted 2026-08-01T12:37:40 PDT); job-name-collision watch item still applies once the guard leg starts running | **2 live/pending SLURM** (`r2-r2s2_stacked-B3-s0` 66267438, `r2-r2s2_stacked-B3-guard-s0` 66267441, both PENDING) | No change; both jobs still PENDING |
 | r2s3_lf_train_signal | 23.0636 (best_floor_panel_geomean) | 4 | r2s3_lf_train_signal-B1..B4 **all complete** | **CLOSED (registered close, walk 15)**, unchanged this walk. Formal part-7 close: no B5, graded criterion-1 legacy ch=A/ifc=B/ac=C, fk/pfc/hz retired. Not an abandonment — `STREAM_ABANDON_CAP` never applied (all 4 batches complete, no skip/block history) | **0 live SLURM** (job 66268786 COMPLETED 2026-08-01T13:10:49; already in ledger) | No change since walk 15's close |
-| r2s4_diag | **19.8178** (certified_3seed_panel_geomean, CI95 [19.385, 20.527]) | 4 | r2s4_diag-B1..B3 **complete**; r2s4_diag-B4 **running** | Unchanged since walk 15. Seed 0 job 66269660 confirmed still **PENDING**, queue wait **~6.81 h** (submitted 2026-08-01T14:05:45 PDT) | **1 live/pending SLURM** (`r2-r2s4_diag-B4-s0`, job 66269660, PENDING) | No change; job still PENDING |
+| r2s4_diag | **19.8178** (certified_3seed_panel_geomean, CI95 [19.385, 20.527]) | 4 | r2s4_diag-B1..B3 **complete**; r2s4_diag-B4 **running** | Unchanged since walk 15. Seed 0 job 66269660 confirmed still **PENDING**, queue wait **~7.13 h** (submitted 2026-08-01T14:05:45 PDT) | **1 live/pending SLURM** (`r2-r2s4_diag-B4-s0`, job 66269660, PENDING) | No change; job still PENDING |
 
 **Anchor note**: r2s4_diag remains the only stream with a *certified* anchor
 (`certified_3seed_panel_geomean`, 19.8178) — r2s1_direct, r2s2_stacked, and
@@ -51,12 +53,12 @@ All anchors rendered verbatim from `state/anchors/*.json`.
 
 | Job | Card | State | Elapsed | Queue wait (submit → now) | Node/Reason |
 |---|---|---|---|---|---|
-| 66262741 | r2s1_direct-B3 (seed 0) | PENDING | 0:00 | ~10.12 h (submit 2026-08-01T10:47:27 PDT) | (Priority) |
-| 66267438 | r2s2_stacked-B3 (seed 0, panel) | PENDING | 0:00 | ~8.28 h (submit 2026-08-01T12:37:40 PDT) | (Priority) |
-| 66267441 | r2s2_stacked-B3 (seed 0, guard) | PENDING | 0:00 | ~8.28 h (submit 2026-08-01T12:37:40 PDT) | (Priority) |
-| 66269660 | r2s4_diag-B4 (seed 0) | PENDING | 0:00 | ~6.81 h (submit 2026-08-01T14:05:45 PDT) | (Priority) |
+| 66262741 | r2s1_direct-B3 (seed 0) | PENDING | 0:00 | ~10.44 h (submit 2026-08-01T10:47:27 PDT) | (Priority) |
+| 66267438 | r2s2_stacked-B3 (seed 0, panel) | PENDING | 0:00 | ~8.60 h (submit 2026-08-01T12:37:40 PDT) | (Priority) |
+| 66267441 | r2s2_stacked-B3 (seed 0, guard) | PENDING | 0:00 | ~8.60 h (submit 2026-08-01T12:37:40 PDT) | (Priority) |
+| 66269660 | r2s4_diag-B4 (seed 0) | PENDING | 0:00 | ~7.13 h (submit 2026-08-01T14:05:45 PDT) | (Priority) |
 
-**4 live/pending `r2-*` SLURM jobs** — unchanged from walks 14-20, all 4
+**4 live/pending `r2-*` SLURM jobs** — unchanged from walks 14-21, all 4
 confirmed still PENDING at this run's check by both `squeue` and `sacct`.
 Queue waits computed from `scontrol show job`'s `SubmitTime` against the
 current wall clock (cluster confirmed America/Los_Angeles PDT;
@@ -89,24 +91,24 @@ not listed here until they close. `r2s4_diag-B4` is `running` (job
 ## Flags
 
 - **Round fully compute-bound, no card-level deltas since walk 15**
-  (now seven consecutive no-delta walks: 15, 16, 17, 18, 19, 20, 21 —
-  the walk-20→21 gap includes a full session restart with no
-  orchestrator/agent activity). All 14 cards walked and confirmed
-  unchanged: `r2s1_direct-B3` and `r2s2_stacked-B3` remain `running`
-  with no part 5, `r2s4_diag-B4` remains `running`, and
-  `r2s3_lf_train_signal` remains formally `complete`/CLOSED. The next
-  actionable event for every open stream is a SLURM state transition on
-  one of the four tracked jobs.
-- **Session restart, ~2026-08-01T20:45 PDT (this walk's context)**:
-  operator resumed the session; state on arrival was unchanged from
-  walk 20 (all 4 jobs still PENDING, r2s3 closed, no agent stages in
-  flight). Crons re-created (session-only, 7-day auto-expiry):
-  orchestrator pulse `aa4dcb66`, maintainer `2c7fed88`, auto-sync
-  `a45bd18b` — recorded in `state/orchestrator_flow.md` and committed
-  as `818faef8` (2026-08-01T20:35:37-07:00). This is the maintainer's
-  first walk under the new cron set; prior set (`8de33a00`/`75c00bb0`/
-  `f14a9d81`) is presumed expired/superseded, not separately verified
-  (outside this role's SLURM/card scope).
+  (now eight consecutive no-delta walks: 15, 16, 17, 18, 19, 20, 21, 22 —
+  the walk-20→21 gap included a full session restart with no
+  orchestrator/agent activity; walk 21→22 is a normal-cadence light walk,
+  no gap). All 14 cards walked and confirmed unchanged: `r2s1_direct-B3`
+  and `r2s2_stacked-B3` remain `running` with no part 5, `r2s4_diag-B4`
+  remains `running`, and `r2s3_lf_train_signal` remains formally
+  `complete`/CLOSED. The next actionable event for every open stream is
+  a SLURM state transition on one of the four tracked jobs.
+- **Session restart, ~2026-08-01T20:45 PDT (walk 21's context, carried
+  forward unchanged)**: operator resumed the session; state on arrival
+  was unchanged from walk 20 (all 4 jobs still PENDING, r2s3 closed, no
+  agent stages in flight). Crons re-created (session-only, 7-day
+  auto-expiry): orchestrator pulse `aa4dcb66`, maintainer `2c7fed88`,
+  auto-sync `a45bd18b` — recorded in `state/orchestrator_flow.md` and
+  committed as `818faef8` (2026-08-01T20:35:37-07:00). Walk 21 confirmed
+  the new cron set was live and healthy; this walk (22) is the second
+  under it, orchestrator pulse 2 min prior confirmed the same 4 jobs
+  still PENDING/Priority.
 - **`r2s3_lf_train_signal` stream CLOSED (walk 15, unchanged)** — a
   legitimate registered trigger-non-fire close, NOT an abandonment.
   `STREAM_ABANDON_CAP` (=3) never applied (all 4 batches `complete`, no
@@ -127,18 +129,16 @@ not listed here until they close. `r2s4_diag-B4` is `running` (job
   once either job transitions state.
 - **Job 66262741 (r2s1_direct-B3, seed 0)**: confirmed via both `squeue`
   and `sacct` this run — still **PENDING**, Priority-queued, queue wait
-  ~10.12 h (submitted 2026-08-01T10:47:27 PDT), oldest of the 4 tracked
-  jobs and the longest queue wait in the round to date. Now over the
-  10-hour mark for the first time — worth flagging to the orchestrator
-  as a queue-health watch item even though no card/gate action is
-  triggered by queue duration alone.
+  ~10.44 h (submitted 2026-08-01T10:47:27 PDT), oldest of the 4 tracked
+  jobs and the longest queue wait in the round to date — still a
+  queue-health watch item, no new escalation this walk.
 - **Jobs 66267438 / 66267441 (r2s2_stacked-B3, seed 0 panel + guard)**:
   confirmed via both `squeue` and `sacct` this run — both still
-  **PENDING**, Priority-queued, queue wait ~8.28 h each (submitted
+  **PENDING**, Priority-queued, queue wait ~8.60 h each (submitted
   2026-08-01T12:37:40 PDT).
 - **Job 66269660 (r2s4_diag-B4, seed 0)**: confirmed via both `squeue`
   and `sacct` this run — still **PENDING**, Priority-queued, queue wait
-  ~6.81 h (submitted 2026-08-01T14:05:45 PDT), youngest of the 4.
+  ~7.13 h (submitted 2026-08-01T14:05:45 PDT), youngest of the 4.
 - **Round-level instrument-defect pattern (carried forward, 7 independent
   confirmations, unchanged this run)**: `r2s1_direct`'s post-hoc-blend-
   stage class (adjudicated non-defective); `r2s2_stacked-B2`'s statistic
@@ -209,10 +209,11 @@ not listed here until they close. `r2s4_diag-B4` is `running` (job
   still does not exist — consistent with no abandonments ever being
   needed.
 - Repo hygiene, final check: `git status --short .` on the round root at
-  this run's open shows fully clean (the session-restart commit `818faef8`
-  already absorbed all of walk 20's writes). Monorepo tip is `818faef8`
-  (2026-08-01T20:35:37-07:00), unchanged across this run's open and
-  close — no new external commits landed during this run's window. No
-  changes made to `state/timing_ledger.json` (no upsert due). No
-  maintainer Write touched `experiment_cards/`, `tools/`, or any
-  other-agent-owned `state/` file this run.
+  this run's open shows fully clean (walk 21's writes were absorbed by
+  the auto-sync commit `78f392af`, 2026-08-01T20:58:47-07:00). Monorepo
+  tip is `78f392af` at both this run's open and close — no new external
+  commit landed during this run's window. `git status --short
+  experiment_cards/` independently confirmed clean. No changes made to
+  `state/timing_ledger.json` (no upsert due — 17 entries, still
+  parseable). No maintainer Write touched `experiment_cards/`, `tools/`,
+  or any other-agent-owned `state/` file this run.
