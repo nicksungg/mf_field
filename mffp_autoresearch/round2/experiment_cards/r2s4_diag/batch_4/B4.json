@@ -98,7 +98,7 @@
     },
     "_brainstormer_recipe_notes": "`base_commit` = `round2-substrate` HEAD, verified by\n  `git rev-parse round2-substrate` = 9e10d414e35a96398f7b091bc84ddf936d88acc7. Leg budget\n  93 + 48 + 60 = **201 trainings** plus 3 guard legs at 2 epochs; every group-A leg is\n  200 optimiser steps on \u2264 5 rows of 64x64 and the largest group-C leg is 80 rows of 8x8,\n  all in one process with a single dataset load. B3 ran 184 far larger legs in 92 min, so\n  expect **45\u201375 min**; request `--time 02:00:00`. Strict 1 card seed \u21d2 only `submit.sh`,\n  no `submit_seeds_2_3.sh`. Groups D\u2013F are numpy/closed-form post-processing over\n  already-trained legs: no extra GPU, no new dependencies."
   },
-  "status": "running",
+  "status": "analyzing",
   "skipped_reason": null,
   "reopen_candidate": false,
   "scripts_path": {
@@ -177,7 +177,389 @@
     "orchestrator 2026-08-01: submitted per attempt-2 reviewer SUGGEST \u2014 job 66269660. Pre-submit housekeeping done: contract-tier outputs archived to eval_contract_tier_archive/ (8 files incl. the 2-epoch diagnostic.json and 298MB preds npz) so no stale deliverable sits at the analyzer path. ANALYZER OBLIGATIONS: assert diagnostic.json.epochs == 200 and per_seed.0.source ends _e200_s0.json; carry O_UNCLASSIFIED/prereg_gap verbatim; watch the second lobe (CI entirely below -bound = pre-registered non-monotone RESULT, not equivalence). Evidence-provenance SUGGEST (reverify logs untracked, VERIFICATION.md stale claim) noted, non-blocking."
   ],
   "debug_notes": [],
-  "5_actual_result": null,
+  "5_actual_result": {
+    "seeds_available": [
+      0
+    ],
+    "seed_semantics": "strict 1 card seed (recipe.seeds = [0]); the 3 in-job replicates are INIT replicates derived from R2S4B4_SPLIT_SEED, NOT card seeds (R2S4B4_REPLICATE_SEMANTICS = in_job_init_replicates_from_split_seed_not_card_seeds). No seeds 1/2 will be run for this card.",
+    "result_json_sources": {
+      "scored_panel_leg": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s4_diag/B4/eval/result_ifc_poisson_s0.json",
+      "guard": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s4_diag/B4/eval/result_guard_s0.json",
+      "diagnostic": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s4_diag/B4/eval/diagnostic.json",
+      "anatomy_dump": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s4_diag/B4/eval/anatomy_ifc_poisson_e200_s0.json",
+      "prereg_training_free": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s4_diag/B4/eval/prereg_ifc_poisson_e200_s0.json",
+      "aux_audits": [
+        "ladder_pair_alignment_audit_s0.json",
+        "design_coverage_audit_s0.json",
+        "band_retention_probe_s0.json",
+        "ledger_contamination_audit_s0.json"
+      ],
+      "slurm": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round2/r2s4_diag/B4/slurm/r2-r2s4_diag-B4-s0_66269660.out"
+    },
+    "seam_assertions": {
+      "nrmse_def_hash": "d3d0ade9191c13bacc40702f3eb26ad290e01641cacee22a1d2233b74c035850",
+      "nrmse_def_hash_consistent": true,
+      "nrmse_def_hash_checked_in": [
+        "result_ifc_poisson_s0.json",
+        "result_guard_s0.json",
+        "band_retention_probe_s0.json",
+        "ledger_contamination_audit_s0.json",
+        "state/noise_floor.json:_provenance.nrmse_def_hash"
+      ],
+      "copylf_def_hash": "9753ff24e856f595748492dec6cb6c215d748f97e8ec4a679b651f8846da907a",
+      "copylf_def_hash_consistent": true,
+      "analyzer_obligation_epochs_assert": "diagnostic.json.epochs == 200 -> TRUE; per_seed.0.source == '.../anatomy_ifc_poisson_e200_s0.json' (ends _e200_s0.json) -> TRUE. The archived contract-tier snapshot is isolated in eval_contract_tier_archive/ and was not parsed.",
+      "in_family_metric_seam": "primary_leg.metric_seam_check: eval_layer_rel_l2_mean 0.28588182462395306 == in_family_twin 0.28588182462395306, abs_diff 0.0, asserted true"
+    },
+    "per_dataset": {
+      "ifc_poisson": {
+        "per_seed_nrmse": [
+          0.2858818246239531
+        ],
+        "per_seed_skill": [
+          7.941161795109809
+        ],
+        "mean_skill": 7.941161795109809,
+        "ci95": null,
+        "ci95_note": "single card seed -> no seed-level CI is computable. The descriptive in-job replicate range at the primary knob (n=5, w32) is [7.9411617951098075, 8.878868170190414], max-min spread 0.9377063750806061 over 3 init replicates. This is an INIT-replicate range, NOT a seed CI, and is not used to adjudicate anything.",
+        "reference_type": "paper_bar",
+        "reference_nrmse": 0.036,
+        "cached": false,
+        "split": "test_hf",
+        "leg": "A__w32__n5__S01234__r0 (R2S4B4_PRIMARY_LEG = n5_w32_rep0)"
+      }
+    },
+    "panel_geomean_skill": {
+      "per_seed": [
+        7.941161795109809
+      ],
+      "mean": 7.941161795109809,
+      "ci95": null,
+      "scope_warning": "result_ifc_poisson_s0.json's `panel_geomean_skill` is a geomean over the ONE dataset this card scores (ifc_poisson). It is NOT the 6-dataset round panel geomean and must never be compared against the stream panel anchor 19.817844731907492."
+    },
+    "vs_anchor": {
+      "anchor_file": "mffp_autoresearch/round2/state/anchors/r2s4_diag.json",
+      "anchor_value": 8.261220201059428,
+      "anchor_value_scope": "per_dataset_mean_skill.ifc_poisson of the certified r2s4_diag-B1 3-seed anchor (the adjudicating anchor for this single-dataset diagnostic)",
+      "stream_panel_anchor_not_applicable": 19.817844731907492,
+      "measured": 7.941161795109809,
+      "delta": -0.3200584059496195,
+      "delta_convention": "measured - anchor; skill is nRMSE/reference, so LOWER is better and a negative delta is an improvement",
+      "beyond_ci": false,
+      "beyond_ci_basis": "the measurement lands at the lower endpoint of the anchor's own ifc 3-seed stratified-bootstrap CI [7.941161869912803, 8.878865998865917]; a single-seed card has no CI of its own, so no separation is claimable",
+      "beyond_noise_floor": false,
+      "noise_floor_min_claimable_effect": 0.9377041289531141,
+      "reading": "|delta| 0.3201 = 0.341x the certified ifc MCE -> NOT resolvable. This is the intended instrument check: the primary leg reproduces the B1 certifier rather than moving it.",
+      "cross_card_reproduction": "the 3 in-job replicates at n=5,w32 are [7.9411617951098075, 8.878868170190414, 7.963633362062258] vs r2s4_diag-B1's certified 3 card seeds [7.941161869912803, 8.878865998865917, 7.963632734399563] - agreement to ~1e-6 relative, replicate-for-seed. A strong (unplanned) reproduction of the certifier by an independently re-implemented family."
+    },
+    "cratered_verdict": "n/a",
+    "cratered_note": "diagnostic card -> the cratered rule does not apply (per the analyzer contract, diagnostics record the measurement against the falsification clause instead). For reference only: job COMPLETED with ExitCode 0:0, no crash; cratered_skill_factor 1.5 x ifc anchor 8.261220201059428 = 12.391830, and the measured 7.941162 sits far below it.",
+    "falsification_verdict": "falsified",
+    "falsification_detail": {
+      "hypothesis_verbatim": "at N_hf = 5 on ifc_poisson the condition->HF surrogate is variance/sample-limited rather than architecture-limited: it fits its 5 training rows to near-zero in-sample error while test error sits at ~8x the paper bar, marginal HF samples move test skill by more than the certified MCE over 1->5, and the generalisation gap closes as the within-rung design grows 20x",
+      "rule_verbatim": "is falsified if ANY of: (F1) ... (F5) ...",
+      "verdict_mechanism": "F4 fired; F1, F2, F3, F5 did not. Under the card's pre-registered ANY-of rule the conjunctive hypothesis is FALSIFIED, and only its fourth conjunct (the gap-closing clause) is responsible.",
+      "deciding_clause_verbatim": "(F4) the rung `gap_ratio` at n_fit = 80 is not smaller than at n_fit = 4 by more than the in-job fold spread",
+      "deciding_numbers": "mean_gap_ratio at n_fit=4 (fidelity_64) = 7.211610047059689; at n_fit=80 (fidelity_8) = 1.739785271474527; drop = 5.471824775585162; in-job fold spread at the smallest design = 13.515744138933343. drop (5.4718) < spread (13.5157) -> F4 fires.",
+      "honest_reading_of_F4": "the drop is in the PREDICTED direction and monotone across all four rungs (7.2116 -> 2.6769 -> 1.8485 -> 1.7398 as n_fit goes 4 -> 16 -> 40 -> 80), but it is smaller than its own in-job resolution scale at the 4-row rung. The gap-closing conjunct is therefore NOT RESOLVABLE at this design rather than contradicted. The card's rule nonetheless converts that into a falsification of the conjunctive hypothesis, and it is recorded as such without spin. Caveat carried from the probe: rungs are INDEPENDENT designs on different grids; only dimensionless within-rung ratios are compared, never two skills.",
+      "per_clause": {
+        "F1_in_sample_nrmse_at_n5_w32_gt_0.10": {
+          "fires": false,
+          "value": 0.02513622849900382,
+          "threshold": 0.1,
+          "per_replicate": [
+            0.022081827035061487,
+            0.025937460546478313,
+            0.02738939791547166
+          ],
+          "in_mce_nrmse_units": 0.7446150100632486
+        },
+        "F2_outcome_O3_inconclusive": {
+          "fires": false,
+          "outcome": "O1_EFFECT",
+          "ci_halfwidth": 0.6518733967389632,
+          "bound": 0.9377041289531141
+        },
+        "F3_width8_beats_width32_at_n5": {
+          "fires": false,
+          "mean_skill_width_8": 8.76242389898105,
+          "mean_skill_width_32": 8.261221109120827,
+          "advantage_of_small_width": -0.5012027898602227,
+          "threshold": 1.7245548634740775,
+          "threshold_basis": "max(MCE, in-job subset x replicate spread) = in-job spread 1.7245548634740775",
+          "label": "the one genuine function-class contrast of this card"
+        },
+        "F4_gap_ratio_does_not_fall_with_design_size": {
+          "fires": true,
+          "smallest_design": {
+            "rung": "fidelity_64",
+            "n_fit": 4,
+            "mean_gap_ratio": 7.211610047059689
+          },
+          "largest_design": {
+            "rung": "fidelity_8",
+            "n_fit": 80,
+            "mean_gap_ratio": 1.739785271474527
+          },
+          "drop": 5.471824775585162,
+          "in_job_fold_spread": 13.515744138933343
+        },
+        "F5_floor_reproduction_broken": {
+          "fires": false,
+          "reproduced": true,
+          "ref_zero_equals_one_exactly": true,
+          "arms": {
+            "nn_condition": {
+              "recomputed_skill": 10.054890929609687,
+              "relative_deviation": 0.0
+            },
+            "train_mean": {
+              "recomputed_skill": 11.206332455369639,
+              "relative_deviation": 0.0
+            },
+            "zero": {
+              "recomputed_skill": 27.77777777777778,
+              "relative_deviation": 0.0
+            }
+          },
+          "note": "the card's highest-value outcome held: every frozen ifc floor reproduces to relative deviation 0.0 (tol 1e-9) and ref_zero == 1.0 exactly, so no ifc number in the round is invalidated"
+        }
+      },
+      "beyond_noise_floor_crosscheck": "the only clause that fired did so because its measured quantity is BELOW its own in-job resolution scale; no falsified-by-contradiction evidence exists in this run. The clauses that carry the card's substance (F1, F2, F3, F5) all held, and the primary estimand cleared the certified MCE by ~5x."
+    },
+    "primary_estimand": {
+      "name": "Delta_5_1 = mean_skill(n=1,w32) - mean_skill(n=5,w32)",
+      "point": 4.678559965059254,
+      "ci90": [
+        4.024463904519728,
+        5.328210697997655
+      ],
+      "ci_halfwidth": 0.6518733967389632,
+      "method": "stratified_bootstrap_by_n, B=10000, rng 0, level 0.90 (Agarwal et al. arXiv:2108.13264)",
+      "n_cells_small": 15,
+      "n_cells_large": 3,
+      "prereg_outcome": "O1_EFFECT",
+      "prereg_gap": false,
+      "prereg_gap_note": "the reviewer-flagged O_UNCLASSIFIED lobe did NOT fire: prereg_gap = false in the probe output. Sign of Delta_5_1 is POSITIVE (n=1 skill worse than n=5 skill, i.e. more HF rows help), so the second lobe (CI entirely below -bound = pre-registered non-monotone RESULT) is also not in play. No retro-labelling was performed.",
+      "effect_in_mce_units": 4.98937758787792,
+      "bound": 0.9377041289531141,
+      "ceiling_headroom_mean": 10.261557105048444
+    },
+    "learning_curve_by_n": [
+      {
+        "n": 1,
+        "n_cells": 15,
+        "mean_test_skill": 12.93978107418008,
+        "min": 11.52524567172726,
+        "max": 14.778355725502387,
+        "mean_in_sample_nrmse": 0.006214033646362334,
+        "mean_micro_holdout_nrmse": 0.4472340921850367,
+        "mean_gap_ratio": 73.87718005874666,
+        "mean_best_floor_skill": 13.569627612892765,
+        "cells_beating_own_n_floor_by_mce": 5
+      },
+      {
+        "n": 2,
+        "n_cells": 30,
+        "mean_test_skill": 10.767030452531055,
+        "min": 8.4530841251924,
+        "max": 13.525127981424253,
+        "mean_in_sample_nrmse": 0.013713445627504602,
+        "mean_micro_holdout_nrmse": 0.3380714540454752,
+        "mean_gap_ratio": 26.50260203492547,
+        "mean_best_floor_skill": 11.292422673700731,
+        "cells_beating_own_n_floor_by_mce": 10
+      },
+      {
+        "n": 3,
+        "n_cells": 30,
+        "mean_test_skill": 9.646679179269873,
+        "min": 8.000350385703666,
+        "max": 11.90283673717983,
+        "mean_in_sample_nrmse": 0.020050487428107746,
+        "mean_micro_holdout_nrmse": 0.255539192759015,
+        "mean_gap_ratio": 14.563932885947027,
+        "mean_best_floor_skill": 10.504846038767253,
+        "cells_beating_own_n_floor_by_mce": 16
+      },
+      {
+        "n": 4,
+        "n_cells": 15,
+        "mean_test_skill": 8.786797556404398,
+        "min": 7.758164750874588,
+        "max": 10.43805701384732,
+        "mean_in_sample_nrmse": 0.02342691060262802,
+        "mean_micro_holdout_nrmse": 0.16768356638210413,
+        "mean_gap_ratio": 7.717006926343841,
+        "mean_best_floor_skill": 10.149924549703043,
+        "cells_beating_own_n_floor_by_mce": 11
+      },
+      {
+        "n": 5,
+        "n_cells": 3,
+        "mean_test_skill": 8.261221109120827,
+        "min": 7.9411617951098075,
+        "max": 8.878868170190414,
+        "mean_in_sample_nrmse": 0.02513622849900382,
+        "mean_micro_holdout_nrmse": null,
+        "mean_gap_ratio": null,
+        "mean_best_floor_skill": 10.054890929609687,
+        "cells_beating_own_n_floor_by_mce": 3
+      }
+    ],
+    "learning_curve_notes": "monotone improving in n on the group means (12.9398 -> 10.7670 -> 9.6467 -> 8.7868 -> 8.2612); mean_in_sample_nrmse stays <= 0.0252 at every n while test nRMSE stays ~0.29 at n=5 (gap ratio ~11.4x at n=5 against the 0.036 paper bar); micro-holdout and gap_ratio are null at n=5 because no unused HF row remains. Cells that do not beat their own-n best floor by more than the MCE are REPORTED, not CLAIMED (at n=1 only 5/15 cells clear their floor; at n=5 all 3 do).",
+    "rung_ladder": [
+      {
+        "rung": "fidelity_8",
+        "grid": [
+          8,
+          8
+        ],
+        "n_fit": 80,
+        "mean_in_sample_rel_l2": 0.008932530027783924,
+        "mean_held_out_rel_l2": 0.015008623502426478,
+        "mean_gap": 0.006076093474642556,
+        "mean_gap_ratio": 1.739785271474527,
+        "gap_ratio_spread_in_job": 3.258823653365129
+      },
+      {
+        "rung": "fidelity_16",
+        "grid": [
+          16,
+          16
+        ],
+        "n_fit": 40,
+        "mean_in_sample_rel_l2": 0.014263862542824536,
+        "mean_held_out_rel_l2": 0.026001753562006145,
+        "mean_gap": 0.011737891019181608,
+        "mean_gap_ratio": 1.8484988117589594,
+        "gap_ratio_spread_in_job": 2.2556051069256524
+      },
+      {
+        "rung": "fidelity_32",
+        "grid": [
+          32,
+          32
+        ],
+        "n_fit": 16,
+        "mean_in_sample_rel_l2": 0.03449989810402901,
+        "mean_held_out_rel_l2": 0.09100277742991406,
+        "mean_gap": 0.056502879325885054,
+        "mean_gap_ratio": 2.676895167454289,
+        "gap_ratio_spread_in_job": 4.146609267145504
+      },
+      {
+        "rung": "fidelity_64",
+        "grid": [
+          64,
+          64
+        ],
+        "n_fit": 4,
+        "mean_in_sample_rel_l2": 0.022552016506575265,
+        "mean_held_out_rel_l2": 0.15391664140440423,
+        "mean_gap": 0.13136462489782894,
+        "mean_gap_ratio": 7.211610047059689,
+        "gap_ratio_spread_in_job": 13.515744138933343
+      }
+    ],
+    "bridge_column_status": "REPORT_ONLY - adjudicates nothing (one-sided resolution confound; independent rung designs). Recorded values bridge_mean_test_skill_REPORT_ONLY: fidelity_8 2066.332824075804, fidelity_16 454.789574019353, fidelity_32 86.71471629624757, fidelity_64 8.857548319811915.",
+    "paired_nested_chains": {
+      "n_chains": 120,
+      "n_chain_rows": 360,
+      "delta_5_1_mean": 4.678559965059255,
+      "quantiles": {
+        "p5": 2.7500996552382997,
+        "p25": 3.516668301432963,
+        "p50": 4.127460593837532,
+        "p75": 5.922928696369875,
+        "p95": 6.837193930392579
+      },
+      "frac_positive": 1.0,
+      "frac_exceeding_mce": 1.0,
+      "monotone_improving_fraction": 0.6,
+      "mean_step_delta_by_step": [
+        2.1727506216490275,
+        1.120351273261183,
+        0.859881622865472,
+        0.5255764472835726
+      ],
+      "note": "chains are not independent, so no CI is claimed from this column; 40% of chains are non-monotone, which the card pre-registers as the published ill-behaved-learning-curve RESULT (arXiv:2211.14061), not a harness bug."
+    },
+    "bounding_claim": {
+      "envelope_cells": 93,
+      "envelope_min_skill": 7.758164750874588,
+      "envelope_max_skill": 14.778355725502387,
+      "lf_effect_reference": 2.150091575784423,
+      "lf_effect_reference_source": "r2s3_lf_train_signal-B3 5_actual_result.per_dataset.ifc_poisson.arms.A1_lf_cov.draw_mean_skill",
+      "inside_envelope": false,
+      "margin_below_envelope": 5.608073175090166,
+      "margin_in_mce_units": 5.98064250964877,
+      "scope": "bounding statement over the OBSERVED 93 cells only - no extrapolation, no ceiling claim, no n_eff (all four pre-registered prohibitions honoured in the probe output's forbidden_by_preregistration list)"
+    },
+    "prereg_and_certificates": {
+      "floor_repro": "all three ifc floors reproduce at relative deviation 0.0 (tol 1e-9); ref_zero == 1.0 exactly; nn_unique_train_atoms 5",
+      "nonnestedness_certificate": "ladder_pair_alignment_audit.py --fail-on mispaired EXITED 2 on ifc_poisson (all three LF rungs DISJOINT_SUPPLY_TRUNCATED + MISPAIRED). The runner's verdict-gated handler logged '[prereg] CERTIFICATE CONFIRMED: ifc rungs audit to verdict=MISPAIRED (exit 2) => independent designs'. Max index-aligned condition mismatch 0.7144623547792435; paired_row_is_nearest_frac 0.0 on every rung.",
+      "design_coverage": "descriptive only (explicitly NOT an n_eff diagnostic): HF design rank 5 with m_null_dim 1 over 5 condition columns; 0/5 HF conditions covered by any LF rung (100/50/20 LF rows all sit at conditions with no HF row).",
+      "band_energy_above_rung_nyquist": "HF test ensemble energy above each rung Nyquist: k>4 6.198e-3, k>8 1.376e-3, k>16 3.375e-4, k>32 3.768e-7 (fractions of total); train-field values match to the same order.",
+      "ledger_contamination_audit": "verdict ['no contamination flag fired']; could_not_fire false; delta 4.127460593837532 vs threshold 0.9377041289531141; ceiling_realised 6.523323807324665; abs_delta_over_ceiling 0.6327235494891491. Control column declared N/A on the N-axis (same estimator/budget/procedure at every n); matched n_fit asserted in every cell (47 group-A, 20 group-C); triangle headroom reported before any threshold was read.",
+      "target_scaler_preflight": "N/A - ifc_poisson is out of scope for the section-12 rule (helmholtz and pfc only); recorded, not silently skipped."
+    },
+    "guard_flags": [
+      {
+        "dataset": "heat_local",
+        "nRMSE": 0.03472336088650802,
+        "guard_reference_nrmse": 0.00240152155999517,
+        "ratio_vs_reference": 14.45890033424387,
+        "flag": true,
+        "criterion": ">2x the eval/copylf_baselines.json recorded guard reference",
+        "context": "NOT a regression introduced by this card: the guard legs are 2-epoch (R2S4B4_GUARD_EPOCHS=2) contract-tier runs of a condition-only, LF-blind family on a dataset whose copy-LF reference is extremely strong (0.0024). Same-tier guard nRMSE in this stream: r2s4_diag-B2 0.040203 / B3 0.040203 vs this card's 0.034723 - B4 is BETTER than the stream's own prior guard legs on all three guard datasets. Flag recorded, no auto-reject."
+      },
+      {
+        "dataset": "fluid",
+        "nRMSE": 0.3787415629167006,
+        "guard_reference_nrmse": 0.21805958171115042,
+        "ratio_vs_reference": 1.7368719133763877,
+        "flag": false
+      },
+      {
+        "dataset": "sharp__sod_1d",
+        "nRMSE": 0.04800718331429063,
+        "guard_reference_nrmse": 0.03309017650048946,
+        "ratio_vs_reference": 1.4507986475557337,
+        "flag": false
+      }
+    ],
+    "guard_set_trigger_note": "the analyzer's guard-set obligation is conditional on a claimed panel win; this diagnostic claims none (single dataset, single seed, delta vs the ifc anchor below the MCE), so no additional login-node guard scoring was run. The in-job guard legs recorded in result_guard_s0.json (2 epochs, seed 0) are reported above as-is.",
+    "anomalies": [
+      "none of the fatal classes: SLURM .err is 0 bytes; no NaN/Inf/traceback/error string anywhere in the 393-line .out; no preemption or resume event; single job 66269660, State COMPLETED, ExitCode 0:0, partition gpu, MaxRSS 1586432K, peak GPU mem 564.7 MB.",
+      "The one non-zero exit in the log is BY DESIGN: ladder_pair_alignment_audit.py exit 2 = the card's non-nestedness certificate (verdict-gated handler; build_notes item 16).",
+      "Wall clock 5:58 vs the recipe note's 45-75 min estimate - 8-12x faster. Consistent with the anatomy dump's train_seconds 316.47 s over all 201 legs (group-A legs are 200 optimiser steps on <= 5 rows). No sign of truncated work: all 201 legs are present (93 + 48 group-A cells and 60 group-C legs; curve_cells covers 31 subsets x 3 replicates).",
+      "Unplanned cross-card reproduction: the 3 in-job init replicates at n=5,w32 match r2s4_diag-B1's 3 certified card seeds to ~1e-6 relative, replicate-for-seed. Worth an explicit look by the mechanism analyzer - it is either an excellent instrument check of an independently re-implemented family or evidence that the init streams coincide with B1's card seeds.",
+      "F4 fired (see falsification_detail). Its firing is driven by an in-job fold spread (13.52) that is 2.5x the measured drop (5.47), i.e. a resolution limit at the 4-row rung, not a contradiction."
+    ],
+    "wall_clock_per_seed_min": [
+      5.97
+    ],
+    "timing_ledger_facts": {
+      "job_id": "66269660",
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "elapsed": "00:05:58",
+      "start_utc_cluster": "2026-08-01T22:27:16",
+      "end_utc_cluster": "2026-08-01T22:33:14",
+      "partition": "gpu",
+      "max_rss_kb": 1586432,
+      "train_seconds_all_legs": 316.4698603153229,
+      "eval_seconds": 0.012619256973266602,
+      "n_params": 1059905,
+      "estimate_in_recipe_notes": "45-75 min"
+    },
+    "labels": [
+      "provisional-single-seed",
+      "anecdote-grade on the N-axis (N_hf = 5)",
+      "no extrapolation, no ceiling claim, no n_eff"
+    ]
+  },
   "6_analysis": null,
   "7_gap_and_future": null,
   "reanalysis_progress": null

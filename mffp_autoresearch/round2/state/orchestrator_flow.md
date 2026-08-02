@@ -773,3 +773,22 @@
   No dispatches due (analyzers gate on COMPLETED). Maintainer resumes full 20-min cadence.
   On completion: r2s1-B3 -> initial-analyzer (s0); r2s2-B3 -> initial-analyzer once BOTH
   main and guard jobs are done (guard is part of the B3 design).
+
+- 2026-08-02 ~05:4x UTC pulse: 66262741 r2s1-B3-s0 FAILED (1:0, 13:21 elapsed) ->
+  experiment-debugger dispatched (attempt 1, ALGO/INFRA TBD). 66267441 r2s2-B3-guard-s0
+  COMPLETED 0:0 (1:09); 66267438 r2s2-B3-s0 main still RUNNING (~16 min) — initial-analyzer
+  gates on BOTH r2s2 jobs done. 66269660 r2s4-B4-s0 PENDING->RUNNING on hpc-sm-02-17.
+
+- 2026-08-02 ~05:5x UTC pulse: 66269660 r2s4-B4-s0 COMPLETED 0:0 (5:58) ->
+  initial-analyzer dispatched (diagnostic card, single run). 66267438 r2s2-B3-s0 main
+  still RUNNING (~26 min). r2s1-B3 debugger attempt 1 still in flight (no re-dispatch).
+
+- 2026-08-02 ~06:1x UTC r2s4-B4 initial-analyzer COMPLETE (6/6): FALSIFIED per ANY-of rule —
+  F4 fired (rung gap_ratio drop 5.47 < in-job fold spread 13.52; drop monotone and in
+  predicted direction but below its own resolution scale — recorded with caveat, not spun).
+  F1/F2/F3/F5 held; F5 perfect (all 3 frozen ifc floors reproduce at rel dev 0.0 — no ifc
+  number in the round invalidated). Delta_5_1 = 4.679 CI [4.02, 5.33] => O1_EFFECT,
+  replicates B1's certified +4.68. Anchor untouched. heat_local guard flagged (14.46x
+  copy-LF, but better than own B2/B3 legs at same tier). Ladder-audit exit 2 = by-design
+  MISPAIRED certificate. -> mechanism-analyzer turn 1 dispatched (probe menu: fidelity_64
+  rung spread; n=1 band floor failures; ~1e-6 B1-seed reproduction instrument check).
