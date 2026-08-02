@@ -982,3 +982,29 @@
   ROUND STATE: ALL FOUR STREAMS AT BATCH CLOSE (r2s1 B3 complete @3-batch budget, r2s2 B3
   complete @3-batch budget, r2s3 CLOSED B4, r2s4 complete B4 CLOSE CANDIDATE). No further
   autonomous dispatches — end-of-round adjudication handed to operator.
+
+- 2026-08-02 WEBFETCH "DISABLED" DIAGNOSIS CORRECTED + AGENT REGISTRY FIXED (operator
+  "go"). The batch-3/batch-4 websearcher note "WebFetch disabled in env — routed around,
+  fix subagents/websearcher.md before batch-5" was a MISDIAGNOSIS. Reproduced directly:
+  WebFetch is not disabled and no settings.json disables it; the context-mode plugin's
+  PreToolUse hook INTERCEPTS every WebFetch call and returns an error directing the caller
+  to mcp__plugin_context-mode_context-mode__ctx_fetch_and_index. Subagents whose frontmatter
+  listed WebFetch but not the ctx MCP tools could therefore never fetch a page at all —
+  the hook blocked WebFetch and pointed them at a tool outside their tool list — so they
+  fell back to Bash curl/urllib (r2s2-B3 13 fetches, r2s3-B4 12, r2s4-B4 12+2). That
+  fallback returned pages but bypassed the searchable index and pulled raw bytes into
+  subagent context. Replacement path VERIFIED before editing: ctx_fetch_and_index on
+  arxiv 2010.08895 indexed 16 sections / 9.4KB and returned the FNO abstract.
+  BLAST RADIUS: 4 agents, all with WebFetch in frontmatter and none referencing ctx —
+  websearcher, experiment-builder, experiment-debugger, experiment-mechanism-analyzer
+  (i.e. the defect was NOT websearcher-only as the batch-4 note assumed).
+  FIX: all 4 frontmatters gained ctx_fetch_and_index + ctx_search (WebFetch retained last
+  as a fallback if the plugin is ever removed); prose in all 4 now names the hook redirect,
+  states explicitly that it is not "disabled", and forbids the curl/urllib workaround on
+  the grounds that it bypasses the index; websearcher §3.2 gained the batch-fetch recipe
+  (requests array, concurrency 4, source labels) and its report template now counts
+  "page fetches (tool path used)" instead of "WebFetch calls". Frontmatter of all 4
+  re-validated (parse, name key intact, both ctx tools present, no duplicate entries).
+  Prior batch reports keep their curl-sourced findings — retrieval content was not wrong,
+  only the path; no re-run needed. Registry backups of the 4 pre-edit files in this
+  session's scratchpad. NOTE: context-mode itself reports v1.0.151 outdated -> v1.0.169.
