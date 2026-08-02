@@ -1,90 +1,101 @@
-# MFFP Autoresearch Round 2 — Dashboard (updated 2026-08-02T14:41:30Z)
+# MFFP Autoresearch Round 2 — Dashboard (updated 2026-08-02T15:03:00Z)
 
-**Twenty-ninth maintainer walk since the operator halt/resume cycle —
-first walk after the THIRD session restart.**
+**Thirtieth maintainer walk since the operator halt/resume cycle —
+second walk after the THIRD session restart.**
 Halt landed 2026-08-01T01:31:54Z (commit `10d4e4c`), first resume landed
 2026-08-01 ~08:1x PDT (commit `b80e622`), second restart landed
-~2026-08-01T20:45 PDT.
-This walk picks up after a **third session restart, ~2026-08-02T14:2x
-UTC** (per `state/orchestrator_flow.md`'s tail entry, cross-checked
-against this walk's own reads — see below).
-The gap since the prior maintainer walk's `RUN END` (`2026-08-02T06:37:00Z`)
-is **~7h57m**, consistent with the session being down for most of that
-window rather than a normal ~20-30 min cron cadence; this walk is the
-first to run since the resume.
+~2026-08-01T20:45 PDT, third restart landed ~2026-08-02T14:2x UTC (per
+`state/orchestrator_flow.md`).
+The gap since the prior maintainer walk's `RUN END` (`2026-08-02T14:44:32Z`)
+is **~15 min**, back to normal cron cadence.
+
+## Milestone this walk
+
+**All 14 cards across all 4 streams are now `complete`** — for the first
+time this round.
+Both `r2s1_direct-B3` and `r2s2_stacked-B3` advanced through mechanism-analyzer
+turn 3 and the register turn since the prior walk, landing `status: complete`,
+`reanalysis_progress: registered`, part 7 populated.
+This maintainer caught both already landed at this walk's first card read
+(card mtimes `2026-08-02T14:54:51Z` and `2026-08-02T14:54:00Z`, i.e. within
+~10 minutes of the prior walk's `RUN END` at `14:44:32Z`).
 
 ## Real deltas this walk (see `state/maintainer_report.md` RUN block for full detail)
 
-- **Session restart (third resume) confirmed independently.**
-  `state/orchestrator_flow.md` (read-only to this maintainer) carries a
-  freshly appended, still-uncommitted entry timestamped
-  `2026-08-02 ~14:2x UTC`: prior session died after dispatching both
-  turn-3 mechanism-analyzers (~08:0x/08:2x UTC); both cards were
-  verified still at `reanalysis_progress=turn_2` with parts 6/7 null and
-  0 live `r2-*` SLURM jobs at resume time; crons re-created session-only
-  (pulse `707a5d1f` @10min, maintainer `838b5b42` @20min, auto-sync
-  `e526548f` @30min, 7-day auto-expiry) — **this maintainer could not
-  independently verify the cron IDs** (`crontab -l` is PAM-denied for
-  this user on this cluster), so that detail is reported as claimed by
-  the orchestrator, not directly confirmed; the fact that this walk is
-  running at all is itself the practical confirmation the maintainer
-  cron is alive again. Mechanism-analyzer turn 3 + register re-dispatched
-  for BOTH `r2s1_direct-B3` and `r2s2_stacked-B3` (agents told to
-  distrust stale turn-3 partials from the killed prior-session agent).
-- **`r2s2_stacked-B3` mechanism-analyzer turn 3 LANDED DURING THIS
-  WALK'S READ WINDOW.** Caught live via `git diff --stat` (73
-  insertions / 34 deletions, uncommitted at read time, file mtime
-  ~83 seconds before this walk's final re-check). `reanalysis_progress`
-  advanced `turn_2` → **`turn_3`**; `6_analysis` now populated
-  (`findings`/`interpretation`/`falsification_postmortem`/`surprises`
-  keys present, no `turns` sub-object this time — differs from
-  `r2s4_diag`'s structure). Part 7 still `null` — register turn not yet
-  landed. Headline (turn 3, high confidence): **the class's entire
-  headroom is exactly one scalar deep** — once the per-sample DC
-  (spatial-mean) law is granted via a 9-feature quadratic ridge on the
-  condition vector (96.6% of the level oracle, 3.72x the trained CNN's
-  whole gain on `allen_cahn`, 5/5 fold seeds), 40-211x each dataset's
-  certified MCE of oracle value remains unaddressed and none of it is
-  reachable from the condition vector alone. Confirms/extends turn 2's
-  finding that the headline A1-A2 win is a partial gradient-trained
-  solve of a closed-form scalar regression, and turn 1's band-0/DC-
-  energy-share framing (`pfc could_not_fire` reading superseded: a
-  closed-form scalar law wins 6.03x pfc's certified mce, 152.7x what the
-  degenerate A2 arm delivered). Part 5 unchanged (`panel_geomean_skill`
-  20.0315 vs stream anchor 23.0636, falsified positive direction).
-  Status unchanged `analyzing`.
-- **`r2s1_direct-B3` remains at `reanalysis_progress=turn_2` at the
-  card level** (mtime `2026-08-02T07:12:18Z`, unchanged since walk 27) —
-  **but is actively computing turn 3 in the worktree scratchpad as of
-  this walk's read**: `worktrees/r2s1_direct/B3/scratchpad/` shows
-  `reanalysis_turn_3.py` through `reanalysis_turn_3c_report.json`, the
-  freshest (`reanalysis_turn_3c_console.txt`) timestamped
-  `2026-08-02T14:36:13Z` — essentially concurrent with this walk's read.
-  Card write-back has not yet landed (`6_analysis`/`7_gap_and_future`
-  still `null`); worth checking next walk.
-- **SLURM: no change since walk 27/28.** `squeue -u $USER` shows **0
-  live `r2-*` jobs** (only the unrelated long-running interactive
-  `bash` job `66302920`, ~36 min elapsed — a different PID than the
-  `66279812` seen in walks 26-28, consistent with a session restart
-  bouncing the interactive shell too). `sacct` (2-day window) shows the
-  same **22 `r2-*` job records** (21 COMPLETED + 1 FAILED `66262741`,
-  superseded by relaunch `66285051`) — no new jobs, none vanished.
-- **Timing ledger**: unchanged at **21 entries** — already current
-  (all 21 COMPLETED jobs present by job ID; the 1 FAILED job correctly
-  excluded). Re-validated parseable JSON; no upsert due this walk.
+- **`r2s1_direct-B3` register turn COMPLETE — card CLOSED.**
+  `panel_geomean_skill` 18.749954 (single seed 0) — falsified via L2
+  (turn 1: the calibration-fold Bates-Granger prelude clause was
+  **unpassable by construction**, a unit mismatch between a between-seed
+  100-row mce and a 40-row within-fold sampling question). Mechanism
+  analysis across 3 turns (16 interpretation items, M1-M16): the headline
+  "10-param head beats a 15.85M-param decoder by 75x mce on
+  `allen_cahn`" is a **coordinate verdict, not a capacity verdict** (M5);
+  headroom is coefficient-estimation, not basis-width, and survives a
+  deployable relaxation test (M11); the per-direction OOF R² statistic
+  used to call coefficients "condition-unidentifiable" actually measures
+  **reach of the map family**, not identifiability — on `cahn_hilliard`
+  a decoder recovers cross-coefficient structure the statistic scored as
+  noise (OOF R² up to 0.94) (M12/M13). New hypothesis M15 (moderate
+  confidence, n=1 caveat): this is a **condition-dimension effect** — the
+  one panel cell with usable cross-coefficient structure is also the
+  only one with a high-dimensional condition vector (19 scalars vs 2-3
+  elsewhere). Part 7 next_direction: B4 should ship the propagation-aware
+  two-stage closed-form head as the scored arm at 1+2 seeds and add a
+  cond_dim discriminator. **2 tools promoted**:
+  `tools/coefficient_factorisation_audit.py`, `tools/head_subspace_surgery.py`
+  (both confirmed present on disk).
+- **`r2s2_stacked-B3` register turn COMPLETE — card CLOSED.**
+  `panel_geomean_skill` 20.031536 (single seed 0), falsified positive vs
+  the 23.0636 anchor. `falsification_postmortem`: the pre-registered
+  zero-gradient-ceiling hypothesis was **right about the architecture,
+  wrong about the arithmetic** — the trained stage's value is a
+  per-sample DC recalibration (a scalar regression on the condition
+  vector), not a field correction, because the LSI stage structurally
+  carries only a single shared DC gain across samples. Surprises: the
+  condition→level law is exact to machine precision on `cahn_hilliard`
+  (1-R² = 3.93e-15) yet worth almost nothing there (0.28x mce, HF DC
+  energy share 0.0045); the `pfc` cell booked as a degenerate
+  `could_not_fire` resolves to a closed-form channel worth 6.03x its
+  certified mce; **all 64 POD coefficients on all 4 datasets have
+  negative held-out R² from the condition vector** (a cleaner null than
+  the probe was built to detect). Part 7 open question: after granting
+  the closed-form level law, is there any legitimate move left for a
+  condition-only class, or should the correct output of this stream be a
+  **certified impossibility statement** — the residual carries 40-211x
+  each dataset's certified mce with condition-only reachability negative
+  at every rung on 4/4 decidable datasets, while the paired LF field
+  carries that same residual almost perfectly (median per-sample
+  fluctuation cosine ≥ 0.997 on 4/4). next_direction explicitly forbids
+  another condition-only field corrector; supports (1) a cheap
+  zero-gradient level arm reported as dataset-level not panel-level, and
+  (2) a distributional/calibrated-uncertainty arm as the only
+  construction with real headroom — with a caveat to price whether the
+  round's rel-L2 geomean metric can reward it at all. **2 tools
+  promoted**: `tools/condition_scalar_channel_ladder.py`,
+  `tools/granted_channel_residual_ladder.py` (both confirmed present on
+  disk).
+- **SLURM: no change.** `squeue -u $USER` shows **0 live `r2-*` jobs**
+  (only unrelated interactive `bash` job `66302920`). `sacct` (2-day
+  window) shows the same **22 `r2-*` job records** as walks 26-29 (21
+  COMPLETED + 1 FAILED `66262741`, superseded by relaunch `66285051`) —
+  no new jobs, none vanished. Consistent with the task brief's note that
+  the queue has been empty of `r2-*` jobs.
+- **Timing ledger**: unchanged at **21 entries** — already current (all
+  21 COMPLETED jobs present by job ID; the 1 FAILED job correctly
+  excluded). Re-validated parseable JSON; no upsert due this walk
+  (register/analysis-stage deltas are not SLURM jobs).
 - No `STREAM_ABANDON_CAP` trip. No anchor deltas (all 4
-  `state/anchors/*.json` byte-identical, mtimes still `2026-07-31`).
+  `state/anchors/*.json` byte-identical, mtimes still `2026-07-31`/`10:03`).
   No gate changes (G1-r2/G2-r2/G3-r2 all still PASS 2026-07-31). No new
-  `state/adhoc_measurements/` entries (still just the 1 file from walk
-  28, mtime `2026-08-01T23:55`). No transcripts to file
+  `state/adhoc_measurements/` entries. No transcripts to file
   (`state/transcripts/inbox/` still does not exist).
 
 ## Streams
 
 | Stream | Anchor (skill) | Current batch | Card | Status | Jobs | Last change |
 |---|---|---|---|---|---|---|
-| r2s1_direct | 23.0636 (best_floor_panel_geomean) | 3 | r2s1_direct-B1 **complete**; r2s1_direct-B2 **complete**; r2s1_direct-B3 **analyzing** (part 5 populated, geomean 18.7500, falsified; parts 6/7 null) | Seed-0 debugged + relaunched (walk 26): `66262741` FAILED → fix `568522c` → `66285051` **COMPLETED**. Mechanism-analyzer turn 1 (walk 27) + turn 2 (walk 28) landed; **turn 3 actively computing in scratchpad this walk, not yet written back to card** | **0 live SLURM** | Scratchpad turn-3 activity ~14:36Z this walk; card unchanged since walk 27 |
-| r2s2_stacked | 23.0636 (best_floor_panel_geomean) | 3 | r2s2_stacked-B1 **complete**; r2s2_stacked-B2 **complete**; r2s2_stacked-B3 **analyzing** (part 5 populated, geomean 20.0315, falsified positive; **part 6 now populated, turn 3**; part 7 null) | Guard `66267441` + panel `66267438` both COMPLETED. Mechanism-analyzer turn 3 **landed this walk** (headline: headroom is exactly one scalar deep past the condition-driven DC/level law); register turn pending | **0 live SLURM** | **`reanalysis_progress` turn_2→turn_3 this walk, caught live** |
+| r2s1_direct | 23.0636 (best_floor_panel_geomean) | 3 | r2s1_direct-B1 **complete**; r2s1_direct-B2 **complete**; r2s1_direct-B3 **complete** (registered; geomean 18.7500, falsified via L2-unpassable-by-construction; 16-item M1-M16 mechanism register, part 7 written) | All 3 batches complete. No stream close/abandon marker written; whether a B4 opens is an orchestrator/operator decision outside this maintainer's scope | **0 live SLURM** | Register turn landed this walk (card mtime `14:54:51Z`, ~10 min before this walk started) |
+| r2s2_stacked | 23.0636 (best_floor_panel_geomean) | 3 | r2s2_stacked-B1 **complete**; r2s2_stacked-B2 **complete**; r2s2_stacked-B3 **complete** (registered; geomean 20.0315, falsified positive; 15-finding mechanism register, part 7 written) | All 3 batches complete. No stream close/abandon marker written; whether a B4 opens is an orchestrator/operator decision outside this maintainer's scope | **0 live SLURM** | Register turn landed this walk (card mtime `14:54:00Z`, ~10 min before this walk started) |
 | r2s3_lf_train_signal | 23.0636 (best_floor_panel_geomean) | 4 | r2s3_lf_train_signal-B1..B4 **all complete** | **CLOSED (registered close, walk 15)**, unchanged | **0 live SLURM** | No change this walk |
 | r2s4_diag | **19.8178** (certified_3seed_panel_geomean, CI95 [19.385, 20.527]) | 4 | r2s4_diag-B1..B4 **all complete** | **complete**, unchanged since walk 28 register close. Stream still flagged **CLOSE CANDIDATE** (4 batches vs ~3-batch program budget) pending operator/end-of-round adjudication | **0 live SLURM** | No change this walk |
 
@@ -104,12 +115,12 @@ anchors rendered verbatim from `state/anchors/*.json`.
 | *(none)* | — | — | — | — |
 
 **0 live/pending `r2-*` SLURM jobs** — the queue has remained fully
-drained since walk 26, unaffected by the session restart. All in-flight
-work is at the analysis-agent / register-turn stage (non-SLURM
-background processes writing to worktree scratchpads). `sacct`'s 2-day
-window shows 22 `r2-*` job records total (21 COMPLETED + 1 FAILED
-`66262741`, superseded by relaunch `66285051`). All states cross-
-confirmed by both `squeue` (empty of `r2-*`) and `sacct`.
+drained since walk 26. With both `r2s1_direct-B3` and `r2s2_stacked-B3`
+now closed, there is no in-flight analysis-agent work on any card either
+— all 14 cards are `complete`. `sacct`'s 2-day window shows 22 `r2-*`
+job records total (21 COMPLETED + 1 FAILED `66262741`, superseded by
+relaunch `66285051`). All states cross-confirmed by both `squeue` (empty
+of `r2-*`) and `sacct`.
 
 ## Completed cards
 
@@ -127,44 +138,50 @@ confirmed by both `squeue` (empty of `r2-*`) and `sacct`.
 | r2s4_diag-B3 | diagnostic | 19.172826 (single seed 0) | **falsified** (F3 hardened, F4a fires on corrected definition, F1 partial survival) | `tools/ledger_contamination_audit.py`, `tools/band_retention_probe.py` |
 | r2s3_lf_train_signal-B4 | diagnostic (mechanism/register) | n/a — reuses B3's skills; graded criterion-1 legacy ch=A/ifc=B/ac=C | S1 **CONFIRMED false**; part 7: **formal stream close**, no B5 | `tools/gain_head_feasibility_audit.py`, `tools/effect_concentration_audit.py` |
 | r2s4_diag-B4 | diagnostic (mechanism/register) | 7.9412 — **single-dataset (ifc_poisson) scope only, not comparable to the 6-dataset panel anchor** (per card's own `scope_warning`) | n/a (diagnostic); mechanism register complete across 3 turns, part 7 written; H5/H4/H2/provenance findings folded into `cross_stream_notes` | `tools/hf_row_shapley_value.py`, `tools/gain_channel_ladder.py` |
+| r2s1_direct-B3 | model | 18.749954 (single seed 0) | **falsified via L2**: calibration-fold Bates-Granger prelude clause **unpassable by construction** (unit mismatch, tolerance 0.026-0.107 sigma of the 40-sample estimator it audits); mechanism register (M1-M16, 3 turns) reframes the headline decoder-vs-head comparison as coordinate, not capacity | `tools/coefficient_factorisation_audit.py`, `tools/head_subspace_surgery.py` |
+| r2s2_stacked-B3 | model | 20.031536 (single seed 0) | **falsified positive** vs anchor 23.0636; pre-registered zero-gradient-ceiling hypothesis right on architecture, wrong on arithmetic (value = per-sample DC recalibration, not field correction); condition-only reachability negative at every rung on 4/4 decidable datasets post-level-law | `tools/condition_scalar_channel_ladder.py`, `tools/granted_channel_residual_ladder.py` |
 
-`r2s1_direct-B3` has a COMPLETED SLURM job (relaunch `66285051`) and is
-mid-computation on mechanism-analyzer turn 3 (scratchpad only, not yet
-on the card) — remains card-level `analyzing` (parts 6/7 null).
-`r2s2_stacked-B3` is `analyzing` with mechanism turn 3 now landed on
-the card (part 6 populated) but part 7 (register) still pending —
-neither listed above until they close.
+**All 14 cards are now closed/complete** — no cards remain in
+`running`/`analyzing` state as of this walk.
 
 ## Flags
 
+- **MILESTONE, new this walk**: all 14 cards across all 4 streams are
+  now `status: complete`. `r2s1_direct-B3` and `r2s2_stacked-B3` both
+  completed their register turns since the prior walk (`RUN END
+  2026-08-02T14:44:32Z`), landing within ~10 minutes of that prior
+  walk's close. No `running`/`analyzing` cards remain anywhere in the
+  round. Whether `r2s1_direct` or `r2s2_stacked` open a B4 is an
+  orchestrator/operator decision — this read-only maintainer surfaces
+  the milestone but does not act on it.
 - **`r2s4_diag` stream — CLOSE CANDIDATE, unchanged since walk 28**: B4
   closed its register turn at 4 batches against a ~3-batch program
   budget. `state/r2s4_diag/current_stage.txt`: "do not open B5 without
   operator/end-of-round decision." Budget-overrun close candidate, not
   a `STREAM_ABANDON_CAP` trip. Surfacing for the orchestrator/operator,
   not actioned by this read-only maintainer walk.
-- **Third session restart (~2026-08-02T14:2x UTC), new this walk**:
-  ~7h57m gap since the prior maintainer `RUN END`. Turn-3 mechanism-
-  analyzers re-dispatched for `r2s1_direct-B3` and `r2s2_stacked-B3`
-  after the second-session's turn-3 agents were killed mid-flight;
-  `r2s2_stacked-B3`'s scratchpad explicitly shows a `_v2` set of turn-3
-  artifacts superseding stale `00:0x-00:1x` (local) partials from the
-  killed agent — this maintainer treated only the `_v2`-derived,
-  card-level write-back (which landed during this walk) as authoritative,
-  per the resume note's own instruction; the stale partials were not
-  used for any ledger or dashboard content. Cron re-creation
-  (`707a5d1f`/`838b5b42`/`e526548f`) is reported by the orchestrator and
-  could not be independently confirmed (`crontab -l` PAM-denied for this
-  user); this walk's own successful execution is the practical evidence
-  the maintainer cron is alive.
-- **`r2s2_stacked-B3` mechanism-analyzer turn 3 landed mid-walk (new)**:
-  `reanalysis_progress` `turn_2`→`turn_3`, `6_analysis` now populated
-  (caught via live `git diff`, uncommitted at read time). Part 7 still
-  `null` — register turn pending, worth a re-check next walk.
-- **`r2s1_direct-B3` turn 3 in active computation, not yet landed
-  (new)**: worktree scratchpad shows work as recent as
-  `2026-08-02T14:36:13Z` (~5 min before this walk's close); card still
-  reads `turn_2`. Re-check next walk.
+- **`r2s1_direct-B3` register turn landed (new)**: `reanalysis_progress`
+  `turn_3`→`registered`, `7_gap_and_future` now populated. 2 tools
+  promoted (`coefficient_factorisation_audit.py`, `head_subspace_surgery.py`),
+  both confirmed on disk. Open question flagged for a future card:
+  whether the `cahn_hilliard` cross-coefficient-factorisation finding
+  (M13/M15) is a condition-dimension effect or a single-cell accident
+  (n=1 caveat, explicit in part 7).
+- **`r2s2_stacked-B3` register turn landed (new)**: `reanalysis_progress`
+  `turn_3`→`registered`, `7_gap_and_future` now populated. 2 tools
+  promoted (`condition_scalar_channel_ladder.py`,
+  `granted_channel_residual_ladder.py`), both confirmed on disk. Part 7
+  raises a stream-level open question — whether the correct next output
+  for a condition-only class on this panel is a certified impossibility
+  statement rather than another corrector proposal; next_direction
+  explicitly forbids another condition-only field corrector.
+- **Third session restart (~2026-08-02T14:2x UTC), carried from walk 29**:
+  crons re-created session-only (pulse `707a5d1f` @10min, maintainer
+  `838b5b42` @20min, auto-sync `e526548f` @30min, 7-day auto-expiry) —
+  reported by the orchestrator, could not be independently confirmed
+  (`crontab -l` PAM-denied for this user); this walk's own successful
+  execution (back to the normal ~15-20 min cadence) is further practical
+  evidence the maintainer cron is healthy again.
 - **`r2s1_direct-B3` debug loop resolved (attempt 1/5, class ALGO,
   walk 26), unchanged**: fix commit `568522c` (self-validating POD rank
   truncation in `pod_basis`); relaunch `66285051` COMPLETED clean.
@@ -177,8 +194,8 @@ neither listed above until they close.
   job's name (`r2-r2s2_stacked-B3-s0`) mid-run — all queue/ledger checks
   matched by explicit job ID, never by name.
 - **Queue remains fully drained**: 0 live/pending `r2-*` SLURM jobs
-  (unchanged from walks 26-28, unaffected by the session restart). All
-  in-flight work is at the analysis-agent / register-turn stage.
+  (unchanged from walks 26-29). No in-flight analysis-agent work remains
+  either — all 14 cards are `complete`.
 - **`r2s3_lf_train_signal` stream CLOSED (walk 15, unchanged)** — a
   legitimate registered trigger-non-fire close, NOT an abandonment.
   `STREAM_ABANDON_CAP` (=3) never applied. `state/streams/` correctly
@@ -204,13 +221,21 @@ neither listed above until they close.
 - **Analyzer caveat (r2s3_lf_train_signal-B1, from code-review)**,
   carried forward: shared-max-abs-rungs scaler confound (C1, card-locked
   design) and epoch-vs-step mismatch (C2); r2s3-B2 shipped the repair.
-- **Analyzer caveat (r2s2_stacked-B3, from code-review, updated this
-  walk)**: pfc's pre-flight-instrument conflict directionally biases
-  F1/F2/F3 toward confirming the card's hypothesis — turn 3's finding
-  (a closed-form scalar law wins 6.03x pfc's certified mce, 5/5 fold
-  seeds) is read by this maintainer as superseding, not resolving, the
-  original bias concern; still worth a pfc-dropped re-check once part 7
-  lands.
+- **Analyzer caveat (r2s2_stacked-B3, from code-review, updated at the
+  register turn)**: pfc's pre-flight-instrument conflict directionally
+  biased F1/F2/F3 toward confirming the card's hypothesis — the register
+  turn's finding (a closed-form scalar law wins 6.03x pfc's certified
+  mce, 5/5 fold seeds) supersedes rather than resolves the original bias
+  concern; folded into the closed card's part 6/7, no further re-check
+  needed.
+- **Analyzer caveat (r2s1_direct-B3, from the register turn, new)**: the
+  card's L2 falsification clause is a UNIT-MISMATCH design defect
+  (between-seed mce reused as a within-fold sampling tolerance,
+  0.026-0.107 sigma resolving power) — flagged as a recipe repair for
+  any future card exercising the same calibration-fold pattern, not just
+  an r2s1-local finding; also flags fit-set-asymmetric blend bases
+  (calibration fitted on 320 rows, test-side floors on the full 400) as
+  a second cross-card recipe defect.
 - **Analyzer caveat (r2s4_diag-B4, from part 7's `cross_stream_notes`,
   unchanged)**: (1) H5 ACTIONABLE — ifc's live route to criterion 1 is
   a per-sample GAIN channel (65.4% of n=5 error oracle-removable
@@ -234,10 +259,14 @@ neither listed above until they close.
   exists. **No abandoned streams** — `STREAM_ABANDON_CAP` never trips;
   `r2s4_diag`'s close is a budget-overrun candidate, not a cap trip.
   `state/streams/` directory still does not exist.
-- Repo hygiene, final check: `git status --short .` at this run's close
-  (round-root scope) shows 2 modified files — `experiment_cards/
-  r2s2_stacked/batch_3/B3.json` (turn-3 write-back caught mid-flight
-  this walk, not touched by this maintainer) and `state/
-  orchestrator_flow.md` (resume-note append, not owned by this
-  maintainer). Only `index.md` and `state/maintainer_report.md` written
-  this run (timing ledger required no change).
+- Repo hygiene, final check: `git status --short experiment_cards/` at
+  this run's close shows 2 modified files — `r2s1_direct/batch_3/B3.json`
+  and `r2s2_stacked/batch_3/B3.json` (both register-turn write-backs
+  described above, made by the register-turn subagents, not touched by
+  this maintainer). `git status --short .` (round-root scope)
+  additionally shows `state/orchestrator_flow.md` (not owned by this
+  maintainer, stale tail not yet reflecting this walk's register
+  completions) and `tools/index.md` + 4 new untracked `tools/*.py` files
+  (register-turn tool promotions, not owned by this maintainer). Only
+  `index.md` and `state/maintainer_report.md` written this run (timing
+  ledger required no change).
