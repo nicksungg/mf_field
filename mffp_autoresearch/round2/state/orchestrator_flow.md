@@ -917,3 +917,16 @@
   refuting (reasoning recorded). -> turn 3 dispatched (residual HF - level_law
   decomposition: second scalar channel vs field-structured; LF-pool obtainability;
   part 6 due).
+
+- 2026-08-02 ~08:2x UTC r2s1-B3 mechanism turn 2 COMPLETE (5/5): "10 params beat 15.85M"
+  is a COORDINATE verdict, not capacity — ac 98.1% scalar (head leading dir = constant
+  field |cos| 0.99999998; head 2.11 mce above own-subspace oracle ceiling); decoder
+  deficit = one mis-set scalar (slope 0.9537, corr 0.9925); deployable subspace surgery
+  closes 94.4% (test-label-free); decoder off-H content = orthogonal noise 5/6 cells
+  EXCEPT ch (cos +0.2342; free hybrid 11.679 beats BOTH arms — the one place 15.85M
+  bought real off-subspace structure; consistent with r2s2-B3 ch ceiling + r2s4-B4
+  structure channel). Panel-wide hybrid a wash (-0.0005 mce). Standing headroom =
+  COEFFICIENT ESTIMATION not basis width (truth-in-H oracle geomean 9.8924 vs 18.7500).
+  decoder best_epoch 10/200 on the same under-resolved 40-row fold (links to L2 turn 1).
+  Register candidate: subspace-surgery probe suite. -> turn 3 dispatched (identifiability
+  triad on coefficient headroom; ch complementary cell; part 6 due).
