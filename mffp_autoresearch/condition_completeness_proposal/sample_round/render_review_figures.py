@@ -10,6 +10,7 @@ Usage: python render_review_figures.py            # writes figures/<variant>_rev
 """
 from __future__ import annotations
 
+import argparse
 import json
 import os
 
@@ -50,8 +51,8 @@ _SYM = {"eps": r"$\varepsilon$", "mobility": "$M$", "mean_composition": r"$\bar{
         "mean_density": r"$\bar{\psi}$", "D": "$D$", "r": "$r$"}
 
 
-def render(variant: str) -> str:
-    d = os.path.join(ROOT, f"{variant}_generated")
+def render(variant: str, root: str = ROOT, suffix: str = "_generated") -> str:
+    d = os.path.join(root, f"{variant}{suffix}")
     meta = json.load(open(os.path.join(d, "meta.json")))
     cc = meta["condition_completeness"]
     lf_res = meta["ladder"][0][0]
@@ -112,5 +113,11 @@ def render(variant: str) -> str:
 
 
 if __name__ == "__main__":
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--root", default=ROOT,
+                    help="dataset root (e.g. benchmark_42/sharp for the production data)")
+    ap.add_argument("--suffix", default="_generated",
+                    help='dataset dir suffix ("" for the benchmark layout)')
+    a = ap.parse_args()
     for v in PDES:
-        print("wrote", render(v))
+        print("wrote", render(v, a.root, a.suffix))
