@@ -12,13 +12,15 @@ explicit and 2/3-rule de-aliased; fresh FFT each step. The leading laplacian lea
 k=0 mode untouched, so the spatial mean (mass) is conserved exactly. SAME dt at every
 resolution.
 
-IC: mean_density + small band-limited noise on the coarsest grid, spectrally interpolated
+IC: mean_density + a small band-limited field built deterministically from the exported
+ic_c* coefficients (common/ic_encoding) on the coarsest grid, spectrally interpolated
 up -> identical continuous IC per level. (Continuous k^2; PFC patterns are smooth/resolved.)
 """
 from __future__ import annotations
 
 import numpy as np
 
+from ..common import ic_encoding
 from ..common.spectral import spectral_interp
 from ..common.sampling import latin_hypercube
 
@@ -51,12 +53,14 @@ def _solve(psi0: np.ndarray, r: float, domain_size: float, output_time: float,
 
 
 def sample_configs(n: int, sampling_cfg: dict, ndim: int, seed: int) -> list[dict]:
-    """Draw n PFC condition specs (Latin-hypercube over r / mean_density)."""
+    """Draw n PFC condition specs (Latin-hypercube over r / mean_density + IC coeffs)."""
     assert ndim in NDIMS_SUPPORTED, f"phase_field_crystal supports {NDIMS_SUPPORTED}, got {ndim}"
     draws = latin_hypercube(
         {"r": tuple(sampling_cfg["r_range"]),
-         "mean_density": tuple(sampling_cfg["mean_density_range"])}, n, seed)
+         "mean_density": tuple(sampling_cfg["mean_density_range"]),
+         **ic_encoding.ic_ranges(2)}, n, seed)
     return [{"r": draws["r"][i], "mean_density": draws["mean_density"][i],
+             **{k: draws[k][i] for k in ic_encoding.ic_names(2)},
              "ic_amplitude": sampling_cfg["ic_amplitude"],
              "domain_size": sampling_cfg["domain_size"], "ndim": ndim,
              "seed": seed + i} for i in range(n)]
@@ -66,14 +70,14 @@ def generate_sample(spec: dict, resolutions: list[int], hf_res: int, output_time
                     ) -> tuple[dict[int, np.ndarray], np.ndarray, list[str]]:
     """Generate one PFC sample across the fidelity ladder (2D)."""
     res_min = min(resolutions)
-    rng = np.random.default_rng(spec["seed"])
-    ic_coarse = spec["mean_density"] + spec["ic_amplitude"] * (
-        2 * rng.random((res_min, res_min)) - 1)
+    coeffs = ic_encoding.coeffs_from_spec(spec, 2)
+    ic_coarse = spec["mean_density"] + ic_encoding.build_ic(
+        coeffs, res_min, spec["ic_amplitude"], 2)
     fields = {
         res: _solve(spectral_interp(ic_coarse, res), spec["r"], spec["domain_size"],
                     output_time)
         for res in resolutions
     }
-    cond = np.array([spec["r"], spec["mean_density"]], dtype=np.float64)
-    names = ["r", "mean_density"]
+    cond = np.array([spec["r"], spec["mean_density"], *coeffs], dtype=np.float64)
+    names = ["r", "mean_density"] + ic_encoding.ic_names(2)
     return fields, cond, names
