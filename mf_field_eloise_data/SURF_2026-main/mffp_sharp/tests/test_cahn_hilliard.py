@@ -1,6 +1,7 @@
 import numpy as np
 import pytest
 
+from mffp_sharp.common import ic_encoding as ice
 from mffp_sharp.pdes import cahn_hilliard as ch
 
 
@@ -52,6 +53,18 @@ def test_generate_sample_ladder_and_determinism():
     f1, cond, names = ch.generate_sample(spec, [16, 32], 32, output_time=20 * ch._DT)
     f2, _, _ = ch.generate_sample(spec, [16, 32], 32, output_time=20 * ch._DT)
     assert f1[16].shape == (16, 16) and f1[32].shape == (32, 32)
-    assert names == ["eps", "mobility", "mean_composition"]
+    assert names == ["eps", "mobility", "mean_composition"] + ice.ic_names(2)
     for r in (16, 32):
         assert np.array_equal(f1[r], f2[r])     # same IC + deterministic solve
+
+
+def test_field_is_function_of_exported_cond_only():
+    cfg = {"eps_range": [0.02, 0.05], "mobility_range": [0.5, 1.5],
+           "mean_composition_range": [-0.1, 0.1], "domain_size": 1.0}
+    spec = ch.sample_configs(1, cfg, ndim=2, seed=7)[0]
+    f1, cond, names = ch.generate_sample(spec, [16, 32], 32, output_time=20 * ch._DT)
+    spec2 = dict(zip(names, cond.tolist()))
+    spec2.update({"domain_size": 1.0, "ndim": 2})
+    f2, cond2, _ = ch.generate_sample(spec2, [16, 32], 32, output_time=20 * ch._DT)
+    assert np.array_equal(f1[32], f2[32])
+    assert np.array_equal(cond, cond2)

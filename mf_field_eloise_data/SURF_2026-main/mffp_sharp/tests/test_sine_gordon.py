@@ -1,10 +1,14 @@
 import numpy as np
 
+from mffp_sharp.common import ic_encoding as ice
 from mffp_sharp.pdes import sine_gordon as sg
 
 
 def _spec(ndim, seed=0):
-    return {"m": 1.0, "ic_amplitude": 0.1, "domain_size": 40.0, "ndim": ndim, "seed": seed}
+    s = {"m": 1.0, "ic_amplitude": 0.1, "domain_size": 40.0, "ndim": ndim, "seed": seed}
+    rng = np.random.default_rng(seed)
+    s.update(zip(ice.ic_names(ndim), rng.uniform(-1, 1, ice.n_coeffs(ndim))))
+    return s
 
 
 def test_2d_shapes_finite():
@@ -12,7 +16,7 @@ def test_2d_shapes_finite():
     assert fields[16].shape == (16, 16) and fields[32].shape == (32, 32)
     for f in fields.values():
         assert np.isfinite(f).all()
-    assert names == ["m", "ic_amplitude"] and cond.shape == (2,)
+    assert names == ["m", "ic_amplitude"] + ice.ic_names(2) and cond.shape == (18,)
 
 
 def test_1d_shapes_finite():
@@ -51,10 +55,21 @@ def test_energy_conserved():
 
 def test_stable_at_harshest_config_range():
     fields = sg.generate_sample(
-        {"m": 2.0, "ic_amplitude": 1.0, "domain_size": 40.0, "ndim": 1, "seed": 3},
+        {**_spec(1, seed=3), "m": 2.0, "ic_amplitude": 1.0},
         [64, 128], 128, output_time=2.0)[0]
     for f in fields.values():
         assert np.isfinite(f).all() and np.abs(f).max() < 1e3
+
+
+def test_field_is_function_of_exported_cond_only():
+    cfg = {"m_range": [0.5, 2.0], "ic_amplitude_range": [0.1, 1.0], "domain_size": 40.0}
+    spec = sg.sample_configs(1, cfg, ndim=1, seed=7)[0]
+    fields, cond, names = sg.generate_sample(spec, [64, 128], 128, output_time=0.5)
+    spec2 = dict(zip(names, cond.tolist()))
+    spec2.update({"domain_size": 40.0, "ndim": 1})
+    fields2, cond2, _ = sg.generate_sample(spec2, [64, 128], 128, output_time=0.5)
+    assert np.array_equal(fields[128], fields2[128])
+    assert np.array_equal(cond, cond2)
 
 
 def test_only_supported_ndims():

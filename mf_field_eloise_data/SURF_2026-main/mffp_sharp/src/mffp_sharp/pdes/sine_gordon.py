@@ -14,13 +14,15 @@ SOLVER: Strang split-step on the (u, u_t) state ('kick-wave-kick'):
     on each side. In the small-amplitude limit the kick vanishes -> exact Klein-Gordon.
 np.fft.fftn/ifftn serve 1D and 2D. Starts from rest (u_t=0). Energy is conserved.
 
-IC: band-limited random field on the coarsest grid, spectrally interpolated up ->
-identical continuous IC per level. Field stored: u at fixed output time T.
+IC: band-limited field built deterministically from the exported ic_c* coefficients
+(common/ic_encoding) on the coarsest grid, spectrally interpolated up -> identical
+continuous IC per level. Field stored: u at fixed output time T.
 """
 from __future__ import annotations
 
 import numpy as np
 
+from ..common import ic_encoding
 from ..common.spectral import spectral_interp
 from ..common.sampling import latin_hypercube
 
@@ -90,8 +92,10 @@ def sample_configs(n: int, sampling_cfg: dict, ndim: int, seed: int) -> list[dic
     assert ndim in NDIMS_SUPPORTED, f"sine_gordon supports {NDIMS_SUPPORTED}, got {ndim}"
     draws = latin_hypercube(
         {"m": tuple(sampling_cfg["m_range"]),
-         "ic_amplitude": tuple(sampling_cfg["ic_amplitude_range"])}, n, seed)
+         "ic_amplitude": tuple(sampling_cfg["ic_amplitude_range"]),
+         **ic_encoding.ic_ranges(ndim)}, n, seed)
     return [{"m": draws["m"][i], "ic_amplitude": draws["ic_amplitude"][i],
+             **{k: draws[k][i] for k in ic_encoding.ic_names(ndim)},
              "domain_size": sampling_cfg["domain_size"], "ndim": ndim,
              "seed": seed + i} for i in range(n)]
 
@@ -101,13 +105,13 @@ def generate_sample(spec: dict, resolutions: list[int], hf_res: int, output_time
     """Generate one sine-Gordon sample across the fidelity ladder (1D or 2D)."""
     ndim = int(spec["ndim"])
     res_min = min(resolutions)
-    rng = np.random.default_rng(spec["seed"])
-    ic_coarse = spec["ic_amplitude"] * (2 * rng.random((res_min,) * ndim) - 1)
+    coeffs = ic_encoding.coeffs_from_spec(spec, ndim)
+    ic_coarse = ic_encoding.build_ic(coeffs, res_min, spec["ic_amplitude"], ndim)
     fields = {
         res: _solve(spectral_interp(ic_coarse, res), spec["m"], spec["domain_size"],
                     output_time)
         for res in resolutions
     }
-    cond = np.array([spec["m"], spec["ic_amplitude"]], dtype=np.float64)
-    names = ["m", "ic_amplitude"]
+    cond = np.array([spec["m"], spec["ic_amplitude"], *coeffs], dtype=np.float64)
+    names = ["m", "ic_amplitude"] + ic_encoding.ic_names(ndim)
     return fields, cond, names

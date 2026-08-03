@@ -24,8 +24,9 @@ We store the zero-mean fluctuation u - <u> (the physically meaningful, T-determi
 field); the drift is a deterministic gauge offset that would otherwise dominate the
 rel-L2 denominator and mask the real LF-HF differences. (Flag for Nicholas.)
 
-IC: band-limited random field generated on the coarsest grid from the sample seed and
-spectrally interpolated up -> every ladder level solves the IDENTICAL continuous IC.
+IC: band-limited field built deterministically from the exported ic_c* coefficients
+(common/ic_encoding) on the coarsest grid and spectrally interpolated up -> every
+ladder level solves the IDENTICAL continuous IC.
 
 Field stored: u - <u> at fixed output time T (past the initial transient).
 """
@@ -33,6 +34,7 @@ from __future__ import annotations
 
 import numpy as np
 
+from ..common import ic_encoding
 from ..common.spectral import spectral_interp
 from ..common.sampling import latin_hypercube
 
@@ -72,8 +74,10 @@ def sample_configs(n: int, sampling_cfg: dict, ndim: int, seed: int) -> list[dic
     assert ndim in NDIMS_SUPPORTED, f"kuramoto_sivashinsky supports {NDIMS_SUPPORTED}, got {ndim}"
     draws = latin_hypercube(
         {"L": tuple(sampling_cfg["L_range"]),
-         "ic_amplitude": tuple(sampling_cfg["ic_amplitude_range"])}, n, seed)
+         "ic_amplitude": tuple(sampling_cfg["ic_amplitude_range"]),
+         **ic_encoding.ic_ranges(ndim)}, n, seed)
     return [{"L": draws["L"][i], "ic_amplitude": draws["ic_amplitude"][i],
+             **{k: draws[k][i] for k in ic_encoding.ic_names(ndim)},
              "ndim": ndim, "seed": seed + i} for i in range(n)]
 
 
@@ -85,12 +89,12 @@ def generate_sample(spec: dict, resolutions: list[int], hf_res: int, output_time
     """
     res_min = min(resolutions)
     ndim = int(spec.get("ndim", 2))
-    rng = np.random.default_rng(spec["seed"])
-    ic_coarse = spec["ic_amplitude"] * (2 * rng.random((res_min,) * ndim) - 1)
+    coeffs = ic_encoding.coeffs_from_spec(spec, ndim)
+    ic_coarse = ic_encoding.build_ic(coeffs, res_min, spec["ic_amplitude"], ndim)
     fields = {
         res: _solve(spectral_interp(ic_coarse, res), spec["L"], output_time)
         for res in resolutions
     }
-    cond = np.array([spec["L"], spec["ic_amplitude"]], dtype=np.float64)
-    names = ["L", "ic_amplitude"]
+    cond = np.array([spec["L"], spec["ic_amplitude"], *coeffs], dtype=np.float64)
+    names = ["L", "ic_amplitude"] + ic_encoding.ic_names(ndim)
     return fields, cond, names

@@ -12,7 +12,14 @@ import numpy as np
 import pytest
 
 from mffp_sharp.common import io, ladder
+from mffp_sharp.common import ic_encoding as ice
 from mffp_sharp.pdes import kuramoto_sivashinsky as ks, allen_cahn as ac
+
+
+def _with_ic(spec, ndim, seed=0):
+    rng = np.random.default_rng(seed)
+    spec.update(zip(ice.ic_names(ndim), rng.uniform(-1, 1, ice.n_coeffs(ndim))))
+    return spec
 
 
 def _write(tmp, name, mod, spec, T):
@@ -49,21 +56,21 @@ def test_report_distinguishes_smooth_from_sharp(tmp_path):
         d,
         "kuramoto_sivashinsky",
         ks,
-        {"L": 30.0, "ic_amplitude": 0.1, "ndim": 2, "seed": 1},
+        _with_ic({"L": 30.0, "ic_amplitude": 0.1, "ndim": 2, "seed": 1}, ndim=2, seed=1),
         2.0,
     )
     _write(
         d,
         "allen_cahn",
         ac,
-        {
+        _with_ic({
             "eps": 0.03,
             "mobility": 1.0,
             "mean_composition": 0.0,
             "domain_size": 1.0,
             "ndim": 2,
             "seed": 1,
-        },
+        }, ndim=2, seed=1),
         0.5,
     )
     rep = _load_builder().build_report(d, k_cs=(8, 12))

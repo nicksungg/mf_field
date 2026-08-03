@@ -1,10 +1,14 @@
 import numpy as np
 
+from mffp_sharp.common import ic_encoding as ice
 from mffp_sharp.pdes import kdv
 
 
 def _spec(seed=0):
-    return {"delta": 0.022, "ic_amplitude": 0.5, "domain_size": 2.0, "ndim": 1, "seed": seed}
+    s = {"delta": 0.022, "ic_amplitude": 0.5, "domain_size": 2.0, "ndim": 1, "seed": seed}
+    rng = np.random.default_rng(seed)
+    s.update(zip(ice.ic_names(1), rng.uniform(-1, 1, ice.n_coeffs(1))))
+    return s
 
 
 def test_shapes_finite():
@@ -12,7 +16,7 @@ def test_shapes_finite():
     assert fields[64].shape == (64,) and fields[128].shape == (128,)
     for f in fields.values():
         assert np.isfinite(f).all()
-    assert names == ["delta", "ic_amplitude"] and cond.shape == (2,)
+    assert names == ["delta", "ic_amplitude"] + ice.ic_names(1) and cond.shape == (18,)
 
 
 def test_soliton_propagates_at_speed_c():
@@ -44,7 +48,7 @@ def test_mass_conserved():
 def test_stable_at_harshest_config_range():
     # The Plan-3 failure mode: must stay finite at the config's worst-case params.
     fields = kdv.generate_sample(
-        {"delta": 0.04, "ic_amplitude": 0.7, "domain_size": 2.0, "ndim": 1, "seed": 3},
+        {**_spec(seed=3), "delta": 0.04, "ic_amplitude": 0.7},
         [64, 128], 128, output_time=1.0)[0]
     for f in fields.values():
         assert np.isfinite(f).all() and np.abs(f).max() < 1e3
@@ -64,3 +68,14 @@ def test_deterministic():
     a = kdv.generate_sample(s, [64, 128], 128, 0.5)[0][128]
     b = kdv.generate_sample(s, [64, 128], 128, 0.5)[0][128]
     assert np.array_equal(a, b)
+
+
+def test_field_is_function_of_exported_cond_only():
+    cfg = {"delta_range": [0.02, 0.03], "ic_amplitude_range": [0.4, 0.6], "domain_size": 2.0}
+    spec = kdv.sample_configs(1, cfg, ndim=1, seed=7)[0]
+    fields, cond, names = kdv.generate_sample(spec, [64, 128], 128, output_time=0.2)
+    spec2 = dict(zip(names, cond.tolist()))
+    spec2.update({"domain_size": 2.0, "ndim": 1})
+    fields2, cond2, _ = kdv.generate_sample(spec2, [64, 128], 128, output_time=0.2)
+    assert np.array_equal(fields[128], fields2[128])
+    assert np.array_equal(cond, cond2)

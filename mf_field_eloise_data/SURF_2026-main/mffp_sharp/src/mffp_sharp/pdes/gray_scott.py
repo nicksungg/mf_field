@@ -13,13 +13,15 @@ SOLVER: semi-implicit IMEX (same family as Allen-Cahn / Fisher-KPP, on a 2-field
   - fresh FFT each step. SAME dt at every resolution.
 
 IC (The Well style): u=1, v=0 background with a central perturbed square (u=0.5, v=0.25)
-plus small noise, built on the coarsest grid and spectrally interpolated up so every
-ladder level seeds the SAME continuous IC. Field stored: v at fixed output time T.
+plus a small band-limited perturbation built deterministically from the exported ic_c*
+coefficients (common/ic_encoding), on the coarsest grid and spectrally interpolated up
+so every ladder level seeds the SAME continuous IC. Field stored: v at fixed output time T.
 """
 from __future__ import annotations
 
 import numpy as np
 
+from ..common import ic_encoding
 from ..common.spectral import spectral_interp, neg_laplacian_symbol
 from ..common.sampling import latin_hypercube
 
@@ -56,8 +58,10 @@ def sample_configs(n: int, sampling_cfg: dict, ndim: int, seed: int) -> list[dic
     assert ndim in NDIMS_SUPPORTED, f"gray_scott supports {NDIMS_SUPPORTED}, got {ndim}"
     draws = latin_hypercube(
         {"F": tuple(sampling_cfg["F_range"]),
-         "k_rate": tuple(sampling_cfg["k_rate_range"])}, n, seed)
+         "k_rate": tuple(sampling_cfg["k_rate_range"]),
+         **ic_encoding.ic_ranges(2)}, n, seed)
     return [{"F": draws["F"][i], "k_rate": draws["k_rate"][i],
+             **{k: draws[k][i] for k in ic_encoding.ic_names(2)},
              "Du": sampling_cfg["Du"], "Dv": sampling_cfg["Dv"],
              "domain_size": sampling_cfg["domain_size"], "ndim": ndim,
              "seed": seed + i} for i in range(n)]
@@ -67,15 +71,18 @@ def generate_sample(spec: dict, resolutions: list[int], hf_res: int, output_time
                     ) -> tuple[dict[int, np.ndarray], np.ndarray, list[str]]:
     """Generate one Gray-Scott sample across the fidelity ladder (2D). Stored field = v."""
     res_min = min(resolutions)
-    rng = np.random.default_rng(spec["seed"])
     u0c = np.ones((res_min, res_min))
     v0c = np.zeros((res_min, res_min))
     s = max(2, res_min // 8)
     a, b = res_min // 2 - s, res_min // 2 + s
     u0c[a:b, a:b] = 0.5
     v0c[a:b, a:b] = 0.25
-    u0c += 0.01 * (2 * rng.random((res_min, res_min)) - 1)
-    v0c += 0.01 * (2 * rng.random((res_min, res_min)) - 1)
+    # One shared band-limited perturbation on both fields: it only has to break the
+    # square-seed symmetry, and a single exported coefficient set keeps cond at 16 dims.
+    coeffs = ic_encoding.coeffs_from_spec(spec, 2)
+    pert = ic_encoding.build_ic(coeffs, res_min, 0.01, 2)
+    u0c += pert
+    v0c += pert
     fields = {}
     for res in resolutions:
         u0 = spectral_interp(u0c, res)
@@ -83,6 +90,6 @@ def generate_sample(spec: dict, resolutions: list[int], hf_res: int, output_time
         _, v = _solve(u0, v0, spec["Du"], spec["Dv"], spec["F"], spec["k_rate"],
                       spec["domain_size"], output_time)
         fields[res] = v
-    cond = np.array([spec["F"], spec["k_rate"]], dtype=np.float64)
-    names = ["F", "k_rate"]
+    cond = np.array([spec["F"], spec["k_rate"], *coeffs], dtype=np.float64)
+    names = ["F", "k_rate"] + ic_encoding.ic_names(2)
     return fields, cond, names

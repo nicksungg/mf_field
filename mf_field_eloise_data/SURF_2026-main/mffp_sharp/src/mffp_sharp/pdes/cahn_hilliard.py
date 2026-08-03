@@ -28,15 +28,17 @@ scheme instead:
 Stable to dt~5e-4 across the 32/64/128 ladder; mass-conserving; phase-separates to
 +/-1. SAME dt at every resolution (consistency: only the grid changes).
 
-IC: a band-limited random field generated on the coarsest grid from the sample seed
-and spectrally interpolated up, so every ladder level solves the IDENTICAL continuous
-IC (else each grid would spinodally decompose into a different pattern and HF-LF
-residuals would be meaningless).
+IC: a band-limited field built deterministically from the exported ic_c* coefficients
+(common/ic_encoding, scale 0.1 -- the generate_learnable.py convention) on the coarsest
+grid and spectrally interpolated up, so every ladder level solves the IDENTICAL
+continuous IC (else each grid would spinodally decompose into a different pattern and
+HF-LF residuals would be meaningless).
 """
 from __future__ import annotations
 
 import numpy as np
 
+from ..common import ic_encoding
 from ..common.spectral import spectral_interp
 from ..common.sampling import latin_hypercube
 
@@ -74,9 +76,11 @@ def sample_configs(n: int, sampling_cfg: dict, ndim: int, seed: int) -> list[dic
     draws = latin_hypercube(
         {"eps": tuple(sampling_cfg["eps_range"]),
          "mobility": tuple(sampling_cfg["mobility_range"]),
-         "mean_composition": tuple(sampling_cfg["mean_composition_range"])}, n, seed)
+         "mean_composition": tuple(sampling_cfg["mean_composition_range"]),
+         **ic_encoding.ic_ranges(2)}, n, seed)
     return [{"eps": draws["eps"][i], "mobility": draws["mobility"][i],
              "mean_composition": draws["mean_composition"][i],
+             **{k: draws[k][i] for k in ic_encoding.ic_names(2)},
              "domain_size": sampling_cfg["domain_size"], "ndim": ndim,
              "seed": seed + i} for i in range(n)]
 
@@ -89,13 +93,14 @@ def generate_sample(spec: dict, resolutions: list[int], hf_res: int, output_time
     Same eps and same (band-limited) IC at every resolution -- only the grid changes.
     """
     res_min = min(resolutions)
-    rng = np.random.default_rng(spec["seed"])
-    ic_coarse = spec["mean_composition"] + 0.1 * (2 * rng.random((res_min, res_min)) - 1)
+    coeffs = ic_encoding.coeffs_from_spec(spec, 2)
+    ic_coarse = spec["mean_composition"] + ic_encoding.build_ic(coeffs, res_min, 0.1, 2)
     fields = {
         res: _solve(spectral_interp(ic_coarse, res), spec["eps"], spec["mobility"],
                     spec["domain_size"], output_time)
         for res in resolutions
     }
-    cond = np.array([spec["eps"], spec["mobility"], spec["mean_composition"]], dtype=np.float64)
-    names = ["eps", "mobility", "mean_composition"]
+    cond = np.array([spec["eps"], spec["mobility"], spec["mean_composition"], *coeffs],
+                    dtype=np.float64)
+    names = ["eps", "mobility", "mean_composition"] + ic_encoding.ic_names(2)
     return fields, cond, names

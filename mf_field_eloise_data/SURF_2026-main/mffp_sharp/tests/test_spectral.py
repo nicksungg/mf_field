@@ -51,22 +51,29 @@ def test_neg_laplacian_symbol_2d_shape():
     assert s.min() >= 0.0 and np.isclose(s[0, 0], 0.0)
 
 
+def _with_ic(spec, ndim, seed=0):
+    from mffp_sharp.common import ic_encoding as ice
+    rng = np.random.default_rng(seed)
+    spec.update(zip(ice.ic_names(ndim), rng.uniform(-1, 1, ice.n_coeffs(ndim))))
+    return spec
+
+
 def test_ch_solve_still_runs_and_bounded():
     from mffp_sharp.pdes import cahn_hilliard as ch
-    spec = {"eps": 0.03, "mobility": 1.0, "mean_composition": 0.0,
-            "domain_size": 1.0, "seed": 0}
+    spec = _with_ic({"eps": 0.03, "mobility": 1.0, "mean_composition": 0.0,
+                     "domain_size": 1.0, "seed": 0}, ndim=2)
     fields, cond, names = ch.generate_sample(spec, [16, 32], 32, output_time=0.05)
     assert set(fields) == {16, 32}
     for f in fields.values():
         assert np.isfinite(f).all()
         assert np.abs(f).max() < 5.0           # bounded; phase field stays O(1)
-    assert names == ["eps", "mobility", "mean_composition"]
+    assert names[:3] == ["eps", "mobility", "mean_composition"]
 
 
 def test_ch_solve_deterministic():
     from mffp_sharp.pdes import cahn_hilliard as ch
-    spec = {"eps": 0.03, "mobility": 1.0, "mean_composition": 0.0,
-            "domain_size": 1.0, "seed": 7}
+    spec = _with_ic({"eps": 0.03, "mobility": 1.0, "mean_composition": 0.0,
+                     "domain_size": 1.0, "seed": 7}, ndim=2, seed=7)
     a = ch.generate_sample(spec, [16, 32], 32, 0.05)[0][32]
     b = ch.generate_sample(spec, [16, 32], 32, 0.05)[0][32]
     assert np.array_equal(a, b)
@@ -74,7 +81,7 @@ def test_ch_solve_deterministic():
 
 def test_ks_solve_still_runs_zero_mean():
     from mffp_sharp.pdes import kuramoto_sivashinsky as ks
-    spec = {"L": 30.0, "ic_amplitude": 0.1, "seed": 1}
+    spec = _with_ic({"L": 30.0, "ic_amplitude": 0.1, "seed": 1}, ndim=2, seed=1)
     fields, cond, names = ks.generate_sample(spec, [16, 32], 32, output_time=1.0)
     for f in fields.values():
         assert np.isfinite(f).all()

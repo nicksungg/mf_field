@@ -15,13 +15,15 @@ weakly stable here and blows up at realistic amplitudes; RK4 has a far larger st
 region.) Fresh real-space FFT each substep keeps the state Hermitian (stays real). KdV
 conserves the integral of u, so the spatial mean (k=0 mode) is preserved exactly.
 
-IC: band-limited random field on the coarsest grid, spectrally interpolated up ->
-identical continuous IC per level. Field stored: u at fixed output time T.
+IC: band-limited field built deterministically from the exported ic_c* coefficients
+(common/ic_encoding) on the coarsest grid, spectrally interpolated up -> identical
+continuous IC per level. Field stored: u at fixed output time T.
 """
 from __future__ import annotations
 
 import numpy as np
 
+from ..common import ic_encoding
 from ..common.spectral import spectral_interp
 from ..common.sampling import latin_hypercube
 
@@ -66,8 +68,10 @@ def sample_configs(n: int, sampling_cfg: dict, ndim: int, seed: int) -> list[dic
     assert ndim in NDIMS_SUPPORTED, f"kdv supports {NDIMS_SUPPORTED}, got {ndim}"
     draws = latin_hypercube(
         {"delta": tuple(sampling_cfg["delta_range"]),
-         "ic_amplitude": tuple(sampling_cfg["ic_amplitude_range"])}, n, seed)
+         "ic_amplitude": tuple(sampling_cfg["ic_amplitude_range"]),
+         **ic_encoding.ic_ranges(1)}, n, seed)
     return [{"delta": draws["delta"][i], "ic_amplitude": draws["ic_amplitude"][i],
+             **{k: draws[k][i] for k in ic_encoding.ic_names(1)},
              "domain_size": sampling_cfg["domain_size"], "ndim": ndim,
              "seed": seed + i} for i in range(n)]
 
@@ -76,13 +80,13 @@ def generate_sample(spec: dict, resolutions: list[int], hf_res: int, output_time
                     ) -> tuple[dict[int, np.ndarray], np.ndarray, list[str]]:
     """Generate one KdV sample across the fidelity ladder (1D)."""
     res_min = min(resolutions)
-    rng = np.random.default_rng(spec["seed"])
-    ic_coarse = spec["ic_amplitude"] * (2 * rng.random(res_min) - 1)
+    coeffs = ic_encoding.coeffs_from_spec(spec, 1)
+    ic_coarse = ic_encoding.build_ic(coeffs, res_min, spec["ic_amplitude"], 1)
     fields = {
         res: _solve(spectral_interp(ic_coarse, res), spec["delta"], spec["domain_size"],
                     output_time)
         for res in resolutions
     }
-    cond = np.array([spec["delta"], spec["ic_amplitude"]], dtype=np.float64)
-    names = ["delta", "ic_amplitude"]
+    cond = np.array([spec["delta"], spec["ic_amplitude"], *coeffs], dtype=np.float64)
+    names = ["delta", "ic_amplitude"] + ic_encoding.ic_names(1)
     return fields, cond, names

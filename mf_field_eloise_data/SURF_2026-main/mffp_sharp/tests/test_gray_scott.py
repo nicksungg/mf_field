@@ -1,11 +1,15 @@
 import numpy as np
 
+from mffp_sharp.common import ic_encoding as ice
 from mffp_sharp.pdes import gray_scott as gs
 
 
 def _spec(seed=0):
-    return {"F": 0.029, "k_rate": 0.057, "Du": 2e-5, "Dv": 1e-5,
-            "domain_size": 2.0, "ndim": 2, "seed": seed}
+    s = {"F": 0.029, "k_rate": 0.057, "Du": 2e-5, "Dv": 1e-5,
+         "domain_size": 2.0, "ndim": 2, "seed": seed}
+    rng = np.random.default_rng(seed)
+    s.update(zip(ice.ic_names(2), rng.uniform(-1, 1, ice.n_coeffs(2))))
+    return s
 
 
 def test_shapes_finite():
@@ -13,7 +17,7 @@ def test_shapes_finite():
     assert fields[32].shape == (32, 32) and fields[64].shape == (64, 64)
     for f in fields.values():
         assert np.isfinite(f).all()
-    assert names == ["F", "k_rate"] and cond.shape == (2,)
+    assert names == ["F", "k_rate"] + ice.ic_names(2) and cond.shape == (18,)
 
 
 def test_trivial_fixed_point_stays_fixed():
@@ -35,13 +39,24 @@ def test_deterministic():
 def test_stable_at_config_range():
     # A representative Pearson regime over a longer time must stay finite & bounded in [0,1.5].
     fields = gs.generate_sample(
-        {"F": 0.058, "k_rate": 0.065, "Du": 2e-5, "Dv": 1e-5,
-         "domain_size": 2.0, "ndim": 2, "seed": 4}, [32, 64], 64, output_time=50.0)[0]
+        {**_spec(seed=4), "F": 0.058, "k_rate": 0.065}, [32, 64], 64, output_time=50.0)[0]
     for f in fields.values():
         # spectral ringing on the sharp GS fronts gives a tiny negative undershoot
         # (~-1.3e-5 at T=50), 4 orders below the field max (~0.34); -2e-5 bounds it while
         # still catching gross instability.
         assert np.isfinite(f).all() and f.min() >= -2e-5 and f.max() < 1.5
+
+
+def test_field_is_function_of_exported_cond_only():
+    cfg = {"F_range": [0.02, 0.06], "k_rate_range": [0.05, 0.07],
+           "Du": 2e-5, "Dv": 1e-5, "domain_size": 2.0}
+    spec = gs.sample_configs(1, cfg, ndim=2, seed=7)[0]
+    fields, cond, names = gs.generate_sample(spec, [16, 32], 32, output_time=2.0)
+    spec2 = dict(zip(names, cond.tolist()))
+    spec2.update({"Du": 2e-5, "Dv": 1e-5, "domain_size": 2.0, "ndim": 2})
+    fields2, cond2, _ = gs.generate_sample(spec2, [16, 32], 32, output_time=2.0)
+    assert np.array_equal(fields[32], fields2[32])
+    assert np.array_equal(cond, cond2)
 
 
 def test_only_2d_supported():
