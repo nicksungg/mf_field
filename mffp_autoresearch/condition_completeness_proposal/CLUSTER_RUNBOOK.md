@@ -1,5 +1,13 @@
 # Cluster runbook — completing the repair pipeline (2026-08-03)
 
+## State at local handoff (2026-08-03, Mac session paused its generation)
+
+Already FINAL on the Mac's `benchmark_42/sharp` (certified COMPLETE, metas committed on this branch): `phase_field_crystal_2d`, `fisher_kpp_1d`, `allen_cahn_1d`.
+INTERIM (complete but gapless first-pass; replace these): `fisher_kpp_2d` (T=0.05) and `allen_cahn_2d` (T=0.5) — their FINAL recipes are already in `sample.yaml` (fk `output_time: 0.30`; ac `eps_range: [0.012, 0.02]` + `output_time: 10.0`).
+**The cluster's first job is regenerating those two at the final recipes**; regenerating all five for single-provenance is also fine (cheap).
+The Caltech cluster (`login.hpc.caltech.edu`) has NO checkout and no ORCD mount — clone `nicksungg/mf_field` branch `mffp-trunk-eloise` (needs your GitHub auth), create a venv (`python/3.11` module; `pip install numpy scipy pyyaml h5py matplotlib scikit-image pytest && pip install -e mf_field_eloise_data/SURF_2026-main/mffp_sharp`), and use partition `expansion` (CPU) / `gpu` (anchors).
+Heavy arrays are NOT in git — the cluster regenerates its own (each meta self-certifies via the generation gate), and only small artifacts (metas, reports, figures) flow back through the branch.
+
 Paste the **Claude prompt** below into a Claude Code session on the cluster login node (run it inside `tmux` so it survives disconnects; durable work goes through `sbatch`, never the login shell).
 Or run the **quick-start shell block** first if you just want the regeneration jobs submitted immediately.
 
