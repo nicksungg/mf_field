@@ -1,0 +1,66 @@
+{
+  "variant": "phase_field_crystal_2d",
+  "module": "phase_field_crystal",
+  "ndim": 2,
+  "source": "Elder & Grant 2004",
+  "output_time": 200.0,
+  "ladder": [
+    [
+      32,
+      32
+    ],
+    [
+      64,
+      64
+    ],
+    [
+      128,
+      128
+    ]
+  ],
+  "param_names": [
+    "r",
+    "mean_density",
+    "ic_c0",
+    "ic_c1",
+    "ic_c2",
+    "ic_c3",
+    "ic_c4",
+    "ic_c5",
+    "ic_c6",
+    "ic_c7",
+    "ic_c8",
+    "ic_c9",
+    "ic_c10",
+    "ic_c11",
+    "ic_c12",
+    "ic_c13",
+    "ic_c14",
+    "ic_c15"
+  ],
+  "n_params": 18,
+  "ntrain": 8,
+  "ntest": 2,
+  "seed": 42,
+  "condition_completeness": {
+    "witness": {
+      "closest_pair": [
+        1,
+        8
+      ],
+      "standardized_condition_distance": 4.752401069523029,
+      "relative_field_difference": 0.33229657490963155,
+      "median_pair_distance": 6.309668772169941
+    },
+    "reconstruction": {
+      "n_samples": 2,
+      "rel_L2_per_sample": [
+        0.0,
+        0.0
+      ],
+      "rel_L2_max": 0.0,
+      "verdict": "COMPLETE"
+    },
+    "verdict": "COMPLETE"
+  }
+}

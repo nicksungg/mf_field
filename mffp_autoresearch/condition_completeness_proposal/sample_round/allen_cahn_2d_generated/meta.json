@@ -1,0 +1,67 @@
+{
+  "variant": "allen_cahn_2d",
+  "module": "allen_cahn",
+  "ndim": 2,
+  "source": "APEBench (arXiv:2411.00180)",
+  "output_time": 0.5,
+  "ladder": [
+    [
+      64,
+      64
+    ],
+    [
+      128,
+      128
+    ],
+    [
+      256,
+      256
+    ]
+  ],
+  "param_names": [
+    "eps",
+    "mobility",
+    "mean_composition",
+    "ic_c0",
+    "ic_c1",
+    "ic_c2",
+    "ic_c3",
+    "ic_c4",
+    "ic_c5",
+    "ic_c6",
+    "ic_c7",
+    "ic_c8",
+    "ic_c9",
+    "ic_c10",
+    "ic_c11",
+    "ic_c12",
+    "ic_c13",
+    "ic_c14",
+    "ic_c15"
+  ],
+  "n_params": 19,
+  "ntrain": 8,
+  "ntest": 2,
+  "seed": 42,
+  "condition_completeness": {
+    "witness": {
+      "closest_pair": [
+        6,
+        7
+      ],
+      "standardized_condition_distance": 3.986636625295445,
+      "relative_field_difference": 1.330802376592474,
+      "median_pair_distance": 6.555507037181777
+    },
+    "reconstruction": {
+      "n_samples": 2,
+      "rel_L2_per_sample": [
+        0.0,
+        0.0
+      ],
+      "rel_L2_max": 0.0,
+      "verdict": "COMPLETE"
+    },
+    "verdict": "COMPLETE"
+  }
+}
