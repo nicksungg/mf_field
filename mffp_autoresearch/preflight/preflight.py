@@ -39,7 +39,10 @@ from pathlib import Path
 import numpy as np
 
 PAIRING_MIN_FRAC = 0.5
-GAP_NO_GAP = 0.02
+# Fidelity gap uses the repo's CANONICAL residual: LF spectrally interpolated up to the
+# HF grid (a block-average comparison has an operator-mismatch floor of ~0.02-0.05 that
+# reads as a fake gap — it hid fisher_kpp's true 4e-5 gap on 2026-08-03).
+GAP_NO_GAP = 1e-3
 GAP_SATURATED = 0.8
 NN_TRIVIAL = 0.05
 WITNESS_DIST_MAX = 0.5
@@ -64,7 +67,8 @@ def nearest_pair_witness(x: np.ndarray, y: np.ndarray) -> dict:
 
 
 def _block_avg_to(y_hf: np.ndarray, n_lf: int, ndim: int) -> np.ndarray | None:
-    """Block-average flattened HF rows down to the LF cell count (diagnostic only)."""
+    """Block-average flattened HF rows down to the LF cell count (pairing only —
+    fine as a projection for row matching, NOT as a fidelity measure)."""
     n_hf = y_hf.shape[1]
     if ndim == 2:
         r_hf, r_lf = int(round(np.sqrt(n_hf))), int(round(np.sqrt(n_lf)))
@@ -77,6 +81,32 @@ def _block_avg_to(y_hf: np.ndarray, n_lf: int, ndim: int) -> np.ndarray | None:
         return None
     s = n_hf // n_lf
     return y_hf.reshape(-1, n_lf, s).mean(axis=2)
+
+
+def _spectral_up(y_lf: np.ndarray, n_hf: int, ndim: int) -> np.ndarray | None:
+    """Spectrally interpolate flattened LF rows up to the HF cell count (the repo's
+    canonical alignment for residuals: zero-pad the Fourier spectrum)."""
+    n_lf = y_lf.shape[1]
+    if ndim == 2:
+        r_lf, r_hf = int(round(np.sqrt(n_lf))), int(round(np.sqrt(n_hf)))
+        if r_lf * r_lf != n_lf or r_hf * r_hf != n_hf or r_hf % r_lf:
+            return None
+        out = np.empty((len(y_lf), n_hf))
+        for i, row in enumerate(y_lf):
+            F = np.fft.fftshift(np.fft.fft2(row.reshape(r_lf, r_lf)))
+            pad = (r_hf - r_lf) // 2
+            Fp = np.pad(F, pad)
+            out[i] = np.real(np.fft.ifft2(np.fft.ifftshift(Fp))).ravel() * (r_hf / r_lf) ** 2
+        return out
+    if n_hf % n_lf:
+        return None
+    out = np.empty((len(y_lf), n_hf))
+    for i, row in enumerate(y_lf):
+        F = np.fft.fftshift(np.fft.fft(row))
+        pad = (n_hf - n_lf) // 2
+        Fp = np.pad(F, pad)
+        out[i] = np.real(np.fft.ifft(np.fft.ifftshift(Fp))) * (n_hf / n_lf)
+    return out
 
 
 def pairing_check(y_lf: np.ndarray, y_hf: np.ndarray, ndim: int) -> dict:
@@ -110,10 +140,12 @@ def pairing_check(y_lf: np.ndarray, y_hf: np.ndarray, ndim: int) -> dict:
 
 
 def fidelity_gap(y_lf: np.ndarray, y_hf: np.ndarray, ndim: int) -> dict:
-    hf_down = _block_avg_to(y_hf, y_lf.shape[1], ndim)
-    if hf_down is None:
+    """Canonical fidelity gap: rel-L2 of (HF − LF spectrally interpolated to HF grid)."""
+    lf_up = _spectral_up(y_lf, y_hf.shape[1], ndim)
+    if lf_up is None:
         return {"status": "UNSUPPORTED"}
-    rel = np.linalg.norm(y_lf - hf_down, axis=1) / (np.linalg.norm(hf_down, axis=1) + 1e-300)
+    rel = (np.linalg.norm(y_hf - lf_up, axis=1)
+           / (np.linalg.norm(y_hf, axis=1) + 1e-300))
     med = float(np.median(rel))
     status = "NO_GAP" if med < GAP_NO_GAP else ("SATURATED" if med > GAP_SATURATED else "OK")
     return {"status": status, "median_rel_l2": med}
@@ -205,8 +237,25 @@ def selftest() -> int:
     y_lf_alike = _block_avg_to(y_hf_alike, cells, 2) + 0.001 * rng.random((n, cells))
     assert pairing_check(y_lf_alike, y_hf_alike, 2)["status"] == "OK"
     assert pairing_check(y_lf_alike[perm], y_hf_alike, 2)["status"] == "MISPAIRED"
-    # no fidelity gap: LF == block-avg HF exactly
-    assert fidelity_gap(_block_avg_to(y_hf, cells, 2), y_hf, 2)["status"] == "NO_GAP"
+    # no fidelity gap: the same band-limited function sampled on both grids — the
+    # canonical measure (LF spectrally interpolated up) sees machine zero; adding
+    # genuine HF-only structure (5%) must read OK
+    grids = {}
+    for r in (16, 32):
+        xs = 2 * np.pi * np.arange(r) / r
+        grids[r] = np.meshgrid(xs, xs, indexing="ij")
+    hf_band, lf_exact = [], []
+    for _ in range(n):
+        c = rng.uniform(-1, 1, 4)
+        row = {}
+        for r, (X, Y) in grids.items():
+            row[r] = (c[0] * np.cos(X) + c[1] * np.sin(2 * X + Y)
+                      + c[2] * np.cos(3 * Y) + c[3] * np.sin(X + 2 * Y)).ravel()
+        hf_band.append(row[32])
+        lf_exact.append(row[16])
+    hf_band, lf_exact = np.stack(hf_band), np.stack(lf_exact)
+    assert fidelity_gap(lf_exact, hf_band, 2)["status"] == "NO_GAP"
+    assert fidelity_gap(lf_exact, hf_band + 0.05 * rng.random(hf_band.shape), 2)["status"] == "OK"
     # NN-trivial: test conds equal train conds -> NN reproduces the field
     assert nn_baseline(x, y, x[:10], y[:10])["status"] == "TRIVIAL_NN"
     print("preflight selftest: all four defect classes detected OK")

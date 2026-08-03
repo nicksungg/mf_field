@@ -106,9 +106,11 @@ Sample-round findings that need a recipe decision at sign-off:
 | allen_cahn_2d | 0.033 | 0.041 | preserved (interface width is set by $\varepsilon$, not the IC) |
 | phase_field_crystal_2d | 8.3e-6 | 1.2e-6 | NO_GAP before and after — the pre-existing round-2 finding; a panel-composition decision, not an IC-fix regression. Part of the sampled $(r, \bar\psi)$ range also sits in the uniform (non-crystalline) phase (see figure sample 1) |
 
-**Recipe resolution (2026-08-03, operator-approved — see `APPROVAL.md`):** fisher_kpp_2d regenerates with `ic_modes: 5` (48 coefficients, condition dim 50).
-The measured sweep (`fk_option_sweep`): longer `output_time` *reduces* the gap (logistic domain-fill outruns front densification: 0.022 → 0.019 at $T{=}0.15$, mean $u \to 0.91$); 10× smaller $D$ changes nothing (0.0219 — front *density*, not width, is what white noise supplied); 48 coefficients reach 0.041 (allen_cahn's accepted level) and 96 only 0.048.
-The shipped 0.196 is unreachable under any small complete condition vector — it was largely a property of the unexported broadband IC, i.e. of the defect itself.
+**Recipe resolution, first pass (2026-08-03) — SUPERSEDED, instrument error.**
+The `fk_option_sweep` numbers above (and the sample-round gap column) were measured with a block-average LF-vs-HF comparison, which turns out to carry an operator-mismatch floor of ~0.02–0.05 that reads as a fake gap.
+On the repo's *canonical* residual measure (LF spectrally interpolated to the HF grid), the first-pass regenerated fisher_kpp has gap ~4e-5 (shipped white-noise data: 7.4e-2) and allen_cahn ~1.5e-4 (shipped: 5.6e-3) — i.e. the band-limited IC at the short production solve times produces LF ≈ HF and copy-LF is a near-perfect model.
+cahn_hilliard, IC-encoded since June with $T{=}5.0$, keeps a genuine 1.5e-2 gap: the lever that matters is *solve time for nonlinear dynamics to build under-resolved structure*, not IC mode count alone.
+The preflight `fidelity_gap` check now uses the canonical measure (threshold NO_GAP < 1e-3), and the fisher_kpp / allen_cahn recipes are re-derived on it (`true_gap_sweep`); the final recipe and its measured gap are recorded below.
 
 ## Files in this package
 
