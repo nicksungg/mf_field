@@ -114,3 +114,92 @@ def test_certify_without_module_falls_back_to_witness():
     y = rng.random((8, 64))
     with pytest.raises(comp.CompletenessError):
         comp.certify(None, x, y, ["a", "b", "c"], {}, [16], 16, 1.0)
+
+
+# ---------------------------------------------------------------------------
+# 2026-08-03 hardening (briefing §8.1): seed-padding and dimension inflation
+# ---------------------------------------------------------------------------
+
+class _StubSeedPadded:
+    """The illegitimate 'fix': the per-sample RNG seed is exported as a condition
+    dimension. Reconstruction from cond succeeds at machine precision, but the
+    map through the seed dimension is a hash, not a function a model can learn."""
+
+    @staticmethod
+    def generate_sample(spec, resolutions, hf_res, output_time):
+        rng = np.random.default_rng(int(spec["s"]))
+        f = float(spec["a"]) + rng.random((hf_res, hf_res))
+        cond = np.array([spec["a"], float(int(spec["s"]))], dtype=np.float64)
+        return {hf_res: f}, cond, ["a", "s"]
+
+
+def _seed_padded_dataset(n=6, seed_stride=1):
+    x, y = [], []
+    for i in range(n):
+        fields, cond, names = _StubSeedPadded.generate_sample(
+            {"a": 0.5 + 0.1 * i, "s": i * seed_stride}, [16], 16, 1.0)
+        x.append(cond)
+        y.append(fields[16].ravel())
+    return np.stack(x), np.stack(y), ["a", "s"]
+
+
+def test_probe_kills_seed_padding_dead_dim():
+    # Unit seed stride: eps = 1% of the seed column's spread stays inside one
+    # integer, so the field does not respond at all -> DEAD dimension.
+    x, y, names = _seed_padded_dataset(seed_stride=1)
+    rec = comp.reconstruction_check(_StubSeedPadded, x[0], names, {}, [16], 16, 1.0, y[0])
+    assert rec["verdict"] == "COMPLETE"          # reconstruction alone is fooled
+    with pytest.raises(comp.CompletenessError) as ei:
+        comp.certify(_StubSeedPadded, x, y, names, {}, [16], 16, 1.0, n_reconstruct=2)
+    probe = ei.value.record["continuity_probe"]
+    assert any(d["name"] == "s" and d["class"] in ("DEAD", "NONSMOOTH")
+               for d in probe["per_dim"])
+
+
+def test_probe_kills_seed_padding_hash_dim():
+    # Large seed stride: eps crosses integer boundaries, the response is O(1)
+    # at both step sizes and does not shrink -> NONSMOOTH (hash-like).
+    x, y, names = _seed_padded_dataset(seed_stride=1000)
+    with pytest.raises(comp.CompletenessError) as ei:
+        comp.certify(_StubSeedPadded, x, y, names, {}, [16], 16, 1.0, n_reconstruct=2)
+    probe = ei.value.record["continuity_probe"]
+    flagged = {d["name"]: d["class"] for d in probe["per_dim"]}
+    assert flagged["s"] in ("NONSMOOTH", "DEAD")
+    assert flagged["a"] == "SMOOTH"              # the genuine coefficient is untouched
+
+
+def test_witness_relative_threshold_survives_dimension_inflation():
+    # A close pair hidden in 20 dimensions: absolute distance above the fixed
+    # 0.5 bound, but far below 10% of the dataset's own median pair distance.
+    rng = np.random.default_rng(7)
+    x = rng.normal(size=(12, 20))
+    x[1] = x[0] + 0.123
+    # calibrate the offset so the pair's standardized distance lands between the
+    # absolute bound and the relative trip point
+    w0 = comp.nearest_pair_witness(x, rng.random((12, 4)))
+    x[1] = x[0] + 0.123 * (0.55 / w0["standardized_condition_distance"])
+    y = rng.random((12, 64))
+    w = comp.nearest_pair_witness(x, y)
+    assert w["standardized_condition_distance"] > comp.WITNESS_DIST_MAX
+    assert (w["standardized_condition_distance"]
+            < comp.WITNESS_DIST_MEDIAN_FRAC * w["median_pair_distance"])
+    with pytest.raises(comp.CompletenessError):
+        comp.certify(None, x, y, [f"c{i}" for i in range(20)], {}, [16], 16, 1.0)
+
+
+class _StubDeterministic:
+    @staticmethod
+    def generate_sample(spec, resolutions, hf_res, output_time):
+        f = np.full((hf_res, hf_res), float(spec["a"]))
+        return {hf_res: f}, np.array([spec["a"]], dtype=np.float64), ["a"]
+
+
+def test_witness_veto_overrides_reconstruction():
+    # Sample 0 reconstructs perfectly, but the dataset contains a near-identical
+    # condition pair with wildly different stored fields; the witness must veto.
+    x = np.array([[0.5], [0.5 + 1e-9], [0.9], [0.1]])
+    y = np.stack([np.full(64, 0.5), np.full(64, 5.0),
+                  np.full(64, 0.9), np.full(64, 0.1)])
+    with pytest.raises(comp.CompletenessError):
+        comp.certify(_StubDeterministic, x, y, ["a"], {}, [16], 16, 1.0,
+                     n_reconstruct=1)

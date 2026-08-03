@@ -166,9 +166,20 @@ def solve_eikonal(params, n):
     return out
 
 
-def ch_ic(n, sd, mean):
-    """Resolution-independent Cahn-Hilliard IC (same continuous field on any grid)."""
-    r = np.random.default_rng(5000 + sd)
+def ch_ic(n, mean, seed=5000):
+    """Resolution-independent Cahn-Hilliard IC (same continuous field on any grid).
+
+    The seed is FIXED (not per-sample): every sample shares one IC realization and
+    varies only through (gamma, mean), so the exported 2-param condition vector
+    fully determines the field (verified 2026-08-03: re-solving benchmark_42/ext/
+    cahn_hilliard_2d from stored x reproduces every checked row at rel-L2 = 0.0).
+    The pre-fix signature seeded by BATCH POSITION (5000 + enumerate index), which
+    made results depend on how calls were batched and — under batch-wise
+    generation — would hide ~48 IC dof from the condition vector (the round-2
+    incompleteness defect class). Do not reintroduce a per-sample seed here
+    without exporting the drawn values into params.
+    """
+    r = np.random.default_rng(seed)
     xs = np.linspace(0, 2 * np.pi, n, endpoint=False)
     Xg, Yg = np.meshgrid(xs, xs); c = np.zeros((n, n))
     for _ in range(12):
@@ -182,7 +193,7 @@ def solve_cahn_hilliard(params, n, M=1.0, steps=4000, dt=1e-5):
     k2 = KX**2 + KY**2; k4 = k2**2
     out = np.empty((len(params), n, n))
     for s, (lg, mean) in enumerate(params):
-        gamma = 10**lg; c = ch_ic(n, s, mean)
+        gamma = 10**lg; c = ch_ic(n, mean)
         for _ in range(steps):
             ch = np.fft.fft2(c**3 - c); chat = np.fft.fft2(c)
             chat = (chat - dt * M * k2 * ch) / (1 + dt * M * gamma * k4)

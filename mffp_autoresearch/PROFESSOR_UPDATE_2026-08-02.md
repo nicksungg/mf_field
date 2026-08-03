@@ -1,6 +1,7 @@
 # MFFP Autoresearch — Update for Mentor (Round 2 Close)
 
 Date: 2026-08-02. Author: Eloise (with the autoresearch orchestrator).
+Updated 2026-08-03: the benchmark-repair pipeline described in §3 has since been executed end-to-end (operator-approved); §6 records what was done and verified.
 Authoritative sources: `round2/docs/round2_report.md`, `round2/program.md`, per-experiment cards under `round2/experiment_cards/`.
 Companion to the 2026-07-31 update (system setup and round-1 results are described there and are not repeated).
 
@@ -20,7 +21,8 @@ Rendered versions of this update (figures embedded):
 - **Headline mechanism finding: this panel is *scalar-deep* for condition-only models.**
   After granting a closed-form condition→level law, the leftover residual is worth 40–211× each dataset's certified minimum claimable effect — but has *zero* usable condition reachability, while the paired LF field carries it almost perfectly (fluctuation cosine ≥ 0.997).
   Consistently, a ~150-parameter closed-form head matches a 15.85M-parameter FiLM-FNO decoder on 5/6 panel cells.
-- **As in round 1, the most valuable output is benchmark-integrity findings** (§3): the condition vector is incomplete on 3/6 panel datasets (corrected 2026-08-03 from 4/6), ifc_poisson is affine and its fidelity ladder mispaired, and the generator-side $(r-1)/2$ registration defect now has a complete fix package awaiting review.
+- **As in round 1, the most valuable output is benchmark-integrity findings** (§3): the condition vector is incomplete on 3/6 panel datasets (corrected 2026-08-03 from 4/6), ifc_poisson is affine and its fidelity ladder mispaired, and the generator-side $(r-1)/2$ registration defect had a complete fix package.
+  *As of 2026-08-03 both fixes are landed and the affected datasets regenerated — see §6.*
 - New figures: `round2/docs/figures/error_comparison.png` and `top_models_overview.svg` (both regenerable from cards via `round2/tools/render_*.py`).
 
 ## 1. What round 2 asked, and how it ran
@@ -64,11 +66,15 @@ Both figures live in `round2/docs/figures/` (regenerate from cards with `tools/r
   This is the round's sharpest paper-facing point: a "condition-only" track on this benchmark needs either completed condition vectors or explicitly aleatoric-aware metrics.
   *Correction 2026-08-03 (this update originally said 4 of 6):* cahn_hilliard was wrongly folded in. Its IC is built from its own condition vector, and re-solving from `x` alone reproduces the on-disk field to rel-L2 $1.7\times10^{-14}$ (control 1.346) — the vector is complete, and what was measured there is the support limit of 400 rows in 19 dimensions (closest training pair at standardized distance 2.82). Certificate and fix package: `mffp_autoresearch/condition_completeness_proposal/`.
   The root cause on the other three is a code-path split, not a design choice: the identical bug was fixed on 2026-06-28 in a standalone script (`generate_learnable.py`, 9 variants regenerated) rather than in the `mffp_sharp` package, so datasets generated later through the package path silently reproduced it.
+  *Status 2026-08-03: fixed at the package level (IC coefficients drawn in the Latin-hypercube design and exported in `cond`; a training-free completeness certificate now runs as a generation gate and is written into every `meta.json`), and the affected variants regenerated through the fixed path — §6.*
 - **The frozen floors sit 1.3–4.2× above the aleatoric barriers**, so "beats the best training-free floor" is a weak bar on the stochastic datasets.
 - **The generator itself carries the $(r-1)/2$ registration defect** (`mffp_sharp/common/ladder.py` bakes a cell-centred coordinate map into node-sampled aligned arrays, and clamp-extends across periodic seams).
-  A complete fix package — patch, verification harness (PASS), sample round, including the measurement that the defect inflates allen_cahn's self-metric gap 3.2–4.7× — is at `mffp_autoresearch/ladder_fix_proposal/`, awaiting Eloise's review then your sign-off; the surface is mentor-owned and nothing has been landed.
+  The fix package — patch, verification harness (PASS), sample round, including the measurement that the defect inflates allen_cahn's self-metric gap 3.2–4.7× — is at `mffp_autoresearch/ladder_fix_proposal/`.
+  *Status 2026-08-03: Eloise approved the package under operator authority (mentor sign-off waived — `condition_completeness_proposal/APPROVAL.md`); the patch is landed (per-PDE node conventions in `assemble_sample`, commit `c29c269`), and the acceptance verification was re-run on the cluster against the landed code: VERDICT PASS, byte-identical results.*
 - **ifc_poisson is degenerate for this regime**: the HF side is affine (LOO residual $3.2\times10^{-8}$ at every rung; independently confirmed from the LF side), so criterion-2-style claims on it measure rank recovery, not operator learning.
   Its fidelity ladder is additionally *mispaired* (170 LF rows at conditions with no HF row; 0 conditions covered at every rung — two independent audits), invalidating every $hf-lf$, LF-teacher, and copy-LF construction on it.
+  *Status 2026-08-03: confirmed on-disk — every rung pair shares 0 condition rows, and the same measurement shows `ifc_heat` (a guard dataset) is mispaired the same way (preflight row-match 0.2 / 0.4 respectively).*
+  *Both are local IFC-protocol replicas of `generate_all_datasets.py` solvers, so a faithful repaired ladder was regenerated with nested conditions (preflight row-match 1.0) and staged at `mffp_autoresearch/ifc_pairing_repair/`; whether it replaces the shipped ladder on the round-3 panel is a launch-ADR decision.*
 - **Falsification clauses failed from instrument arithmetic far more often than from model behaviour** (7 independent confirmations across the round) — the codified rules (registration-of-lifts, target-scaler pre-flight, zero-information nulls, matched-procedure arm comparisons, propagation-aware gates) are in the final report §6 and are now program law.
 - **Cross-regime comparisons are dominated by the regime, not the model**: on identical held-out rows, raw copy-LF beats the round's fitted condition-only arms by 12–165×.
   Any side-by-side of round-1 and round-2 numbers must carry this caveat on top of the denominator change.
@@ -80,9 +86,35 @@ Both figures live in `round2/docs/figures/` (regenerate from cards with `tools/r
 - **Honest accounting**: the round's best geomean (14.08) is *reported with* its attribution caveat rather than headlined naked; the only number we call certified is the 3-seed 19.8178.
 - **Cost of statelessness**: the orchestrator session died and resumed three times, losslessly (state files + append-only cards + SLURM queue as ground truth) — but the close log records ~10 h of idle polling burned against frozen state; polling now dies with the round.
 
-## 5. Gated next steps (in order, each on explicit go)
+## 5. Gated next steps (in order, each on explicit go — status as of 2026-08-03)
 
-1. **Seeds 1–2 confirms** for the claimable slate (r2s2-B1, r2s3-B3, r2s1-B2/B3) — not launched at close; fires on explicit go.
-2. **`ladder.py` fix package review** — Eloise, then mentor sign-off (generator surface is mentor-owned).
+1. **Seeds 1–2 confirms** for the claimable slate (r2s2-B1, r2s3-B3, r2s1-B2/B3) — superseded by the repair pipeline: the slate is being re-scored at 3 seeds *on the repaired panel* (§6), which is both the confirm and round 3's certified launch anchor (PROGRAM_NOTE §7.4).
+2. **`ladder.py` fix package review** — DONE: approved by Eloise under operator authority (mentor gate waived), landed, verification PASS (§3, §6).
 3. **Round-1 2500-epoch full runs** — still on hold (the round-1 s4 gate-relaxation decision remains a prerequisite for s4's slot).
 4. **Round-3 direction adjudication** from the recorded-but-not-executed material: the r2s1 two-stage factorised head (pre-measured 18.6787), the r2s2 certified-impossibility-statement question, the r2s3 phase-channel identifiability-vs-trainability question, and a training-free ifc identifiability audit.
+   Round 3's remaining launch prerequisites are listed in `round3/PROGRAM_NOTE.md` §7: panel-composition ADR (helmholtz / ifc / pfc / fisher_kpp), then operator go.
+
+## 6. Repair pipeline execution (2026-08-03, cluster)
+
+Everything in this section ran under the operator approval recorded in `condition_completeness_proposal/APPROVAL.md`; each step was verified against the artifact it produced, and old data was archived, never deleted (round-2 numbers remain reproducible against `_incomplete_backup_2026-08-03/`).
+
+- **Both generator fixes are landed at the package level.**
+  IC-encoding: every stochastic-IC PDE now draws its IC coefficients in the Latin-hypercube design and exports them in `cond` (`ic_c0…`); per-module tests pin the field as a function of the exported condition alone (149 passed, 9 skipped).
+  Registration: `ladder.py` dispatches per-PDE node conventions (`node_periodic` / `node_dirichlet` / `cell_centered`), raising on unclassified PDEs; acceptance verification re-run on the cluster reads PASS with byte-identical results.
+- **A training-free completeness certificate now gates generation.**
+  `certify`-style reconstruction (rebuild the IC from `x`, re-solve, compare) runs at the end of every generation and is written into `meta.json` as `condition_completeness`; INCOMPLETE hard-fails the job unless the dataset explicitly declares stochastic-map semantics.
+- **The audit heuristic was adjudicated by the certificate, not by pattern.**
+  Sweeping every other benchmark variant for the defect class flagged three extension-tree datasets (`ext/cahn_hilliard_2d`, `ext/gray_scott_2d`, `ext/kuramoto_sivashinsky_1d`); all three *reconstruct exactly* (rel-L2 = 0.0) from their stored condition vectors — deterministic ICs, no defect — so no further regeneration was needed.
+  (KS fails the nearest-pair witness by chaotic amplification while passing reconstruction — a good example of why the reconstruction certificate, not the witness, is the decisive test.)
+- **The mispaired ifc ladders have a staged repair** (§3): nested-condition regeneration through the local solvers, preflight pairing row-match 1.0 vs the shipped 0.2/0.4; panel adoption is a round-3 launch-ADR decision.
+- **All five affected sharp variants are regenerated and swapped in.**
+  `phase_field_crystal_2d`, `fisher_kpp_2d` (final recipe $T=0.30$), `allen_cahn_2d` (final recipe $\varepsilon$ coupled to the ladder, $T=10$), plus the 1-D pair — every certificate reads COMPLETE at reconstruction rel-L2 = 0.0, cluster metas matching the committed finals to floating-point rounding.
+  Old data is archived (never deleted) in `_incomplete_backup_2026-08-03/`, so every round-2 number remains reproducible against the panel it was measured on.
+- **Preflight now passes on the repaired panel** (report archived in `round3/state/`), with two instrument false-positives adjudicated by decisive tests before waiving: helmholtz's completeness flag (resonance sensitivity — re-solving from the condition vector reproduces the flagged rows at rel-L2 ~1e-15) and sod's pairing flag (near-duplicate Riemann rows — the ladder's condition arrays are bit-identical across levels).
+- **The 3-seed anchor re-score of round 2's claimable slate is running on the repaired panel** (12 GPU jobs), against freshly recomputed copy-LF denominators (round-2 denominators archived).
+  One consequence worth flagging now: fisher_kpp's copy-LF reference collapsed 130× under the complete IC (LF ≈ HF), so skills on the regenerated datasets are not comparable to round-2 skills — these runs measure how much of round 2's story survives the data fix, which is exactly their purpose.
+- **A same-day hardening pass closed the gate's own blind spots** (found by the condition-completeness briefing, executed under the same approval):
+  the certificate now carries a witness veto whose threshold scales with the dataset's own pair-distance scale, plus a two-scale continuity probe that tells a genuine coefficient from an exported RNG seed (a smooth map's response halves when the probe step halves; a seed's does not) — so the illegitimate "export the seed" shortcut can no longer certify COMPLETE;
+  the briefing-prescribed repo-wide sweep found a **fourth occurrence** of the defect class (`burgers_param`: per-sample IC phases consumed but never exported), repaired in place without re-solving by re-deriving the phases from the generation seed — post-retrofit, all 500 rows reconstruct from the condition vector at rel-L2 = 0.0;
+  and the flagged extension-tree Cahn-Hilliard was adjudicated complete at the artifact level (one shared IC realization; documented, and its batch-order-dependent seeding bug fixed).
+- Round 3 is **not** launched; its remaining prerequisites (panel-composition ADR for helmholtz / ifc / pfc / fisher_kpp, operator go) are §5.4.

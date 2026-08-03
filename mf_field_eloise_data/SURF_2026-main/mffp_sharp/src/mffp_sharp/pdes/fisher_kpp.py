@@ -54,9 +54,14 @@ def _solve(u0: np.ndarray, D: float, r: float, domain_size: float,
 def sample_configs(n: int, sampling_cfg: dict, ndim: int, seed: int) -> list[dict]:
     """Draw n Fisher-KPP condition specs (Latin-hypercube over D / r + IC coeffs).
 
-    `ic_modes` (config constant, default 3) widens the 2D IC mode square: front
-    density scales with IC level crossings, and 8 low modes leave the LF-vs-HF
-    gap near the NO_GAP floor (measured 0.022 vs 0.041 at ic_modes=5).
+    `ic_modes` (config constant, default 3) widens the 2D IC mode square, which
+    raises front density (IC level crossings) and condition dimension (16 coeffs
+    at m=3, 48 at m=5). It is NOT a fidelity-gap lever: on the canonical measure
+    (LF spectrally interpolated to HF; the block-average numbers previously
+    quoted here carried a ~0.02-0.05 operator-mismatch floor and are retracted,
+    see condition_completeness PROPOSAL) the T=0.30 gap is ~4.6e-4 at m=3 vs
+    ~3.2e-4 at m=5 (measured 2026-08-03) — the same weak-gap order either way;
+    the gap lever is solve time for nonlinear structure to build.
     """
     assert ndim in NDIMS_SUPPORTED, f"fisher_kpp supports {NDIMS_SUPPORTED}, got {ndim}"
     m2d = int(sampling_cfg.get("ic_modes", 3))

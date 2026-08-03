@@ -1,0 +1,415 @@
+{
+  "root": "mf_field/factory_mffp/data",
+  "waivers": [
+    [
+      "ext__helmholtz_2d",
+      "completeness"
+    ],
+    [
+      "sharp__sod_1d",
+      "pairing"
+    ]
+  ],
+  "datasets": {
+    "ext__helmholtz_2d": {
+      "dataset": "ext__helmholtz_2d",
+      "levels": [
+        1,
+        2
+      ],
+      "n_rows_checked": 400,
+      "completeness": {
+        "status": "INCOMPLETE",
+        "witness": {
+          "closest_pair": [
+            113,
+            284
+          ],
+          "standardized_condition_distance": 0.03514443425557709,
+          "relative_field_difference": 0.22149999754489724
+        },
+        "meta_gate_verdict": null
+      },
+      "pairing": {
+        "status": "OK",
+        "frac_diag_above_p95_offdiag": 0.995,
+        "row_match_accuracy": 0.97,
+        "mean_diag_cosine": 0.9853376958075748
+      },
+      "fidelity_gap": {
+        "status": "OK",
+        "median_rel_l2": 0.16793185936970423
+      },
+      "nn_baseline": {
+        "status": "OK",
+        "median_rel_l2": 0.8271349922308089
+      },
+      "hard_fails": [],
+      "warnings": [],
+      "status": "WAIVED"
+    },
+    "sharp__phase_field_crystal_2d": {
+      "dataset": "sharp__phase_field_crystal_2d",
+      "levels": [
+        1,
+        2,
+        3
+      ],
+      "n_rows_checked": 400,
+      "completeness": {
+        "status": "OK",
+        "witness": {
+          "closest_pair": [
+            47,
+            266
+          ],
+          "standardized_condition_distance": 2.1626822943533637,
+          "relative_field_difference": 0.952138778694668
+        },
+        "meta_gate_verdict": "COMPLETE"
+      },
+      "pairing": {
+        "status": "OK",
+        "frac_diag_above_p95_offdiag": 1.0,
+        "row_match_accuracy": 0.795,
+        "mean_diag_cosine": 0.9576394614949266
+      },
+      "fidelity_gap": {
+        "status": "NO_GAP",
+        "median_rel_l2": 1.8595262104505677e-15
+      },
+      "nn_baseline": {
+        "status": "OK",
+        "median_rel_l2": 0.23964009119913124
+      },
+      "hard_fails": [],
+      "warnings": [
+        "fidelity_gap"
+      ],
+      "status": "WARN"
+    },
+    "sharp__allen_cahn_2d": {
+      "dataset": "sharp__allen_cahn_2d",
+      "levels": [
+        1,
+        2,
+        3
+      ],
+      "n_rows_checked": 400,
+      "completeness": {
+        "status": "OK",
+        "witness": {
+          "closest_pair": [
+            122,
+            314
+          ],
+          "standardized_condition_distance": 2.7375101684028076,
+          "relative_field_difference": 0.31057506846443184
+        },
+        "meta_gate_verdict": "COMPLETE"
+      },
+      "pairing": {
+        "status": "OK",
+        "frac_diag_above_p95_offdiag": 1.0,
+        "row_match_accuracy": 1.0,
+        "mean_diag_cosine": 0.9912743821278208
+      },
+      "fidelity_gap": {
+        "status": "OK",
+        "median_rel_l2": 0.006532508016617573
+      },
+      "nn_baseline": {
+        "status": "OK",
+        "median_rel_l2": 0.6928169010455726
+      },
+      "hard_fails": [],
+      "warnings": [],
+      "status": "PASS"
+    },
+    "sharp__fisher_kpp_2d": {
+      "dataset": "sharp__fisher_kpp_2d",
+      "levels": [
+        1,
+        2,
+        3
+      ],
+      "n_rows_checked": 400,
+      "completeness": {
+        "status": "OK",
+        "witness": {
+          "closest_pair": [
+            24,
+            346
+          ],
+          "standardized_condition_distance": 6.686241075264441,
+          "relative_field_difference": 0.0961260228188021
+        },
+        "meta_gate_verdict": "COMPLETE"
+      },
+      "pairing": {
+        "status": "OK",
+        "frac_diag_above_p95_offdiag": 1.0,
+        "row_match_accuracy": 1.0,
+        "mean_diag_cosine": 0.9789788356809406
+      },
+      "fidelity_gap": {
+        "status": "NO_GAP",
+        "median_rel_l2": 0.0001922266306621869
+      },
+      "nn_baseline": {
+        "status": "OK",
+        "median_rel_l2": 0.05747315725643111
+      },
+      "hard_fails": [],
+      "warnings": [
+        "fidelity_gap"
+      ],
+      "status": "WARN"
+    },
+    "sharp__cahn_hilliard": {
+      "dataset": "sharp__cahn_hilliard",
+      "levels": [
+        1,
+        2,
+        3
+      ],
+      "n_rows_checked": 400,
+      "completeness": {
+        "status": "UNDECIDED",
+        "witness": {
+          "closest_pair": [
+            73,
+            189
+          ],
+          "standardized_condition_distance": 2.82220493634785,
+          "relative_field_difference": 0.6760334871267648
+        },
+        "meta_gate_verdict": null
+      },
+      "pairing": {
+        "status": "OK",
+        "frac_diag_above_p95_offdiag": 0.9725,
+        "row_match_accuracy": 0.2375,
+        "mean_diag_cosine": 0.964023115613836
+      },
+      "fidelity_gap": {
+        "status": "OK",
+        "median_rel_l2": 0.01910868289675682
+      },
+      "nn_baseline": {
+        "status": "OK",
+        "median_rel_l2": 1.1025828093555234
+      },
+      "hard_fails": [],
+      "warnings": [],
+      "status": "PASS"
+    },
+    "ifc_poisson": {
+      "dataset": "ifc_poisson",
+      "status": "NO_DATA",
+      "hard_fails": []
+    },
+    "sharp__fisher_kpp_1d": {
+      "dataset": "sharp__fisher_kpp_1d",
+      "levels": [
+        1,
+        2,
+        3
+      ],
+      "n_rows_checked": 400,
+      "completeness": {
+        "status": "OK",
+        "witness": {
+          "closest_pair": [
+            47,
+            266
+          ],
+          "standardized_condition_distance": 2.1626822943533637,
+          "relative_field_difference": 0.13977664492516237
+        },
+        "meta_gate_verdict": "COMPLETE"
+      },
+      "pairing": {
+        "status": "OK",
+        "frac_diag_above_p95_offdiag": 1.0,
+        "row_match_accuracy": 1.0,
+        "mean_diag_cosine": 0.9955255637392314
+      },
+      "fidelity_gap": {
+        "status": "NO_GAP",
+        "median_rel_l2": 5.04900064725007e-05
+      },
+      "nn_baseline": {
+        "status": "OK",
+        "median_rel_l2": 0.265753912004861
+      },
+      "hard_fails": [],
+      "warnings": [
+        "fidelity_gap"
+      ],
+      "status": "WARN"
+    },
+    "sharp__allen_cahn_1d": {
+      "dataset": "sharp__allen_cahn_1d",
+      "levels": [
+        1,
+        2,
+        3
+      ],
+      "n_rows_checked": 400,
+      "completeness": {
+        "status": "OK",
+        "witness": {
+          "closest_pair": [
+            122,
+            314
+          ],
+          "standardized_condition_distance": 2.737510168402808,
+          "relative_field_difference": 0.34937993688800156
+        },
+        "meta_gate_verdict": "COMPLETE"
+      },
+      "pairing": {
+        "status": "OK",
+        "frac_diag_above_p95_offdiag": 1.0,
+        "row_match_accuracy": 1.0,
+        "mean_diag_cosine": 0.9967178875639604
+      },
+      "fidelity_gap": {
+        "status": "NO_GAP",
+        "median_rel_l2": 0.0009133331288416946
+      },
+      "nn_baseline": {
+        "status": "OK",
+        "median_rel_l2": 0.9153093141897031
+      },
+      "hard_fails": [],
+      "warnings": [
+        "fidelity_gap"
+      ],
+      "status": "WARN"
+    },
+    "fluid": {
+      "dataset": "fluid",
+      "levels": [
+        1,
+        2
+      ],
+      "n_rows_checked": 256,
+      "completeness": {
+        "status": "UNDECIDED",
+        "witness": {
+          "closest_pair": [
+            0,
+            253
+          ],
+          "standardized_condition_distance": 0.019194504543225716,
+          "relative_field_difference": 0.009038778043857668
+        },
+        "meta_gate_verdict": null
+      },
+      "pairing": {
+        "status": "OK",
+        "frac_diag_above_p95_offdiag": 0.90234375,
+        "row_match_accuracy": 0.26171875,
+        "mean_diag_cosine": 0.9803675055896324
+      },
+      "fidelity_gap": {
+        "status": "OK",
+        "median_rel_l2": 0.2524025361324637
+      },
+      "nn_baseline": {
+        "status": "TRIVIAL_NN",
+        "median_rel_l2": 0.03686636223485906
+      },
+      "hard_fails": [],
+      "warnings": [
+        "nn_baseline"
+      ],
+      "status": "WARN"
+    },
+    "heat_local": {
+      "dataset": "heat_local",
+      "levels": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "n_rows_checked": 400,
+      "completeness": {
+        "status": "UNDECIDED",
+        "witness": {
+          "closest_pair": [
+            257,
+            341
+          ],
+          "standardized_condition_distance": 0.0900196002004394,
+          "relative_field_difference": 0.011351334318709124
+        },
+        "meta_gate_verdict": null
+      },
+      "pairing": {
+        "status": "OK",
+        "frac_diag_above_p95_offdiag": 1.0,
+        "row_match_accuracy": 0.1775,
+        "mean_diag_cosine": 0.9986771205368791
+      },
+      "fidelity_gap": {
+        "status": "OK",
+        "median_rel_l2": 0.12598765214248991
+      },
+      "nn_baseline": {
+        "status": "TRIVIAL_NN",
+        "median_rel_l2": 0.01902033318508734
+      },
+      "hard_fails": [],
+      "warnings": [
+        "nn_baseline"
+      ],
+      "status": "WARN"
+    },
+    "sharp__sod_1d": {
+      "dataset": "sharp__sod_1d",
+      "levels": [
+        1,
+        2,
+        3
+      ],
+      "n_rows_checked": 400,
+      "completeness": {
+        "status": "UNDECIDED",
+        "witness": {
+          "closest_pair": [
+            59,
+            248
+          ],
+          "standardized_condition_distance": 0.005143230997132527,
+          "relative_field_difference": 0.0002708738849263482
+        },
+        "meta_gate_verdict": null
+      },
+      "pairing": {
+        "status": "MISPAIRED",
+        "frac_diag_above_p95_offdiag": 0.2,
+        "row_match_accuracy": 0.01,
+        "mean_diag_cosine": 0.9954707262614348
+      },
+      "fidelity_gap": {
+        "status": "OK",
+        "median_rel_l2": 0.13161281640293554
+      },
+      "nn_baseline": {
+        "status": "TRIVIAL_NN",
+        "median_rel_l2": 0.006987337774417474
+      },
+      "hard_fails": [],
+      "warnings": [
+        "nn_baseline"
+      ],
+      "status": "WAIVED"
+    }
+  },
+  "verdict": "PASS"
+}

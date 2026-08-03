@@ -1,0 +1,16 @@
+{
+  "name": "burgers_param_generated",
+  "generator": "mf_field/generate_all_datasets.py::_make_burgers_param",
+  "seed": 42,
+  "ntrain": 400,
+  "ntest": 100,
+  "ladder": [64, 128, 256],
+  "param_names": ["amp_0", "amp_1", "amp_2", "amp_3", "log10_nu",
+                  "phase_0", "phase_1", "phase_2", "phase_3"],
+  "n_params": 9,
+  "condition_completeness": {
+    "verdict": "COMPLETE",
+    "note": "2026-08-03 retrofit: the generator drew per-sample IC phases and consumed them in the solver without exporting them (condition vector was [amps x4, log10_nu] only — the round-2 incompleteness defect class, found by the repo-wide sweep in CONDITION_COMPLETENESS_BRIEFING §8.3). The phases are deterministic given the generation seed, so they were re-derived through the full N=500 RNG chain (amps and log10_nu reproduce the stored x bit-for-bit) and appended as columns 5-8 without re-solving. Reconstruction certificate after retrofit: re-solving all 500 rows from the exported vector reproduces the stored fields at rel-L2 = 0.0 (train and test, coarsest rung). Pre-retrofit npz archived in ../_incomplete_backup_2026-08-03/burgers_param_generated/.",
+    "reconstruction": {"n_samples": 500, "rel_L2_max": 0.0}
+  }
+}

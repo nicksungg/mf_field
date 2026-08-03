@@ -274,9 +274,13 @@ def gen_cahn_hilliard(N=100, n_lf=24, n_hf=64, seed=7):
     P = np.column_stack([rng.uniform(-3.7, -2.7, N),    # log10 gamma
                          rng.uniform(-0.1, 0.1, N)])    # mean composition
     M = 1.0
-    def ic_field(n, sd, mean):
-        # identical continuous IC on any grid: sum of fixed low Fourier modes
-        r = np.random.default_rng(5000 + sd)
+    def ic_field(n, mean, seed=5000):
+        # identical continuous IC on any grid: sum of fixed low Fourier modes.
+        # FIXED seed (not the row index): a per-sample seed here hides ~48 IC dof
+        # from the 2-param condition vector (the round-2 incompleteness defect
+        # class) — export the drawn values into params if per-sample ICs are
+        # ever wanted.
+        r = np.random.default_rng(seed)
         xs = np.linspace(0, 2 * np.pi, n, endpoint=False)
         Xg, Yg = np.meshgrid(xs, xs)
         c = np.zeros((n, n))
@@ -294,7 +298,7 @@ def gen_cahn_hilliard(N=100, n_lf=24, n_hf=64, seed=7):
         for s in range(N):
             lg, mean = P[s]
             gamma = 10**lg
-            c = ic_field(n, s, mean)
+            c = ic_field(n, mean)
             dt = 1e-5
             for _ in range(4000):
                 ch = np.fft.fft2(c**3 - c)

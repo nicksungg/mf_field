@@ -84,7 +84,10 @@ pdes:
       D_range: [1.0e-4, 1.0e-3] # small D/r -> thin front; couple to ladder (TBD)
       r_range: [5.0, 20.0]
       domain_size: 1.0
-      ic_modes: 5               # 48 IC coeffs: front density -> LF-vs-HF gap 0.041 vs 0.022 at the 16-coeff default (2026-08-03 sweep)
+      ic_modes: 5               # 48 IC coeffs: richer IC pattern family / front density. NOT a gap lever —
+                                # canonical-measure gap at T=0.30 is ~3.2e-4 (m=5) vs ~4.6e-4 (m=3), same weak-gap
+                                # order (2026-08-03; the earlier 0.041-vs-0.022 was the retracted block-average
+                                # instrument). Dimension cost (50-D cond) vs benefit is a round-3 panel-ADR item.
 
   fisher_kpp_1d:
     role: front
