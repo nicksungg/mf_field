@@ -20,7 +20,7 @@ Rendered versions of this update (figures embedded):
 - **Headline mechanism finding: this panel is *scalar-deep* for condition-only models.**
   After granting a closed-form condition→level law, the leftover residual is worth 40–211× each dataset's certified minimum claimable effect — but has *zero* usable condition reachability, while the paired LF field carries it almost perfectly (fluctuation cosine ≥ 0.997).
   Consistently, a ~150-parameter closed-form head matches a 15.85M-parameter FiLM-FNO decoder on 5/6 panel cells.
-- **As in round 1, the most valuable output is benchmark-integrity findings** (§3): the condition vector is incomplete on 4/6 panel datasets, ifc_poisson is affine and its fidelity ladder mispaired, and the generator-side $(r-1)/2$ registration defect now has a complete fix package awaiting review.
+- **As in round 1, the most valuable output is benchmark-integrity findings** (§3): the condition vector is incomplete on 3/6 panel datasets (corrected 2026-08-03 from 4/6), ifc_poisson is affine and its fidelity ladder mispaired, and the generator-side $(r-1)/2$ registration defect now has a complete fix package awaiting review.
 - New figures: `round2/docs/figures/error_comparison.png` and `top_models_overview.svg` (both regenerable from cards via `round2/tools/render_*.py`).
 
 ## 1. What round 2 asked, and how it ran
@@ -59,9 +59,11 @@ Both figures live in `round2/docs/figures/` (regenerate from cards with `tools/r
 
 ## 3. Benchmark-integrity findings (the part most relevant to the benchmark paper)
 
-- **The condition vector is NOT complete on 4 of 6 panel datasets** (pfc, fisher_kpp, allen_cahn by construction — no initial-condition parameters exist in the vector; cahn_hilliard by measurement).
+- **The condition vector is NOT complete on 3 of 6 panel datasets** (pfc, fisher_kpp, allen_cahn — no initial-condition parameters exist in the vector; the per-sample IC is white noise drawn from an unexported seed).
   Condition→HF is therefore a *stochastic* map there: deterministic models are bounded by the conditional-mean floor and skill→1 is unreachable in principle.
   This is the round's sharpest paper-facing point: a "condition-only" track on this benchmark needs either completed condition vectors or explicitly aleatoric-aware metrics.
+  *Correction 2026-08-03 (this update originally said 4 of 6):* cahn_hilliard was wrongly folded in. Its IC is built from its own condition vector, and re-solving from `x` alone reproduces the on-disk field to rel-L2 $1.7\times10^{-14}$ (control 1.346) — the vector is complete, and what was measured there is the support limit of 400 rows in 19 dimensions (closest training pair at standardized distance 2.82). Certificate and fix package: `mffp_autoresearch/condition_completeness_proposal/`.
+  The root cause on the other three is a code-path split, not a design choice: the identical bug was fixed on 2026-06-28 in a standalone script (`generate_learnable.py`, 9 variants regenerated) rather than in the `mffp_sharp` package, so datasets generated later through the package path silently reproduced it.
 - **The frozen floors sit 1.3–4.2× above the aleatoric barriers**, so "beats the best training-free floor" is a weak bar on the stochastic datasets.
 - **The generator itself carries the $(r-1)/2$ registration defect** (`mffp_sharp/common/ladder.py` bakes a cell-centred coordinate map into node-sampled aligned arrays, and clamp-extends across periodic seams).
   A complete fix package — patch, verification harness (PASS), sample round, including the measurement that the defect inflates allen_cahn's self-metric gap 3.2–4.7× — is at `mffp_autoresearch/ladder_fix_proposal/`, awaiting Eloise's review then your sign-off; the surface is mentor-owned and nothing has been landed.

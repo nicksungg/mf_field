@@ -167,7 +167,7 @@
       <li><strong>Headline mechanism: this panel is <em>scalar-deep</em> for condition-only models.</strong>
         Grant a closed-form condition&rarr;level law and the leftover residual is worth 40&ndash;211&times; each dataset's certified minimum claimable effect — with <em>zero</em> usable condition reachability, while the paired LF field carries it almost perfectly (fluctuation cosine &ge; 0.997).
         Consistently, a ~150-parameter closed-form head matches a 15.85M-parameter FiLM-FNO decoder on 5 of 6 panel cells.</li>
-      <li><strong>As in round 1, the most valuable output is benchmark-integrity findings</strong> (&sect;3): the condition vector is incomplete on 4/6 panel datasets, ifc_poisson is affine with a mispaired fidelity ladder, and the generator-side (r&minus;1)/2 registration defect now has a complete fix package awaiting review.</li>
+      <li><strong>As in round 1, the most valuable output is benchmark-integrity findings</strong> (&sect;3): the condition vector is incomplete on 3/6 panel datasets (corrected 2026-08-03 from 4/6), ifc_poisson is affine with a mispaired fidelity ladder, and the generator-side (r&minus;1)/2 registration defect now has a complete fix package awaiting review.</li>
     </ul>
   </div>
 
@@ -323,9 +323,11 @@
   <h2>3&nbsp;&middot;&nbsp;Benchmark-integrity findings (the part most relevant to the paper)</h2>
   <div class="prose">
     <ul>
-      <li><strong>The condition vector is NOT complete on 4 of 6 panel datasets</strong> (pfc, fisher_kpp, allen_cahn by construction — no initial-condition parameters exist in the vector; cahn_hilliard by measurement).
+      <li><strong>The condition vector is NOT complete on 3 of 6 panel datasets</strong> (pfc, fisher_kpp, allen_cahn — no initial-condition parameters exist in the vector; the per-sample IC is white noise drawn from an unexported seed).
         Condition&rarr;HF is therefore a <em>stochastic</em> map there: deterministic models are bounded by the conditional-mean floor and skill&rarr;1 is unreachable in principle.
-        A &ldquo;condition-only&rdquo; track on this benchmark needs either completed condition vectors or explicitly aleatoric-aware metrics.</li>
+        A &ldquo;condition-only&rdquo; track on this benchmark needs either completed condition vectors or explicitly aleatoric-aware metrics.
+      <p style="margin:6px 0 0 0;font-size:0.95em"><em>Correction 2026-08-03 (this update originally said 4 of 6):</em> cahn_hilliard was wrongly folded in. Its IC is built from its own condition vector, and re-solving from <code>x</code> alone reproduces the on-disk field to rel-L2 1.7&times;10<sup>&minus;14</sup> (control 1.346) &mdash; the vector is complete, and what was measured there is the support limit of 400 rows in 19 dimensions (closest training pair at standardized distance 2.82). Certificate and fix package: <code>mffp_autoresearch/condition_completeness_proposal/</code>. The root cause on the other three is a code-path split: the identical bug was fixed on 2026-06-28 in a standalone script (<code>generate_learnable.py</code>, 9 variants regenerated) rather than in the <code>mffp_sharp</code> package, so datasets generated later through the package path silently reproduced it.</p>
+    </li>
       <li><strong>The frozen floors sit 1.3&ndash;4.2&times; above the aleatoric barriers</strong>, so &ldquo;beats the best training-free floor&rdquo; is a weak bar on the stochastic datasets.</li>
       <li><strong>The generator itself carries the (r&minus;1)/2 registration defect</strong>: <code>mffp_sharp/common/ladder.py</code> bakes a cell-centred coordinate map into node-sampled aligned arrays and clamp-extends across periodic seams.
         A complete fix package — patch, verification harness (PASS), sample round, including the measurement that the defect inflates allen_cahn's self-metric gap 3.2&ndash;4.7&times; — is at <code>mffp_autoresearch/ladder_fix_proposal/</code>, awaiting Eloise's review and then your sign-off; the surface is mentor-owned and nothing has been landed.</li>

@@ -1,0 +1,109 @@
+{
+  "_protocol": "nearest-pair witness (all) + reconstruction certificate (IC-encoded only)",
+  "_level": "l1",
+  "datasets": {
+    "cahn_hilliard": {
+      "n_params": 19,
+      "param_names": [
+        "eps",
+        "mobility",
+        "mean_composition",
+        "\u2026",
+        "ic_c15"
+      ],
+      "ic_parameters_exported": 16,
+      "generator_path": "generate_learnable.py (IC-encoded)",
+      "witness": {
+        "closest_pair": [
+          73,
+          189
+        ],
+        "standardized_condition_distance": 2.82220493634785,
+        "relative_field_difference": 0.6941884753011874,
+        "median_pair_distance": 6.121333437404984
+      },
+      "reconstruction": {
+        "n_samples": 3,
+        "rel_L2_per_sample": [
+          1.731176301270473e-14,
+          5.246960667169524e-15,
+          1.7047184750946028e-14
+        ],
+        "rel_L2_max": 1.731176301270473e-14,
+        "control_wrong_ic_rel_L2": 1.345574691637488,
+        "verdict": "COMPLETE"
+      },
+      "verdict": "COMPLETE (reconstructs from x at solver precision)"
+    },
+    "phase_field_crystal_2d": {
+      "n_params": 2,
+      "param_names": [
+        "r",
+        "mean_density"
+      ],
+      "ic_parameters_exported": 0,
+      "generator_path": "mffp_sharp package (generate.py)",
+      "witness": {
+        "closest_pair": [
+          74,
+          395
+        ],
+        "standardized_condition_distance": 0.012416716000638782,
+        "relative_field_difference": 1.14852962842939,
+        "median_pair_distance": 1.7721298242453873
+      },
+      "reconstruction": {
+        "verdict": "NOT_POSSIBLE",
+        "reason": "no IC parameters in the condition vector \u2014 the realised IC is a white-noise field drawn from an unexported per-sample seed"
+      },
+      "verdict": "INCOMPLETE (near-identical conditions, O(1) different fields)"
+    },
+    "fisher_kpp_2d": {
+      "n_params": 2,
+      "param_names": [
+        "D",
+        "r"
+      ],
+      "ic_parameters_exported": 0,
+      "generator_path": "mffp_sharp package (generate.py)",
+      "witness": {
+        "closest_pair": [
+          74,
+          395
+        ],
+        "standardized_condition_distance": 0.012416716000638634,
+        "relative_field_difference": 0.4107294914232443,
+        "median_pair_distance": 1.7721298242453873
+      },
+      "reconstruction": {
+        "verdict": "NOT_POSSIBLE",
+        "reason": "no IC parameters in the condition vector \u2014 the realised IC is a white-noise field drawn from an unexported per-sample seed"
+      },
+      "verdict": "INCOMPLETE (near-identical conditions, O(1) different fields)"
+    },
+    "allen_cahn_2d": {
+      "n_params": 3,
+      "param_names": [
+        "eps",
+        "mobility",
+        "mean_composition"
+      ],
+      "ic_parameters_exported": 0,
+      "generator_path": "mffp_sharp package (generate.py)",
+      "witness": {
+        "closest_pair": [
+          329,
+          342
+        ],
+        "standardized_condition_distance": 0.05105893418056152,
+        "relative_field_difference": 0.11799689563240534,
+        "median_pair_distance": 2.2936444115450576
+      },
+      "reconstruction": {
+        "verdict": "NOT_POSSIBLE",
+        "reason": "no IC parameters in the condition vector \u2014 the realised IC is a white-noise field drawn from an unexported per-sample seed"
+      },
+      "verdict": "INCOMPLETE (near-identical conditions, O(1) different fields)"
+    }
+  }
+}
