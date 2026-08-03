@@ -55,6 +55,22 @@ def test_field_is_function_of_exported_cond_only():
     assert [n for n in names if n.startswith("ic_c")] == ice.ic_names(2)
 
 
+def test_ic_modes_5_widens_export_and_stays_complete():
+    # fisher_kpp_2d production recipe: ic_modes=5 -> 48 coeffs, still a pure
+    # function of the exported cond (the 2D construction infers the mode square
+    # from the coefficient count).
+    cfg = {"D_range": [1e-4, 1e-3], "r_range": [5.0, 20.0], "domain_size": 1.0,
+           "ic_modes": 5}
+    spec = fk.sample_configs(1, cfg, ndim=2, seed=7)[0]
+    fields, cond, names = fk.generate_sample(spec, [16, 32], 32, output_time=5 * fk._DT)
+    assert cond.shape == (50,) and names[2:] == ice.ic_names(2, 5)
+    spec2 = dict(zip(names, cond.tolist()))
+    spec2.update({"domain_size": 1.0, "ndim": 2, "ic_modes": 5})
+    fields2, cond2, _ = fk.generate_sample(spec2, [16, 32], 32, output_time=5 * fk._DT)
+    assert np.array_equal(fields[32], fields2[32])
+    assert np.array_equal(cond, cond2)
+
+
 def test_ladder_outputs_spectrally_consistent():
     # Near-zero T: each level solves from the SAME continuous IC (coarse IC spectrally
     # interpolated up). The band-limited IC spans exactly [0,1], so the [0,1] clip in

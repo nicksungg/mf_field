@@ -52,14 +52,21 @@ def _solve(u0: np.ndarray, D: float, r: float, domain_size: float,
 
 
 def sample_configs(n: int, sampling_cfg: dict, ndim: int, seed: int) -> list[dict]:
-    """Draw n Fisher-KPP condition specs (Latin-hypercube over D / r + IC coeffs)."""
+    """Draw n Fisher-KPP condition specs (Latin-hypercube over D / r + IC coeffs).
+
+    `ic_modes` (config constant, default 3) widens the 2D IC mode square: front
+    density scales with IC level crossings, and 8 low modes leave the LF-vs-HF
+    gap near the NO_GAP floor (measured 0.022 vs 0.041 at ic_modes=5).
+    """
     assert ndim in NDIMS_SUPPORTED, f"fisher_kpp supports {NDIMS_SUPPORTED}, got {ndim}"
+    m2d = int(sampling_cfg.get("ic_modes", 3))
     draws = latin_hypercube(
         {"D": tuple(sampling_cfg["D_range"]),
          "r": tuple(sampling_cfg["r_range"]),
-         **ic_encoding.ic_ranges(ndim)}, n, seed)
+         **ic_encoding.ic_ranges(ndim, m2d)}, n, seed)
     return [{"D": draws["D"][i], "r": draws["r"][i],
-             **{k: draws[k][i] for k in ic_encoding.ic_names(ndim)},
+             **{k: draws[k][i] for k in ic_encoding.ic_names(ndim, m2d)},
+             "ic_modes": m2d,
              "domain_size": sampling_cfg["domain_size"], "ndim": ndim,
              "seed": seed + i} for i in range(n)]
 
@@ -69,7 +76,8 @@ def generate_sample(spec: dict, resolutions: list[int], hf_res: int, output_time
     """Generate one Fisher-KPP sample across the fidelity ladder (1D or 2D)."""
     ndim = int(spec["ndim"])
     res_min = min(resolutions)
-    coeffs = ic_encoding.coeffs_from_spec(spec, ndim)
+    m2d = int(spec.get("ic_modes", 3))
+    coeffs = ic_encoding.coeffs_from_spec(spec, ndim, m2d)
     ic_coarse = 0.5 + ic_encoding.build_ic(coeffs, res_min, 0.5, ndim)   # in [0,1]
     fields = {
         res: _solve(spectral_interp(ic_coarse, res), spec["D"], spec["r"],
@@ -77,5 +85,5 @@ def generate_sample(spec: dict, resolutions: list[int], hf_res: int, output_time
         for res in resolutions
     }
     cond = np.array([spec["D"], spec["r"], *coeffs], dtype=np.float64)
-    names = ["D", "r"] + ic_encoding.ic_names(ndim)
+    names = ["D", "r"] + ic_encoding.ic_names(ndim, m2d)
     return fields, cond, names

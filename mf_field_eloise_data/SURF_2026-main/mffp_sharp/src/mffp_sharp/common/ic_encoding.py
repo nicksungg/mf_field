@@ -21,24 +21,29 @@ K1D = 8          # 1D: modes 1..8 -> 16 coeffs
 M2D = 3          # 2D: (kx,ky) in 0..2 minus DC -> 8 modes -> 16 coeffs
 
 
-def n_coeffs(ndim: int) -> int:
-    """Number of exported IC coefficients (16 for both supported ndims)."""
-    return 2 * K1D if ndim == 1 else 2 * (M2D * M2D - 1)
+def n_coeffs(ndim: int, m2d: int = M2D) -> int:
+    """Number of exported IC coefficients (16 at the defaults for both ndims).
+
+    `m2d` widens the 2D mode square per dataset (modes (kx,ky) in 0..m2d-1 minus
+    DC); a richer IC buys front/pattern density at the cost of condition-vector
+    size — e.g. fisher_kpp uses m2d=5 (48 coeffs) to keep a real LF-vs-HF gap.
+    """
+    return 2 * K1D if ndim == 1 else 2 * (m2d * m2d - 1)
 
 
-def ic_names(ndim: int) -> list[str]:
+def ic_names(ndim: int, m2d: int = M2D) -> list[str]:
     """Condition-vector names for the IC coefficients, in export order."""
-    return [f"ic_c{j}" for j in range(n_coeffs(ndim))]
+    return [f"ic_c{j}" for j in range(n_coeffs(ndim, m2d))]
 
 
-def ic_ranges(ndim: int) -> dict[str, tuple[float, float]]:
+def ic_ranges(ndim: int, m2d: int = M2D) -> dict[str, tuple[float, float]]:
     """Latin-hypercube ranges for the IC coefficients (splat into the design)."""
-    return {name: (-1.0, 1.0) for name in ic_names(ndim)}
+    return {name: (-1.0, 1.0) for name in ic_names(ndim, m2d)}
 
 
-def coeffs_from_spec(spec: dict, ndim: int) -> np.ndarray:
+def coeffs_from_spec(spec: dict, ndim: int, m2d: int = M2D) -> np.ndarray:
     """Collect the IC coefficients back out of a spec dict, in export order."""
-    return np.array([spec[name] for name in ic_names(ndim)], dtype=np.float64)
+    return np.array([spec[name] for name in ic_names(ndim, m2d)], dtype=np.float64)
 
 
 def ic_1d(coeffs: np.ndarray, res: int, scale: float) -> np.ndarray:
@@ -52,9 +57,12 @@ def ic_1d(coeffs: np.ndarray, res: int, scale: float) -> np.ndarray:
 
 
 def ic_2d(coeffs: np.ndarray, res: int, scale: float) -> np.ndarray:
+    # The mode square is inferred from the coefficient count (2*(m^2-1) coeffs),
+    # so 16 coeffs reproduce the validated M2D=3 construction byte-for-byte.
+    m = int(round(np.sqrt(len(coeffs) / 2.0 + 1.0)))
     xs = 2 * np.pi * np.arange(res) / res
     X, Y = np.meshgrid(xs, xs, indexing="ij")
-    modes = [(a, b) for a in range(M2D) for b in range(M2D) if not (a == 0 and b == 0)]
+    modes = [(a, b) for a in range(m) for b in range(m) if not (a == 0 and b == 0)]
     f = np.zeros((res, res))
     idx = 0
     for (kx, ky) in modes:
