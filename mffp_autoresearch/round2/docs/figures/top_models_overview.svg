@@ -1,0 +1,98 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1160" height="900" viewBox="0 0 1160 900" font-family="Helvetica, Arial, sans-serif">
+<rect width="1160" height="900" fill="#FFFFFF"/>
+<text x="30" y="42" font-size="21" fill="#1F2937" font-weight="bold">MFFP Round 2 — Top Models per Stream (condition-only at test)</text>
+<text x="30" y="64" font-size="12" fill="#6B7280">skill = nRMSE(model) / nRMSE(copy-LF) — lower is better; models see LF fields at TRAIN time only, at inference only the condition vector</text>
+<text x="30" y="82" font-size="12" fill="#6B7280">launch anchor = geomean of the best training-free floor per dataset = 23.0636; every scored stream best beats it; only r2s4-B1 is 3-seed certified</text>
+<rect x="30" y="98" width="14" height="14" rx="3" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+<text x="50" y="110" font-size="12" fill="#1F2937">trained neural network</text>
+<rect x="225" y="98" width="14" height="14" rx="3" fill="#EDE9FE" stroke="#7C3AED" stroke-width="2"/>
+<text x="245" y="110" font-size="12" fill="#1F2937">closed-form / fitted (no gradient training)</text>
+<rect x="540" y="98" width="14" height="14" rx="3" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+<text x="560" y="110" font-size="12" fill="#1F2937">diagnostic stream (no scored arm)</text>
+<line x1="800" y1="105" x2="840" y2="105" stroke="#1F2937" stroke-width="1.5" stroke-dasharray="5,4"/>
+<text x="848" y="110" font-size="12" fill="#1F2937">launch anchor</text>
+<line x1="30" y1="126" x2="1130" y2="126" stroke="#E5E7EB" stroke-width="1"/>
+<text x="30" y="154" font-size="13.5" fill="#1F2937" font-weight="bold">Panel geomean skill by stream</text>
+<text x="300" y="154" font-size="11.5" fill="#6B7280">(6-dataset panel: ext__helmholtz_2d, phase_field_crystal_2d, allen_cahn_2d, fisher_kpp_2d, cahn_hilliard, ifc_poisson)</text>
+<line x1="80" y1="238" x2="1080" y2="238" stroke="#9CA3AF" stroke-width="1.5"/>
+<line x1="90.0" y1="234" x2="90.0" y2="242" stroke="#9CA3AF" stroke-width="1.2"/>
+<text x="90.0" y="260" font-size="11" fill="#6B7280" text-anchor="middle">18</text>
+<line x1="253.33333333333331" y1="234" x2="253.33333333333331" y2="242" stroke="#9CA3AF" stroke-width="1.2"/>
+<text x="253.33333333333331" y="260" font-size="11" fill="#6B7280" text-anchor="middle">19</text>
+<line x1="416.66666666666663" y1="234" x2="416.66666666666663" y2="242" stroke="#9CA3AF" stroke-width="1.2"/>
+<text x="416.66666666666663" y="260" font-size="11" fill="#6B7280" text-anchor="middle">20</text>
+<line x1="580.0" y1="234" x2="580.0" y2="242" stroke="#9CA3AF" stroke-width="1.2"/>
+<text x="580.0" y="260" font-size="11" fill="#6B7280" text-anchor="middle">21</text>
+<line x1="743.3333333333333" y1="234" x2="743.3333333333333" y2="242" stroke="#9CA3AF" stroke-width="1.2"/>
+<text x="743.3333333333333" y="260" font-size="11" fill="#6B7280" text-anchor="middle">22</text>
+<line x1="906.6666666666667" y1="234" x2="906.6666666666667" y2="242" stroke="#9CA3AF" stroke-width="1.2"/>
+<text x="906.6666666666667" y="260" font-size="11" fill="#6B7280" text-anchor="middle">23</text>
+<line x1="1070.0" y1="234" x2="1070.0" y2="242" stroke="#9CA3AF" stroke-width="1.2"/>
+<text x="1070.0" y="260" font-size="11" fill="#6B7280" text-anchor="middle">24</text>
+<line x1="210" y1="178" x2="110" y2="178" stroke="#6B7280" stroke-width="1.5"/>
+<path d="M 110 178 l 9 -4 l 0 8 z" fill="#6B7280"/>
+<text x="218" y="182" font-size="11" fill="#6B7280">lower is better</text>
+<line x1="917.057420077243" y1="192" x2="917.057420077243" y2="246" stroke="#1F2937" stroke-width="1.5" stroke-dasharray="5,4"/>
+<text x="917.057420077243" y="186" font-size="12" fill="#1F2937" font-weight="bold" text-anchor="middle">launch anchor 23.0636</text>
+<line x1="316.26163737105134" y1="238" x2="502.7665514888878" y2="238" stroke="#EA580C" stroke-width="5"/>
+<line x1="316.26163737105134" y1="231" x2="316.26163737105134" y2="245" stroke="#EA580C" stroke-width="1.5"/>
+<line x1="502.7665514888878" y1="231" x2="502.7665514888878" y2="245" stroke="#EA580C" stroke-width="1.5"/>
+<path d="M 386.91463954489035 230 L 394.91463954489035 238 L 386.91463954489035 246 L 378.91463954489035 238 Z" fill="#EA580C"/>
+<text x="392.91463954489035" y="224" font-size="11.5" fill="#EA580C" font-weight="bold">r2s4-B1 certified 19.8178  CI95 [19.385, 20.527]</text>
+<polygon points="212.5,227.0 215.4,234.0 223.0,234.6 217.2,239.5 219.0,246.9 212.5,242.9 206.0,246.9 207.8,239.5 202.0,234.6 209.6,234.0" fill="#7C3AED"/>
+<text x="206.49247500058792" y="224" font-size="11.5" fill="#7C3AED" font-weight="bold" text-anchor="end">r2s1-B3 18.7500</text>
+<circle cx="421.81756279518675" cy="238" r="6" fill="#2563EB" stroke="#FFFFFF" stroke-width="1.5"/>
+<line x1="431.81756279518675" y1="248" x2="459.81756279518675" y2="272" stroke="#2563EB" stroke-width="1.0"/>
+<text x="463.81756279518675" y="278" font-size="11.5" fill="#2563EB" font-weight="bold">r2s2-B3 20.0315</text>
+<text x="80" y="300" font-size="10.5" fill="#6B7280">markers: r2s1 / r2s2 are single-seed (seed 0, strict in-round protocol); r2s3 has no scored arm (grade table below)</text>
+<line x1="30" y1="312" x2="1130" y2="312" stroke="#E5E7EB" stroke-width="1"/>
+<text x="30" y="354" font-size="15" fill="#1F2937" font-weight="bold">1 · r2s1_direct</text>
+<text x="30" y="374" font-size="11.5" fill="#6B7280">B3 — models_r2/r2s1_stagefree_permode</text>
+<text x="30" y="390" font-size="11.5" fill="#6B7280">scored arm: test_hf (stage-free head)</text>
+<rect x="300" y="336" width="570" height="96" rx="8" fill="#EDE9FE" stroke="#7C3AED" stroke-width="2"/>
+<text x="315" y="360" font-size="12" fill="#1F2937">condition -> per-mode closed-form head over an OOF-selected</text>
+<text x="315" y="378" font-size="12" fill="#1F2937">direction bank (POD/FFT); 6-8964 fitted params per dataset,</text>
+<text x="315" y="396" font-size="12" fill="#1F2937">zero gradient training. Instrument-repaired re-pricing of B2</text>
+<text x="315" y="414" font-size="12" fill="#1F2937">(T1-F2 / T1-F7 selection-arity defects).</text>
+<text x="1120" y="376" font-size="26" fill="#1F2937" font-weight="bold" text-anchor="end">18.7500</text>
+<text x="1120" y="396" font-size="11" fill="#6B7280" text-anchor="end">panel geomean skill — seed 0</text>
+<rect x="896" y="336" width="224" height="22" rx="11" fill="#7C3AED"/>
+<text x="1008" y="351" font-size="11.5" fill="#FFFFFF" font-weight="bold" text-anchor="middle">ROUND BEST (single-seed)</text>
+<text x="30" y="482" font-size="15" fill="#1F2937" font-weight="bold">2 · r2s2_stacked</text>
+<text x="30" y="502" font-size="11.5" fill="#6B7280">B3 — models_r2/r2s2_zerograd</text>
+<text x="30" y="518" font-size="11.5" fill="#6B7280">scored arm: A1_lsi (zero-gradient)</text>
+<rect x="300" y="464" width="570" height="96" rx="8" fill="#EDE9FE" stroke="#7C3AED" stroke-width="2"/>
+<text x="315" y="488" font-size="12" fill="#1F2937">condition-keyed retrieval intermediate -> closed-form LSI</text>
+<text x="315" y="506" font-size="12" fill="#1F2937">(Fourier-diagonal Wiener) transfer, no gradient training.</text>
+<text x="315" y="524" font-size="12" fill="#1F2937">Matched no-LF base swap (A3) is worse on 4/4 decidable</text>
+<text x="315" y="542" font-size="12" fill="#1F2937">datasets: the LF-derived retrieval intermediate is load-bearing.</text>
+<text x="1120" y="504" font-size="26" fill="#1F2937" font-weight="bold" text-anchor="end">20.0315</text>
+<text x="1120" y="524" font-size="11" fill="#6B7280" text-anchor="end">panel geomean skill — seed 0</text>
+<text x="30" y="610" font-size="15" fill="#1F2937" font-weight="bold">3 · r2s3_lf_train_signal</text>
+<text x="30" y="630" font-size="11.5" fill="#6B7280">B4 — substitution audit (diagnostic,</text>
+<text x="30" y="646" font-size="11.5" fill="#6B7280">epochs 0; prices the +-LF train effect)</text>
+<rect x="300" y="592" width="820" height="118" rx="8" fill="#F3F4F6" stroke="#6B7280" stroke-width="2"/>
+<text x="315" y="614" font-size="11.5" fill="#6B7280">graded, not geomean'd: certified +-LF TRAIN-signal effect vs the best ACHIEVABLE LF-free control (E_free, worst draw, x its mce)</text>
+<circle cx="324" cy="634" r="9" fill="#D1FAE5" stroke="#059669" stroke-width="2"/>
+<text x="324" y="638" font-size="11.5" fill="#059669" font-weight="bold" text-anchor="middle">A</text>
+<text x="342" y="638" font-size="12" fill="#1F2937">cahn_hilliard — E_free 113.5x mce; broad-based, sign-significant on every draw, survives the ceiling gate</text>
+<circle cx="324" cy="658" r="9" fill="#FFEDD5" stroke="#EA580C" stroke-width="2"/>
+<text x="324" y="662" font-size="11.5" fill="#EA580C" font-weight="bold" text-anchor="middle">B</text>
+<text x="342" y="662" font-size="12" fill="#1F2937">ifc_poisson — E_free 1.41x mce; real (paired CI95 excludes 0) but narrow, mean-driven, single native draw</text>
+<circle cx="324" cy="682" r="9" fill="#E5E7EB" stroke="#6B7280" stroke-width="2"/>
+<text x="324" y="686" font-size="11.5" fill="#6B7280" font-weight="bold" text-anchor="middle">C</text>
+<text x="342" y="686" font-size="12" fill="#1F2937">allen_cahn — achievable gate 26.9x mce but tail-carried (5-16 of 100 samples hold half the effect); fails the ceiling gate</text>
+<text x="30" y="760" font-size="15" fill="#1F2937" font-weight="bold">4 · r2s4_diag</text>
+<text x="30" y="780" font-size="11.5" fill="#6B7280">B1 — models_r2/r2s4_cert_min</text>
+<text x="30" y="796" font-size="11.5" fill="#6B7280">certifier (scored test_hf split)</text>
+<rect x="300" y="742" width="570" height="96" rx="8" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+<text x="315" y="766" font-size="12" fill="#1F2937">condition-only FiLM-FNO decoder (2 FNO blocks, 16 modes,</text>
+<text x="315" y="784" font-size="12" fill="#1F2937">~1.06M params) — the certifier behind the round's certified</text>
+<text x="315" y="802" font-size="12" fill="#1F2937">noise floor and its only 3-seed certified anchor</text>
+<text x="315" y="820" font-size="12" fill="#1F2937">(supersedes the launch floor 23.0636).</text>
+<text x="1120" y="782" font-size="26" fill="#1F2937" font-weight="bold" text-anchor="end">19.8178</text>
+<text x="1120" y="802" font-size="11" fill="#6B7280" text-anchor="end">certified 3-seed panel geomean</text>
+<text x="1120" y="818" font-size="11" fill="#6B7280" text-anchor="end">CI95 [19.385, 20.527]</text>
+<text x="30" y="872" font-size="10.5" fill="#6B7280">Rendered by tools/render_top_models_overview.py — every number parsed from experiment_cards/*/batch_*/B*.json and state/anchors/*.json; nothing typed by hand.</text>
+<text x="30" y="888" font-size="10.5" fill="#6B7280">Certified anchor 2026-07-31T17:03:41Z (source card r2s4_diag-B1). Not shown: r2s2-B1 14.0756 (ifc corrector attribution invalid) and r2s1-B2 18.3622 (head-selection defects, repriced by B3).</text>
+</svg>

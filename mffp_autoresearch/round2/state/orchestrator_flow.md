@@ -1022,3 +1022,19 @@
   Prior batch reports keep their curl-sourced findings — retrieval content was not wrong,
   only the path; no re-run needed. Registry backups of the 4 pre-edit files in this
   session's scratchpad. NOTE: context-mode itself reports v1.0.151 outdated -> v1.0.169.
+
+- 2026-08-03 ~04:1x UTC OPERATOR ADJUDICATION — ROUND 2 CLOSED (fourth session; Eloise:
+  "resume round2" then explicit pick "Close round, write report" over opening r2s1/r2s2
+  B4s). Pre-close verification: 0 live r2-* SLURM jobs, no running/analyzing cards, both
+  B3 registers landed (r2s1 ~15:1x, r2s2 ~15:3x UTC 08-02). Close actions: current_stage.txt
+  rewritten to STREAM CLOSED for r2s1_direct (B3, 18.7500; B4 two-stage-head candidate
+  recorded-not-executed), r2s2_stacked (B3, 20.0315; impossibility-statement question
+  recorded for a future round), r2s4_diag (B4, certified 19.8178 — CLOSE CANDIDATE
+  discharged); r2s3 was already closed (walk 15). POLLING CRONS DELIBERATELY NOT
+  RE-CREATED — round is closed, nothing to advance; predecessor session burned ~10h of
+  idle pulses against the frozen state. End-of-round deliverables dispatched: (a)
+  docs/round2_report.md writer (round-1 report structure), (b) figures agent
+  (tools/render_error_comparison.py + top-models overview, card-JSON-parsed only), to be
+  followed by PROFESSOR_UPDATE (operator-requested, round-1 form) + fact-check pass +
+  one-shot auto-sync. Standing operator items carried out of the round: ladder.py fix
+  proposal (Eloise review -> mentor sign-off); round-1 2500-epoch full runs (gated).
