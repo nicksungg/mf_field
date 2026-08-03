@@ -16,6 +16,7 @@ from __future__ import annotations
 import argparse, json, os
 import numpy as np
 import yaml
+from mffp_sharp.common import completeness
 from mffp_sharp.pdes import (euler, cahn_hilliard, kuramoto_sivashinsky, allen_cahn,
     fisher_kpp, swift_hohenberg, kdv, nls, sine_gordon, gray_scott,
     phase_field_crystal, burgers, sod, shallow_water, helmholtz, porous_medium)
@@ -53,7 +54,22 @@ def ladder_for(variant, block, ablation):
     rungs = [r for r in rungs if r >= MIN_LF] or [hf]
     return ndim, rungs
 
-def merge_shards(args, block, ndim, rungs, out_dir):
+def _certify_or_die(args, block, mod, ndim, rungs, X, Y_hf, names):
+    """Completeness gate (ADR r2-0003): run the certificate against the arrays about
+    to be written; hard-fail on INCOMPLETE unless the block declares stochastic_map."""
+    const = {k: v for k, v in block["sampling"].items() if not k.endswith("_range")}
+    const["ndim"] = ndim
+    try:
+        rec = completeness.certify(mod, X, Y_hf, list(names), const, list(rungs),
+                                   rungs[-1], block["output_time"],
+                                   declared_stochastic=bool(block.get("stochastic_map")))
+    except completeness.CompletenessError as e:
+        raise SystemExit(f"[{args.variant}] condition_completeness INCOMPLETE — {e}")
+    print(f"[{args.variant}] condition_completeness: {rec['verdict']}", flush=True)
+    return rec
+
+
+def merge_shards(args, block, mod, ndim, rungs, out_dir):
     """Concatenate all shard files (in sample order) -> standard train/test npz + README."""
     import glob
     sh = sorted(glob.glob(os.path.join(out_dir, "shards", "shard_*.npz")))
@@ -68,22 +84,34 @@ def merge_shards(args, block, ndim, rungs, out_dir):
     print(f"[{args.variant}] merge: {len(parts)} shards, {covered} samples (need {N})", flush=True)
     assert X.shape[0] == N, f"shard coverage {X.shape[0]} != N {N} (gaps/overlap?)"
     nt = args.ntrain
+    Y_hf = None
     for k, r in enumerate(rungs, start=1):
         Yr = np.concatenate([d[f"y{k-1}"] for d in parts], axis=0)
         assert np.isfinite(Yr).all(), f"non-finite in level {k}"
         np.savez(os.path.join(out_dir, f"train_l{k}.npz"), x=X[:nt], y=Yr[:nt])
         np.savez(os.path.join(out_dir, f"test_l{k}.npz"),  x=X[nt:], y=Yr[nt:])
+        Y_hf = Yr
+    cc = _certify_or_die(args, block, mod, ndim, rungs, X, Y_hf, names)
     grid_shape = [[r] if ndim == 1 else [r, r] for r in rungs]
-    _write_meta_readme(args, block, ndim, rungs, grid_shape, names, out_dir)
+    _write_meta_readme(args, block, ndim, rungs, grid_shape, names, out_dir, cc)
     print(f"  -> merged into {out_dir}", flush=True)
 
 
-def _write_meta_readme(args, block, ndim, rungs, grid_shape, names, out_dir):
+def _write_meta_readme(args, block, ndim, rungs, grid_shape, names, out_dir, cc=None):
     T = block["output_time"]
     meta = {"variant": args.variant, "module": block["module"], "ndim": ndim,
             "source": SOURCE.get(block["module"], "NA"), "output_time": T,
             "ladder": grid_shape, "param_names": list(names), "n_params": len(names),
             "ntrain": args.ntrain, "ntest": args.ntest, "seed": SEED}
+    if cc is not None:
+        meta["condition_completeness"] = cc
+    if block.get("stochastic_map"):
+        # A deliberate stochastic map is a distributional benchmark: it must ship its
+        # semantics + aleatoric floor so no future round re-derives them.
+        meta["stochastic_map_semantics"] = block.get(
+            "stochastic_map_semantics",
+            "condition->field is a declared stochastic map; judge against the "
+            "conditional-mean floor, not skill 1.0")
     json.dump(meta, open(os.path.join(out_dir, "meta.json"), "w"), indent=2)
     with open(os.path.join(out_dir, "README.md"), "w") as f:
         f.write(f"# {args.variant}_generated\n\n"
@@ -107,17 +135,23 @@ def main():
                     metavar=("LO", "HI"), help="generate only specs[LO:HI] -> a shard file")
     ap.add_argument("--merge", action="store_true",
                     help="merge all shard files for the variant into the standard npz")
+    ap.add_argument("--cfg", default=CFG, help="sample.yaml path (override for local runs)")
+    ap.add_argument("--ablation_dir", default=ROOT,
+                    help="dir holding ablation_<variant>.json / grid_ablation_results.json")
+    ap.add_argument("--out_root", default=OUT_ROOT,
+                    help="output root (override for local sample rounds)")
     args = ap.parse_args()
-    top = yaml.safe_load(open(CFG))
-    per_variant = f"{ROOT}/ablation_{args.variant}.json"
+    top = yaml.safe_load(open(args.cfg))
+    per_variant = f"{args.ablation_dir}/ablation_{args.variant}.json"
+    combined = f"{args.ablation_dir}/grid_ablation_results.json"
     if os.path.exists(per_variant):
         ablation = json.load(open(per_variant))         # array-task per-variant result
-    elif os.path.exists(ABLATION):
-        ablation = json.load(open(ABLATION))            # combined serial result
+    elif os.path.exists(combined):
+        ablation = json.load(open(combined))            # combined serial result
     else:
         ablation = {}
     print(f"[{args.variant}] ablation source: "
-          f"{'per-variant' if os.path.exists(per_variant) else ('combined' if os.path.exists(ABLATION) else 'DEFAULT fallback')}",
+          f"{'per-variant' if os.path.exists(per_variant) else ('combined' if os.path.exists(combined) else 'DEFAULT fallback')}",
           flush=True)
     block = top["pdes"][args.variant]
     mod = MODS[block["module"]]
@@ -148,10 +182,10 @@ def main():
 
     hf = rungs[-1]
     N = args.ntrain + args.ntest
-    out_dir = os.path.join(OUT_ROOT, f"{args.variant}_generated")
+    out_dir = os.path.join(args.out_root, f"{args.variant}_generated")
 
     if args.merge:
-        return merge_shards(args, block, ndim, rungs, out_dir)
+        return merge_shards(args, block, mod, ndim, rungs, out_dir)
 
     lo, hi = (args.shard if args.shard else (0, N))
     print(f"[{args.variant}] ndim={ndim} ladder={rungs} HF={hf} N={N} slice=[{lo}:{hi}] (T={T})", flush=True)
@@ -183,8 +217,9 @@ def main():
         Yr = np.stack(Y[r])
         np.savez(os.path.join(out_dir, f"train_l{k}.npz"), x=X[:nt], y=Yr[:nt])
         np.savez(os.path.join(out_dir, f"test_l{k}.npz"),  x=X[nt:], y=Yr[nt:])
+    cc = _certify_or_die(args, block, mod, ndim, rungs, X, np.stack(Y[rungs[-1]]), names)
     grid_shape = [[r] if ndim == 1 else [r, r] for r in rungs]
-    _write_meta_readme(args, block, ndim, rungs, grid_shape, names, out_dir)
+    _write_meta_readme(args, block, ndim, rungs, grid_shape, names, out_dir, cc)
     print(f"  -> wrote {out_dir}", flush=True)
 
 if __name__ == "__main__":
