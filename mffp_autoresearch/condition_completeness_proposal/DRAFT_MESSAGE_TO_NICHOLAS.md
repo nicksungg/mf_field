@@ -1,4 +1,4 @@
-# Draft for Eloise to send Nicholas (edit freely; nothing sent automatically)
+# Draft for Eloise to send Nicholas (now optional/informational — the pipeline proceeds on operator approval, see APPROVAL.md; the fisher_kpp recipe question below was resolved by measured sweep: ic_modes=5, gap 0.041)
 
 Hi Nicholas,
 

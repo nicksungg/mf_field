@@ -106,6 +106,10 @@ Sample-round findings that need a recipe decision at sign-off:
 | allen_cahn_2d | 0.033 | 0.041 | preserved (interface width is set by $\varepsilon$, not the IC) |
 | phase_field_crystal_2d | 8.3e-6 | 1.2e-6 | NO_GAP before and after — the pre-existing round-2 finding; a panel-composition decision, not an IC-fix regression. Part of the sampled $(r, \bar\psi)$ range also sits in the uniform (non-crystalline) phase (see figure sample 1) |
 
+**Recipe resolution (2026-08-03, operator-approved — see `APPROVAL.md`):** fisher_kpp_2d regenerates with `ic_modes: 5` (48 coefficients, condition dim 50).
+The measured sweep (`fk_option_sweep`): longer `output_time` *reduces* the gap (logistic domain-fill outruns front densification: 0.022 → 0.019 at $T{=}0.15$, mean $u \to 0.91$); 10× smaller $D$ changes nothing (0.0219 — front *density*, not width, is what white noise supplied); 48 coefficients reach 0.041 (allen_cahn's accepted level) and 96 only 0.048.
+The shipped 0.196 is unreachable under any small complete condition vector — it was largely a property of the unexported broadband IC, i.e. of the defect itself.
+
 ## Files in this package
 
 - `PROPOSAL.md` — this document.
