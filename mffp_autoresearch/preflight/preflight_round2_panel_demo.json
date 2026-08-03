@@ -1,0 +1,208 @@
+{
+  "root": "/Users/nicholassung/Documents/mf_field/benchmark_42/sharp",
+  "waivers": [],
+  "datasets": {
+    "cahn_hilliard": {
+      "dataset": "cahn_hilliard",
+      "levels": [
+        1,
+        2,
+        3
+      ],
+      "n_rows_checked": 400,
+      "completeness": {
+        "status": "UNDECIDED",
+        "witness": {
+          "closest_pair": [
+            73,
+            189
+          ],
+          "standardized_condition_distance": 2.82220493634785,
+          "relative_field_difference": 0.6760334871267649
+        },
+        "meta_gate_verdict": null
+      },
+      "pairing": {
+        "status": "OK",
+        "frac_diag_above_p95_offdiag": 0.9725,
+        "row_match_accuracy": 0.2375,
+        "mean_diag_cosine": 0.9640231156138358
+      },
+      "fidelity_gap": {
+        "status": "OK",
+        "median_rel_l2": 0.17148452652013013
+      },
+      "nn_baseline": {
+        "status": "OK",
+        "median_rel_l2": 1.1025828093555234
+      },
+      "hard_fails": [],
+      "warnings": [],
+      "status": "PASS"
+    },
+    "phase_field_crystal_2d": {
+      "dataset": "phase_field_crystal_2d",
+      "levels": [
+        1,
+        2,
+        3
+      ],
+      "n_rows_checked": 400,
+      "completeness": {
+        "status": "INCOMPLETE",
+        "witness": {
+          "closest_pair": [
+            74,
+            395
+          ],
+          "standardized_condition_distance": 0.012416716000638782,
+          "relative_field_difference": 1.1491766770324765
+        },
+        "meta_gate_verdict": null
+      },
+      "pairing": {
+        "status": "OK",
+        "frac_diag_above_p95_offdiag": 1.0,
+        "row_match_accuracy": 0.8825,
+        "mean_diag_cosine": 0.9613650655627478
+      },
+      "fidelity_gap": {
+        "status": "NO_GAP",
+        "median_rel_l2": 8.262977249536248e-06
+      },
+      "nn_baseline": {
+        "status": "TRIVIAL_NN",
+        "median_rel_l2": 0.0172853588695245
+      },
+      "hard_fails": [
+        "completeness"
+      ],
+      "warnings": [
+        "fidelity_gap",
+        "nn_baseline"
+      ],
+      "status": "FAIL"
+    },
+    "fisher_kpp_2d": {
+      "dataset": "fisher_kpp_2d",
+      "levels": [
+        1,
+        2,
+        3
+      ],
+      "n_rows_checked": 400,
+      "completeness": {
+        "status": "INCOMPLETE",
+        "witness": {
+          "closest_pair": [
+            74,
+            395
+          ],
+          "standardized_condition_distance": 0.012416716000638634,
+          "relative_field_difference": 0.3422379959469077
+        },
+        "meta_gate_verdict": null
+      },
+      "pairing": {
+        "status": "OK",
+        "frac_diag_above_p95_offdiag": 1.0,
+        "row_match_accuracy": 1.0,
+        "mean_diag_cosine": 0.7287412849257694
+      },
+      "fidelity_gap": {
+        "status": "OK",
+        "median_rel_l2": 0.19637684330326516
+      },
+      "nn_baseline": {
+        "status": "OK",
+        "median_rel_l2": 0.33731218649292205
+      },
+      "hard_fails": [
+        "completeness"
+      ],
+      "warnings": [],
+      "status": "FAIL"
+    },
+    "allen_cahn_2d": {
+      "dataset": "allen_cahn_2d",
+      "levels": [
+        1,
+        2,
+        3
+      ],
+      "n_rows_checked": 400,
+      "completeness": {
+        "status": "INCOMPLETE",
+        "witness": {
+          "closest_pair": [
+            329,
+            342
+          ],
+          "standardized_condition_distance": 0.05105893418056152,
+          "relative_field_difference": 0.11747637785280986
+        },
+        "meta_gate_verdict": null
+      },
+      "pairing": {
+        "status": "OK",
+        "frac_diag_above_p95_offdiag": 1.0,
+        "row_match_accuracy": 1.0,
+        "mean_diag_cosine": 0.9778668283324538
+      },
+      "fidelity_gap": {
+        "status": "OK",
+        "median_rel_l2": 0.03311624086499765
+      },
+      "nn_baseline": {
+        "status": "OK",
+        "median_rel_l2": 0.25594585809570725
+      },
+      "hard_fails": [
+        "completeness"
+      ],
+      "warnings": [],
+      "status": "FAIL"
+    },
+    "helmholtz_2d": {
+      "dataset": "helmholtz_2d",
+      "levels": [
+        1,
+        2,
+        3
+      ],
+      "n_rows_checked": 400,
+      "completeness": {
+        "status": "UNDECIDED",
+        "witness": {
+          "closest_pair": [
+            187,
+            349
+          ],
+          "standardized_condition_distance": 0.008173210401134877,
+          "relative_field_difference": 0.0036456155758586312
+        },
+        "meta_gate_verdict": null
+      },
+      "pairing": {
+        "status": "OK",
+        "frac_diag_above_p95_offdiag": 0.9775,
+        "row_match_accuracy": 0.06,
+        "mean_diag_cosine": 0.950197909248051
+      },
+      "fidelity_gap": {
+        "status": "SATURATED",
+        "median_rel_l2": 3.0180131915099
+      },
+      "nn_baseline": {
+        "status": "OK",
+        "median_rel_l2": 0.10346321348807835
+      },
+      "hard_fails": [],
+      "warnings": [
+        "fidelity_gap"
+      ],
+      "status": "WARN"
+    }
+  },
+  "verdict": "FAIL"
+}
