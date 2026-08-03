@@ -82,6 +82,30 @@ def test_certify_declared_stochastic_records_without_raising():
     assert rec["reconstruction"]["verdict"] == "NOT_REPRODUCED"
 
 
+class _StubNestedSpec:
+    """A module whose spec cannot be rebuilt from a flat cond (like euler's
+    quadrant structure): reconstruction must degrade to witness-only, not crash."""
+
+    @staticmethod
+    def generate_sample(spec, resolutions, hf_res, output_time):
+        q = spec["quadrants"]                       # KeyError when rebuilt from cond
+        f = np.full((hf_res, hf_res), float(q[0][0]))
+        return {hf_res: f}, np.array([float(q[0][0])]), ["rho_tr"]
+
+
+def test_certify_degrades_to_witness_when_spec_not_flat():
+    x, y = [], []
+    for i in range(4):
+        fields, cond, names = _StubNestedSpec.generate_sample(
+            {"quadrants": [(1.0 + i, 0, 0, 1.0)]}, [16], 16, 1.0)
+        x.append(cond)
+        y.append(fields[16].ravel())
+    rec = comp.certify(_StubNestedSpec, np.stack(x), np.stack(y), ["rho_tr"], {},
+                       [16], 16, 1.0)
+    assert rec["reconstruction"]["verdict"] == "NOT_POSSIBLE"
+    assert rec["verdict"] == "UNDECIDED"           # witness clean, but not proven
+
+
 def test_certify_without_module_falls_back_to_witness():
     # No generator available: the witness alone must still catch the defect.
     rng = np.random.default_rng(0)

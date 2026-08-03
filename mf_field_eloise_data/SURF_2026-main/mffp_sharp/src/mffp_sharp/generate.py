@@ -19,7 +19,7 @@ import os
 import numpy as np
 import yaml
 
-from .common import ladder, io, metrics, visualize
+from .common import completeness, ladder, io, metrics, visualize
 from .pdes import euler, cahn_hilliard, kuramoto_sivashinsky, allen_cahn, fisher_kpp, swift_hohenberg, kdv, nls, sine_gordon, gray_scott, phase_field_crystal, burgers, sod, shallow_water, helmholtz, porous_medium
 
 _MODULES = {
@@ -58,6 +58,7 @@ def generate_dataset(name: str, block: dict, top: dict) -> dict:
 
     specs = mod.sample_configs(n, block["sampling"], ndim, seed)
     samples, conds, names = [], [], None
+    hf_raw = []
     per_lf_metrics = {res: [] for res in resolutions if res != hf_res}
 
     for i, spec in enumerate(specs):
@@ -65,11 +66,25 @@ def generate_dataset(name: str, block: dict, top: dict) -> dict:
         bundle = ladder.assemble_sample(raw, hf_res)
         samples.append(bundle)
         conds.append(cond)
+        hf_raw.append(np.asarray(raw[hf_res], dtype=np.float64).ravel())
         hf = bundle["aligned"][hf_res]
         for res in per_lf_metrics:
             per_lf_metrics[res].append(
                 metrics.evaluate(bundle["aligned"][res], hf, top["metrics"]))
         print(f"  [{name}] sample {i+1}/{n} done", flush=True)
+
+    # Completeness gate (ADR r2-0003): the condition vector must determine the field,
+    # verified against the just-generated arrays, unless the block declares itself a
+    # deliberate stochastic map.
+    const = {k: v for k, v in block["sampling"].items() if not k.endswith("_range")}
+    const["ndim"] = ndim
+    try:
+        cc = completeness.certify(mod, np.array(conds), np.stack(hf_raw), names, const,
+                                  resolutions, hf_res, T,
+                                  declared_stochastic=bool(block.get("stochastic_map")))
+    except completeness.CompletenessError as e:
+        raise SystemExit(f"[{name}] condition_completeness INCOMPLETE — {e}")
+    print(f"  [{name}] condition_completeness: {cc['verdict']}", flush=True)
 
     os.makedirs(top["out_dir"], exist_ok=True)
     out_path = os.path.join(top["out_dir"], f"{name}_sample.h5")
@@ -90,6 +105,7 @@ def generate_dataset(name: str, block: dict, top: dict) -> dict:
                 print(f"  [{name}] figure {i} failed: {e}", flush=True)
 
     summary = {"pde": name, "out_path": out_path, "hf_res": hf_res, "n": n,
+               "condition_completeness": cc,
                "lf_vs_hf": {res: {m: float(np.mean([d[m] for d in rows]))
                                   for m in top["metrics"]}
                             for res, rows in per_lf_metrics.items()}}

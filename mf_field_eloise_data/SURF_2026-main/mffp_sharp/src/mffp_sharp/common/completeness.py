@@ -84,30 +84,38 @@ def certify(mod, x: np.ndarray, y_hf: np.ndarray, names: list[str], const: dict,
     """
     x = np.asarray(x, dtype=np.float64)
     record = {"witness": nearest_pair_witness(x, y_hf)}
+    reconstruction_failure = None
     if mod is not None:
         n = min(int(n_reconstruct), len(x))
         rels, verdicts = [], []
-        for i in range(n):
-            rec_i = reconstruction_check(mod, x[i], names, const, resolutions,
-                                         hf_res, output_time, np.asarray(y_hf)[i])
-            rels.append(rec_i["rel_L2"])
-            verdicts.append(rec_i["verdict"])
+        try:
+            for i in range(n):
+                rec_i = reconstruction_check(mod, x[i], names, const, resolutions,
+                                             hf_res, output_time, np.asarray(y_hf)[i])
+                rels.append(rec_i["rel_L2"])
+                verdicts.append(rec_i["verdict"])
+        except Exception as e:      # spec not reconstructible from flat cond (e.g. euler)
+            reconstruction_failure = repr(e)
+    if mod is not None and reconstruction_failure is None:
         record["reconstruction"] = {
             "n_samples": n, "rel_L2_per_sample": rels, "rel_L2_max": max(rels),
             "verdict": "COMPLETE" if all(v == "COMPLETE" for v in verdicts)
                        else "NOT_REPRODUCED"}
         complete = record["reconstruction"]["verdict"] == "COMPLETE"
+        witness_only = False
     else:
         record["reconstruction"] = {
-            "verdict": "NOT_POSSIBLE", "reason": "no generator module supplied"}
+            "verdict": "NOT_POSSIBLE",
+            "reason": reconstruction_failure or "no generator module supplied"}
         w = record["witness"]
         complete = not (w["relative_field_difference"] > WITNESS_REL_MIN
                         and w["standardized_condition_distance"] < WITNESS_DIST_MAX)
+        witness_only = True
 
     if declared_stochastic:
         record["verdict"] = "STOCHASTIC_DECLARED"
         return record
-    if complete and mod is not None:
+    if complete and not witness_only:
         record["verdict"] = "COMPLETE"
         return record
     if complete:
