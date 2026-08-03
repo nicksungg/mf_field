@@ -13,7 +13,7 @@ def _make_samples(ndim, n=3):
             x = np.linspace(0, 1, 4) + i
             xh = np.linspace(0, 1, 8) + i
             raw = {4: np.add.outer(x, x), 8: np.add.outer(xh, xh)}
-        samples.append(ladder.assemble_sample(raw, 8))
+        samples.append(ladder.assemble_sample(raw, 8, pde="sod" if ndim == 1 else "euler"))
         conds.append([float(i), 0.5])
     return samples, np.array(conds)
 

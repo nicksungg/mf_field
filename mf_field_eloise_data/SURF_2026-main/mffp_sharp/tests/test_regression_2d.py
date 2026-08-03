@@ -13,10 +13,10 @@ def _golden_2d_field(res, seed=0):
 
 def test_2d_upsample_is_deterministic_and_shaped():
     f = _golden_2d_field(4)
-    out = ladder.upsample_to_hf(f, 8)
+    out = ladder.upsample_to_hf(f, 8, convention="cell_centered")
     assert out.shape == (8, 8)
     # linear up-interp of a known field reproduces a stored corner exactly enough
-    again = ladder.upsample_to_hf(f, 8)
+    again = ladder.upsample_to_hf(f, 8, convention="cell_centered")
     assert np.allclose(out, again)
 
 
@@ -34,7 +34,7 @@ def test_2d_full_pipeline_roundtrip(tmp_path):
     samples, conds = [], []
     for i in range(4):
         raw = {4: _golden_2d_field(4, i), 8: _golden_2d_field(8, 100 + i)}
-        samples.append(ladder.assemble_sample(raw, 8))
+        samples.append(ladder.assemble_sample(raw, 8, pde="cahn_hilliard"))
         conds.append([float(i)])
     p = str(tmp_path / "reg.h5")
     io.write_dataset(p, "cahn_hilliard", samples, np.array(conds), ["eps"],

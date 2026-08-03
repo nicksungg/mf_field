@@ -51,6 +51,10 @@ def write_dataset(
         hf0 = np.asarray(samples[0]["aligned"][hf_res])
         f.attrs["ndim"] = int(hf0.ndim)
         f.attrs["spatial_shape"] = list(hf0.shape)
+        # Provenance: which registration convention built the aligned arrays
+        # (registration-defect note 2026-08-01, item 2).
+        if samples[0].get("convention"):
+            f.attrs["alignment_convention"] = samples[0]["convention"]
 
         f.create_dataset("fidelity_index", data=np.asarray(resolutions, dtype=np.int32))
         f.create_dataset("condition", data=condition.astype(np.float32))

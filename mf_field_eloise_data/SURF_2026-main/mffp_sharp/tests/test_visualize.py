@@ -22,7 +22,7 @@ def test_radial_spectrum_2d_unchanged():
 
 def test_one_pager_1d_writes_png(tmp_path):
     raw = {4: np.linspace(0, 1, 4), 8: np.sin(np.linspace(0, 2 * np.pi, 8))}
-    b = ladder.assemble_sample(raw, 8)
+    b = ladder.assemble_sample(raw, 8, pde="kuramoto_sivashinsky")
     out = str(tmp_path / "onepager_1d.png")
     visualize.one_pager(b, [4, 8], 8, ["rel_l2", "linf", "spectral_band",
                         "interface_position"], "kuramoto_sivashinsky", 0, out,
@@ -34,7 +34,7 @@ def test_one_pager_2d_writes_png(tmp_path):
     x = np.linspace(0, 1, 4)
     xh = np.linspace(0, 1, 8)
     raw = {4: np.add.outer(x, x), 8: np.add.outer(xh, xh)}
-    b = ladder.assemble_sample(raw, 8)
+    b = ladder.assemble_sample(raw, 8, pde="cahn_hilliard")
     out = str(tmp_path / "onepager_2d.png")
     visualize.one_pager(b, [4, 8], 8, ["rel_l2", "linf", "spectral_band",
                         "interface_position"], "cahn_hilliard", 0, out,

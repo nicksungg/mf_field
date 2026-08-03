@@ -20,14 +20,22 @@ def ramp_2d():
 
 @pytest.fixture
 def bundle_1d(ramp_1d):
-    """A two-level 1D bundle (res 4 -> HF 8) via the real ladder."""
+    """A two-level 1D bundle (res 4 -> HF 8) via the real ladder.
+
+    Uses a cell-centred (finite-volume) PDE so the fixture numerics match the
+    pre-fix golden behaviour; the node conventions are covered in test_ladder.
+    """
     hf = np.linspace(0.0, 3.0, 8)
-    return ladder.assemble_sample({4: ramp_1d, 8: hf}, hf_res=8)
+    return ladder.assemble_sample({4: ramp_1d, 8: hf}, hf_res=8, pde="sod")
 
 
 @pytest.fixture
 def bundle_2d(ramp_2d):
-    """A two-level 2D bundle (res 4 -> HF 8) via the real ladder."""
+    """A two-level 2D bundle (res 4 -> HF 8) via the real ladder.
+
+    Uses a cell-centred (finite-volume) PDE so the fixture numerics match the
+    pre-fix golden behaviour; the node conventions are covered in test_ladder.
+    """
     x = np.linspace(0.0, 3.0, 8)
     hf = np.add.outer(x, x)
-    return ladder.assemble_sample({4: ramp_2d, 8: hf}, hf_res=8)
+    return ladder.assemble_sample({4: ramp_2d, 8: hf}, hf_res=8, pde="euler")

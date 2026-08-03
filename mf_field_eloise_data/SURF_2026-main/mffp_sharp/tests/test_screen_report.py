@@ -27,7 +27,7 @@ def _write(tmp, name, mod, spec, T):
     hf = 32
     samples, conds, cond_names = [], [], None
     raw, cond, cond_names = mod.generate_sample(spec, res, hf, T)
-    samples.append(ladder.assemble_sample(raw, hf))
+    samples.append(ladder.assemble_sample(raw, hf, pde=mod.__name__.rsplit(".", 1)[-1]))
     conds.append(cond)
     io.write_dataset(
         os.path.join(tmp, f"{name}_sample.h5"),

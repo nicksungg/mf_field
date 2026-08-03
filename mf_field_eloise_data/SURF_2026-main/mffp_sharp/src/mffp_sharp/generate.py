@@ -63,7 +63,7 @@ def generate_dataset(name: str, block: dict, top: dict) -> dict:
 
     for i, spec in enumerate(specs):
         raw, cond, names = mod.generate_sample(spec, resolutions, hf_res, T)
-        bundle = ladder.assemble_sample(raw, hf_res)
+        bundle = ladder.assemble_sample(raw, hf_res, pde=block["module"])
         samples.append(bundle)
         conds.append(cond)
         hf_raw.append(np.asarray(raw[hf_res], dtype=np.float64).ravel())

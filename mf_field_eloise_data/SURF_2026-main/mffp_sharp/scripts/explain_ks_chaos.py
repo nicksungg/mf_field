@@ -29,7 +29,7 @@ SPEC.update(zip(ic_encoding.ic_names(2),
 
 def fields_at(T):
     raw, _, _ = ks.generate_sample(SPEC, [32, 128], 128, T)
-    b = ladder.assemble_sample(raw, 128)
+    b = ladder.assemble_sample(raw, 128, pde="kuramoto_sivashinsky")
     lf, hf = b["aligned"][32], b["aligned"][128]
     return lf, hf, metrics.rel_l2(lf, hf)
 

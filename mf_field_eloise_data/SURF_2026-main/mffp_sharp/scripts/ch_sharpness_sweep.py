@@ -46,7 +46,7 @@ def main():
     print(f"{'eps':>6} {'cells@256':>9} {'HFslope':>8} {'E>k12':>9} {'relL2_128':>10} {'relL2_64':>9}")
     for eps in EPS:
         fields = {r: ch._solve(ch._spectral_interp(ic, r), eps, 1.0, 1.0, T, dt=DT) for r in LADDER}
-        b = ladder.assemble_sample(fields, HF)
+        b = ladder.assemble_sample(fields, HF, pde="cahn_hilliard")
         hf = b["aligned"][HF]
         if not np.isfinite(hf).all():
             print(f"{eps:6.3f} {eps*HF:9.1f}   UNSTABLE (solver overflow at dt={DT:g})", flush=True)
