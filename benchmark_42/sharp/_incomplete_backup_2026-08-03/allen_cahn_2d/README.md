@@ -1,18 +1,18 @@
-# allen_cahn_1d_generated
+# allen_cahn_2d_generated
 
 **PDE module:** allen_cahn  
 **Source:** APEBench (arXiv:2411.00180)  
-**ndim:** 1  
+**ndim:** 2  
 **Availability:** regenerable (eloise sharp-field solver)  
 
 ## Fidelity ladder (ablation-driven)
 
-- L1: [128]
-- L2: [256]
-- L3: [512]
+- L1: [64, 64]
+- L2: [128, 128]
+- L3: [256, 256]
 
 ## Inputs/outputs
-- `x`: (N,19) condition vector [eps, mobility, mean_composition, ic_c0, ic_c1, ic_c2, ic_c3, ic_c4, ic_c5, ic_c6, ic_c7, ic_c8, ic_c9, ic_c10, ic_c11, ic_c12, ic_c13, ic_c14, ic_c15]
+- `x`: (N,3) condition vector [eps, mobility, mean_composition]
 - `y`: (N, prod(grid)) flattened field at each fidelity
 
 ## Sample counts
