@@ -13,8 +13,9 @@ SOLVER: semi-implicit Fourier (same family as Cahn-Hilliard/Allen-Cahn):
 The logistic reaction keeps u in [0,1] for small dt; we clip to [0,1] after each
 step as a safety net against round-off excursions. SAME dt at every resolution.
 
-dt is provisional (validate on the box). IC: band-limited random field in [0,1] on
-the coarsest grid, spectrally interpolated up -> identical continuous IC per level.
+dt is provisional (validate on the box). IC: band-limited field in [0,1] built
+deterministically from the exported ic_c* coefficients (common/ic_encoding) on the
+coarsest grid, spectrally interpolated up -> identical continuous IC per level.
 
 Field stored: u at fixed output time T (front developed, pre-domain-fill).
 """
@@ -22,6 +23,7 @@ from __future__ import annotations
 
 import numpy as np
 
+from ..common import ic_encoding
 from ..common.spectral import spectral_interp, neg_laplacian_symbol
 from ..common.sampling import latin_hypercube
 
@@ -50,12 +52,14 @@ def _solve(u0: np.ndarray, D: float, r: float, domain_size: float,
 
 
 def sample_configs(n: int, sampling_cfg: dict, ndim: int, seed: int) -> list[dict]:
-    """Draw n Fisher-KPP condition specs (Latin-hypercube over D / r)."""
+    """Draw n Fisher-KPP condition specs (Latin-hypercube over D / r + IC coeffs)."""
     assert ndim in NDIMS_SUPPORTED, f"fisher_kpp supports {NDIMS_SUPPORTED}, got {ndim}"
     draws = latin_hypercube(
         {"D": tuple(sampling_cfg["D_range"]),
-         "r": tuple(sampling_cfg["r_range"])}, n, seed)
+         "r": tuple(sampling_cfg["r_range"]),
+         **ic_encoding.ic_ranges(ndim)}, n, seed)
     return [{"D": draws["D"][i], "r": draws["r"][i],
+             **{k: draws[k][i] for k in ic_encoding.ic_names(ndim)},
              "domain_size": sampling_cfg["domain_size"], "ndim": ndim,
              "seed": seed + i} for i in range(n)]
 
@@ -65,14 +69,13 @@ def generate_sample(spec: dict, resolutions: list[int], hf_res: int, output_time
     """Generate one Fisher-KPP sample across the fidelity ladder (1D or 2D)."""
     ndim = int(spec["ndim"])
     res_min = min(resolutions)
-    rng = np.random.default_rng(spec["seed"])
-    shape = (res_min,) * ndim
-    ic_coarse = 0.5 + 0.5 * (2 * rng.random(shape) - 1)   # random in [0,1]
+    coeffs = ic_encoding.coeffs_from_spec(spec, ndim)
+    ic_coarse = 0.5 + ic_encoding.build_ic(coeffs, res_min, 0.5, ndim)   # in [0,1]
     fields = {
         res: _solve(spectral_interp(ic_coarse, res), spec["D"], spec["r"],
                     spec["domain_size"], output_time)
         for res in resolutions
     }
-    cond = np.array([spec["D"], spec["r"]], dtype=np.float64)
-    names = ["D", "r"]
+    cond = np.array([spec["D"], spec["r"], *coeffs], dtype=np.float64)
+    names = ["D", "r"] + ic_encoding.ic_names(ndim)
     return fields, cond, names
