@@ -14,8 +14,9 @@ SOLVER: semi-implicit Fourier, cloned from the validated Cahn-Hilliard scheme:
 np.fft.fftn/ifftn serve 1D and 2D with one body. SAME dt at every resolution.
 
 dt is provisional (validate stability across the ladder on the box). IC: band-limited
-random field on the coarsest grid, spectrally interpolated up so every ladder level
-solves the IDENTICAL continuous IC.
+field built deterministically from the exported ic_c* coefficients (common/ic_encoding)
+on the coarsest grid, spectrally interpolated up so every ladder level solves the
+IDENTICAL continuous IC.
 
 Field stored: u at fixed output time T.
 """
@@ -23,6 +24,7 @@ from __future__ import annotations
 
 import numpy as np
 
+from ..common import ic_encoding
 from ..common.spectral import spectral_interp, neg_laplacian_symbol
 from ..common.sampling import latin_hypercube
 
@@ -51,14 +53,16 @@ def _solve(u0: np.ndarray, eps: float, mobility: float, domain_size: float,
 
 
 def sample_configs(n: int, sampling_cfg: dict, ndim: int, seed: int) -> list[dict]:
-    """Draw n Allen-Cahn condition specs (Latin-hypercube over eps/mobility/mean)."""
+    """Draw n Allen-Cahn condition specs (Latin-hypercube over eps/mobility/mean + IC coeffs)."""
     assert ndim in NDIMS_SUPPORTED, f"allen_cahn supports {NDIMS_SUPPORTED}, got {ndim}"
     draws = latin_hypercube(
         {"eps": tuple(sampling_cfg["eps_range"]),
          "mobility": tuple(sampling_cfg["mobility_range"]),
-         "mean_composition": tuple(sampling_cfg["mean_composition_range"])}, n, seed)
+         "mean_composition": tuple(sampling_cfg["mean_composition_range"]),
+         **ic_encoding.ic_ranges(ndim)}, n, seed)
     return [{"eps": draws["eps"][i], "mobility": draws["mobility"][i],
              "mean_composition": draws["mean_composition"][i],
+             **{k: draws[k][i] for k in ic_encoding.ic_names(ndim)},
              "domain_size": sampling_cfg["domain_size"], "ndim": ndim,
              "seed": seed + i} for i in range(n)]
 
@@ -68,15 +72,14 @@ def generate_sample(spec: dict, resolutions: list[int], hf_res: int, output_time
     """Generate one Allen-Cahn sample across the fidelity ladder (1D or 2D)."""
     ndim = int(spec["ndim"])
     res_min = min(resolutions)
-    rng = np.random.default_rng(spec["seed"])
-    shape = (res_min,) * ndim
-    ic_coarse = spec["mean_composition"] + 0.1 * (2 * rng.random(shape) - 1)
+    coeffs = ic_encoding.coeffs_from_spec(spec, ndim)
+    ic_coarse = spec["mean_composition"] + ic_encoding.build_ic(coeffs, res_min, 0.1, ndim)
     fields = {
         res: _solve(spectral_interp(ic_coarse, res), spec["eps"], spec["mobility"],
                     spec["domain_size"], output_time)
         for res in resolutions
     }
-    cond = np.array([spec["eps"], spec["mobility"], spec["mean_composition"]],
+    cond = np.array([spec["eps"], spec["mobility"], spec["mean_composition"], *coeffs],
                     dtype=np.float64)
-    names = ["eps", "mobility", "mean_composition"]
+    names = ["eps", "mobility", "mean_composition"] + ic_encoding.ic_names(ndim)
     return fields, cond, names
