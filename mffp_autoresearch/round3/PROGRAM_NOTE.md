@@ -43,7 +43,7 @@ Round 2's polling crons burned ~10 h of idle pulses against frozen state after c
 
 ## 7. Round-3 launch prerequisites (sequencing)
 
-1. Nicholas's sign-off on the two generator-surface packages: `condition_completeness_proposal/` (IC-encoding + generation gate, implemented and sample-round-certified) and `ladder_fix_proposal/` (patch rebased to apply at current HEAD).
+1. Approval of the two generator-surface packages: `condition_completeness_proposal/` (IC-encoding + generation gate, implemented and sample-round-certified) and `ladder_fix_proposal/` (patch rebased to apply at current HEAD). Granted 2026-08-03 by operator authority (Eloise; mentor sign-off waived — see `condition_completeness_proposal/APPROVAL.md`).
 2. Regeneration of pfc / fisher_kpp / allen_cahn on the cluster through the fixed package path (500×3 ladder levels each, solver time only; SLURM with completion mail).
 3. Preflight PASS on the regenerated panel, plus explicit panel-composition decisions for helmholtz (trivially re-solvable) and ifc_poisson (pairing repair via the ladder fix) recorded in the launch ADR.
 4. 3-seed re-score of round 2's claimable slate (r2s2-B1, r2s3-B3, r2s1-B2/B3) on the repaired panel — these become round 3's certified launch anchors and measure how much of round 2's story survives the data fix.

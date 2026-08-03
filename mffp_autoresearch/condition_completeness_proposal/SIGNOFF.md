@@ -1,5 +1,7 @@
 # Sign-off request — generator-surface changes (one page)
 
+> **Superseded 2026-08-03, same day:** Eloise directed that her operator approval is sufficient (see `APPROVAL.md`); this document remains as the technical one-pager, and sending it to Nicholas is optional/informational.
+
 **To:** Nicholas.
 **From:** Eloise (prepared by her agent, 2026-08-03).
 **Branch:** `mffp-trunk-eloise` on `nicksungg/mf_field` (all changes committed there; nothing merged, nothing regenerated at production scale, no cluster compute spent).
