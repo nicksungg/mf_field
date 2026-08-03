@@ -90,8 +90,27 @@ Regeneration of the three datasets is solver time only: 500 samples × 3 ladder 
 Landing the encoding in the package is a small refactor (two helper functions plus three `sample_configs` / `generate_sample` pairs) and is covered by the existing `mffp_sharp` test suite once a completeness test is added per PDE.
 Nothing here requires re-running any round-2 model: the round's numbers stand as measurements of the panel as it exists, and the correction is to their *interpretation* on cahn_hilliard.
 
+## Implementation status (2026-08-03, same day — awaiting sign-off; nothing regenerated at production scale)
+
+All three parts of the recommended fix are implemented on branch `mffp-trunk-eloise` and verified locally; see `IMPLEMENTATION_PLAN.md` for the task-by-task record and `SIGNOFF.md` for the one-page ask.
+
+1. **IC encoding lives in the package.** `mffp_sharp/common/ic_encoding.py` (math byte-identical to `generate_learnable.py`, pinned by test) + all ten stochastic-IC modules now draw `ic_c0..ic_c15` in their Latin-hypercube design and export them in `cond`/`param_names`; per-module tests assert the field is a function of the exported cond alone. Full suite: 149 passed, 9 skipped.
+2. **The certificate is a generation gate.** `mffp_sharp/common/completeness.py` (witness + generic reconstruction), wired into both `mffp_sharp/generate.py` and `generate_standardized.py`; `condition_completeness` is written into `meta.json` and INCOMPLETE hard-fails unless the block declares `stochastic_map`.
+3. **Sample round (SURF gate) generated and certified.** `sample_round/`: 10 samples × 3 production-ladder levels per dataset; every `meta.json` reads COMPLETE with reconstruction rel-L2 = 0.0; review figures in `sample_round/figures/`.
+
+Sample-round findings that need a recipe decision at sign-off:
+
+| dataset | LF-vs-HF gap, shipped (white-noise IC) | gap, sample round (band-limited IC) | reading |
+|---|---|---|---|
+| fisher_kpp_2d | 0.196 | **0.024** | the 8-mode IC weakens the front regime 8×; options: longer `output_time`, smaller `D_range`, or more IC modes (larger cond) |
+| allen_cahn_2d | 0.033 | 0.041 | preserved (interface width is set by $\varepsilon$, not the IC) |
+| phase_field_crystal_2d | 8.3e-6 | 1.2e-6 | NO_GAP before and after — the pre-existing round-2 finding; a panel-composition decision, not an IC-fix regression. Part of the sampled $(r, \bar\psi)$ range also sits in the uniform (non-crystalline) phase (see figure sample 1) |
+
 ## Files in this package
 
 - `PROPOSAL.md` — this document.
 - `certify_condition_completeness.py` — the two training-free tests; reproduces ADR r2-0003's pfc/fisher_kpp numbers and adds the cahn_hilliard reconstruction certificate.
 - `certificate_results.json` — measured output, 2026-08-03, `benchmark_42/sharp`, ladder level `l1`.
+- `IMPLEMENTATION_PLAN.md` — the executed implementation plan (all tasks verified).
+- `SIGNOFF.md` — the one-page ask + post-approval runbook.
+- `sample_round/` — certified sample data (meta/README/figures in git; field npz local-only), ablation stubs pinning the production ladders, and the figure render script.

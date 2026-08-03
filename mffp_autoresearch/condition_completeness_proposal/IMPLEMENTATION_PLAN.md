@@ -36,11 +36,11 @@ Regeneration scope stays the three panel datasets (pfc / fisher_kpp / allen_cahn
 **Interfaces:**
 - Produces: `K1D=8`, `M2D=3`, `n_coeffs(ndim)->int` (16 for both), `ic_names(ndim)->list[str]` (`["ic_c0"…"ic_c15"]`), `ic_ranges(ndim)->dict[str,tuple]` (each `(-1.0, 1.0)`), `ic_1d(coeffs, res, scale)`, `ic_2d(coeffs, res, scale)`, `build_ic(coeffs, res, scale, ndim)`, `coeffs_from_spec(spec, ndim)->np.ndarray`.
 
-- [ ] **Step 1: Write failing tests** — determinism; `max|ic| == scale` (normalization); 1D spectral support only in modes `1..K1D`; 2D support only in `|kx|,|ky| < M2D`; `build_ic` dispatch; `ic_ranges` has 16 entries both ndims; `coeffs_from_spec` ordering `ic_c0..ic_c15`.
-- [ ] **Step 2: Run tests, verify FAIL (module not found).**
-- [ ] **Step 3: Implement.** `ic_1d`/`ic_2d` bodies copied verbatim from `generate_learnable.py:23-40` (the `M2D` module constant replaces the script global).
-- [ ] **Step 4: Run tests, verify PASS.**
-- [ ] **Step 5: Commit** `mffp_sharp: add common/ic_encoding (validated band-limited IC, single source of truth)`.
+- [x] **Step 1: Write failing tests** — determinism; `max|ic| == scale` (normalization); 1D spectral support only in modes `1..K1D`; 2D support only in `|kx|,|ky| < M2D`; `build_ic` dispatch; `ic_ranges` has 16 entries both ndims; `coeffs_from_spec` ordering `ic_c0..ic_c15`.
+- [x] **Step 2: Run tests, verify FAIL (module not found).**
+- [x] **Step 3: Implement.** `ic_1d`/`ic_2d` bodies copied verbatim from `generate_learnable.py:23-40` (the `M2D` module constant replaces the script global).
+- [x] **Step 4: Run tests, verify PASS.**
+- [x] **Step 5: Commit** `mffp_sharp: add common/ic_encoding (validated band-limited IC, single source of truth)`.
 
 ### Task 2: Fix the three panel modules (fisher_kpp, allen_cahn, phase_field_crystal)
 
@@ -92,7 +92,7 @@ def test_field_is_function_of_exported_cond_only():
     assert [n for n in names if n.startswith("ic_c")] == ic_encoding.ic_names(2)
 ```
 
-- [ ] Steps per module: update tests (fail) → edit module → tests pass → commit (three commits: `mffp_sharp: IC-encoded conditions for <module>`).
+- [x] Steps per module: update tests (fail) → edit module → tests pass → commit (three commits: `mffp_sharp: IC-encoded conditions for <module>`).
 
 ### Task 3: Fix the six script-covered stochastic modules
 
@@ -113,7 +113,7 @@ Same pattern as Task 2. IC lines:
 
 Modules where `ic_amplitude` is itself an exported cond param (ks, sg, sh, kdv, nls) keep it exported; the coeffs are appended after it.
 
-- [ ] Update tests → fail → edit → pass → one commit `mffp_sharp: IC-encoded conditions for the six script-covered stochastic modules`.
+- [x] Update tests → fail → edit → pass → one commit `mffp_sharp: IC-encoded conditions for the six script-covered stochastic modules`.
 
 ### Task 4: Fix gray_scott (two-field IC)
 
@@ -128,7 +128,7 @@ u0c += pert
 v0c += pert
 ```
 
-- [ ] Same TDD cycle; commit `mffp_sharp: IC-encoded conditions for gray_scott`.
+- [x] Same TDD cycle; commit `mffp_sharp: IC-encoded conditions for gray_scott`.
 
 ### Task 5: `common/completeness.py` + tests
 
@@ -141,7 +141,7 @@ v0c += pert
 
 Tests: witness flags a synthetic incomplete set (two identical conds, O(1)-different fields); `certify` returns COMPLETE for fixed fisher_kpp at tiny res; a stub module reproducing the old unexported-rng behavior raises `CompletenessError`; `declared_stochastic=True` records the verdict without raising.
 
-- [ ] TDD cycle; commit `mffp_sharp: completeness certificate as a library (witness + generic reconstruction)`.
+- [x] TDD cycle; commit `mffp_sharp: completeness certificate as a library (witness + generic reconstruction)`.
 
 ### Task 6: Wire the gate into `mffp_sharp/generate.py`
 
@@ -150,7 +150,7 @@ Tests: witness flags a synthetic incomplete set (two identical conds, O(1)-diffe
 - Test: `tests/test_generate_gate.py` (drive `generate_dataset` on a 2-sample fisher_kpp block at res [8,16] and assert the summary carries verdict COMPLETE).
 - Constraint: hunks must not overlap `ladder_fix.patch`'s `generate.py` hunks (checked in Task 9).
 
-- [ ] TDD cycle; commit `mffp_sharp: completeness gate on the h5 sample-generation path`.
+- [x] TDD cycle; commit `mffp_sharp: completeness gate on the h5 sample-generation path`.
 
 ### Task 7: Wire the gate into `generate_standardized.py` + local-run overrides
 
@@ -159,27 +159,27 @@ Tests: witness flags a synthetic incomplete set (two identical conds, O(1)-diffe
 
 Changes: `--out_root`, `--cfg`, `--ablation` CLI overrides (default to today's cluster constants, enabling the local sample round); a `_certify_and_record(block, mod, ndim, rungs, X, Y_hf, names)` helper called from both the direct-write path and `merge_shards`; the returned record written into `meta.json` as `condition_completeness`; hard `SystemExit` on `CompletenessError` unless the block carries `stochastic_map: true`; when a dataset is deliberately stochastic, `meta.json` additionally records `stochastic_map_semantics` (declared floor numbers per the proposal §3).
 
-- [ ] Implement + smoke locally (2-sample run) + commit `generate_standardized: completeness gate writes condition_completeness into meta.json; local-run overrides`.
+- [x] Implement + smoke locally (2-sample run) + commit `generate_standardized: completeness gate writes condition_completeness into meta.json; local-run overrides`.
 
 ### Task 8: Dedupe `generate_learnable.py`
 
 - Modify: `mf_field_eloise_data/generate_learnable.py` to `from mffp_sharp.common.ic_encoding import ic_1d, ic_2d, K1D, M2D` (bodies deleted, behavior identical — pinned by the CH reconstruction certificate which reproduces the existing benchmark from stored `x`).
-- [ ] Commit `generate_learnable: import IC construction from the package (single source of truth)`.
+- [x] Commit `generate_learnable: import IC construction from the package (single source of truth)`.
 
 ### Task 9: Full verification
 
-- [ ] Full pytest suite in `.venv` — all files, including the untouched-module tests.
-- [ ] Grep `scripts/` for hand-built spec dicts passed to `generate_sample`; fix any that now lack `ic_c*` keys.
-- [ ] `git apply --check mffp_autoresearch/ladder_fix_proposal/ladder_fix.patch` still green (Task 3 of the handoff).
-- [ ] Run `certify_condition_completeness.py` unchanged against the CURRENT benchmark data (~50 s) — confirms the audit numbers are still reproduced and the proposal package's own script is unaffected.
+- [x] Full pytest suite in `.venv` — all files, including the untouched-module tests.
+- [x] Grep `scripts/` for hand-built spec dicts passed to `generate_sample`; fix any that now lack `ic_c*` keys.
+- [x] `git apply --check mffp_autoresearch/ladder_fix_proposal/ladder_fix.patch` still green (Task 3 of the handoff).
+- [x] Run `certify_condition_completeness.py` unchanged against the CURRENT benchmark data (~50 s) — confirms the audit numbers are still reproduced and the proposal package's own script is unaffected.
 
 ### Task 10: Local sample round (the SURF-gate artifact)
 
-- [ ] Local ablation stub pinning the production ladders from the existing benchmark metas (fk 2d [64,128,256]; ac 2d and pfc from their metas).
-- [ ] `python generate_standardized.py <variant> --ntrain 8 --ntest 2 --out_root <local>` for `phase_field_crystal_2d`, `fisher_kpp_2d`, `allen_cahn_2d` through the FIXED package.
-- [ ] Verify each output `meta.json` carries `condition_completeness.verdict == COMPLETE` (reconstruction rel-L2 ≤ 1e-9) and `param_names` ends with `ic_c0..ic_c15`.
-- [ ] Sample figures via the package `visualize.one_pager` for Nicholas's visual review.
-- [ ] Commit sample-round summaries (small JSON/figures only; field data stays git-ignored).
+- [x] Local ablation stub pinning the production ladders from the existing benchmark metas (fk 2d [64,128,256]; ac 2d and pfc from their metas).
+- [x] `python generate_standardized.py <variant> --ntrain 8 --ntest 2 --out_root <local>` for `phase_field_crystal_2d`, `fisher_kpp_2d`, `allen_cahn_2d` through the FIXED package.
+- [x] Verify each output `meta.json` carries `condition_completeness.verdict == COMPLETE` (reconstruction rel-L2 ≤ 1e-9) and `param_names` ends with `ic_c0..ic_c15`.
+- [x] Sample figures via the package `visualize.one_pager` for Nicholas's visual review.
+- [x] Commit sample-round summaries (small JSON/figures only; field data stays git-ignored).
 
 ## Follow-ups outside this plan (tracked separately)
 
