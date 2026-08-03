@@ -19,10 +19,12 @@ import matplotlib.pyplot as plt
 from matplotlib.gridspec import GridSpec
 
 from mffp_sharp.pdes import kuramoto_sivashinsky as ks
-from mffp_sharp.common import ladder, metrics
+from mffp_sharp.common import ic_encoding, ladder, metrics
 
 OUT = os.path.join(os.path.dirname(__file__), "..", "data", "explain")
-SPEC = {"L": 30.0, "ic_amplitude": 0.1, "seed": 42}
+SPEC = {"L": 30.0, "ic_amplitude": 0.1, "ndim": 2, "seed": 42}
+SPEC.update(zip(ic_encoding.ic_names(2),
+                np.random.default_rng(42).uniform(-1, 1, ic_encoding.n_coeffs(2))))
 
 
 def fields_at(T):

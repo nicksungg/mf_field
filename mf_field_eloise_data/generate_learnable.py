@@ -12,32 +12,12 @@ Usage: python generate_learnable.py <variant> [--shard LO HI | --merge]
 """
 import argparse, json, os, glob
 import numpy as np
+from mffp_sharp.common.ic_encoding import ic_1d, ic_2d, K1D, M2D   # single source of truth
 from mffp_sharp.pdes import (kuramoto_sivashinsky as ks, cahn_hilliard as ch,
     sine_gordon as sg, swift_hohenberg as sh, kdv, nls)
 
 OUT_ROOT = "/orcd/data/faez/001/nick/mf_field/sharp_generated"
 SEED = 42; NTRAIN, NTEST = 400, 100; N = NTRAIN + NTEST
-K1D = 8          # 1D: modes 1..8 -> 16 coeffs
-M2D = 3          # 2D: (kx,ky) in 0..2 minus DC -> 8 modes -> 16 coeffs
-
-def ic_1d(coeffs, res, scale):
-    K = len(coeffs) // 2
-    Ch = np.zeros(res, complex)
-    for k in range(1, K + 1):
-        Ch[k] = coeffs[k - 1] + 1j * coeffs[K + k - 1]
-        Ch[res - k] = np.conj(Ch[k])
-    u = np.fft.ifft(Ch).real
-    return u / (np.max(np.abs(u)) + 1e-12) * scale
-
-def ic_2d(coeffs, res, scale):
-    xs = 2 * np.pi * np.arange(res) / res
-    X, Y = np.meshgrid(xs, xs, indexing="ij")
-    modes = [(a, b) for a in range(M2D) for b in range(M2D) if not (a == 0 and b == 0)]
-    f = np.zeros((res, res)); idx = 0
-    for (kx, ky) in modes:
-        f += coeffs[idx] * np.cos(kx * X + ky * Y) + coeffs[idx + 1] * np.sin(kx * X + ky * Y)
-        idx += 2
-    return f / (np.max(np.abs(f)) + 1e-12) * scale
 
 # variant -> config. phys = list of (name, lo, hi). solve(u0, phys_vals) -> field.
 def _kdv_dt(L=2.0, dmax=0.12, hf=128):
