@@ -52,3 +52,8 @@ Helmholtz bulk rel-L2 is dominated by genuine coarse-grid dispersion error and i
 The 8 skips are the PyClaw solver tests (`clawpack` is box-only, not installed on this node).
 The 1 failure is `test_ks_1d.py::test_2d_output_matches_golden` — `tests/fixtures/ks_2d_golden.npy` is git-ignored (`*.npy`) and absent on this machine; the identical failure occurs on the **unpatched** tree, so it is a pre-existing environment gap, not a patch regression.
 New in the patch: 12 registration tests in `tests/test_ladder.py` (exact nesting, index-ramp probe, periodic-wrap seam, shift-gone regression, Dirichlet interior exactness, raise-on-unclassified, and a pin that every module wired into `generate.py` is classified).
+
+## Rebase note (2026-08-03)
+
+The generate.py hunk was rebased onto the IC-encoding change (commit 8d34a6f adds an `hf_raw` collection line inside the sample loop for the completeness gate).
+Content of the fix is unchanged; `git apply --check` passes at 8d34a6f.
