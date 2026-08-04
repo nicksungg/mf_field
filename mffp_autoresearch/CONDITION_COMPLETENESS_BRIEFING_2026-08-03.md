@@ -115,6 +115,22 @@ In the physics literature that noise realization is a nuisance variable you aver
 
 The category error is subtle: the IC is a parameter of the problem *instance*, not of the *equation* — physics conditions on equations, while supervised learning conditions on instances.
 
+The mean level itself follows the ordinary rule for condition vectors.
+
+A quantity drawn per sample must be exported: Allen–Cahn's IC is built as `mean_composition` plus the bumps, and its vector is `[eps, mobility, mean_composition, ic_c0…ic_c15]`; PFC's IC is `mean_density` plus the bumps, with vector `[r, mean_density, ic_c0…ic_c15]`.
+
+A quantity fixed for the whole dataset carries no per-sample information and lives in the dataset recipe instead: Fisher–KPP's IC base level is a constant $0.5$ for every sample, so its vector is `[D, r, ic coefficients]` with no mean entry.
+
+Completeness always means the condition vector *plus the dataset's fixed recipe* — solver, snapshot time, and shared constants — determines the field.
+
+Note that the mean was exported even in the defective datasets, and that is the last piece of why the bug hid so well.
+
+These fields are level-dominated: most of each field's magnitude is just its mean.
+
+A model reading `mean_composition` or `mean_density` could therefore predict the bulk of the field and score respectably while staying blind to the perturbation that decides the pattern.
+
+The vector carried the loud part of the field and omitted the decisive part — exactly the failure mode a rel-L2-style average rewards, and one reason the methodology prefers a metric panel over rel-L2 alone.
+
 The safe datasets never faced this trap, because their ICs are shapes with a handful of natural parameters: `burgers` has `ic_amplitude` and `ic_freq`, `shallow_water` has `inner_height` and `dam_radius`, `helmholtz` has `wavenumber` and `source_width`, and `sod` has its left/right Riemann states.
 
 For those, exporting the parameters is the only way to write the IC down at all, so completeness came for free.
