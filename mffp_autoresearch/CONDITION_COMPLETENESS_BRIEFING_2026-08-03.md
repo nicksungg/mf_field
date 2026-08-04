@@ -91,11 +91,21 @@ Skill approaching $1$ was structurally unavailable because copy-LF used the real
 
 ## Why those three datasets drew a random field, and the safe datasets did not
 
-Pattern-forming equations describe an instability.
+A "uniform state" means the field has exactly the same value at every point in space — a completely flat, featureless picture.
 
-Their uniform starting state is an exact equilibrium: perfectly uniform stays perfectly uniform forever, like a pencil balanced exactly on its tip.
+For Cahn–Hilliard it is a mixture blended perfectly evenly; for Fisher–KPP it is a population at exactly the same density everywhere; for PFC it is matter at exactly the mean density with no crystal structure.
 
-To get any pattern at all, the generator must add a small perturbation that breaks the symmetry, and which pattern the system falls into is decided entirely by that nudge.
+These equations apply the same local update rule at every point in space.
+
+If every point starts with the same value, every point receives the same update at every step, so the field stays perfectly flat forever.
+
+No pattern can ever appear, because nothing in the equation distinguishes one location from another — symmetry cannot break itself.
+
+For the phase-separating equations the flat state is unstable on top of being stuck: the physics *wants* to unmix, and any tiny unevenness grows exponentially — the pencil balanced exactly on its tip.
+
+But "wants to" is not enough; the system still needs some unevenness to tell it *where* the domains, fronts, or crystals go.
+
+So the generator adds a small random bumpy perturbation, and that nudge — not the scalar parameters — decides which pattern appears.
 
 The standard physics recipe is therefore "mean state plus small random noise," with broad-spectrum noise chosen deliberately so the physics, not the generator, selects the winning pattern.
 
