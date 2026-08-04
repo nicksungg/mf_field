@@ -156,3 +156,16 @@ Executed per `condition_completeness_proposal/CLUSTER_RUNBOOK.md` under the appr
    the briefing-prescribed repo-wide sweep found a **fourth occurrence** — `core/burgers_param_generated` drew per-sample IC phases and never exported them (witness: field diff 2.77 at 7%-of-median condition distance) — repaired in place by re-deriving the phases through the generation RNG chain (amps/log-nu reproduce the stored `x` bit-for-bit) and appending them as condition columns; post-retrofit reconstruction of all 500 rows: rel-L2 = 0.0;
    the ext-tree Cahn-Hilliard call-outs were adjudicated COMPLETE at the artifact level (all checked rows re-solve at rel-L2 = 0.0 — the shipped data shares ONE fixed IC realization), and the underlying batch-position seeding bug (same row, different field depending on call batching) fixed with an explicit constant seed;
    the `ic_modes` justification was re-derived on the canonical instrument: the T=0.30 gap is ~3.2e-4 at m=5 vs ~4.6e-4 at m=3 — mode count is not a gap lever, and the stale block-average numbers were removed from the docstring and config.
+8. **The 3-seed anchor re-score is COMPLETE — round 3's certified launch anchors** (`mffp_autoresearch_outputs/round3_anchors/anchor_summary_3seed_2026-08-03.json`; repaired-panel best-floor anchor 46.3911, lower is better):
+
+   | Card | Repaired-panel geomean, 3-seed mean [CI95] | Round-2 single-seed |
+   |---|---|---|
+   | r2s2-B1 `frozen` stack | **24.3725** [22.953, 25.792] | 14.0755 |
+   | r2s1-B2 closed-form head | **34.3634** [34.311, 34.416] | 18.3622 |
+   | r2s1-B3 out-of-fold head | **39.1843** [39.081, 39.287] | 18.7500 |
+
+   The round-2 ranking survives (r2s2-B1 best, then r2s1-B2, then r2s1-B3), every card still beats the repaired best-floor anchor, and the closed-form heads reproduce across seeds to ±0.05 while the trained stack spreads ±1.4.
+   The absolute inflation vs round 2 is the honest-denominator effect on the three regenerated columns (fisher_kpp copy-LF ÷130), not model regression — cross-round skill comparisons on those columns are invalid by construction (item 6).
+   **The r2s3-B3 criterion-1 contrast survives the data fix on all six datasets**: the LF-at-train coverage arm beats the matched no-LF control everywhere (mean-skill deltas: helmholtz −5.83, ifc −6.01, cahn_hilliard −14.35, pfc −3.58, allen_cahn −530, fisher_kpp −299), now measured on completeness-certified data; pfc's near-zero edge is consistent with its NO_GAP physics.
+   Operational note: 3 of the 4 families' own frozen-floor seam checks correctly REFUSED to score the mutated panel until repointed at floors recomputed on the repaired data (`round3/state/anchors_repaired/`; r2s3-B3 via its existing `R2S3B3_FLOORS_JSON` knob, the two r2s1 families via a minimal additive `R2S1_FLOORS_JSON` override committed post-close on their experiment branches) — the tripwire class §6 codified, working as designed across a sanctioned panel mutation.
+   With preflight PASS archived and these anchors certified, PROGRAM_NOTE §7 items 2–4 are complete; round 3 still awaits the panel-composition ADR and operator go (§7.3/§7.5), and was NOT launched.
