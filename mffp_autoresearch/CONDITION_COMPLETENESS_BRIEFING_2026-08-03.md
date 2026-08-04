@@ -236,11 +236,9 @@ It must also ship the measured aleatoric floor and use distributional scoring ra
 
 This is an honest way to preserve rich dynamics at small condition dimension.
 
-A fair question: why do the scalar conditions stay meaningful when the IC does not?
+A fair question: chaos amplifies tiny errors in *every* input, the scalars included — so why do the scalar conditions stay meaningful when the IC does not?
 
-Chaos amplifies tiny errors in *every* input, the scalars included, so past the predictability horizon nothing determines the field pointwise in a learnable way.
-
-But the scalars are knowable for a mundane reason: they are the knobs of the setup, chosen by the experimenter or drawn and recorded by the generator, and knowing them requires no measurement of the chaotic state.
+They are knowable for a mundane reason: they are the recorded knobs of the setup, not measurements of the chaotic state.
 
 And they stay useful because statistics survive chaos even though trajectories do not.
 
@@ -310,16 +308,6 @@ The stored seeds can reconstruct the realized IC arrays, subject to verifying re
 
 The `burgers_param_generated` retrofit in Part III demonstrates the pattern: values re-derived from the generation RNG chain, exported, and certified with no re-solve.
 
-A natural objection to option B, answered here because it sharpens C's scope: when running physics simulations we *do* know the IC — the generator drew it and the solver used it — so why would any design treat it as unknown?
-
-The answer is that "known" must be judged at deployment time, not at generation time.
-
-If the surrogate replaces a simulation — the user writes the input deck and sets the starting field themselves — the IC is available at prediction time by definition, and option C is the natural contract.
-
-If the surrogate predicts a physical experiment, the generator's random draw is a proxy for nature's draw: a real quench starts from thermal fluctuations no one can measure beforehand, so the deployment-time user cannot supply the IC even though the training simulations knew theirs.
-
-And past the predictability horizon, known stops implying usable: a cheap surrogate is approximate by construction, and a chaotic map amplifies the surrogate's own small errors by the same mechanism that amplifies IC uncertainty, so exploiting the IC pointwise would require solver-level fidelity — defeating the purpose of a surrogate.
-
 Option C is drafted here but is not yet a formal part 4 in `condition_completeness_proposal/`.
 
 ## D. Export the seed
@@ -340,6 +328,58 @@ This is why the hardened gate now requires more than exact reconstruction.
 
 It uses a witness veto and a two-scale continuity probe to distinguish true coefficients from seed or nominal exports.
 
+## Who knows the IC, and when — choosing between B and C
+
+In the simulation world, the IC is always known.
+
+The generator drew it, the solver marched it forward.
+
+That was never in question — it is why the bug was an export failure rather than a knowledge failure, why the seed retrofit could rebuild the ICs without re-solving, and why option C is possible at all.
+
+If the surrogate's job is to replace simulations — the user writes an input deck, sets the starting field, and wants the evolved field cheaper than the solver gives it — then the IC is available at prediction time by definition, and treating it as unknown would be artificial.
+
+That is the strongest argument for C, and inside the predictability horizon it is decisive.
+
+The case for "unknown IC" comes from what the random IC is standing in for.
+
+In a real quench or deposition experiment, the initial perturbation is thermal fluctuation at the molecular scale — it exists, but nobody can measure it before the fact.
+
+The generator's random draw is a proxy for nature's draw.
+
+If the surrogate's deployment target is "predict what the physical experiment will produce," then the IC your simulation knew is irrelevant, because the experiment will run on a different realization you will never see.
+
+The randomness in option B does not model ignorance during data generation; it models ignorance at deployment against the physical world.
+
+And past the horizon, "known" stops implying "usable."
+
+Even in pure simulation-replacement mode with the IC in hand, a chaotic map amplifies input error exponentially — so a cheap surrogate, which is approximate by construction, has its own small errors blown up to $O(1)$ by the same mechanism that blows up IC uncertainty.
+
+The map is deterministic, but learnable only at solver-level fidelity, which defeats the purpose of a surrogate.
+
+Conditioning pointwise on an input you cannot exploit buys nothing; the honest contract collapses back to statistics either way.
+
+Within its domain, a C surrogate subsumes B.
+
+Statistics over uncontrollable starting conditions — B's whole deliverable — can be recovered from a C surrogate by sampling ICs from the ensemble and pushing each through the model, which is how uncertainty propagation with surrogates is done in practice.
+
+The reverse is impossible: a B surrogate can never say what one particular starting state evolves into.
+
+But Monte-Carlo through a *failed* C surrogate past the horizon is biased toward too little variability, because a model stuck near the conditional mean under-disperses.
+
+C also fits ordinary supervised tooling — standard metrics, standard architectures, outputs that feed downstream deterministic analyses — while B needs distributional scoring and calibration machinery.
+
+For engineering practice, this makes C the better default wherever it qualifies, with B as the honest fallback.
+
+So the decision rule is not "is the IC knowable" but two sharper questions: will the deployment-time user have the IC, and can a cheap model use it at this snapshot time?
+
+Both yes → C.
+
+Either no → B.
+
+For simulation-surrogacy inside the horizon both are yes; for experiment prediction, or for any chaotic long-time snapshot, at least one is no.
+
+The horizon test is per-PDE and per-snapshot-time, and it rides the same solve-time lever the open `true_gap_sweep` already has to explore.
+
 ## Adjudication
 
 Option A is the engineering-surrogate corner.
@@ -354,25 +394,7 @@ Option C is the ML operator-learning corner.
 
 It best fits a benchmark asking a model to evolve a supplied field-valued state.
 
-For engineering practice specifically, C is the better default wherever it qualifies, because a C surrogate subsumes B.
-
-Statistics over uncontrollable starting conditions — B's whole deliverable — can be recovered from a C surrogate by sampling ICs from the ensemble and pushing each through the model, which is how uncertainty propagation with surrogates is done in practice.
-
-The reverse does not hold: a B surrogate can never say what one particular starting state evolves into.
-
-C is also ordinary supervised prediction — standard metrics, standard architectures, outputs that feed downstream deterministic analyses — while B needs distributional scoring and calibration machinery.
-
-B wins in exactly two situations.
-
-First, past the predictability horizon, where the pointwise map is unlearnable even with the IC in hand — and where Monte-Carlo through a failed C surrogate is biased too, because a model stuck near the conditional mean produces samples with too little variability.
-
-Second, when the deployment-time user cannot obtain or credibly synthesize the IC ensemble, so the honest map is controllable knobs → outcome statistics.
-
-The decision rule is two questions: will the deployment-time user have the IC, and can a cheap model use it at this snapshot time?
-
-Both yes → C; either no → B.
-
-The horizon test is per-PDE and per-snapshot-time, and it rides the same solve-time lever the open `true_gap_sweep` already has to explore.
+The preceding subsection gives the B-versus-C choice, including the deployment-time and predictability-horizon tests.
 
 The panel may mix these designs per dataset, provided each dataset states its contract and is scored accordingly.
 
