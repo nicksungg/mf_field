@@ -1,0 +1,43 @@
+{
+  "anchor_type": "best_floor_panel_geomean",
+  "certified_utc": "2026-08-04T05:12:04Z",
+  "datasets": [
+    "ext__helmholtz_2d",
+    "sharp__phase_field_crystal_2d",
+    "sharp__allen_cahn_2d",
+    "sharp__fisher_kpp_2d",
+    "sharp__cahn_hilliard",
+    "ifc_poisson"
+  ],
+  "note": "Round-2 launch anchor: geomean over the panel of the best training-free floor (NN-in-condition / train-mean / zero) per dataset, under the corrected copy-LF denominators (ADR r2-0001). skill < 1 vs copy-LF remains the headline deployment claim; beating THIS anchor is the minimum bar for any trained model.",
+  "per_dataset": {
+    "ext__helmholtz_2d": {
+      "arm": "zero",
+      "skill": 3.3441095587226317
+    },
+    "ifc_poisson": {
+      "arm": "nn_condition",
+      "skill": 10.054890929609687
+    },
+    "sharp__allen_cahn_2d": {
+      "arm": "nn_condition",
+      "skill": 507.85330178692396
+    },
+    "sharp__cahn_hilliard": {
+      "arm": "nn_condition",
+      "skill": 23.180342227117514
+    },
+    "sharp__fisher_kpp_2d": {
+      "arm": "train_mean",
+      "skill": 390.7014844797183
+    },
+    "sharp__phase_field_crystal_2d": {
+      "arm": "train_mean",
+      "skill": 64.45358573657592
+    }
+  },
+  "provisional": false,
+  "source": "training_free_floors",
+  "stream": "r2s3_lf_train_signal",
+  "value": 46.39110191169853
+}
