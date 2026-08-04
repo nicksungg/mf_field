@@ -236,6 +236,26 @@ It must also ship the measured aleatoric floor and use distributional scoring ra
 
 This is an honest way to preserve rich dynamics at small condition dimension.
 
+A fair question: why do the scalar conditions stay meaningful when the IC does not?
+
+Chaos amplifies tiny errors in *every* input, the scalars included, so past the predictability horizon nothing determines the field pointwise in a learnable way.
+
+But the scalars are knowable for a mundane reason: they are the knobs of the setup, chosen by the experimenter or drawn and recorded by the generator, and knowing them requires no measurement of the chaotic state.
+
+And they stay useful because statistics survive chaos even though trajectories do not.
+
+The scalars select the attractor — the ensemble of patterns the system wanders through — and the attractor's statistics (interface density, characteristic wavelength, spectra) vary smoothly with them.
+
+Chaos scrambles your position *on* the attractor; it does not change *which* attractor you are on.
+
+This is the weather-versus-climate split: no one can say whether it rains on a given day ten years out, but how average rainfall shifts with a warming climate is a well-posed question.
+
+Option B is the benchmark for the second kind of question: condition vector → *distribution* of fields, judged against the measured aleatoric floor.
+
+The extension-tree KS dataset in Part III illustrates the split exactly: exact reconstruction certifies that the information is all present, while its nearest-pair witness fires because near-identical conditions yield wildly different fields — chaotic amplification, not missing information.
+
+One caveat: the scalars → statistics map is smooth only away from phase boundaries; near a bifurcation the statistics themselves can jump, and part of PFC's sampled $(r, \bar\psi)$ range sits in the uniform (non-crystalline) phase (see `PROPOSAL.md`).
+
 No dataset currently declares `stochastic_map`.
 
 It remains a standing option for the round-3 panel-composition ADR.
@@ -290,6 +310,16 @@ The stored seeds can reconstruct the realized IC arrays, subject to verifying re
 
 The `burgers_param_generated` retrofit in Part III demonstrates the pattern: values re-derived from the generation RNG chain, exported, and certified with no re-solve.
 
+A natural objection to option B, answered here because it sharpens C's scope: when running physics simulations we *do* know the IC — the generator drew it and the solver used it — so why would any design treat it as unknown?
+
+The answer is that "known" must be judged at deployment time, not at generation time.
+
+If the surrogate replaces a simulation — the user writes the input deck and sets the starting field themselves — the IC is available at prediction time by definition, and option C is the natural contract.
+
+If the surrogate predicts a physical experiment, the generator's random draw is a proxy for nature's draw: a real quench starts from thermal fluctuations no one can measure beforehand, so the deployment-time user cannot supply the IC even though the training simulations knew theirs.
+
+And past the predictability horizon, known stops implying usable: a cheap surrogate is approximate by construction, and a chaotic map amplifies the surrogate's own small errors by the same mechanism that amplifies IC uncertainty, so exploiting the IC pointwise would require solver-level fidelity — defeating the purpose of a surrogate.
+
 Option C is drafted here but is not yet a formal part 4 in `condition_completeness_proposal/`.
 
 ## D. Export the seed
@@ -323,6 +353,26 @@ It best fits a benchmark asking about ensemble behavior of pattern-forming syste
 Option C is the ML operator-learning corner.
 
 It best fits a benchmark asking a model to evolve a supplied field-valued state.
+
+For engineering practice specifically, C is the better default wherever it qualifies, because a C surrogate subsumes B.
+
+Statistics over uncontrollable starting conditions — B's whole deliverable — can be recovered from a C surrogate by sampling ICs from the ensemble and pushing each through the model, which is how uncertainty propagation with surrogates is done in practice.
+
+The reverse does not hold: a B surrogate can never say what one particular starting state evolves into.
+
+C is also ordinary supervised prediction — standard metrics, standard architectures, outputs that feed downstream deterministic analyses — while B needs distributional scoring and calibration machinery.
+
+B wins in exactly two situations.
+
+First, past the predictability horizon, where the pointwise map is unlearnable even with the IC in hand — and where Monte-Carlo through a failed C surrogate is biased too, because a model stuck near the conditional mean produces samples with too little variability.
+
+Second, when the deployment-time user cannot obtain or credibly synthesize the IC ensemble, so the honest map is controllable knobs → outcome statistics.
+
+The decision rule is two questions: will the deployment-time user have the IC, and can a cheap model use it at this snapshot time?
+
+Both yes → C; either no → B.
+
+The horizon test is per-PDE and per-snapshot-time, and it rides the same solve-time lever the open `true_gap_sweep` already has to explore.
 
 The panel may mix these designs per dataset, provided each dataset states its contract and is scored accordingly.
 
