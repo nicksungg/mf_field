@@ -388,4 +388,55 @@ Implemented and verified locally on branch `mffp-trunk-eloise`; **nothing regene
 Round-2 numbers stand as measurements of the panel as it exists.
 The correction is to their *interpretation* on cahn_hilliard, and no round-2 model needs re-running.
 
-Open: the fidelity-gap recipe (`true_gap_sweep`), §8.1, §8.2, §8.3.
+Open: the fidelity-gap recipe (`true_gap_sweep`), §8.1, §8.2, §8.3, and the §11 IC-field-input option (2026-08-04 addendum).
+
+---
+
+## 11. Addendum (2026-08-04) — the IC field as an input: a way out of the trilemma
+
+*Added after the 2026-08-03 sign-off package was assembled; not yet in `condition_completeness_proposal/`.
+Candidate part 4 of the proposal, to be put to the mentor alongside parts 1–3, not landed unilaterally.*
+
+**The trilemma in §7 has a hidden assumption: the condition must be a vector.**
+Relax that, and a third repair exists for field-IC PDEs — ship the realised IC *field* as a model input, alongside the small physical-parameter vector.
+
+**This is not the round-1 leak.**
+The LF field is a cheap solve *of the answer*; handing it over at test time hides whether the model learned anything (§4).
+The IC is part of the *question* — in any real use of a surrogate the starting state is known, because the user supplied it.
+Conditioning on the IC field is the standard operator-learning convention: FNO, DeepONet, and PDEBench all pose exactly this task (IC field → solution at time $T$).
+It is also the legitimate version of the seed-export shortcut §8.1 rejects: the seed is a discontinuous hash *label* for the IC, while the field **is** the IC — the model receives the actual continuous input instead of a name for it.
+
+**What it buys.**
+The map becomes deterministic and complete while the IC stays broad-spectrum, so the LF–HF gap survives untouched.
+All three corners of §7 hold at once because the "small" constraint is removed rather than fought: complete (the IC is given), rich dynamics (white noise retained), and the condition *vector* stays at 2–3 physical scalars — the IC's dimensionality moves into an input channel where field-to-field architectures handle it natively.
+
+**What it costs.**
+It changes the benchmark question for those datasets: round-2's "predict from the condition vector alone" ceases to exist for them, and the task becomes multi-fidelity *operator learning* — a standard, well-populated regime, but a different one.
+Model families need a field-input channel at test time; the round-1 contract already flows the LF field through such a channel, so for most architectures what changes is what flows through it, not the plumbing — but it is a contract change and must be versioned as one.
+
+**Repair cost is low — likely no re-solve.**
+§8.1 establishes that the shipped IC is a deterministic function of `spec["seed"]` (rebuild-and-re-solve certifies at machine precision).
+So for pfc / fisher_kpp / allen_cahn *as shipped*, the IC input arrays can be reconstructed from the stored seeds and exported without regenerating any solution — unlike the band-limited repair, which must re-solve all 500 samples × 3 rungs.
+Before trusting this per dataset, run the existing reconstruction certificate against the rebuilt ICs.
+
+**Which PDEs qualify — the test is two-part.**
+(a) The solution depends on a field-valued input with no natural few-number description, and (b) the snapshot time lies inside the predictability horizon, so IC → $u(T)$ is a *learnable* deterministic map.
+
+| group | modules | verdict |
+|---|---|---|
+| pattern formers | cahn_hilliard, allen_cahn, phase_field_crystal, swift_hohenberg, gray_scott, fisher_kpp | yes — these gain the most; §7's trilemma bites hardest here |
+| dispersive / wave | kdv, nls, sine_gordon | yes — information-preserving dynamics; textbook operator-learning targets |
+| chaotic | kuramoto_sivashinsky; pattern formers far past the transient | only inside the predictability horizon — see below |
+| parametric IC | burgers, porous_medium, shallow_water, sod, euler | no — the field would restate 2–7 scalars at 64² cost |
+| elliptic / steady | helmholtz, poisson, eikonal | no IC exists; the analogue is a random coefficient/source *field* (Darcy-style), which is a redesign, not a repair |
+
+**The predictability-horizon caveat.**
+For chaotic dynamics the map IC → $u(T)$ is deterministic but its sensitivity to the IC grows exponentially in $T$.
+Past the Lyapunov horizon, pointwise prediction is unlearnable *even with the IC in hand* — the field input relabels "unknown randomness" as "known but unusable initial data" without removing it.
+There, `stochastic_map` plus distributional scoring remains the honest regime regardless of inputs.
+This couples to the open `true_gap_sweep`: the usable snapshot window is long enough for nonlinear structure to build (§7's solve-time lever) yet short enough to stay predictable, and it should be found per-PDE, not assumed.
+
+**Portfolio consequence.**
+Adopting this per-dataset splits the panel into a parametric-surrogate group (sod, burgers, shallow_water, …), an operator-learning group (the field-IC PDEs inside their horizons), and a `stochastic_map` group (snapshots past the horizon).
+That mirrors how the literature splits, and every cell stays honest under its own scoring rule — but it is a benchmark-identity decision, which is exactly why it belongs in the sign-off package rather than in a generator patch.
+`mf_field_extension_data`'s cahn_hilliard (§8.3) falls in the yes group by the same test; any decision here should cover both trees at once.
