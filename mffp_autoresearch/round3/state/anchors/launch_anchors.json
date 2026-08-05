@@ -1,15 +1,16 @@
 {
-  "_adr": "round3/docs/adr/0001-launch-panel-composition.md (D6)",
+  "_adr": "round3/docs/adr/0001-launch-panel-composition.md (D6; panel per D4 as amended by A1)",
   "_panel": [
     "sharp__phase_field_crystal_2d",
     "sharp__allen_cahn_2d",
     "sharp__fisher_kpp_2d",
     "sharp__cahn_hilliard",
-    "ifc_poisson"
+    "ifc_poisson",
+    "ifc_heat"
   ],
-  "_note": "Round-3 launch anchors over the ADR D4 panel (helmholtz excluded, report-only; ifc_poisson on the repaired nested ladder). Shipped-row ifc entries quarantined; PENDING_IFC_RESCORE cards certify automatically when the repaired-ifc re-score lands and this script is re-run.",
+  "_note": "Round-3 launch anchors over the ADR D4+A1 panel (helmholtz excluded, report-only; ifc_poisson and ifc_heat on repaired nested ladders). Shipped-row ifc entries quarantined; PENDING_IFC_RESCORE cards certify automatically when the repaired-ifc re-score lands and this script is re-run.",
   "best_floor": {
-    "value": 75.0673,
+    "value": 38.63,
     "per_dataset": {
       "sharp__phase_field_crystal_2d": {
         "arm": "train_mean",
@@ -30,39 +31,76 @@
       "ifc_poisson": {
         "arm": "nn_condition",
         "skill": 8.040896838361228
+      },
+      "ifc_heat": {
+        "arm": "nn_condition",
+        "skill": 1.3941023084286595
       }
     },
     "source": "training_free_floors"
   },
-  "ifc_poisson_floors_repaired": {
-    "reference": {
-      "convention": "paper_bar",
-      "reference_type": "paper_bar",
-      "test_nrmse": 0.036
-    },
-    "cond_dim": 5,
-    "n_train_hf": 5,
-    "n_test": 128,
-    "data": "benchmark_42/core/ifc_poisson (repaired nested ladder, adopted 2026-08-05)",
-    "nn_condition": {
-      "definition": "L2 nearest in per-dim train-standardized condition space; tie -> lowest train index",
-      "nrmse": 0.2894722861810042,
-      "nn_index_hist": {
-        "0": 17,
-        "1": 20,
-        "2": 35,
-        "3": 9,
-        "4": 47
+  "ifc_floors_repaired": {
+    "ifc_poisson": {
+      "reference": {
+        "convention": "paper_bar",
+        "reference_type": "paper_bar",
+        "test_nrmse": 0.036
       },
-      "skill": 8.040896838361228
+      "cond_dim": 5,
+      "n_train_hf": 5,
+      "n_test": 128,
+      "data": "benchmark_42/core/ifc_poisson (repaired nested ladder, adopted 2026-08-05)",
+      "nn_condition": {
+        "definition": "L2 nearest in per-dim train-standardized condition space; tie -> lowest train index",
+        "nrmse": 0.2894722861810042,
+        "nn_index_hist": {
+          "0": 17,
+          "1": 20,
+          "2": 35,
+          "3": 9,
+          "4": 47
+        },
+        "skill": 8.040896838361228
+      },
+      "train_mean": {
+        "nrmse": 0.32414872615981205,
+        "skill": 9.004131282217003
+      },
+      "zero": {
+        "nrmse": 1.0,
+        "skill": 27.77777777777778
+      }
     },
-    "train_mean": {
-      "nrmse": 0.32414872615981205,
-      "skill": 9.004131282217003
-    },
-    "zero": {
-      "nrmse": 1.0,
-      "skill": 27.77777777777778
+    "ifc_heat": {
+      "reference": {
+        "convention": "paper_bar",
+        "reference_type": "paper_bar",
+        "test_nrmse": 0.074
+      },
+      "cond_dim": 3,
+      "n_train_hf": 5,
+      "n_test": 128,
+      "data": "benchmark_42/core/ifc_heat (repaired nested ladder, adopted 2026-08-05)",
+      "nn_condition": {
+        "definition": "L2 nearest in per-dim train-standardized condition space; tie -> lowest train index",
+        "nrmse": 0.1031635708237208,
+        "nn_index_hist": {
+          "0": 22,
+          "1": 25,
+          "2": 36,
+          "3": 8,
+          "4": 37
+        },
+        "skill": 1.3941023084286595
+      },
+      "train_mean": {
+        "nrmse": 0.13072869651694966,
+        "skill": 1.7666040069858062
+      },
+      "zero": {
+        "nrmse": 1.0,
+        "skill": 13.513513513513514
+      }
     }
   },
   "cards": {

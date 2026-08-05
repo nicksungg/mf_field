@@ -12,15 +12,15 @@ paths:
   data_root: mf_field/factory_mffp/data            # ORIGINAL datasets: offline references/floors ONLY
   stripped_data_root: mffp_autoresearch/round2/stripped_data  # live symlink mirror of the repaired benchmark data; reused (verified 2026-08-05)
   eval_dir: mffp_autoresearch/round2/eval          # FROZEN round-2 eval layer: per-dataset cells only; 5-ds aggregation is round-3-side (tools/)
-panel:
+panel:                                             # ADR D4 as amended by A1 (6 datasets)
   - sharp__phase_field_crystal_2d
   - sharp__allen_cahn_2d
   - sharp__fisher_kpp_2d
   - sharp__cahn_hilliard
   - ifc_poisson
+  - ifc_heat
 report_only: [ext__helmholtz_2d]                   # ADR D2: closed-form triviality flag on every mention
 guard_set: [heat_local, fluid, sharp__sod_1d]
-probe_unscored: [ifc_heat]
 streams:
   - {name: r3s1_factorised,  class: gap,   question: "does the recorded two-stage cross-coefficient factorised closed-form head beat the shipped condition->level law on the honest (completeness-certified) panel?"}
   - {name: r3s2_field_reach, class: gap,   question: "can any architecture (incl. internal IC reconstruction from the complete condition vector) recover field-level structure beyond the scalar-deep law, or is the negative certifiable?"}

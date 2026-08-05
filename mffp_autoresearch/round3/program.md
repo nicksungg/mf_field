@@ -26,9 +26,9 @@ Calling a numerical PDE solver at test time remains banned (round-2 rule, unchan
 Round-2 §2 applies: one nRMSE definition (`../round2/eval/nrmse.py`), skill = model nRMSE / corrected copy-LF reference, panel geomean.
 Amendments:
 
-- **Scored panel (5 datasets, ADR D4):** `sharp__phase_field_crystal_2d`, `sharp__allen_cahn_2d`, `sharp__fisher_kpp_2d`, `sharp__cahn_hilliard`, `ifc_poisson` (repaired nested ladder).
+- **Scored panel (6 datasets, ADR D4 as amended by A1):** `sharp__phase_field_crystal_2d`, `sharp__allen_cahn_2d`, `sharp__fisher_kpp_2d`, `sharp__cahn_hilliard`, `ifc_poisson`, `ifc_heat` (both on repaired nested ladders; ifc_heat paper bar 0.074, ifc_poisson 0.036).
 - `ext__helmholtz_2d` is report-only (ADR D2); every helmholtz mention carries the closed-form-triviality flag.
-- Guard set unchanged: `heat_local`, `fluid`, `sharp__sod_1d`; `ifc_heat` (repaired) is an unscored probe.
+- Guard set unchanged: `heat_local`, `fluid`, `sharp__sod_1d`.
 - Per-dataset cells are produced by the frozen round-2 eval layer (`../round2/eval/score_panel.py`, unchanged bytes, def hashes valid); the 5-dataset panel aggregation is round-3-side (`tools/make_round3_anchors.py` conventions).
 - **Launch anchors** live in `state/anchors/launch_anchors.json`: best-floor geomean 75.0673 on the D4 panel; the four round-2 anchor cards certify there when the repaired-ifc re-score lands (`state/ifc_rescore_jobs_2026-08-05.json`); batch 1 does not dispatch before that (ADR D6).
 - Standing caveats on every claim: pfc/fisher_kpp weak fidelity gap (denominator caveat), ifc_poisson affine structure, no cross-round comparison without the honest-denominator flag.

@@ -1,6 +1,6 @@
 # ADR r3-0001: Round-3 launch — panel composition and fix-option assignment
 
-**Status:** accepted (operator go, Eloise, 2026-08-05; mentor option-A endorsement 2026-08-05).
+**Status:** accepted (operator go, Eloise, 2026-08-05; mentor option-A endorsement 2026-08-05); **amended same day (A1: ifc_heat promoted — see Amendment A1)**.
 **Supersedes:** the open panel-composition items in `round3/PROGRAM_NOTE.md` §7.3 and `CONDITION_COMPLETENESS_BRIEFING_2026-08-03.md` Part III "Still open".
 
 ## Context
@@ -39,10 +39,10 @@ The 3-seed anchor re-score used the shipped ifc_poisson rows; the repaired ladde
 Every ifc model-anchor cell must be re-scored on the repaired rows before batch 1; training-free ifc floors are recomputed immediately post-swap.
 Round-2 ifc numbers and repaired-ladder ifc numbers are never comparable; any side-by-side carries this flag.
 
-### D4 — Round-3 scored panel (5 datasets) and guards
+### D4 — Round-3 scored panel and guards (as amended by A1: 6 datasets)
 
-Scored panel: `sharp__phase_field_crystal_2d`, `sharp__allen_cahn_2d`, `sharp__fisher_kpp_2d`, `sharp__cahn_hilliard`, `ifc_poisson` (repaired ladder).
-Guard set unchanged: `heat_local`, `fluid`, `sharp__sod_1d`; `ifc_heat` (repaired) is additionally available as an unscored probe dataset.
+Scored panel: `sharp__phase_field_crystal_2d`, `sharp__allen_cahn_2d`, `sharp__fisher_kpp_2d`, `sharp__cahn_hilliard`, `ifc_poisson` (repaired ladder), and — per Amendment A1 — `ifc_heat` (repaired ladder).
+Guard set unchanged: `heat_local`, `fluid`, `sharp__sod_1d`.
 Standing caveats carried into every claim: pfc and fisher_kpp weak fidelity gap under the complete band-limited IC (preflight "expected warnings"; `true_gap_sweep` remains the open recipe question), and ifc_poisson's affine structure.
 Per PROGRAM_NOTE MUST #5 the panel is mutable in-round only under an explicit ADR.
 
@@ -64,3 +64,10 @@ Round 3 does not launch batch 1 until the recomputed anchors are certified into 
 - The scored panel is 100% completeness-certified: every dataset's HF field is exactly reconstructible from its stored condition vector, so the round-2 aleatoric exclusion of criterion 2 no longer applies to the sharp panel.
 - One SLURM re-anchor job (4 cards × 3 seeds × ifc_poisson-repaired, plus training-free floors) is a launch prerequisite; completion mail wired per operator convention.
 - The regime question round 3 can now genuinely ask: with complete condition vectors, can any condition→HF model reach field-level structure beyond the scalar-deep law, and does LF-at-train still matter on an honest panel?
+
+## Amendment A1 (2026-08-05, operator-approved): ifc_heat promoted to the scored panel
+
+Eloise asked whether round 3 should score 6 datasets with a helmholtz replacement; adjudicated A (promote `ifc_heat`) over certifying `ext/gray_scott_2d` (needs a registration-convention audit, gap measurement, and floors — instrument work that would delay G3) or staying at 5.
+Evidence for readiness, measured 2026-08-05 on the repaired ladder: NN-in-condition floor nRMSE 0.10316 and train-mean 0.13073 (non-trivial), LF32→HF64 gap ≈ 0.01143 at shared nested rows (real multi-fidelity content), published paper bar 0.074 as skill denominator (li2022ifc IFC-ODE2, mirroring ifc_poisson's 0.036 convention — test ships HF only), parabolic physics the panel otherwise lacks, and a hedge against ifc_poisson's affine degeneracy.
+Executed with the amendment: `ifc_heat` entry added to `round2/eval/copylf_baselines.json` (pre-amendment file archived at `copylf_baselines_pre_ifc_heat_2026-08-05.json`), stripped view built (test = fidelity_64 only), floors + anchor-card cells added to the launch re-score (D6 applies to ifc_heat identically), launch anchors recomputed over the 6-dataset panel.
+`ext/gray_scott_2d` remains the standing candidate for an in-round panel addition under PROGRAM_NOTE MUST #5.

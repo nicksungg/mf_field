@@ -36,15 +36,17 @@ sys.path.insert(0, str(EVAL))
 
 from nrmse import nrmse, skill, NRMSE_DEF_HASH  # noqa: E402
 
-PANEL5 = [
+PANEL = [
     "sharp__phase_field_crystal_2d",
     "sharp__allen_cahn_2d",
     "sharp__fisher_kpp_2d",
     "sharp__cahn_hilliard",
     "ifc_poisson",
+    "ifc_heat",  # ADR r3-0001 Amendment A1 (2026-08-05)
 ]
-PANEL6_R2 = ["ext__helmholtz_2d"] + PANEL5  # certified-summary panel
-SHARP4 = PANEL5[:-1]
+SHARP4 = PANEL[:4]
+IFC = ["ifc_poisson", "ifc_heat"]
+PANEL6_R2 = ["ext__helmholtz_2d"] + SHARP4 + ["ifc_poisson"]  # certified-summary panel (round-2 composition)
 SEEDS = [0, 1, 2]
 CARDS = {
     "r2s1_direct-B2": ("results", "r2s1_selected_form"),
@@ -64,13 +66,13 @@ def geomean(vals):
     return float(np.exp(np.log(v).mean()))
 
 
-def ifc_floors():
-    """Training-free floors on the repaired ifc_poisson ladder (ADR D3/D6)."""
+def ifc_floors(name):
+    """Training-free floors on a repaired ifc ladder (ADR D3/D6; A1 for ifc_heat)."""
     baselines = json.loads((EVAL / "copylf_baselines.json").read_text())
-    ref = baselines["ifc_poisson"]["reference"] if "reference" in baselines["ifc_poisson"] else baselines["ifc_poisson"]["test_nrmse"]
+    ref = baselines[name]["reference"] if "reference" in baselines[name] else baselines[name]["test_nrmse"]
     if isinstance(ref, dict):
         ref = ref["test_nrmse"]
-    d = ROOT / "benchmark_42" / "core" / "ifc_poisson"
+    d = ROOT / "benchmark_42" / "core" / name
     Xtr = np.load(d / "train" / "fidelity_64" / "Xs.npy")
     ytr = np.load(d / "train" / "fidelity_64" / "ys.npy").reshape(len(Xtr), -1)
     Xte = np.load(d / "test" / "fidelity_64" / "Xs.npy")
@@ -95,7 +97,7 @@ def ifc_floors():
         "cond_dim": int(Xtr.shape[1]),
         "n_train_hf": int(len(Xtr)),
         "n_test": int(len(Xte)),
-        "data": "benchmark_42/core/ifc_poisson (repaired nested ladder, adopted 2026-08-05)",
+        "data": f"benchmark_42/core/{name} (repaired nested ladder, adopted 2026-08-05)",
         **floors,
     }
 
@@ -190,10 +192,10 @@ def main():
     floors_repaired = json.loads((ROUND3 / "state" / "anchors_repaired" / "floors.json").read_text())
 
     # ---- phase 1: floors ----
-    ifc = ifc_floors()
+    ifc = {name: ifc_floors(name) for name in IFC}
     best_floor = {}
-    for ds in PANEL5:
-        src = ifc if ds == "ifc_poisson" else floors_repaired[ds]
+    for ds in PANEL:
+        src = ifc[ds] if ds in IFC else floors_repaired[ds]
         arms = {a: src[a]["skill"] for a in ("nn_condition", "train_mean", "zero")}
         arm = min(arms, key=arms.get)
         best_floor[ds] = {"arm": arm, "skill": arms[arm]}
@@ -218,10 +220,10 @@ def main():
                 if not np.allclose(sorted(mine), sorted(cert_seed), atol=5e-3):
                     raise SystemExit(f"{card}/{ds}: A1 per-seed skills fail certified reproduction: {mine} vs {cert_seed}")
         live = load_card_skills(card, mode, family, floors_repaired, include_void_ifc=False)
-        have_ifc = all(("ifc_poisson", s) in live for s in SEEDS)
+        have_ifc = all((ds, s) in live for ds in IFC for s in SEEDS)
         entry = {"validated_against_certified_6ds": [round(v, 4) for v in val]}
         if have_ifc:
-            sg = [geomean([live[(ds, s)] for ds in PANEL5]) for s in SEEDS]
+            sg = [geomean([live[(ds, s)] for ds in PANEL]) for s in SEEDS]
             entry.update(status="CERTIFIED", seed_geomeans=[round(v, 4) for v in sg],
                          mean=round(float(np.mean(sg)), 4),
                          ci95=[round(float(np.mean(sg) - 1.96 * np.std(sg, ddof=1) / np.sqrt(3)), 4),
@@ -233,19 +235,19 @@ def main():
             pending.append(card)
         entry["per_dataset_mean_skill"] = {
             ds: round(float(np.mean([live[(ds, s)] for s in SEEDS])), 4)
-            for ds in (PANEL5 if have_ifc else SHARP4)}
+            for ds in (PANEL if have_ifc else SHARP4)}
         cards_out[card] = entry
 
     out = {
-        "_adr": "round3/docs/adr/0001-launch-panel-composition.md (D6)",
-        "_panel": PANEL5,
-        "_note": ("Round-3 launch anchors over the ADR D4 panel (helmholtz excluded, report-only; "
-                  "ifc_poisson on the repaired nested ladder). Shipped-row ifc entries quarantined; "
+        "_adr": "round3/docs/adr/0001-launch-panel-composition.md (D6; panel per D4 as amended by A1)",
+        "_panel": PANEL,
+        "_note": ("Round-3 launch anchors over the ADR D4+A1 panel (helmholtz excluded, report-only; "
+                  "ifc_poisson and ifc_heat on repaired nested ladders). Shipped-row ifc entries quarantined; "
                   "PENDING_IFC_RESCORE cards certify automatically when the repaired-ifc re-score lands "
                   "and this script is re-run."),
         "best_floor": {"value": round(best_floor_geomean, 4), "per_dataset": best_floor,
                        "source": "training_free_floors"},
-        "ifc_poisson_floors_repaired": ifc,
+        "ifc_floors_repaired": ifc,
         "cards": cards_out,
         "pending_ifc_rescore": pending,
     }
