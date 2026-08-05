@@ -17,7 +17,11 @@ Set up the MFFP research monorepo and its 42 benchmark datasets on this cluster,
 Two separate things from two separate places:
 
 1. **Code** — GitHub repo `https://github.com/nicksungg/mf_field.git`, branch `mffp-trunk-eloise`.
-2. **Data** — HuggingFace dataset `nicksung/mf_field`, which is **gated**. 421 files, 7.46 GB.
+2. **Data** — HuggingFace dataset `eloisezeng/mf_field`, which is **gated**. 405 files, 7.46 GB.
+
+   > This supersedes `nicksung/mf_field` (the 2026-07-28 release), which still carries the
+   > grid-registration, condition-incompleteness, and ifc-pairing defects. Do not mix the two —
+   > seven datasets differ. See `benchmark_42/README.md` § Revision history.
 
 The repo's `.gitignore` excludes every heavy artifact type (`*.npz *.npy *.pt *.h5 *.tar.gz *.zip *.png *.pdf`, plus `data/`, `logs/`, `checkpoints/`, `.venv/`).
 A fresh clone therefore gives you the full directory tree and every `.py` / `.md` / `.json`, and **zero arrays**.
@@ -56,7 +60,7 @@ Verify on a **GPU node**, not the login node:
 
 The dataset is gated with `gated: auto`: access is granted the instant you accept, with no manual approval wait — but you must accept once, in a browser, as the account whose token you use.
 
-1. Log in to HuggingFace, visit `https://huggingface.co/datasets/nicksung/mf_field`, click **"Agree and access repository"**. There is no API for this.
+1. Log in to HuggingFace, visit `https://huggingface.co/datasets/eloisezeng/mf_field`, click **"Agree and access repository"**. There is no API for this.
 2. Create a **read** token at `https://huggingface.co/settings/tokens`.
 3. On the cluster:
 
