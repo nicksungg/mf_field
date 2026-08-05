@@ -1,0 +1,12 @@
+{
+  "purpose": "ADR r3-0001 D3/D6 — re-score the four anchor cards' ifc_poisson cells on the repaired nested ladder (shipped-row entries quarantined in *_void_ifc_shipped_2026-08-05/).",
+  "submitted_utc": "2026-08-05",
+  "mail": "ezeng@caltech.edu END,FAIL",
+  "jobs": {
+    "r2s1_direct-B2": {"0": 66546256, "1": 66546257, "2": 66546258},
+    "r2s1_direct-B3": {"0": 66546259, "1": 66546260, "2": 66546261},
+    "r2s2_stacked-B1": {"0": 66546262, "1": 66546263, "2": 66546264},
+    "r2s3_lf_train_signal-B3": {"0": 66546265, "1": 66546266, "2": 66546267}
+  },
+  "on_completion": "re-run round3/tools/make_round3_anchors.py; cards flip from PENDING_IFC_RESCORE to CERTIFIED in state/anchors/launch_anchors.json; batch 1 may not dispatch before that (ADR D6)."
+}

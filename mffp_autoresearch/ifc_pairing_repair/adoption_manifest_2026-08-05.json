@@ -1,0 +1,19 @@
+{
+  "adr": "round3/docs/adr/0001-launch-panel-composition.md (D3)",
+  "adopted_utc": "2026-08-05",
+  "authorized_by": "Eloise (operator go, 2026-08-05)",
+  "source_staged": "regen_2026-08-03/ifc_paired/{ifc_poisson,ifc_heat}",
+  "destination": "benchmark_42/core/{ifc_poisson,ifc_heat}",
+  "shipped_archive": "benchmark_42/core/_shipped_disjoint_backup_2026-08-05/{ifc_poisson,ifc_heat}",
+  "shipped_extras_archived_with_backup": ["cat.pkl", "scalers/", "README.md"],
+  "post_swap_verification": {
+    "method": "in-place row-nesting check on swapped arrays (finer-rung condition rows verbatim at coarser rung, all rung pairs)",
+    "ifc_poisson": {"train_counts": {"8": 100, "16": 50, "32": 20, "64": 5}, "cond_dim": 5, "n_test": 128, "nested": true},
+    "ifc_heat": {"train_counts": {"8": 100, "16": 50, "32": 20, "64": 5}, "cond_dim": 3, "n_test": 128, "nested": true}
+  },
+  "consequences": [
+    "ifc model-anchor cells from anchor_summary_3seed_2026-08-03.json are VOID (measured on shipped rows); re-score on repaired rows is a launch prerequisite (ADR D3/D6).",
+    "Round-2 ifc numbers and repaired-ladder ifc numbers are never comparable.",
+    "cat.pkl / scalers were fit on shipped rows and are deliberately NOT carried over; the ifc_raw loader does not read them."
+  ]
+}

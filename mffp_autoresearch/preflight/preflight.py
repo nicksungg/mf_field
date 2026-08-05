@@ -268,7 +268,7 @@ def main() -> int:
     ap.add_argument("--datasets", nargs="+", default=None,
                     help="dataset dir names under root (default: every dir with meta.json)")
     ap.add_argument("--out", type=Path, default=Path("preflight_report.json"))
-    ap.add_argument("--waive", nargs="*", default=[],
+    ap.add_argument("--waive", nargs="*", action="extend", default=[],
                     metavar="DATASET:CHECK", help="waive a hard fail (recorded)")
     ap.add_argument("--selftest", action="store_true")
     args = ap.parse_args()

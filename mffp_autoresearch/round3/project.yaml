@@ -1,0 +1,37 @@
+# MFFP Autoresearch Round 3 — config surface (Layer-A externalization).
+# All paths are relative to the repo root; agents absolutify at runtime via
+# `git rev-parse --show-toplevel` (see subagents/_shared/universal_context.md).
+# Round 3 regime: LF at train only; condition vector only at test (stripped view).
+# Panel per ADR r3-0001 D4 (helmholtz report-only; ifc_poisson = repaired nested ladder).
+round: round3
+paths:
+  round_root: mffp_autoresearch/round3
+  outputs_root: mffp_autoresearch_outputs/round3
+  venv: .venv
+  factory_root: mf_field/factory_mffp
+  data_root: mf_field/factory_mffp/data            # ORIGINAL datasets: offline references/floors ONLY
+  stripped_data_root: mffp_autoresearch/round2/stripped_data  # live symlink mirror of the repaired benchmark data; reused (verified 2026-08-05)
+  eval_dir: mffp_autoresearch/round2/eval          # FROZEN round-2 eval layer: per-dataset cells only; 5-ds aggregation is round-3-side (tools/)
+panel:
+  - sharp__phase_field_crystal_2d
+  - sharp__allen_cahn_2d
+  - sharp__fisher_kpp_2d
+  - sharp__cahn_hilliard
+  - ifc_poisson
+report_only: [ext__helmholtz_2d]                   # ADR D2: closed-form triviality flag on every mention
+guard_set: [heat_local, fluid, sharp__sod_1d]
+probe_unscored: [ifc_heat]
+streams:
+  - {name: r3s1_factorised,  class: gap,   question: "does the recorded two-stage cross-coefficient factorised closed-form head beat the shipped condition->level law on the honest (completeness-certified) panel?"}
+  - {name: r3s2_field_reach, class: gap,   question: "can any architecture (incl. internal IC reconstruction from the complete condition vector) recover field-level structure beyond the scalar-deep law, or is the negative certifiable?"}
+  - {name: r3s3_lf_value,    class: lever, question: "what is LF-at-train worth on the honest panel (coverage/amplitude, ch identifiability-vs-trainability), matched with/without arms at matched procedure?"}
+  - {name: r3s4_audit,       class: diag,  question: "certify repaired-panel mce and floors; training-free instrument audits (incl. repaired-ifc); own the MUST-3 close-evidence audits."}
+seed_protocol: {seeds: [0], in_round_confirm: {claimable_cards: true, seeds: [1, 2], close_precondition: true}, cratered_skill_factor: 1.5}  # PROGRAM_NOTE MUST 4
+tiers: {contract_epochs: 2, smoke_epochs: 200, full_epochs: 2500}
+caps: {slurm_algo_attempts: 5, review_fail_attempts: 3, consecutive_skips_for_stream_abandonment: 3}
+crons: {orchestrator_pulse_min: 10, maintainer_min: 20}
+sbatch: {partition: gpu, gres: "gpu:nvidia_h200:1", account: null, time_default: "02:00:00", mail_user: ezeng@caltech.edu, mail_type: "END,FAIL"}  # ADR r2-0004 tier; mail on every >=1h job
+anchors:
+  launch_anchors: mffp_autoresearch/round3/state/anchors/launch_anchors.json  # best-floor 75.0673; cards certify on ifc re-score (ADR D6)
+  floors_repaired: mffp_autoresearch/round3/state/anchors_repaired/floors.json
+  noise_floor: mffp_autoresearch/round3/state/anchors_repaired/noise_floor.json  # PROVISIONAL until r3s4 certifies mce
