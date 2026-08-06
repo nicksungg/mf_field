@@ -1,5 +1,7 @@
 # Round-3 orchestrator decision log
 
+- **2026-08-06 — STANDING DELEGATION (Eloise):** evidence-backed scope/panel/recipe decisions are executed autonomously with a written decision record and post-hoc notification; operator asks are reserved for new spend beyond the round's envelope or reinterpretation of already-reported results. Recorded in global memory (`operator-delegation-evidence-backed-research-decisions`).
+
 - **2026-08-05 — launch sequence** (operator go + mentor option-A ratification): ADR r3-0001 executed; G1/G2 green; G3 pending the ifc anchor re-score (SLURM 66546256–67 + 66549217–28, watcher bc3hek1gb).
 - **2026-08-05 — Amendment A1** (operator-adjudicated): ifc_heat promoted to the scored panel (6 datasets); anchors rebuilt, best-floor 38.6300.
 - **2026-08-05 — degeneracy audit** (operator question): ifc_poisson exactly affine on repaired rows (oracle residual 5.4e-16) — KEPT as the control cell; mandatory `affine_on_hf_train` reported floor for all ifc claims (ifc_poisson 1.59, ifc_heat 0.96).
