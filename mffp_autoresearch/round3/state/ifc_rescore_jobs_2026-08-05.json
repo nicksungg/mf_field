@@ -1,18 +1,63 @@
 {
-  "purpose": "ADR r3-0001 D3/D6 — re-score the four anchor cards' ifc_poisson cells on the repaired nested ladder (shipped-row entries quarantined in *_void_ifc_shipped_2026-08-05/).",
+  "purpose": "ADR r3-0001 D3/D6 \u2014 re-score the four anchor cards' ifc_poisson cells on the repaired nested ladder (shipped-row entries quarantined in *_void_ifc_shipped_2026-08-05/).",
   "submitted_utc": "2026-08-05",
   "mail": "ezeng@caltech.edu END,FAIL",
   "jobs": {
-    "r2s1_direct-B2": {"0": 66546256, "1": 66546257, "2": 66546258},
-    "r2s1_direct-B3": {"0": 66546259, "1": 66546260, "2": 66546261},
-    "r2s2_stacked-B1": {"0": 66546262, "1": 66546263, "2": 66546264},
-    "r2s3_lf_train_signal-B3": {"0": 66546265, "1": 66546266, "2": 66546267}
+    "r2s1_direct-B2": {
+      "0": 66546256,
+      "1": 66546257,
+      "2": 66546258
+    },
+    "r2s1_direct-B3": {
+      "0": 66546259,
+      "1": 66546260,
+      "2": 66546261
+    },
+    "r2s2_stacked-B1": {
+      "0": 66546262,
+      "1": 66546263,
+      "2": 66546264
+    },
+    "r2s3_lf_train_signal-B3": {
+      "0": 66546265,
+      "1": 66546266,
+      "2": 66546267
+    }
   },
   "jobs_ifc_heat_amendment_A1": {
-    "r2s1_direct-B2": {"0": 66549217, "1": 66549218, "2": 66549219},
-    "r2s1_direct-B3": {"0": 66549220, "1": 66549221, "2": 66549222},
-    "r2s2_stacked-B1": {"0": 66549223, "1": 66549224, "2": 66549225},
-    "r2s3_lf_train_signal-B3": {"0": 66549226, "1": 66549227, "2": 66549228}
+    "r2s1_direct-B2": {
+      "0": 66549217,
+      "1": 66549218,
+      "2": 66549219
+    },
+    "r2s1_direct-B3": {
+      "0": 66549220,
+      "1": 66549221,
+      "2": 66549222
+    },
+    "r2s2_stacked-B1": {
+      "0": 66549223,
+      "1": 66549224,
+      "2": 66549225
+    },
+    "r2s3_lf_train_signal-B3": {
+      "0": 66549226,
+      "1": 66549227,
+      "2": 66549228
+    }
   },
-  "on_completion": "re-run round3/tools/make_round3_anchors.py; cards flip from PENDING_IFC_RESCORE to CERTIFIED in state/anchors/launch_anchors.json; batch 1 may not dispatch before that (ADR D6)."
+  "on_completion": "re-run round3/tools/make_round3_anchors.py; cards flip from PENDING_IFC_RESCORE to CERTIFIED in state/anchors/launch_anchors.json; batch 1 may not dispatch before that (ADR D6).",
+  "seam_trip_2026-08-05": "r2s1-B2/B3 first submissions (66546256-61) FAILED on the floors seam check (stale shipped-row ifc floors in anchors_repaired/floors.json); floors updated (archive: floors_pre_ifc_swap_2026-08-05.json), resubmitted below.",
+  "jobs_resubmitted_after_floor_fix": {
+    "r2s1_direct-B2": {
+      "0": 66574938,
+      "1": 66574939,
+      "2": 66574940
+    },
+    "r2s1_direct-B3": {
+      "0": 66574941,
+      "1": 66574942,
+      "2": 66574943
+    }
+  }
 }

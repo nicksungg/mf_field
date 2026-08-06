@@ -1,0 +1,276 @@
+{
+  "_certified_utc": "2026-08-04T05:12:04Z",
+  "_copylf_def_hash": "9753ff24e856f595748492dec6cb6c215d748f97e8ec4a679b651f8846da907a",
+  "_nrmse_def_hash": "d3d0ade9191c13bacc40702f3eb26ad290e01641cacee22a1d2233b74c035850",
+  "_split": "test",
+  "ext__helmholtz_2d": {
+    "cond_dim": 3,
+    "n_test": 100,
+    "n_train_hf": 400,
+    "nn_condition": {
+      "definition": "L2 nearest in per-dim train-standardized condition space; tie -> lowest train index",
+      "nn_index_hist_top5": {
+        "154": 2,
+        "2": 2,
+        "372": 2,
+        "375": 2,
+        "399": 2
+      },
+      "nrmse": 1.3113524474983616,
+      "skill": 4.385306254533589
+    },
+    "reference": {
+      "convention": "dirichlet_node",
+      "reference_type": "copylf",
+      "test_nrmse": 0.2990332650411058
+    },
+    "train_mean": {
+      "nrmse": 4.369072694559929,
+      "skill": 14.610657760631902
+    },
+    "zero": {
+      "nrmse": 1.0,
+      "skill": 3.3441095587226317
+    }
+  },
+  "fluid": {
+    "cond_dim": 2,
+    "n_test": 256,
+    "n_train_hf": 256,
+    "nn_condition": {
+      "definition": "L2 nearest in per-dim train-standardized condition space; tie -> lowest train index",
+      "nn_index_hist_top5": {
+        "175": 4,
+        "216": 3,
+        "222": 3,
+        "97": 3,
+        "98": 3
+      },
+      "nrmse": 0.04465925977189836,
+      "skill": 0.20480301494412487
+    },
+    "reference": {
+      "convention": "legacy_cell_centred",
+      "reference_type": "copylf",
+      "test_nrmse": 0.21805958171115042
+    },
+    "train_mean": {
+      "nrmse": 0.4071398035791225,
+      "skill": 1.8671034787108531
+    },
+    "zero": {
+      "nrmse": 1.0,
+      "skill": 4.585902587507648
+    }
+  },
+  "heat_local": {
+    "cond_dim": 3,
+    "n_test": 512,
+    "n_train_hf": 1024,
+    "nn_condition": {
+      "definition": "L2 nearest in per-dim train-standardized condition space; tie -> lowest train index",
+      "nn_index_hist_top5": {
+        "261": 3,
+        "322": 3,
+        "340": 3,
+        "559": 4,
+        "578": 3
+      },
+      "nrmse": 0.015425060969713805,
+      "skill": 6.423036639215027
+    },
+    "reference": {
+      "convention": "legacy_cell_centred",
+      "reference_type": "copylf",
+      "test_nrmse": 0.00240152155999517
+    },
+    "train_mean": {
+      "nrmse": 0.1261611128431337,
+      "skill": 52.533824782063355
+    },
+    "zero": {
+      "nrmse": 1.0,
+      "skill": 416.40267431203546
+    }
+  },
+  "ifc_poisson": {
+    "cond_dim": 5,
+    "n_test": 128,
+    "n_train_hf": 5,
+    "nn_condition": {
+      "definition": "L2 nearest in per-dim train-standardized condition space; tie -> lowest train index",
+      "nn_index_hist_top5": {
+        "0": 41,
+        "1": 17,
+        "2": 20,
+        "3": 38,
+        "4": 12
+      },
+      "nrmse": 0.36197607346594873,
+      "skill": 10.054890929609687
+    },
+    "reference": {
+      "convention": "paper_bar",
+      "reference_type": "paper_bar",
+      "test_nrmse": 0.036
+    },
+    "train_mean": {
+      "nrmse": 0.40342796839330697,
+      "skill": 11.206332455369639
+    },
+    "zero": {
+      "nrmse": 1.0,
+      "skill": 27.77777777777778
+    }
+  },
+  "sharp__allen_cahn_2d": {
+    "cond_dim": 19,
+    "n_test": 100,
+    "n_train_hf": 400,
+    "nn_condition": {
+      "definition": "L2 nearest in per-dim train-standardized condition space; tie -> lowest train index",
+      "nn_index_hist_top5": {
+        "149": 2,
+        "206": 3,
+        "211": 2,
+        "264": 2,
+        "96": 3
+      },
+      "nrmse": 0.8158669044500048,
+      "skill": 507.85330178692396
+    },
+    "reference": {
+      "convention": "node_aligned_periodic",
+      "reference_type": "copylf",
+      "test_nrmse": 0.0016065011324713444
+    },
+    "train_mean": {
+      "nrmse": 1.0016831070252048,
+      "skill": 623.5184568368626
+    },
+    "zero": {
+      "nrmse": 1.0,
+      "skill": 622.47077190768
+    }
+  },
+  "sharp__cahn_hilliard": {
+    "cond_dim": 19,
+    "n_test": 100,
+    "n_train_hf": 400,
+    "nn_condition": {
+      "definition": "L2 nearest in per-dim train-standardized condition space; tie -> lowest train index",
+      "nn_index_hist_top5": {
+        "18": 3,
+        "255": 3,
+        "292": 2,
+        "387": 2,
+        "388": 2
+      },
+      "nrmse": 0.9690069811741324,
+      "skill": 23.180342227117514
+    },
+    "reference": {
+      "convention": "node_aligned_periodic",
+      "reference_type": "copylf",
+      "test_nrmse": 0.041802962686225575
+    },
+    "train_mean": {
+      "nrmse": 1.001977490272036,
+      "skill": 23.96905448527446
+    },
+    "zero": {
+      "nrmse": 1.0,
+      "skill": 23.92174945843033
+    }
+  },
+  "sharp__fisher_kpp_2d": {
+    "cond_dim": 50,
+    "n_test": 100,
+    "n_train_hf": 400,
+    "nn_condition": {
+      "definition": "L2 nearest in per-dim train-standardized condition space; tie -> lowest train index",
+      "nn_index_hist_top5": {
+        "186": 3,
+        "213": 3,
+        "222": 3,
+        "233": 3,
+        "79": 3
+      },
+      "nrmse": 0.06779736322524395,
+      "skill": 410.28175138258905
+    },
+    "reference": {
+      "convention": "node_aligned_periodic",
+      "reference_type": "copylf",
+      "test_nrmse": 0.00016524586579046429
+    },
+    "train_mean": {
+      "nrmse": 0.0645618050684707,
+      "skill": 390.7014844797183
+    },
+    "zero": {
+      "nrmse": 1.0,
+      "skill": 6051.588614434832
+    }
+  },
+  "sharp__phase_field_crystal_2d": {
+    "cond_dim": 18,
+    "n_test": 100,
+    "n_train_hf": 400,
+    "nn_condition": {
+      "definition": "L2 nearest in per-dim train-standardized condition space; tie -> lowest train index",
+      "nn_index_hist_top5": {
+        "263": 3,
+        "313": 3,
+        "371": 2,
+        "372": 3,
+        "373": 3
+      },
+      "nrmse": 0.5577385570168387,
+      "skill": 95.860637063518
+    },
+    "reference": {
+      "convention": "node_aligned_periodic",
+      "reference_type": "copylf",
+      "test_nrmse": 0.005818222933854245
+    },
+    "train_mean": {
+      "nrmse": 0.37500533070168685,
+      "skill": 64.45358573657592
+    },
+    "zero": {
+      "nrmse": 1.0,
+      "skill": 171.8737854098616
+    }
+  },
+  "sharp__sod_1d": {
+    "cond_dim": 3,
+    "n_test": 100,
+    "n_train_hf": 400,
+    "nn_condition": {
+      "definition": "L2 nearest in per-dim train-standardized condition space; tie -> lowest train index",
+      "nn_index_hist_top5": {
+        "250": 3,
+        "268": 2,
+        "295": 2,
+        "32": 3,
+        "80": 2
+      },
+      "nrmse": 0.008074920688403445,
+      "skill": 0.2440277309576757
+    },
+    "reference": {
+      "convention": "legacy_cell_centred",
+      "reference_type": "copylf",
+      "test_nrmse": 0.03309017650048946
+    },
+    "train_mean": {
+      "nrmse": 0.11591173505963606,
+      "skill": 3.5029047082272746
+    },
+    "zero": {
+      "nrmse": 1.0,
+      "skill": 30.220449261889197
+    }
+  }
+}
