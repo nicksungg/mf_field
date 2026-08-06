@@ -77,11 +77,31 @@ Everything lives under one top-level directory. Mirror it 1:1 into the repo root
 
 | HF path | Size | Files | Contents |
 |---|---|---|---|
-| `benchmark_42/core/` | 3.78 GB | 193 | 15 datasets |
+| `benchmark_42/core/` | 3.78 GB | 178 | 15 datasets |
 | `benchmark_42/sharp/` | 3.38 GB | 172 | 19 datasets |
 | `benchmark_42/ext/` | 0.30 GB | 52 | 8 datasets |
 | `benchmark_42/MANIFEST.csv` | 4 KB | 1 | per-dataset stats + quality flags |
-| `benchmark_42/README.md` | 8 KB | 1 | collection tables |
+| `benchmark_42/README.md` | 11 KB | 1 | collection tables + revision history |
+
+Run `python hf_download_benchmark_42.py` from the repo root. It is resumable, and it
+verifies by **sha256, not file size**.
+
+### If you already have a `benchmark_42/` from `nicksung/mf_field`
+
+**A size-based sync will not update you, and will report success.** Re-pairing the ifc
+fidelity ladders changed *which* samples sit at each level, not the array shapes, so all
+22 arrays under `core/ifc_heat/` and `core/ifc_poisson/` have byte-identical sizes across
+the two releases with completely different contents. Any tool that skips on equal size —
+including the earlier version of this script — leaves the defective disjoint data in place.
+
+The current script hashes, so a plain re-run does the right thing:
+
+    python hf_download_benchmark_42.py --prune
+
+`--prune` also removes the 16 `ifc_*/scalers/*.pkl` files that the old release shipped and
+this one deliberately does not; they were fitted on the old disjoint sample set. Local
+`*backup*` directories are never touched. Without `--prune` the orphans are listed, not
+deleted.
 
 Each dataset is a folder of aligned/nested `train_l*.npz` / `test_l*.npz` (`l1` = coarsest), with keys `x` (conditions) and `y` (flattened field).
 Fidelity counts range from 2 to 9 levels depending on the dataset.
