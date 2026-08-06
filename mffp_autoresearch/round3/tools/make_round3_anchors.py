@@ -146,6 +146,8 @@ def load_card_skills(card, mode, family, floors_by_ds, include_void_ifc):
         cands = {}
         files = list((base / "cache").glob("*.json"))
         if include_void_ifc:
+            files = [f for f in files
+                     if json.loads(f.read_text()).get("dataset") != "ifc_poisson"]
             files += list((base / VOID_CACHE).glob("*.json"))
         for f in files:
             d = json.loads(f.read_text())
@@ -176,6 +178,7 @@ def load_card_skills(card, mode, family, floors_by_ds, include_void_ifc):
     elif mode == "results":
         files = list((base / "results" / family).glob("*_e200_s*.json"))
         if include_void_ifc:
+            files = [f for f in files if not f.name.startswith("ifc_poisson")]
             files += list((base / VOID_RESULTS).glob("ifc_poisson_e200_s*.json"))
         for f in files:
             d = json.loads(f.read_text())
@@ -189,6 +192,9 @@ def load_card_skills(card, mode, family, floors_by_ds, include_void_ifc):
     else:  # r2s3-B3: per-leg eval files, claimable arm A1_lf_cov, mean nRMSE over draws
         files = list((base / "eval").glob("result_*_A1_*.json"))
         if include_void_ifc:
+            # certified-reproduction pass: shipped-row (void) ifc entries stand IN PLACE OF
+            # the fresh repaired-row ones — never mixed (they would average together below).
+            files = [f for f in files if not re.match(r"^result_ifc_", f.name)]
             files += list((base / VOID_RESULTS).glob("result_*_A1_*.json"))
         acc = {}
         for f in files:

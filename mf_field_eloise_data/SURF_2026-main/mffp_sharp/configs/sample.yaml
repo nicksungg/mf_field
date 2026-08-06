@@ -203,10 +203,14 @@ pdes:
     role: pattern
     module: phase_field_crystal
     ndim: 2
-    output_time: 200.0          # T: lattice developed (TBD-box)
+    output_time: 200.0          # T: lattice developed
     sampling:
-      r_range: [-0.4, -0.1]     # r<0 for patterns (TBD)
-      mean_density_range: [-0.4, -0.2]
+      # ADR r3-0002 (2026-08-06): all-crystalline box, sigma = -(r + 3*psi_bar^2) >= 0.11
+      # everywhere. The former box [-0.4,-0.1] x [-0.4,-0.2] put ~half the samples in the
+      # uniform phase (flat fields, gap ~1e-15) — the NO_GAP composition artifact
+      # (true_gap_sweep 2026-08-05: crystalline-box median bottom-rung gap 9.8e-3).
+      r_range: [-0.4, -0.3]
+      mean_density_range: [-0.25, -0.2]
       ic_amplitude: 0.05
       domain_size: 32.0
 
