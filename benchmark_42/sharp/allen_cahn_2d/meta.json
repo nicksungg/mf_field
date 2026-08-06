@@ -63,5 +63,36 @@
       "verdict": "COMPLETE"
     },
     "verdict": "COMPLETE"
+  },
+  "test_trim_2026_08_06": {
+    "adr": "round3/docs/adr/0003-estimator-integrity-repairs.md D1",
+    "criterion": "per-row canonical copy-LF gap < max(1e-6, 1% of median) = 1.824e-05",
+    "n_before": 100,
+    "n_after": 78,
+    "dropped_indices": [
+      2,
+      6,
+      9,
+      25,
+      37,
+      38,
+      41,
+      43,
+      47,
+      54,
+      57,
+      58,
+      63,
+      64,
+      75,
+      76,
+      77,
+      81,
+      82,
+      96,
+      97,
+      98
+    ],
+    "backup": "_pretrim_backup_2026-08-06"
   }
 }

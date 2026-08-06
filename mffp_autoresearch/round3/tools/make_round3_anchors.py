@@ -58,6 +58,22 @@ CARDS = {
 }
 VOID_CACHE = "cache_void_ifc_shipped_2026-08-05"
 VOID_RESULTS = "results_void_ifc_shipped_2026-08-05"
+# datasets whose CERTIFIED-summary values were measured on superseded data; the
+# certified-reproduction pass substitutes their quarantined entries for the live
+# ones (never mixes). Extend this map with each sanctioned data mutation.
+VOID_DATASETS = {
+    "ifc_poisson": [VOID_CACHE, VOID_RESULTS],
+    "sharp__allen_cahn_2d": ["quarantine_ac_pretrim_2026-08-06"],
+}
+
+
+def void_files(base, suffix_globs):
+    out = []
+    for dirs in VOID_DATASETS.values():
+        for d in dirs:
+            for g in suffix_globs:
+                out += list((base / d).glob(g))
+    return out
 
 
 def geomean(vals):
@@ -142,13 +158,18 @@ def load_card_skills(card, mode, family, floors_by_ds, include_void_ifc):
         return e["test_nrmse"] if "test_nrmse" in e else e["reference"]["test_nrmse"]
 
     out = {}
+    if include_void_ifc:
+        # certified-reproduction pass prices with the references in effect when
+        # anchor_summary_3seed was certified (pre-A1, pre-ac-trim archive).
+        refs = json.loads((EVAL / "copylf_baselines_pre_ifc_heat_2026-08-05.json").read_text())
     if mode == "cache":
         cands = {}
         files = list((base / "cache").glob("*.json"))
         if include_void_ifc:
             files = [f for f in files
-                     if json.loads(f.read_text()).get("dataset") != "ifc_poisson"]
-            files += list((base / VOID_CACHE).glob("*.json"))
+                     if json.loads(f.read_text()).get("dataset") not in VOID_DATASETS]
+            files += [f for f in void_files(base, ["*.json"])
+                      if "seed" in json.loads(f.read_text())]  # cache-schema only
         for f in files:
             d = json.loads(f.read_text())
             if d.get("nrmse_def_hash") != NRMSE_DEF_HASH:
@@ -178,8 +199,10 @@ def load_card_skills(card, mode, family, floors_by_ds, include_void_ifc):
     elif mode == "results":
         files = list((base / "results" / family).glob("*_e200_s*.json"))
         if include_void_ifc:
-            files = [f for f in files if not f.name.startswith("ifc_poisson")]
-            files += list((base / VOID_RESULTS).glob("ifc_poisson_e200_s*.json"))
+            files = [f for f in files
+                     if not any(f.name.startswith(ds) for ds in VOID_DATASETS)]
+            files += [f for f in void_files(base, ["*_e200_s*.json"])
+                      if any(f.name.startswith(ds) for ds in VOID_DATASETS)]
         for f in files:
             d = json.loads(f.read_text())
             m = re.search(r"_s(\d+)\.json$", f.name)
@@ -192,10 +215,11 @@ def load_card_skills(card, mode, family, floors_by_ds, include_void_ifc):
     else:  # r2s3-B3: per-leg eval files, claimable arm A1_lf_cov, mean nRMSE over draws
         files = list((base / "eval").glob("result_*_A1_*.json"))
         if include_void_ifc:
-            # certified-reproduction pass: shipped-row (void) ifc entries stand IN PLACE OF
-            # the fresh repaired-row ones — never mixed (they would average together below).
-            files = [f for f in files if not re.match(r"^result_ifc_", f.name)]
-            files += list((base / VOID_RESULTS).glob("result_*_A1_*.json"))
+            # certified-reproduction pass: quarantined (superseded-data) entries stand IN
+            # PLACE OF the fresh ones — never mixed (they would average together below).
+            files = [f for f in files
+                     if not any(ds in f.name for ds in VOID_DATASETS)]
+            files += [f for f in void_files(base, ["result_*_A1_*.json"])]
         acc = {}
         for f in files:
             d = json.loads(f.read_text())

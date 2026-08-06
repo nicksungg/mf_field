@@ -1,7 +1,6 @@
 {
   "_copylf_def_hash": "9753ff24e856f595748492dec6cb6c215d748f97e8ec4a679b651f8846da907a",
   "_notes": {
-    "ac_trim_2026_08_06": "allen_cahn_2d reference recomputed on the trimmed test split (0.0016065 -> 0.00205936); pre-trim file archived at copylf_baselines_pre_ac_trim_2026-08-06.json. Skills across the trim are not comparable.",
     "comparability": "round-2 skills are NOT comparable to round-1 skills on the corrected datasets: the round-1 denominators were inflated 2.0-8.6x by the registration defect (r1 report \u00a75). r1_frozen_nrmse is recorded per dataset.",
     "convention": "ADR r2-0001: registration ((r-1)/2 half-cell) + wrap-seam reference fixes. Periodic nested datasets use node-aligned bilinear with periodic wrap (variant C); helmholtz uses the Dirichlet interior-node map (variant E); guards/1-D keep the round-1 convention (audit: consistent).",
     "ifc_poisson": "ifc test ships only the HF fidelity, so copy-LF is undefined on the test split; the skill reference is the published paper bar (r1 ADR 0002). skill < 1 there means 'beats the paper'.",
@@ -47,13 +46,12 @@
   },
   "sharp__allen_cahn_2d": {
     "convention": "node_aligned_periodic",
-    "pre_trim_nrmse": 0.0016065011324713444,
     "r1_frozen_nrmse": 0.016151772077279084,
     "ratio_to_r1": 0.11025206954066319,
-    "recomputed": "2026-08-06 ADR r3-0003 D1 (78-row trimmed test split)",
+    "recomputed": "2026-08-03 repaired panel",
     "reference_type": "copylf",
     "round2_frozen_nrmse": 0.0017807662982691156,
-    "test_nrmse": 0.0020593576160366327
+    "test_nrmse": 0.0016065011324713444
   },
   "sharp__cahn_hilliard": {
     "convention": "node_aligned_periodic",
