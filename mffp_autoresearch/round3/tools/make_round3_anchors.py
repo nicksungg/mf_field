@@ -64,6 +64,7 @@ VOID_RESULTS = "results_void_ifc_shipped_2026-08-05"
 VOID_DATASETS = {
     "ifc_poisson": [VOID_CACHE, VOID_RESULTS],
     "sharp__allen_cahn_2d": ["quarantine_ac_pretrim_2026-08-06"],
+    "sharp__phase_field_crystal_2d": ["quarantine_pfc_prebox_2026-08-06"],
 }
 
 

@@ -7,8 +7,7 @@
     "ifc_poisson": "ifc test ships only the HF fidelity, so copy-LF is undefined on the test split; the skill reference is the published paper bar (r1 ADR 0002). skill < 1 there means 'beats the paper'.",
     "panel_amendment_2026_08_05": "ifc_heat promoted to the round-3 scored panel (ADR r3-0001 amendment A1, operator-approved 2026-08-05): paper-bar denominator 0.074, repaired nested ladder. Pre-amendment file archived at copylf_baselines_pre_ifc_heat_2026-08-05.json.",
     "panel_mutation_2026_08_03": "pfc / allen_cahn_2d / fisher_kpp_2d references recomputed on the IC-complete regenerated data (condition_completeness_proposal/, operator-approved); all other entries reproduce the archived round-2 file to 1e-9. Round-2 skills are NOT comparable across this mutation on the three regenerated datasets. Round-2 denominators archived at copylf_baselines_round2_frozen_2026-08-03.json.",
-    "pfc": "under a band-limited (variant D) reference pfc has no fidelity gap at all (nRMSE 3e-07); variant C is the round convention and pfc claims carry a standing caveat until the dataset is redesigned (r1 report \u00a75 fix list).",
-    "pfc_box_2026_08_06": "pfc reference recomputed on the crystalline-box data (0.00581822 -> 0.0182574); pre-box file archived. Skills across the swap are not comparable (ADR r3-0002 D5)."
+    "pfc": "under a band-limited (variant D) reference pfc has no fidelity gap at all (nRMSE 3e-07); variant C is the round convention and pfc claims carry a standing caveat until the dataset is redesigned (r1 report \u00a75 fix list)."
   },
   "_nrmse_def_hash": "d3d0ade9191c13bacc40702f3eb26ad290e01641cacee22a1d2233b74c035850",
   "_split": "test",
@@ -74,13 +73,12 @@
   },
   "sharp__phase_field_crystal_2d": {
     "convention": "node_aligned_periodic",
-    "pre_box_nrmse": 0.005818222933854245,
     "r1_frozen_nrmse": 0.04478044719481978,
     "ratio_to_r1": 0.164821457206456,
-    "recomputed": "2026-08-06 ADR r3-0002 (crystalline-box regeneration)",
+    "recomputed": "2026-08-03 repaired panel",
     "reference_type": "copylf",
     "round2_frozen_nrmse": 0.00738077856100695,
-    "test_nrmse": 0.018257409062703473
+    "test_nrmse": 0.005818222933854245
   },
   "sharp__sod_1d": {
     "convention": "legacy_cell_centred",
