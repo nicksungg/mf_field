@@ -46,11 +46,16 @@ train(f64) disjoint from test: True
 
 Seeds are recorded in `pairing_report.json` (`seed_train` 20260803, `seed_test` 20260804).
 
-**Removed in this revision:** `cat.pkl` and `scalers/fidelity_*/scaler_{Xs,ys}.pkl`.
-Those were fitted on the old disjoint sample set, so their means and scales describe data
-that no longer ships. Re-shipping them would silently mis-normalize the repaired fields.
-They are unused by the reference loader, which reads the `.npy` arrays directly. Fit your
-own scalers on the training split if you need them.
+**Removed in this revision:** `scalers/fidelity_*/scaler_{Xs,ys}.pkl`. Those were fitted on
+the old disjoint sample set, so their means and scales describe data that no longer ships.
+Re-shipping them would silently mis-normalize the repaired fields. No model reads them —
+the families that normalize per fidelity recompute max-abs from the raw arrays at load
+time. Fit your own on the training split if you need them.
+
+**`cat.pkl` is retained.** It is a pure ladder descriptor (`fid_list`, `t_list`, `ns_list`,
+`fid_min`/`fid_max`) with no pairing information, and six model families read it to
+discover the fidelity ladder. It was dropped in error during the repair and has been
+rebuilt from the repaired arrays; the rebuild reproduces the original exactly.
 
 ## Load example
 
