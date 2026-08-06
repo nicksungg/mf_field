@@ -5,6 +5,15 @@
 **ndim:** 2  
 **Availability:** regenerable (eloise sharp-field solver)  
 
+## ⚠️ Degeneracy warning
+
+This dataset is flagged **degenerate** in `MANIFEST.csv`. It is not broken, but a model can score well on it without doing anything interesting, so results here should not be read as evidence of multi-fidelity skill.
+
+- **operator-hard** — the condition vector barely predicts the field (param→field distance correlation 0.012, threshold 0.15). Nothing conditions the prediction.
+- **copy-LF-trivial** — lifting LF onto the HF grid already reproduces HF to within 0.0069 relative L2 at full resolution. Copying the coarse field solves the task; there is no fidelity gap to learn.
+
+See the *Degeneracy flags* section of [`../../README.md`](../../README.md) for the criteria, thresholds, and their caveats.
+
 ## Fidelity ladder (ablation-driven)
 
 - L1: [64, 64]
