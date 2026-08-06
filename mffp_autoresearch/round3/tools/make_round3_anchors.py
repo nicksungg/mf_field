@@ -92,6 +92,25 @@ def ifc_floors(name):
     }
     for arm in floors.values():
         arm["skill"] = skill(arm["nrmse"], ref)
+
+    # Degeneracy audit (2026-08-05): affine closed-form floor. FITTED, not
+    # training-free — reported next to models (round-2 granted-law discipline),
+    # never part of the best_floor anchor. oracle_affine_residual ~0 means the
+    # condition->HF map is exactly affine (intrinsic degeneracy evidence).
+    def affine_fit(X, Y):
+        A = np.hstack([X, np.ones((len(X), 1))])
+        W, *_ = np.linalg.lstsq(A, Y, rcond=None)  # min-norm when underdetermined
+        return lambda Xq: np.hstack([Xq, np.ones((len(Xq), 1))]) @ W
+
+    aff = nrmse(affine_fit(Xtr, ytr)(Xte), yte)
+    floors["affine_on_hf_train"] = {
+        "definition": "min-norm least-squares affine map condition->field, fit on the HF train rows; "
+                      "mandatory reported arm for ifc claims (program.md section 2), NOT in best_floor",
+        "class": "closed_form_fitted",
+        "nrmse": aff,
+        "skill": skill(aff, ref),
+        "oracle_affine_residual_nrmse": nrmse(affine_fit(Xte, yte)(Xte), yte),
+    }
     return {
         "reference": {"convention": "paper_bar", "reference_type": "paper_bar", "test_nrmse": ref},
         "cond_dim": int(Xtr.shape[1]),
@@ -196,7 +215,7 @@ def main():
     best_floor = {}
     for ds in PANEL:
         src = ifc[ds] if ds in IFC else floors_repaired[ds]
-        arms = {a: src[a]["skill"] for a in ("nn_condition", "train_mean", "zero")}
+        arms = {a: src[a]["skill"] for a in ("nn_condition", "train_mean", "zero")}  # training-free only; affine floor reported separately
         arm = min(arms, key=arms.get)
         best_floor[ds] = {"arm": arm, "skill": arms[arm]}
     best_floor_geomean = geomean([v["skill"] for v in best_floor.values()])
