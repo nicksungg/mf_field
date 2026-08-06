@@ -7,11 +7,12 @@
 
 IC built from low Fourier-mode coefficients stored in x (cond), so field=f(x) is well-posed & learnable.
 
+
 ## ⚠️ Degeneracy warning
 
 This dataset is flagged **degenerate** in `MANIFEST.csv`. It is not broken, but a model can score well on it without doing anything interesting, so results here should not be read as evidence of multi-fidelity skill.
 
-- **operator-hard** — the condition vector barely predicts the field (param→field distance correlation -0.046, threshold 0.15). Nothing conditions the prediction.
+- **operator-hard** — the condition vector barely predicts the field (param→field distance correlation -0.046, threshold 0.15). Nothing conditions the prediction. See the caveats in the collection README before excluding this dataset on that basis alone.
 
-See the *Degeneracy flags* section of [`../../README.md`](../../README.md) for the criteria, thresholds, and their caveats.
+See the *Degeneracy flags* section of [`../../README.md`](../../README.md) for criteria, thresholds, and caveats.
 

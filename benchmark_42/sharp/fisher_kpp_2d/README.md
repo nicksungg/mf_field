@@ -9,9 +9,9 @@
 
 This dataset is flagged **degenerate** in `MANIFEST.csv`. It is not broken, but a model can score well on it without doing anything interesting, so results here should not be read as evidence of multi-fidelity skill.
 
-- **copy-LF-trivial** — lifting LF onto the HF grid already reproduces HF to within 0.0006 relative L2 at full resolution. Copying the coarse field solves the task; there is no fidelity gap to learn.
+- **level-dominated** — copying LF scores 0.0006 relative L2, but only because the field is nearly uniform: after removing each sample's spatial mean the copy error is 0.0216, 35x larger. The headline metric here is dominated by a constant offset that LF reproduces for free, while the structure is still substantially wrong.
 
-See the *Degeneracy flags* section of [`../../README.md`](../../README.md) for the criteria, thresholds, and their caveats.
+See the *Degeneracy flags* section of [`../../README.md`](../../README.md) for criteria, thresholds, and caveats.
 
 ## Fidelity ladder (ablation-driven)
 

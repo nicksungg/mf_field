@@ -20,34 +20,56 @@ Multi-fidelity field-prediction benchmark, organized into three collections. Eac
 
 ## Degeneracy flags — read this before choosing datasets
 
-**14 of the 42 datasets are degenerate in at least one of three ways.** A degenerate dataset is not broken; it is unsuitable for measuring what this benchmark claims to measure, and a model can post an excellent score on it without doing anything interesting. They are kept in the release because excluding them silently is worse than labelling them.
+**14 of the 42 datasets are degenerate in at least one of four ways.** A degenerate dataset is not broken; it is unsuitable for measuring what this benchmark claims to measure, and a model can post an excellent score on it without doing anything interesting. They are kept in the release because excluding them silently is worse than labelling them.
 
 | flag | criterion | what it means |
 |---|---|---|
 | `mf_useless` | `lf_hf_pearson < 0.3` | The low-fidelity field carries essentially no information about the high-fidelity one. Multi-fidelity is pointless here by construction — there is nothing to transfer. |
 | `operator_hard` | `pf_dist_corr < 0.15` | The condition vector barely predicts the field. Nothing conditions the prediction, so a model cannot do better than learning the field distribution. |
-| `copy_lf_trivial` | `copy_lf_rel_l2 < 0.01` | Lifting LF onto the HF grid *already* reproduces HF to within 1% relative L2. Copying the coarse field solves the task; there is no fidelity gap to learn. |
+| `copy_lf_trivial` | raw **and** detrended `copy_lf_rel_l2 < 0.01` | Lifting LF onto the HF grid already reproduces HF to within 1%, structure included. Copying the coarse field solves the task; there is no fidelity gap to learn. |
+| `level_dominated` | raw `< 0.01` but detrended `>= 0.01` | Copying LF looks near-perfect only because the field is nearly uniform. The score is dominated by a constant offset that LF gets for free, while the actual structure is still substantially wrong. |
 
-`copy_lf_rel_l2` is measured at **full resolution** under the best of the audited registration conventions — the best case for the copy hypothesis, so a flagged dataset is trivial under any registration. Do not confuse it with the characterizer's internal `lf_hf_rel_resid`, which compares nearest-index-resampled fields on a grid capped at 128 and misstates copy error in both directions (`allen_cahn_2d`: 0.0445 there, 0.0069 here).
+### What `copy_lf_rel_l2` is
+
+The error made by the dumbest possible model: don't predict anything, just take the coarse field, stretch it onto the fine grid, and submit that. Per sample,
+
+> `‖HF − lift(LF)‖₂ ⁄ ‖HF‖₂`, averaged over samples.
+
+0.0006 means copying gets you to within 0.06% of the true field. Any model has to beat this number to be doing anything at all.
+
+Three things make it trustworthy — and one thing makes it treacherous:
+
+- **Full resolution.** Not the characterizer's internal `lf_hf_rel_resid`, which nearest-index resamples onto a grid capped at 128 and misstates copy error in both directions (`allen_cahn_2d`: 0.0445 there, 0.0069 here).
+- **Best-case registration.** `lift` is exactly the operation the half-pixel defect corrupted, so the value depends on how you interpolate. We take the minimum over the audited conventions, which is the best case for the copy hypothesis — a flagged dataset is trivial under *any* registration. (Reassuringly, the winning convention reproduces the generator's own per-PDE classification: node-periodic for the spectral solvers, cell-centred for the PyClaw ones.)
+- **Relative, not absolute**, so it is comparable across datasets with wildly different amplitudes. The flip side: where LF and HF differ hugely in magnitude the ratio explodes and stops being informative — `ifc_poisson` reads 78.3 because an 8×8 Poisson solve and a 64×64 one are not on the same scale at all. Read large values as "not remotely trivial", not as a meaningful error.
+- **The trap: it is not scale- or offset-free.** A nearly-uniform field has a large `‖HF‖` dominated by its constant level, which LF reproduces for free. So the **detrended** column — the same quantity after removing each sample's spatial mean from both fields — is the honest measure of structural agreement. Where the two disagree sharply, the raw number is measuring the offset, not the physics.
+
+That is not hypothetical. It is exactly what distinguishes the two flags:
+
+| dataset | raw | detrended | ratio | verdict |
+|---|---|---|---|---|
+| `sharp/fisher_kpp_2d` | 0.0006 | 0.0216 | **35×** | level-dominated (HF field spans only [0.79, 1.00]) |
+| `sharp/allen_cahn_2d` | 0.0069 | 0.1465 | **21×** | level-dominated — 15% structural error |
+| `sharp/kuramoto_sivashinsky_2d` | 0.0047 | 0.0047 | 1.0× | genuinely trivial (zero-mean field) |
 
 ### The flagged datasets
 
-| dataset | modes | key number |
+| dataset | modes | raw / detrended copy rel-L2 |
 |---|---|---|
-| `sharp/fisher_kpp_2d` | copy-LF-trivial | copy rel-L2 **0.0006** |
-| `sharp/fisher_kpp_1d` | copy-LF-trivial | copy rel-L2 0.0023 |
-| `sharp/allen_cahn_1d` | operator-hard, copy-LF-trivial | copy rel-L2 0.0027 |
-| `sharp/kuramoto_sivashinsky_2d` | operator-hard, copy-LF-trivial | copy rel-L2 0.0047 |
-| `core/advection_diffusion_generated` | copy-LF-trivial | copy rel-L2 0.0057 |
-| `sharp/sine_gordon_1d` | operator-hard, copy-LF-trivial | copy rel-L2 0.0063 |
-| `sharp/allen_cahn_2d` | operator-hard, copy-LF-trivial | copy rel-L2 0.0069 |
-| `sharp/kuramoto_sivashinsky_1d` | operator-hard, copy-LF-trivial | copy rel-L2 0.0077 |
+| `sharp/fisher_kpp_1d` | copy-LF-trivial | 0.0023 / 0.0076 |
+| `sharp/allen_cahn_1d` | operator-hard, copy-LF-trivial | 0.0027 / 0.0044 |
+| `sharp/kuramoto_sivashinsky_2d` | operator-hard, copy-LF-trivial | 0.0047 / 0.0047 |
+| `core/advection_diffusion_generated` | copy-LF-trivial | 0.0057 / 0.0066 |
+| `sharp/sine_gordon_1d` | operator-hard, copy-LF-trivial | 0.0063 / 0.0063 |
+| `sharp/kuramoto_sivashinsky_1d` | operator-hard, copy-LF-trivial | 0.0077 / 0.0077 |
+| `sharp/fisher_kpp_2d` | level-dominated | **0.0006 / 0.0216** |
+| `sharp/allen_cahn_2d` | operator-hard, level-dominated | **0.0069 / 0.1465** |
 | `ext/gray_scott_2d` | MF-useless | LF–HF corr **0.008** |
 | `ext/kuramoto_sivashinsky_1d` | MF-useless, operator-hard | LF–HF corr **−0.057** |
-| `sharp/nls_1d` | operator-hard | copy rel-L2 0.0124 (borderline) |
-| `sharp/phase_field_crystal_2d` | operator-hard | pf corr ≈ 0 on the IC-encoded vector |
-| `core/burgers_generated` | operator-hard | 16×16 HF grid |
-| `core/burgers_param_generated` | operator-hard | 16×16 HF grid |
+| `sharp/nls_1d` | operator-hard | 0.0124 / 0.0161 (borderline) |
+| `sharp/phase_field_crystal_2d` | operator-hard | 0.0287 / 0.0484 |
+| `core/burgers_generated` | operator-hard | 0.2384 / 0.2384 |
+| `core/burgers_param_generated` | operator-hard | 0.2767 / 0.2767 |
 
 Three more sit just above the copy-LF threshold and deserve the same caution: `ext/pressure_poisson_poiseuille` (0.0117), `sharp/nls_1d` (0.0124), `ext/rayleigh_benard_2d` (0.0147).
 
@@ -62,61 +84,61 @@ Three more sit just above the copy-LF threshold and deserve the same caution: `e
 
 Base MFFP collection — classic multi-fidelity PDE/reanalysis benchmarks.
 
-| # | dataset | dims | fidelities | cond dim | N (HF) | HF grid | LF–HF corr | copy-LF rel-L2 | flags |
+| # | dataset | dims | fidelities | cond dim | N (HF) | HF grid | LF–HF corr | copy-LF rel-L2 (raw / detrended) | flags |
 |---|---|---|---|---|---|---|---|---|---|
-| 1 | **poisson_generated** | 2 | 3 | 5 | 400 | 64x64 | 0.977 | 16.4524 | — |
-| 2 | **heat_generated** | 2 | 3 | 3 | 400 | 64x64 | 0.989 | 0.0305 | — |
-| 3 | **burgers_generated** | 2 | 3 | 8 | 400 | 16x16 | 0.947 | 0.2384 | operator-hard |
-| 4 | **burgers_param_generated** | 2 | 3 | 9 | 400 | 16x16 | 0.927 | 0.2767 | operator-hard |
-| 5 | **advection_diffusion_generated** | 2 | 2 | 2 | 400 | 64x64 | 0.996 | 0.0057 | copy-LF-trivial |
-| 6 | **allen_cahn_generated** | 2 | 3 | 2 | 400 | 16x16 | 0.936 | 0.2611 | — |
-| 7 | **darcy_generated** | 2 | 3 | 16 | 400 | 128x128 | 0.995 | 0.0423 | — |
-| 8 | **lid_driven_cavity_generated** | 2 | 4 | 1 | 40 | 256x256 | 0.799 | 0.7029 | — |
-| 9 | **poisson_local** | 2 | 5 | 5 | 64 | 128x128 | 0.975 | 66.8286 | — |
-| 10 | **heat_local** | 2 | 5 | 3 | 1024 | 128x128 | 0.989 | 0.0340 | — |
-| 11 | **fluid** | 2 | 2 | 2 | 256 | 64x64 | 0.972 | 0.2051 | — |
-| 12 | **ifc_heat** | 2 | 4 | 3 | 5 | 64x64 | 0.956 | 0.0715 | — |
-| 13 | **ifc_poisson** | 2 | 4 | 5 | 5 | 64x64 | 0.909 | 78.2798 | — |
-| 14 | **era5** | 2 | 9 | 12 | 65 | 721x1440 | 0.995 | 0.1019 | — |
-| 15 | **pm_test** | 2 | 9 | 12 | 65 | 721x1440 | 0.995 | 0.1019 | — |
+| 1 | **poisson_generated** | 2 | 3 | 5 | 400 | 64x64 | 0.977 | 16.4524 / 15.4279 | — |
+| 2 | **heat_generated** | 2 | 3 | 3 | 400 | 64x64 | 0.989 | 0.0305 / 0.0607 | — |
+| 3 | **burgers_generated** | 2 | 3 | 8 | 400 | 16x16 | 0.947 | 0.2384 / 0.2384 | operator-hard |
+| 4 | **burgers_param_generated** | 2 | 3 | 9 | 400 | 16x16 | 0.927 | 0.2767 / 0.2767 | operator-hard |
+| 5 | **advection_diffusion_generated** | 2 | 2 | 2 | 400 | 64x64 | 0.996 | 0.0057 / 0.0066 | copy-LF-trivial |
+| 6 | **allen_cahn_generated** | 2 | 3 | 2 | 400 | 16x16 | 0.936 | 0.2611 / 0.2859 | — |
+| 7 | **darcy_generated** | 2 | 3 | 16 | 400 | 128x128 | 0.995 | 0.0423 / 0.0709 | — |
+| 8 | **lid_driven_cavity_generated** | 2 | 4 | 1 | 40 | 256x256 | 0.799 | 0.7029 / 0.7132 | — |
+| 9 | **poisson_local** | 2 | 5 | 5 | 64 | 128x128 | 0.975 | 66.8286 / 65.6351 | — |
+| 10 | **heat_local** | 2 | 5 | 3 | 1024 | 128x128 | 0.989 | 0.0340 / 0.0672 | — |
+| 11 | **fluid** | 2 | 2 | 2 | 256 | 64x64 | 0.972 | 0.2051 / 0.2048 | — |
+| 12 | **ifc_heat** | 2 | 4 | 3 | 5 | 64x64 | 0.956 | 0.0715 / 0.1316 | — |
+| 13 | **ifc_poisson** | 2 | 4 | 5 | 5 | 64x64 | 0.909 | 78.2798 / 65.0214 | — |
+| 14 | **era5** | 2 | 9 | 12 | 65 | 721x1440 | 0.995 | 0.1019 / 0.0990 | — |
+| 15 | **pm_test** | 2 | 9 | 12 | 65 | 721x1440 | 0.995 | 0.1019 / 0.0990 | — |
 
 ## `ext/` — 8 datasets
 
 Extension — new high-frequency 2D/1D fields the core set lacked.
 
-| # | dataset | dims | fidelities | cond dim | N (HF) | HF grid | LF–HF corr | copy-LF rel-L2 | flags |
+| # | dataset | dims | fidelities | cond dim | N (HF) | HF grid | LF–HF corr | copy-LF rel-L2 (raw / detrended) | flags |
 |---|---|---|---|---|---|---|---|---|---|
-| 1 | **helmholtz_2d** | 2 | 2 | 3 | 400 | 96x96 | 0.983 | 0.1097 | — |
-| 2 | **rayleigh_benard_2d** | 2 | 2 | 1 | 400 | 64x64 | 0.999 | 0.0147 | — |
-| 3 | **gray_scott_2d** | 2 | 2 | 2 | 400 | 72x72 | 0.008 | 183583542648.4986 | MF-useless |
-| 4 | **wave_2d** | 2 | 2 | 3 | 400 | 80x80 | 0.846 | 0.5245 | — |
-| 5 | **eikonal_2d** | 2 | 2 | 3 | 400 | 64x64 | 0.990 | 0.0708 | — |
-| 6 | **cahn_hilliard_2d** | 2 | 2 | 2 | 400 | 64x64 | 0.333 | 0.8011 | — |
-| 7 | **kuramoto_sivashinsky_1d** | 2 | 2 | 3 | 400 | 256x120 | -0.057 | 1.2563 | MF-useless, operator-hard |
-| 8 | **pressure_poisson_poiseuille** | 2 | 4 | 2 | 400 | 64x64 | 0.927 | 0.0117 | — |
+| 1 | **helmholtz_2d** | 2 | 2 | 3 | 400 | 96x96 | 0.983 | 0.1097 / 0.1173 | — |
+| 2 | **rayleigh_benard_2d** | 2 | 2 | 1 | 400 | 64x64 | 0.999 | 0.0147 / 0.0293 | — |
+| 3 | **gray_scott_2d** | 2 | 2 | 2 | 400 | 72x72 | 0.008 | 183583542648.4986 / 169723011896.8980 | MF-useless |
+| 4 | **wave_2d** | 2 | 2 | 3 | 400 | 80x80 | 0.846 | 0.5245 / 0.5511 | — |
+| 5 | **eikonal_2d** | 2 | 2 | 3 | 400 | 64x64 | 0.990 | 0.0708 / 0.1157 | — |
+| 6 | **cahn_hilliard_2d** | 2 | 2 | 2 | 400 | 64x64 | 0.333 | 0.8011 / 0.8493 | — |
+| 7 | **kuramoto_sivashinsky_1d** | 2 | 2 | 3 | 400 | 256x120 | -0.057 | 1.2563 / 1.2945 | MF-useless, operator-hard |
+| 8 | **pressure_poisson_poiseuille** | 2 | 4 | 2 | 400 | 64x64 | 0.927 | 0.0117 / 0.2781 | — |
 
 ## `sharp/` — 19 datasets
 
 Sharp — shock / sharp-interface / smooth-control portfolio (SURF 2026).
 
-| # | dataset | dims | fidelities | cond dim | N (HF) | HF grid | LF–HF corr | copy-LF rel-L2 | flags |
+| # | dataset | dims | fidelities | cond dim | N (HF) | HF grid | LF–HF corr | copy-LF rel-L2 (raw / detrended) | flags |
 |---|---|---|---|---|---|---|---|---|---|
-| 1 | **euler** | 2 | 3 | 7 | 400 | 128x128 | 0.974 | 0.0574 | — |
-| 2 | **sod_1d** | 1 | 3 | 3 | 400 | 128 | 0.994 | 0.0508 | — |
-| 3 | **burgers_1d** | 1 | 3 | 2 | 400 | 128 | 0.939 | 0.2528 | — |
-| 4 | **burgers_2d** | 2 | 3 | 2 | 400 | 256x256 | 0.977 | 0.1935 | — |
-| 5 | **shallow_water_1d** | 1 | 3 | 2 | 400 | 128 | 0.723 | 0.0340 | — |
-| 6 | **shallow_water_2d** | 2 | 3 | 2 | 400 | 128x128 | 0.942 | 0.0504 | — |
-| 7 | **cahn_hilliard** | 2 | 3 | 19 | 400 | 256x256 | 0.990 | 0.0357 | — |
-| 8 | **allen_cahn_1d** | 1 | 3 | 19 | 400 | 512 | 1.000 | 0.0027 | operator-hard, copy-LF-trivial |
-| 9 | **allen_cahn_2d** | 2 | 3 | 19 | 400 | 256x256 | 0.993 | 0.0069 | operator-hard, copy-LF-trivial |
-| 10 | **porous_medium_1d** | 1 | 3 | 2 | 400 | 128 | 0.984 | 0.0425 | — |
-| 11 | **porous_medium_2d** | 2 | 3 | 2 | 400 | 256x256 | 0.994 | 0.0372 | — |
-| 12 | **fisher_kpp_1d** | 1 | 3 | 18 | 400 | 512 | 1.000 | 0.0023 | copy-LF-trivial |
-| 13 | **fisher_kpp_2d** | 2 | 3 | 50 | 400 | 256x256 | 0.984 | 0.0006 | copy-LF-trivial |
-| 14 | **phase_field_crystal_2d** | 2 | 3 | 18 | 400 | 128x128 | 0.928 | 0.0287 | operator-hard |
-| 15 | **kuramoto_sivashinsky_1d** | 1 | 3 | 17 | 400 | 512 | 1.000 | 0.0077 | operator-hard, copy-LF-trivial |
-| 16 | **kuramoto_sivashinsky_2d** | 2 | 3 | 17 | 400 | 256x256 | 0.995 | 0.0047 | operator-hard, copy-LF-trivial |
-| 17 | **nls_1d** | 1 | 3 | 17 | 400 | 512 | 1.000 | 0.0124 | operator-hard |
-| 18 | **sine_gordon_1d** | 1 | 3 | 17 | 400 | 512 | 1.000 | 0.0063 | operator-hard, copy-LF-trivial |
-| 19 | **helmholtz_2d** | 2 | 3 | 2 | 400 | 256x256 | 0.991 | 2.9333 | — |
+| 1 | **euler** | 2 | 3 | 7 | 400 | 128x128 | 0.974 | 0.0574 / 0.1959 | — |
+| 2 | **sod_1d** | 1 | 3 | 3 | 400 | 128 | 0.994 | 0.0508 / 0.1025 | — |
+| 3 | **burgers_1d** | 1 | 3 | 2 | 400 | 128 | 0.939 | 0.2528 / 0.2528 | — |
+| 4 | **burgers_2d** | 2 | 3 | 2 | 400 | 256x256 | 0.977 | 0.1935 / 0.1935 | — |
+| 5 | **shallow_water_1d** | 1 | 3 | 2 | 400 | 128 | 0.723 | 0.0340 / 0.1618 | — |
+| 6 | **shallow_water_2d** | 2 | 3 | 2 | 400 | 128x128 | 0.942 | 0.0504 / 0.3478 | — |
+| 7 | **cahn_hilliard** | 2 | 3 | 19 | 400 | 256x256 | 0.990 | 0.0357 / 0.0358 | — |
+| 8 | **allen_cahn_1d** | 1 | 3 | 19 | 400 | 512 | 1.000 | 0.0027 / 0.0044 | operator-hard, copy-LF-trivial |
+| 9 | **allen_cahn_2d** | 2 | 3 | 19 | 400 | 256x256 | 0.993 | 0.0069 / 0.1465 | operator-hard, level-dominated |
+| 10 | **porous_medium_1d** | 1 | 3 | 2 | 400 | 128 | 0.984 | 0.0425 / 0.0501 | — |
+| 11 | **porous_medium_2d** | 2 | 3 | 2 | 400 | 256x256 | 0.994 | 0.0372 / 0.0381 | — |
+| 12 | **fisher_kpp_1d** | 1 | 3 | 18 | 400 | 512 | 1.000 | 0.0023 / 0.0076 | copy-LF-trivial |
+| 13 | **fisher_kpp_2d** | 2 | 3 | 50 | 400 | 256x256 | 0.984 | 0.0006 / 0.0216 | level-dominated |
+| 14 | **phase_field_crystal_2d** | 2 | 3 | 18 | 400 | 128x128 | 0.928 | 0.0287 / 0.0484 | operator-hard |
+| 15 | **kuramoto_sivashinsky_1d** | 1 | 3 | 17 | 400 | 512 | 1.000 | 0.0077 / 0.0077 | operator-hard, copy-LF-trivial |
+| 16 | **kuramoto_sivashinsky_2d** | 2 | 3 | 17 | 400 | 256x256 | 0.995 | 0.0047 / 0.0047 | operator-hard, copy-LF-trivial |
+| 17 | **nls_1d** | 1 | 3 | 17 | 400 | 512 | 1.000 | 0.0124 / 0.0161 | operator-hard |
+| 18 | **sine_gordon_1d** | 1 | 3 | 17 | 400 | 512 | 1.000 | 0.0063 / 0.0063 | operator-hard, copy-LF-trivial |
+| 19 | **helmholtz_2d** | 2 | 3 | 2 | 400 | 256x256 | 0.991 | 2.9333 / 2.9308 | — |
