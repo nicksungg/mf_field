@@ -1,6 +1,8 @@
 # MFFP benchmark — 42 datasets
 
-Multi-fidelity field-prediction benchmark, organized into three collections. Each dataset is a folder with `meta.json`, `README.md`, and aligned/nested `train_l*.npz` / `test_l*.npz` fidelity levels (`l1`=coarsest). Full per-dataset stats in [`MANIFEST.csv`](MANIFEST.csv).
+Multi-fidelity field-prediction benchmark, organized into three collections.
+Each dataset is a folder with `meta.json`, `README.md`, and aligned/nested `train_l*.npz` / `test_l*.npz` fidelity levels (`l1`=coarsest).
+Full per-dataset stats in [`MANIFEST.csv`](MANIFEST.csv).
 
 **Totals:** 42 datasets — core 15, ext 8, sharp 19.
 
@@ -8,19 +10,31 @@ Multi-fidelity field-prediction benchmark, organized into three collections. Eac
 
 ## Revision history
 
-**2026-08-05 — corrected release.** Three defect classes were fixed since the 2026-07-28 release. Seven datasets changed; the other 35 are byte-identical.
+**2026-08-05 — corrected release.**
+Three defect classes were fixed since the 2026-07-28 release.
+Seven datasets changed; the other 35 are byte-identical.
 
-1. **Grid-registration ("half-pixel") defect** — the generator built each pre-aligned copy (`/fields_hf/res_R`) with a single cell-centred coordinate map, but the pseudo-spectral and periodic-FD solvers sample at nodes, and helmholtz on interior Dirichlet nodes. Every output pixel was read from a coordinate displaced by `(r-1)/2` HF cells — half a coarse cell — with clamp-extension across periodic seams instead of wrapping. The raw native-grid arrays were always correct; the shift lived in the aligned copies and in the fidelity-gap metrics the datasets reported about themselves (allen_cahn's LF→HF rel-L2 gap was inflated 3.2–4.7x). The generator now dispatches per PDE across three conventions (`node_periodic`, `node_dirichlet`, `cell_centered`), records the one it used as an `alignment_convention` attribute, and raises on an unclassified PDE rather than defaulting.
+1. **Grid-registration ("half-pixel") defect** — the generator built each pre-aligned copy (`/fields_hf/res_R`) with a single cell-centred coordinate map, but the pseudo-spectral and periodic-FD solvers sample at nodes, and helmholtz on interior Dirichlet nodes.
+   Every output pixel was read from a coordinate displaced by `(r-1)/2` HF cells — half a coarse cell — with clamp-extension across periodic seams instead of wrapping.
+   The raw native-grid arrays were always correct; the shift lived in the aligned copies and in the fidelity-gap metrics the datasets reported about themselves (allen_cahn's LF→HF rel-L2 gap was inflated 3.2–4.7x).
+   The generator now dispatches per PDE across three conventions (`node_periodic`, `node_dirichlet`, `cell_centered`), records the one it used as an `alignment_convention` attribute, and raises on an unclassified PDE rather than defaulting.
 
-2. **Condition-vector incompleteness** — five sharp datasets drew per-sample initial-condition coefficients and consumed them in the solver without exporting them, so the condition vector did not determine the field. They were regenerated with the ICs encoded, which is why their `cond dim` grows sharply (e.g. `fisher_kpp_2d` 2 → 50). `core/burgers_param_generated` had the same defect in its IC phases; those were re-derived through the generation RNG chain and appended without re-solving (reconstruction certificate: rel-L2 = 0.0 over all 500 rows).
+2. **Condition-vector incompleteness** — five sharp datasets drew per-sample initial-condition coefficients and consumed them in the solver without exporting them, so the condition vector did not determine the field.
+   They were regenerated with the ICs encoded, which is why their `cond dim` grows sharply (e.g. `fisher_kpp_2d` 2 → 50).
+   `core/burgers_param_generated` had the same defect in its IC phases; those were re-derived through the generation RNG chain and appended without re-solving (reconstruction certificate: rel-L2 = 0.0 over all 500 rows).
 
-3. **Disjoint fidelity levels in `ifc_heat` / `ifc_poisson`** — parameter vectors were drawn independently per fidelity, so no sample existed at more than one fidelity and `HF - LF` residuals were undefined. Both were regenerated with nested parameter sets (verified: L2 ⊂ L1, L3 ⊂ L2, L4 ⊂ L3, train disjoint from test). Their stale `scalers/` and `cat.pkl`, fitted on the old sample set, were removed rather than re-shipped.
+3. **Disjoint fidelity levels in `ifc_heat` / `ifc_poisson`** — parameter vectors were drawn independently per fidelity, so no sample existed at more than one fidelity and `HF - LF` residuals were undefined.
+   Both were regenerated with nested parameter sets (verified: L2 ⊂ L1, L3 ⊂ L2, L4 ⊂ L3, train disjoint from test).
+   Their stale `scalers/` and `cat.pkl`, fitted on the old sample set, were removed rather than re-shipped.
 
-`MANIFEST.csv` and the tables below were recomputed from the corrected data with the original characterizer. The `lf_hf_pearson` and degeneracy flags shifted for the seven affected datasets — most visibly `ifc_poisson` 0.827 → 0.909 and `fisher_kpp_2d` 0.758 → 0.984, both of which had been depressed by the defects rather than by anything physical.
+`MANIFEST.csv` and the tables below were recomputed from the corrected data with the original characterizer.
+The `lf_hf_pearson` and degeneracy flags shifted for the seven affected datasets — most visibly `ifc_poisson` 0.827 → 0.909 and `fisher_kpp_2d` 0.758 → 0.984, both of which had been depressed by the defects rather than by anything physical.
 
 ## Degeneracy flags — read this before choosing datasets
 
-**14 of the 42 datasets are degenerate in at least one of four ways.** A degenerate dataset is not broken; it is unsuitable for measuring what this benchmark claims to measure, and a model can post an excellent score on it without doing anything interesting. They are kept in the release because excluding them silently is worse than labelling them.
+**14 of the 42 datasets are degenerate in at least one of four ways.**
+A degenerate dataset is not broken; it is unsuitable for measuring what this benchmark claims to measure, and a model can post an excellent score on it without doing anything interesting.
+They are kept in the release because excluding them silently is worse than labelling them.
 
 | flag | criterion | what it means |
 |---|---|---|
@@ -31,20 +45,32 @@ Multi-fidelity field-prediction benchmark, organized into three collections. Eac
 
 ### What `copy_lf_rel_l2` is
 
-The error made by the dumbest possible model: don't predict anything, just take the coarse field, stretch it onto the fine grid, and submit that. Per sample,
+The error made by the dumbest possible model: don't predict anything, just take the coarse field, stretch it onto the fine grid, and submit that.
+Per sample,
 
 > `‖HF − lift(LF)‖₂ ⁄ ‖HF‖₂`, averaged over samples.
 
-0.0006 means copying gets you to within 0.06% of the true field. Any model has to beat this number to be doing anything at all.
+0.0006 means copying gets you to within 0.06% of the true field.
+Any model has to beat this number to be doing anything at all.
 
 Three things make it trustworthy — and one thing makes it treacherous:
 
-- **Full resolution.** Not the characterizer's internal `lf_hf_rel_resid`, which nearest-index resamples onto a grid capped at 128 and misstates copy error in both directions (`allen_cahn_2d`: 0.0445 there, 0.0069 here).
-- **Best-case registration.** `lift` is exactly the operation the half-pixel defect corrupted, so the value depends on how you interpolate. We take the minimum over the audited conventions, which is the best case for the copy hypothesis — a flagged dataset is trivial under *any* registration. (Reassuringly, the winning convention reproduces the generator's own per-PDE classification: node-periodic for the spectral solvers, cell-centred for the PyClaw ones.)
-- **Relative, not absolute**, so it is comparable across datasets with wildly different amplitudes. The flip side: where LF and HF differ hugely in magnitude the ratio explodes and stops being informative — `ifc_poisson` reads 78.3 because an 8×8 Poisson solve and a 64×64 one are not on the same scale at all. Read large values as "not remotely trivial", not as a meaningful error.
-- **The trap: it is not scale- or offset-free.** A nearly-uniform field has a large `‖HF‖` dominated by its constant level, which LF reproduces for free. So the **detrended** column — the same quantity after removing each sample's spatial mean from both fields — is the honest measure of structural agreement. Where the two disagree sharply, the raw number is measuring the offset, not the physics.
+- **Full resolution.**
+  Not the characterizer's internal `lf_hf_rel_resid`, which nearest-index resamples onto a grid capped at 128 and misstates copy error in both directions (`allen_cahn_2d`: 0.0445 there, 0.0069 here).
+- **Best-case registration.**
+  `lift` is exactly the operation the half-pixel defect corrupted, so the value depends on how you interpolate.
+  We take the minimum over the audited conventions, which is the best case for the copy hypothesis — a flagged dataset is trivial under *any* registration.
+  (Reassuringly, the winning convention reproduces the generator's own per-PDE classification: node-periodic for the spectral solvers, cell-centred for the PyClaw ones.)
+- **Relative, not absolute**, so it is comparable across datasets with wildly different amplitudes.
+  The flip side: where LF and HF differ hugely in magnitude the ratio explodes and stops being informative — `ifc_poisson` reads 78.3 because an 8×8 Poisson solve and a 64×64 one are not on the same scale at all.
+  Read large values as "not remotely trivial", not as a meaningful error.
+- **The trap: it is not scale- or offset-free.**
+  A nearly-uniform field has a large `‖HF‖` dominated by its constant level, which LF reproduces for free.
+  So the **detrended** column — the same quantity after removing each sample's spatial mean from both fields — is the honest measure of structural agreement.
+  Where the two disagree sharply, the raw number is measuring the offset, not the physics.
 
-That is not hypothetical. It is exactly what distinguishes the two flags:
+That is not hypothetical.
+It is exactly what distinguishes the two flags:
 
 | dataset | raw | detrended | ratio | verdict |
 |---|---|---|---|---|
@@ -75,9 +101,14 @@ Three more sit just above the copy-LF threshold and deserve the same caution: `e
 
 ### Two caveats on `operator_hard`
 
-**It is diluted by IC-encoded condition vectors.** The five sharp datasets regenerated in this release now carry initial-condition coefficients in the condition vector, and distance correlation over a mostly-IC vector tends toward zero even when the field genuinely depends on it. `phase_field_crystal_2d` scores 0.247 on its two physical parameters alone but ≈0 on all 18 columns. Read the flag as "distance correlation is the wrong instrument here", not "the map is unlearnable".
+**It is diluted by IC-encoded condition vectors.**
+The five sharp datasets regenerated in this release now carry initial-condition coefficients in the condition vector, and distance correlation over a mostly-IC vector tends toward zero even when the field genuinely depends on it.
+`phase_field_crystal_2d` scores 0.247 on its two physical parameters alone but ≈0 on all 18 columns.
+Read the flag as "distance correlation is the wrong instrument here", not "the map is unlearnable".
 
-**The thresholds are hand-tuned**, described in the characterizer itself as "tunable; validated against KS/cahn". They are a triage aid, not a verdict. The flag is stable, though: over 6 independent subsamples `allen_cahn_2d` and `phase_field_crystal_2d` fire 6/6, while `fisher_kpp_2d` and `cahn_hilliard` fire 0/6.
+**The thresholds are hand-tuned**, described in the characterizer itself as "tunable; validated against KS/cahn".
+They are a triage aid, not a verdict.
+The flag is stable, though: over 6 independent subsamples `allen_cahn_2d` and `phase_field_crystal_2d` fire 6/6, while `fisher_kpp_2d` and `cahn_hilliard` fire 0/6.
 
 
 ## `core/` — 15 datasets

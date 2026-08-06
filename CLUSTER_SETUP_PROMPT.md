@@ -142,8 +142,9 @@ Note `data/` will contain **44** entries, not 42: `chin_chun_isothermal` and `ch
 
 ## Step 6 — Know which datasets are degraded before you trust any score
 
-`benchmark_42/MANIFEST.csv` carries `lf_hf_pearson` plus boolean `mf_useless`, `operator_hard`, `degenerate`.
-**11 of 42 datasets are flagged `degenerate`; 2 are flagged `mf_useless`.**
+`benchmark_42/MANIFEST.csv` carries `lf_hf_pearson`, `pf_dist_corr`, `copy_lf_rel_l2`, `copy_lf_rel_l2_detrended`, plus boolean `mf_useless`, `operator_hard`, `copy_lf_trivial`, `level_dominated`, `degenerate`.
+**14 of 42 datasets are flagged `degenerate`.**
+Each flagged dataset also carries a warning block at the top of its own `README.md`, and the criteria and caveats are in `benchmark_42/README.md` § Degeneracy flags.
 
 Two carry no usable multi-fidelity signal at all:
 
@@ -152,8 +153,13 @@ Two carry no usable multi-fidelity signal at all:
 
 On those, LF tells you nothing about HF, so no multi-fidelity method can win and any good score is single-fidelity fitting.
 
-Five sharp datasets sit at the opposite extreme — `allen_cahn_1d`, `fisher_kpp_1d`, `kuramoto_sivashinsky_1d`, `nls_1d`, `sine_gordon_1d` all have correlation **1.000** and are flagged `operator-hard, degenerate`.
-There LF is essentially identical to HF, so copying LF is near-optimal and there is no headroom to demonstrate anything.
+Six sit at the opposite extreme, flagged `copy_lf_trivial`: lifting LF onto the HF grid already reproduces HF to under 1% relative L2, structure included, so copying the coarse field solves the task.
+They are `core/advection_diffusion_generated`, `sharp/allen_cahn_1d`, `sharp/fisher_kpp_1d`, `sharp/kuramoto_sivashinsky_1d`, `sharp/kuramoto_sivashinsky_2d`, `sharp/sine_gordon_1d`.
+
+Two more are flagged `level_dominated`, which is the subtler trap.
+`sharp/fisher_kpp_2d` reads a copy error of 0.0006 and `sharp/allen_cahn_2d` 0.0069 — but their fields are nearly uniform, so those numbers are almost entirely a constant offset that LF reproduces for free.
+Remove each sample's spatial mean and the copy errors are 0.0216 and 0.1465, 35x and 21x larger.
+On those two the headline relative-L2 metric mostly measures getting the mean right, so read any score there with the detrended column beside it.
 
 Also note `core/ifc_heat` and `core/ifc_poisson` have **N_hf = 5**.
 Five HF samples: per-dataset conclusions there are anecdote, not measurement.
