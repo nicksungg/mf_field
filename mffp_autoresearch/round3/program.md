@@ -30,7 +30,8 @@ Amendments:
 - `ext__helmholtz_2d` is report-only (ADR D2); every helmholtz mention carries the closed-form-triviality flag.
 - Guard set unchanged: `heat_local`, `fluid`, `sharp__sod_1d`.
 - Per-dataset cells are produced by the frozen round-2 eval layer (`../round2/eval/score_panel.py`, unchanged bytes, def hashes valid); the 5-dataset panel aggregation is round-3-side (`tools/make_round3_anchors.py` conventions).
-- **Launch anchors** live in `state/anchors/launch_anchors.json`: best-floor geomean 75.0673 on the D4 panel; the four round-2 anchor cards certify there when the repaired-ifc re-score lands (`state/ifc_rescore_jobs_2026-08-05.json`); batch 1 does not dispatch before that (ADR D6).
+- **Launch anchors** live in `state/anchors/launch_anchors.json`: best-floor geomean **36.3912** on the final 6-dataset panel (lineage: 75.0673 pre-A1 5-ds → 38.6300 after ifc_heat promotion → 36.3912 after the ac trim + pfc box swap, ADR r3-0002/r3-0003).
+  All four round-2 anchor cards CERTIFIED 2026-08-07 (per-seed geomeans in the anchors file); ADR D6 satisfied.
 - Standing caveats on every claim: pfc/fisher_kpp weak fidelity gap (denominator caveat), ifc_poisson affine structure, no cross-round comparison without the honest-denominator flag.
 - **Affine-floor rule (degeneracy audit 2026-08-05, `state/anchors/launch_anchors.json`):** ifc_poisson's condition→HF map is EXACTLY affine on the repaired rows (oracle-affine residual 5.4e-16), and on ifc_heat a 6-dof affine fit on the 5 HF train rows already beats the paper bar (nRMSE 0.0709, skill 0.96). Every card reporting an ifc number therefore reports the fitted `affine_on_hf_train` floor next to it (ifc_poisson skill 1.59, ifc_heat 0.96); an ifc claim that does not beat this floor has learned nothing beyond linearity, and skill < 1 on ifc_heat is not by itself a strong claim.
 

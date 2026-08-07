@@ -167,10 +167,13 @@ def load_card_skills(card, mode, family, floors_by_ds, include_void_ifc):
         cands = {}
         files = list((base / "cache").glob("*.json"))
         if include_void_ifc:
+            # restrict to the certified-summary panel: post-certification datasets
+            # (ifc_heat, A1) have no entry in the era refs and no certified row.
             files = [f for f in files
-                     if json.loads(f.read_text()).get("dataset") not in VOID_DATASETS]
+                     if json.loads(f.read_text()).get("dataset") in set(PANEL6_R2) - set(VOID_DATASETS)]
             files += [f for f in void_files(base, ["*.json"])
-                      if "seed" in json.loads(f.read_text())]  # cache-schema only
+                      if not f.name.startswith("diag_")
+                      and {"dataset", "seed", "nrmse_def_hash"} <= set(json.loads(f.read_text()))]  # cache-schema only
         for f in files:
             d = json.loads(f.read_text())
             if d.get("nrmse_def_hash") != NRMSE_DEF_HASH:
@@ -201,7 +204,7 @@ def load_card_skills(card, mode, family, floors_by_ds, include_void_ifc):
         files = list((base / "results" / family).glob("*_e200_s*.json"))
         if include_void_ifc:
             files = [f for f in files
-                     if not any(f.name.startswith(ds) for ds in VOID_DATASETS)]
+                     if any(f.name.startswith(ds) for ds in set(PANEL6_R2) - set(VOID_DATASETS))]
             files += [f for f in void_files(base, ["*_e200_s*.json"])
                       if any(f.name.startswith(ds) for ds in VOID_DATASETS)]
         for f in files:
@@ -219,7 +222,7 @@ def load_card_skills(card, mode, family, floors_by_ds, include_void_ifc):
             # certified-reproduction pass: quarantined (superseded-data) entries stand IN
             # PLACE OF the fresh ones — never mixed (they would average together below).
             files = [f for f in files
-                     if not any(ds in f.name for ds in VOID_DATASETS)]
+                     if any(ds in f.name for ds in set(PANEL6_R2) - set(VOID_DATASETS))]
             files += [f for f in void_files(base, ["result_*_A1_*.json"])]
         acc = {}
         for f in files:

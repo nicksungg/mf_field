@@ -7,7 +7,7 @@ Round-2 runbook: `../round2/HOW_TO_LAUNCH.md` (this file mirrors it with round-3
 
 - **G1-r3 — data**: ADR r3-0001 executed: five option-A sharp variants swapped in (2026-08-03), repaired IFC ladders adopted (2026-08-05, `ifc_pairing_repair/adoption_manifest_2026-08-05.json`), stripped view verified live-mirroring the repaired arrays.
 - **G2-r3 — preflight**: `state/preflight_launch_2026-08-05.json` PASS with the two adjudicated waivers (`state/preflight_launch_waiver_evidence_2026-08-05.md`); PROGRAM_NOTE MUST #1 satisfied.
-- **G3-r3 — anchors**: `state/anchors/launch_anchors.json` — best-floor certified (75.0673); the four card anchors flip PENDING→CERTIFIED when SLURM jobs 66546256–66546267 land and `tools/make_round3_anchors.py` is re-run. **Batch 1 does not dispatch while any card is PENDING (ADR D6).**
+- **G3-r3 — anchors**: `state/anchors/launch_anchors.json` — best-floor certified **36.3912** on the final repaired panel (lineage 75.0673 → 38.6300 → 36.3912); all four card anchors CERTIFIED 2026-08-07 after the pfc re-score (jobs 66610525–36). ADR D6 satisfied — batch 1 may dispatch.
 - Track gate state in `state/gates.md`.
 
 ## 1. Kick off the orchestrator (one persistent Claude Code session)

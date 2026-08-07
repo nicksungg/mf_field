@@ -58,11 +58,21 @@ Read (never guess):
 4. **Previous brainstormer reports** for this stream (N ≥ 2, selective).
 5. **Reopen candidates**: prior cards with `reopen_candidate: true` — list
    verbatim (id, category, why skipped).
+6. **Prior-round record** (mandatory at batch 1, selective after): the
+   round-2 report §2 (leaderboard) / §4 (what worked) / §6 (methodological
+   rules) at `../round2/docs/round2_report.md`, and round-1 report §4/§6 at
+   `../round1/docs/round1_report.md`. The websearch verdict covers the
+   *literature*; these cover *our own tested directions*. A proposal that
+   overlaps a tested round-1/2 direction must either state precisely how it
+   differs or justify the re-test (e.g. the panel repairs changed the data
+   the old result was measured on — cite which repair).
 
 Format (H2 sections): 1. websearch findings + prior-art verdict / 2. §12
 conventions verbatim / 3. within-stream prior cards / 4. cross-stream cards
-(or "none.") / 5. reopen candidates (or "none.") / 6. **What is UNKNOWN**
-(the most valuable section — spend effort). 500–1200 words, cite paths.
+(or "none.") / 5. reopen candidates (or "none.") / 6. prior-round record —
+tested directions relevant to this stream, each marked confirmed / refuted /
+untested-on-repaired-panel / 7. **What is UNKNOWN** (the most valuable
+section — spend effort). 500–1200 words, cite paths.
 
 ## 4. Design the slot proposal
 

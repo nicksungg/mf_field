@@ -1,0 +1,39 @@
+# Iteration 3 — r3s4_audit / batch 1
+
+## Search rationale
+
+`ENOUGH` on general field context — iterations 1–2 covered MDE/power, skill-score denominator lineage, per-sample-ratio aggregation, SciML baseline standards, and provenance hashing. Reason: the remaining uncertainty is not "what does the field do" but "has anyone done *the specific compositions B1 will propose*". This iteration is the first of two refutation passes, aimed at the three directions I expect the brainstormer to propose:
+
+- **D1** — per-dataset **claim threshold** for the repaired panel combining TWO noise sources: model seed spread (3-seed condition→HF smoke baseline, numerator) and the copy-LF reference cell's bootstrap min-detectable-delta (denominator, ADR r3-0003 `cell_stability`).
+- **D2** — **floor certification**: reproduce `zero` / `train_mean` / `nn_condition` / `affine_on_hf_train` under a data-binding hash certificate; reconcile the best-floor geomean discrepancy (38.63 in `launch_anchors.json` vs 75.0673 in program.md §2).
+- **D3** — **estimator-integrity audit of each panel cell**: leave-top-k-out / influence analysis of the per-row ratio sum, degenerate-row re-certification after the ac trim and pfc swap.
+
+## Search terms used
+
+1. `uncertainty propagation ratio metric numerator denominator both estimated skill score confidence interval seed variance evaluation noise combined`
+2. `leave-one-out influence analysis of benchmark aggregate metric identifying test examples that dominate the score`
+3. `linear least squares affine baseline outperforms neural operator parametric PDE few training samples baseline check`
+
+## Findings
+
+### Term 1 → attacks D1
+
+Top results: `SpecsVerification::SkillScore` R reference (https://search.r-project.org/CRAN/refmans/SpecsVerification/html/SkillScore.html, mirrors https://rdrr.io/cran/SpecsVerification/man/SkillScore.html and https://www.rdocumentation.org/packages/SpecsVerification/versions/0.5-3/topics/SkillScore); "Uncertainty Quantification in Forecast Comparisons" (https://arxiv.org/pdf/2605.03997); "The measurement uncertainty of ratios which share uncertainty components in numerator and denominator" (https://www.researchgate.net/publication/226389256_The_measurement_uncertainty_of_ratios_which_share_uncertainty_components_in_numerator_and_denominator); ratio-of-normals discussion (https://arxiv.org/pdf/1604.01205).
+
+**Fetch of https://search.r-project.org/CRAN/refmans/SpecsVerification/html/SkillScore.html** (~150 words): the function is documented as *"Calculate a skill score and assess uncertainty… A skill score is defined as (mean score − mean reference score) / (perfect score − mean reference score)… **Uncertainty is assessed by estimating the standard deviation of the skill score by propagation of uncertainty.**"* Its signature is `SkillScore(scores, scores.ref, N.eff = NA, score.perf = 0, handle.na = c("na.fail","use.pairwise.complete"))`, it requires the reference score vector to be **paired row-for-row** with the model score vector, exposes a user-supplied **effective sample size `N.eff`** "to be used to estimate the sampling uncertainty", and returns *"vector with skill score and its estimated standard deviation"*. This is, to the byte, the object D1 wants: a skill score whose uncertainty accounts for the reference (denominator) being an estimate, with a paired design and an ESS knob — shipped as production software since at least version 0.5-3. The search engine additionally surfaced (result-level) two constraints worth carrying: *"the effects of correlation must be taken into account for ratios in which the denominator and numerator share identical uncertainties"* and *"the uncertainty of the ratio of normally distributed variables is not itself normally distributed and can be well approximated as such only when the uncertainty on the denominator is smaller than that of the numerator"* — the second is a direct warning for cahn_hilliard, whose denominator CI half-width is large (top-5 rows = 76% of the cell).
+
+### Term 2 → attacks D3
+
+Top results: "Training Data Influence Analysis and Estimation: A Survey" (https://arxiv.org/pdf/2212.04612); "Revisiting Methods for Finding Influential Examples" (https://arxiv.org/pdf/2111.04683); leave-one-out meta-analysis references (https://www.stata.com/stata17/leave-one-out-meta-analysis/, https://scispace.com/agents/meta-analysis-leave-one-out-e8mzdg3x); "Distributional bias compromises leave-one-out cross-validation" (https://www.ncbi.nlm.nih.gov/pmc/articles/PMC11177965/).
+
+No fetch performed (search-result level only; the survey text was sufficient to settle the verdict and the loop budget is better spent on D1/D2). The engine's summary establishes: leave-one-out influence is *"the simplest influence measure… the oldest, dating back to Cook and Weisberg who term it **case deletion diagnostics**"*, and **leave-one-out meta-analysis** — omitting one study at a time to see its influence on the pooled effect and *"to identify influential studies"* — is a standard, tooled procedure (Stata 17 ships it). Our "leave-top-k-out on the per-row ratio sum" is case-deletion diagnostics applied to a benchmark cell. The ML-side influence literature (2212.04612, 2111.04683) is about *training*-data influence, not test-aggregate influence, so it is a neighbor rather than a hit.
+
+### Term 3 → attacks D2 (the affine floor arm specifically)
+
+Top results: DeLise, Loh, Patel, Teague, Arnold & Chung 2025, "**Optimal Linear Baseline Models for Scientific Machine Learning**" (https://arxiv.org/abs/2508.05831, html https://arxiv.org/html/2508.05831v1); "Randomized neural operator for parametric PDEs…" PCA-RaNN (https://arxiv.org/html/2606.29440v1); "Meta-Learned Basis Adaptation for Parametric Linear PDEs" (https://arxiv.org/html/2604.09289v1); LS-Net (https://arxiv.org/html/2410.15089v1).
+
+**Fetch of https://arxiv.org/abs/2508.05831** (~150 words): the authors *"develop a unified theoretical framework for analyzing linear encoder-decoder architectures through the lens of Bayes risk minimization for solving data-driven scientific machine learning problems"* and *"derive **closed-form, rank-constrained linear and affine linear optimal mappings** for forward modeling and inverse recovery tasks"*, generalizing existing formulations *"by accommodating **rank-deficiencies in data**, forward operators, and measurement processes"* — validated on biomedical imaging, financial factor analysis, and shallow-water nonlinear fluid simulations. Their stated purpose is verbatim ours: *"This work provides a **robust baseline** for understanding and **benchmarking learned neural network models** for scientific machine learning problems."* The rank-deficiency emphasis matters directly: our `affine_on_hf_train` arm is a min-norm least-squares fit of a 6-dof affine map on **5 HF rows** — a rank-deficient regime this paper explicitly covers. The engine also noted (result-level) the FNO-with-least-squares-readout-refit idea from https://arxiv.org/html/2606.29436 — freezing a trained nonlinear backbone and recomputing the final affine readout in closed form for the empirically squared-error-optimal readout.
+
+## Interpretation
+
+All three directions take direct hits at the mechanism level: skill-score uncertainty propagation with a paired reference and an ESS knob is shipped R software; leave-top-k-out influence on an aggregate is Cook–Weisberg case-deletion diagnostics with a Stata implementation; and the optimal affine baseline for SciML benchmarking — including the rank-deficient case — is a 2025 paper whose stated purpose is being a benchmark floor. B1 must be framed as **instrument certification with published machinery**, and any novelty claim must be confined to the *composition* (a copy-LF-skill panel where both the trained-model noise and the reference-cell noise are certified into one per-dataset claim threshold, under a byte-binding certificate).

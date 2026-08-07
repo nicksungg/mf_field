@@ -1,0 +1,92 @@
+# summary_so_far — `r3s1_factorised`, batch 1
+
+## What this stream is asking
+
+`project.yaml streams[0]` and `round3/program.md` §4: *"Does the recorded
+two-stage cross-coefficient factorised closed-form head (r2s1-B3 part 7,
+pre-measured 18.6787 on the OLD panel — number void, direction live) beat the
+shipped condition→level law on the honest (completeness-certified) panel?"*
+
+This is NOT a generic "build a condition→field surrogate" batch.
+The seed direction is a specific, already-implemented estimator shape recorded
+in `round2/experiment_cards/r2s1_direct/batch_3/B3.json` part 7 and in
+`round2/tools/coefficient_factorisation_audit.py`:
+
+- **Stage 1**: condition vector -> coefficients of a *selected SET* of output-basis
+  directions (POD/DC bank), one regressor per direction chosen out-of-fold from a
+  map bank {affine, quadratic, RBF kernel ridge, kNN}.
+- **Stage 2**: the *remaining* (discarded) coefficients are regressed on the
+  stage-1 **predicted** coefficients — cross-coefficient structure a per-direction
+  condition->coefficient map cannot express.
+- **Propagation-aware gate**: stage 2 must be selected AND fitted on
+  *out-of-fold stage-1 predictions*, not true stage-1 coefficients. B3 turn-3
+  F25 measured that fitting on true stage-1 inputs damaged helmholtz
+  3.8150->6.1666 and the panel 18.7500->19.9704; the out-of-fold version kept the
+  cahn_hilliard win (11.4148) and moved the panel to 18.6787.
+
+## State that constrains the design
+
+- **All round-2 numbers are void.** `round3/program.md` §2: the panel is now 6
+  completeness-certified datasets on repaired ladders; launch best-floor geomean
+  is **38.63** (`state/anchors/launch_anchors.json`), not round 2's 23.06.
+- **`state/anchors_repaired/noise_floor.json` is PROVISIONAL** — r3s4 re-certifies
+  mce before adjudication. Any claim inside those spreads is noise, not signal
+  (cahn_hilliard mce 1.1604, allen_cahn 16.42, pfc 8.86, fisher_kpp 158.33,
+  ifc_poisson 0.2399 in skill units).
+- **The single biggest change for THIS stream**: condition dimensions.
+  `state/anchors_repaired/floors.json` now reports cond_dim **19** (allen_cahn,
+  cahn_hilliard), **18** (pfc), **50** (fisher_kpp), 5 (ifc_poisson), 3 (ifc_heat)
+  — round 2 had 2-3 everywhere except cahn_hilliard's 19.
+  B3's hypothesis **M15** ("the only cell with usable cross-coefficient structure
+  is the only cell with a high-dimensional condition; at cond_dim >= ~10 a
+  closed-form per-direction head under-performs and a two-stage head recovers
+  most of the gap; caveat n = 1") is therefore **directly testable at n = 4** on
+  the round-3 panel. That is the stream's cheapest high-value experiment.
+- **Affine-floor rule** (program.md §2): every ifc number reports the fitted
+  `affine_on_hf_train` floor beside it (ifc_poisson skill 1.5938 with
+  oracle-affine residual 5.4e-16; ifc_heat skill 0.9584). An ifc claim that does
+  not beat that floor has learned nothing beyond linearity.
+- Floor arms (`nn_condition`, `train_mean`, `zero`) are mandatory on model cards.
+- Round-2 headline the stream must beat: the panel is **scalar-deep** for
+  condition-only models — headroom past the condition->level law was "exactly one
+  scalar per sample, free from LF" (`round2/docs/round2_report.md` lines 16, 47).
+  Round 3's premise is that IC coefficients now in the condition vector void that
+  excuse.
+
+## Prior websearch coverage to NOT re-derive
+
+`round2/websearches/r2s1_direct/batch_{1,2,3}/report.md` already settled:
+
+- FiLM/modulation-conditioned spectral decoders — **preempted**
+  (arxiv 2601.22654, 2511.09729, ModAFNO).
+- condition->fixed-basis (POD/PCA-Net/POD-NN, RB-DeepONet) — **preempted**
+  (arxiv 2504.18513, 2511.18260).
+- per-mode out-of-fold *family* selection (C1) — **preempted-but-MF-composition-open**
+  (ASAMS PMC7571090; McGreivy & Hakim arXiv:2407.07218). "One regressor per mode"
+  is a standing **presumed prior art, do not claim**.
+- Bates-Granger post-hoc blend as a decorrelation instrument (C2) —
+  **preempted-but-composition-open**.
+- Predictability-ordered / supervised basis selection (C3) — **preempted**
+  (arXiv:2011.05309, PMC9633505); ship as bug fix, never as contribution.
+
+Not covered by any prior loop and therefore this batch's job: the **two-stage
+cross-coefficient completion** itself, its **propagation-aware (out-of-fold
+stage-1 input) gate**, and the **condition-dimension discriminator**.
+
+In-repo literature reports (`docs/reports/MF_Leaderboard_Beaters_2026_Report.md`,
+`docs/reports/MF_Sharp_HighFreq_Report.md`) are LF-consuming-regime surveys
+(IRNO refinement, flow-matching residual transport, spectral-bias remedies);
+they contain nothing on condition-only coefficient factorisation and are cited
+here only to record that they were checked.
+
+## Open questions entering the search
+
+1. Is regressing *discarded* reduced-basis coefficients on *predicted* retained
+   coefficients published (gappy POD / PCA score completion / nonlinear POD
+   closure / hierarchical coefficient ROMs)?
+2. Is the propagation-aware fit (train stage 2 on out-of-fold stage-1 outputs)
+   anything other than Wolpert-style stacked generalization / exposure-bias
+   correction?
+3. Is "per-mode condition->coefficient regression degrades with parameter
+   dimension, and a coefficient-to-coefficient stage recovers it" a known
+   result for high-dimensional (KL/IC-coefficient) parametric inputs?
