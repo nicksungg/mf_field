@@ -1,4 +1,4 @@
-# MFFP Autoresearch Round 3 — Dashboard (updated 2026-08-07T19:18:34Z)
+# MFFP Autoresearch Round 3 — Dashboard (updated 2026-08-07T19:20:13Z)
 
 ## HOLD CLEARED 2026-08-07T19:17:33Z — pfc moved to report-only (ADR r3-0004), scored panel now 5 datasets
 
@@ -11,7 +11,7 @@ A separate draft ADR (coarse-rung scoring + spectral-lift reference, the "proper
 HF release: pfc arrays ship unchanged (correct physics); dataset card/DEFECT_STATUS to document the top-rung convergence.
 
 All three gates are GREEN again on the 5-dataset panel (`state/gates.md`, re-certified 2026-08-07): **G1-r3 GREEN**, **G2-r3 GREEN** (`preflight_launch_5ds_2026-08-07.json` PASS), **G3-r3 GREEN** (all 4 anchor-family cards CERTIFIED on the 5-ds re-aggregation).
-**Batch 1 has not yet been dispatched to SLURM** as of this snapshot — all 3 drafted cards still show `status: drafted`, `job_ids: []`; `squeue`/`sacct` show no `r3-*` experiment jobs. r3s3_lf_value has no card yet (starter was withheld through the whole HOLD episode; brainstorm-done).
+**Builders now dispatched at the agent level** for r3s1/r3s2/r3s4, and the r3s3 starter has been dispatched (per orchestrator commit `873075c`, landed 2026-08-07T19:19:30Z, ~1 min after this maintainer's prior snapshot) — but **no SLURM job has appeared yet**: all 3 cards still show `status: drafted`, `job_ids: []` as of 19:20:13Z, and `squeue`/`sacct` show no `r3-*` experiment jobs. Expect status/job_ids to update on the next maintainer cycle once builders finish and submit training jobs.
 
 **Program:** `program.md` · **Config:** `project.yaml` · **ADRs:** `docs/adr/` (0001 launch panel + A1, 0002 pfc crystalline box, 0003 estimator-integrity repairs, 0004 pfc report-only) · **Runbook:** `HOW_TO_LAUNCH.md`
 
@@ -29,7 +29,7 @@ Source: `state/anchors/launch_anchors.json` (re-aggregated 2026-08-07, ~19:17Z).
 ## Running / pending jobs
 | Job | Card | State | Elapsed | Node/Reason |
 |---|---|---|---|---|
-| — | — | — | — | none live: `squeue -u $USER` empty; `sacct` (2-day window) has no `r3-{stream}-B*` entries — batch 1 has not been dispatched to SLURM for any stream yet |
+| — | — | — | — | none live: `squeue -u $USER` empty; `sacct` (2-day window) has no `r3-{stream}-B*` entries — builders/starter dispatched at the agent level (orchestrator commit `873075c`) but no SLURM submission observed yet |
 
 ## Completed cards
 | Card | Type | Panel geomean skill (±CI) | Falsification verdict | Tools promoted |
