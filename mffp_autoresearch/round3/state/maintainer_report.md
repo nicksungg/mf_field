@@ -12,3 +12,17 @@
 - No transcripts/inbox/ files present -- nothing archived.
 - index.md regenerated in full to reflect the final post-transition state (HOLD cleared, ADR r3-0004, 5-dataset panel, gates GREEN, batch 1 still pending dispatch) -- superseding the maintainer's own initial HOLD-active draft caught mid-walk.
 ## RUN END 2026-08-07T19:20:30Z
+
+## RUN START 2026-08-07T19:38:15Z
+- Single in-flight check: last RUN START 19:15:22Z had a matching RUN END 19:20:30Z (elapsed ~5 min, well within cadence) -- proceeding.
+- Walked all 4 batch-1 cards (r3s1_factorised-B1, r3s2_field_reach-B1, r3s3_lf_value-B1, r3s4_audit-B1): all still `status: drafted`, `job_ids: []`. No card file was modified by this maintainer run (`git status --short experiment_cards/` clean before and after).
+- **New card since last run**: `r3s3_lf_value-B1` was created at 2026-08-07T19:21:21Z (committed `ae2001b`, 19:30:02Z auto-sync) -- the starter that the prior report flagged as "withheld under HOLD, expect dispatch next cycle" ran and produced a card. `r3s3_lf_value`'s stage advanced brainstorm -> builder.
+- **All 4 streams now at builder stage** (`state/{stream}/current_stage.txt` = `builder` for r3s1_factorised, r3s2_field_reach, r3s3_lf_value, r3s4_audit). Each worktree has an active `models_r3/<family>/` directory with file mtimes within ~2 minutes of this walk (r3s1_twostage_crosscoef, r3s2_stack_ic, r3s3_lf_channels, r3s4_cert_min) -- builders are live, not stalled.
+- **No `r3-{stream}-B{N}-s{seed}` SLURM jobs anywhere**: `squeue -u $USER` empty; `sacct` 2-day window has no `r3-` prefixed entries. The only recent sacct activity was the round-2 anchor-certification jobs (66610529-36, already logged last cycle) plus unrelated non-round-3 `bash` jobs from other users' sessions -- none match `r3-*` naming. Consistent with builders still writing family code pre-submission.
+- **New deltas outside the round-3 card set, surfaced as flags**: (1) HF release synced this cycle -- commit `f869636` (19:26:18Z), hub commit `36a5f198`, pfc row recomputed / dataset cards updated, arrays unchanged. (2) ADR r3-0005 (pfc spectral-rung repair) landed as **PROPOSED** -- commit `9b07ce0` (19:27:23Z), `docs/adr/0005-pfc-spectral-rung-repair-PROPOSED.md` + new `experiment_cards/SCHEMA.md`. Explicitly requires operator (Eloise) AND mentor sign-off before execution (amends the frozen ADR r2-0001 eval convention) -- not executed, no card/anchor/gate mutation from it this cycle. Flagging for visibility; not actioned by this maintainer (read-only).
+- Gates (`state/gates.md`) unchanged: G1-r3/G2-r3/G3-r3 all GREEN, same evidence as last cycle. Anchors (`state/anchors/launch_anchors.json`) unchanged, best-floor geomean 34.4198.
+- Timing ledger: no COMPLETED `r3-*` jobs exist to upsert; `state/timing_ledger.json` left unchanged (entries: [], scope note still accurate).
+- Abandonment: no stream has 3 consecutive skipped/blocked batches (all 4 on batch 1, builder stage) -- no `state/streams/{stream}.json` abandonment markers written.
+- Transcripts: `state/transcripts/inbox/` empty (dir created if missing) -- nothing to archive.
+- index.md regenerated in full to reflect: r3s3 card creation + all-4-streams-at-builder-stage, HF sync, ADR r3-0005 proposed status, still-zero SLURM jobs.
+## RUN END 2026-08-07T19:39:40Z
