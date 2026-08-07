@@ -21,8 +21,9 @@ Also binding: "Every number in the card is new" — round-2's 18.6787 / 11.4148 
 
 ## 2. §12 conventions verbatim
 
-Round-3 `program.md` §5: "Round-2 §12 methodological rules apply verbatim". Round-2 §12 preamble and §12.1 (the stream's governing conventions), verbatim:
+Round-3 `program.md` §5: "Round-2 §12 methodological rules apply verbatim". Round-2 §12 preamble, the ADR r2-0004 additions, and §12.1 — the stream's governing conventions — reproduced byte-for-byte from `round2/program.md`:
 
+>
 > Common to all streams: quote the launch anchor (best-floor geomean 23.06) and
 > the per-dataset floor table verbatim when designing; thresholds must clear
 > the noise floor for the dataset(s) — while `state/noise_floor.json` is
@@ -30,37 +31,42 @@ Round-3 `program.md` §5: "Round-2 §12 methodological rules apply verbatim". Ro
 > websearcher's prior-art verdict; every proposal carries a complete `recipe`
 > block; floor arms mandatory on model cards (§2.2).
 
+> Two further conventions, added 2026-08-01 between batches (ADR r2-0004):
+>
 > - **Registration of model-side lifts.** Any family or instrument code that
->   resamples a field between grids (LF->HF lift, working-grid cap, prediction
+>   resamples a field between grids (LF→HF lift, working-grid cap, prediction
 >   resample) MUST use the ADR r2-0001 per-dataset conventions — vendor the
 >   interpolators from `eval/panel_data.py` (the r2s2-B1/r2s3-B2 precedent) or
 >   use `factory_mffp/models/_common/lf_registration.py`. A bare
->   `F.interpolate`/`zoom` on a panel dataset is the (r-1)/2 registration
+>   `F.interpolate`/`zoom` on a panel dataset is the (r−1)/2 registration
 >   defect and is a reviewer FAIL.
 > - **Target-scaler pre-flight.** Any model card that trains on
 >   `ext__helmholtz_2d` or `sharp__phase_field_crystal_2d` runs
 >   `tools/target_scale_spread_audit.py` on those datasets pre-flight; an
 >   `OUTLIER_DOMINATED` or `NEAR_ZERO_TARGETS` verdict requires per-sample
 >   target normalisation (or a card-recorded justification for keeping a
->   global scaler).
+>   global scaler). Round 1's `lf_resid_fno` helmholtz 4.14 / pfc 8206×-noise
+>   failures were exactly these two verdicts left unhandled.
 
 > ### 12.1 `r2s1_direct` (gap)
 >
 > - **Bar**: the per-dataset floor table (§2.3). Beating NN-in-condition with
 >   400 train samples is necessary but nowhere near sufficient; the interesting
->   question is how close a from-scratch condition->HF surrogate gets to
+>   question is how close a from-scratch condition→HF surrogate gets to
 >   skill 1.0 on each dataset.
-> - Design priors (spec §6): FiLM-conditioned FNO **decoders** (condition ->
->   spectral latent -> field), DeepONet-style branch-trunk (branch on condition,
+> - Design priors (spec §6): FiLM-conditioned FNO **decoders** (condition →
+>   spectral latent → field), DeepONet-style branch–trunk (branch on condition,
 >   trunk on coordinates), spectral/implicit decoders (SIREN/modulated INR
->   class). Condition vectors are 2-19 dims; ifc_poisson's is 5-dim.
+>   class). Condition vectors are 2–19 dims; ifc_poisson's is 5-dim.
 > - **ADR r2-0003 (corrects a spec §4 grounding fact)**: on pfc, fisher_kpp
 >   and allen_cahn the condition vector is NOT complete — per-sample random
->   ICs live only in the fields, so condition->HF is a stochastic map and
+>   ICs live only in the fields, so condition→HF is a stochastic map and
 >   deterministic models are bounded by the conditional-mean floor
->   (train_mean > NN on those floors is the symptom). Skill->1 is unreachable
+>   (train_mean > NN on those floors is the symptom). Skill→1 is unreachable
 >   there; design and falsify against the conditional-mean floor, and treat
 >   bare FiLM-decoders as declared baselines (prior-art verdict: preempted).
+> - **Helmholtz lesson** (r1 report §5): the zero field is the floor to beat
+>   there — any helmholtz claim must show the zero-floor column.
 > - **pfc caveat** (§2.3): denominator 0.007381 under variant C; no
 >   fidelity gap under band-limited. State it on every pfc claim.
 > - N_hf on ifc_poisson is 5 — every claim there is anecdote-grade; prefer

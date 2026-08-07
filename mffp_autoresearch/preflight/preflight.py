@@ -322,8 +322,11 @@ def check_dataset(root: Path, name: str) -> dict:
         rec["nn_baseline"] = nn_baseline(
             np.asarray(x, float), np.asarray(y_hf, float),
             np.asarray(te["x"][:50], float), np.asarray(te["y"][:50], float))
-    # --- fifth class: per-cell estimator integrity (test split; canonical per-row gap)
-    te_lf_p = d / f"test_l{levels[0]}.npz"
+    # --- fifth class: per-cell estimator integrity (test split; scored-cell per-row
+    # gap: finest LF rung, matching panel_data.copylf_prediction's max(lf_fids) —
+    # the ADR r3-0003 D2 licensing constants are defined on this cell, not the
+    # coarsest rung (r3s4-B1 escalation, 2026-08-07))
+    te_lf_p = d / f"test_l{levels[-2]}.npz"
     gaps = None
     if len(levels) > 1 and y_te_hf is not None and te_lf_p.exists():
         y_te_lf = np.asarray(np.load(te_lf_p)["y"][:MAX_ROWS], float)

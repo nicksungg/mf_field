@@ -1,5 +1,11 @@
 # Round-3 launch gates
 
+**2026-08-07 (later): G2 + G3 RE-OPENED — HOLD set.**
+The scored-cell repoint of the fifth-class checks (r3s4-B1 escalation) exposed pfc's scored cell (l2→l3) as spectrally converged: all 100 test rows task-void (per-row gap ≤ 1.66e-6); the certified 0.018257 reference is linear-interpolation artifact of the frozen ADR r2-0001 lift.
+`preflight_launch_2026-08-07.json` now records the honest FAIL.
+pfc columns of the anchor certification are voided; batch 1 halted pre-SLURM.
+Operator adjudication pending (see `HOLD.json`, orchestrator_flow).
+
 | gate | state | evidence |
 |---|---|---|
 | G1-r3 data | **GREEN** (2026-08-05) | ADR r3-0001 D1/D3 executed: option-A sharp swap (2026-08-03), repaired IFC adoption (`ifc_pairing_repair/adoption_manifest_2026-08-05.json`, in-place nesting verified), stripped view verified live-mirroring repaired arrays. |
