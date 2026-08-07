@@ -37,14 +37,15 @@ sys.path.insert(0, str(EVAL))
 from nrmse import nrmse, skill, NRMSE_DEF_HASH  # noqa: E402
 
 PANEL = [
-    "sharp__phase_field_crystal_2d",
+    # ADR r3-0004 (2026-08-07): pfc moved to report-only — scored cell (l2->l3)
+    # is spectrally converged, all test rows task-void; not in the geomean.
     "sharp__allen_cahn_2d",
     "sharp__fisher_kpp_2d",
     "sharp__cahn_hilliard",
     "ifc_poisson",
     "ifc_heat",  # ADR r3-0001 Amendment A1 (2026-08-05)
 ]
-SHARP4 = PANEL[:4]
+SHARP4 = ["sharp__phase_field_crystal_2d"] + PANEL[:3]  # historical: validation-seam composition
 IFC = ["ifc_poisson", "ifc_heat"]
 PANEL6_R2 = ["ext__helmholtz_2d"] + SHARP4 + ["ifc_poisson"]  # certified-summary panel (round-2 composition)
 SEEDS = [0, 1, 2]

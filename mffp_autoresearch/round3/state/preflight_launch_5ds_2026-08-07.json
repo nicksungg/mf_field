@@ -1,0 +1,541 @@
+{
+  "root": "mf_field/factory_mffp/data",
+  "waivers": [
+    [
+      "ext__helmholtz_2d",
+      "completeness"
+    ],
+    [
+      "sharp__sod_1d",
+      "pairing"
+    ]
+  ],
+  "datasets": {
+    "sharp__allen_cahn_2d": {
+      "dataset": "sharp__allen_cahn_2d",
+      "levels": [
+        1,
+        2,
+        3
+      ],
+      "n_rows_checked": 400,
+      "completeness": {
+        "status": "OK",
+        "witness": {
+          "closest_pair": [
+            122,
+            314
+          ],
+          "standardized_condition_distance": 2.7375101684028076,
+          "relative_field_difference": 0.3105750684644319
+        },
+        "meta_gate_verdict": "COMPLETE"
+      },
+      "pairing": {
+        "status": "OK",
+        "frac_diag_above_p95_offdiag": 1.0,
+        "row_match_accuracy": 1.0,
+        "mean_diag_cosine": 0.9912743821278208
+      },
+      "fidelity_gap": {
+        "status": "OK",
+        "median_rel_l2": 0.006532508016617573
+      },
+      "nn_baseline": {
+        "status": "OK",
+        "median_rel_l2": 1.0550655953644892
+      },
+      "degenerate_rows": {
+        "status": "OK",
+        "n_rows": 78,
+        "n_void": 0,
+        "frac_void": 0.0,
+        "threshold": 1.57575140959677e-05,
+        "median_row_gap": 0.00157575140959677,
+        "min_row_gap": 2.908042885455664e-05,
+        "void_indices_first10": []
+      },
+      "cell_stability": {
+        "status": "OK",
+        "cell_point_value": 0.0015764741939007247,
+        "ci95": [
+          0.0014234448958915773,
+          0.0017426614722441394
+        ],
+        "ci_halfwidth_rel": 0.10124383183295674,
+        "top5_share": 0.11758879680047735,
+        "min_detectable_delta": 0.20248766366591348,
+        "n_boot": 1000,
+        "seed": 0
+      },
+      "rung_scale_coherence": {
+        "status": "OK",
+        "rms_ratio_by_level": {
+          "1": 1.0007465316406914,
+          "2": 1.0001399488529936
+        },
+        "bounds": [
+          0.5,
+          2.0
+        ],
+        "offending_levels": [],
+        "split": "test"
+      },
+      "hard_fails": [],
+      "warnings": [],
+      "status": "PASS"
+    },
+    "sharp__fisher_kpp_2d": {
+      "dataset": "sharp__fisher_kpp_2d",
+      "levels": [
+        1,
+        2,
+        3
+      ],
+      "n_rows_checked": 400,
+      "completeness": {
+        "status": "OK",
+        "witness": {
+          "closest_pair": [
+            24,
+            346
+          ],
+          "standardized_condition_distance": 6.686241075264441,
+          "relative_field_difference": 0.09612602281880207
+        },
+        "meta_gate_verdict": "COMPLETE"
+      },
+      "pairing": {
+        "status": "OK",
+        "frac_diag_above_p95_offdiag": 1.0,
+        "row_match_accuracy": 1.0,
+        "mean_diag_cosine": 0.9789788356809406
+      },
+      "fidelity_gap": {
+        "status": "NO_GAP",
+        "median_rel_l2": 0.0001922266306621869
+      },
+      "nn_baseline": {
+        "status": "OK",
+        "median_rel_l2": 0.05747315725643111
+      },
+      "degenerate_rows": {
+        "status": "OK",
+        "n_rows": 100,
+        "n_void": 0,
+        "frac_void": 0.0,
+        "threshold": 1e-06,
+        "median_row_gap": 4.238967955333657e-05,
+        "min_row_gap": 1.4345801603600348e-06,
+        "void_indices_first10": []
+      },
+      "cell_stability": {
+        "status": "OK",
+        "cell_point_value": 4.2774081081760244e-05,
+        "ci95": [
+          3.689227314866838e-05,
+          4.87380493841276e-05
+        ],
+        "ci_halfwidth_rel": 0.13846909081245584,
+        "top5_share": 0.13828103653639753,
+        "min_detectable_delta": 0.2769381816249117,
+        "n_boot": 1000,
+        "seed": 0
+      },
+      "rung_scale_coherence": {
+        "status": "OK",
+        "rms_ratio_by_level": {
+          "1": 0.9999919519179652,
+          "2": 0.9999984539799488
+        },
+        "bounds": [
+          0.5,
+          2.0
+        ],
+        "offending_levels": [],
+        "split": "test"
+      },
+      "hard_fails": [],
+      "warnings": [
+        "fidelity_gap"
+      ],
+      "status": "WARN"
+    },
+    "sharp__cahn_hilliard": {
+      "dataset": "sharp__cahn_hilliard",
+      "levels": [
+        1,
+        2,
+        3
+      ],
+      "n_rows_checked": 400,
+      "completeness": {
+        "status": "UNDECIDED",
+        "witness": {
+          "closest_pair": [
+            73,
+            189
+          ],
+          "standardized_condition_distance": 2.82220493634785,
+          "relative_field_difference": 0.6760334871267648
+        },
+        "meta_gate_verdict": null
+      },
+      "pairing": {
+        "status": "OK",
+        "frac_diag_above_p95_offdiag": 0.9725,
+        "row_match_accuracy": 0.2375,
+        "mean_diag_cosine": 0.964023115613836
+      },
+      "fidelity_gap": {
+        "status": "OK",
+        "median_rel_l2": 0.01910868289675682
+      },
+      "nn_baseline": {
+        "status": "OK",
+        "median_rel_l2": 1.1025828093555234
+      },
+      "degenerate_rows": {
+        "status": "OK",
+        "n_rows": 100,
+        "n_void": 0,
+        "frac_void": 0.0,
+        "threshold": 1.637029481982845e-05,
+        "median_row_gap": 0.0016370294819828448,
+        "min_row_gap": 0.0008280090494917715,
+        "void_indices_first10": []
+      },
+      "cell_stability": {
+        "status": "OUTLIER_DOMINATED",
+        "cell_point_value": 0.04059822267879344,
+        "ci95": [
+          0.010401796474690412,
+          0.0797313567648529
+        ],
+        "ci_halfwidth_rel": 0.8538496972969326,
+        "top5_share": 0.7836432777308463,
+        "min_detectable_delta": 1.7076993945938652,
+        "n_boot": 1000,
+        "seed": 0
+      },
+      "rung_scale_coherence": {
+        "status": "OK",
+        "rms_ratio_by_level": {
+          "1": 0.9996859557271174,
+          "2": 0.9989156892300322
+        },
+        "bounds": [
+          0.5,
+          2.0
+        ],
+        "offending_levels": [],
+        "split": "test"
+      },
+      "hard_fails": [],
+      "warnings": [
+        "cell_stability"
+      ],
+      "status": "WARN"
+    },
+    "ifc_poisson": {
+      "dataset": "ifc_poisson",
+      "status": "NO_DATA",
+      "hard_fails": []
+    },
+    "ifc_heat": {
+      "dataset": "ifc_heat",
+      "status": "NO_DATA",
+      "hard_fails": []
+    },
+    "ext__helmholtz_2d": {
+      "dataset": "ext__helmholtz_2d",
+      "levels": [
+        1,
+        2
+      ],
+      "n_rows_checked": 400,
+      "completeness": {
+        "status": "INCOMPLETE",
+        "witness": {
+          "closest_pair": [
+            113,
+            284
+          ],
+          "standardized_condition_distance": 0.03514443425557709,
+          "relative_field_difference": 0.22149999754489724
+        },
+        "meta_gate_verdict": null
+      },
+      "pairing": {
+        "status": "OK",
+        "frac_diag_above_p95_offdiag": 0.995,
+        "row_match_accuracy": 0.97,
+        "mean_diag_cosine": 0.9853376958075748
+      },
+      "fidelity_gap": {
+        "status": "OK",
+        "median_rel_l2": 0.16793185936970423
+      },
+      "nn_baseline": {
+        "status": "OK",
+        "median_rel_l2": 0.8271349922308089
+      },
+      "degenerate_rows": {
+        "status": "OK",
+        "n_rows": 100,
+        "n_void": 0,
+        "frac_void": 0.0,
+        "threshold": 0.0016083046665407935,
+        "median_row_gap": 0.16083046665407935,
+        "min_row_gap": 0.07585933584728514,
+        "void_indices_first10": []
+      },
+      "cell_stability": {
+        "status": "OUTLIER_DOMINATED",
+        "cell_point_value": 0.3725850561365824,
+        "ci95": [
+          0.19860940339458236,
+          0.6709828668909257
+        ],
+        "ci_halfwidth_rel": 0.6339135933073768,
+        "top5_share": 0.5244645395356992,
+        "min_detectable_delta": 1.2678271866147537,
+        "n_boot": 1000,
+        "seed": 0
+      },
+      "rung_scale_coherence": {
+        "status": "OK",
+        "rms_ratio_by_level": {
+          "1": 1.5893151721437238
+        },
+        "bounds": [
+          0.5,
+          2.0
+        ],
+        "offending_levels": [],
+        "split": "test"
+      },
+      "hard_fails": [],
+      "warnings": [
+        "cell_stability"
+      ],
+      "status": "WAIVED"
+    },
+    "sharp__sod_1d": {
+      "dataset": "sharp__sod_1d",
+      "levels": [
+        1,
+        2,
+        3
+      ],
+      "n_rows_checked": 400,
+      "completeness": {
+        "status": "UNDECIDED",
+        "witness": {
+          "closest_pair": [
+            59,
+            248
+          ],
+          "standardized_condition_distance": 0.005143230997132527,
+          "relative_field_difference": 0.0002708738849263482
+        },
+        "meta_gate_verdict": null
+      },
+      "pairing": {
+        "status": "MISPAIRED",
+        "frac_diag_above_p95_offdiag": 0.2,
+        "row_match_accuracy": 0.01,
+        "mean_diag_cosine": 0.9954707262614348
+      },
+      "fidelity_gap": {
+        "status": "OK",
+        "median_rel_l2": 0.13161281640293554
+      },
+      "nn_baseline": {
+        "status": "TRIVIAL_NN",
+        "median_rel_l2": 0.006987337774417474
+      },
+      "degenerate_rows": {
+        "status": "OK",
+        "n_rows": 100,
+        "n_void": 0,
+        "frac_void": 0.0,
+        "threshold": 0.00074244780842079,
+        "median_row_gap": 0.074244780842079,
+        "min_row_gap": 0.0708581388087886,
+        "void_indices_first10": []
+      },
+      "cell_stability": {
+        "status": "OK",
+        "cell_point_value": 0.07410431640439401,
+        "ci95": [
+          0.07380708133009722,
+          0.07441801816037444
+        ],
+        "ci_halfwidth_rel": 0.0041221406519916905,
+        "top5_share": 0.0515594972746265,
+        "min_detectable_delta": 0.008244281303983381,
+        "n_boot": 1000,
+        "seed": 0
+      },
+      "rung_scale_coherence": {
+        "status": "OK",
+        "rms_ratio_by_level": {
+          "1": 0.9935014405879719,
+          "2": 0.9964294354129163
+        },
+        "bounds": [
+          0.5,
+          2.0
+        ],
+        "offending_levels": [],
+        "split": "test"
+      },
+      "hard_fails": [],
+      "warnings": [
+        "nn_baseline"
+      ],
+      "status": "WAIVED"
+    },
+    "heat_local": {
+      "dataset": "heat_local",
+      "levels": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "n_rows_checked": 400,
+      "completeness": {
+        "status": "UNDECIDED",
+        "witness": {
+          "closest_pair": [
+            257,
+            341
+          ],
+          "standardized_condition_distance": 0.0900196002004394,
+          "relative_field_difference": 0.011351334318709123
+        },
+        "meta_gate_verdict": null
+      },
+      "pairing": {
+        "status": "OK",
+        "frac_diag_above_p95_offdiag": 1.0,
+        "row_match_accuracy": 0.1775,
+        "mean_diag_cosine": 0.9986771205368791
+      },
+      "fidelity_gap": {
+        "status": "OK",
+        "median_rel_l2": 0.12598765214248991
+      },
+      "nn_baseline": {
+        "status": "TRIVIAL_NN",
+        "median_rel_l2": 0.01902033318508734
+      },
+      "degenerate_rows": {
+        "status": "UNSUPPORTED"
+      },
+      "cell_stability": {
+        "status": "UNSUPPORTED"
+      },
+      "rung_scale_coherence": {
+        "status": "OK",
+        "rms_ratio_by_level": {
+          "1": 1.0127392550736836,
+          "2": 1.004353261032848,
+          "3": 1.0012628020180516
+        },
+        "bounds": [
+          0.5,
+          2.0
+        ],
+        "offending_levels": [],
+        "skipped_levels": [
+          "4"
+        ],
+        "split": "test"
+      },
+      "hard_fails": [],
+      "warnings": [
+        "nn_baseline"
+      ],
+      "status": "WARN"
+    },
+    "fluid": {
+      "dataset": "fluid",
+      "levels": [
+        1,
+        2
+      ],
+      "n_rows_checked": 256,
+      "completeness": {
+        "status": "UNDECIDED",
+        "witness": {
+          "closest_pair": [
+            0,
+            253
+          ],
+          "standardized_condition_distance": 0.019194504543225716,
+          "relative_field_difference": 0.009038778043857668
+        },
+        "meta_gate_verdict": null
+      },
+      "pairing": {
+        "status": "OK",
+        "frac_diag_above_p95_offdiag": 0.90234375,
+        "row_match_accuracy": 0.26171875,
+        "mean_diag_cosine": 0.9803675055896324
+      },
+      "fidelity_gap": {
+        "status": "OK",
+        "median_rel_l2": 0.2524025361324637
+      },
+      "nn_baseline": {
+        "status": "TRIVIAL_NN",
+        "median_rel_l2": 0.03686636223485906
+      },
+      "degenerate_rows": {
+        "status": "OK",
+        "n_rows": 256,
+        "n_void": 0,
+        "frac_void": 0.0,
+        "threshold": 0.0025385120631237217,
+        "median_row_gap": 0.2538512063123722,
+        "min_row_gap": 0.175761444343336,
+        "void_indices_first10": []
+      },
+      "cell_stability": {
+        "status": "OK",
+        "cell_point_value": 0.2532750927153558,
+        "ci95": [
+          0.24835529854947055,
+          0.25802400806880027
+        ],
+        "ci_halfwidth_rel": 0.019087367446344067,
+        "top5_share": 0.02456189952994179,
+        "min_detectable_delta": 0.038174734892688134,
+        "n_boot": 1000,
+        "seed": 0
+      },
+      "rung_scale_coherence": {
+        "status": "OK",
+        "rms_ratio_by_level": {
+          "1": 1.0348196247931625
+        },
+        "bounds": [
+          0.5,
+          2.0
+        ],
+        "offending_levels": [],
+        "split": "test"
+      },
+      "hard_fails": [],
+      "warnings": [
+        "nn_baseline"
+      ],
+      "status": "WARN"
+    }
+  },
+  "verdict": "PASS"
+}
