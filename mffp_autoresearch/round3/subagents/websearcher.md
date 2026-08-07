@@ -161,3 +161,14 @@ Per `_shared/return_format.md`:
 **Checklist passes**: <n>/<m>
 **Blockers** (only if PARTIAL or FAILURE): <description>
 ```
+
+## Tooling note (environment, batch-1 lessons — do not rediscover)
+
+- `WebFetch` (and often `curl`/`wget`) are intercepted by a context-mode plugin
+  that redirects to MCP tools NOT in your tool list. Do not fight it: fetch
+  pages with `python3 urllib.request` directly.
+- PDFs: `pypdf` is installed in the repo venv
+  (`/resnick/groups/Hippo/ezeng/mf_field/.venv/bin/python`) — use it to
+  extract arXiv/NeurIPS PDF text instead of declaring the body unreadable.
+- Cite only bodies you actually retrieved this loop; label search-snippet-only
+  sources as such (unchanged rule).

@@ -166,8 +166,11 @@ The brainstormer MUST quote the prior-art verdict for whatever it proposes.
    motivation and it is retrieval-grounded (iteration_2 term 1, iteration_5 term 3).
 4. **Every number in the card is new.** Round-2's 18.6787 / 11.4148 / 12.6601 are
    **void** (`program.md` §2): the panel is 6 completeness-certified datasets, the
-   launch best-floor geomean is **38.63**, and `state/anchors_repaired/noise_floor.json`
-   is **PROVISIONAL** pending r3s4. Do not quote a round-2 skill as an expectation;
+   launch best-floor geomean is **36.3912** (re-verified at act time 2026-08-07
+   09:14; lineage 75.0673 -> 38.6300 -> 36.3912, ADR r3-0002/r3-0003 — this file
+   moved WHILE this search loop ran, so re-read `state/anchors/launch_anchors.json`
+   at design time rather than trusting this report's number), and
+   `state/anchors_repaired/noise_floor.json` is **PROVISIONAL** pending r3s4. Do not quote a round-2 skill as an expectation;
    quote it only as a direction with the void flag.
 5. **Floor arms are mandatory and D3 is a bug-fix, not a contribution.** Report
    `nn_condition`, `train_mean`, `zero`, and — on any ifc cell — the fitted
