@@ -57,15 +57,21 @@ The 2026-08-03 wave ran *under* the landed ladder fix (`c29c269`, 15:02 EDT, bef
 | `core/ifc_heat` | parameter vectors drawn independently per fidelity, so no sample existed at more than one fidelity and $HF - LF$ was undefined; regenerated with nested parameter sets | — |
 | `core/ifc_poisson` | same | — |
 | `sharp/allen_cahn_1d` | condition-vector incompleteness — per-sample IC coefficients consumed but not exported | `WORK_CAP` |
-| `sharp/allen_cahn_2d` | condition incompleteness (2026-08-03), **plus** 22 task-void test rows trimmed to $n = 78$ (ADR r3-0003 D1, 2026-08-06) | **stale on HuggingFace** |
+| `sharp/allen_cahn_2d` | condition incompleteness (2026-08-03), **plus** 22 task-void test rows trimmed to $n = 78$ (ADR r3-0003 D1, 2026-08-06) | — |
 | `sharp/fisher_kpp_1d` | condition incompleteness | `WORK_CAP` |
 | `sharp/fisher_kpp_2d` | condition incompleteness | — |
-| `sharp/phase_field_crystal_2d` | condition incompleteness (2026-08-03), **plus** NO_GAP → crystalline-box regeneration, median bottom-rung gap 1.2e-6 → 9.8e-3 (ADR r3-0002, 2026-08-06) | **stale on HuggingFace** |
+| `sharp/phase_field_crystal_2d` | condition incompleteness (2026-08-03), **plus** NO_GAP → crystalline-box regeneration, median bottom-rung gap 1.2e-6 → 9.8e-3 (ADR r3-0002, 2026-08-06), **plus** top-rung convergence documented: L2→L3 is spectrally converged (≤ 1.7e-6 per row) so the scored L2→L3 cell carries no task — dataset report-only in MFFP round 3 until the eval is re-pointed at L1 with a spectral reference (ADR r3-0004, 2026-08-07) | — |
 
 `phase_field_crystal_2d` is the one regeneration that traces back to the half-pixel repair, and only indirectly.
 The corrected node-aligned reference collapsed its copy-LF gap from 0.0448 to 7.1e-06, exposing that the dataset had no fidelity gap at all.
 That verdict drove `true_gap_sweep`, which then **overturned** the original defect note's diagnosis: the note blamed a resolution-independent continuous symbol and prescribed a coarser LF rung, but the real cause was sampling composition — under the production box roughly half the samples satisfied $\sigma = -(r + 3\bar\psi^2) < 0$, sat in the uniform phase, and decayed to flat fields.
 The regeneration changed the sampling box, not the registration.
+A second finding followed on 2026-08-07 (ADR r3-0004): the crystalline fields are band-limited below the 64² Nyquist, so the **top rung pair (L2→L3) is spectrally converged** — exact interpolation reproduces L3 from L2 to ≤ 1.7e-6 on every test row, and any larger "copy error" measured there (e.g. 0.018 under a linear lift) is interpolation-method artifact, not fidelity gap.
+The real gap lives at L1→L3 (test median 4.5e-3, spectral).
+Benchmarks must use L1 as the LF input for this dataset.
+
+One open metrology note (2026-08-07): `MANIFEST.csv`'s `copy_lf_rel_l2_detrended` for `sharp/allen_cahn_2d` (0.14653, published 2026-08-05) is not reproducible under the convention that reproduces `cahn_hilliard` (0.03581) and `fisher_kpp_2d` (0.02161) exactly — that convention (both fields per-sample mean-removed, node-periodic lift, train[:100]) yields 0.05180 for allen_cahn_2d on the current arrays.
+The row is left as published pending re-derivation; the level-dominated verdict is unaffected either way (0.052 is still 7.5× the raw 0.0069).
 
 ## 3 — Fixed by patching code (9)
 
@@ -113,16 +119,11 @@ That is 7 datasets: `core/era5`, `core/pm_test`, and the five sharp 1D sets at 5
 The comment at `mf_field/factory_mffp/models/fno_coreg_conditioned/smoke_eval.py:64` reads "only era5/pm_test exceed it".
 That is wrong — the 512-point 1D datasets exceed it too.
 
-### Two datasets are stale on HuggingFace
+### HuggingFace sync status
 
-`eloisezeng/mf_field` was uploaded 2026-08-05 23:48 – 2026-08-06 02:42 UTC.
-40 of 42 datasets are byte-identical to the local working tree.
-Two diverge, both from round-3 work that postdates the upload:
-
-- `sharp/allen_cahn_2d` — test split only (ADR r3-0003 trim, commit `792d243`); train splits still match.
-- `sharp/phase_field_crystal_2d` — all arrays plus `README.md` and `meta.json` (ADR r3-0002 box swap, commit `c677b00`).
-
-Both need a re-push, after which `MANIFEST.csv` must be recomputed — it is derived data and has gone stale silently once before.
+`eloisezeng/mf_field` re-pushed 2026-08-08 UTC (hub commit `36a5f198`): regenerated `sharp/phase_field_crystal_2d` (all arrays + card), trimmed `sharp/allen_cahn_2d` test split (+ card), recomputed `MANIFEST.csv` pfc row, updated collection README / DEFECT_STATUS, and a dated changelog on the hub dataset card.
+All 17 pushed files hash-verified byte-identical to local; the other 40 datasets were already byte-identical from the 2026-08-05 upload.
+The 2026-08-05 revision remains available via hub git history.
 
 ### `README.md` undercounts the changed datasets
 

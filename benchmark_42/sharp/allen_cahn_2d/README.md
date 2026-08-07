@@ -25,7 +25,16 @@ See the *Degeneracy flags* section of [`../../README.md`](../../README.md) for c
 - `y`: (N, prod(grid)) flattened field at each fidelity
 
 ## Sample counts
-- Train: **400**  Test: **100**
+- Train: **400**  Test: **78** (trimmed from 100 — see changelog)
 
 ## File layout
 `train_l1.npz`..`train_l3.npz`, `test_l1.npz`.. — MFRNP/factory npz convention (keys `x`,`y`).
+
+## Changelog
+
+- **2026-08-06 — test split trimmed 100 → 78 rows** (MFFP autoresearch ADR r3-0003 D1).
+  22 test rows had a per-row copy-LF gap below `max(1e-6, 1% of the dataset median)` — 9 of them bit-identical LF ≡ HF constant fields.
+  Those rows contain no prediction task (the dynamics reach the uniform state by the snapshot time for their ε/parameter combos) and bias any copy-LF-referenced score.
+  Dropped indices and the trim criterion are recorded in `meta.json` (`test_trim_2026_08_06`); the pre-trim split is available from this repository's git history (revisions before 2026-08-07).
+  Train split untouched.
+  Scores computed against the pre-trim test split are **not comparable** to post-trim scores.

@@ -93,7 +93,7 @@ It is exactly what distinguishes the two flags:
 | `ext/gray_scott_2d` | MF-useless | LF–HF corr **0.008** |
 | `ext/kuramoto_sivashinsky_1d` | MF-useless, operator-hard | LF–HF corr **−0.057** |
 | `sharp/nls_1d` | operator-hard | 0.0124 / 0.0161 (borderline) |
-| `sharp/phase_field_crystal_2d` | operator-hard | 0.0287 / 0.0484 |
+| `sharp/phase_field_crystal_2d` | operator-hard, top-rung-converged | 0.0822 / 0.0939 (crystalline 2026-08-06 regen; L2→L3 carries no task — see its README) |
 | `core/burgers_generated` | operator-hard | 0.2384 / 0.2384 |
 | `core/burgers_param_generated` | operator-hard | 0.2767 / 0.2767 |
 
@@ -103,8 +103,8 @@ Three more sit just above the copy-LF threshold and deserve the same caution: `e
 
 **It is diluted by IC-encoded condition vectors.**
 The five sharp datasets regenerated in this release now carry initial-condition coefficients in the condition vector, and distance correlation over a mostly-IC vector tends toward zero even when the field genuinely depends on it.
-`phase_field_crystal_2d` scores 0.247 on its two physical parameters alone but ≈0 on all 18 columns.
 Read the flag as "distance correlation is the wrong instrument here", not "the map is unlearnable".
+(An earlier revision cited `phase_field_crystal_2d` at 0.247 on its two physical parameters alone; after the 2026-08-06 crystalline regeneration that number is 0.024 — the crystalline map is genuinely stiff, ~1e4 linear amplification, so for this dataset the flag now reflects real physics rather than IC dilution.)
 
 **The thresholds are hand-tuned**, described in the characterizer itself as "tunable; validated against KS/cahn".
 They are a triage aid, not a verdict.
@@ -167,7 +167,7 @@ Sharp — shock / sharp-interface / smooth-control portfolio (SURF 2026).
 | 11 | **porous_medium_2d** | 2 | 3 | 2 | 400 | 256x256 | 0.994 | 0.0372 / 0.0381 | — |
 | 12 | **fisher_kpp_1d** | 1 | 3 | 18 | 400 | 512 | 1.000 | 0.0023 / 0.0076 | copy-LF-trivial |
 | 13 | **fisher_kpp_2d** | 2 | 3 | 50 | 400 | 256x256 | 0.984 | 0.0006 / 0.0216 | level-dominated |
-| 14 | **phase_field_crystal_2d** | 2 | 3 | 18 | 400 | 128x128 | 0.928 | 0.0287 / 0.0484 | operator-hard |
+| 14 | **phase_field_crystal_2d** | 2 | 3 | 18 | 400 | 128x128 | 0.877 | 0.0822 / 0.0939 | operator-hard, top-rung-converged |
 | 15 | **kuramoto_sivashinsky_1d** | 1 | 3 | 17 | 400 | 512 | 1.000 | 0.0077 / 0.0077 | operator-hard, copy-LF-trivial |
 | 16 | **kuramoto_sivashinsky_2d** | 2 | 3 | 17 | 400 | 256x256 | 0.995 | 0.0047 / 0.0047 | operator-hard, copy-LF-trivial |
 | 17 | **nls_1d** | 1 | 3 | 17 | 400 | 512 | 1.000 | 0.0124 / 0.0161 | operator-hard |
