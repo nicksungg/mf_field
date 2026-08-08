@@ -1,0 +1,5 @@
+{
+  "reason": "Stale-checkpoint anchor contamination (2026-08-08, r3s3-B1 mechanism analyzer turn 2, tool-verified 6/12 STALE positive control): the launch-anchor ifc_poisson cells for r2s3-B3 (all 6 legs), r2s1-B2 and r2s1-B3 (all seeds) resumed pre-repair checkpoints (resumed_from_step=5000, train_seconds 1.3-2.9s, ckpt dates 2026-08-03/04 vs ladder adoption 2026-08-05) and were scored on repaired arrays with stale weights - r2s2-B1 possibly mixed. Checkpoints carry no data hash (sibling of the score-cache hole; ADR r3-0003 D4 closed data->score binding but not data->checkpoint). Blast radius: launch_anchors ifc_poisson columns + panel geomeans invalid (r3s3's -38.97% ifc_poisson / -10.14% panel deltas are artefacts, recorded as such); round-3 experiment legs verified CLEAN (0/225 stale on r3s3; r3s4/r3s2/r3s1 train fresh in-worktree). No queued job depends on the stale cells; none cancelled. Repair plan prepared; operator adjudication requested.",
+  "set_by": "claude-orchestrator",
+  "set_at": "2026-08-08T19:51:50.352612+00:00"
+}
