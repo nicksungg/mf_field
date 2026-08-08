@@ -211,3 +211,11 @@ Failure → `state/blocked.md` + `FAILURE`.
 **Checklist passes**: <n>/<m>
 **Blockers** (only if FAILURE): <description>
 ```
+
+## Round-3 convention (batch-1 lesson, 3 of 4 builders hit this — do not repeat)
+
+Every script that invokes `score_panel.py` MUST first export
+`ROUND2_EVAL_RESULTS="$OUT_DIR/training"` and `ROUND2_EVAL_CACHE="$OUT_DIR/cache"`
+(and create both dirs). Without them the frozen round-2 eval layer is the
+default write target — a §5 immutable violation the reviewer will FAIL.
+Verify at runtime (watch where artifacts land), not by reading the code.
