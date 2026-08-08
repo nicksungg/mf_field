@@ -186,6 +186,44 @@
       "panel_geomean_skill": 0.3260278284459755,
       "note": "guard relaunch (debug attempt 1 of 5, POD rank numerical-boundary fix) \u2014 result_guard_s0.json landed, fix verified in production; supersedes original guard leg 66829978 (FAILED, exit 1, direction-bank orthonormality assertion on heat_local, not upserted).",
       "source": "sacct"
+    },
+    {
+      "stream": "r3s2_field_reach",
+      "batch": 1,
+      "seed": 1,
+      "job_id": 66928385,
+      "job_name": "r3-r3s2_field_reach-B1-s1",
+      "datasets": "sharp__allen_cahn_2d,sharp__fisher_kpp_2d,sharp__cahn_hilliard,ifc_poisson,ifc_heat",
+      "epochs": 200,
+      "gpu_type": "nvidia_h200",
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "start_utc": "2026-08-08T19:57:12Z",
+      "end_utc": "2026-08-08T20:33:45Z",
+      "elapsed_min": 36.55,
+      "panel_geomean_skill_scored5": 10.317973904757508,
+      "n_result_files": 8,
+      "card_type": "model (r3s2_stack_ic, IC-synthesis frontend + shared LF emulator arm)",
+      "source": "sacct"
+    },
+    {
+      "stream": "r3s2_field_reach",
+      "batch": 1,
+      "seed": 2,
+      "job_id": 66928386,
+      "job_name": "r3-r3s2_field_reach-B1-s2",
+      "datasets": "sharp__allen_cahn_2d,sharp__fisher_kpp_2d,sharp__cahn_hilliard,ifc_poisson,ifc_heat",
+      "epochs": 200,
+      "gpu_type": "nvidia_h200",
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "start_utc": "2026-08-08T19:57:12Z",
+      "end_utc": "2026-08-08T20:33:45Z",
+      "elapsed_min": 36.55,
+      "panel_geomean_skill_scored5": 17.827688357224755,
+      "n_result_files": 8,
+      "card_type": "model (r3s2_stack_ic, IC-synthesis frontend + shared LF emulator arm)",
+      "source": "sacct"
     }
   ]
 }
