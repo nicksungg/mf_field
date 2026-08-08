@@ -178,15 +178,36 @@
     "datasets_pre_adr_r3_0004": "panel",
     "base_commit_pre_adr_r3_0004": "6b4e1d4825666e037a43675c83d9bda6289ec9d0"
   },
-  "status": "drafted",
+  "status": "built",
   "skipped_reason": null,
   "reopen_candidate": false,
-  "scripts_path": {},
-  "output_paths": {},
-  "build_commit": null,
+  "scripts_path": {
+    "submit": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/worktrees/r3s2_field_reach/B1/scripts/submit.sh",
+    "seeds_2_3": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/worktrees/r3s2_field_reach/B1/scripts/submit_seeds_2_3.sh",
+    "train_eval": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/worktrees/r3s2_field_reach/B1/scripts/01_train_eval.sh"
+  },
+  "output_paths": {
+    "training": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round3/r3s2_field_reach/B1/training",
+    "eval": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round3/r3s2_field_reach/B1/eval",
+    "slurm": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round3/r3s2_field_reach/B1/slurm"
+  },
+  "build_commit": "10bfcc76ae25a44b08a94e73275892c33ce5c9f6",
   "job_ids": [],
   "logs": {},
-  "build_notes": [],
+  "build_notes": [
+    "Family `models_r3/r3s2_stack_ic` built in the worktree on branch round3/exp-r3s2_field_reach-B1 @ 10bfcc7 (forked from recipe.base_commit 44f2404a2). Seven modules re-vendored BYTE-IDENTICALLY (round-3 provenance header prepended, body unchanged, source sha256 recorded in each header) from round2/worktrees/r2s2_stacked/B1/models_r2/r2s2_stack @ 6b4e1d48: model.py, local_corrector.py, lsi_filter.py, bands.py, periodicity.py, upsample.py, probes.py. TorchUpsampler + the train loop in smoke_eval.py from the same source; sidecars.centred_gamma vendored from r2s2_zerograd (r2s2_stacked-B3). New code: ic_synth.py (exact analytic IC synthesis), front_end.py (FNO2dIC + the Emulator wrapper), floor_arms.py, sidecars.py.",
+    "CONTRACT SMOKE 1 (MANDATORY, PASSED): `source .venv/bin/activate; ROUND2_EVAL_RESULTS=<wt>/scratchpad/smoke_results ROUND2_EVAL_CACHE=<wt>/scratchpad/smoke_cache python mffp_autoresearch/round2/eval/score_panel.py --family_dir <wt>/models_r3/r3s2_stack_ic --datasets ifc_heat --epochs 2 --seed 0 --out <wt>/scratchpad/contract_smoke.json --no_cache` -> exit 0, test_hf nRMSE 0.22923804662965888, skill 3.0978114409413364 (finite). Artifact: <wt>/scratchpad/contract_smoke.json. Exercises the RECORDED-FALLBACK path (no ic_c* dims): V10 confirms E1 and E1n are bit-identical to E0 (max|delta| 0.0) because they alias the single built emulator rather than getting a second random init.",
+    "CONTRACT SMOKE 2 (the LIVE IC path, PASSED): same command with `--datasets sharp__phase_field_crystal_2d --out <wt>/scratchpad/contract_smoke_pfc_icpath.json` -> exit 0, test_hf nRMSE 0.7732357087106587 (finite; 2 epochs, no claim implied). Diag gates all pass: V8 IC equivalence (analytic-on-node-grid vs spectral_interp of build_ic at res_min) max|delta| = 1.47e-15 <= 1e-12; V9 shuffle derangement 0 fixed points in all 3 splits; V10 E1-vs-E0 pseudo-LF max|delta| 0.517 (channel live); V1 emul_only re-derivation exactly 0 for all three front ends; V11 stage-2 arms all spend 3 optimizer epochs. All ten arms produced. pfc is REPORT-ONLY under ADR r3-0004 and is not in recipe.datasets; it was used here only because it is the cheapest ic_c*-bearing dataset.",
+    "IC-path unit verification (artifact <wt>/scratchpad/ic_path_verification.txt): equivalence max|delta| 1.5e-15 - 3.5e-15 (tol 1e-12) on cahn_hilliard / allen_cahn_2d / fisher_kpp_2d (48 coeffs, m=5) / phase_field_crystal_2d; derangement clean; IC channel demonstrably moves the emulator output (max|delta| 0.19-0.37); ifc_poisson and ifc_heat correctly report applicable=False (no param_names in meta.json).",
+    "HYPERPARAMETER PROVENANCE: all 50 non-`_` keys of recipe.env are passed to score_panel --env VERBATIM and were verified programmatically against the card (50/50 present, 0 missing, 0 extra, 0 mismatched); recipe.datasets and recipe.epochs likewise byte-equal in 01_train_eval.sh. Optimiser constants (SMOKE dict: width/blocks/modes/batch 16, lr_pretrain 1e-3, lr_finetune 3e-4, wd 1e-5, clip 1.0) are the base family's values, unchanged and cited in the source header. NOTHING invented; no TBD.",
+    "BUDGET MATCHING (R3S2_BUDGET_MATCH=arm_equal_total, round-2 reviewer caveat F8) implemented as: `dc_real` (E_dc epochs on REAL LF) is the common ancestor of every stage-2 arm; `frozen` then continues a FURTHER E_dc on REAL LF (this is new vs round 2), `finetuned` continues E_dc on pseudo-LF, `end_to_end` spends E_dc jointly. Every stage-2 arm therefore spends E_emu + 2*E_dc, asserted by gate V11. Consequence to note at analysis: E0_frozen is a BUDGET-REPAIRED replay of the round-2 primary, not a byte-for-byte replay.",
+    "PAIRING GATE (R3S2_PAIRING_GATE=1) RAISES on an unpaired ladder instead of silently re-routing the DC fit to pseudo-LF (round 2's fallback). Measured at build time on the stripped view: max|dX| = 0.0 on all five scored datasets and on all three guard datasets, so the gate is not expected to fire.",
+    "pfc TARGET-SCALER PRE-FLIGHT (R3S2_TARGET_SCALER_PREFLIGHT) is MEASURED on every dataset and APPLIED ON NONE (sidecar S6 records `applied: false`), per the card's adr_r3_0004_addendum voiding it; the global residual scaler of the base family is used everywhere so no cell carries a different estimator.",
+    "SLURM: --time 03:00:00 and --mail-user=ezeng@caltech.edu --mail-type=END,FAIL per the recipe `_note` (state/timing_ledger.json has no entries, so the card's own estimate is the only analog). partition=gpu, gres=gpu:nvidia_h200:1 from project.yaml. Builder resource choices (not science knobs): --mem=64G (five datasets x float64 fields at 400x65536, several intermediates live at once) and --cpus-per-task=8. JOB NAME DEVIATION, deliberate and documented: `r3-{stream}-B{N}-s{seed}`, not the round-2 slurm_rules `r2-` prefix, because the round-3 maintainer's own note in state/timing_ledger.json (2026-08-07T19:15Z) states it greps for `r3-{stream}-B{N}-s{seed}`; an `r2-` name would be invisible to it. The header default is the seed-0 name and submit.sh / submit_seeds_2_3.sh pass --job-name on the sbatch line (an #SBATCH header cannot interpolate $1).",
+    "The guard set runs as a SEPARATE `--datasets guard` invocation inside 01_train_eval.sh, gated to SEED=0 (recipe `_note`: --datasets accepts only panel|guard|a comma-list of names). The literal 'panel' is never used - it resolves through round2/project.yaml to the ROUND-2 panel; the explicit 5-dataset ADR r3-0004 scored list is hard-coded from recipe.datasets.",
+    "All three scripts pass `bash -n`; every path in them is absolute; SEED parameterization verified ($1 -> --seed and the result filename). Checkpoint resume from <ckpt_dir>/last.pt is implemented per stage (STAGE_ORDER covers 3 emulators, dc_real, dc_ext, and dc_ft/e2e per front end) with atomic tmp+os.replace writes; verified in-job during the smokes (last.pt written at stage granularity, 114 MB on pfc).",
+    "Builder-added diagnostic carried over from round 2 without a dedicated recipe knob: probes.P2_cond_lf_identifiability is computed unconditionally (round 2 gated it on R2S2_COND_LF_IDENT_SIDECAR, which has no round-3 counterpart). It is training-free, cheap, reads nothing in the scoring path, and is recorded under diag.probes."
+  ],
   "review_notes": [],
   "debug_notes": [],
   "5_actual_result": null,
