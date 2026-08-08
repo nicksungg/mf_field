@@ -146,6 +146,46 @@
       "elapsed_min": 140.15,
       "n_legs": 60,
       "source": "sacct"
+    },
+    {
+      "stream": "r3s4_audit",
+      "batch": 1,
+      "seed": null,
+      "job_id": 66921555,
+      "job_name": "r3-r3s4_audit-B1-certify",
+      "leg": "certify (D2-D4)",
+      "datasets": "ifc_heat,sharp__cahn_hilliard",
+      "epochs": null,
+      "gpu_type": null,
+      "partition": "expansion",
+      "cpu_only": true,
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "start_utc": "2026-08-08T19:59:48Z",
+      "end_utc": "2026-08-08T20:00:11Z",
+      "elapsed_min": 0.38,
+      "note": "certifier D2-D4 fusion job over the 3 landed seeds; F1 unavailable, F2/F3/F4 not_fired; panel_geomean (D2/D3 fusion, 2-ds ifc_heat+cahn_hilliard subset) ci95 [8.3526, 8.5735]. Artifacts eval/{diagnostic.json,noise_floor_candidate.json,diagnostic_cell_integrity.json}. PROVISIONAL per orchestrator note: partially depends on anchors_repaired/floors.json which sits alongside the contaminated launch-anchor ifc_poisson cells (STOP-THE-LINE #2); will be recomputed after the retrain repair.",
+      "source": "sacct"
+    },
+    {
+      "stream": "r3s1_factorised",
+      "batch": 1,
+      "seed": 0,
+      "job_id": 66922977,
+      "job_name": "r3-r3s1_factorised-B1-guard-s0",
+      "leg": "guards",
+      "datasets": "heat_local,fluid,sharp__sod_1d",
+      "epochs": 0,
+      "gpu_type": "nvidia_h200",
+      "partition": "gpu",
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "start_utc": "2026-08-08T19:57:12Z",
+      "end_utc": "2026-08-08T19:57:47Z",
+      "elapsed_min": 0.58,
+      "panel_geomean_skill": 0.3260278284459755,
+      "note": "guard relaunch (debug attempt 1 of 5, POD rank numerical-boundary fix) \u2014 result_guard_s0.json landed, fix verified in production; supersedes original guard leg 66829978 (FAILED, exit 1, direction-bank orthonormality assertion on heat_local, not upserted).",
+      "source": "sacct"
     }
   ]
 }
