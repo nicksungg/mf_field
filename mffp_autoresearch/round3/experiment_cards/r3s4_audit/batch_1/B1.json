@@ -72,7 +72,7 @@
     "datasets_pre_adr_r3_0004": "sharp__phase_field_crystal_2d,sharp__allen_cahn_2d,sharp__fisher_kpp_2d,sharp__cahn_hilliard,ifc_poisson,ifc_heat",
     "base_commit_pre_adr_r3_0004": "8aae33a7fab11ef8234f4bb7158c2bc1a8b4bf51"
   },
-  "status": "submitted_seed0",
+  "status": "analyzing",
   "skipped_reason": null,
   "reopen_candidate": false,
   "scripts_path": {
@@ -94,6 +94,18 @@
       "job_id": 66826610,
       "submitted": "2026-08-07T18:15 PDT",
       "by": "orchestrator (post reviewed_suggest attempt 2; HOLD absent, data_binding verify OK; wrapper executed, not sbatch'd)"
+    },
+    {
+      "seed": 1,
+      "job_id": 66879667,
+      "submitted": "2026-08-08T03:15 PDT",
+      "by": "orchestrator (seed-0 COMPLETED clean; certifier needs 3 seeds for D3/D4)"
+    },
+    {
+      "seed": 2,
+      "job_id": 66879668,
+      "submitted": "2026-08-08T03:15 PDT",
+      "by": "orchestrator"
     }
   ],
   "logs": {},
@@ -157,7 +169,511 @@
     }
   ],
   "debug_notes": [],
-  "5_actual_result": null,
+  "5_actual_result": {
+    "_extractor": "experiment-initial-analyzer, seed-0 invocation, 2026-08-08",
+    "_sources": {
+      "panel_result": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round3/r3s4_audit/B1/eval/result_panel5_s0.json",
+      "probe_D0_cell_seam": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round3/r3s4_audit/B1/eval/diagnostic_cell_seam.json",
+      "probe_D1_floor_repro": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round3/r3s4_audit/B1/eval/diagnostic_floor_repro.json",
+      "per_dataset_cells": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round3/r3s4_audit/B1/training/r3s4_cert_min/<ds>_e200_s0.json",
+      "slurm_log": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round3/r3s4_audit/B1/slurm/r3-r3s4_audit-B1-s0_66826610.out",
+      "anchor": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/state/anchors/launch_anchors.json",
+      "provisional_noise_floor": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/state/anchors_repaired/noise_floor.json"
+    },
+    "seeds_available": [
+      0
+    ],
+    "seeds_pending": {
+      "1": 66879667,
+      "2": 66879668,
+      "state_at_extraction": "PENDING (queued)"
+    },
+    "def_hash_seam_check": {
+      "nrmse_def_hash": "d3d0ade9191c13bacc40702f3eb26ad290e01641cacee22a1d2233b74c035850",
+      "copylf_def_hash": "9753ff24e856f595748492dec6cb6c215d748f97e8ec4a679b651f8846da907a",
+      "consistent_across_parsed_jsons": true,
+      "matches_live_round2_eval_nrmse_py_sha256": true,
+      "jsons_checked": [
+        "result_panel5_s0.json",
+        "diagnostic_cell_seam.json",
+        "diagnostic_floor_repro.json",
+        "round2/eval/copylf_baselines.json"
+      ]
+    },
+    "per_dataset": {
+      "ifc_heat": {
+        "per_seed_nrmse": [
+          0.061198556108398805
+        ],
+        "per_seed_skill": [
+          0.8270075149783622
+        ],
+        "mean_skill": 0.8270075149783622,
+        "ci95": null,
+        "ci95_note": "null by construction - single seed; the 3-seed stratified percentile bootstrap CI is computed at the ALL-3-SEEDS invocation.",
+        "reference_type": "paper_bar",
+        "reference_test_nrmse": 0.074,
+        "split": "test_hf",
+        "metric_source": "per_sample_mean",
+        "cached": false,
+        "n_test_rows": 128,
+        "row_bootstrap_ci95_nrmse_seed0": [
+          0.05452173397012377,
+          0.06840109636745617
+        ],
+        "best_floor_skill_anchor": 1.3941023084286595,
+        "best_floor_arm_anchor": "nn_condition",
+        "seed0_skill_over_best_floor": 0.5932186683705523,
+        "floor_arms_recomputed_in_run_skill": {
+          "affine_on_hf_train": 0.958356,
+          "nn_condition": 1.3941023,
+          "train_mean": 1.766604,
+          "zero": 13.5135135
+        },
+        "provisional_min_claimable_effect": null,
+        "ifc_affine_floor_rule_program_md_s2": {
+          "affine_on_hf_train_skill": 0.9583559719706533,
+          "certifier_seed0_skill": 0.8270075149783622,
+          "beats_affine_floor": true,
+          "margin_skill_units": 0.13134845699229103
+        }
+      },
+      "ifc_poisson": {
+        "per_seed_nrmse": [
+          0.19544979494096876
+        ],
+        "per_seed_skill": [
+          5.4291609705824655
+        ],
+        "mean_skill": 5.4291609705824655,
+        "ci95": null,
+        "ci95_note": "null by construction - single seed; the 3-seed stratified percentile bootstrap CI is computed at the ALL-3-SEEDS invocation.",
+        "reference_type": "paper_bar",
+        "reference_test_nrmse": 0.036,
+        "split": "test_hf",
+        "metric_source": "per_sample_mean",
+        "cached": false,
+        "n_test_rows": 128,
+        "row_bootstrap_ci95_nrmse_seed0": [
+          0.1789214318834546,
+          0.2136190700749077
+        ],
+        "best_floor_skill_anchor": 8.040896838361228,
+        "best_floor_arm_anchor": "nn_condition",
+        "seed0_skill_over_best_floor": 0.6751934615901569,
+        "floor_arms_recomputed_in_run_skill": {
+          "affine_on_hf_train": 1.5937636,
+          "nn_condition": 8.0408968,
+          "train_mean": 9.0041313,
+          "zero": 27.7777778
+        },
+        "provisional_min_claimable_effect": 0.23990756041925798,
+        "ifc_affine_floor_rule_program_md_s2": {
+          "affine_on_hf_train_skill": 1.5937636123306758,
+          "certifier_seed0_skill": 5.4291609705824655,
+          "beats_affine_floor": false,
+          "ratio_certifier_over_affine": 3.4065032785150686,
+          "note": "program.md section 2: an ifc number that does not beat the fitted affine floor has learned nothing beyond linearity. Recorded as an observation about this instrument's condition-only pathway; the card makes no ifc performance claim."
+        }
+      },
+      "sharp__allen_cahn_2d": {
+        "per_seed_nrmse": [
+          0.4694348857450008
+        ],
+        "per_seed_skill": [
+          227.95209636705
+        ],
+        "mean_skill": 227.95209636705,
+        "ci95": null,
+        "ci95_note": "null by construction - single seed; the 3-seed stratified percentile bootstrap CI is computed at the ALL-3-SEEDS invocation.",
+        "reference_type": "copylf",
+        "reference_test_nrmse": 0.0020593576160366327,
+        "split": "test_hf",
+        "metric_source": "per_sample_mean",
+        "cached": false,
+        "n_test_rows": 78,
+        "row_bootstrap_ci95_nrmse_seed0": [
+          0.43111047232892635,
+          0.5066498065705619
+        ],
+        "best_floor_skill_anchor": 475.85682154308705,
+        "best_floor_arm_anchor": "nn_condition",
+        "seed0_skill_over_best_floor": 0.4790350501393617,
+        "floor_arms_recomputed_in_run_skill": {
+          "affine_on_hf_train": 275.6887709,
+          "nn_condition": 475.8568215,
+          "train_mean": 486.4148159,
+          "zero": 485.5883175
+        },
+        "provisional_min_claimable_effect": 16.422284630500034
+      },
+      "sharp__cahn_hilliard": {
+        "per_seed_nrmse": [
+          0.5525108301042916
+        ],
+        "per_seed_skill": [
+          13.21702565082423
+        ],
+        "mean_skill": 13.21702565082423,
+        "ci95": null,
+        "ci95_note": "null by construction - single seed; the 3-seed stratified percentile bootstrap CI is computed at the ALL-3-SEEDS invocation.",
+        "reference_type": "copylf",
+        "reference_test_nrmse": 0.041802962686225575,
+        "split": "test_hf",
+        "metric_source": "per_sample_mean",
+        "cached": false,
+        "n_test_rows": 100,
+        "row_bootstrap_ci95_nrmse_seed0": [
+          0.4914061567723148,
+          0.6158901360456182
+        ],
+        "best_floor_skill_anchor": 23.180342227117514,
+        "best_floor_arm_anchor": "nn_condition",
+        "seed0_skill_over_best_floor": 0.5701825072868121,
+        "floor_arms_recomputed_in_run_skill": {
+          "affine_on_hf_train": 12.8710834,
+          "nn_condition": 23.1803422,
+          "train_mean": 23.9690545,
+          "zero": 23.9217495
+        },
+        "provisional_min_claimable_effect": 1.1603569120520159
+      },
+      "sharp__fisher_kpp_2d": {
+        "per_seed_nrmse": [
+          0.03377176874122874
+        ],
+        "per_seed_skill": [
+          204.372851203746
+        ],
+        "mean_skill": 204.372851203746,
+        "ci95": null,
+        "ci95_note": "null by construction - single seed; the 3-seed stratified percentile bootstrap CI is computed at the ALL-3-SEEDS invocation.",
+        "reference_type": "copylf",
+        "reference_test_nrmse": 0.00016524586579046429,
+        "split": "test_hf",
+        "metric_source": "per_sample_mean",
+        "cached": false,
+        "n_test_rows": 100,
+        "row_bootstrap_ci95_nrmse_seed0": [
+          0.028834458623824794,
+          0.039105189913629365
+        ],
+        "best_floor_skill_anchor": 390.7014844797183,
+        "best_floor_arm_anchor": "train_mean",
+        "seed0_skill_over_best_floor": 0.5230920775125828,
+        "floor_arms_recomputed_in_run_skill": {
+          "affine_on_hf_train": 266.4814215,
+          "nn_condition": 410.2817514,
+          "train_mean": 390.7014845,
+          "zero": 6051.5886144
+        },
+        "provisional_min_claimable_effect": 158.33215324637433
+      }
+    },
+    "panel_geomean_skill": {
+      "per_seed": [
+        19.423546977863886
+      ],
+      "mean": 19.423546977863886,
+      "ci95": null,
+      "panel": [
+        "ifc_heat",
+        "ifc_poisson",
+        "sharp__allen_cahn_2d",
+        "sharp__cahn_hilliard",
+        "sharp__fisher_kpp_2d"
+      ],
+      "note": "5-dataset ADR r3-0004 scored panel; lower is better (skill = nRMSE / reference nRMSE). Tool-written value; the geomean of the five tool-written per-dataset skills reproduces it to <1e-9."
+    },
+    "vs_anchor": {
+      "anchor_source": "state/anchors/launch_anchors.json :: best_floor.value (training-free best-floor geomean, 5-ds scored panel)",
+      "anchor_value": 34.4198,
+      "seed0_value": 19.423546977863886,
+      "delta": -14.996253022136116,
+      "ratio": 0.5643131853719047,
+      "beyond_ci": null,
+      "beyond_noise_floor": null,
+      "note": "beyond_ci / beyond_noise_floor are null at one seed. The card is diagnostic with anchor_reference null and makes no performance claim (4_expected_result item 5: 'Context only'). Card predicted a 25-45 band; observed 19.4235 sits BELOW the band (i.e. better than predicted), close to round-2's 19.82 for the byte-identical certifier. Certifier beats the per-dataset best floor on all five datasets (ratios 0.479-0.675)."
+    },
+    "cratered_verdict": "proceed_to_seeds_1_2",
+    "cratered_check": {
+      "rule": "cratered iff crash, OR panel geomean skill > 1.5 x stream anchor skill, OR falsification fired decisively",
+      "contract_note": "Diagnostic cards carry no cratered rule (initial-analyzer contract 2b); computed anyway at orchestrator request.",
+      "job_exit": "COMPLETED, exit 0:0, empty .err",
+      "threshold": 51.6297,
+      "observed": 19.423546977863886,
+      "passes_by_margin": 32.206153022136114,
+      "falsification_fired_decisively": false
+    },
+    "falsification_verdict": "pending_seeds",
+    "falsification_clauses": {
+      "F1": {
+        "clause_verbatim": "any floor arm on any of the 9 datasets deviates from floors.json by > 1e-9 relative, or zero != 1.0, or the best-floor geomean != 36.3912 to 4 dp, or the lineage does not reproduce, or data_binding.py verify exits 3",
+        "verdict": "FIRED",
+        "verdict_stripped_view_carded_path": "FIRED",
+        "verdict_native_dtype_control": "FIRED",
+        "deciding_numbers": {
+          "stripped_view_breaches": {
+            "ifc_heat.nn_condition": {
+              "frozen": 0.1031635708237208,
+              "recomputed_stripped_view": 0.10316357093777939,
+              "rel_diff": 1.1056092280511275e-09,
+              "tol": 1e-09,
+              "rel_diff_native_dtype": 0.0
+            }
+          },
+          "native_dtype_control_breaches": {
+            "heat_local.nn_condition": {
+              "rel_diff_native_dtype": 1.779603213049388e-09,
+              "rel_diff_stripped_view": 0.0
+            },
+            "sharp__sod_1d.nn_condition": {
+              "rel_diff_native_dtype": 7.73992728561441e-08,
+              "rel_diff_stripped_view": 0.0
+            },
+            "sharp__sod_1d.train_mean": {
+              "rel_diff_native_dtype": 7.359537288625863e-09,
+              "rel_diff_stripped_view": 0.0
+            }
+          }
+        },
+        "all_other_conjuncts_pass": {
+          "zero_exactly_one_on_all_9": true,
+          "best_floor_geomean_panel6": {
+            "expected": 36.3912,
+            "recomputed": 36.39122610916907,
+            "match_4dp": true
+          },
+          "best_floor_geomean_panel5_scored": {
+            "expected": 34.4198,
+            "recomputed": 34.41977827370512,
+            "match_4dp": true
+          },
+          "lineage_all_waypoints_reproduce": true,
+          "lineage": {
+            "pre_A1_5ds_no_ifc_heat": 75.0673,
+            "post_ifc_heat_promotion_6ds": 38.63,
+            "post_ac_trim_and_pfc_box_6ds": 36.3912,
+            "adr_r3_0004_scored_5ds": 34.4198
+          },
+          "data_binding_verify_exit_code": 0,
+          "n_datasets": 9
+        },
+        "dual_reading": "FIRED on the card-mandated stripped-view path AND FIRED on the native-dtype control, on DISJOINT dataset sets. This is the float64 -> float32 loader seam: floors.json is not internally consistent about precision (ifc entries were frozen in float64 from benchmark_42; heat_local and sharp__sod_1d were frozen through the float32 loader view). The carded 1e-9 tolerance sits INSIDE that spread. Reported as FIRED with the dual reading per the orchestrator's standing instruction; NOT absorbed, NOT loosened. Every breach is a last-ulp float32 artifact (max 7.7e-8 relative), no scored-panel arm moves at 4 dp, and every geomean and lineage waypoint reproduces.",
+        "scored_panel_impact": "none of the four breaching cells is a SCORED-panel arm except ifc_heat.nn_condition, whose skill moves 1.3941023084 -> 1.3941023100 (rel 1.1e-9)."
+      },
+      "F2": {
+        "clause_verbatim": "the scored-cell min_detectable_delta agrees with the shipped preflight value within 5 % relative on ALL FOUR copy-LF panel datasets (the seam is not real)",
+        "verdict_scored_only_adr_r3_0004": "not_fired",
+        "verdict_as_written_incl_report_only_pfc": "not_fired",
+        "n_agreeing_scored_only": "1 of 3",
+        "n_agreeing_as_written": "1 of 4",
+        "deciding_numbers_scored_vs_shipped_preflight_2026_08_07": {
+          "sharp__allen_cahn_2d": {
+            "scored": 0.1709787076080977,
+            "shipped": 0.20248766366591348,
+            "rel_diff": 0.15560926274403927,
+            "agrees_within_5pct": false
+          },
+          "sharp__fisher_kpp_2d": {
+            "scored": 0.3105619532241984,
+            "shipped": 0.2769381816249117,
+            "rel_diff": 0.12141255280150258,
+            "agrees_within_5pct": false
+          },
+          "sharp__cahn_hilliard": {
+            "scored": 1.6736767478839116,
+            "shipped": 1.7076993945938652,
+            "rel_diff": 0.01992308881625214,
+            "agrees_within_5pct": true
+          },
+          "sharp__phase_field_crystal_2d": {
+            "scored": 0.01524494619593623,
+            "shipped": null,
+            "status": "UNCOMPARABLE (report-only, ADR r3-0004)"
+          }
+        },
+        "note": "not_fired on BOTH readings => the rung/convention seam IS real. Direction differs by dataset (ac scored cell is 16 % TIGHTER, fkpp 12 % WIDER), so the seam is not a uniform offset."
+      },
+      "F3": {
+        "clause_verbatim": "mdd_scored < 0.05 on >= 3 of the 4 copy-LF panel datasets (reference noise negligible panel-wide => the two-threshold composition is empty)",
+        "verdict": "pending_seeds",
+        "reason": "The F3 verdict block is emitted by probes/certify_thresholds.py (03_certify.sh), which requires all three seed result files.",
+        "inputs_already_measured_by_D0_scored_cell_mdd": {
+          "sharp__allen_cahn_2d": 0.1709787076080977,
+          "sharp__fisher_kpp_2d": 0.3105619532241984,
+          "sharp__cahn_hilliard": 1.6736767478839116,
+          "sharp__phase_field_crystal_2d": 0.01524494619593623
+        },
+        "note": "On the D0 scored-cell numbers only pfc (report-only) is below 0.05, i.e. 1 of 4 as-written and 0 of 3 scored-only. Recorded as a measurement, not a verdict - D3 recomputes mdd_scored on its own paired row bootstrap and owns the clause."
+      },
+      "F4": {
+        "clause_verbatim": "the certified seed_mce exceeds twice the provisional min_claimable_effect on >= 2 of {pfc 17.7191, ac 32.8446, fkpp 316.6643, ch 2.3207, ifc_poisson 0.4798} - which invalidates the round's 3-seed protocol (PROGRAM_NOTE MUST #4) and must be escalated to the operator, not absorbed",
+        "verdict": "pending_seeds",
+        "reason": "seed_mce = max(spread_maxmin, paired_null_95) over 3 seeds; only seed 0 exists. Not evaluable and NOT estimated here.",
+        "provisional_min_claimable_effect_for_context": {
+          "sharp__allen_cahn_2d": 16.422284630500034,
+          "sharp__fisher_kpp_2d": 158.33215324637433,
+          "sharp__cahn_hilliard": 1.1603569120520159,
+          "ifc_poisson": 0.23990756041925798,
+          "ifc_heat": null
+        },
+        "ifc_heat_note": "ifc_heat has NO provisional constant - D3 emits its first certification, reported without a pass/fail test (card 4_expected_result, 'vs noise floor')."
+      }
+    },
+    "probe_D0_cell_seam_summary": {
+      "seam_assertion_vs_floors_json_reference": {
+        "verdict": "pass",
+        "tol": 1e-09,
+        "failed_datasets": [],
+        "rel_diff_on_every_copylf_dataset": 0.0
+      },
+      "scored_cell_construction": "scored__copylf_prediction__finest_lf__adr_r2_0001",
+      "per_dataset_min_detectable_delta": {
+        "sharp__allen_cahn_2d": {
+          "scored": 0.1709787076080977,
+          "preflight_finest_lf": 0.1980564003374247,
+          "preflight_coarsest_lf": 0.21586343296825244,
+          "scored_stability": "OK",
+          "scored_top5_share": 0.11089741764523221,
+          "scored_ci_halfwidth_rel": 0.08548935380404885,
+          "n_rows": 78,
+          "n_void": 0
+        },
+        "sharp__fisher_kpp_2d": {
+          "scored": 0.3105619532241984,
+          "preflight_finest_lf": 0.27117667245251226,
+          "preflight_coarsest_lf": 0.2907034393636631,
+          "scored_stability": "OK",
+          "scored_top5_share": 0.14754134908012148,
+          "scored_ci_halfwidth_rel": 0.1552809766120992,
+          "n_rows": 100,
+          "n_void": 0
+        },
+        "sharp__cahn_hilliard": {
+          "scored": 1.6736767478839116,
+          "preflight_finest_lf": 1.7303854220578676,
+          "preflight_coarsest_lf": 1.091053592479066,
+          "scored_stability": "OUTLIER_DOMINATED",
+          "scored_top5_share": 0.7593445668447706,
+          "scored_ci_halfwidth_rel": 0.8368383739419558,
+          "n_rows": 100,
+          "n_void": 0
+        },
+        "sharp__phase_field_crystal_2d": {
+          "scored": 0.01524494619593623,
+          "preflight_finest_lf": 0.09544495655033737,
+          "preflight_coarsest_lf": 0.6864455775757913,
+          "scored_stability": "OK",
+          "scored_top5_share": 0.052752635841087234,
+          "scored_ci_halfwidth_rel": 0.007622473097968115,
+          "n_rows": 100,
+          "n_void": 0,
+          "scoring_status": "report_only_non_scoring_adr_r3_0004",
+          "preflight_finest_lf_n_void": 23
+        },
+        "ifc_poisson": "NO_COPYLF_CELL (ifc_raw, test ships HF only, paper_bar reference)",
+        "ifc_heat": "NO_COPYLF_CELL (ifc_raw, test ships HF only, paper_bar reference)"
+      },
+      "adr_readjudication": {
+        "r3_0003_D1_allen_cahn_trim": {
+          "holds_on_scored_cell": true,
+          "n_rows": 78,
+          "n_void": 0,
+          "frac_void": 0.0,
+          "median_row_gap": 0.002034003426152538,
+          "min_row_gap": 2.1529751866733075e-05
+        },
+        "r3_0003_D2_cahn_hilliard_mdd": {
+          "adr_quoted": "~166 %",
+          "scored_cell_min_detectable_delta_pct": 167.36767478839116,
+          "scored_cell_stability_status": "OUTLIER_DOMINATED"
+        }
+      }
+    },
+    "probe_D1_floor_repro_summary": {
+      "data_root": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round2/stripped_data",
+      "n_datasets": 9,
+      "arms": [
+        "nn_condition",
+        "train_mean",
+        "zero",
+        "affine_on_hf_train"
+      ],
+      "zero_exactly_one_everywhere": true,
+      "geomean_panel6": 36.39122610916907,
+      "geomean_panel5_scored": 34.41977827370512,
+      "lineage_reproduces": true,
+      "ifc_affine_floor_vs_launch_anchors": {
+        "ifc_poisson": {
+          "skill_anchor": 1.5937636895033758,
+          "skill_recomputed": 1.5937636123306758,
+          "rel_diff": 4.8421670362074916e-08
+        },
+        "ifc_heat": {
+          "skill_anchor": 0.9583559375093983,
+          "skill_recomputed": 0.9583559719706533,
+          "rel_diff": 3.5958722236666275e-08
+        },
+        "gating": false
+      }
+    },
+    "guard_flags": [],
+    "guard_status": {
+      "run": false,
+      "reason": "Contract 2d triggers the guard set only on a claimed panel win (3-seed geomean beating the anchor beyond the CI). This is a diagnostic card with anchor_reference null, at one seed, making no performance claim - the trigger is not met, so no guard scoring was launched. The card's own guard leg (scripts/02_guard_contract.sh, contract tier, heat_local/fluid/sharp__sod_1d) has not been run yet; no guard result JSON exists under eval/.",
+      "guard_reference_nrmse_copylf_baselines": {
+        "heat_local": 0.00240152155999517,
+        "fluid": 0.21805958171115042,
+        "sharp__sod_1d": 0.03309017650048946
+      },
+      "guard_datasets_covered_training_free_by_D1": [
+        "heat_local",
+        "fluid",
+        "sharp__sod_1d"
+      ]
+    },
+    "anomalies": [
+      "F1 FIRED on BOTH readings, on disjoint dataset sets - the float64 -> float32 loader seam. Stripped view (carded path): ifc_heat nn_condition rel 1.106e-9 > 1e-9. Native-dtype control: heat_local nn_condition 1.78e-9, sharp__sod_1d nn_condition 7.74e-8 and train_mean 7.36e-9. Expected and pre-flagged by the builder and the reviewer; reported as FIRED with the dual reading, not absorbed.",
+      "ifc_poisson: the certifier's seed-0 skill 5.4292 does NOT beat the mandatory affine_on_hf_train floor 1.5938 (3.41x worse). ifc_poisson's condition->HF map is exactly affine (oracle residual 2.9e-08 from the stripped view, 5.4e-16 native), so a condition-only FNO on 5 HF train rows is strictly dominated by the closed form here. ifc_heat goes the other way: 0.8270 beats the affine floor 0.9584.",
+      "sharp__cahn_hilliard is OUTLIER_DOMINATED on all three cell constructions (scored top-5 share 0.7593, CI half-width 0.8368, mdd 167.37 %). ADR r3-0003 D2's '~166 %' is confirmed as the scored-cell number (167.37 %). The ratio-of-normals caveat named in the D1 prior-art verdict applies here.",
+      "sharp__phase_field_crystal_2d (report-only, ADR r3-0004): the preflight finest-rung construction reports 23 void rows while the SCORED cell reports 0, and its mdd drops 45x from the coarsest-rung construction (0.6864 -> 0.0152). The shipped OUTLIER_DOMINATED flag clears on the scored cell. Instrument artifact of the rung/convention seam; carries no claim weight.",
+      "Panel geomean 19.4235 lands BELOW the card's predicted 25-45 band (better than predicted) and close to round-2's 19.82 for the byte-identical certifier - supporting the card's design intent that constant movement is attributable to the data repair, not to a model change.",
+      "No NaN/Inf in any cell; .err is empty (0 lines); no preemption or resume-from-checkpoint events in the .out; single allocation on hpc-sm-02-17."
+    ],
+    "wall_clock_per_seed_min": [
+      6.77
+    ],
+    "timing_ledger_feed": {
+      "job_id": 66826610,
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "elapsed": "00:06:46",
+      "elapsed_min": 6.77,
+      "requested": "02:00:00",
+      "headroom_x": 17.7,
+      "node": "hpc-sm-02-17",
+      "gpu": "NVIDIA H200",
+      "partition": "gpu",
+      "breakdown_seconds": {
+        "data_binding_verify": 2,
+        "probe_D0_cell_seam": 48,
+        "probe_D1_floor_repro": 47.6,
+        "model_train_sum_5_datasets": 186.53,
+        "model_eval_sum_5_datasets": 0.32
+      },
+      "per_dataset_train_seconds": {
+        "ifc_heat": 5.673931837081909,
+        "ifc_poisson": 5.712380647659302,
+        "sharp__allen_cahn_2d": 58.6692841053009,
+        "sharp__cahn_hilliard": 57.997692823410034,
+        "sharp__fisher_kpp_2d": 58.47823715209961
+      },
+      "peak_mem_mb_max": 919.373312,
+      "note": "5 datasets at 200 epochs, not 6. Round-2 ledger recorded this family at 4.1-4.4 min/seed for 6 datasets; the extra ~2.5 min here is the seed-0-only D0+D1 probe legs (~96 s) plus scoring overhead. Seeds 1 and 2 skip the probes and should run shorter."
+    },
+    "pre_directed_certifier_note": "D2 (tau certification), D3 (min-detectable-deltas / two-threshold fusion) and D4 (noise-floor re-certification, cell-integrity audit) all require 3 seeds and run via scripts/03_certify.sh after seeds 1-2 land. Part 5 covers the seed-0 cells and the D0/D1 probe verdicts only. No noise_floor candidate was installed; no state/ file was written."
+  },
   "6_analysis": null,
   "7_gap_and_future": null,
   "reanalysis_progress": null,

@@ -82,7 +82,7 @@
     "datasets_pre_adr_r3_0004": "sharp__phase_field_crystal_2d,sharp__allen_cahn_2d,sharp__fisher_kpp_2d,sharp__cahn_hilliard,ifc_poisson,ifc_heat",
     "base_commit_pre_adr_r3_0004": "9ad78b47dbcc9373b1270bb18deba43ab7adb4ad"
   },
-  "status": "submitted_seed0",
+  "status": "analyzing",
   "skipped_reason": null,
   "reopen_candidate": false,
   "scripts_path": {
@@ -108,6 +108,18 @@
       "submitted": "2026-08-07T17:52 PDT",
       "by": "orchestrator",
       "note": "corrects 66824243 (scancelled): submit.sh is a login-node wrapper that sbatches 01_train_eval.sh \u2014 sbatch'ing the wrapper queued a 1-cpu shell job (maintainer catch). 66825323 is the real GPU job."
+    },
+    {
+      "seed": 1,
+      "job_id": 66879960,
+      "submitted": "2026-08-08T03:35 PDT",
+      "by": "orchestrator (initial-analyzer verdict proceed_to_seeds_1_2; MUST #4 in-round confirms)"
+    },
+    {
+      "seed": 2,
+      "job_id": 66879961,
+      "submitted": "2026-08-08T03:35 PDT",
+      "by": "orchestrator"
     }
   ],
   "logs": {},
@@ -152,7 +164,838 @@
     }
   ],
   "debug_notes": [],
-  "5_actual_result": null,
+  "5_actual_result": {
+    "seeds_available": [
+      0
+    ],
+    "primary_arm": "A1_lf_all",
+    "scored_panel": "sharp__allen_cahn_2d,sharp__fisher_kpp_2d,sharp__cahn_hilliard,ifc_poisson,ifc_heat (5-dataset ADR r3-0004 panel; pfc report-only)",
+    "per_dataset": {
+      "sharp__allen_cahn_2d": {
+        "per_seed_nrmse": [
+          0.358159
+        ],
+        "per_seed_skill": [
+          173.917818
+        ],
+        "mean_skill": 173.917818,
+        "ci95": null,
+        "reference_type": "copylf",
+        "cached": true,
+        "source": "eval/result_ac-fk-ch-ifcp-ifch_s0.json (PRIMARY arm A1_lf_all roll-up; sharp cells = HF-draw d0)"
+      },
+      "sharp__fisher_kpp_2d": {
+        "per_seed_nrmse": [
+          0.02748
+        ],
+        "per_seed_skill": [
+          166.299482
+        ],
+        "mean_skill": 166.299482,
+        "ci95": null,
+        "reference_type": "copylf",
+        "cached": true,
+        "source": "eval/result_ac-fk-ch-ifcp-ifch_s0.json (PRIMARY arm A1_lf_all roll-up; sharp cells = HF-draw d0)"
+      },
+      "sharp__cahn_hilliard": {
+        "per_seed_nrmse": [
+          0.528166
+        ],
+        "per_seed_skill": [
+          12.634646
+        ],
+        "mean_skill": 12.634646,
+        "ci95": null,
+        "reference_type": "copylf",
+        "cached": true,
+        "source": "eval/result_ac-fk-ch-ifcp-ifch_s0.json (PRIMARY arm A1_lf_all roll-up; sharp cells = HF-draw d0)"
+      },
+      "ifc_poisson": {
+        "per_seed_nrmse": [
+          0.224871
+        ],
+        "per_seed_skill": [
+          6.246406
+        ],
+        "mean_skill": 6.246406,
+        "ci95": null,
+        "reference_type": "paper_bar",
+        "cached": false,
+        "source": "eval/result_ac-fk-ch-ifcp-ifch_s0.json (PRIMARY arm A1_lf_all roll-up; sharp cells = HF-draw d0)"
+      },
+      "ifc_heat": {
+        "per_seed_nrmse": [
+          0.004862
+        ],
+        "per_seed_skill": [
+          0.065709
+        ],
+        "mean_skill": 0.065709,
+        "ci95": null,
+        "reference_type": "paper_bar",
+        "cached": false,
+        "source": "eval/result_ac-fk-ch-ifcp-ifch_s0.json (PRIMARY arm A1_lf_all roll-up; sharp cells = HF-draw d0)"
+      }
+    },
+    "panel_geomean_skill": {
+      "per_seed": [
+        10.844515
+      ],
+      "mean": 10.844515,
+      "ci95": null,
+      "note": "seed 0 only; CI pending seeds 1-2. R3S3B1_SPLIT_SEED is an HF-SUBSET DRAW, not a training seed (leg JSON lf_channels.seed_semantics) - the three draws are NEVER bootstrapped as a seed CI.",
+      "source": "eval/result_ac-fk-ch-ifcp-ifch_s0.json",
+      "leg_composed_replicate_d0": 10.846645,
+      "per_draw_from_legs": {
+        "A0_nolf": {
+          "d0": 29.759017,
+          "d1": 30.04981,
+          "d2": 31.747042
+        },
+        "A1_lf_all": {
+          "d0": 10.846645,
+          "d1": 10.99151,
+          "d2": 11.169704
+        },
+        "A2_lf_covered": {
+          "d0": 30.876958,
+          "d1": 30.903122,
+          "d2": 32.248271
+        },
+        "A3_lf_uncovered": {
+          "d0": 11.329844,
+          "d1": 11.525643,
+          "d2": 11.603548
+        }
+      }
+    },
+    "vs_anchor": {
+      "anchor_card": "r2s3_lf_train_signal-B3 (own-stream, CERTIFIED)",
+      "anchor_value": 12.3288,
+      "anchor_ci95": [
+        11.9785,
+        12.679
+      ],
+      "anchor_source": "state/anchors/launch_anchors.json :: cards.r2s3_lf_train_signal-B3 (live 5-dataset re-aggregation)",
+      "delta": -1.484285,
+      "beyond_ci": true,
+      "beyond_noise_floor": true,
+      "noise_floor_used": 1.1418668211296108,
+      "noise_floor_source": "round2/state/noise_floor.json :: _panel_geomean.min_claimable_effect (CERTIFIED; defined on the round-2 6-dataset panel composition, applied here as the nearest certified panel-level floor)",
+      "provenance_note": "Card part 4 quotes the PRE-ADR-r3-0004 6-dataset values (anchor 15.5893, CI [15.2071,15.9714]; cratered 1.5 x 36.3912 = 54.5868). The LIVE 5-dataset values used here are anchor 12.3288, CI [11.9785,12.679], cratered line 1.5 x 34.4198 = 51.6297 (build_notes / launch_anchors.json).",
+      "caveat": "Single seed vs a 3-seed anchor CI - directional only until seeds 1-2 land."
+    },
+    "cratered_verdict": "proceed_to_seeds_1_2",
+    "cratered_detail": {
+      "rule": "cratered iff crash OR panel geomean skill > 1.5 x stream best-floor anchor",
+      "cratered_line": 51.6297,
+      "cratered_line_basis": "1.5 x 34.4198 (launch_anchors.json best_floor.value, live 5-dataset)",
+      "measured_primary_panel_geomean": 10.844515,
+      "margin_factor": 4.760905,
+      "job_state": "COMPLETED exit 0:0 (sacct 66825323)",
+      "note": "A0/A2 (no-LF and covered-only arms) sit at panel geomean ~29.8-32.2, still under the cratered line; they are matched controls and are not cratered-screened per recipe.env._primary_arm."
+    },
+    "falsification_verdict": "confirmed",
+    "falsification_detail": {
+      "clause_verbatim": "FALSIFIED if, at seed 0 on the worst HF-subset draw, `E_total` fails to exceed `tau_d` (pfc 8.8595, ac 16.4223, fk 158.3322, ch 1.1604, ifc_poisson 0.9377041) on at least 3 of the 5 threshold-carrying datasets *restricted to those where `A1_lf_all` also beats that dataset's best training-free floor*, or if on `sharp__cahn_hilliard` `A2_lf_covered` recovers >= 50 % of `E_total` while the row-count-matched `A3s_lf_uncov_n5` recovers < 50 % - which would show the ch effect is an optimisation artefact of multi-resolution supervision rather than the coverage-supply mechanism this card predicts.",
+      "adr_r3_0004_effect": "pfc (tau 8.8595) is VOID for claim purposes, so the clause's denominator is 4 threshold-carrying datasets (ac, fk, ch, ifc_poisson), not 5; the '>= 3' numerator is unchanged. Verdict is identical under either denominator because 3 carriers pass outright.",
+      "floor_gate": "all 4 threshold-carrying datasets pass (A1_lf_all beats the best training-free floor on EVERY draw): ac 173.92-196.06 < 475.86; fk 166.30-175.80 < 390.70; ch 12.52-12.63 < 23.18; ifc_poisson 6.2705 < 8.0409. ifc_heat 0.0655 < 1.3941 (no tau; reported only).",
+      "clause_1_worst_draw": {
+        "sharp__allen_cahn_2d": {
+          "worst_draw": "d0",
+          "E_total": 289.6392,
+          "tau_d": 16.4223,
+          "ratio": 17.64,
+          "exceeds": true
+        },
+        "sharp__fisher_kpp_2d": {
+          "worst_draw": "d0",
+          "E_total": 291.7098,
+          "tau_d": 158.3322,
+          "ratio": 1.84,
+          "exceeds": true
+        },
+        "sharp__cahn_hilliard": {
+          "worst_draw": "d2",
+          "E_total": 12.1547,
+          "tau_d": 1.1604,
+          "ratio": 10.48,
+          "exceeds": true
+        },
+        "ifc_poisson": {
+          "worst_draw": "native",
+          "E_total": -1.8015,
+          "tau_d": 0.9377,
+          "ratio": -1.92,
+          "exceeds": false,
+          "note": "SIGN FAILURE, and resolvable: |E_total| = 1.92 x tau_d, i.e. LF-at-train measurably HURTS on the repaired nested ifc_poisson ladder."
+        },
+        "count_exceeding": 3,
+        "required": 3,
+        "clause_1_fires": false,
+        "robustness": "identical 3/4 result under the alternative reading 'a single globally worst draw' - ac/fk/ch exceed tau on all three draws d0/d1/d2 and ifc_poisson has only the native leg."
+      },
+      "clause_2_ch_channel": {
+        "d0": {
+          "E_total": 17.4436,
+          "A2_recovery_pct": -4.7,
+          "A3s_recovery_pct": 43.7
+        },
+        "d1": {
+          "E_total": 14.7302,
+          "A2_recovery_pct": 0.2,
+          "A3s_recovery_pct": 8.8
+        },
+        "d2": {
+          "E_total": 12.1547,
+          "A2_recovery_pct": 0.5,
+          "A3s_recovery_pct": 28.4
+        },
+        "antecedent": "A2_lf_covered recovers >= 50 % of E_total",
+        "antecedent_holds": false,
+        "clause_2_fires": false,
+        "note": "A2 (covered-only LF) recovers essentially NOTHING of the ch effect on any draw (-4.7 % to +0.5 %); the full uncovered pool A3 recovers 97.2-100.8 %. The row-count-matched A3s recovers 8.8-43.7 %, i.e. coverage BREADTH, not merely uncovered-ness, carries the effect."
+      },
+      "verdict_reasoning": "Neither disjunct of the pre-registered clause fires at seed 0, so the card is NOT falsified: 3 of the 4 live threshold-carrying datasets clear tau_d on their worst draw with all 4 passing the claimability floor gate, and the ch optimisation-artefact disjunct requires A2 >= 50 % which is measured at <= 0.5 %.",
+      "still_pending": "Seeds 1 and 2 (training seeds) have not run. The clause is written 'at seed 0', so it is adjudicated here; seeds 1-2 will test robustness of the same adjudication, not the clause itself."
+    },
+    "channel_decomposition_summary": {
+      "definition": "E_total = skill(A0_nolf) - skill(A1_lf_all); E_opt = skill(A0) - skill(A2_lf_covered); E_cov = skill(A0) - skill(A3_lf_uncovered); E_cov_matched = skill(A0) - skill(A3s_lf_uncov_n5). Positive = LF-at-train helps (skill is nRMSE / reference, lower is better).",
+      "headline": "The +/-LF-at-train effect is ~entirely the COVERAGE channel on all four datasets where it is positive. E_opt / E_total = -1.10 %, -0.75 %, +7.26 % (ac d0/d1/d2); -0.79 %, +1.44 %, +1.53 % (fk); -4.74 %, +0.24 %, +0.46 % (ch); -4.05 % (ifc_heat) - i.e. |E_opt| <= 4.8 % of E_total on 9 of the 10 positive cells, ac d2 being the only outlier at 7.3 %. E_cov / E_total sits in [0.972, 1.013] on every one of those 10 cells. Verified non-degenerate: every A2 leg really trained on 5 covered LF rows per rung (lf_pool n_kept = [5,5] sharp / [5,5,5] ifc, kept_rows_covered_by_hf_train = 5).",
+      "ifc_poisson_sign_inversion": "E_total = -1.80, E_opt = -0.51, E_cov = -2.77: on the repaired nested ladder the uncovered LF rows actively HARM, and the row-count-matched A3s is neutral (-0.02). This is the one dataset where the coverage channel has the wrong sign.",
+      "hf_row_price_A4": "A4_hf20_nolf (N_hf = 20, no LF) never reaches A1_lf_all (N_hf = 5, +LF) on any sharp dataset/draw. (A0-A4)/(A0-A1) = 0.16-0.57, i.e. quadrupling the HF budget buys 16-57 % of what the full LF pool buys at N_hf = 5."
+    },
+    "arm_matrix": {
+      "_schema": "arm_matrix[dataset][draw].arms_nrmse_skill[arm] = [nRMSE, skill] read verbatim from eval/{arm}__{dataset}__d{draw}__e200__s0.json; null = leg not in the grid (A3s: ch + both ifc only; A4: sharp only). channels are analysis-side differences of those published skills.",
+      "matrix": {
+        "sharp__allen_cahn_2d": {
+          "d0": {
+            "arms_nrmse_skill": {
+              "A0_nolf": [
+                0.95463,
+                463.557031
+              ],
+              "A1_lf_all": [
+                0.358159,
+                173.917818
+              ],
+              "A2_lf_covered": [
+                0.961193,
+                466.744012
+              ],
+              "A3_lf_uncovered": [
+                0.362846,
+                176.193822
+              ],
+              "A3s_lf_uncov_n5": null,
+              "A4_hf20_nolf": [
+                0.819445,
+                397.912823
+              ]
+            },
+            "channels": {
+              "E_total": 289.639213,
+              "E_opt": -3.186981,
+              "E_cov": 287.363209,
+              "E_cov_matched": null,
+              "E_opt_frac_of_E_total": -0.011003,
+              "E_cov_frac_of_E_total": 0.992142,
+              "E_cov_matched_frac_of_E_total": null,
+              "tau_d": 16.422285,
+              "E_total_exceeds_tau_d": true,
+              "E_total_over_tau_d": 17.636962
+            },
+            "A1_beats_best_training_free_floor": true,
+            "best_training_free_floor": {
+              "skill": 475.856822,
+              "arm": "nn_condition"
+            }
+          },
+          "d1": {
+            "arms_nrmse_skill": {
+              "A0_nolf": [
+                1.077602,
+                523.27098
+              ],
+              "A1_lf_all": [
+                0.36536,
+                177.414437
+              ],
+              "A2_lf_covered": [
+                1.082946,
+                525.866101
+              ],
+              "A3_lf_uncovered": [
+                0.37853,
+                183.809795
+              ],
+              "A3s_lf_uncov_n5": null,
+              "A4_hf20_nolf": [
+                0.960814,
+                466.560219
+              ]
+            },
+            "channels": {
+              "E_total": 345.856543,
+              "E_opt": -2.595121,
+              "E_cov": 339.461185,
+              "E_cov_matched": null,
+              "E_opt_frac_of_E_total": -0.007503,
+              "E_cov_frac_of_E_total": 0.981509,
+              "E_cov_matched_frac_of_E_total": null,
+              "tau_d": 16.422285,
+              "E_total_exceeds_tau_d": true,
+              "E_total_over_tau_d": 21.060197
+            },
+            "A1_beats_best_training_free_floor": true,
+            "best_training_free_floor": {
+              "skill": 475.856822,
+              "arm": "nn_condition"
+            }
+          },
+          "d2": {
+            "arms_nrmse_skill": {
+              "A0_nolf": [
+                1.529253,
+                742.587346
+              ],
+              "A1_lf_all": [
+                0.403758,
+                196.06013
+              ],
+              "A2_lf_covered": [
+                1.447586,
+                702.930685
+              ],
+              "A3_lf_uncovered": [
+                0.409051,
+                198.630441
+              ],
+              "A3s_lf_uncov_n5": null,
+              "A4_hf20_nolf": [
+                0.88798,
+                431.192679
+              ]
+            },
+            "channels": {
+              "E_total": 546.527216,
+              "E_opt": 39.656661,
+              "E_cov": 543.956905,
+              "E_cov_matched": null,
+              "E_opt_frac_of_E_total": 0.072561,
+              "E_cov_frac_of_E_total": 0.995297,
+              "E_cov_matched_frac_of_E_total": null,
+              "tau_d": 16.422285,
+              "E_total_exceeds_tau_d": true,
+              "E_total_over_tau_d": 33.279609
+            },
+            "A1_beats_best_training_free_floor": true,
+            "best_training_free_floor": {
+              "skill": 475.856822,
+              "arm": "nn_condition"
+            }
+          }
+        },
+        "sharp__fisher_kpp_2d": {
+          "d0": {
+            "arms_nrmse_skill": {
+              "A0_nolf": [
+                0.075684,
+                458.0093
+              ],
+              "A1_lf_all": [
+                0.02748,
+                166.299482
+              ],
+              "A2_lf_covered": [
+                0.076065,
+                460.31507
+              ],
+              "A3_lf_uncovered": [
+                0.028236,
+                170.873902
+              ],
+              "A3s_lf_uncov_n5": null,
+              "A4_hf20_nolf": [
+                0.058704,
+                355.253221
+              ]
+            },
+            "channels": {
+              "E_total": 291.709818,
+              "E_opt": -2.30577,
+              "E_cov": 287.135398,
+              "E_cov_matched": null,
+              "E_opt_frac_of_E_total": -0.007904,
+              "E_cov_frac_of_E_total": 0.984319,
+              "E_cov_matched_frac_of_E_total": null,
+              "tau_d": 158.332153,
+              "E_total_exceeds_tau_d": true,
+              "E_total_over_tau_d": 1.842392
+            },
+            "A1_beats_best_training_free_floor": true,
+            "best_training_free_floor": {
+              "skill": 390.701484,
+              "arm": "train_mean"
+            }
+          },
+          "d1": {
+            "arms_nrmse_skill": {
+              "A0_nolf": [
+                0.077694,
+                470.170058
+              ],
+              "A1_lf_all": [
+                0.029051,
+                175.801883
+              ],
+              "A2_lf_covered": [
+                0.076995,
+                465.941698
+              ],
+              "A3_lf_uncovered": [
+                0.028487,
+                172.39372
+              ],
+              "A3s_lf_uncov_n5": null,
+              "A4_hf20_nolf": [
+                0.067484,
+                408.385832
+              ]
+            },
+            "channels": {
+              "E_total": 294.368175,
+              "E_opt": 4.22836,
+              "E_cov": 297.776338,
+              "E_cov_matched": null,
+              "E_opt_frac_of_E_total": 0.014364,
+              "E_cov_frac_of_E_total": 1.011578,
+              "E_cov_matched_frac_of_E_total": null,
+              "tau_d": 158.332153,
+              "E_total_exceeds_tau_d": true,
+              "E_total_over_tau_d": 1.859181
+            },
+            "A1_beats_best_training_free_floor": true,
+            "best_training_free_floor": {
+              "skill": 390.701484,
+              "arm": "train_mean"
+            }
+          },
+          "d2": {
+            "arms_nrmse_skill": {
+              "A0_nolf": [
+                0.079305,
+                479.923715
+              ],
+              "A1_lf_all": [
+                0.028298,
+                171.245826
+              ],
+              "A2_lf_covered": [
+                0.078524,
+                475.192226
+              ],
+              "A3_lf_uncovered": [
+                0.027656,
+                167.360962
+              ],
+              "A3s_lf_uncov_n5": null,
+              "A4_hf20_nolf": [
+                0.064115,
+                387.997555
+              ]
+            },
+            "channels": {
+              "E_total": 308.677889,
+              "E_opt": 4.731489,
+              "E_cov": 312.562753,
+              "E_cov_matched": null,
+              "E_opt_frac_of_E_total": 0.015328,
+              "E_cov_frac_of_E_total": 1.012585,
+              "E_cov_matched_frac_of_E_total": null,
+              "tau_d": 158.332153,
+              "E_total_exceeds_tau_d": true,
+              "E_total_over_tau_d": 1.949559
+            },
+            "A1_beats_best_training_free_floor": true,
+            "best_training_free_floor": {
+              "skill": 390.701484,
+              "arm": "train_mean"
+            }
+          }
+        },
+        "sharp__cahn_hilliard": {
+          "d0": {
+            "arms_nrmse_skill": {
+              "A0_nolf": [
+                1.257361,
+                30.078285
+              ],
+              "A1_lf_all": [
+                0.528166,
+                12.634646
+              ],
+              "A2_lf_covered": [
+                1.291956,
+                30.905836
+              ],
+              "A3_lf_uncovered": [
+                0.522244,
+                12.49299
+              ],
+              "A3s_lf_uncov_n5": [
+                0.938348,
+                22.446915
+              ],
+              "A4_hf20_nolf": [
+                0.861547,
+                20.609716
+              ]
+            },
+            "channels": {
+              "E_total": 17.443639,
+              "E_opt": -0.827551,
+              "E_cov": 17.585295,
+              "E_cov_matched": 7.63137,
+              "E_opt_frac_of_E_total": -0.047441,
+              "E_cov_frac_of_E_total": 1.008121,
+              "E_cov_matched_frac_of_E_total": 0.437487,
+              "tau_d": 1.160357,
+              "E_total_exceeds_tau_d": true,
+              "E_total_over_tau_d": 15.032994
+            },
+            "A1_beats_best_training_free_floor": true,
+            "best_training_free_floor": {
+              "skill": 23.180342,
+              "arm": "nn_condition"
+            }
+          },
+          "d1": {
+            "arms_nrmse_skill": {
+              "A0_nolf": [
+                1.139126,
+                27.249887
+              ],
+              "A1_lf_all": [
+                0.523362,
+                12.519735
+              ],
+              "A2_lf_covered": [
+                1.137664,
+                27.214912
+              ],
+              "A3_lf_uncovered": [
+                0.540575,
+                12.931503
+              ],
+              "A3s_lf_uncov_n5": [
+                1.085198,
+                25.959826
+              ],
+              "A4_hf20_nolf": [
+                0.86587,
+                20.713125
+              ]
+            },
+            "channels": {
+              "E_total": 14.730152,
+              "E_opt": 0.034975,
+              "E_cov": 14.318384,
+              "E_cov_matched": 1.290061,
+              "E_opt_frac_of_E_total": 0.002374,
+              "E_cov_frac_of_E_total": 0.972046,
+              "E_cov_matched_frac_of_E_total": 0.08758,
+              "tau_d": 1.160357,
+              "E_total_exceeds_tau_d": true,
+              "E_total_over_tau_d": 12.694501
+            },
+            "A1_beats_best_training_free_floor": true,
+            "best_training_free_floor": {
+              "skill": 23.180342,
+              "arm": "nn_condition"
+            }
+          },
+          "d2": {
+            "arms_nrmse_skill": {
+              "A0_nolf": [
+                1.035002,
+                24.759065
+              ],
+              "A1_lf_all": [
+                0.526898,
+                12.604332
+              ],
+              "A2_lf_covered": [
+                1.032665,
+                24.703148
+              ],
+              "A3_lf_uncovered": [
+                0.532935,
+                12.748738
+              ],
+              "A3s_lf_uncov_n5": [
+                0.89075,
+                21.308298
+              ],
+              "A4_hf20_nolf": [
+                0.944794,
+                22.601136
+              ]
+            },
+            "channels": {
+              "E_total": 12.154733,
+              "E_opt": 0.055917,
+              "E_cov": 12.010327,
+              "E_cov_matched": 3.450767,
+              "E_opt_frac_of_E_total": 0.0046,
+              "E_cov_frac_of_E_total": 0.988119,
+              "E_cov_matched_frac_of_E_total": 0.283903,
+              "tau_d": 1.160357,
+              "E_total_exceeds_tau_d": true,
+              "E_total_over_tau_d": 10.474995
+            },
+            "A1_beats_best_training_free_floor": true,
+            "best_training_free_floor": {
+              "skill": 23.180342,
+              "arm": "nn_condition"
+            }
+          }
+        },
+        "ifc_poisson": {
+          "dnative": {
+            "arms_nrmse_skill": {
+              "A0_nolf": [
+                0.160883,
+                4.468972
+              ],
+              "A1_lf_all": [
+                0.225738,
+                6.270495
+              ],
+              "A2_lf_covered": [
+                0.179371,
+                4.982538
+              ],
+              "A3_lf_uncovered": [
+                0.260532,
+                7.236993
+              ],
+              "A3s_lf_uncov_n5": [
+                0.161729,
+                4.492478
+              ],
+              "A4_hf20_nolf": null
+            },
+            "channels": {
+              "E_total": -1.801523,
+              "E_opt": -0.513566,
+              "E_cov": -2.768021,
+              "E_cov_matched": -0.023506,
+              "E_opt_frac_of_E_total": 0.285073,
+              "E_cov_frac_of_E_total": 1.536489,
+              "E_cov_matched_frac_of_E_total": 0.013048,
+              "tau_d": 0.937704,
+              "E_total_exceeds_tau_d": false,
+              "E_total_over_tau_d": -1.921206
+            },
+            "A1_beats_best_training_free_floor": true,
+            "best_training_free_floor": {
+              "skill": 8.040897,
+              "arm": "nn_condition"
+            }
+          }
+        },
+        "ifc_heat": {
+          "dnative": {
+            "arms_nrmse_skill": {
+              "A0_nolf": [
+                0.060518,
+                0.817814
+              ],
+              "A1_lf_all": [
+                0.004849,
+                0.065521
+              ],
+              "A2_lf_covered": [
+                0.062774,
+                0.848296
+              ],
+              "A3_lf_uncovered": [
+                0.005075,
+                0.068585
+              ],
+              "A3s_lf_uncov_n5": [
+                0.023632,
+                0.319346
+              ],
+              "A4_hf20_nolf": null
+            },
+            "channels": {
+              "E_total": 0.752293,
+              "E_opt": -0.030482,
+              "E_cov": 0.749229,
+              "E_cov_matched": 0.498468,
+              "E_opt_frac_of_E_total": -0.040519,
+              "E_cov_frac_of_E_total": 0.995927,
+              "E_cov_matched_frac_of_E_total": 0.662598,
+              "tau_d": null,
+              "E_total_exceeds_tau_d": null,
+              "E_total_over_tau_d": null
+            },
+            "A1_beats_best_training_free_floor": true,
+            "best_training_free_floor": {
+              "skill": 1.394102,
+              "arm": "nn_condition"
+            }
+          }
+        }
+      }
+    },
+    "pfc_report_only_non_scoring": {
+      "adr": "ADR r3-0004: sharp__phase_field_crystal_2d scored cell is task-void; these cells NEVER enter a scored aggregate. Source dir eval/diagnostic_pfc/ (each file carries a single-cell top-level panel_geomean_skill that must never be aggregated).",
+      "A0_nolf_skill": {
+        "d0": 64.1198,
+        "d1": 64.3363,
+        "d2": 64.3891
+      },
+      "A1_lf_all_skill": {
+        "d0": 50.5144,
+        "d1": 49.9107,
+        "d2": 52.4897
+      },
+      "A2_lf_covered_skill": {
+        "d0": 62.6737,
+        "d1": 64.7526,
+        "d2": 64.6882
+      },
+      "A3_lf_uncovered_skill": {
+        "d0": 49.8772,
+        "d1": 50.1174,
+        "d2": 52.4948
+      },
+      "A4_hf20_nolf_skill": {
+        "d0": 57.9831,
+        "d1": 59.4895,
+        "d2": 57.5964
+      },
+      "E_total": {
+        "d0": 13.6054,
+        "d1": 14.4256,
+        "d2": 11.8994
+      },
+      "note": "Same coverage-channel signature as the scored panel (E_opt ~ 0, E_cov ~ E_total); void for claim purposes."
+    },
+    "guard_flags": [
+      "heat_local"
+    ],
+    "guard_detail": {
+      "tier": "contract (epochs = 2), run in-job as leg A1_lf_all__guard__d0__e2__s0",
+      "reference_source": "round2/eval/copylf_baselines.json test_nrmse",
+      "per_dataset": {
+        "fluid": {
+          "nRMSE": 0.247433,
+          "guard_reference_nrmse": 0.21805958171115042,
+          "ratio_to_guard_reference": 1.134701,
+          "regressed_gt_2x": false
+        },
+        "heat_local": {
+          "nRMSE": 0.045299,
+          "guard_reference_nrmse": 0.00240152155999517,
+          "ratio_to_guard_reference": 18.862597,
+          "regressed_gt_2x": true
+        },
+        "sharp__sod_1d": {
+          "nRMSE": 0.034579,
+          "guard_reference_nrmse": 0.03309017650048946,
+          "ratio_to_guard_reference": 1.04499,
+          "regressed_gt_2x": false
+        }
+      },
+      "interpretation": "heat_local ratio 18.86 exceeds the 2x flag line, but the three guard nRMSEs are BIT-IDENTICAL to the vendored base family's own round-2 guard legs (r2s3_lf_train_signal-B3 result_guard_guard_A1_s0.json: fluid 0.247434, heat_local 0.045299, sod_1d 0.034579; and B2 guard_A2). It is a pre-existing 2-epoch characteristic of the frozen backbone, NOT a regression introduced by this card - and it doubles as an exact reproduction seam for the byte-identical vendoring. No auto-reject.",
+      "contract_note": "Section 2d's guard trigger (a 3-seed panel win beyond CI) is not yet met; the guard set was run in-job anyway and is reported here."
+    },
+    "preflight": {
+      "target_scale_spread_s0.json": {
+        "instrument_ok": true,
+        "error_keys_found": 0,
+        "verdicts": {
+          "sharp__allen_cahn_2d": "OK",
+          "sharp__fisher_kpp_2d": "OK",
+          "sharp__cahn_hilliard": "OK",
+          "ifc_poisson": "OK",
+          "ifc_heat": "OK",
+          "sharp__phase_field_crystal_2d": "OK"
+        },
+        "reviewer_F1_discharged": "code-reviewer F1 warned the tool swallows per-dataset exceptions into an 'error' key and still exits 0. Checked: no 'error' key anywhere in the file and all 6 datasets carry a real statistics block plus verdict OK.",
+        "notable": "ifc effective_n_samples_of_mse 4.7/5 and 4.8/5 (n_train_hf = 5); sharp effective N 145.6-183.4 / 400."
+      },
+      "condition_identifiable_rank_ch_s0.json": {
+        "cond_dim": 19,
+        "identifiable_rank_R2_gt_0.1": 3,
+        "pred_var": 0.5641,
+        "floor": 0.6596,
+        "dc_share": 0.0045,
+        "dc_oof_R2": 1.0,
+        "dc_arm": 0.99774,
+        "verdict": "no_arm_nrmse_given",
+        "note": "only 3 of ch's 19 condition dimensions are out-of-fold identifiable from the 400-row design at the probed mode budget."
+      },
+      "affine_ladder_voi_ch_s0.json": {
+        "hf_design_rank": "20/20 (full, 400 rows)",
+        "null_energy": 0.0,
+        "affine_limit_skill": 12.8711,
+        "best_lf_skill": 12.8158,
+        "voi": 0.05526,
+        "verdict": "HF_DESIGN_FULL_RANK",
+        "note": "at the FULL 400-row design ch is affine-saturated; at N_hf = 5 the per-leg gate_report.design_coverage gives numerical_rank 5 and m_null_dim 15."
+      },
+      "data_binding_assert": "performed on every leg; copylf_def_hash 9753ff24..., nrmse_def_hash d3d0ade9..., floors certified_utc 2026-08-04T05:12:04Z; floor seam at tol 1e-9, anchor affine seam at tol 1e-7 (both pass)."
+    },
+    "anomalies": [
+      "ZERO training anomalies: stderr log is 0 bytes; no NaN/Inf in any of the 78 rich leg JSONs (loss curves and all split nRMSEs finite); resumed_from_step = 0 on every leg (no preemption, no resume); 74/74 legs completed with done markers; sacct 66825323 COMPLETED exit 0:0.",
+      "ifc legs were trained TWICE at seed 0 and are not bit-reproducible. The per-leg ifc invocations carry R3S3B1_SPLIT_SEED='native' while the PRIMARY roll-up carries '0'; score_panel's cache key is sha256(code_hash|ds|epochs|seed) and code_hash covers env, so the roll-up re-trained ifc_poisson and ifc_heat from scratch (sharp cells hit cache). Identical config (same 5 rows [0,1,2,3,4], same LF pool 100/50/20, identical ref_affine_on_hf_train to all digits) yet: ifc_poisson nRMSE 0.225738 vs 0.224871 (0.39 %), ifc_heat 0.004849 vs 0.004862 (0.28 %); panel geomean 10.846645 vs 10.844515 (0.02 %). This is a free within-config GPU-nondeterminism replicate and it is far below every tau_d, but it means ifc cells are reproducible only to ~0.4 %.",
+      "Card part 4 / expected_falsification thresholds are the PRE-ADR-r3-0004 6-dataset numbers (anchor 15.5893, cratered 54.5868, 'at least 3 of the 5'). This analysis uses the live 5-dataset values (anchor 12.3288 CI [11.9785,12.679], cratered 51.6297) per build_notes and launch_anchors.json, and reads the clause denominator as 4 live threshold carriers.",
+      "The PRIMARY arm came in at panel geomean 10.8445, BELOW the card's own prediction band of 13-18 and below the own-stream anchor's CI lower bound 11.9785, despite the card deliberately claiming no improvement. Per-dataset the sharp reproduction seam is tight against the anchor (ac 182.5 mean-over-draws vs 186.8; fk 171.1 vs 172.2; ch 12.59 vs 12.87), so essentially all of the panel movement is ifc_poisson 9.5116 -> 6.2705 (-34 %). Mechanism-analyzer should adjudicate whether that is the repaired nested ladder or a genuine arm effect before anyone treats this as a win.",
+      "ifc_poisson is the sole sign inversion: E_total = -1.80 (LF hurts) at 1.92 x its certified tau_d 0.9377, driven by the uncovered pool (E_cov = -2.77) while the row-count-matched A3s is neutral (-0.02).",
+      "A2_lf_covered is indistinguishable from A0_nolf across the board (panel geomean 30.88/30.90/32.25 vs 29.76/30.05/31.75): the optimisation channel measures ~zero. This is NOT a degenerate leg - I checked every A2 rich leg JSON and lf_pool n_kept = [5,5] (sharp) / [5,5,5] (ifc) with kept_rows_covered_by_hf_train = 5 at every rung. The matched contrast is the clean one: A3s_lf_uncov_n5 trains on the SAME 5 LF rows per rung but at UNCOVERED conditions (kept_rows_covered_by_hf_train = 0) and recovers 8.8-43.7 % of E_total on ch and 66.3 % on ifc_heat.",
+      "Guard heat_local ratio 18.86 > 2 x reference - flagged per contract, but bit-identical to the base family's round-2 guard leg, so pre-existing (see guard_detail)."
+    ],
+    "wall_clock_per_seed_min": [
+      150.25
+    ],
+    "timing_ledger_feed": {
+      "job_id": 66825323,
+      "seed": 0,
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "elapsed": "02:30:15",
+      "elapsed_min": 150.25,
+      "requested": "06:00:00",
+      "start_utc": "2026-08-07T23:58:47",
+      "end_utc": "2026-08-08T02:29:02",
+      "node": "hpc-sm-02-17",
+      "gpu": "NVIDIA H200",
+      "max_rss_kb": 4035508,
+      "legs": 74,
+      "sum_train_seconds": 7846.6,
+      "mean_train_seconds_per_leg": 100.6,
+      "slowest_leg_s": 140.0,
+      "note": "41 % of the 6 h request used; 3 pre-flights cost ~5 s + 4.7 s + <1 s (code-reviewer F3 concern about untimed pre-flights did not materialise)."
+    },
+    "provenance": {
+      "eval_dir": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round3/r3s3_lf_value/B1/eval",
+      "scored_leg_files": 59,
+      "pfc_diagnostic_files_excluded": 15,
+      "glob_rule": "eval/*.json NON-recursively; eval/diagnostic_pfc/ excluded by construction (code-reviewer F2).",
+      "nrmse_def_hash": "d3d0ade9191c13bacc40702f3eb26ad290e01641cacee22a1d2233b74c035850",
+      "nrmse_def_hash_consistent_across_all_parsed_jsons": true,
+      "copylf_def_hash": "9753ff24e856f595748492dec6cb6c215d748f97e8ec4a679b651f8846da907a",
+      "copylf_def_hash_consistent": true,
+      "slurm_log": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round3/r3s3_lf_value/B1/slurm/r3-r3s3_lf_value-B1-s0_66825323.out",
+      "analyzed_utc": "2026-08-08T09:45:51Z",
+      "no_metric_recomputed_by_hand": "every nRMSE and skill in this block is read verbatim from a score_panel.py result JSON; only differences (E_*), geomeans over those published skills, and ratios were derived."
+    }
+  },
   "6_analysis": null,
   "7_gap_and_future": null,
   "reanalysis_progress": null,

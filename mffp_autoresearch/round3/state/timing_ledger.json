@@ -1,4 +1,44 @@
 {
-  "_note": "Maintainer-upserted from sacct. First maintainer walk (2026-08-07T19:15Z): no r3-{stream}-B{N}-s{seed} jobs exist in squeue or the last-2-day sacct window -- batch 1 has never been dispatched to SLURM for any of the 4 streams (all card job_ids: [], consistent with the round's HOLD). The only recent r2-/r3PFC-prefixed sacct entries in this window (66610529-36) are the pfc anchor re-score / certification jobs from the 2026-08-07 launch-anchor rebuild -- these score the anchor family scripts (r2s1_direct-B3, r2s2_stacked-B1, r2s3_lf_train_signal-B3), not round-3 experiment cards, and are out of scope for this ledger (which sizes builder --time for r3s1_factorised/r3s2_field_reach/r3s3_lf_value/r3s4_audit batch cards). Entries will populate once batch-1 dispatches post-HOLD-clear.",
-  "entries": []
+  "_note": "Maintainer-upserted from sacct. Batch 1 dispatched to SLURM 2026-08-07 (all 4 streams at slurm-seed0 by 01:17:45Z). First COMPLETED r3-* job this cycle: r3s3_lf_value-B1 seed 0 (66825323), 74-leg card / 60 scored+control legs landed under eval/ (maxdepth1), 0 errors in .err, exit 0:0. Entries populate as jobs COMPLETE; sizes builder --time for future batches per stream/dataset-set/epoch combination.",
+  "entries": [
+    {
+      "stream": "r3s3_lf_value",
+      "batch": 1,
+      "seed": 0,
+      "job_id": 66825323,
+      "job_name": "r3-r3s3_lf_value-B1-s0",
+      "datasets": "sharp__allen_cahn_2d,sharp__fisher_kpp_2d,sharp__cahn_hilliard,ifc_poisson,ifc_heat",
+      "epochs": 200,
+      "gpu_type": "nvidia_h200",
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "start_utc": "2026-08-08T06:58:47Z",
+      "end_utc": "2026-08-08T09:29:02Z",
+      "elapsed_min": 150.25,
+      "n_legs": 60,
+      "source": "sacct"
+    },
+    {
+      "stream": "r3s4_audit",
+      "batch": 1,
+      "seed": 0,
+      "job_id": 66826610,
+      "job_name": "r3-r3s4_audit-B1-s0",
+      "datasets": "sharp__allen_cahn_2d,sharp__fisher_kpp_2d,sharp__cahn_hilliard,ifc_poisson,ifc_heat",
+      "epochs": 200,
+      "gpu_type": "nvidia_h200",
+      "state": "COMPLETED",
+      "exit_code": "0:0",
+      "start_utc": "2026-08-08T09:34:26Z",
+      "end_utc": "2026-08-08T09:41:12Z",
+      "elapsed_min": 6.77,
+      "phase_breakdown_sec": {
+        "D0_cell_seam": 48,
+        "D1_floor_repro": 47.6,
+        "train_and_eval": 186.5
+      },
+      "card_type": "diagnostic (r3s4_cert_min, byte-identical vendor of r2s4_cert_min)",
+      "source": "sacct + slurm .out phase timestamps"
+    }
+  ]
 }
