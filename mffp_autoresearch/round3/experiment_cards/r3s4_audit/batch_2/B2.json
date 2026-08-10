@@ -97,7 +97,7 @@
    "R3S4B2_DIAG_OUT": "mffp_autoresearch_outputs/round3/r3s4_audit/B2/eval"
   }
  },
- "status": "reviewed_suggest",
+ "status": "analyzing",
  "skipped_reason": null,
  "reopen_candidate": false,
  "scripts_path": {
@@ -126,6 +126,18 @@
    "job_id": 181979,
    "submitted": "2026-08-10",
    "by": "orchestrator (pre-pricing gate items implemented in da855da; corpus 108/108 present)"
+  },
+  {
+   "seed": 1,
+   "job_id": 168917,
+   "submitted": "2026-08-10",
+   "by": "orchestrator (post seed-0 proceed; serialized ahead of seed 2 to avoid the unsuffixed-manifest race; RETROACTIVELY recorded \u2014 omission flagged by the 3-seed analyzer)"
+  },
+  {
+   "seed": 2,
+   "job_id": 168918,
+   "submitted": "2026-08-10",
+   "by": "orchestrator (dependency afterany:168917; retroactively recorded)"
   }
  ],
  "logs": {},
@@ -168,7 +180,811 @@
   }
  ],
  "debug_notes": [],
- "5_actual_result": null,
+ "5_actual_result": {
+  "seeds_available": [
+   0,
+   1,
+   2
+  ],
+  "_reading_note": "DIAGNOSTIC card. `_scored_cells_touched: 0` and `_delta_vs_anchor: \"not defined \u2014 this card scores no panel cell\"` (eval/diagnostic.json). There are NO `result_*_s*.json` panel artifacts and no panel geomean; every number below is TRANSCRIBED from the probe JSONs under output_paths.eval \u2014 nothing was recomputed by the analyzer. The card's pre-registered inference statistic is the WILSON 95% interval on counts (recipe.env R3S4B2_WILSON_ALPHA=0.05), not a seed bootstrap: the 3 seeds are 3 strata of ONE 108-leg labelled corpus, not 3 replicates of a scalar, so the round's stratified-percentile-bootstrap convention does not apply to G1 and is deliberately not reported.",
+  "per_dataset": {
+   "_shape_note": "No dataset is SCORED by this card. The only cell-resolved, skill-valued measurement is D4 (G5): training-free reference-arm refits at the scored arm's fit-set size (n=320) beside the recorded 400-row fit. Seed-invariant by construction (D2/D3/D4 are `SEED -eq 0` gated and read no training seed), hence per_seed_* and ci95 are null everywhere. Source: eval/diagnostic_d4_fitset.json.",
+   "sharp__allen_cahn_2d": {
+    "per_seed_nrmse": null,
+    "per_seed_skill": null,
+    "mean_skill": null,
+    "ci95": null,
+    "d4_best_floor_arm": "nn_condition",
+    "d4_skill_at_full": 475.85682154308705,
+    "d4_skill_at_n320": 478.5348456502493,
+    "d4_abs_shift_skill": 2.67802410716223,
+    "certified_tau_rel": 18.61975759925883,
+    "d4_shift_over_tau_rel": 0.14382701240261206,
+    "exceeds_certified_tau_rel": false,
+    "d4_per_arm_shift_over_tau_rel": {
+     "affine_on_hf_train": 0.1131931004715707,
+     "nn_condition": 0.14382701240261206,
+     "train_mean": 0.024045044730532393
+    },
+    "full_refit_vs_frozen_1e-12": {
+     "nn_condition": "OK (rel_diff 0.0)",
+     "train_mean": "MISS (rel_diff 5.454e-11; native-dtype control ALSO misses at 5.930e-11 => NOT explained by the float32 stripped-view loader seam)",
+     "affine_on_hf_train": "NO_FROZEN_VALUE"
+    }
+   },
+   "sharp__fisher_kpp_2d": {
+    "per_seed_nrmse": null,
+    "per_seed_skill": null,
+    "mean_skill": null,
+    "ci95": null,
+    "d4_best_floor_arm": "train_mean",
+    "d4_skill_at_full": 390.7014844797183,
+    "d4_skill_at_n320": 386.1361908506226,
+    "d4_abs_shift_skill": 4.56529362909572,
+    "certified_tau_rel": 10.312814173562199,
+    "d4_shift_over_tau_rel": 0.4426816533550318,
+    "exceeds_certified_tau_rel": false,
+    "d4_per_arm_shift_over_tau_rel": {
+     "affine_on_hf_train": 0.5515958130165117,
+     "nn_condition": 0.07262375496846993,
+     "train_mean": 0.4426816533550318
+    },
+    "full_refit_vs_frozen_1e-12": {
+     "nn_condition": "OK (rel_diff 0.0)",
+     "train_mean": "OK (rel_diff 0.0)",
+     "affine_on_hf_train": "NO_FROZEN_VALUE"
+    }
+   },
+   "sharp__cahn_hilliard": {
+    "per_seed_nrmse": null,
+    "per_seed_skill": null,
+    "mean_skill": null,
+    "ci95": null,
+    "d4_best_floor_arm": "nn_condition",
+    "d4_skill_at_full": 23.180342227117514,
+    "d4_skill_at_n320": 23.87874576485666,
+    "d4_abs_shift_skill": 0.6984035377391464,
+    "certified_tau_rel": 0.36124864423263325,
+    "d4_shift_over_tau_rel": 1.9333042459514271,
+    "exceeds_certified_tau_rel": true,
+    "d4_per_arm_shift_over_tau_rel": {
+     "affine_on_hf_train": 0.8561449602015943,
+     "nn_condition": 1.9333042459514271,
+     "train_mean": 0.005721407367742819
+    },
+    "full_refit_vs_frozen_1e-12": {
+     "nn_condition": "OK (rel_diff 0.0)",
+     "train_mean": "OK (rel_diff 0.0)",
+     "affine_on_hf_train": "NO_FROZEN_VALUE"
+    },
+    "note": "THE G5 BREACH CELL. Direction: the @full(400) fit is the LOWER-skill (better) reference; the matched-size @fit(320) refit is 0.698404 skill WORSE, i.e. the reference arm is flattered by its 80 extra fit rows. The max-over-arms non-gating reading agrees (same single breach cell)."
+   },
+   "ifc_poisson": {
+    "per_seed_nrmse": null,
+    "per_seed_skill": null,
+    "mean_skill": null,
+    "ci95": null,
+    "d4_best_floor_arm": "nn_condition",
+    "d4_status": "N_EXCEEDS_TRAIN_ROWS (n_train_hf = 5 << 320): the fit-set seam is UNDEFINED here, not absent",
+    "d4_abs_shift_skill": null,
+    "certified_tau_rel": 0.6910000683054431,
+    "d4_shift_over_tau_rel": null,
+    "exceeds_certified_tau_rel": false,
+    "d4_full_arms_skill": {
+     "affine_on_hf_train": 1.5937636123306758,
+     "nn_condition": 8.040896845727307,
+     "train_mean": 9.004131287667388
+    },
+    "full_refit_vs_frozen_1e-12": {
+     "affine_on_hf_train": "MISS 4.842e-08",
+     "nn_condition": "MISS 9.161e-10",
+     "train_mean": "MISS 6.053e-10",
+     "native_dtype_control": "all three reproduce EXACTLY (rel_diff 0.0) at float64 => all three misses are the float32 stripped-view loader seam"
+    }
+   },
+   "ifc_heat": {
+    "per_seed_nrmse": null,
+    "per_seed_skill": null,
+    "mean_skill": null,
+    "ci95": null,
+    "d4_best_floor_arm": "nn_condition",
+    "d4_status": "N_EXCEEDS_TRAIN_ROWS (n_train_hf = 5 << 320): the fit-set seam is UNDEFINED here, not absent",
+    "d4_abs_shift_skill": null,
+    "certified_tau_rel": 0.1640195793751628,
+    "d4_shift_over_tau_rel": null,
+    "exceeds_certified_tau_rel": false,
+    "d4_full_arms_skill": {
+     "affine_on_hf_train": 0.9583559719706533,
+     "nn_condition": 1.3941023099699918,
+     "train_mean": 1.7666040077084846
+    },
+    "full_refit_vs_frozen_1e-12": {
+     "affine_on_hf_train": "MISS 3.596e-08",
+     "nn_condition": "MISS 1.106e-09",
+     "train_mean": "MISS 4.091e-10",
+     "native_dtype_control": "all three reproduce EXACTLY (rel_diff 0.0) at float64 => all three misses are the float32 stripped-view loader seam"
+    },
+    "note": "`nn_condition` rel_diff 1.1056092280511275e-09 is r3s4_audit-B1's F1 fire, reproduced here by an independent estimator and now 7.89x INSIDE this card's own re-measured ifc_heat tolerance (8.7227e-09): the metrology-limited adjudication becomes structural."
+   }
+  },
+  "panel_geomean_skill": {
+   "per_seed": null,
+   "mean": null,
+   "ci95": null,
+   "_reason": "no panel cell is scored by this card (eval/diagnostic.json `_scored_cells_touched: 0`); the one score-bearing invocation in the whole build is the reviewer-cited contract-tier score_panel.py smoke (ext__helmholtz_2d nRMSE 2.256341191218599), which is a contract check and enters no claim."
+  },
+  "vs_anchor": {
+   "anchor_value": null,
+   "delta": null,
+   "beyond_ci": false,
+   "beyond_noise_floor": true,
+   "_note": "`anchor_reference` is null per the r3s4_audit per-stream policy and no anchor file `state/anchors/r3s4_audit.json` exists; `_delta_vs_anchor` is 'not defined \u2014 this card scores no panel cell'. `beyond_noise_floor: true` refers ONLY to the single floor-referenced quantity this card produces: G5's sharp__cahn_hilliard best-floor shift, 0.698404 skill = 1.9333x the certified tau_rel 0.36124864423263325 (state/anchors_repaired/noise_floor.json). The three non-breaching resolvable cells (ac 0.1438x, fk 0.4427x) and the two undefined ifc cells are BELOW/undefined and are recorded as not resolvable, not as wins. Context constants, untouched: launch best-floor panel geomean 34.4198; stream B1 certification panel 19.6438."
+  },
+  "cratered_verdict": "n/a",
+  "_cratered_rationale": "Diagnostic card: the cratered rule is not defined for cards that score no panel cell (subagent spec \u00a72b; r3s4_audit-B1 precedent). The measurement-vs-falsification-clause record is `falsification_by_clause` below.",
+  "falsification_verdict": "falsified",
+  "falsification_by_clause": {
+   "_clause_verbatim": "the hypothesis \u2014 \"a role-resolved checkpoint<->data content binding is the exact scoring-correctness witness for this regime: it recovers the required remedy (retrain / rescore / re-reference) on a labelled MF mutation corpus with zero false retrains, strictly dominating both the whole-dataset hash and the round's wall-clock rules; the round's F1-class tolerances are metrology-limited and its one discontinuous floor arm is an unstable test with a no-op remedy; and the reference-side terms the round is missing (unobservable paper-bar noise, 400-vs-320 fit sets) are real but sub-verdict\" \u2014 is falsified if ANY of: (G1) ... (G2) ... (G3) ... (G4) ... (G5) ...",
+   "_verdict_shape": "1 of 5 clauses fired. G5 fires => the compound hypothesis is FALSIFIED, and it is falsified in its THIRD conjunct only ('the reference-side terms ... are real but sub-verdict'). The card's primary deliverable \u2014 G1, the six-role binding instrument \u2014 is CONFIRMED at the full pre-registered 108-leg corpus, and G2/G3/G4 are confirmed, three of them more strongly than predicted. No spin either way: the instrument works and the card's own sub-verdict prediction about the fit-set seam is wrong by 3.13x on one cell.",
+   "G1_role_binding_pricing": {
+    "clause_verbatim": "(G1) R1 fails 27/27 \u00b7 18/18 \u00b7 18/18 recall with 0/27 false RETRAIN, or the whole-dataset-hash ablation R2 makes 0 false RETRAIN calls on M2 union M3 (the train/test split buys nothing), or the no-roles ablation R3 also attains 0/27 (the MF role increment is empty)",
+    "fired": false,
+    "verdict": "CONFIRMED at the full corpus",
+    "corpus": {
+     "corpus_complete": true,
+     "n_resume_legs_priced": 108,
+     "expected": 108,
+     "per_seed": {
+      "0": 36,
+      "1": 36,
+      "2": 36
+     },
+     "n_v0_training_legs": 18,
+     "n_legs_total": 126,
+     "missing_resume_legs": [],
+     "unexpected_resume_legs": [],
+     "truth_class_counts": {
+      "RETRAIN": 27,
+      "RESCORE": 18,
+      "REREFERENCE": 18,
+      "NONE": 45,
+      "_NONE_note": "45 = 27 scored NONE + 18 pre-registered blind-spot (M4_train_permute) legs, whose truth is NONE but which are excluded from the FPR denominator by pre-registration"
+     }
+    },
+    "disjunct_1_R1_recall_and_false_retrain": {
+     "deciding_numbers": "RETRAIN 27/27 (Wilson95 [0.87544, 1.0]); RESCORE 18/18 ([0.82412, 1.0]); REREFERENCE 18/18 ([0.82412, 1.0]); NONE 27/27 ([0.87544, 1.0]); false RETRAIN 0/27 = 0.0 (Wilson95 [0.0, 0.12455502974186704]); wrong RETRAIN over every non-RETRAIN leg 0/90 (Wilson95 [3.33e-18, 0.040936])",
+     "vs_pre_registered": "part 4 item 1 predicted 27/27 \u00b7 18/18 \u00b7 18/18 with 0/27 false RETRAIN, Wilson upper 0.126 \u2014 measured EXACTLY, upper bound 0.12456",
+     "confusion_matrix_excl_blindspot": "perfectly diagonal: RETRAIN->RETRAIN 27, RESCORE->RESCORE 18, REREFERENCE->REREFERENCE 18, NONE->NONE 27; 0 off-diagonal, 0 UNAVAILABLE",
+     "blind_spot": "all 18 M4_train_permute legs are called RETRAIN (the declared conservative blind spot: content-identical row permutation is a hash change). Excluded by pre-registration, reported not hidden.",
+     "does_not_fire": true
+    },
+    "disjunct_2_R2_buys_nothing": {
+     "clause_test": "R2 makes 0 false RETRAIN calls on M2 union M3",
+     "deciding_numbers": "R2 wrong RETRAIN on M2 union M3 = 36/36 = 1.0 (Wilson95 [0.90358, 1.0]); confusion-matrix cross-check agrees (k=36, n=36, agrees: true)",
+     "reading": "the whole-dataset hash calls RETRAIN on EVERY test-only mutation. It buys strictly less than nothing on this axis; the train/test split is not empty. Clause requires 0 => does not fire.",
+     "denominator_provenance": "this is the carded M2-union-M3 denominator installed by the pre-pricing fix (commit da855da, gate item 2). Before the fix the disjunct read truth==NONE legs; builder-recorded before/after is 9/27 -> 36/36 over 3 seeds and 3/9 -> 12/12 at seed 0 \u2014 OUTCOME UNCHANGED (both non-zero).",
+     "does_not_fire": true
+    },
+    "disjunct_3_R3_roles_blind_reaches_zero": {
+     "clause_test": "the no-roles ablation R3 also attains 0/27 false RETRAIN",
+     "deciding_numbers": "R3 false RETRAIN 9/27 = 0.3333 (Wilson95 [0.18643, 0.52175]); R3 recall REREFERENCE 0/18 (all 18 mis-called RESCORE)",
+     "reading": "the MF role increment is NOT empty and is exactly measured: the 9 false RETRAINs are the 9 M5_train_lf | cond_only legs (a train-LF-only change on a condition-only arm \u2014 a genuine no-op that a roles-blind split cannot see), and R3 additionally cannot separate REREFERENCE from RESCORE at all. Clause requires 0/27 => does not fire.",
+     "vs_pre_registered": "part 4 item 1 predicted R3 makes 9/27 false RETRAIN (FPR 0.333) \u2014 measured EXACTLY 9/27",
+     "does_not_fire": true
+    },
+    "per_seed_recall_stratified": {
+     "_note": "each seed is one third of every pre-registered class; all three strata are identical",
+     "seed_0": "RETRAIN 9/9, RESCORE 6/6, REREFERENCE 6/6, NONE 9/9, blind-spot 6 all called RETRAIN",
+     "seed_1": "RETRAIN 9/9, RESCORE 6/6, REREFERENCE 6/6, NONE 9/9, blind-spot 6 all called RETRAIN",
+     "seed_2": "RETRAIN 9/9, RESCORE 6/6, REREFERENCE 6/6, NONE 9/9, blind-spot 6 all called RETRAIN"
+    },
+    "six_rule_pricing_108_legs": {
+     "_denominators": "falseRETRAIN(NONE) = k/27 legs whose truth is NONE, blind spot excluded; wrongRETRAIN = k/90 legs whose truth is not RETRAIN, blind spot excluded",
+     "R1_role_binding": {
+      "false_retrain": "0/27 = 0.0000",
+      "false_retrain_wilson95": [
+       0.0,
+       0.12455502974186704
+      ],
+      "wrong_retrain": "0/90",
+      "recall": {
+       "RETRAIN": "27/27",
+       "RESCORE": "18/18",
+       "REREFERENCE": "18/18",
+       "NONE": "27/27"
+      },
+      "predicted": "27/27\u00b718/18\u00b718/18, 0/27",
+      "matches_prediction": true
+     },
+     "R2_whole_hash": {
+      "false_retrain": "9/27 = 0.3333",
+      "false_retrain_wilson95": [
+       0.18643261498715652,
+       0.5217523949267993
+      ],
+      "wrong_retrain": "45/90",
+      "recall": {
+       "RETRAIN": "27/27",
+       "RESCORE": "0/18",
+       "REREFERENCE": "0/18",
+       "NONE": "18/27"
+      },
+      "predicted": "cannot emit RESCORE/REREFERENCE at all (0/18, 0/18) and makes 45 false RETRAIN out of 90 mutated legs",
+      "matches_prediction": true
+     },
+     "R3_traintest_split": {
+      "false_retrain": "9/27 = 0.3333",
+      "false_retrain_wilson95": [
+       0.18643261498715652,
+       0.5217523949267993
+      ],
+      "wrong_retrain": "9/90",
+      "recall": {
+       "RETRAIN": "27/27",
+       "RESCORE": "18/18",
+       "REREFERENCE": "0/18",
+       "NONE": "18/27"
+      },
+      "predicted": "9/27 false RETRAIN (FPR 0.333) \u2014 the size of the MF role increment",
+      "matches_prediction": true
+     },
+     "R4_ckpt_older_than_result": {
+      "false_retrain": "16/27 = 0.5926",
+      "false_retrain_wilson95": [
+       0.40726700968064694,
+       0.7548524292560443
+      ],
+      "wrong_retrain": "40/90",
+      "recall": {
+       "RETRAIN": "17/27",
+       "RESCORE": "0/18",
+       "REREFERENCE": "0/18",
+       "NONE": "11/27"
+      },
+      "predicted": "FPR 27/27",
+      "matches_prediction": false,
+      "deviation": "measured 16/27, not 27/27 \u2014 AND its RETRAIN recall is only 17/27. R4 is the one rule that is both incomplete AND unsound on this fixture; the card over-predicted its false-alarm rate and did not predict its 10 MISSED true retrains. Mechanism candidate: the fixture's mutation-then-resume timestamps make `ckpt mtime < result mtime` a coin-flip rather than a systematic alarm."
+     },
+     "R5_train_seconds_collapsed": {
+      "false_retrain": "27/27 = 1.0000",
+      "false_retrain_wilson95": [
+       0.8754449702581331,
+       1.0
+      ],
+      "wrong_retrain": "63/90",
+      "recall": {
+       "RETRAIN": "27/27",
+       "RESCORE": "0/18",
+       "REREFERENCE": "0/18",
+       "NONE": "0/27"
+      },
+      "predicted": "FPR ~27/27 (replicating B1's 859-leg pricing under control)",
+      "matches_prediction": true,
+      "reading": "R5 alarms on literally every leg: it carries zero information at the contract tier. This is the in-fixture, paired-control replication of B1's 859-leg finding (62 false alarms, sole reason on 0/20 ground-truth stale legs)."
+     },
+     "R6_global_cutoff": {
+      "false_retrain": "27/27 = 1.0000",
+      "false_retrain_wilson95": [
+       0.8754449702581331,
+       1.0
+      ],
+      "wrong_retrain": "63/90",
+      "recall": {
+       "RETRAIN": "27/27",
+       "RESCORE": "0/18",
+       "REREFERENCE": "0/18",
+       "NONE": "0/27"
+      },
+      "predicted": "FPR 27/27",
+      "matches_prediction": true
+     },
+     "dominance_reading": "R1 strictly dominates all five ablations on this corpus: it is the ONLY rule with non-zero REREFERENCE recall (18/18 vs 0/18 for every other rule), the only rule with 0 false RETRAIN, and it loses nothing in RETRAIN recall (27/27, tied with R2/R3/R5/R6, strictly above R4's 17/27)."
+    },
+    "artifact": "eval/diagnostic_d1_pricing.json (G1_fired false, G1_fired_reasons []), folded into eval/diagnostic.json verdicts.G1_role_binding_pricing"
+   },
+   "G2_manifest_and_census": {
+    "clause_verbatim": "(G2) the role partition's `union_sha256` fails to reproduce `preflight/data_binding.py`'s recorded `sha256` on any of the 6 manifest datasets, or the role census is not exhaustive/disjoint on any of the 10 `floors.json` datasets, or `data_binding.py verify` is not MATCH 6/6 at both job start and job end",
+    "fired": false,
+    "verdict": "CONFIRMED, now on all 3 jobs",
+    "deciding_numbers": "per-job reconstruction from the SLURM .out logs: 3/3 seed jobs (165822, 168917, 168918) MATCH 6/6 with shipped-verify exit 0 at BOTH start and end phases; census_failures [] at every phase; union_mismatched_datasets [] on all 6 manifest datasets; role census exhaustive+disjoint on all 10 floors.json datasets. `all_logged_jobs_clean: true`.",
+    "manifest_race_handling": "the unsuffixed `diagnostic_d1_manifest_{start,end}.json` are LAST-WRITER-WINS BY DESIGN (`json_files_are_last_writer_wins: true`): the shipped pair carries `_utc` 2026-08-10T17:27:56Z / 17:30:43Z, which is the SEED-2 job (168918, 10:27:51-10:30:43 PDT) \u2014 seeds 1 and 2 were serialised precisely so the race could not interleave. The authoritative 3-job evidence is the per-job `.out` reconstruction added by the pre-pricing fix, NOT those two files. Seed-0's own pair is preserved in slurm/r3-r3s4_audit-B2-s0_165822.out lines 9 and 97.",
+    "field_naming_caveat": "in eval/diagnostic.json, `verdicts.G2_manifest_and_census.at_job_start` / `.at_job_end` carry the value of `G2_fired` at that phase (models_r3/r3s4_binding_fixture/run_diagnostic.py:143), NOT a match flag. Both read `false`, which is PASS. Do not misread them as failed verifications.",
+    "artifact": "eval/diagnostic_d1_manifest_start.json, eval/diagnostic_d1_manifest_end.json, eval/diagnostic.json verdicts.G2_manifest_and_census.per_job_from_slurm_logs"
+   },
+   "G3_ulp_band_reproduction": {
+    "clause_verbatim": "(G3) the re-measured ULP bands (seed 1, B = 64) disagree with B1's table by > 2x relative on >= 2 of 10 datasets, or `band(B=64) < band(B=8)` on >= 3 of 10",
+    "fired": false,
+    "verdict": "CONFIRMED, stronger than predicted",
+    "deciding_numbers": "0/10 ratio disagreements (max ratio_now_over_b1 = 1.572 on sharp__fisher_kpp_2d, all 10 within the 2.0x tolerance) and 0/10 monotonicity failures (band(B=64) >= band(B=8) on 10/10; predicted >= 8/10).",
+    "per_dataset_band_B64_seed1_vs_B8_seed0": {
+     "ext__helmholtz_2d": [
+      2.657425460627155e-09,
+      1.9861640207036216e-09,
+      1.3379687845144488
+     ],
+     "fluid": [
+      1.0978436581552171e-08,
+      1.0049642935533202e-08,
+      1.0924205618027454
+     ],
+     "heat_local": [
+      5.889761675643212e-09,
+      5.4569258735519405e-09,
+      1.079318614934664
+     ],
+     "ifc_heat": [
+      8.722671778135594e-09,
+      7.85391312815824e-09,
+      1.1106147516277762
+     ],
+     "ifc_poisson": [
+      3.5226744963526633e-09,
+      2.297277490039922e-09,
+      1.5334127077053483
+     ],
+     "sharp__allen_cahn_2d": [
+      3.9336198197053365e-10,
+      3.4103296213277304e-10,
+      1.1534427039266297
+     ],
+     "sharp__cahn_hilliard": [
+      9.104989146940036e-11,
+      6.027413517049974e-11,
+      1.5105963978055275
+     ],
+     "sharp__fisher_kpp_2d": [
+      1.4032616451972788e-09,
+      8.925737862705071e-10,
+      1.5721519797938595
+     ],
+     "sharp__phase_field_crystal_2d": [
+      2.2455136194266226e-10,
+      1.6698604936513264e-10,
+      1.344731268248984
+     ],
+     "sharp__sod_1d": [
+      0.3534768064652326,
+      0.3078233859638505,
+      1.1483104357338967
+     ],
+     "_format": "[band(B=64, dither seed 1), band(B=8, dither seed 0, B1 table), ratio]"
+    },
+    "artifact": "eval/diagnostic_d2_tolerances.json (G3), eval/floor_tolerances.json"
+   },
+   "G4_degenerate_dim_remedy": {
+    "clause_verbatim": "(G4) dropping zero-variance fit-set condition dimensions fails to bring `sharp__sod_1d`'s `nn_condition` band below 1e-6 (from 3.078e-1), or changes any floor arm on the other nine datasets by > 1e-12",
+    "fired": false,
+    "verdict": "CONFIRMED, stronger than predicted",
+    "deciding_numbers": "sod_1d nn_condition band 0.3534768064652326 -> 4.178976072756473e-07 (below 1e-6: true); NN re-selection under 1-ULP dither 64.0% -> 0.0%; exactly one dropped condition dimension, index [2], with std exactly 0 on the fit set; `other_datasets_moved_gt_1e-12: []`, and `max_arm_value_move = 0.0` on ALL TEN datasets \u2014 the remedy removes the dither instability and moves NO arm value at all, not merely 'less than 1e-12'.",
+    "scope": "sharp__sod_1d is a GUARD cell and sharp__phase_field_crystal_2d is REPORT-ONLY (ADR r3-0004): no SCORED number moves under this remedy. 9/10 datasets have zero degenerate condition dimensions (cond_dim 2-50, dropped []).",
+    "artifact": "eval/diagnostic_d2_tolerances.json (G4)"
+   },
+   "G5_fit_set_size_seam": {
+    "clause_verbatim": "(G5) refitting the reference arms at n = 320 shifts the gap by **more than** that cell's certified `tau_rel` on >= 1 of the 5 scored cells (allen_cahn 18.6198, fisher_kpp 10.3128, cahn_hilliard 0.3612, ifc_poisson 0.6910, ifc_heat 0.1640) \u2014 which must be escalated to the operator as a fair-comparison defect, not absorbed \u2014 or the `@full` refit fails to reproduce `floors.json` at 1e-12",
+    "fired": true,
+    "verdict": "FIRED \u2014 the card's own falsifier, on BOTH disjuncts",
+    "status_carried": "ESCALATED-PENDING (fired at seed 0, escalated to the operator; UNCHANGED at 3 seeds because D4 is training-free and `SEED -eq 0` gated). The proposed closed-form re-pricing of the affected batch-1 sharp__cahn_hilliard comparands is PENDING OPERATOR CONFIRMATION and is NOT resolved by this card.",
+    "disjunct_1_tau_rel_breach": {
+     "deciding_numbers": "sharp__cahn_hilliard, best-floor arm `nn_condition`: |delta skill| 0.6984035377391464 > certified tau_rel 0.36124864423263325 => 1.9333042459514271x. Card part 4 item 6 predicted 0.2233/0.3612 = 0.618x and declared the seam 'sub-verdict'; the measurement is 3.13x the prediction and OVER the threshold the card itself set.",
+     "gating_quantity": "the best-floor arm's |delta skill| per cell (launch_anchors.best_floor.per_dataset); the max-over-arms reading is reported non-gating beside it and AGREES (`max_any_arm_breaches: ['sharp__cahn_hilliard']`)",
+     "scope": "ch ONLY. ac 0.1438x and fk 0.4427x are both BELOW their certified tau_rel => NOT RESOLVABLE, recorded as such and not as null results. Both ifc cells are `N_EXCEEDS_TRAIN_ROWS` at n_train_hf = 5, so the seam there is UNDEFINED, not absent.",
+     "escalation_required": true
+    },
+    "disjunct_2_full_refit_reproduction": {
+     "deciding_numbers": "7 of the @full refits miss floors.json / launch_anchors.json at 1e-12: sharp__allen_cahn_2d:train_mean 5.454e-11; ifc_poisson:{affine 4.842e-08, train_mean 6.053e-10, nn_condition 9.161e-10}; ifc_heat:{affine 3.596e-08, train_mean 4.091e-10, nn_condition 1.106e-09}",
+     "explained": "6 of 7 (all six ifc arms) reproduce EXACTLY (rel_diff 0.0) under the additive native-float64 control => the float32 stripped-view loader seam. 1 of 7 is UNEXPLAINED: sharp__allen_cahn_2d:train_mean still misses at 5.930e-11 under the native-dtype control.",
+     "cross_link_to_D2": "read against this card's OWN re-measured tolerances, 5 of the 7 misses fall INSIDE their dataset's recommended tolerance (ac train_mean 5.454e-11 < 1e-9; ifc_poisson train_mean/nn < 3.5227e-09; ifc_heat train_mean/nn < 8.7227e-09 \u2014 including B1's F1 fire at 7.89x inside). The 2 that do NOT are both the `affine_on_hf_train` arm (ifc_poisson 13.7x, ifc_heat 4.12x over tolerance) \u2014 and D2 measured NO band for that arm (recipe.env R3S4B2_SEAM_ARMS = nn_condition,train_mean,zero), so no tolerance exists for it. That gap is a finding, not an excuse."
+    },
+    "artifact": "eval/diagnostic_d4_fitset.json (G5), eval/diagnostic.json verdicts.G5_fit_set_size_seam"
+   }
+  },
+  "d1_anchor_consumer_walk": {
+   "_status": "pricing-stage evidence; NOT a carded G-clause and deliberately outside `verdicts` (it answers a yes/no question, it does not gate). Delivered by the pre-pricing fix (commit da855da, gate item 1) after the code-reviewer flagged it as the undeclared missing carded deliverable.",
+   "b1_question": "r3s4_audit-B1 part 7: ADR r3-0004 appears to have neutralised the contaminated pfc anchor legs by accident rather than by instrument, but that has not been verified against the anchor-consumer graph.",
+   "answer_yes_no_would_any_live_anchor_value_consume_a_stale_pfc_leg": "NO",
+   "pfc_numbers": {
+    "n_pfc_legs_flagged_in_a_consumer_read_set": 6,
+    "n_pfc_flagged_legs_read_by_a_live_producer_glob": 6,
+    "n_pfc_flagged_legs_entering_a_published_value": 0,
+    "stale_gate_covers_pfc": false,
+    "neutralised_by": "panel_composition_ADR_r3_0004 (pfc is report-only; the stale-checkpoint gate never audits it)"
+   },
+   "by_accident_not_by_instrument_CONFIRMED": "the counterfactual is explicit: if pfc WERE in the scored panel, 6 flagged legs WOULD enter a published value, via launch_anchors.cards.r2s1_direct-B2[live] and launch_anchors.cards.r2s1_direct-B3[live]. 'these legs ARE parsed by the producer's glob and are dropped only by the PANEL/_panel dataset filter' \u2014 B1's suspicion is confirmed as measured fact, not merely not-refuted.",
+   "certified_reproduction_seam": "the frozen round-2 6-ds seam (validated_against_certified_6ds) DOES price a pfc row (PANEL6_R2 contains pfc), but only from the quarantined PRE-BOX archive that make_round3_anchors substitutes (VOID_DATASETS) \u2014 18 files carry pfc, 0 flagged, 0 entering the seam value.",
+   "surfaces_walked": {
+    "n_surfaces": 12,
+    "reads_leg_result_jsons": 9,
+    "detail": "launch_anchors.cards.{r2s1_direct-B2,r2s1_direct-B3,r2s2_stacked-B1,r2s3_lf_train_signal-B3} x {live, certified_reproduction} (8, all read legs); launch_anchors.best_floor, state/anchors_repaired/floors.json, state/anchors_repaired/noise_floor.json (3, read no legs); make_round3_anchors.stale_gate (reads legs, counts null \u2014 the walk could not resolve its read set, a declared residual)"
+   },
+   "flagged_by_dataset": {
+    "ext__helmholtz_2d": {
+     "n_flagged": 6,
+     "n_entering_value": 3,
+     "in_scored_panel": false,
+     "stale_adjudicated_ok": false
+    },
+    "sharp__allen_cahn_2d": {
+     "n_flagged": 6,
+     "n_entering_value": 6,
+     "in_scored_panel": true,
+     "stale_adjudicated_ok": true
+    },
+    "sharp__phase_field_crystal_2d": {
+     "n_flagged": 6,
+     "n_entering_value": 0,
+     "in_scored_panel": false,
+     "stale_adjudicated_ok": false
+    }
+   },
+   "escalation": {
+    "escalation_required": true,
+    "n_flagged_legs_entering_a_published_value": 9,
+    "items": "3 x ext__helmholtz_2d CKPT_NOT_REWRITTEN legs (r2s1_direct-B2/results/r2s1_selected_form/ext__helmholtz_2d_e200_s{0,1,2}.json) reaching launch_anchors.cards.r2s1_direct-B2[certified_reproduction]; plus the 6 sharp__allen_cahn_2d legs already covered by STALE_ADJUDICATED_OK.",
+    "adjudication_reference": "ALREADY ADJUDICATED by the orchestrator \u2014 state/orchestrator_flow.md, '2026-08-10 \u2014 batch-2 endgame adjudications' item (3), and commit b6bd560: the 3 ext__helmholtz_2d CKPT_NOT_REWRITTEN legs are BENIGN BY NO-DATA-CHANGE (helmholtz arrays were never mutated this round, so resumed weights are valid there and the seam they feed compares like-with-like against the certified-era summary); the 6 allen_cahn legs are the standing test-trim adjudication. No HOLD. NOT re-adjudicated by this analysis.",
+    "clause_semantics": "ZERO_WORK / CKPT_NOT_REWRITTEN are NECESSARY CONDITIONS, not verdicts (zero_work_resume_scan.py's own words)."
+   },
+   "instrument_validation": {
+    "ladder_agreement_with_shipped_tool": "42 legs checked against zero_work_resume_scan.py's own subprocess output, 0 disagreements",
+    "checked_against": "zero_work_resume_scan.py subprocess output"
+   },
+   "artifact": "eval/diagnostic_d1_consumers.json, eval/diagnostic.json d1_anchor_consumer_walk"
+  },
+  "d1_unscoped_coverage_audit": {
+   "own_legs_binding_coverage": "126/126 legs carry a `data_binding` block (108 resume + 18 v0); predicted 126/126, met",
+   "roots_scanned": 9,
+   "per_root": {
+    "SELF r3s4_audit/B2/training/r3s4_binding_fixture": {
+     "n_legs": 126,
+     "zero_work": 108,
+     "ckpt_not_rewritten": 0,
+     "binding_on_flagged": "108/108"
+    },
+    "round3/r3s1_factorised": {
+     "n_legs": 0,
+     "zero_work": 0,
+     "ckpt_not_rewritten": 0,
+     "binding_on_flagged": "0/0"
+    },
+    "round3/r3s2_field_reach": {
+     "n_legs": 37,
+     "zero_work": 0,
+     "ckpt_not_rewritten": 0,
+     "binding_on_flagged": "0/0"
+    },
+    "round3/r3s3_lf_value": {
+     "n_legs": 284,
+     "zero_work": 0,
+     "ckpt_not_rewritten": 0,
+     "binding_on_flagged": "0/0"
+    },
+    "round3/r3s4_audit": {
+     "n_legs": 267,
+     "zero_work": 216,
+     "ckpt_not_rewritten": 0,
+     "binding_on_flagged": "108/216",
+     "status": "OK_VIA_IMPORTED_PREDICATES (shipped CLI aborts, see anomalies)"
+    },
+    "round3_anchors/r2s1_direct-B2": {
+     "n_legs": 60,
+     "zero_work": 0,
+     "ckpt_not_rewritten": 9,
+     "binding_on_flagged": "0/9"
+    },
+    "round3_anchors/r2s1_direct-B3": {
+     "n_legs": 60,
+     "zero_work": 0,
+     "ckpt_not_rewritten": 6,
+     "binding_on_flagged": "0/6"
+    },
+    "round3_anchors/r2s2_stacked-B1": {
+     "n_legs": 21,
+     "zero_work": 0,
+     "ckpt_not_rewritten": 0,
+     "binding_on_flagged": "0/0"
+    },
+    "round3_anchors/r2s3_lf_train_signal-B3": {
+     "n_legs": 111,
+     "zero_work": 18,
+     "ckpt_not_rewritten": 0,
+     "binding_on_flagged": "0/18",
+     "by_dataset": {
+      "r2s3_coverage_panel|sharp__allen_cahn_2d": 18
+     }
+    }
+   },
+   "binding_coverage_on_the_live_corpus": "0 on every pre-existing live leg across all 8 non-SELF roots (0/9, 0/6, 0/18 on the flagged ones) \u2014 the predicted 'coverage is 0 today' is confirmed, and it is exactly the gap B1 part 7 priority (1) routes.",
+   "deviation_vs_prediction": "part 4 item 2 predicted the unscoped audit 'reproduces the 36 zero-work legs (18 pfc, 18 allen_cahn)' in r2s3_lf_train_signal-B3. Measured 18 (allen_cahn only). This is a CORPUS CHANGE, not a measurement disagreement: the 18 sharp__phase_field_crystal_2d legs were fresh-trained on 2026-08-10T06:46 (result JSON mtimes) and the stale ones quarantined to `results_stale_ckpt_2026-08-10/`, so they now scan WORK_DONE. Verified directly in eval/coverage_scans/mffp_autoresearch_outputs_round3_anchors_r2s3_lf_train_signal-B3.json: 111 legs, pfc 18/18 WORK_DONE, ac 18/18 ZERO_WORK.",
+   "artifact": "eval/diagnostic_d1_coverage.json, eval/coverage_scans/*.json"
+  },
+  "d2_tolerance_census": {
+   "_seed_note": "training-free, `SEED -eq 0` gated; dither seed 1 and B = 64 are the pre-registered INDEPENDENT re-measurement of B1 (dither seed 0, B = 8). Not a 3-seed quantity.",
+   "n_moved_off_the_1e-9_floor": 7,
+   "predicted_moved": 4,
+   "deviation": "7 of 10 moved, not 4. The card named 4 (fluid, ifc_heat, heat_local, ifc_poisson) and quoted their B1 (B=8) values; at B=64 every band grew, pulling ext__helmholtz_2d (2.657e-09) and sharp__fisher_kpp_2d (1.403e-09) above 1e-9 as well, and sharp__sod_1d (3.535e-01) is the discontinuity, not a precision band. The 4 named cells all moved as predicted, with values 1.09-1.53x the quoted B1 numbers.",
+   "recommended_tolerances_max_1e-9_band": {
+    "ext__helmholtz_2d": 2.657425460627155e-09,
+    "fluid": 1.0978436581552171e-08,
+    "heat_local": 5.889761675643212e-09,
+    "ifc_heat": 8.722671778135594e-09,
+    "ifc_poisson": 3.5226744963526633e-09,
+    "sharp__allen_cahn_2d": 1e-09,
+    "sharp__cahn_hilliard": 1e-09,
+    "sharp__fisher_kpp_2d": 1.4032616451972788e-09,
+    "sharp__phase_field_crystal_2d": 1e-09,
+    "sharp__sod_1d": 0.3534768064652326
+   },
+   "b1_F1_fire_resolution": "B1's F1 fire (ifc_heat nn_condition, 1.1056092280511275e-09) reproduces EXACTLY here from an independent estimator and sits 7.89x inside the new ifc_heat tolerance 8.722671778135594e-09 => the 'metrology-limited' adjudication becomes structural, as predicted.",
+   "unstable_test_remedy": {
+    "dataset": "sharp__sod_1d",
+    "arm": "nn_condition",
+    "band_before": 0.3534768064652326,
+    "band_after": 4.178976072756473e-07,
+    "nn_flip_frac_before": 0.64,
+    "nn_flip_frac_after": 0.0,
+    "dropped_cond_dims": [
+     2
+    ],
+    "cond_dim": 3,
+    "max_arm_value_move_all_ten_datasets": 0.0,
+    "predicted_flip_before": "53% (B1 measured 56%); measured here 64.0% at B=64/seed 1 \u2014 the instability is larger under the stronger dither, which strengthens rather than weakens the finding"
+   },
+   "_recommendation_only": "eval/floor_tolerances.json is a RECOMMENDATION; this probe re-freezes nothing and never writes state/.",
+   "artifact": "eval/diagnostic_d2_tolerances.json, eval/floor_tolerances.json"
+  },
+  "d3_mdd_adoption": {
+   "_status": "ADOPTION only (prior-art verdict `preempted (cite)`); carries no G-clause of its own. Training-free, `SEED -eq 0` gated \u2014 not a 3-seed quantity.",
+   "mdd_reference_unobservable": {
+    "ifc_heat": 0.2472392435206398,
+    "ifc_poisson": 0.0018153087734901598
+   },
+   "tau_abs_conservative": {
+    "ifc_heat": 0.38898652239828313,
+    "ifc_poisson": 0.7003981370926166
+   },
+   "tau_abs_conservative_over_certified": {
+    "ifc_heat": 2.3715859038301295,
+    "ifc_poisson": 1.0136006770740567
+   },
+   "predicted": "mdd_reference_unobservable ~0.211 / ~0.153; tau_abs_conservative 0.3563 / 1.4827 (2.17x / 2.15x certified)",
+   "deviation": "ifc_heat is close (0.2472 vs ~0.211, 1.17x; multiplier 2.372x vs predicted 2.17x). ifc_poisson MISSES BY ~84x: measured mdd_ref 1.815e-03 against a predicted ~0.153, so tau_abs_conservative is only 1.0136x the certified constant, not 2.15x. The conservative imputation buys essentially nothing on ifc_poisson.",
+   "surrogate_validation": {
+    "declared_surrogate_failures": [],
+    "sharp__allen_cahn_2d": {
+     "surrogate": 0.1709787076080977,
+     "certified_mdd_scored": 0.1709787076080977,
+     "rel_diff": 0.0,
+     "cross_check_preflight_spectral": 0.1980564003374247,
+     "cross_check_rel_diff": 0.15836879988233446,
+     "agrees_within_5pct": true
+    },
+    "sharp__cahn_hilliard": {
+     "surrogate": 1.6736767478839116,
+     "certified_mdd_scored": 1.6736767478839116,
+     "rel_diff": 0.0,
+     "cross_check_preflight_spectral": 1.7303854220578676,
+     "cross_check_rel_diff": 0.033882692249656184,
+     "agrees_within_5pct": true
+    },
+    "sharp__fisher_kpp_2d": {
+     "surrogate": 0.3105619532241984,
+     "certified_mdd_scored": 0.3105619532241984,
+     "rel_diff": 0.0,
+     "cross_check_preflight_spectral": 0.27117667245251226,
+     "cross_check_rel_diff": 0.12681940064710187,
+     "agrees_within_5pct": true
+    },
+    "deviation": "the card predicted a declared surrogate FAILURE on sharp__cahn_hilliard; 0 failures were declared \u2014 the surrogate agrees with the certified mdd_scored at rel_diff 0.0 on all three copy-LF cells."
+   },
+   "no_live_claim_flips": "the certified constants are unchanged; this is a sensitivity analysis, not a re-certification. The probe never writes state/.",
+   "artifact": "eval/diagnostic_d3_mdd.json, eval/noise_floor_candidate_v2.json"
+  },
+  "guard_flags": [
+   {
+    "flag": "guard_set_not_run",
+    "reason": "subagent spec \u00a72d triggers the guard set only on a claimed PANEL WIN. This card scores no panel cell (`_scored_cells_touched: 0`), claims no win, and has no anchor; the guard-set/copylf_baselines regression check is therefore not applicable. No auto-reject implied."
+   },
+   {
+    "flag": "guard_cells_appear_only_as_instrument_subjects",
+    "detail": "sharp__sod_1d and fluid are guard cells and are used here only as D1 fixture BASES (read-only copies under output_paths.fixture) and as D2 metrology rows. G4's 8.4e5x sod_1d band collapse (3.5348e-01 -> 4.1790e-07) moves NO scored number: `max_arm_value_move = 0.0` on all ten datasets, and sod_1d is a guard cell while sharp__phase_field_crystal_2d is report-only (ADR r3-0004)."
+   },
+   {
+    "flag": "no_dataset_regression_possible",
+    "detail": "the fixtures are mutated COPIES under output_paths.fixture; state/, data/ and the stripped view are read-only throughout (code-reviewer finding 3, PASS)."
+   }
+  ],
+  "anomalies": [
+   {
+    "severity": "process",
+    "id": "part5_lost",
+    "detail": "This card's part 5 was NULL when this invocation started, and is null in BOTH commits that touched the card (64ca4f2, b6bd560), even though the seed-0 analyzer's handoff (worktree notes/handoff_experiment_initial_analyzer.md, 2026-08-10T17:14Z) states it wrote part 5. `status` was likewise still `reviewed_suggest`, never `analyzing`. The seed-0 write was evidently clobbered by a later full-card rewrite (card mtime 11:50, matching the b6bd560 window). MITIGATION: this part 5 is written to cover ALL of seeds 0-2 plus pricing; every seed-0 number was re-derived from the eval JSONs, not copied from the handoff, and the seed-0 handoff is retained in the worktree."
+   },
+   {
+    "severity": "process",
+    "id": "job_ids_incomplete",
+    "detail": "card `job_ids` lists only seed 0 (165822) and the pricing leg (181979). Seeds 1 and 2 ran as 168917 / 168918 (sacct COMPLETED 0:0, 00:02:32 / 00:02:52, nodes hpc-sm-01-17 / hpc-sm-01-11) and are absent from the card. `job_ids` is the debugger's field, not this subagent's, so it was NOT edited \u2014 recorded here instead."
+   },
+   {
+    "severity": "by_design",
+    "id": "manifest_last_writer_wins",
+    "detail": "the unsuffixed diagnostic_d1_manifest_{start,end}.json are last-writer-wins by design; the shipped pair is the SEED-2 job's (17:27:56Z / 17:30:43Z). Seeds 1-2 were SERIALISED (168917 ended 10:20:12, 168918 started 10:27:51) specifically to avoid an interleaved race. The authoritative 3-job G2 evidence is the per-job reconstruction from the SLURM .out logs (pre-pricing fix), which reports 3/3 jobs MATCH 6/6 at both phases."
+   },
+   {
+    "severity": "readability",
+    "id": "G2_field_naming",
+    "detail": "verdicts.G2_manifest_and_census.at_job_start / .at_job_end hold `G2_fired` (false = PASS), not a match flag (run_diagnostic.py:143). Easy to misread as a failure."
+   },
+   {
+    "severity": "corpus_drift",
+    "id": "pfc_repaired_between_B1_and_B2",
+    "detail": "the live corpus changed under the audit: r2s3_lf_train_signal-B3 zero-work went 36 (B1: 18 pfc + 18 ac) -> 18 (ac only), because the 18 pfc legs were fresh-trained 2026-08-10T06:46 and the stale ones quarantined to results_stale_ckpt_2026-08-10/. Part 4 item 2's '36 zero-work legs' prediction is stale by repair, not wrong by measurement."
+   },
+   {
+    "severity": "tooling",
+    "id": "zero_work_scan_cli_crash",
+    "detail": "the shipped `tools/zero_work_resume_scan.py` CLI ABORTS on the r3s4_audit root \u2014 `TypeError: '<' not supported between instances of 'str' and 'NoneType'` at line 205, `for k in sorted(by)` \u2014 because this card's own leg markers carry `train_seconds` but no `model` key. The probe fell back to the same predicates imported in-process (`status: OK_VIA_IMPORTED_PREDICATES`, CLI stderr recorded verbatim in the coverage JSON); the tool itself was NOT edited. Already routed by the orchestrator to r3s4 mechanism / batch 3 alongside the tool's UNDERIVABLE blind spot (state/orchestrator_flow.md 2026-08-10 item (4))."
+   },
+   {
+    "severity": "residual",
+    "id": "stale_gate_read_set_unresolved",
+    "detail": "the consumer walk's 12th surface, `make_round3_anchors.stale_gate`, reports reads_leg_result_jsons true but n_files_in_read_set / n_flagged / n_entering all NULL \u2014 the walk could not resolve that surface's read set. It is the one surface whose consumption is unquantified; `stale_gate_covers_pfc` is separately reported false."
+   },
+   {
+    "severity": "measurement",
+    "id": "d4_ifc_undefined",
+    "detail": "both paper-bar cells return `N_EXCEEDS_TRAIN_ROWS` at n_train_hf = 5 (the requested fit sets are 320/400). The fit-set seam on ifc_poisson and ifc_heat is UNDEFINED, not measured-as-absent. Card part 4 item 6 predicted '< 0.3x' for both; that prediction is unevaluable."
+   },
+   {
+    "severity": "measurement",
+    "id": "R4_double_miss",
+    "detail": "R4_ckpt_older_than_result deviates from the card in BOTH directions: predicted FPR 27/27, measured 16/27; and its RETRAIN recall is only 17/27 (10 true retrains MISSED), which the card did not predict at all. It is the one ablation that is both unsound and incomplete on this fixture."
+   },
+   {
+    "severity": "training",
+    "id": "clean",
+    "detail": "NO training anomalies. All four jobs COMPLETED with ExitCode 0:0; all four .err files are 0 bytes; no NaN/Inf, no preemption, no requeue, no timeout in any .out (the only 'nan' strings are D4's N_EXCEEDS_TRAIN_ROWS placeholders for the two ifc cells). 126/126 legs and 126/126 last.pt present; every artifact mtime falls inside its own sacct job window."
+   },
+   {
+    "severity": "resource",
+    "id": "walltime_over_request",
+    "detail": "seed 0 requested 04:00:00 and used 00:07:55 (30x); seeds 1-2 requested 01:30:00 and used 00:02:32 / 00:02:52 (~35x / ~31x); the price leg requested 01:00:00 and used 00:00:32 (112x), and reserves an H200 it does not use. The builder's ~1h45m floor was a loaded-login-node measurement. Total across all four jobs: 13m51s wall, ~0.23 GPU-hours."
+   }
+  ],
+  "wall_clock_per_seed_min": [
+   7.917,
+   2.533,
+   2.867
+  ],
+  "timing_ledger_feed": {
+   "_source": "sacct -X and the timestamped stage lines in output_paths.slurm/*.out",
+   "jobs": {
+    "165822 (seed 0)": {
+     "state": "COMPLETED",
+     "exit": "0:0",
+     "node": "hpc-sm-01-10",
+     "timelimit": "04:00:00",
+     "elapsed": "00:07:55",
+     "start": "2026-08-10T09:49:21",
+     "end": "2026-08-10T09:57:16",
+     "stages_sec": {
+      "G2_manifest_start": 4,
+      "D1_legs_42": 143,
+      "D2_tolerances": 315,
+      "D3_mdd": 4,
+      "D4_fitset": 6,
+      "G2_manifest_end": 3
+     }
+    },
+    "168917 (seed 1)": {
+     "state": "COMPLETED",
+     "exit": "0:0",
+     "node": "hpc-sm-01-17",
+     "timelimit": "01:30:00",
+     "elapsed": "00:02:32",
+     "start": "2026-08-10T10:17:40",
+     "end": "2026-08-10T10:20:12",
+     "stages_sec": {
+      "G2_manifest_start": 4,
+      "D1_legs_42": 143,
+      "G2_manifest_end": 4
+     }
+    },
+    "168918 (seed 2)": {
+     "state": "COMPLETED",
+     "exit": "0:0",
+     "node": "hpc-sm-01-11",
+     "timelimit": "01:30:00",
+     "elapsed": "00:02:52",
+     "start": "2026-08-10T10:27:51",
+     "end": "2026-08-10T10:30:43",
+     "stages_sec": {
+      "G2_manifest_start": 4,
+      "D1_legs_42": 164,
+      "G2_manifest_end": 3
+     }
+    },
+    "181979 (03_price)": {
+     "state": "COMPLETED",
+     "exit": "0:0",
+     "node": "hpc-sm-01-10",
+     "timelimit": "01:00:00",
+     "elapsed": "00:00:32",
+     "start": "2026-08-10T11:50:00",
+     "end": "2026-08-10T11:50:32",
+     "stages_sec": {
+      "D1_coverage_9_roots": 28,
+      "D1_consumers": 1,
+      "D1_pricing": 3,
+      "summary": 0
+     }
+    }
+   },
+   "totals": {
+    "wall_clock_all_jobs_min": 13.85,
+    "gpu_hours_approx": 0.231,
+    "seed_1_2_serialised": true,
+    "over_request_factors": {
+     "seed0": 30.3,
+     "seed1": 35.5,
+     "seed2": 31.4,
+     "price": 112.5
+    }
+   }
+  },
+  "seam_assertions_verified_by_analyzer": {
+   "nrmse_def_hash": "d3d0ade9191c13bacc40702f3eb26ad290e01641cacee22a1d2233b74c035850 \u2014 IDENTICAL across eval/diagnostic_d2_tolerances.json, eval/diagnostic_d4_fitset.json, eval/floor_tolerances.json AND the frozen state/anchors_repaired/floors.json. No mismatch; no other eval artifact on this card records the hash.",
+   "certified_tau_rel_provenance": "the five tau_rel constants used by D4 (18.61975759925883 / 10.312814173562199 / 0.36124864423263325 / 0.6910000683054431 / 0.1640195793751628) match state/anchors_repaired/noise_floor.json exactly, field `tau_rel`, certified 2026-08-08T20:00:07Z.",
+   "freshness": "every eval artifact mtime lies inside its producing job's sacct window: D2/D3/D4 + floor_tolerances + noise_floor_candidate_v2 at 09:57:03-09:57:13 (job 165822, 09:49:21-09:57:16); manifest start/end at 10:27:56 / 10:30:43 (job 168918, 10:27:51-10:30:43); coverage_scans + d1_coverage + d1_consumers + d1_pricing + diagnostic.json at 11:50:03-11:50:32 (job 181979, 11:50:00-11:50:32). Per-seed leg JSONs and last.pt: 42 + 42 each for seeds 0/1/2, all inside their own windows.",
+   "corpus_completeness_gate": "`cmd_price` refuses on a partial corpus (pre-pricing fix item 3). It passed: corpus_complete true, 108/108 resume legs, seeds [0,1,2], missing [] and unexpected []. `diagnostic_d1_pricing_PARTIAL.json` does not exist, so the authoritative file was never written on a partial corpus.",
+   "pre_pricing_gate_discharged": "all three orchestrator gate items verified present in the shipped outputs, against notes/handoff_experiment_builder_prepricing_fix.md: (1) consumer walk present and answering (eval/diagnostic_d1_consumers.json, 12 surfaces, ladder agreement 42 legs / 0 disagreements); (2) G1 second disjunct on the carded M2-union-M3 denominator (n=36, confusion cross-check `agrees: true`, outcome unchanged); (3) corpus-completeness assertion present and passing. Build commit da855da."
+  },
+  "_analyzer_provenance": {
+   "invocation": "experiment-initial-analyzer, 3-seed + pricing invocation",
+   "no_metric_recomputed": true,
+   "artifacts_parsed": [
+    "eval/diagnostic.json",
+    "eval/diagnostic_d1_pricing.json",
+    "eval/diagnostic_d1_consumers.json",
+    "eval/diagnostic_d1_coverage.json",
+    "eval/diagnostic_d1_manifest_start.json",
+    "eval/diagnostic_d1_manifest_end.json",
+    "eval/diagnostic_d2_tolerances.json",
+    "eval/diagnostic_d3_mdd.json",
+    "eval/diagnostic_d4_fitset.json",
+    "eval/floor_tolerances.json",
+    "eval/coverage_scans/*.json (9)",
+    "eval/legs/*.json (126)",
+    "slurm/*.out (4)",
+    "slurm/*.err (4, all 0 bytes)"
+   ],
+   "state_files_read_only": [
+    "state/anchors_repaired/noise_floor.json",
+    "state/anchors_repaired/floors.json",
+    "state/anchors/launch_anchors.json",
+    "state/orchestrator_flow.md",
+    "state/stale_ckpt_repair_jobs_2026-08-09.json"
+   ],
+   "anchors_updated": "NONE. \u00a72e criteria not met: this card scores no panel cell, `anchor_reference` is null per the r3s4_audit per-stream policy, and no state/anchors/r3s4_audit.json exists. No anchor file was created or modified."
+  },
+  "completion_verdict": {
+   "verdict": "COMPLETE \u2014 all five pre-registered clauses decided on the full pre-registered corpus; one fired.",
+   "G1_G5": {
+    "G1": "not fired (CONFIRMED at 108/108 legs)",
+    "G2": "not fired (CONFIRMED on 3/3 jobs, both phases)",
+    "G3": "not fired (CONFIRMED, 0/10 and 0/10)",
+    "G4": "not fired (CONFIRMED, and stronger: max_arm_value_move 0.0 on 10/10)",
+    "G5": "FIRED on both disjuncts (ch 1.9333x tau_rel; 7 @full misses, 1 unexplained) \u2014 ESCALATED, PENDING OPERATOR"
+   },
+   "headline": "The six-role binding instrument does exactly what the card claimed and the two 'buys nothing' falsification branches both fail to fire with room to spare: R1 is 27/27 \u00b7 18/18 \u00b7 18/18 with 0/27 false RETRAIN (Wilson upper 0.1246), while the whole-dataset hash wrongly demands a retrain on 36/36 M2-union-M3 legs and the roles-blind split still makes 9/27 false RETRAINs and cannot see REREFERENCE at all (0/18). What the card got WRONG is its own sub-verdict prediction: the 400-vs-320 fit-set seam is 3.13x larger than predicted on sharp__cahn_hilliard and clears that cell's certified noise floor at 1.9333x, so the compound hypothesis is falsified in its third conjunct and the ch comparand re-pricing sits with the operator.",
+   "open_at_close": [
+    "G5 escalation: closed-form re-pricing of the affected batch-1 sharp__cahn_hilliard @full comparands \u2014 PENDING OPERATOR CONFIRMATION, not resolved here",
+    "the unexplained sharp__allen_cahn_2d:train_mean @full miss (5.454e-11 stripped, 5.930e-11 native) \u2014 the only one of 7 the float32 loader seam does not account for",
+    "no ULP band exists for the `affine_on_hf_train` arm (D2 measured only nn_condition/train_mean/zero), which is why 2 of the 7 @full misses have no tolerance to be read against",
+    "checkpoint data-binding coverage on the LIVE corpus is 0/33 flagged legs across the 8 non-SELF roots \u2014 B1 part 7 priority (1) remains open",
+    "zero_work_resume_scan.py CLI crash on model-less leg markers \u2014 routed to batch 3",
+    "the card's honesty flag stands verbatim: B2-D1's build-system / content-addressed-cache framing never completed (two tool errors); its write-up must say 'not refuted, not confirmed on that angle'"
+   ]
+  }
+ },
  "6_analysis": null,
  "7_gap_and_future": null,
  "reanalysis_progress": null,
