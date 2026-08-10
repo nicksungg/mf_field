@@ -1,0 +1,96 @@
+{
+ "_adr": "round3/docs/adr/0006-film-transfer-denominator.md",
+ "_source": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round3_anchors/film_baseline-R3",
+ "_jobs": {
+  "0": 171858,
+  "1": 171859,
+  "2": 171860
+ },
+ "_family": "mf_fno_transfer_film",
+ "_epochs": 200,
+ "_seeds": [
+  0,
+  1,
+  2
+ ],
+ "_note": "nRMSE_film mean is THE ADR r3-0006 denominator; c_ds converts copy-LF-referenced skills exactly: skill_film = skill_copylf * c_ds. Caveat on record: the factory family emits no step metadata, so zero_work_resume_scan reads UNDERIVABLE; the clean ckpt-mtime stale audit (fresh dirs, fresh training) is the witness.",
+ "datasets": {
+  "sharp__allen_cahn_2d": {
+   "nrmse_film_per_seed": [
+    0.45430382483212894,
+    0.4801277774766028,
+    0.5771191252787409
+   ],
+   "nrmse_film_mean": 0.5038502425291576,
+   "nrmse_film_ci95": [
+    0.4305751939082345,
+    0.5771252911500806
+   ],
+   "ref_copylf": 0.0020593576160366327,
+   "c_ds": 0.004087241490049414,
+   "skill_copylf_of_film": 244.66379156566796
+  },
+  "sharp__fisher_kpp_2d": {
+   "nrmse_film_per_seed": [
+    0.037940709069909415,
+    0.036322632174184966,
+    0.038132702074503595
+   ],
+   "nrmse_film_mean": 0.037465347772865996,
+   "nrmse_film_ci95": [
+    0.03634023007381047,
+    0.03859046547192152
+   ],
+   "ref_copylf": 0.00016524586579046429,
+   "c_ds": 0.004410632107094503,
+   "skill_copylf_of_film": 226.72487201811725
+  },
+  "sharp__cahn_hilliard": {
+   "nrmse_film_per_seed": [
+    0.6820997395980108,
+    0.701397728858534,
+    0.7007526609561946
+   ],
+   "nrmse_film_mean": 0.6947500431375798,
+   "nrmse_film_ci95": [
+    0.6823473742295343,
+    0.7071527120456254
+   ],
+   "ref_copylf": 0.041802962686225575,
+   "c_ds": 0.06016978782388852,
+   "skill_copylf_of_film": 16.61963646817085
+  },
+  "ifc_poisson": {
+   "nrmse_film_per_seed": [
+    0.04646302900869972,
+    0.04340807433694699,
+    0.04274953778459498
+   ],
+   "nrmse_film_mean": 0.04420688037674723,
+   "nrmse_film_ci95": [
+    0.04196467904459349,
+    0.04644908170890096
+   ],
+   "ref_copylf": 0.036,
+   "c_ds": 0.8143528720686647,
+   "skill_copylf_of_film": 1.2279688993540898
+  },
+  "ifc_heat": {
+   "nrmse_film_per_seed": [
+    0.034053729757421373,
+    0.04350449241022727,
+    0.030842500584943797
+   ],
+   "nrmse_film_mean": 0.036133574250864144,
+   "nrmse_film_ci95": [
+    0.028685073600858098,
+    0.04358207490087019
+   ],
+   "ref_copylf": 0.074,
+   "c_ds": 2.0479568250359366,
+   "skill_copylf_of_film": 0.48829154393059654
+  }
+ },
+ "_panel_geomean_skill_copylf_of_film": 14.077041522020306,
+ "_panel_geomean_c": 0.07103765364588356
+}

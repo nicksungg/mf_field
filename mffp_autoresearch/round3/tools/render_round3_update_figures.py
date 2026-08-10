@@ -130,40 +130,60 @@ def load_anchors():
     return best_floor, floors_ds, r2
 
 
-def fig_performance(cards, best_floor, floors_ds, r2_anchors):
-    fig = plt.figure(figsize=(10.5, 5.4), constrained_layout=True)
+def load_film():
+    """ADR r3-0006 conversion constants; None if the denominator is not yet certified."""
+    p = ROOT / "state" / "anchors" / "film_denominator.json"
+    if not p.exists():
+        return None
+    return json.loads(p.read_text())
+
+
+def fig_performance(cards, best_floor, floors_ds, r2_anchors, film):
+    import numpy as np
+    c_ds = {ds: film["datasets"][ds]["c_ds"] for ds in PANEL}
+    gc = film["_panel_geomean_c"]
+    # film-transfer's own per-seed panel value in film units (its denominator noise, disclosed)
+    film_seed_panels = []
+    for si in range(3):
+        vals = [film["datasets"][ds]["nrmse_film_per_seed"][si] / film["datasets"][ds]["nrmse_film_mean"]
+                for ds in PANEL]
+        film_seed_panels.append(float(np.exp(np.mean(np.log(vals)))))
+
+    fig = plt.figure(figsize=(10.5, 5.6), constrained_layout=True)
     gs = GridSpec(1, 2, figure=fig, width_ratios=[1.0, 1.25])
     fig.suptitle(
-        "Round 3, batch 1: every stream beats the training-free floor; skill is copy-LF-referenced nRMSE (lower = better)\n"
-        "Panel = geometric mean over the 5 scored datasets (ADR r3-0004). Floors and anchors recomputed on the repaired data (2026-08-10).",
-        fontsize=10.5, x=0.02, ha="left")
+        "Round 3, batch 1 vs the learned baseline: error relative to mf_fno_transfer_film (ADR r3-0006; lower = better, 1.0 = the baseline)\n"
+        "Panel = geometric mean over the 5 scored datasets. Baseline certified 2026-08-10 (3 fresh seeds on the repaired data, stale-gate clean).",
+        fontsize=10, x=0.02, ha="left")
 
-    # Panel A: panel geomeans
+    # Panel A: panel geomeans in film units + the baseline's own bar
     ax = fig.add_subplot(gs[0, 0])
-    names, vals, errs = [], [], []
+    names, vals, errs = ["mf_fno_transfer_film (baseline)"], [1.0], []
+    fe = (1.0 - min(film_seed_panels), max(film_seed_panels) - 1.0)
+    errs.append(fe)
     for cid, meta in CARDS.items():
         d = cards[cid]
-        names.append(meta["label"]); vals.append(d["panel"])
+        names.append(meta["label"]); vals.append(d["panel"] * gc)
         if d["ci"]:
-            errs.append((d["panel"] - d["ci"][0], d["ci"][1] - d["panel"]))
+            errs.append(((d["panel"] - d["ci"][0]) * gc, (d["ci"][1] - d["panel"]) * gc))
         else:
             errs.append((0, 0))
     order = sorted(range(len(vals)), key=lambda i: vals[i])
-    y = range(len(order))
-    ax.barh(list(y), [vals[i] for i in order], color=ACCENT, alpha=0.85, height=0.55,
+    y = list(range(len(order)))
+    colors = [BLUE if order[i] == 0 else ACCENT for i in range(len(order))]
+    ax.barh(y, [vals[i] for i in order], color=colors, alpha=0.85, height=0.55,
             xerr=list(zip(*[errs[i] for i in order])), error_kw=dict(ecolor=INK, capsize=3, lw=1))
-    ax.set_yticks(list(y), [names[i] for i in order])
-    ax.axvline(best_floor, color=FLOOR, ls="--", lw=1.4)
-    ax.text(best_floor + 0.6, 1.5, f"training-free floor {best_floor:.1f}\n(no model: best of\nNN / mean / zero)",
+    ax.set_yticks(y, [names[i] for i in order])
+    ax.axvline(1.0, color=BLUE, ls="-", lw=1.2)
+    floor_film = best_floor * gc
+    ax.axvline(floor_film, color=FLOOR, ls="--", lw=1.4)
+    ax.text(floor_film + 0.03, 0.2, f"training-free floor {floor_film:.2f}\n(no model: best of\nNN / mean / zero)",
             color=FLOOR, fontsize=8.5, va="center", ha="left")
-    r2best = min(r2_anchors.values())
-    ax.axvline(r2best, color=BLUE, ls=":", lw=1.4)
-    ax.text(r2best + 0.4, -0.38, f"best round-2 anchor {r2best:.1f}", color=BLUE, fontsize=8.5, va="bottom", ha="left")
-    ax.set_xlabel("panel geomean skill, 3-seed mean with 95% CI (lower = better)")
-    ax.set_title("A — batch-1 models vs the two baselines", loc="left")
-    ax.set_xlim(0, best_floor * 1.25)
+    ax.set_xlabel("panel error ÷ film-transfer baseline, 3-seed mean with 95% CI (lower = better)")
+    ax.set_title("A — batch-1 models vs the learned baseline", loc="left")
+    ax.set_xlim(0, max(floor_film * 1.18, max(vals) * 1.15))
 
-    # Panel B: per-dataset best model vs floor
+    # Panel B: per-dataset best model vs the baseline (1.0) and the floor, in film units
     ax2 = fig.add_subplot(gs[0, 1])
     rows = []
     for ds in PANEL:
@@ -173,23 +193,29 @@ def fig_performance(cards, best_floor, floors_ds, r2_anchors):
             if v is not None and (best_v is None or v < best_v):
                 best_cid, best_v = cid, v
         rows.append((ds, floors_ds.get(ds), best_v, best_cid))
-    ypos = range(len(rows))
+    ypos = list(range(len(rows)))
     for i, (ds, fl, bv, bc) in enumerate(rows):
+        c = c_ds[ds]
         if fl and bv:
-            ax2.plot([bv, fl], [i, i], color="#E5E2EE", lw=2, zorder=1)
+            ax2.plot([bv * c, fl * c], [i, i], color="#E5E2EE", lw=2, zorder=1)
         if fl:
-            ax2.plot(fl, i, "s", color=FLOOR, ms=7, zorder=3)
+            ax2.plot(fl * c, i, "s", color=FLOOR, ms=7, zorder=3)
         if bv:
-            ax2.plot(bv, i, "o", color=ACCENT, ms=8, zorder=3)
-            ax2.annotate(f"{bv:.2f}  ({CARDS[bc]['label'].split()[0]})", (bv, i),
+            ax2.plot(bv * c, i, "o", color=ACCENT, ms=8, zorder=3)
+            ax2.annotate(f"{bv * c:.2f}  ({CARDS[bc]['label'].split()[0]})", (bv * c, i),
                          textcoords="offset points", xytext=(0, 9), fontsize=8, color=INK, ha="center")
-    ax2.set_yticks(list(ypos), [DS_SHORT[r[0]] for r in rows])
+    ax2.set_yticks(ypos, [DS_SHORT[r[0]] for r in rows])
     ax2.set_xscale("log")
-    ax2.set_xlabel("per-dataset mean skill, log scale (lower = better)")
-    ax2.axvline(1.0, color=MUTED, lw=1, ls="-")
-    ax2.text(1.07, len(rows) - 0.62, "skill = 1: as good as\ncopying the LF solve", color=MUTED,
-             fontsize=8, va="bottom", ha="left")
-    ax2.set_title("B — best batch-1 model (circle) vs floor (square)", loc="left")
+    from matplotlib.ticker import NullFormatter, FixedLocator, ScalarFormatter
+    ax2.xaxis.set_minor_formatter(NullFormatter())
+    ax2.xaxis.set_major_locator(FixedLocator([0.1, 0.2, 0.5, 1, 2, 5, 10]))
+    fmt = ScalarFormatter(); fmt.set_scientific(False)
+    ax2.xaxis.set_major_formatter(fmt)
+    ax2.set_xlabel("per-dataset error ÷ baseline (log; lower = better)")
+    ax2.axvline(1.0, color=BLUE, lw=1.2, ls="-")
+    ax2.text(1.06, len(rows) - 0.56, "1.0 = the baseline on that dataset", color=BLUE,
+             fontsize=8, va="center", ha="left")
+    ax2.set_title("B — best model vs baseline and floor", loc="left")
     ax2.invert_yaxis()
 
     out = FIGDIR / "r3_performance_vs_baselines.png"
@@ -281,10 +307,13 @@ def fig_architectures():
 def main():
     cards = load_cards()
     best_floor, floors_ds, r2 = load_anchors()
+    film = load_film()
+    if film is None:
+        raise SystemExit("film_denominator.json not built yet (ADR r3-0006) — run make_film_denominator.py first")
     missing = [(cid, ds) for cid, d in cards.items() for ds, v in d["per_ds"].items() if v is None]
     if missing:
         print("WARN: per-dataset values not found for:", missing)
-    p1 = fig_performance(cards, best_floor, floors_ds, r2)
+    p1 = fig_performance(cards, best_floor, floors_ds, r2, film)
     p2 = fig_architectures()
     print("wrote", p1)
     print("wrote", p2)
