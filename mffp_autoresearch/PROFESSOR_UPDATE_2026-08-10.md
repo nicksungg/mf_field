@@ -22,7 +22,9 @@ Companion decision page for §5.1: [ADR r3-0005 decision memo](https://claude.ai
 - **Mechanism findings replaced two pre-registered stories with sharper ones** (§2): the factorised head's discriminator is stage-1 residual saturation, not condition dimension; and the initial-condition "reach" effect lives entirely in stage 1 while the corrector stage is a certified null for the second consecutive round.
 - **The audit stream certified the round's noise floor** (per-dataset minimum claimable effects now price every claim) **and priced the audit instruments themselves**: one staleness heuristic had 0 unique true positives against 62 false alarms in 859 legs and is being deleted in favor of content hashes bound into checkpoints.
 - **Batch 2 is designed, reviewed, and launching now** (first two jobs on the cluster today); prior-art discipline held — nothing in 7 searched directions is claimed as novel, each card claims only its measured composition.
-- **One decision is pending operator + mentor sign-off: ADR r3-0005** (re-point pfc's scored cell to the coarsest rung with a spectral reference — the only amendment to the frozen round-2 eval convention on the table). A plain-language decision page accompanies this update.
+- **ADR r3-0005 RATIFIED 2026-08-10 (option A)**: pfc's scored cell re-points to the coarsest rung with a spectral reference — the only amendment to the frozen round-2 eval convention this round.
+  Phase 1 (serving change) is executed; phase 2 (reference amendment + re-scores, restoring the 6-dataset panel) is gated on batch-2 compute closing so no in-flight card sees mixed reference hashes.
+- New figures: `round3/docs/figures/r3_performance_vs_baselines.png` and `r3_architectures_overview.png` (both regenerable from the cards via `round3/tools/render_round3_update_figures.py`; embedded in the rendered page).
 
 ## 1. What round 3 asked, and how it ran
 
