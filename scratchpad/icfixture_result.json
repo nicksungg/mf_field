@@ -1,0 +1,2188 @@
+{
+  "model": "r3s2_route",
+  "dataset": "sharp__cahn_hilliard",
+  "splits": {
+    "test_hf": {
+      "nRMSE": 0.9904486890316875,
+      "rel_l2_mean": 0.9944363448170345,
+      "rel_l2_ci95_lo": 0.9366405035933731,
+      "rel_l2_ci95_hi": 1.052611677139484,
+      "rel_l2_std": 0.08999082993134616,
+      "rel_l2_per_sample": [
+        1.1103933536808224,
+        0.9248601230893326,
+        0.915202975639522,
+        1.0703741573701104,
+        1.0342693727328194,
+        1.089184292842055,
+        0.9033004850331806,
+        0.9079059981484331
+      ],
+      "n_samples": 8
+    }
+  },
+  "n_params": 2492003,
+  "train_seconds": 55.47786903381348,
+  "eval_seconds": 3.1968395709991455,
+  "latency_ms_per_sample": null,
+  "peak_mem_mb": null,
+  "work_grid": [
+    32,
+    32
+  ],
+  "eval_protocol": "full_field_on_working_grid",
+  "scored_arm": "A1_stack_ic_reg",
+  "arm_nrmse": {
+    "A1_stack_ic_reg": 0.9944363448170345,
+    "A2_stack_film_reg": 0.9791681657102616,
+    "A3_direct_ic": 0.9908461327293616,
+    "A4_direct_film": 1.013941420283901,
+    "A5_stack_ic_unreg": 0.9961738450061781,
+    "A7_emul_only_ic": 0.9996060528074036
+  },
+  "attribution": {
+    "G1_route_delta_A1_minus_A3": 0.0035902120876728505,
+    "G1_route_delta_A1_minus_A3_fractional_vs_A3": -0.0036233800275158124,
+    "route_delta_A2_minus_A4": -0.034773254573639445,
+    "route_delta_A2_minus_A4_fractional_vs_A4": 0.034295131728520396,
+    "G2_repair_delta_A5_minus_A1": 0.0017375001891436481,
+    "G2_repair_delta_fractional_vs_A5": 0.0017441736679333038,
+    "front_end_delta_stack_A1_minus_A2": 0.015268179106772917,
+    "front_end_delta_direct_A3_minus_A4": -0.02309528755453938,
+    "transport_term_A1_minus_A7": -0.005169707990369088,
+    "stage1_reference_A7": 0.9996060528074036,
+    "calibration_A4_vs_r2s1_direct_B2_certified_23_7753": {
+      "A4_nrmse_this_cell": 1.013941420283901,
+      "note": "23.7753 is a PANEL GEOMEAN IN SKILL UNITS, not a per-cell nRMSE; the analyzer performs the comparison. If A4 lands far from it, the family and not the route is the story (recipe _novelty_declaration)."
+    },
+    "anchor_replication_A5": {
+      "target_panel_geomean_skill": "12.9556",
+      "tolerance_panel_seed_mce": 0.5083,
+      "A5_nrmse_this_cell": 0.9961738450061781,
+      "note": "G2 leg (iv) is a PANEL-level check in skill units; this cell publishes the raw A5 nRMSE the analyzer aggregates. A5 is the literal B1 estimator (ridge 0, no band-limit) on the same folds."
+    },
+    "valid": true,
+    "ic_synth_applicable": true,
+    "note": "G1 is the card's actual result and its SIGN IS NOT ASSUMED \u2014 the reverse inequality at the same magnitude is recorded as the affirmative negative ('the LF intermediate is a strict tax'). G2 is instrument acceptance, never a contribution. skill units require the cell's copy-LF reference and the certified min_claimable_effect, both of which live OUTSIDE this family; the analyzer converts. Deltas below are in nRMSE units, with the reference-free FRACTIONAL form beside each (R3S2B2_REPORT_UNITS)."
+  },
+  "ifc_loo_selector": {
+    "applicable": false,
+    "reason": "no certified `affine_on_hf_train` floor for this cell (program.md \u00a72's affine-floor rule is scoped to the ifc cells), so the selector's candidate set is undefined here",
+    "n_train_hf_rows": 24
+  },
+  "n_train_route": {
+    "A1_stack_ic_reg": {
+      "stage1_lf_rows": 20,
+      "n_lf_total": 24,
+      "corrector_hf_fit_rows": 20,
+      "gain_selection_hf_rows": 4
+    },
+    "A2_stack_film_reg": {
+      "stage1_lf_rows": 20,
+      "n_lf_total": 24,
+      "corrector_hf_fit_rows": 20,
+      "gain_selection_hf_rows": 4
+    },
+    "A5_stack_ic_unreg": {
+      "stage1_lf_rows": 20,
+      "n_lf_total": 24,
+      "corrector_hf_fit_rows": 20,
+      "gain_selection_hf_rows": 4
+    },
+    "A7_emul_only_ic": {
+      "stage1_lf_rows": 20,
+      "n_lf_total": 24
+    },
+    "A3_direct_ic": {
+      "hf_rows": 20,
+      "n_hf_train_total": 24,
+      "val_disjoint": true
+    },
+    "A4_direct_film": {
+      "hf_rows": 20,
+      "n_hf_train_total": 24,
+      "val_disjoint": true
+    },
+    "_knob": "1",
+    "_why": "card part 3 / FLAG C: on the ifc cells the stack's stage 1 fits 18 of 20 LF rows while the direct head sees 5 HF rows. Every ifc route delta carries this disclosure, and the ifc HEADLINE is A6, not the raw delta."
+  },
+  "lsi_repair": {
+    "kcut": {
+      "k_nyquist_hf": 16.0,
+      "n_lf_over_n_hf_per_axis": 0.5,
+      "k_cut": 8.0,
+      "k_nyquist_lf_direct": 8.0,
+      "isotropic_ladder": true,
+      "hf_grid": [
+        32,
+        32
+      ],
+      "lf_grid": [
+        16,
+        16
+      ],
+      "source": "S6_LSI_KCUT_SOURCE=ladder_shape_ratio_adr_r2_0001"
+    },
+    "bandlimit": {
+      "k_cut": 8.0,
+      "ring_convention": "zero where kr >= k_cut (the k_cut ring INCLUDED)",
+      "n_zeroed_modes": 440,
+      "n_modes_total": 544,
+      "frac_zeroed": 0.8088235294117647
+    },
+    "bandlimit_gate": {
+      "max_abs_T_above_kcut": 0.0,
+      "n_modes_above_kcut": 440,
+      "k_cut": 8.0,
+      "pass": true
+    },
+    "ridge_selection": {
+      "ridge": 0.0,
+      "ridge_grid": [
+        0.0,
+        1e-06,
+        0.0001,
+        0.001,
+        0.01,
+        0.1
+      ],
+      "loo_sse_by_ridge": [
+        640.3760342105193,
+        640.3760342632629,
+        640.3765601586191,
+        640.4275862522196,
+        644.6543255352194,
+        771.1346730964997
+      ],
+      "selected_by": "exact_leave_one_out_on_fit_fold",
+      "n_fit": 20,
+      "loocv_row_ids": [
+        7,
+        2,
+        13,
+        17,
+        4,
+        1,
+        19,
+        22,
+        9,
+        18,
+        11,
+        8,
+        16,
+        10,
+        0,
+        14,
+        15,
+        23,
+        21,
+        6
+      ],
+      "bandlimit": {
+        "k_cut": 8.0,
+        "ring_convention": "zero where kr >= k_cut (the k_cut ring INCLUDED)",
+        "n_zeroed_modes": 440,
+        "n_modes_total": 544,
+        "frac_zeroed": 0.8088235294117647
+      },
+      "max_abs_T": 1.0753988076471643,
+      "note": "instrument repair (card G2), NOT a contribution \u2014 see the APPEND-ONLY block header and INSPIRATION.md."
+    },
+    "unregularised_replay": {
+      "ridge": 0.0,
+      "bandlimit": null,
+      "max_abs_T": 3436.911545378431,
+      "arm": "A5_stack_ic_unreg",
+      "note": "the literal B1 estimator, kept so the repair is ATTRIBUTABLE"
+    },
+    "T_band_mean_abs_reg": [
+      0.30268528362440295,
+      0.48071585308993486,
+      0.637556388953127,
+      0.0
+    ],
+    "T_band_mean_abs_unreg": [
+      0.30268528362440295,
+      0.48071585308993486,
+      0.637556388953127,
+      33.855040759089945
+    ],
+    "declared_role": "INSTRUMENT ACCEPTANCE (card clause G2), never a contribution. Prior-art verdict E1: ridge/band-limiting is `preempted (cite)`; 'Presenting ridge/band-limiting as the *idea* is a rebadge'. Cited as preemption: arXiv:1810.08360 (LOOCV ridge selection), arXiv:1511.07030 (low-sample-support shrinkage), arXiv:2606.03936 (per-band weighting of a frozen operator)."
+  },
+  "band_err_energy_by_arm": {
+    "A1_stack_ic_reg": [
+      20047681.8920906,
+      17558841.046051722,
+      9863022.417047048,
+      17677.444684978036
+    ],
+    "A2_stack_film_reg": [
+      19905042.15167769,
+      16412585.100709554,
+      9978240.84070587,
+      27613.58442917534
+    ],
+    "A3_direct_ic": [
+      19260662.676308688,
+      17839126.983329516,
+      9931758.017516227,
+      64176.00530220913
+    ],
+    "A4_direct_film": [
+      22221069.925486695,
+      17405532.52259564,
+      9887714.933503889,
+      31299.770536338066
+    ],
+    "A5_stack_ic_unreg": [
+      20047681.891706515,
+      17558841.04511771,
+      9863022.417607833,
+      145950.99807583113
+    ],
+    "A7_emul_only_ic": [
+      20269017.91602225,
+      17747984.00489942,
+      9847650.397611372,
+      17677.444684978036
+    ],
+    "_identity_pseudo_lf_film_only": [
+      20061260.697663985,
+      16514609.15981325,
+      9951564.116162788,
+      27613.584429175356
+    ],
+    "_edges_wavenumber": [
+      0.0,
+      2.0,
+      4.0,
+      8.0,
+      16.0
+    ],
+    "_note": "4-band error columns for every field arm (Duraisamy arXiv:2604.20061's reporting standard, card part 3). Band 4 is the octave above the LF Nyquist."
+  },
+  "T_band_mean_abs": [
+    0.30268528362440295,
+    0.48071585308993486,
+    0.637556388953127,
+    0.0
+  ],
+  "T_band_mean_abs_unregularised_A5": [
+    0.30268528362440295,
+    0.48071585308993486,
+    0.637556388953127,
+    33.855040759089945
+  ],
+  "map_smoothness": {
+    "test": {
+      "n": 8,
+      "applicable": true,
+      "cond_dim": 19,
+      "nn_cond_rel_field_diff_median": 1.1448533284138143,
+      "random_pair_rel_field_diff_median": 1.4020557002125629,
+      "map_smoothness_ratio": 0.8165533853186042,
+      "mean_removed_variance_fraction": 0.9062399098482179,
+      "non_smooth_flag": false,
+      "smoothness_tol": 0.95,
+      "estimator": "same arithmetic as round3/tools/task_linearity_audit.py::audit (cited, never imported); rng_seed fixes the random-pair permutation",
+      "rng_seed": 0
+    },
+    "train": {
+      "n": 24,
+      "applicable": true,
+      "cond_dim": 19,
+      "nn_cond_rel_field_diff_median": 0.9829143001287144,
+      "random_pair_rel_field_diff_median": 1.3635524592695885,
+      "map_smoothness_ratio": 0.7208481737880699,
+      "mean_removed_variance_fraction": 0.9341910827011459,
+      "non_smooth_flag": false,
+      "smoothness_tol": 0.95,
+      "estimator": "same arithmetic as round3/tools/task_linearity_audit.py::audit (cited, never imported); rng_seed fixes the random-pair permutation",
+      "rng_seed": 0
+    },
+    "row_cap": 128,
+    "role": "the E3 instrument, declared PROSPECTIVELY (clause G3): a cell whose map_smoothness_ratio is ~1 is APPROXIMABILITY-limited, so the ROUTE is not the binding constraint there. The card's pre-run declaration is that sharp__cahn_hilliard (0.980) is such a cell. Measured on every cell so the declaration is prospective, not retrofitted.",
+    "prospective_declaration": "|A1 - A3| on sharp__cahn_hilliard is predicted to stay below tau_rel(ch) = 0.3612 skill units"
+  },
+  "paired_real_lf": true,
+  "ic_synth_applicable": true,
+  "ic_synthesis": {
+    "applicable": true,
+    "reason": null,
+    "ic_indices": [
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18
+    ],
+    "other_indices": [
+      0,
+      1,
+      2
+    ],
+    "n_ic_coeffs": 16,
+    "mode_square_m": 3,
+    "param_names": [
+      "eps",
+      "mobility",
+      "mean_composition",
+      "ic_c0",
+      "ic_c1",
+      "ic_c2",
+      "ic_c3",
+      "ic_c4",
+      "ic_c5",
+      "ic_c6",
+      "ic_c7",
+      "ic_c8",
+      "ic_c9",
+      "ic_c10",
+      "ic_c11",
+      "ic_c12",
+      "ic_c13",
+      "ic_c14",
+      "ic_c15"
+    ],
+    "ic_synth_applicable": true,
+    "meta_json": "scratchpad/ic_branch_fixture/meta.json",
+    "res_min": 8,
+    "res_min_grid": [
+      8,
+      8
+    ],
+    "stack_synth_res": 16,
+    "stack_grid": [
+      16,
+      16
+    ],
+    "direct_synth_res": 32,
+    "direct_grid": [
+      32,
+      32
+    ],
+    "square_lf": true,
+    "square_hf": true,
+    "scale": 1.0,
+    "both_routes_note": "the SAME analytic coefficients are synthesised at the LF rung's native resolution for the stack and at the HF working resolution for the direct head; the synthesis is closed-form in the mode index, so neither is an interpolation of the other",
+    "scale_note": "the generator's per-dataset IC amplitude and its additive mean offset are NOT reproduced: scale is fixed at R3S2_IC_SYNTH_SCALE and the offset is dropped. Both are a known global constant / affine shift on an INPUT channel and the offset is separately in the condition vector; recorded, never silently absorbed.",
+    "gates": {
+      "equivalence": {
+        "max_abs_dev": 1.7763568394002505e-15,
+        "tol": 1e-12,
+        "n_probe_rows": 4,
+        "res": 16,
+        "res_min": 8,
+        "pass": true,
+        "reference": "common/spectral.py::spectral_interp of common/ic_encoding.py::ic_2d built at res_min"
+      }
+    },
+    "front_end_alias": {
+      "built": [
+        "film_only",
+        "ic_synth"
+      ],
+      "aliased": {},
+      "note": "under R3S2_IC_FALLBACK=film_only_recorded a non-applicable dataset does not get a SECOND randomly-initialised trunk on either route: the ic_synth arms alias the film_only ones, so A1-A2 and A3-A4 are exactly 0 by construction (gate V10)."
+    }
+  },
+  "floor_arms": {
+    "_source": {
+      "floors_file": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/worktrees/r3s2_field_reach/B2/mffp_autoresearch/round3/state/anchors_repaired/floors.json",
+      "floors_sha256": "a2773d89df249383e71c0bb1d9c5ee5befb74277bef2676dac57e27d41b9eb8d",
+      "certified_utc": "2026-08-04T05:12:04Z",
+      "nrmse_def_hash": "d3d0ade9191c13bacc40702f3eb26ad290e01641cacee22a1d2233b74c035850",
+      "copylf_def_hash": "9753ff24e856f595748492dec6cb6c215d748f97e8ec4a679b651f8846da907a",
+      "split": "test",
+      "anchors_file": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/worktrees/r3s2_field_reach/B2/mffp_autoresearch/round3/state/anchors/launch_anchors.json",
+      "anchors_sha256": "9412cae1778891da88ff1a7bff4dbf5dfe6703fdd81e95593dce9d36542bc07b"
+    },
+    "reference": {
+      "convention": "node_aligned_periodic",
+      "reference_type": "copylf",
+      "test_nrmse": 0.041802962686225575
+    },
+    "requested": [
+      "nn_condition",
+      "train_mean",
+      "zero",
+      "affine_on_hf_train"
+    ],
+    "nn_condition": {
+      "definition": "L2 nearest in per-dim train-standardized condition space; tie -> lowest train index",
+      "nn_index_hist_top5": {
+        "18": 3,
+        "255": 3,
+        "292": 2,
+        "387": 2,
+        "388": 2
+      },
+      "nrmse": 0.9690069811741324,
+      "skill": 23.180342227117514
+    },
+    "train_mean": {
+      "nrmse": 1.001977490272036,
+      "skill": 23.96905448527446
+    },
+    "zero": {
+      "nrmse": 1.0,
+      "skill": 23.92174945843033
+    },
+    "affine_on_hf_train": {
+      "applicable": false,
+      "reason": "the round-3 affine-floor rule (program.md 2) publishes affine_on_hf_train for the ifc cells only; sharp__cahn_hilliard has no certified entry in launch_anchors.json::ifc_floors_repaired"
+    }
+  },
+  "floor_comparison_scored_arm": {
+    "nn_condition": {
+      "floor_nrmse": 0.9690069811741324,
+      "model_minus_floor_nrmse": 0.025429363642902048,
+      "model_beats_floor": false
+    },
+    "train_mean": {
+      "floor_nrmse": 1.001977490272036,
+      "model_minus_floor_nrmse": -0.007541145455001508,
+      "model_beats_floor": true
+    },
+    "zero": {
+      "floor_nrmse": 1.0,
+      "model_minus_floor_nrmse": -0.005563655182965532,
+      "model_beats_floor": true
+    }
+  },
+  "floor_comparison_by_arm": {
+    "A1_stack_ic_reg": {
+      "nn_condition": {
+        "floor_nrmse": 0.9690069811741324,
+        "model_minus_floor_nrmse": 0.025429363642902048,
+        "model_beats_floor": false
+      },
+      "train_mean": {
+        "floor_nrmse": 1.001977490272036,
+        "model_minus_floor_nrmse": -0.007541145455001508,
+        "model_beats_floor": true
+      },
+      "zero": {
+        "floor_nrmse": 1.0,
+        "model_minus_floor_nrmse": -0.005563655182965532,
+        "model_beats_floor": true
+      }
+    },
+    "A2_stack_film_reg": {
+      "nn_condition": {
+        "floor_nrmse": 0.9690069811741324,
+        "model_minus_floor_nrmse": 0.01016118453612913,
+        "model_beats_floor": false
+      },
+      "train_mean": {
+        "floor_nrmse": 1.001977490272036,
+        "model_minus_floor_nrmse": -0.022809324561774424,
+        "model_beats_floor": true
+      },
+      "zero": {
+        "floor_nrmse": 1.0,
+        "model_minus_floor_nrmse": -0.02083183428973845,
+        "model_beats_floor": true
+      }
+    },
+    "A3_direct_ic": {
+      "nn_condition": {
+        "floor_nrmse": 0.9690069811741324,
+        "model_minus_floor_nrmse": 0.021839151555229197,
+        "model_beats_floor": false
+      },
+      "train_mean": {
+        "floor_nrmse": 1.001977490272036,
+        "model_minus_floor_nrmse": -0.011131357542674358,
+        "model_beats_floor": true
+      },
+      "zero": {
+        "floor_nrmse": 1.0,
+        "model_minus_floor_nrmse": -0.009153867270638383,
+        "model_beats_floor": true
+      }
+    },
+    "A4_direct_film": {
+      "nn_condition": {
+        "floor_nrmse": 0.9690069811741324,
+        "model_minus_floor_nrmse": 0.044934439109768576,
+        "model_beats_floor": false
+      },
+      "train_mean": {
+        "floor_nrmse": 1.001977490272036,
+        "model_minus_floor_nrmse": 0.01196393001186502,
+        "model_beats_floor": false
+      },
+      "zero": {
+        "floor_nrmse": 1.0,
+        "model_minus_floor_nrmse": 0.013941420283900996,
+        "model_beats_floor": false
+      }
+    },
+    "A5_stack_ic_unreg": {
+      "nn_condition": {
+        "floor_nrmse": 0.9690069811741324,
+        "model_minus_floor_nrmse": 0.027166863832045696,
+        "model_beats_floor": false
+      },
+      "train_mean": {
+        "floor_nrmse": 1.001977490272036,
+        "model_minus_floor_nrmse": -0.00580364526585786,
+        "model_beats_floor": true
+      },
+      "zero": {
+        "floor_nrmse": 1.0,
+        "model_minus_floor_nrmse": -0.003826154993821884,
+        "model_beats_floor": true
+      }
+    },
+    "A7_emul_only_ic": {
+      "nn_condition": {
+        "floor_nrmse": 0.9690069811741324,
+        "model_minus_floor_nrmse": 0.030599071633271135,
+        "model_beats_floor": false
+      },
+      "train_mean": {
+        "floor_nrmse": 1.001977490272036,
+        "model_minus_floor_nrmse": -0.00237143746463242,
+        "model_beats_floor": true
+      },
+      "zero": {
+        "floor_nrmse": 1.0,
+        "model_minus_floor_nrmse": -0.0003939471925964444,
+        "model_beats_floor": true
+      }
+    }
+  },
+  "lf_rung": 1,
+  "lf_grid": [
+    16,
+    16
+  ],
+  "hf_grid": [
+    32,
+    32
+  ],
+  "upsample_convention": "node_aligned_periodic",
+  "padding_mode": "circular",
+  "padding_decision_reason": "max_wrap_ratio 1.0000 <= tol 1.2500",
+  "wrap_ratio_hf": {
+    "y": 1.0,
+    "x": 1.0000000030356182
+  },
+  "alpha_lsi": 1.0,
+  "alpha_nn": 0.0,
+  "validity_gates": {
+    "V1_pseudo_lf_is_upsampled_emulator": {
+      "max_abs_dev_by_front_end": {
+        "E0": 0.0,
+        "E1": 0.0
+      },
+      "pass": true
+    },
+    "V2_no_test_lf_path": {
+      "test_lf_fids": [],
+      "pass": true,
+      "note": "asserted before any array was read"
+    },
+    "V3_frozen_corrector_state": {
+      "reg_sha256": "c5e2c15bf9ad6f050d731947e5680595c4d15fea7fef0cecc734d07b177d1db4",
+      "unreg_sha256": "c0217a4c3ade74d0af5bd29cd1337a32ca99693faa820c8b3406757036edf590",
+      "chains_degenerate": false,
+      "note": "both `frozen` chains fit their corrector on REAL LF only; the pseudo-LF is seen for the first time at prediction time. `chains_degenerate` true would mean A5 == A1 and the G2 repair attribution is empty on this cell.",
+      "pass": true
+    },
+    "V6_pseudo_lf_required": {
+      "knob": "1",
+      "pseudo_lf_test_max_across_sample_std": {
+        "E0": 0.07803981549068521,
+        "E1": 0.7528357087317811
+      },
+      "fallback_fired": false,
+      "pass": true
+    },
+    "V6b_paired_real_lf": {
+      "paired_real_lf": true,
+      "max_abs_cond_deviation_lf_vs_hf": 0.0,
+      "tol": 1e-06,
+      "n_lf_samples": 24,
+      "n_hf_train_samples": 24,
+      "gate_armed": true,
+      "note": "index-aligned ladder: HF - LF_up is a well-defined per-sample residual",
+      "pass_": true
+    },
+    "V8_ic_equivalence": {
+      "max_abs_dev": 1.7763568394002505e-15,
+      "tol": 1e-12,
+      "n_probe_rows": 4,
+      "res": 16,
+      "res_min": 8,
+      "pass": true,
+      "reference": "common/spectral.py::spectral_interp of common/ic_encoding.py::ic_2d built at res_min"
+    },
+    "V10_ic_channel_live_or_recorded_fallback": {
+      "ic_synth_applicable": true,
+      "max_abs_dev_stack_ic_vs_film_pseudo_lf": 2.094997317530215,
+      "max_abs_dev_direct_ic_vs_direct_film": 2.0358916223049164,
+      "pass": true,
+      "note": "when the IC channel applies, the ic_synth arms must differ from the film_only ones on BOTH routes; when it does not, they must BE them (R3S2_IC_FALLBACK=film_only_recorded)"
+    },
+    "V11_arm_equal_total_budget": {
+      "budget_matched_arms": {
+        "A1_stack_ic_reg": 3,
+        "A2_stack_film_reg": 3,
+        "A3_direct_ic": 3,
+        "A4_direct_film": 3,
+        "A5_stack_ic_unreg": 3
+      },
+      "stage2_total": 3,
+      "direct_total": 3,
+      "pass": true
+    },
+    "V12_lsi_bandlimited_above_lf_nyquist": {
+      "max_abs_T_above_kcut": 0.0,
+      "n_modes_above_kcut": 440,
+      "k_cut": 8.0,
+      "pass": true,
+      "k_nyquist_hf": 16.0,
+      "n_lf_over_n_hf_per_axis": 0.5,
+      "k_nyquist_lf_direct": 8.0,
+      "isotropic_ladder": true,
+      "hf_grid": [
+        32,
+        32
+      ],
+      "lf_grid": [
+        16,
+        16
+      ],
+      "source": "S6_LSI_KCUT_SOURCE=ladder_shape_ratio_adr_r2_0001"
+    },
+    "V13_loocv_fit_fold_only": {
+      "tripwire": "1",
+      "selected_ridge": 0.0,
+      "n_loocv_rows": 20,
+      "all_rows_in_fit_fold": true,
+      "selected_by": "exact_leave_one_out_on_fit_fold",
+      "pass": true
+    },
+    "V14_ckpt_data_hash_bind": {
+      "found": false,
+      "aborted": false,
+      "data_sha256": "e856da3f5b161b80b456f19242fe3040e2f66a8470a0c69b137e886429300c22",
+      "knob": "1",
+      "pass_": true
+    },
+    "V15_direct_route_reproducible_and_lf_free": {
+      "max_abs_dev_vs_independent_forward_pass": {
+        "A3_direct_ic": 0.0,
+        "A4_direct_film": 0.0
+      },
+      "direct_reads_any_lf_array": false,
+      "note": "the direct route's inputs are the condition vector and the analytic IC field synthesised FROM it; no LF array enters direct_head.predict (see direct_head.py) and the arm reproduces bit-exactly",
+      "pass": true
+    },
+    "V16_route_data_disclosure": {
+      "A1_stack_ic_reg": {
+        "stage1_lf_rows": 20,
+        "n_lf_total": 24,
+        "corrector_hf_fit_rows": 20,
+        "gain_selection_hf_rows": 4
+      },
+      "A2_stack_film_reg": {
+        "stage1_lf_rows": 20,
+        "n_lf_total": 24,
+        "corrector_hf_fit_rows": 20,
+        "gain_selection_hf_rows": 4
+      },
+      "A5_stack_ic_unreg": {
+        "stage1_lf_rows": 20,
+        "n_lf_total": 24,
+        "corrector_hf_fit_rows": 20,
+        "gain_selection_hf_rows": 4
+      },
+      "A7_emul_only_ic": {
+        "stage1_lf_rows": 20,
+        "n_lf_total": 24
+      },
+      "A3_direct_ic": {
+        "hf_rows": 20,
+        "n_hf_train_total": 24,
+        "val_disjoint": true
+      },
+      "A4_direct_film": {
+        "hf_rows": 20,
+        "n_hf_train_total": 24,
+        "val_disjoint": true
+      },
+      "_knob": "1",
+      "_why": "card part 3 / FLAG C: on the ifc cells the stack's stage 1 fits 18 of 20 LF rows while the direct head sees 5 HF rows. Every ifc route delta carries this disclosure, and the ifc HEADLINE is A6, not the raw delta."
+    }
+  },
+  "probes": {
+    "P1_bc_match_audit": {
+      "scored_on": "train val slice (no test array touched)",
+      "n_fit": 20,
+      "n_val": 4,
+      "ridge": 0.0,
+      "verdict": "periodic",
+      "wrap_ratio_hf_max": 1.0000000030356182,
+      "tol": 1.25,
+      "branches": {
+        "periodic": {
+          "alpha": 1.0000000038583334,
+          "rel_l2_prestage_val": 2.4142091756612314e-08,
+          "resid_frac": 3.210665135937115e-14,
+          "ring_profile_resid_frac": [
+            2.4849224719994996e-14,
+            4.4320129704971395e-14,
+            3.064373582801993e-14,
+            2.8857921884668515e-14,
+            3.5572252306603373e-14,
+            NaN
+          ]
+        },
+        "mirror": {
+          "alpha": 1.0388030062681604,
+          "rel_l2_prestage_val": 0.029564554727586102,
+          "resid_frac": 0.08207629807719326,
+          "ring_profile_resid_frac": [
+            0.29361040873899336,
+            0.27704315176934247,
+            0.016007409895095928,
+            0.025366633693637147,
+            0.006239550025262855,
+            NaN
+          ]
+        }
+      },
+      "mirror_delta_pct": 122460517.85217357,
+      "ring_edges": [
+        0,
+        1,
+        2,
+        4,
+        8,
+        16,
+        "inf"
+      ],
+      "ring_npix": [
+        124,
+        116,
+        208,
+        320,
+        256,
+        0
+      ],
+      "reading": "mirror_delta_pct < 0 => the periodic pre-stage leaks at the boundary; > 0 => the periodic BC was correct, do not repair it; ~0 with a large resid_frac under BOTH extensions => the pre-stage's problem is fit quality, gate it off (alpha -> 0).",
+      "ridge_provenance": "LOOCV-selected on the fit fold (0)"
+    },
+    "P2_cond_lf_identifiability": {
+      "method": "ADR r2-0003: L2 nearest in per-dim train-standardized condition space, applied to the LF field on its native grid",
+      "n_train": 24,
+      "cond_dim": 19,
+      "closest_pair": {
+        "i": 0,
+        "j": 6,
+        "standardized_cond_distance": 3.0361444195700615,
+        "relative_lf_field_difference": 0.9237021071910515
+      },
+      "nn_rel_lf_diff": {
+        "median": 0.9829143016035577,
+        "mean": 1.005748167690463,
+        "p10": 0.7483135050957171,
+        "p90": 1.2462281235384751
+      },
+      "nn_cond_distance": {
+        "min": 3.0361444195700615,
+        "median": 4.428871845931924
+      },
+      "reading": "a LARGE relative_lf_field_difference at a SMALL standardized condition distance means the LF field is not a function of the condition vector: the emulator is bounded by E[LF|c] and arm A5 `condmean_lf` should tie arm A2 `frozen` (ADR r2-0003)."
+    }
+  },
+  "budget": {
+    "epochs_tier": 2,
+    "split": 0.5,
+    "emulator": 1,
+    "dc_stage_total": 1,
+    "corrector": 1,
+    "gate": 1,
+    "stage2_total": 3,
+    "direct_total": 3,
+    "budget_match": "arm_equal_total",
+    "direct_budget_knob": "match_stage2_total",
+    "arm_optimizer_epochs": {
+      "A1_stack_ic_reg": 3,
+      "A2_stack_film_reg": 3,
+      "A3_direct_ic": 3,
+      "A4_direct_film": 3,
+      "A5_stack_ic_unreg": 3,
+      "A6_ifc_loo_selector": 0,
+      "A7_emul_only_ic": 1
+    },
+    "recipe_declared_stage2_epochs_at_tier_200": 300,
+    "note": "R3S2_BUDGET_MATCH=arm_equal_total (round-2 caveat F8). Each stack arm spends E_emu (its front end) + E_dc (the common real-LF ancestor) + E_dc (the frozen extension) = E_emu + 2*E_dc; each DIRECT arm spends the SAME total in one stage on the HF grid. So the route contrast is not a budget contrast. A6 is closed form (0 epochs) and A7 is the front end alone (E_emu)."
+  },
+  "split_protocol": {
+    "n_fit": 20,
+    "n_val": 4,
+    "n_val_a": 2,
+    "n_val_b": 2,
+    "holdout_frac": 0.2,
+    "disjoint": true,
+    "val_a_role": "the LSI gain alpha_lsi (line search including 0)",
+    "val_b_role": "the NN gain alpha_nn (line search including 0)",
+    "forced_even": true,
+    "shared_by": "ALL seven arms and both routes consume the identical folds; the direct head's rows are resolved from these by direct_head.train_rows"
+  },
+  "dataset_content_sha256": "e856da3f5b161b80b456f19242fe3040e2f66a8470a0c69b137e886429300c22",
+  "mf_mechanism": "a ROUTE SWITCH on one shared FiLM-FNO trunk: condition -> pseudo-LF -> corrected upsampling -> frozen REGULARISED LSI + local defect corrector -> HF, against a budget-matched direct condition -> HF head, crossed with an analytic-IC vs FiLM-only front end, with a zero-GPU closed-form LOO selector as the ifc headline",
+  "base_family": "r3s2_stack_ic@d5069a74 (itself r2s2_stack@6b4e1d48, itself s4_router@b90d4662)",
+  "r3s2_env": {
+    "R3S2B2_ARM": "A1_stack_ic_reg",
+    "R3S2B2_ROUTE": "stack",
+    "R3S2_FRONTEND": "ic_synth",
+    "R3S2_ARM": "frozen",
+    "R3S2B2_DIRECT_TARGET": "hf",
+    "R3S2B2_DIRECT_TRUNK": "shared_film_fno_w64_b4_m12",
+    "R3S2B2_DIRECT_BUDGET": "match_stage2_total",
+    "R3S2B2_DIRECT_TRAIN_ROWS": "hf_train_all",
+    "R3S2B2_DIRECT_VAL": "disjoint_if_n_train_hf_ge_20_else_none_recorded",
+    "R3S2_IC_SYNTH": "analytic_modes",
+    "R3S2_IC_SYNTH_NORM": "res_min_maxabs",
+    "R3S2_IC_SYNTH_SCALE": "1.0",
+    "R3S2_IC_NAMES_FROM": "meta_param_names_ic_prefix",
+    "R3S2_IC_FALLBACK": "film_only_recorded",
+    "R3S2_IC_EQUIV_CHECK": "1",
+    "R3S2_IC_SHUFFLE_NULL": "0_established_in_B1",
+    "R3S2_EMU_TARGET": "lf_native",
+    "R3S2_EMU_RUNG": "max",
+    "R3S2_EMU_WIDTH": "64",
+    "R3S2_EMU_BLOCKS": "4",
+    "R3S2_EMU_MODES": "12",
+    "R3S2_EMU_LOSS": "rel_l2",
+    "R3S2_EMU_SHARED": "1",
+    "R3S2_EPOCH_SPLIT": "0.5",
+    "R3S2_BUDGET_MATCH": "arm_equal_total",
+    "R3S2_UPSAMPLE": "corrected_by_convention",
+    "R3S2_LF_INPUT": "pseudo",
+    "R3S2_CORRECTOR_FIT_ON": "real_lf",
+    "R3S2_VAL_DISJOINT": "1",
+    "R3S2_REQUIRE_PSEUDO_LF": "1",
+    "R3S2_PAIRING_GATE": "1",
+    "R3S2_PAIRED_SUBSET_GEOMEAN": "1",
+    "R3S2_TARGET_SCALER_PREFLIGHT": "not_applicable_no_helmholtz_no_pfc_in_datasets",
+    "R3S2_FLOOR_ARMS": "nn_condition,train_mean,zero,affine_on_hf_train",
+    "R3S2_DIAG_OUT": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round3/r3s2_field_reach/B2_smoke/eval_icfixture",
+    "S6_VARIANT": "local_pixel_gate",
+    "S6_SELECTOR": "heldout_scalar",
+    "S6_PAD_MODE": "circular_if_periodic",
+    "S6_PERIODIC_TEST": "wrap_continuity_ratio_hf_train",
+    "S6_PERIODIC_TOL": "1.25",
+    "S6_LF_SOURCE": "dataset_lf_fidelity",
+    "S6_LF_FID": "max",
+    "S6_KERNEL": "7",
+    "S6_DEPTH": "4",
+    "S6_WIDTH": "32",
+    "S6_GATE_HOLDOUT_FRAC": "0.2",
+    "S6_GATE_INIT": "zero",
+    "S6_GATE_LINESEARCH_INCLUDES_ZERO": "1",
+    "S6_BAND_EDGES_FRAC": "0,0.125,0.25,0.5,1.0",
+    "S6_LEAKAGE_TRIPWIRE": "1",
+    "S6_LSI_RIDGE": "loocv",
+    "S6_LSI_RIDGE_GRID": "0,1e-6,1e-4,1e-3,1e-2,1e-1",
+    "S6_LSI_RIDGE_SELECT": "loocv_on_fit_fold_only",
+    "S6_LSI_BANDLIMIT": "lf_nyquist_from_ladder",
+    "S6_LSI_BANDLIMIT_MODE": "zero_above_kcut",
+    "S6_LSI_KCUT_SOURCE": "ladder_shape_ratio_adr_r2_0001",
+    "R3S2B2_REPORT_UNITS": "skill,fractional_error_reduction",
+    "R3S2B2_BAND_ERROR_COLUMNS": "1",
+    "R3S2B2_MAP_SMOOTHNESS_SIDECAR": "1",
+    "R3S2B2_ROUTE_DATA_DISCLOSURE": "1",
+    "R3S2B2_T_STABILITY_AUDIT": "1",
+    "R3S2B2_IFC_LOO_SELECTOR": "affine_on_hf_train,A1_stack_ic_reg,A3_direct_ic",
+    "R3S2B2_CKPT_DATA_HASH_BIND": "1",
+    "R3S2B2_ANCHOR_REPLICATION_CHECK": "12.9556",
+    "R3S2_EMU_ERROR_SIDECAR": "1",
+    "R3S2_ORACLE_TRAINHELDOUT_SIDECAR": "1",
+    "R3S2_ZERO_GRADIENT_LADDER_SIDECAR": "1",
+    "R3S2_BC_AUDIT_SIDECAR": "1",
+    "_deviations_from_recipe": {
+      "R3S2_DIAG_OUT": {
+        "recipe": "mffp_autoresearch_outputs/round3/r3s2_field_reach/B2/eval",
+        "env": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round3/r3s2_field_reach/B2_smoke/eval_icfixture"
+      }
+    },
+    "_scored_arm_tag": "A1_stack_ic_reg"
+  },
+  "r3s2_diag": {
+    "padding_decision": "circular",
+    "padding_decision_reason": "max_wrap_ratio 1.0000 <= tol 1.2500",
+    "pad_mode_knob": "circular_if_periodic",
+    "periodic_tol": 1.25,
+    "n_probe_samples": 24,
+    "wrap_ratio_hf": {
+      "y": 1.0,
+      "x": 1.0000000030356182
+    },
+    "wrap_ratio_hf_max": 1.0000000030356182,
+    "test": "wrap_continuity_ratio_hf_train",
+    "model": "r3s2_route",
+    "dataset": "sharp__cahn_hilliard",
+    "seed": 0,
+    "epochs": 2,
+    "scored_arm": "A1_stack_ic_reg",
+    "nrmse_def_hash": "d3d0ade9191c13bacc40702f3eb26ad290e01641cacee22a1d2233b74c035850",
+    "nrmse_sha256": "d3d0ade9191c13bacc40702f3eb26ad290e01641cacee22a1d2233b74c035850",
+    "knobs": {
+      "R3S2B2_ARM": "A1_stack_ic_reg",
+      "R3S2B2_ROUTE": "stack",
+      "R3S2_FRONTEND": "ic_synth",
+      "R3S2_ARM": "frozen",
+      "R3S2B2_DIRECT_TARGET": "hf",
+      "R3S2B2_DIRECT_TRUNK": "shared_film_fno_w64_b4_m12",
+      "R3S2B2_DIRECT_BUDGET": "match_stage2_total",
+      "R3S2B2_DIRECT_TRAIN_ROWS": "hf_train_all",
+      "R3S2B2_DIRECT_VAL": "disjoint_if_n_train_hf_ge_20_else_none_recorded",
+      "R3S2_IC_SYNTH": "analytic_modes",
+      "R3S2_IC_SYNTH_NORM": "res_min_maxabs",
+      "R3S2_IC_SYNTH_SCALE": "1.0",
+      "R3S2_IC_NAMES_FROM": "meta_param_names_ic_prefix",
+      "R3S2_IC_FALLBACK": "film_only_recorded",
+      "R3S2_IC_EQUIV_CHECK": "1",
+      "R3S2_IC_SHUFFLE_NULL": "0_established_in_B1",
+      "R3S2_EMU_TARGET": "lf_native",
+      "R3S2_EMU_RUNG": "max",
+      "R3S2_EMU_WIDTH": "64",
+      "R3S2_EMU_BLOCKS": "4",
+      "R3S2_EMU_MODES": "12",
+      "R3S2_EMU_LOSS": "rel_l2",
+      "R3S2_EMU_SHARED": "1",
+      "R3S2_EPOCH_SPLIT": "0.5",
+      "R3S2_BUDGET_MATCH": "arm_equal_total",
+      "R3S2_UPSAMPLE": "corrected_by_convention",
+      "R3S2_LF_INPUT": "pseudo",
+      "R3S2_CORRECTOR_FIT_ON": "real_lf",
+      "R3S2_VAL_DISJOINT": "1",
+      "R3S2_REQUIRE_PSEUDO_LF": "1",
+      "R3S2_PAIRING_GATE": "1",
+      "R3S2_PAIRED_SUBSET_GEOMEAN": "1",
+      "R3S2_TARGET_SCALER_PREFLIGHT": "not_applicable_no_helmholtz_no_pfc_in_datasets",
+      "R3S2_FLOOR_ARMS": "nn_condition,train_mean,zero,affine_on_hf_train",
+      "R3S2_DIAG_OUT": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round3/r3s2_field_reach/B2_smoke/eval_icfixture",
+      "S6_VARIANT": "local_pixel_gate",
+      "S6_SELECTOR": "heldout_scalar",
+      "S6_PAD_MODE": "circular_if_periodic",
+      "S6_PERIODIC_TEST": "wrap_continuity_ratio_hf_train",
+      "S6_PERIODIC_TOL": "1.25",
+      "S6_LF_SOURCE": "dataset_lf_fidelity",
+      "S6_LF_FID": "max",
+      "S6_KERNEL": "7",
+      "S6_DEPTH": "4",
+      "S6_WIDTH": "32",
+      "S6_GATE_HOLDOUT_FRAC": "0.2",
+      "S6_GATE_INIT": "zero",
+      "S6_GATE_LINESEARCH_INCLUDES_ZERO": "1",
+      "S6_BAND_EDGES_FRAC": "0,0.125,0.25,0.5,1.0",
+      "S6_LEAKAGE_TRIPWIRE": "1",
+      "S6_LSI_RIDGE": "loocv",
+      "S6_LSI_RIDGE_GRID": "0,1e-6,1e-4,1e-3,1e-2,1e-1",
+      "S6_LSI_RIDGE_SELECT": "loocv_on_fit_fold_only",
+      "S6_LSI_BANDLIMIT": "lf_nyquist_from_ladder",
+      "S6_LSI_BANDLIMIT_MODE": "zero_above_kcut",
+      "S6_LSI_KCUT_SOURCE": "ladder_shape_ratio_adr_r2_0001",
+      "R3S2B2_REPORT_UNITS": "skill,fractional_error_reduction",
+      "R3S2B2_BAND_ERROR_COLUMNS": "1",
+      "R3S2B2_MAP_SMOOTHNESS_SIDECAR": "1",
+      "R3S2B2_ROUTE_DATA_DISCLOSURE": "1",
+      "R3S2B2_T_STABILITY_AUDIT": "1",
+      "R3S2B2_IFC_LOO_SELECTOR": "affine_on_hf_train,A1_stack_ic_reg,A3_direct_ic",
+      "R3S2B2_CKPT_DATA_HASH_BIND": "1",
+      "R3S2B2_ANCHOR_REPLICATION_CHECK": "12.9556",
+      "R3S2_EMU_ERROR_SIDECAR": "1",
+      "R3S2_ORACLE_TRAINHELDOUT_SIDECAR": "1",
+      "R3S2_ZERO_GRADIENT_LADDER_SIDECAR": "1",
+      "R3S2_BC_AUDIT_SIDECAR": "1",
+      "_deviations_from_recipe": {
+        "R3S2_DIAG_OUT": {
+          "recipe": "mffp_autoresearch_outputs/round3/r3s2_field_reach/B2/eval",
+          "env": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round3/r3s2_field_reach/B2_smoke/eval_icfixture"
+        }
+      },
+      "_scored_arm_tag": "A1_stack_ic_reg"
+    },
+    "budget": {
+      "epochs_tier": 2,
+      "split": 0.5,
+      "emulator": 1,
+      "dc_stage_total": 1,
+      "corrector": 1,
+      "gate": 1,
+      "stage2_total": 3,
+      "direct_total": 3,
+      "budget_match": "arm_equal_total",
+      "direct_budget_knob": "match_stage2_total",
+      "arm_optimizer_epochs": {
+        "A1_stack_ic_reg": 3,
+        "A2_stack_film_reg": 3,
+        "A3_direct_ic": 3,
+        "A4_direct_film": 3,
+        "A5_stack_ic_unreg": 3,
+        "A6_ifc_loo_selector": 0,
+        "A7_emul_only_ic": 1
+      },
+      "recipe_declared_stage2_epochs_at_tier_200": 300,
+      "note": "R3S2_BUDGET_MATCH=arm_equal_total (round-2 caveat F8). Each stack arm spends E_emu (its front end) + E_dc (the common real-LF ancestor) + E_dc (the frozen extension) = E_emu + 2*E_dc; each DIRECT arm spends the SAME total in one stage on the HF grid. So the route contrast is not a budget contrast. A6 is closed form (0 epochs) and A7 is the front end alone (E_emu)."
+    },
+    "split_protocol": {
+      "n_fit": 20,
+      "n_val": 4,
+      "n_val_a": 2,
+      "n_val_b": 2,
+      "holdout_frac": 0.2,
+      "disjoint": true,
+      "val_a_role": "the LSI gain alpha_lsi (line search including 0)",
+      "val_b_role": "the NN gain alpha_nn (line search including 0)",
+      "forced_even": true,
+      "shared_by": "ALL seven arms and both routes consume the identical folds; the direct head's rows are resolved from these by direct_head.train_rows"
+    },
+    "pairing": {
+      "paired_real_lf": true,
+      "max_abs_cond_deviation_lf_vs_hf": 0.0,
+      "tol": 1e-06,
+      "n_lf_samples": 24,
+      "n_hf_train_samples": 24,
+      "gate_armed": true,
+      "note": "index-aligned ladder: HF - LF_up is a well-defined per-sample residual"
+    },
+    "upsample_convention": "node_aligned_periodic",
+    "lf_rung": 1,
+    "lf_grid": [
+      16,
+      16
+    ],
+    "hf_grid": [
+      32,
+      32
+    ],
+    "res_min_grid": [
+      8,
+      8
+    ],
+    "dataset_content_sha256": "e856da3f5b161b80b456f19242fe3040e2f66a8470a0c69b137e886429300c22",
+    "ic_synthesis": {
+      "applicable": true,
+      "reason": null,
+      "ic_indices": [
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18
+      ],
+      "other_indices": [
+        0,
+        1,
+        2
+      ],
+      "n_ic_coeffs": 16,
+      "mode_square_m": 3,
+      "param_names": [
+        "eps",
+        "mobility",
+        "mean_composition",
+        "ic_c0",
+        "ic_c1",
+        "ic_c2",
+        "ic_c3",
+        "ic_c4",
+        "ic_c5",
+        "ic_c6",
+        "ic_c7",
+        "ic_c8",
+        "ic_c9",
+        "ic_c10",
+        "ic_c11",
+        "ic_c12",
+        "ic_c13",
+        "ic_c14",
+        "ic_c15"
+      ],
+      "ic_synth_applicable": true,
+      "meta_json": "scratchpad/ic_branch_fixture/meta.json",
+      "res_min": 8,
+      "res_min_grid": [
+        8,
+        8
+      ],
+      "stack_synth_res": 16,
+      "stack_grid": [
+        16,
+        16
+      ],
+      "direct_synth_res": 32,
+      "direct_grid": [
+        32,
+        32
+      ],
+      "square_lf": true,
+      "square_hf": true,
+      "scale": 1.0,
+      "both_routes_note": "the SAME analytic coefficients are synthesised at the LF rung's native resolution for the stack and at the HF working resolution for the direct head; the synthesis is closed-form in the mode index, so neither is an interpolation of the other",
+      "scale_note": "the generator's per-dataset IC amplitude and its additive mean offset are NOT reproduced: scale is fixed at R3S2_IC_SYNTH_SCALE and the offset is dropped. Both are a known global constant / affine shift on an INPUT channel and the offset is separately in the condition vector; recorded, never silently absorbed.",
+      "gates": {
+        "equivalence": {
+          "max_abs_dev": 1.7763568394002505e-15,
+          "tol": 1e-12,
+          "n_probe_rows": 4,
+          "res": 16,
+          "res_min": 8,
+          "pass": true,
+          "reference": "common/spectral.py::spectral_interp of common/ic_encoding.py::ic_2d built at res_min"
+        }
+      },
+      "front_end_alias": {
+        "built": [
+          "film_only",
+          "ic_synth"
+        ],
+        "aliased": {},
+        "note": "under R3S2_IC_FALLBACK=film_only_recorded a non-applicable dataset does not get a SECOND randomly-initialised trunk on either route: the ic_synth arms alias the film_only ones, so A1-A2 and A3-A4 are exactly 0 by construction (gate V10)."
+      }
+    },
+    "front_ends": {
+      "E0": {
+        "knob": "film_only",
+        "film_dim": 19,
+        "uses_ic_channel": false,
+        "fell_back_to_film_only": false,
+        "n_params": 2418753
+      },
+      "E1": {
+        "knob": "ic_synth",
+        "film_dim": 3,
+        "uses_ic_channel": true,
+        "fell_back_to_film_only": false,
+        "n_params": 2414721
+      }
+    },
+    "emulator": {
+      "width": 64,
+      "blocks": 4,
+      "modes": [
+        8,
+        9
+      ],
+      "loss": "rel_l2",
+      "n_fit": 20,
+      "n_heldout": 4,
+      "scaler": 9.213062286376953,
+      "one_emulator_per_front_end": true
+    },
+    "direct_head": {
+      "trunk": "shared_film_fno_w64_b4_m12",
+      "target": "hf",
+      "grid": [
+        32,
+        32
+      ],
+      "modes": [
+        12,
+        12
+      ],
+      "width": 64,
+      "blocks": 4,
+      "loss": "rel_l2",
+      "lr": 0.001,
+      "epochs": 3,
+      "scaler": 9.213062286376953,
+      "rows": {
+        "n_train_route": 20,
+        "val_disjoint": true,
+        "rule": "n_train_hf=24 >= 20: a DISJOINT val slice exists, so the direct head trains on the fit fold only \u2014 the same fold the stack's corrector fits on (matched folds)",
+        "knobs": {
+          "R3S2B2_DIRECT_TRAIN_ROWS": "hf_train_all",
+          "R3S2B2_DIRECT_VAL": "disjoint_if_n_train_hf_ge_20_else_none_recorded",
+          "val_threshold": 20
+        }
+      },
+      "n_params": {
+        "E0": 4778049,
+        "E1": 4774017
+      },
+      "aliased": {},
+      "loss_provenance": "rel_l2, matching the emulator's R3S2_EMU_LOSS \u2014 the card's source_iteration (brainstormer iteration_2 item 4) states the training objectives are rel_l2 for both the emulator and the direct head and are recorded in the diag",
+      "lr_provenance": "SMOKE.lr_pretrain (1e-3) from the base family \u2014 the direct head is the same trunk trained from scratch, so it takes the emulator's pre-training lr; no new constant"
+    },
+    "lsi_repair": {
+      "kcut": {
+        "k_nyquist_hf": 16.0,
+        "n_lf_over_n_hf_per_axis": 0.5,
+        "k_cut": 8.0,
+        "k_nyquist_lf_direct": 8.0,
+        "isotropic_ladder": true,
+        "hf_grid": [
+          32,
+          32
+        ],
+        "lf_grid": [
+          16,
+          16
+        ],
+        "source": "S6_LSI_KCUT_SOURCE=ladder_shape_ratio_adr_r2_0001"
+      },
+      "bandlimit": {
+        "k_cut": 8.0,
+        "ring_convention": "zero where kr >= k_cut (the k_cut ring INCLUDED)",
+        "n_zeroed_modes": 440,
+        "n_modes_total": 544,
+        "frac_zeroed": 0.8088235294117647
+      },
+      "bandlimit_gate": {
+        "max_abs_T_above_kcut": 0.0,
+        "n_modes_above_kcut": 440,
+        "k_cut": 8.0,
+        "pass": true
+      },
+      "ridge_selection": {
+        "ridge": 0.0,
+        "ridge_grid": [
+          0.0,
+          1e-06,
+          0.0001,
+          0.001,
+          0.01,
+          0.1
+        ],
+        "loo_sse_by_ridge": [
+          640.3760342105193,
+          640.3760342632629,
+          640.3765601586191,
+          640.4275862522196,
+          644.6543255352194,
+          771.1346730964997
+        ],
+        "selected_by": "exact_leave_one_out_on_fit_fold",
+        "n_fit": 20,
+        "loocv_row_ids": [
+          7,
+          2,
+          13,
+          17,
+          4,
+          1,
+          19,
+          22,
+          9,
+          18,
+          11,
+          8,
+          16,
+          10,
+          0,
+          14,
+          15,
+          23,
+          21,
+          6
+        ],
+        "bandlimit": {
+          "k_cut": 8.0,
+          "ring_convention": "zero where kr >= k_cut (the k_cut ring INCLUDED)",
+          "n_zeroed_modes": 440,
+          "n_modes_total": 544,
+          "frac_zeroed": 0.8088235294117647
+        },
+        "max_abs_T": 1.0753988076471643,
+        "note": "instrument repair (card G2), NOT a contribution \u2014 see the APPEND-ONLY block header and INSPIRATION.md."
+      },
+      "unregularised_replay": {
+        "ridge": 0.0,
+        "bandlimit": null,
+        "max_abs_T": 3436.911545378431,
+        "arm": "A5_stack_ic_unreg",
+        "note": "the literal B1 estimator, kept so the repair is ATTRIBUTABLE"
+      },
+      "T_band_mean_abs_reg": [
+        0.30268528362440295,
+        0.48071585308993486,
+        0.637556388953127,
+        0.0
+      ],
+      "T_band_mean_abs_unreg": [
+        0.30268528362440295,
+        0.48071585308993486,
+        0.637556388953127,
+        33.855040759089945
+      ],
+      "declared_role": "INSTRUMENT ACCEPTANCE (card clause G2), never a contribution. Prior-art verdict E1: ridge/band-limiting is `preempted (cite)`; 'Presenting ridge/band-limiting as the *idea* is a rebadge'. Cited as preemption: arXiv:1810.08360 (LOOCV ridge selection), arXiv:1511.07030 (low-sample-support shrinkage), arXiv:2606.03936 (per-band weighting of a frozen operator)."
+    },
+    "dc_real": {
+      "reg": {
+        "tag": "dc_reg_real",
+        "alpha_lsi": 1.0,
+        "alpha_lsi_ls": 1.000000009012263,
+        "alpha_nn": 0.0,
+        "alpha_nn_ls": 1.5,
+        "scaler_lf": 9.213062286376953,
+        "scaler_r": 0.6304635576120166,
+        "val_a_rel_base": 0.11172237880169587,
+        "val_a_rel_gated": 0.07899965200071499,
+        "val_b_rel_base": 0.09941382817305,
+        "val_b_rel_gated": 0.09941382817305,
+        "corrector_state_sha256": "1ad8f4bea5eb7858a050b0e4fcae8d3d292f9bd2cc83bce3b52fec4b6339b2dd",
+        "gate_state_sha256": "60e1dd845b935f903c19f08e3651762e0164dd88ab66b77164bafcadcd936a47",
+        "n_params": 77282
+      },
+      "unreg": {
+        "tag": "dc_unreg_real",
+        "alpha_lsi": 1.0000000110330767,
+        "alpha_lsi_ls": 1.0000000110330767,
+        "alpha_nn": 0.0,
+        "alpha_nn_ls": 0.0,
+        "scaler_lf": 9.213062286376953,
+        "scaler_r": 3.853914146145776e-07,
+        "val_a_rel_base": 0.11172237880169587,
+        "val_a_rel_gated": 2.42019952033817e-08,
+        "val_b_rel_base": 2.408785273013016e-08,
+        "val_b_rel_gated": 2.408785273013016e-08,
+        "corrector_state_sha256": "621fa295014426037b73c8b2a74fc9ccc9514f7fdd374c8e386b73ca88fd13c8",
+        "gate_state_sha256": "6558b12ff096766e04c7d9804aae7a80b114a5b36e7899c633099dda32e6d79c",
+        "n_params": 77282
+      }
+    },
+    "dc_frozen_ext": {
+      "reg": {
+        "tag": "dc_reg_ext",
+        "alpha_lsi": 1.0,
+        "alpha_lsi_ls": 1.000000009012263,
+        "alpha_nn": 0.0,
+        "alpha_nn_ls": 1.5,
+        "scaler_lf": 9.213062286376953,
+        "scaler_r": 0.6304635576120166,
+        "val_a_rel_base": 0.11172237880169587,
+        "val_a_rel_gated": 0.07899965200071499,
+        "val_b_rel_base": 0.09941382817305,
+        "val_b_rel_gated": 0.09941382817305,
+        "corrector_state_sha256": "c5e2c15bf9ad6f050d731947e5680595c4d15fea7fef0cecc734d07b177d1db4",
+        "gate_state_sha256": "50fd59b95a42fff0f6bf77fc6774218b5579ec28045b4ef090afbde60ac90e4c",
+        "n_params": 77282
+      },
+      "unreg": {
+        "tag": "dc_unreg_ext",
+        "alpha_lsi": 1.0000000110330767,
+        "alpha_lsi_ls": 1.0000000110330767,
+        "alpha_nn": 0.0,
+        "alpha_nn_ls": 0.0,
+        "scaler_lf": 9.213062286376953,
+        "scaler_r": 3.853914146145776e-07,
+        "val_a_rel_base": 0.11172237880169587,
+        "val_a_rel_gated": 2.42019952033817e-08,
+        "val_b_rel_base": 2.408785273013016e-08,
+        "val_b_rel_gated": 2.408785273013016e-08,
+        "corrector_state_sha256": "c0217a4c3ade74d0af5bd29cd1337a32ca99693faa820c8b3406757036edf590",
+        "gate_state_sha256": "9d9ca7886b993a3e662f5e615a6229f2e739832be95d793fe3facbb62574dd74",
+        "n_params": 77282
+      }
+    },
+    "dc_fit_source": "real_lf (paired ladder; the pairing gate refuses anything else)",
+    "arms": {
+      "A1_stack_ic_reg": {
+        "nrmse": 0.9944363448170345,
+        "role": "SCORED PRIMARY - the repaired stack; G1 left-hand side, G2 subject",
+        "knobs": {
+          "R3S2B2_ROUTE": "stack",
+          "R3S2_FRONTEND": "ic_synth",
+          "R3S2_ARM": "frozen",
+          "S6_LSI_RIDGE": "loocv",
+          "S6_LSI_BANDLIMIT": "lf_nyquist_from_ladder",
+          "R3S2_LF_INPUT": "pseudo",
+          "R3S2_CORRECTOR_FIT_ON": "real_lf"
+        },
+        "optimizer_epochs": 3,
+        "front_end_fell_back_to_film_only": false
+      },
+      "A2_stack_film_reg": {
+        "nrmse": 0.9791681657102616,
+        "role": "second, independent replication of the route contrast at the null front end",
+        "knobs": {
+          "R3S2B2_ROUTE": "stack",
+          "R3S2_FRONTEND": "film_only",
+          "R3S2_ARM": "frozen",
+          "S6_LSI_RIDGE": "loocv",
+          "S6_LSI_BANDLIMIT": "lf_nyquist_from_ladder",
+          "R3S2_LF_INPUT": "pseudo",
+          "R3S2_CORRECTOR_FIT_ON": "real_lf"
+        },
+        "optimizer_epochs": 3,
+        "front_end_fell_back_to_film_only": false
+      },
+      "A3_direct_ic": {
+        "nrmse": 0.9908461327293616,
+        "role": "SCORED PRIMARY comparand - matched-budget direct condition->HF control; G1 right-hand side",
+        "knobs": {
+          "R3S2B2_ROUTE": "direct",
+          "R3S2_FRONTEND": "ic_synth",
+          "R3S2_ARM": "direct",
+          "R3S2_LF_INPUT": "none",
+          "R3S2_CORRECTOR_FIT_ON": "none"
+        },
+        "optimizer_epochs": 3,
+        "front_end_fell_back_to_film_only": false
+      },
+      "A4_direct_film": {
+        "nrmse": 1.013941420283901,
+        "role": "r2s1 CALIBRATION arm - pre-registered to land near r2s1_direct-B2's certified 23.7753",
+        "knobs": {
+          "R3S2B2_ROUTE": "direct",
+          "R3S2_FRONTEND": "film_only",
+          "R3S2_ARM": "direct",
+          "R3S2_LF_INPUT": "none",
+          "R3S2_CORRECTOR_FIT_ON": "none"
+        },
+        "optimizer_epochs": 3,
+        "front_end_fell_back_to_film_only": false
+      },
+      "A5_stack_ic_unreg": {
+        "nrmse": 0.9961738450061781,
+        "role": "B1 replay - repair attribution AND the anchor replication gate (G2 leg iv, target 12.9556 +- 0.5083)",
+        "knobs": {
+          "R3S2B2_ROUTE": "stack",
+          "R3S2_FRONTEND": "ic_synth",
+          "R3S2_ARM": "frozen",
+          "S6_LSI_RIDGE": "0",
+          "S6_LSI_BANDLIMIT": "none",
+          "R3S2_LF_INPUT": "pseudo",
+          "R3S2_CORRECTOR_FIT_ON": "real_lf"
+        },
+        "optimizer_epochs": 3,
+        "front_end_fell_back_to_film_only": false
+      },
+      "A7_emul_only_ic": {
+        "nrmse": 0.9996060528074036,
+        "role": "stage-1 reference (the front end alone), so the route delta can be decomposed into stage-1 and transport terms",
+        "knobs": {
+          "R3S2B2_ROUTE": "stack",
+          "R3S2_FRONTEND": "ic_synth",
+          "R3S2_ARM": "emul_only",
+          "R3S2_LF_INPUT": "pseudo",
+          "R3S2_CORRECTOR_FIT_ON": "none"
+        },
+        "optimizer_epochs": 1,
+        "front_end_fell_back_to_film_only": false
+      }
+    },
+    "attribution": {
+      "G1_route_delta_A1_minus_A3": 0.0035902120876728505,
+      "G1_route_delta_A1_minus_A3_fractional_vs_A3": -0.0036233800275158124,
+      "route_delta_A2_minus_A4": -0.034773254573639445,
+      "route_delta_A2_minus_A4_fractional_vs_A4": 0.034295131728520396,
+      "G2_repair_delta_A5_minus_A1": 0.0017375001891436481,
+      "G2_repair_delta_fractional_vs_A5": 0.0017441736679333038,
+      "front_end_delta_stack_A1_minus_A2": 0.015268179106772917,
+      "front_end_delta_direct_A3_minus_A4": -0.02309528755453938,
+      "transport_term_A1_minus_A7": -0.005169707990369088,
+      "stage1_reference_A7": 0.9996060528074036,
+      "calibration_A4_vs_r2s1_direct_B2_certified_23_7753": {
+        "A4_nrmse_this_cell": 1.013941420283901,
+        "note": "23.7753 is a PANEL GEOMEAN IN SKILL UNITS, not a per-cell nRMSE; the analyzer performs the comparison. If A4 lands far from it, the family and not the route is the story (recipe _novelty_declaration)."
+      },
+      "anchor_replication_A5": {
+        "target_panel_geomean_skill": "12.9556",
+        "tolerance_panel_seed_mce": 0.5083,
+        "A5_nrmse_this_cell": 0.9961738450061781,
+        "note": "G2 leg (iv) is a PANEL-level check in skill units; this cell publishes the raw A5 nRMSE the analyzer aggregates. A5 is the literal B1 estimator (ridge 0, no band-limit) on the same folds."
+      },
+      "valid": true,
+      "ic_synth_applicable": true,
+      "note": "G1 is the card's actual result and its SIGN IS NOT ASSUMED \u2014 the reverse inequality at the same magnitude is recorded as the affirmative negative ('the LF intermediate is a strict tax'). G2 is instrument acceptance, never a contribution. skill units require the cell's copy-LF reference and the certified min_claimable_effect, both of which live OUTSIDE this family; the analyzer converts. Deltas below are in nRMSE units, with the reference-free FRACTIONAL form beside each (R3S2B2_REPORT_UNITS)."
+    },
+    "ifc_loo_selector": {
+      "applicable": false,
+      "reason": "no certified `affine_on_hf_train` floor for this cell (program.md \u00a72's affine-floor rule is scoped to the ifc cells), so the selector's candidate set is undefined here",
+      "n_train_hf_rows": 24
+    },
+    "floor_arms": {
+      "_source": {
+        "floors_file": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/worktrees/r3s2_field_reach/B2/mffp_autoresearch/round3/state/anchors_repaired/floors.json",
+        "floors_sha256": "a2773d89df249383e71c0bb1d9c5ee5befb74277bef2676dac57e27d41b9eb8d",
+        "certified_utc": "2026-08-04T05:12:04Z",
+        "nrmse_def_hash": "d3d0ade9191c13bacc40702f3eb26ad290e01641cacee22a1d2233b74c035850",
+        "copylf_def_hash": "9753ff24e856f595748492dec6cb6c215d748f97e8ec4a679b651f8846da907a",
+        "split": "test",
+        "anchors_file": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/worktrees/r3s2_field_reach/B2/mffp_autoresearch/round3/state/anchors/launch_anchors.json",
+        "anchors_sha256": "9412cae1778891da88ff1a7bff4dbf5dfe6703fdd81e95593dce9d36542bc07b"
+      },
+      "reference": {
+        "convention": "node_aligned_periodic",
+        "reference_type": "copylf",
+        "test_nrmse": 0.041802962686225575
+      },
+      "requested": [
+        "nn_condition",
+        "train_mean",
+        "zero",
+        "affine_on_hf_train"
+      ],
+      "nn_condition": {
+        "definition": "L2 nearest in per-dim train-standardized condition space; tie -> lowest train index",
+        "nn_index_hist_top5": {
+          "18": 3,
+          "255": 3,
+          "292": 2,
+          "387": 2,
+          "388": 2
+        },
+        "nrmse": 0.9690069811741324,
+        "skill": 23.180342227117514
+      },
+      "train_mean": {
+        "nrmse": 1.001977490272036,
+        "skill": 23.96905448527446
+      },
+      "zero": {
+        "nrmse": 1.0,
+        "skill": 23.92174945843033
+      },
+      "affine_on_hf_train": {
+        "applicable": false,
+        "reason": "the round-3 affine-floor rule (program.md 2) publishes affine_on_hf_train for the ifc cells only; sharp__cahn_hilliard has no certified entry in launch_anchors.json::ifc_floors_repaired"
+      }
+    },
+    "floor_comparison_scored_arm": {
+      "nn_condition": {
+        "floor_nrmse": 0.9690069811741324,
+        "model_minus_floor_nrmse": 0.025429363642902048,
+        "model_beats_floor": false
+      },
+      "train_mean": {
+        "floor_nrmse": 1.001977490272036,
+        "model_minus_floor_nrmse": -0.007541145455001508,
+        "model_beats_floor": true
+      },
+      "zero": {
+        "floor_nrmse": 1.0,
+        "model_minus_floor_nrmse": -0.005563655182965532,
+        "model_beats_floor": true
+      }
+    },
+    "floor_comparison_by_arm": {
+      "A1_stack_ic_reg": {
+        "nn_condition": {
+          "floor_nrmse": 0.9690069811741324,
+          "model_minus_floor_nrmse": 0.025429363642902048,
+          "model_beats_floor": false
+        },
+        "train_mean": {
+          "floor_nrmse": 1.001977490272036,
+          "model_minus_floor_nrmse": -0.007541145455001508,
+          "model_beats_floor": true
+        },
+        "zero": {
+          "floor_nrmse": 1.0,
+          "model_minus_floor_nrmse": -0.005563655182965532,
+          "model_beats_floor": true
+        }
+      },
+      "A2_stack_film_reg": {
+        "nn_condition": {
+          "floor_nrmse": 0.9690069811741324,
+          "model_minus_floor_nrmse": 0.01016118453612913,
+          "model_beats_floor": false
+        },
+        "train_mean": {
+          "floor_nrmse": 1.001977490272036,
+          "model_minus_floor_nrmse": -0.022809324561774424,
+          "model_beats_floor": true
+        },
+        "zero": {
+          "floor_nrmse": 1.0,
+          "model_minus_floor_nrmse": -0.02083183428973845,
+          "model_beats_floor": true
+        }
+      },
+      "A3_direct_ic": {
+        "nn_condition": {
+          "floor_nrmse": 0.9690069811741324,
+          "model_minus_floor_nrmse": 0.021839151555229197,
+          "model_beats_floor": false
+        },
+        "train_mean": {
+          "floor_nrmse": 1.001977490272036,
+          "model_minus_floor_nrmse": -0.011131357542674358,
+          "model_beats_floor": true
+        },
+        "zero": {
+          "floor_nrmse": 1.0,
+          "model_minus_floor_nrmse": -0.009153867270638383,
+          "model_beats_floor": true
+        }
+      },
+      "A4_direct_film": {
+        "nn_condition": {
+          "floor_nrmse": 0.9690069811741324,
+          "model_minus_floor_nrmse": 0.044934439109768576,
+          "model_beats_floor": false
+        },
+        "train_mean": {
+          "floor_nrmse": 1.001977490272036,
+          "model_minus_floor_nrmse": 0.01196393001186502,
+          "model_beats_floor": false
+        },
+        "zero": {
+          "floor_nrmse": 1.0,
+          "model_minus_floor_nrmse": 0.013941420283900996,
+          "model_beats_floor": false
+        }
+      },
+      "A5_stack_ic_unreg": {
+        "nn_condition": {
+          "floor_nrmse": 0.9690069811741324,
+          "model_minus_floor_nrmse": 0.027166863832045696,
+          "model_beats_floor": false
+        },
+        "train_mean": {
+          "floor_nrmse": 1.001977490272036,
+          "model_minus_floor_nrmse": -0.00580364526585786,
+          "model_beats_floor": true
+        },
+        "zero": {
+          "floor_nrmse": 1.0,
+          "model_minus_floor_nrmse": -0.003826154993821884,
+          "model_beats_floor": true
+        }
+      },
+      "A7_emul_only_ic": {
+        "nn_condition": {
+          "floor_nrmse": 0.9690069811741324,
+          "model_minus_floor_nrmse": 0.030599071633271135,
+          "model_beats_floor": false
+        },
+        "train_mean": {
+          "floor_nrmse": 1.001977490272036,
+          "model_minus_floor_nrmse": -0.00237143746463242,
+          "model_beats_floor": true
+        },
+        "zero": {
+          "floor_nrmse": 1.0,
+          "model_minus_floor_nrmse": -0.0003939471925964444,
+          "model_beats_floor": true
+        }
+      }
+    },
+    "sidecars": {
+      "S1_emulator_field_error": {
+        "E0": {
+          "front_end": "film_only",
+          "n": 4,
+          "nrmse_lfhat_vs_lf_native": 0.9940262874616839,
+          "insample_nrmse_native": 0.9775734477349335,
+          "fell_back_to_film_only": false
+        },
+        "E1": {
+          "front_end": "ic_synth",
+          "n": 4,
+          "nrmse_lfhat_vs_lf_native": 1.0015958988726967,
+          "insample_nrmse_native": 0.9494902229150227,
+          "fell_back_to_film_only": false
+        }
+      },
+      "S2_oracle_realLF_trainheldout": {
+        "slice": "train val slice (val_a + val_b); NO test array touched",
+        "n": 4,
+        "nrmse_realLF_oracle_reg": 0.0892067400868825,
+        "nrmse_realLF_oracle_unreg": 2.414492396675593e-08,
+        "nrmse_copylf_identity_same_slice": 0.12615738099311932,
+        "note": "the 'perfect emulator' ceiling measured in-job: the SAME frozen corrector fed REAL LF vs each front end's pseudo-LF on the same held-out TRAIN samples. Their ratio is the emulator-error contribution, and it is the stack's half of the route delta.",
+        "nrmse_pseudoLF_E0_reg_same_slice": 0.9897916944798155,
+        "nrmse_pseudoLF_E1_reg_same_slice": 0.9936570490893406,
+        "nrmse_direct_ic_same_slice": 0.9910344844785988,
+        "direct_val_slice_is_heldout": true
+      },
+      "S3_zero_gradient_stage_ladder": {
+        "E0": {
+          "n_fit": 20,
+          "n_calib": 2,
+          "selection_split": "train calib slice (disjoint from the T fit slice)",
+          "evaluated_on": "test",
+          "S0_raw": {
+            "test_nrmse": 0.9818942226571468,
+            "n_selections": 0
+          },
+          "S1_gain": {
+            "a_star": 0.5,
+            "a_lstsq_on_calib": 0.8696569013099458,
+            "calib_nrmse": 0.993937126045569,
+            "n_selections": 1,
+            "test_nrmse": 0.9862987965712537
+          },
+          "S2_lsi": {
+            "alpha": 0.0,
+            "alpha_linesearch": 0.0,
+            "n_gradient_steps": 0,
+            "test_nrmse": 0.9818942226571468
+          },
+          "S3_blend_raw": {
+            "lambda_star": 1.0,
+            "calib_nrmse": 0.9997378410277638,
+            "n_selections": 1,
+            "test_nrmse": 0.9818942226571468
+          },
+          "S4_blend_lsi": {
+            "lambda_star": 1.0,
+            "calib_nrmse": 0.9997378410277638,
+            "n_selections": 1,
+            "test_nrmse": 0.9818942226571468
+          },
+          "S5_free_joint": {
+            "a_star": 0.5,
+            "lambda_star": 1.0,
+            "calib_nrmse": 0.993937126045569,
+            "n_selections": 2,
+            "test_nrmse": 0.9862987965712537
+          },
+          "base_field": "train-mean HF field over the fit slice (training-free)",
+          "read_as": "if a trained arm does not beat the best of S0-S5 by a certified margin, the trained stage earned nothing on this intermediate \u2014 price the closed form FIRST (card part 3)."
+        },
+        "E1": {
+          "n_fit": 20,
+          "n_calib": 2,
+          "selection_split": "train calib slice (disjoint from the T fit slice)",
+          "evaluated_on": "test",
+          "S0_raw": {
+            "test_nrmse": 0.9996060528074036,
+            "n_selections": 0
+          },
+          "S1_gain": {
+            "a_star": 0.4,
+            "a_lstsq_on_calib": 0.6300879355441668,
+            "calib_nrmse": 0.9947314545174346,
+            "n_selections": 1,
+            "test_nrmse": 0.9939663581046971
+          },
+          "S2_lsi": {
+            "alpha": 0.0,
+            "alpha_linesearch": 0.2599882512724564,
+            "n_gradient_steps": 0,
+            "test_nrmse": 0.9996060528074036
+          },
+          "S3_blend_raw": {
+            "lambda_star": 1.0,
+            "calib_nrmse": 1.0051937793945438,
+            "n_selections": 1,
+            "test_nrmse": 0.9996060528074036
+          },
+          "S4_blend_lsi": {
+            "lambda_star": 1.0,
+            "calib_nrmse": 1.0051937793945438,
+            "n_selections": 1,
+            "test_nrmse": 0.9996060528074036
+          },
+          "S5_free_joint": {
+            "a_star": 0.4,
+            "lambda_star": 1.0,
+            "calib_nrmse": 0.9947314545174346,
+            "n_selections": 2,
+            "test_nrmse": 0.9939663581046971
+          },
+          "base_field": "train-mean HF field over the fit slice (training-free)",
+          "read_as": "if a trained arm does not beat the best of S0-S5 by a certified margin, the trained stage earned nothing on this intermediate \u2014 price the closed form FIRST (card part 3)."
+        },
+        "estimator_note": "the ladder's LSI rung uses the REPAIRED estimator (LOOCV ridge + band-limit above the LF Nyquist), so a trained arm cannot beat the closed form merely by being better regularised than it",
+        "real_lf_intermediate_note": "the ladder is built on each front end's PSEUDO-LF test intermediate, the same array the trained stack arms consume, so the comparison is like-for-like"
+      },
+      "S7_map_smoothness": {
+        "test": {
+          "n": 8,
+          "applicable": true,
+          "cond_dim": 19,
+          "nn_cond_rel_field_diff_median": 1.1448533284138143,
+          "random_pair_rel_field_diff_median": 1.4020557002125629,
+          "map_smoothness_ratio": 0.8165533853186042,
+          "mean_removed_variance_fraction": 0.9062399098482179,
+          "non_smooth_flag": false,
+          "smoothness_tol": 0.95,
+          "estimator": "same arithmetic as round3/tools/task_linearity_audit.py::audit (cited, never imported); rng_seed fixes the random-pair permutation",
+          "rng_seed": 0
+        },
+        "train": {
+          "n": 24,
+          "applicable": true,
+          "cond_dim": 19,
+          "nn_cond_rel_field_diff_median": 0.9829143001287144,
+          "random_pair_rel_field_diff_median": 1.3635524592695885,
+          "map_smoothness_ratio": 0.7208481737880699,
+          "mean_removed_variance_fraction": 0.9341910827011459,
+          "non_smooth_flag": false,
+          "smoothness_tol": 0.95,
+          "estimator": "same arithmetic as round3/tools/task_linearity_audit.py::audit (cited, never imported); rng_seed fixes the random-pair permutation",
+          "rng_seed": 0
+        },
+        "row_cap": 128,
+        "role": "the E3 instrument, declared PROSPECTIVELY (clause G3): a cell whose map_smoothness_ratio is ~1 is APPROXIMABILITY-limited, so the ROUTE is not the binding constraint there. The card's pre-run declaration is that sharp__cahn_hilliard (0.980) is such a cell. Measured on every cell so the declaration is prospective, not retrofitted.",
+        "prospective_declaration": "|A1 - A3| on sharp__cahn_hilliard is predicted to stay below tau_rel(ch) = 0.3612 skill units"
+      },
+      "S6_target_scale_preflight": {
+        "knob": "not_applicable_no_helmholtz_no_pfc_in_datasets",
+        "applied": false,
+        "note": "the recipe fixes this to not_applicable: neither ext__helmholtz_2d nor sharp__phase_field_crystal_2d is in the scored dataset list, and no dataset gets a different residual estimator. Recorded, never applied."
+      }
+    },
+    "probes": {
+      "P1_bc_match_audit": {
+        "scored_on": "train val slice (no test array touched)",
+        "n_fit": 20,
+        "n_val": 4,
+        "ridge": 0.0,
+        "verdict": "periodic",
+        "wrap_ratio_hf_max": 1.0000000030356182,
+        "tol": 1.25,
+        "branches": {
+          "periodic": {
+            "alpha": 1.0000000038583334,
+            "rel_l2_prestage_val": 2.4142091756612314e-08,
+            "resid_frac": 3.210665135937115e-14,
+            "ring_profile_resid_frac": [
+              2.4849224719994996e-14,
+              4.4320129704971395e-14,
+              3.064373582801993e-14,
+              2.8857921884668515e-14,
+              3.5572252306603373e-14,
+              NaN
+            ]
+          },
+          "mirror": {
+            "alpha": 1.0388030062681604,
+            "rel_l2_prestage_val": 0.029564554727586102,
+            "resid_frac": 0.08207629807719326,
+            "ring_profile_resid_frac": [
+              0.29361040873899336,
+              0.27704315176934247,
+              0.016007409895095928,
+              0.025366633693637147,
+              0.006239550025262855,
+              NaN
+            ]
+          }
+        },
+        "mirror_delta_pct": 122460517.85217357,
+        "ring_edges": [
+          0,
+          1,
+          2,
+          4,
+          8,
+          16,
+          "inf"
+        ],
+        "ring_npix": [
+          124,
+          116,
+          208,
+          320,
+          256,
+          0
+        ],
+        "reading": "mirror_delta_pct < 0 => the periodic pre-stage leaks at the boundary; > 0 => the periodic BC was correct, do not repair it; ~0 with a large resid_frac under BOTH extensions => the pre-stage's problem is fit quality, gate it off (alpha -> 0).",
+        "ridge_provenance": "LOOCV-selected on the fit fold (0)"
+      },
+      "P2_cond_lf_identifiability": {
+        "method": "ADR r2-0003: L2 nearest in per-dim train-standardized condition space, applied to the LF field on its native grid",
+        "n_train": 24,
+        "cond_dim": 19,
+        "closest_pair": {
+          "i": 0,
+          "j": 6,
+          "standardized_cond_distance": 3.0361444195700615,
+          "relative_lf_field_difference": 0.9237021071910515
+        },
+        "nn_rel_lf_diff": {
+          "median": 0.9829143016035577,
+          "mean": 1.005748167690463,
+          "p10": 0.7483135050957171,
+          "p90": 1.2462281235384751
+        },
+        "nn_cond_distance": {
+          "min": 3.0361444195700615,
+          "median": 4.428871845931924
+        },
+        "reading": "a LARGE relative_lf_field_difference at a SMALL standardized condition distance means the LF field is not a function of the condition vector: the emulator is bounded by E[LF|c] and arm A5 `condmean_lf` should tie arm A2 `frozen` (ADR r2-0003)."
+      }
+    },
+    "validity_gates": {
+      "V1_pseudo_lf_is_upsampled_emulator": {
+        "max_abs_dev_by_front_end": {
+          "E0": 0.0,
+          "E1": 0.0
+        },
+        "pass": true
+      },
+      "V2_no_test_lf_path": {
+        "test_lf_fids": [],
+        "pass": true,
+        "note": "asserted before any array was read"
+      },
+      "V3_frozen_corrector_state": {
+        "reg_sha256": "c5e2c15bf9ad6f050d731947e5680595c4d15fea7fef0cecc734d07b177d1db4",
+        "unreg_sha256": "c0217a4c3ade74d0af5bd29cd1337a32ca99693faa820c8b3406757036edf590",
+        "chains_degenerate": false,
+        "note": "both `frozen` chains fit their corrector on REAL LF only; the pseudo-LF is seen for the first time at prediction time. `chains_degenerate` true would mean A5 == A1 and the G2 repair attribution is empty on this cell.",
+        "pass": true
+      },
+      "V6_pseudo_lf_required": {
+        "knob": "1",
+        "pseudo_lf_test_max_across_sample_std": {
+          "E0": 0.07803981549068521,
+          "E1": 0.7528357087317811
+        },
+        "fallback_fired": false,
+        "pass": true
+      },
+      "V6b_paired_real_lf": {
+        "paired_real_lf": true,
+        "max_abs_cond_deviation_lf_vs_hf": 0.0,
+        "tol": 1e-06,
+        "n_lf_samples": 24,
+        "n_hf_train_samples": 24,
+        "gate_armed": true,
+        "note": "index-aligned ladder: HF - LF_up is a well-defined per-sample residual",
+        "pass_": true
+      },
+      "V8_ic_equivalence": {
+        "max_abs_dev": 1.7763568394002505e-15,
+        "tol": 1e-12,
+        "n_probe_rows": 4,
+        "res": 16,
+        "res_min": 8,
+        "pass": true,
+        "reference": "common/spectral.py::spectral_interp of common/ic_encoding.py::ic_2d built at res_min"
+      },
+      "V10_ic_channel_live_or_recorded_fallback": {
+        "ic_synth_applicable": true,
+        "max_abs_dev_stack_ic_vs_film_pseudo_lf": 2.094997317530215,
+        "max_abs_dev_direct_ic_vs_direct_film": 2.0358916223049164,
+        "pass": true,
+        "note": "when the IC channel applies, the ic_synth arms must differ from the film_only ones on BOTH routes; when it does not, they must BE them (R3S2_IC_FALLBACK=film_only_recorded)"
+      },
+      "V11_arm_equal_total_budget": {
+        "budget_matched_arms": {
+          "A1_stack_ic_reg": 3,
+          "A2_stack_film_reg": 3,
+          "A3_direct_ic": 3,
+          "A4_direct_film": 3,
+          "A5_stack_ic_unreg": 3
+        },
+        "stage2_total": 3,
+        "direct_total": 3,
+        "pass": true
+      },
+      "V12_lsi_bandlimited_above_lf_nyquist": {
+        "max_abs_T_above_kcut": 0.0,
+        "n_modes_above_kcut": 440,
+        "k_cut": 8.0,
+        "pass": true,
+        "k_nyquist_hf": 16.0,
+        "n_lf_over_n_hf_per_axis": 0.5,
+        "k_nyquist_lf_direct": 8.0,
+        "isotropic_ladder": true,
+        "hf_grid": [
+          32,
+          32
+        ],
+        "lf_grid": [
+          16,
+          16
+        ],
+        "source": "S6_LSI_KCUT_SOURCE=ladder_shape_ratio_adr_r2_0001"
+      },
+      "V13_loocv_fit_fold_only": {
+        "tripwire": "1",
+        "selected_ridge": 0.0,
+        "n_loocv_rows": 20,
+        "all_rows_in_fit_fold": true,
+        "selected_by": "exact_leave_one_out_on_fit_fold",
+        "pass": true
+      },
+      "V14_ckpt_data_hash_bind": {
+        "found": false,
+        "aborted": false,
+        "data_sha256": "e856da3f5b161b80b456f19242fe3040e2f66a8470a0c69b137e886429300c22",
+        "knob": "1",
+        "pass_": true
+      },
+      "V15_direct_route_reproducible_and_lf_free": {
+        "max_abs_dev_vs_independent_forward_pass": {
+          "A3_direct_ic": 0.0,
+          "A4_direct_film": 0.0
+        },
+        "direct_reads_any_lf_array": false,
+        "note": "the direct route's inputs are the condition vector and the analytic IC field synthesised FROM it; no LF array enters direct_head.predict (see direct_head.py) and the arm reproduces bit-exactly",
+        "pass": true
+      },
+      "V16_route_data_disclosure": {
+        "A1_stack_ic_reg": {
+          "stage1_lf_rows": 20,
+          "n_lf_total": 24,
+          "corrector_hf_fit_rows": 20,
+          "gain_selection_hf_rows": 4
+        },
+        "A2_stack_film_reg": {
+          "stage1_lf_rows": 20,
+          "n_lf_total": 24,
+          "corrector_hf_fit_rows": 20,
+          "gain_selection_hf_rows": 4
+        },
+        "A5_stack_ic_unreg": {
+          "stage1_lf_rows": 20,
+          "n_lf_total": 24,
+          "corrector_hf_fit_rows": 20,
+          "gain_selection_hf_rows": 4
+        },
+        "A7_emul_only_ic": {
+          "stage1_lf_rows": 20,
+          "n_lf_total": 24
+        },
+        "A3_direct_ic": {
+          "hf_rows": 20,
+          "n_hf_train_total": 24,
+          "val_disjoint": true
+        },
+        "A4_direct_film": {
+          "hf_rows": 20,
+          "n_hf_train_total": 24,
+          "val_disjoint": true
+        },
+        "_knob": "1",
+        "_why": "card part 3 / FLAG C: on the ifc cells the stack's stage 1 fits 18 of 20 LF rows while the direct head sees 5 HF rows. Every ifc route delta carries this disclosure, and the ifc HEADLINE is A6, not the raw delta."
+      }
+    },
+    "bands": {
+      "edges_wavenumber": [
+        0.0,
+        2.0,
+        4.0,
+        8.0,
+        16.0
+      ],
+      "k_nyquist": 16.0,
+      "n_bands": 4
+    },
+    "band_err_energy_by_arm": {
+      "A1_stack_ic_reg": [
+        20047681.8920906,
+        17558841.046051722,
+        9863022.417047048,
+        17677.444684978036
+      ],
+      "A2_stack_film_reg": [
+        19905042.15167769,
+        16412585.100709554,
+        9978240.84070587,
+        27613.58442917534
+      ],
+      "A3_direct_ic": [
+        19260662.676308688,
+        17839126.983329516,
+        9931758.017516227,
+        64176.00530220913
+      ],
+      "A4_direct_film": [
+        22221069.925486695,
+        17405532.52259564,
+        9887714.933503889,
+        31299.770536338066
+      ],
+      "A5_stack_ic_unreg": [
+        20047681.891706515,
+        17558841.04511771,
+        9863022.417607833,
+        145950.99807583113
+      ],
+      "A7_emul_only_ic": [
+        20269017.91602225,
+        17747984.00489942,
+        9847650.397611372,
+        17677.444684978036
+      ],
+      "_identity_pseudo_lf_film_only": [
+        20061260.697663985,
+        16514609.15981325,
+        9951564.116162788,
+        27613.584429175356
+      ],
+      "_edges_wavenumber": [
+        0.0,
+        2.0,
+        4.0,
+        8.0,
+        16.0
+      ],
+      "_note": "4-band error columns for every field arm (Duraisamy arXiv:2604.20061's reporting standard, card part 3). Band 4 is the octave above the LF Nyquist."
+    },
+    "T_band_mean_abs": [
+      0.30268528362440295,
+      0.48071585308993486,
+      0.637556388953127,
+      0.0
+    ],
+    "T_band_mean_abs_unregularised_A5": [
+      0.30268528362440295,
+      0.48071585308993486,
+      0.637556388953127,
+      33.855040759089945
+    ],
+    "band_err_energy_E0_emul_only": [
+      20061260.697663985,
+      16514609.15981325,
+      9951564.116162788,
+      27613.584429175356
+    ],
+    "band_err_energy_scored_arm": [
+      20047681.8920906,
+      17558841.046051722,
+      9863022.417047048,
+      17677.444684978036
+    ],
+    "band_contribution_profile": [
+      0.999323132988598,
+      1.0632307962079728,
+      0.9911027354009673,
+      0.6401720403346401
+    ],
+    "device": "cpu",
+    "vendor_source": "round3/worktrees/r3s2_field_reach/B1/models_r3/r3s2_stack_ic @ d5069a74bb63da837b89b16508ae25a2164780cc (model.py, front_end.py, ic_synth.py, lsi_filter.py, local_corrector.py, bands.py, periodicity.py, upsample.py, floor_arms.py, probes.py, sidecars.py \u2014 per-file sha256 in _vendor_manifest.json). That family in turn vendors r2s2_stack @ 6b4e1d48 and round-1 s4_router @ b90d4662. NO code is vendored from r2s1_direct. IC-synthesis math remains B1's re-implementation from the READ-ONLY generator surfaces mffp_sharp/common/ic_encoding.py::ic_2d and common/spectral.py::spectral_interp (never imported, never edited).",
+    "declared_reuse": "role (a), round-2 program 5.10a: the DC-lineage corrector is a declared frozen test-time sub-component behind a condition->pseudo-LF front end. A5 (ridge=0) is the literal B1 replay and is declared as the pre-registered replication/attribution arm, not as a novelty claim.",
+    "novelty_declaration": "the new pathway is a SINGLE shared FiLM-FNO trunk behind a ROUTE SWITCH with a budget accountant holding total optimizer epochs equal across routes, and a REGULARISED LSI transfer stage. The direct_* arms are declared MATCHED CONTROLS inside that contrast, not candidate architectures.",
+    "paired_subset_geomean_knob": {
+      "knob": "1",
+      "cell_is_pairing_valid": true,
+      "note": "panel aggregation is round-3-side; this cell publishes its own pairing validity so the analyzer can report the geomean over all scored datasets AND over the pairing-valid subset."
+    },
+    "adr_r3_0004": "sharp__phase_field_crystal_2d is REPORT-ONLY (scored cell task-void); its thresholds are void for claim purposes. It is not in this card's dataset list."
+  },
+  "nrmse_def_hash": "d3d0ade9191c13bacc40702f3eb26ad290e01641cacee22a1d2233b74c035850",
+  "panel_data_note": "upsamplers VENDORED into upsample.py; eval/panel_data.py is never imported and never touched",
+  "nrmse_module_sha256": "d3d0ade9191c13bacc40702f3eb26ad290e01641cacee22a1d2233b74c035850"
+}

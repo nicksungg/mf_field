@@ -1,0 +1,17 @@
+{
+  "name": "r3s2_route",
+  "description": "Card r3s2_field_reach-B2. ROUTE CONTRAST on one shared FiLM-FNO trunk (w64/b4/m12): `stack` (condition -> pseudo-LF on the LF rung's native grid -> convention-keyed upsample -> frozen REGULARISED LSI + local defect corrector -> HF) against `direct` (condition -> HF), crossed with a front-end switch (zero-parameter analytic IC synthesis vs FiLM-only), at matched folds and matched total optimizer budget (E_emu + 2*E_dc = 300 at tier 200, R3S2_BUDGET_MATCH=arm_equal_total). Seven arms in one job: A1 stack_ic_reg (SCORED), A2 stack_film_reg, A3 direct_ic, A4 direct_film (r2s1 calibration), A5 stack_ic_unreg (B1 replay / anchor replication gate), A6 ifc_loo_selector (closed form, zero GPU), A7 emul_only_ic, plus the mandatory floor arms. The LOOCV ridge + LF-Nyquist band-limit on T(k) is carried as INSTRUMENT ACCEPTANCE (clause G2), never as a contribution.",
+  "supports": ["ifc_raw", "npz"],
+  "frozen": false,
+  "card": "r3s2_field_reach-B2",
+  "scored_arm": "A1_stack_ic_reg",
+  "base_family": "r3s2_stack_ic",
+  "vendor_source_commit": "d5069a74bb63da837b89b16508ae25a2164780cc",
+  "vendor_source_branch": "round3/exp-r3s2_field_reach-B1",
+  "vendor_source_path": "mffp_autoresearch/round3/worktrees/r3s2_field_reach/B1/models_r3/r3s2_stack_ic",
+  "vendor_file_hashes": "_vendor_manifest.json",
+  "new_in_this_family": ["smoke_eval.py (rewritten for the route switch, the two LSI chains, the data-hash bind and the 7-arm accounting)", "direct_head.py", "selector.py", "lsi_filter.py APPEND-ONLY block (LOOCV ridge + band-limit)", "sidecars.py APPEND-ONLY block (map_smoothness, the E3 instrument)"],
+  "declared_reuse": "role (a), round-2 program 5.10a — the DC-lineage corrector remains a declared FROZEN test-time sub-component behind a condition->pseudo-LF front end. A5 (ridge=0) is the literal B1 replay, declared as the pre-registered replication/attribution arm, not a novelty claim. NO code is vendored from r2s1_direct.",
+  "checkpoint_resume": "<ckpt_dir>/last.pt, atomic tmp+replace, per-stage; the dataset CONTENT sha256 is bound into the payload (R3S2B2_CKPT_DATA_HASH_BIND=1) and a resume against changed arrays ABORTS.",
+  "evaluated_against": "the stripped test view only (round2/eval/score_panel.py points there); the family asserts test['lf_fids'] is empty before touching a field array (gate V2)."
+}
