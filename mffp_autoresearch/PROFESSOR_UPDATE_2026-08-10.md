@@ -87,7 +87,7 @@ Headline mechanism results (each from a causal probe, not a hunch):
 
 ## 5. Gated next steps
 
-1. **ADR r3-0005 (pfc spectral-rung repair) — the pending decision** (operator + mentor; the accompanying decision page has the plain-language version).
+1. **ADR r3-0005 (pfc spectral-rung repair) — RATIFIED 2026-08-10, option A** (Eloise, deciding for the mentor); phase 1 executed, phase 2 gated on batch-2 compute close.
    Two inseparable changes: serve pfc rungs {1, 3} so the scored cell becomes 32²→128² (where the measured per-row gap is real: mean 0.0124, 0/100 task-void), and give the copy-LF reference a pfc-specific spectral lift (the linear lift's error at 32²→128² is ~0.07, which would again swamp the ~0.012 true gap).
    The measured caveat, stated up front: the repaired cell is outlier-dominated (top-5 rows carry 38.8% of the denominator; min-detectable delta **65.8%**), so it returns to the panel as an honest but low-resolution cell — every claim on it must be priced against that MDD.
    Alternatives on the table: keep pfc report-only permanently (conservative, loses the panel's only stiff-map dataset), or regenerate with a higher-resolution ladder (most compute; the sweep suggests the same convergence reappears one rung up, since the crystal wavelength, not the grid, sets it).
