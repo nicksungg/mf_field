@@ -3,6 +3,7 @@
 Date: 2026-08-10. Author: Eloise (with the autoresearch orchestrator).
 Authoritative sources: `round3/state/orchestrator_flow.md` (decision log), `round3/state/gates.md`, per-experiment cards under `round3/experiment_cards/`, `round3/index.md` (dashboard).
 Companion to the 2026-08-02 update (round-2 results and the benchmark-repair pipeline are described there and are not repeated).
+Updated 2026-08-10 (evening): batch-2 midpoint results and the ADR r3-0006 scoring change are in §6.
 
 Rendered versions of this update:
 [Claude artifact](https://claude.ai/code/artifact/a03c7fd2-cf39-42d6-8ec5-cf5ee44449cc)
@@ -42,6 +43,10 @@ Companion decision page for §5.1: [ADR r3-0005 decision memo](https://claude.ai
   This is the round’s only amendment to the frozen round-2 evaluation convention.
   Phase 1, the serving change, is complete.
   Phase 2, the reference amendment and re-evaluation that restore the 6-dataset panel, waits until batch-2 computation closes so no active experiment uses mixed reference hashes.
+- **Batch-2 midpoint (§6): the first batch-2 experiment is already complete and falsified its own novelty claim** — the calibrated selection rule loses to the plain cap fix it was registered against, and that stream now recommends its own consolidation.
+  The audit stream's new fairness probe fired as pre-registered, exposing a resolvable reference-fitting bias on one dataset; escalated to the operator per its clause.
+- **Scoring change (ADR r3-0006, operator decision): the headline denominator moves from copy-the-coarse-solve to the best learned baseline** (`mf_fno_transfer_film`).
+  The change is an exact per-dataset conversion — nothing is re-scored, the frozen evaluation layer is untouched, and in-flight verdicts stay in their registered units; the baseline's own 3-seed certification is running.
 - **Two new figures summarize performance and architectures.**
   They are `round3/docs/figures/r3_performance_vs_baselines.png` and `r3_architectures_overview.png`.
   Both are regenerated from the experiment records by `round3/tools/render_round3_update_figures.py` and embedded in the rendered page.
@@ -219,4 +224,25 @@ It repairs 92 of the no-LF variant’s worse-than-zero rows and accounts for 97%
    The sweep suggests that the same convergence would recur one resolution level higher because crystal wavelength, rather than grid spacing, determines it.
 2. **Batch 2 will complete 4 experiments through the SLURM and analysis pipeline.**
    The first two seed-0 jobs are running as of this update.
-3. **The round-1 full runs of 2500 epochs remain on hold.**
+3. **ADR r3-0006 executes in phases**: denominator certification on the cluster now; converted reporting once `film_denominator.json` is built; batch-3 experiments register their predictions in the new units.
+4. **The round-1 full runs of 2500 epochs remain on hold.**
+## 6. Batch-2 midpoint (added 2026-08-10, evening)
+
+- **Factorised head (r3s1-B2) — complete; falsified its novelty claim; the stream recommends its own consolidation.**
+  The statistically calibrated shape-selection rule was pre-registered head-to-head against the plain "raise the cap" bug-fix, and the plain fix wins.
+  What survives is a confirmed fisher_kpp improvement of 13.35 (1.30× that dataset's minimum claimable effect), attributable entirely to the cap fix.
+  The input-space-expansion repair is now a certified null: worse than inert (3.62× the threshold), because widening the correction gate's input collapses it — 19 columns of pure noise collapse it identically, so input width alone explains the failure.
+  The stream-closing measurement: on fisher_kpp, even a perfect predictor restricted to the model's 50 principal shapes (the oracle ceiling, 298.83) still loses to the 6-parameter affine reference (270.54).
+  The basis, not the selection rule, is the binding constraint there; cahn_hilliard retains 26.8× of real headroom.
+- **IC-stack (r3s2-B2) — complete at 3 seeds; falsified on exactly one clause (an instrument-acceptance leg), while the route comparison itself came out affirmative.**
+  The pre-registered stack-vs-direct contrast holds at panel level: the stack beats the matched direct route by 1.62 (3.2× the minimum claimable effect, sign-stable at every seed) — though no single-dataset win is claimable, because both ifc datasets still lose the mandatory affine reference.
+  The clause that fired is honest instrument accounting: with only 3 fitting samples, cross-validation chose zero regularisation in the frequency band that matters on ifc_poisson, so the repair was inert exactly where batch 1 blew up.
+  The replication arm is the round's cleanest attribution: it reproduced batch 1's numbers within noise on every seed *including* the seed-2 blow-up, down to the identical amplification factor (66.219…), proving the repaired arms removed it via the band-limit and not via re-implementation drift.
+  The stream's reference-to-beat improves from 12.96 to 10.09, recorded with the caveat that the card setting it is falsified on its own pre-registration.
+- **Value-of-coarse-data (r3s3-B2) — the cost-curve experiment (150 training runs across a ladder of coarse-data budgets) is on the cluster.**
+- **Audit (r3s4-B2) — the checkpoint-binding instrument passed its labelled-defect exam exactly** (every pre-registered detection count reproduced; zero false "retrain" verdicts), **and its fairness probe fired as pre-registered**: fitting reference baselines on 400 rows while scored models fit on 320 shifts cahn_hilliard's reference by 1.93× the minimum claimable effect.
+  Per the clause this is escalated to the operator rather than silently absorbed; the proposed fix is a closed-form re-pricing of the affected batch-1 comparisons once the pricing stage lands (no re-runs needed).
+- **Scoring change (ADR r3-0006, operator decision).**
+  The headline score's denominator moves from "copy the coarse solve and enlarge it" to the best learned baseline, `mf_fno_transfer_film`.
+  Because both scores are ratios to the same model RMSE, the switch is an exact per-dataset conversion: nothing is re-scored, the frozen evaluation layer is untouched, rankings within the panel are preserved, and in-flight batch-2 verdicts evaluate in the units their predictions were registered in.
+  The trade-off is recorded in the ADR: the denominator becomes a trained, seed-dependent object, so its own 3-seed variance is certified and disclosed beside every converted number.
