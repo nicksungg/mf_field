@@ -1,0 +1,113 @@
+<title>MFFP round 3 — mentor update (batch 1 close)</title>
+<style>
+  :root {
+    --bg: #F7F6F2; --surface: #FFFFFF; --ink: #23252B; --muted: #6B6E76;
+    --accent: #33646F; --accent-ink: #2A545E; --amber: #8F6527;
+    --line: #DDDCD4; --card-line: #C9CDC9; --code-bg: #EFEEE8;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #17191D; --surface: #1E2126; --ink: #E6E5DF; --muted: #9A9DA5;
+      --accent: #82B7C1; --accent-ink: #9BC8D1; --amber: #D9A45F;
+      --line: #33363C; --card-line: #43474D; --code-bg: #24272C;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #17191D; --surface: #1E2126; --ink: #E6E5DF; --muted: #9A9DA5;
+    --accent: #82B7C1; --accent-ink: #9BC8D1; --amber: #D9A45F;
+    --line: #33363C; --card-line: #43474D; --code-bg: #24272C;
+  }
+  * { box-sizing: border-box; }
+  body {
+    background: var(--bg); color: var(--ink);
+    font-family: Charter, Georgia, 'Times New Roman', serif;
+    font-size: 1.04rem; line-height: 1.62; margin: 0; padding: 0 1.25rem 5rem;
+  }
+  main { max-width: 48rem; margin: 0 auto; }
+  .eyebrow {
+    font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+    font-size: .72rem; letter-spacing: .14em; text-transform: uppercase;
+    color: var(--accent); margin: 3rem 0 .75rem;
+  }
+  h1 { font-size: 1.8rem; line-height: 1.22; margin: 0 0 .4rem; text-wrap: balance; }
+  .meta { color: var(--muted); font-size: .93rem; margin: 0 0 2rem; }
+  h2 { font-size: 1.28rem; margin: 2.6rem 0 .8rem; border-bottom: 1px solid var(--line); padding-bottom: .35rem; }
+  p { margin: .8rem 0; }
+  ul { padding-left: 1.3rem; margin: .8rem 0; }
+  li { margin: .55rem 0; }
+  li::marker { color: var(--accent); }
+  strong { font-weight: 700; }
+  em { font-style: italic; }
+  .num, td.num-cell { font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace; font-size: .92em; font-variant-numeric: tabular-nums; }
+  .table-wrap { overflow-x: auto; }
+  table { border-collapse: collapse; width: 100%; font-size: .93rem; margin: 1rem 0; }
+  th, td { text-align: left; padding: .5rem .9rem .5rem 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { font-size: .76rem; letter-spacing: .07em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+  td.num-cell { white-space: nowrap; }
+  code { background: var(--code-bg); padding: .1em .35em; border-radius: 3px; font-size: .86em; font-family: ui-monospace, Menlo, Consolas, monospace; }
+  .aside { border-left: 3px solid var(--accent); padding: .1rem 0 .1rem 1rem; color: var(--muted); margin: 1.2rem 0; font-size: .97rem; }
+  footer { margin-top: 3rem; color: var(--muted); font-size: .85rem; border-top: 1px solid var(--line); padding-top: 1rem; }
+</style>
+<main>
+  <p class="eyebrow">MFFP autoresearch · mentor update · round 3, batch 1 close</p>
+  <h1>Round 3: repairs held, batch 1 closed, one decision pending</h1>
+  <p class="meta">2026-08-10 · Eloise (with the autoresearch orchestrator) · sources: <code>round3/state/orchestrator_flow.md</code>, <code>round3/state/gates.md</code>, cards under <code>round3/experiment_cards/</code> · companion to the 2026-08-02 update · canonical text: <code>mffp_autoresearch/PROFESSOR_UPDATE_2026-08-10.md</code></p>
+
+  <h2>TL;DR</h2>
+  <ul>
+    <li><strong>Round 3 launched 2026-08-05 on the repaired, completeness-certified panel; batch 1 (4 cards, one per stream) is closed at 3 seeds each.</strong> All four models beat the training-free floor anchor (<span class="num">34.4198</span> panel geomean skill, lower is better); range <span class="num">11.08&#8211;24.96</span>.</li>
+    <li><strong>Two stop-the-line integrity events, both caught by the system's own instruments.</strong> The phase-field-crystal scored cell was task-void (the coarse solve is spectrally converged to the fine one; the certified reference was ~100% our own interpolation error) &#8594; pfc report-only, 5-dataset scored panel (ADR r3-0004). Then a stale-checkpoint audit found anchor cells re-<em>scored</em> on repaired data without being re-<em>trained</em> (checkpoint-resume made the retrain a silent no-op) &#8594; 32 legs quarantined and fresh-trained, anchors rebuilt, a permanent gate installed.</li>
+    <li><strong>Most consequential correction:</strong> r3s3's headline "LF-at-train improves the panel by 10.1% (ifc_poisson by 39%)" was entirely the stale-anchor artifact. Post-repair there is no resolvable vs-anchor delta on that card (panel <span class="num">&#8722;0.81%</span> at <span class="num">0.08&#215;</span> the certified noise floor); the mechanism decomposition survived and is the deliverable.</li>
+    <li><strong>Mechanism findings replaced two pre-registered stories with sharper ones</strong>: the factorised head's discriminator is stage-1 residual saturation, not condition dimension; the IC-reach effect lives entirely in stage 1 while the corrector stage is a certified null for the second consecutive round.</li>
+    <li><strong>The audit stream certified the round's noise floor and priced the audit instruments themselves</strong>: one staleness heuristic had 0 unique true positives against 62 false alarms in 859 legs and is being deleted in favor of content hashes bound into checkpoints.</li>
+    <li><strong>Batch 2 is designed, reviewed, and launching</strong> (first jobs on the cluster today); the prior-art record across 7 searched directions is honestly 0-for-7 on outright novelty, each card claiming only its measured composition.</li>
+    <li><strong>Pending sign-off: ADR r3-0005</strong> (re-point pfc's scored cell to the coarsest rung with a spectral reference) &#8212; the only amendment to the frozen round-2 eval convention on the table. A plain-language decision page accompanies this update.</li>
+  </ul>
+
+  <h2>1. What round 3 asked, and how it ran</h2>
+  <p><strong>Regime</strong>: unchanged from round 2 &#8212; models see LF fields only during training; at test they receive the condition vector alone (the stripped view physically omits test LF). Round 3 runs on the repaired benchmark: completeness-certified condition vectors (IC coefficients now <em>in</em> the vector, retiring ADR r2-0003's stochastic-map caveat), repaired nested IFC ladders, and <code>ifc_heat</code> promoted to the scored panel. Scored panel after ADR r3-0004: allen_cahn, fisher_kpp, cahn_hilliard, ifc_poisson, ifc_heat (helmholtz and pfc report-only).</p>
+  <p><strong>Scale so far</strong>: 4 streams (factorised heads / IC reach / value-of-LF / audit), 4 batch-1 cards at 3 seeds, 5 ADRs, 7 new probe tools promoted, ~2 days of stop-the-line repair mid-round, full websearch &#8594; pre-registered design &#8594; build &#8594; adversarial review &#8594; GPU &#8594; two-stage analysis pipeline on every card. The certified noise floor is no longer provisional: r3s4-B1's certification (per-dataset minimum claimable effects; panel <span class="num">seed_mce 0.5083</span>) was installed 2026-08-10 and prices every claim below.</p>
+
+  <h2>2. Batch-1 results (condition vector &#8594; HF; no solver at test)</h2>
+  <div class="table-wrap"><table>
+    <tr><th>Rank</th><th>Card</th><th>Panel geomean [3-seed]</th><th>Verdict</th><th>What it is</th></tr>
+    <tr><td>1</td><td>r3s3-B1 LF-channels</td><td class="num-cell">11.0789 [10.84, 11.25]</td><td>confirmed</td><td>Budget-matched &#177;LF contrast; <strong>no resolvable vs-anchor delta post-repair</strong> &#8212; the value is the decomposition</td></tr>
+    <tr><td>2</td><td>r3s2-B1 IC-stack</td><td class="num-cell">12.9556 [10.32, 17.83]</td><td>F1 confirmed / <strong>F2 falsified</strong></td><td>IC information helps (stage 1); the corrector is unresolvable &#8212; round 2's null replicates</td></tr>
+    <tr><td>3</td><td>r3s4-B1 certifier</td><td class="num-cell">19.6438 [19.42, 19.93]</td><td>F2&#8211;F4 confirm; F1 metrology-margin</td><td>The round's certified noise-floor source</td></tr>
+    <tr><td>4</td><td>r3s1-B1 factorised head</td><td class="num-cell">24.9573 [24.87, 25.07]</td><td>confirmed (L1/L2/L4)</td><td>Closed-form condition&#8594;coefficient cascade; win is one cell (cahn_hilliard)</td></tr>
+  </table></div>
+  <p>Headline mechanism results (each from a causal probe):</p>
+  <ul>
+    <li><strong>The factorised head's discriminator is stage-1 residual saturation, not condition dimension.</strong> Controlled pair: allen_cahn and cahn_hilliard share cond_dim 19 yet differ 47&#215; in stage-2 margin; fisher_kpp has the largest cond_dim (50) and the smallest margin. On fisher_kpp the loss to the affine floor is a hyperparameter clip (<code>SELECT_MAX = 32</code> strands <span class="num">0.0713</span> of condition-reachable energy; the head is <em>better</em> than affine inside its selected subspace, losing 17&#215; more outside it). The cahn_hilliard win is broad-based (78&#8211;82 of 100 rows; survives an adversarial 10-row trim at 2.9&#8211;3.2&#215; the certified floor).</li>
+    <li><strong>The IC-reach effect is created at stage 1 and is approximability-limited, not information-limited.</strong> Fractional emulator-error removal 63.7% / 22.3% / 85.4% on ac/ch/fk; the zero-information IC null is worse than the no-IC control everywhere. The residual cahn_hilliard gap is approximability: its nearest-condition neighbour is 98% as different as a random sample.</li>
+    <li><strong>The corrector stage is dead weight, decisively, for the second round running</strong>: the best stack arm beats its front-end-matched emulator-only control by 9&#8211;163&#215; <em>less</em> than one minimum-detectable effect; round 2's <span class="num">0.0061</span> null replicates at <span class="num">0.0056</span>. Its one dramatic failure (ifc_poisson seed-2 nRMSE <span class="num">2.04</span> vs <span class="num">0.15</span>) was root-caused to a deterministic instrument defect: an unregularised spectral Wiener transfer fit from <strong>3</strong> samples amplifying 66&#215; in a band where the LF carries no power &#8212; the identical mode as round 2's anchor instability; the promoted audit tool also flags the pfc anchor legs and the fluid guard cell.</li>
+    <li><strong>LF-at-train's value is identifiability supply, quantified.</strong> The covered-input control arm (extra LF only at parameters HF already covers) learns the <em>same function</em> as the no-LF arm; supplying new distinct condition rows accounts for E<sub>cov</sub>/E<sub>total</sub> &#8712; [0.972, 1.024] on 30/30 cells. Recovery is a near-deterministic function of a measurable intermediate (condition-response alignment, r = 0.985) &#8212; batch 2 tests whether that mediator makes the LF-row &#8596; HF-row exchange rate a law.</li>
+    <li><strong>A seed-invariant hard subpopulation exists on cahn_hilliard</strong>: 27/100 test rows whose conditions are indistinguishable from training (max gap 0.45&#963;, NN ratio 1.02) but whose fields are 3.29&#215; farther &#8212; and LF-at-train specifically repairs them (97% of that pair's gain).</li>
+  </ul>
+
+  <h2>3. Benchmark-integrity findings</h2>
+  <ul>
+    <li><strong>The pfc scored cell was task-void</strong> (stop-the-line #1): the convention scores 64&#178;&#8594;128&#178;, where the crystalline fields are band-limited below the coarse Nyquist &#8212; exact per-row copy gap &#8804; <span class="num">1.66e-6</span> on all 100 test rows; the certified reference <span class="num">0.018257</span> was ~100% linear-interpolation error of the frozen lift. The real gap lives at 32&#178;&#8594;128&#178;, which the convention never scores. Interim: report-only (ADR r3-0004); durable repair: ADR r3-0005, pending sign-off.</li>
+    <li><strong>Checkpoint-resume can silently void a re-score campaign</strong> (stop-the-line #2): re-scoring on repaired data resumed completed checkpoints (<span class="num">resumed_from_step = 5000</span>, train 1.3&#8211;2.9 s), so pre-repair weights were scored on post-repair arrays &#8212; and every existing hash/floor seam passed, because references recompute live while only the weights were stale. 32 legs quarantined + fresh-trained; anchor diff confined to the contaminated columns; a stale-checkpoint gate now runs inside the anchor builder. Fresh training <em>improved</em> every contaminated anchor &#8212; the contamination had been biasing comparisons in the flattering direction.</li>
+    <li><strong>The audit instruments were themselves priced</strong>: the <code>train_seconds</code> staleness heuristic contributes 0 unique true positives and 62 false alarms over 859 legs and is being deleted; file mtimes are <em>not</em> a witness (the repair copy preserved them); only a content hash bound into the checkpoint separates a train-invalidating mutation from a benign test-split trim. Binding coverage today: 0/18 &#8212; building that instrument is r3s4's batch-2 card.</li>
+    <li><strong>Tolerance-setting now has a measured metrology floor</strong>: an audit clause fired at <span class="num">1.106e-9</span> against a <span class="num">1e-9</span> tolerance &#8212; ~70&#215; below the float64&#8594;float32 loader seam's own spread. Per-dataset ULP-band analysis puts correct tolerances between <span class="num">2e-9</span> and <span class="num">0.31</span> (sod_1d, where an exact-equality <code>std == 0</code> guard amplifies one ULP 8.4e6&#215;; guard-cell bounded, nothing shipped is wrong). Batch-2 contract change: floor tolerances at max(1e-9, measured band).</li>
+    <li><strong><code>mdd_scored = 0</code> means unobservable, not zero</strong>: on both ifc cells the reference's own uncertainty cannot be observed from this round's data, understating absolute bars ~2.15&#215;; no live claim flips.</li>
+  </ul>
+
+  <h2>4. How the harness itself is performing</h2>
+  <ul>
+    <li><strong>Throughput</strong>: batch 1 closed at 3 seeds on all four streams in ~5 days wall clock (~2 of them the repair); batch 2 went websearch &#8594; brainstorm &#8594; pre-registered card &#8594; build &#8594; adversarial review &#8594; first SLURM jobs in under a day.</li>
+    <li><strong>The discipline works in both directions</strong>: pre-registration + certified floors turned two would-be headlines into precise retractions (r3s3's &#8722;10.1% panel "win"; r3s1's cond_dim story), and adversarial reviews caught real defects pre-submission (a clause gated on the wrong statistic; an admission rule differing measurably from its pre-registered prose, adjudicated <em>ex ante</em> before any result existed).</li>
+    <li><strong>Honest accounting</strong>: only r3s4-certified numbers are called certified; every retraction is annotated in place with historical numbers preserved; the 0-for-7 novelty record is reported as such.</li>
+    <li><strong>Autonomy</strong>: the launch orchestrator session died 2026-08-08; a fresh session resumed losslessly from state files, executed the repair under standing delegation (holding the stop-the-line for operator adjudication), and has run the round since. One operational note: the cluster's SLURM job-ID space reset mid-round; accounting re-anchored, old IDs still resolve.</li>
+  </ul>
+
+  <h2>5. Gated next steps</h2>
+  <ul>
+    <li><strong>ADR r3-0005 &#8212; the pending decision</strong> (operator + mentor): serve pfc rungs {32&#178;, 128&#178;} so the scored cell becomes the real task (measured per-row gap mean <span class="num">0.0124</span>, 0/100 task-void), and give the copy-LF reference a pfc-specific spectral lift (the linear lift's <span class="num">~0.07</span> error would otherwise swamp the <span class="num">~0.012</span> true gap). Stated caveat: the repaired cell is outlier-dominated (top-5 rows 38.8% of the denominator; min-detectable delta <strong>65.8%</strong>) &#8212; honest but low-resolution, every claim MDD-priced. Alternatives: keep report-only (conservative; loses the panel's only stiff-map dataset) or regenerate a higher-resolution ladder (most compute; the sweep suggests the same convergence reappears one rung up).</li>
+    <li><strong>Batch 2 completes</strong>: 4 cards through the SLURM &#8594; analysis pipeline (first two seed-0 jobs running as of this update).</li>
+    <li><strong>Round-1 2500-epoch full runs</strong> &#8212; still on hold (unchanged).</li>
+  </ul>
+
+  <footer>Canonical text: <code>mffp_autoresearch/PROFESSOR_UPDATE_2026-08-10.md</code> (in-repo, committed). This page is private until shared from its share menu.</footer>
+</main>
