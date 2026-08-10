@@ -156,11 +156,21 @@ def fig_performance(cards, best_floor, floors_ds, r2_anchors, film):
         "Panel = geometric mean over the 5 scored datasets. Baseline certified 2026-08-10 (3 fresh seeds on the repaired data, stale-gate clean).",
         fontsize=10, x=0.02, ha="left")
 
-    # Panel A: panel geomeans in film units + the baseline's own bar
+    # Panel A: panel geomeans in film units + the baseline's own bar (+ the certified U-Net if present)
     ax = fig.add_subplot(gs[0, 0])
     names, vals, errs = ["mf_fno_transfer_film (baseline)"], [1.0], []
     fe = (1.0 - min(film_seed_panels), max(film_seed_panels) - 1.0)
     errs.append(fe)
+    unet_p = ROOT / "state" / "anchors" / "unet_baseline.json"
+    if unet_p.exists():
+        u = json.loads(unet_p.read_text())
+        useed = []
+        for si in range(3):
+            r = [u["datasets"][ds]["nrmse_per_seed"][si] / film["datasets"][ds]["nrmse_film_mean"] for ds in PANEL]
+            useed.append(float(np.exp(np.mean(np.log(r)))))
+        um = u["_panel_geomean_ratio_to_film"]
+        names.append("convnext U-Net (certified baseline)"); vals.append(um)
+        errs.append((um - min(useed), max(useed) - um))
     for cid, meta in CARDS.items():
         d = cards[cid]
         names.append(meta["label"]); vals.append(d["panel"] * gc)
@@ -168,9 +178,11 @@ def fig_performance(cards, best_floor, floors_ds, r2_anchors, film):
             errs.append(((d["panel"] - d["ci"][0]) * gc, (d["ci"][1] - d["panel"]) * gc))
         else:
             errs.append((0, 0))
+    n_baselines = len(names) - len(CARDS)  # film (+ U-Net when certified)
     order = sorted(range(len(vals)), key=lambda i: vals[i])
     y = list(range(len(order)))
-    colors = [BLUE if order[i] == 0 else ACCENT for i in range(len(order))]
+    colors = [(BLUE if order[i] == 0 else "#7FA8E8") if order[i] < n_baselines else ACCENT
+              for i in range(len(order))]
     ax.barh(y, [vals[i] for i in order], color=colors, alpha=0.85, height=0.55,
             xerr=list(zip(*[errs[i] for i in order])), error_kw=dict(ecolor=INK, capsize=3, lw=1))
     ax.set_yticks(y, [names[i] for i in order])

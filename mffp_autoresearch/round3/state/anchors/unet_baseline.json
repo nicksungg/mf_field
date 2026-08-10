@@ -1,0 +1,78 @@
+{
+ "_family": "convnext_unet_film (mf_field/akash/models)",
+ "_jobs": {
+  "0": 191214,
+  "1": 197357,
+  "2": 197358
+ },
+ "_epochs": 200,
+ "_note": "Operator-requested U-Net baseline (ADR r3-0006 context): ConvNeXt-U-Net twin of mf_fno_transfer_film; certified 3 fresh seeds on the repaired panel, stale-gate CLEAN. Panel geomean ratio to film-transfer: 1.0034 (dead heat).",
+ "datasets": {
+  "sharp__allen_cahn_2d": {
+   "nrmse_per_seed": [
+    0.44273959271634583,
+    0.42161342086384457,
+    0.4125127659859636
+   ],
+   "nrmse_mean": 0.42562192652205133,
+   "nrmse_ci95": [
+    0.40807412953870686,
+    0.4431697235053958
+   ],
+   "ratio_to_film": 0.844738953355611
+  },
+  "sharp__fisher_kpp_2d": {
+   "nrmse_per_seed": [
+    0.03809481258697526,
+    0.03452629141212459,
+    0.0361233898687062
+   ],
+   "nrmse_mean": 0.03624816462260202,
+   "nrmse_ci95": [
+    0.034225384355320985,
+    0.03827094488988305
+   ],
+   "ratio_to_film": 0.9675117615978593
+  },
+  "sharp__cahn_hilliard": {
+   "nrmse_per_seed": [
+    0.7537188091172418,
+    0.7617591867739348,
+    0.7577664366050737
+   ],
+   "nrmse_mean": 0.7577481441654168,
+   "nrmse_ci95": [
+    0.7531988369249356,
+    0.762297451405898
+   ],
+   "ratio_to_film": 1.0906773618081829
+  },
+  "ifc_poisson": {
+   "nrmse_per_seed": [
+    0.05275613058457536,
+    0.07341330499436598,
+    0.04697114577462096
+   ],
+   "nrmse_mean": 0.0577135271178541,
+   "nrmse_ci95": [
+    0.04198343190302983,
+    0.07344362233267837
+   ],
+   "ratio_to_film": 1.3055326823788127
+  },
+  "ifc_heat": {
+   "nrmse_per_seed": [
+    0.031027936527917892,
+    0.033332749616413866,
+    0.030370627938892367
+   ],
+   "nrmse_mean": 0.03157710469440804,
+   "nrmse_ci95": [
+    0.029816836102011197,
+    0.03333737328680488
+   ],
+   "ratio_to_film": 0.8738992847809088
+  }
+ },
+ "_panel_geomean_ratio_to_film": 1.0033786160553504
+}
