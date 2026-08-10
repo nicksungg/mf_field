@@ -94,7 +94,7 @@
    "_slurm": "three jobs, one per training seed, 50 legs each; partition gpu, gres gpu:nvidia_h200:1, time 05:00:00 (B1 measured 2.4 min/leg -> ~2.0 h/job, 2.5x headroom for preemption), --mail-user=ezeng@caltech.edu --mail-type=END,FAIL. Per-leg done marker keyed on (arm, dataset, cap, split_seed, n_hf, epochs_target); resume from <ckpt_dir>/last.pt; tools/stale_checkpoint_audit.py --fail-on-stale runs over this card's own outputs BEFORE any scoring."
   }
  },
- "status": "reviewed_suggest",
+ "status": "analyzing",
  "skipped_reason": null,
  "reopen_candidate": false,
  "scripts_path": {
@@ -119,6 +119,18 @@
    "job_id": 166258,
    "submitted": "2026-08-10",
    "by": "orchestrator (post reviewed_suggest; analysis-stage notes S1-S3 recorded; HOLD absent, data_binding 6/6)"
+  },
+  {
+   "seed": 1,
+   "job_id": 181977,
+   "submitted": "2026-08-10",
+   "by": "orchestrator (post seed-0 proceed; guard-leg INFRA false-positive relocated per S3 adjudication; HOLD absent, data_binding 6/6)"
+  },
+  {
+   "seed": 2,
+   "job_id": 181978,
+   "submitted": "2026-08-10",
+   "by": "orchestrator (same gate)"
   }
  ],
  "logs": {},
@@ -162,7 +174,1070 @@
   }
  ],
  "debug_notes": [],
- "5_actual_result": null,
+ "5_actual_result": {
+  "seeds_available": [
+   0
+  ],
+  "invocation": "SEED-0 ONLY (single-seed initial analysis). No clause verdicts, no CIs, no anchor action: every number below is a seed-0 trend.",
+  "legs": {
+   "expected": 50,
+   "eval_result_jsons": 50,
+   "done_markers": 50,
+   "training_leg_dirs": 50,
+   "job_id": 166258,
+   "slurm_state": "COMPLETED",
+   "composition": "ch 39 (7-cap ladder x 3 HF draws = 21; A0/A1/A2 x 3 draws = 9; HF-budget ladder {10,20,40} x 3 draws = 9) + ifc_heat 10 (7-cap ladder + A0/A1/A2) + 1 guard leg (heat_local, 2 epochs)"
+  },
+  "estimator_discipline_S2": {
+   "rule": "EVERY nRMSE entering EVERY R above was read from the score_panel aggregate eval/result_<tag>.json :: per_dataset[ds].nRMSE, metric_source = per_sample_mean (verified 'per_sample_mean' on all 50). The rich per-leg splits.test_hf.nRMSE (pooled estimator) was NEVER used in a ratio - on the ch c=40/d0 leg the two differ by 0.7067 vs 0.8402, and mixing them would corrupt knee steps of the same order.",
+   "metric_source_all_50_legs": "per_sample_mean",
+   "split_all_50_legs": "test_hf",
+   "cached_all_50_legs": false
+  },
+  "hash_consistency": {
+   "nrmse_def_hash": "d3d0ade9191c13bacc40702f3eb26ad290e01641cacee22a1d2233b74c035850",
+   "n_distinct_over_50_result_jsons": 1,
+   "copylf_def_hash": "9753ff24e856f595748492dec6cb6c215d748f97e8ec4a679b651f8846da907a",
+   "copylf_n_distinct": 1,
+   "code_hash_note": "code_hash differs per leg by construction (it keys the score cache on the leg's env as well as the family source), so it is NOT a consistency signal; the definition hashes are, and both are single-valued."
+  },
+  "per_dataset": {
+   "sharp__cahn_hilliard": {
+    "primary_arm": "A1_lf_all",
+    "seeds_available": [
+     0
+    ],
+    "per_seed_nrmse": [
+     0.508896
+    ],
+    "per_seed_skill": [
+     12.173682
+    ],
+    "mean_skill": 12.173682,
+    "ci95": null,
+    "reference_type": "copylf",
+    "cached": [
+     false
+    ],
+    "per_hf_draw_nrmse_seed0": {
+     "d0": 0.508896,
+     "d1": 0.503794,
+     "d2": 0.498325
+    },
+    "reporting_discipline": "REFERENCE-FREE dataset (ADR r3-0003 D2, MDD 1.7077). The skill column is carried only because score_panel emits it and because the mechanical cratered gate needs a level; NO ch copy-LF skill delta is quoted anywhere in this part 5, and every ch finding above is an nRMSE ratio or an R value.",
+    "source": "eval/result_A1_lf_all__sharp__cahn_hilliard__d{0,1,2}__n5__c0__e200__s0.json"
+   },
+   "ifc_heat": {
+    "primary_arm": "A1_lf_all",
+    "seeds_available": [
+     0
+    ],
+    "per_seed_nrmse": [
+     0.004862
+    ],
+    "per_seed_skill": [
+     0.065708
+    ],
+    "mean_skill": 0.065708,
+    "ci95": null,
+    "reference_type": "paper_bar",
+    "cached": [
+     false
+    ],
+    "affine_on_hf_train": 0.070918,
+    "paper_bar": 0.074,
+    "beats_affine_on_hf_train": true,
+    "source": "eval/result_A1_lf_all__ifc_heat__dnative__n5__c0__e200__s0.json"
+   }
+  },
+  "panel_geomean_skill": {
+   "per_seed": null,
+   "mean": null,
+   "ci95": null,
+   "not_computable_reason": "this card scores 2 of the round's 5 panel datasets by design (recipe drops ifc_poisson on B1 evidence and carries no pfc leg), so no round-3 5-dataset panel geomean exists for it and none is claimed. Part 4 already states 'Delta vs anchor: none claimed on the panel geomean - the deliverable is the curve, not a score win.'",
+   "two_dataset_geomean_of_the_primary_arm_seed0": 0.894376,
+   "two_dataset_geomean_caveat": "diagnostic only: mixes a reference-free ch cell with a paper-bar ifc_heat cell and is NOT comparable to any anchor."
+  },
+  "vs_anchor": {
+   "anchor_card": "r2s3_lf_train_signal-B3 (own-stream)",
+   "anchor_value": 11.1689,
+   "anchor_ci95": [
+    10.9988,
+    11.339
+   ],
+   "delta": null,
+   "beyond_ci": false,
+   "beyond_noise_floor": false,
+   "comparability": "NOT COMPARABLE at the panel level (2 of 5 datasets). What this card owes the anchor is the A1_lf_all REPRODUCTION SEAM, reported below.",
+   "a1_reproduction_seam_vs_B1_seed0": {
+    "ifc_heat": {
+     "B2": 0.004862,
+     "B1": 0.004862,
+     "delta_pct": 0.01,
+     "hf_arm_rows_max_over_fullpool": 1.0,
+     "reading": "EXACT reproduction. ifc_heat is natively N_hf = 5 = the full HF pool, so per_rung_max_fullpool and B1's arm-rows scaler coincide and the seam is expected to be exact - it is."
+    },
+    "sharp__cahn_hilliard": {
+     "B2": 0.508896,
+     "B1": 0.528166,
+     "delta_pct": -3.65,
+     "hf_arm_rows_max_over_fullpool": 0.851303,
+     "reading": "-3.65 % (B2 BETTER), outside B1's post-repair seam band of -0.75..+0.10 %/seed. Mechanistically expected and mechanistically marked: ch draws 5 of 400 HF rows, so the HF scaler is exactly what the card's change 1 moved (B1 normalised by max|y| over the 5 kept rows; B2 normalises by max|y| over all 400, a factor 1/0.8513 larger). ch is the ONLY dataset in this card whose HF scaler moved and it is the ONLY one whose seam moved. For the mechanism-analyzer: this is the intended scaler repair showing up in the reproduction seam, not a regression - but it does mean B1's ch numbers and B2's ch numbers are on different normalisations and must never be pooled."
+    }
+   },
+   "noise_floor_source": "state/anchors_repaired/noise_floor.json (certified 2026-08-08T20:00:07Z); tau_rel(ch) 0.36124864423263325 skill, tau_rel(ifc_heat) 0.1640195793751628 skill"
+  },
+  "cratered_verdict": "proceed_to_seeds_1_2",
+  "cratered_evidence": {
+   "line": 51.6297,
+   "line_definition": "1.5 x the live 5-dataset best-floor panel geomean 34.4198 (state/anchors/launch_anchors.json), per the stream's recorded gate",
+   "crash": false,
+   "nans": 0,
+   "legs_completed": "50/50",
+   "worst_single_dataset_panel_geomean_skill_over_all_50_legs": 31.127071,
+   "worst_leg": "A2_lf_covered__sharp__cahn_hilliard__d0 (a deliberately crippled control arm)",
+   "legs_above_the_line": 0,
+   "reading": "no leg - including the crippled A2 control - reaches the 51.6297 line, the A1 reproduction seam is exact on ifc_heat and off by an amount fully attributed to the carded scaler repair on ch, and the falsification clause has NOT fired decisively in either direction on seed 0 (clause (i)'s knee shape is present at c*=80 on all three HF draws; clause (ii)'s A2 recovery is -0.03 to -0.04, an order below its +0.25 trigger). Gate-level use of ch skill only; not a finding."
+  },
+  "falsification_verdict": "pending_seeds",
+  "falsification_clause_verbatim": "FALSIFIED if either (i) the ch recovery curve carries no knee resolvable at the certified floor - no ladder rung c* with mean R(c*) >= 0.90 whose next-lower rung is lower by more than 0.030 in R units (= 2x tau_rel(ch) = 2 x 0.36124864423263325 skill x 0.041802962686225575 = 0.030202 nRMSE, i.e. 4.1-5.9 % of the measured A0->A1 effect of 0.514-0.743 nRMSE), so that R is within one floor width of log-linear in distinct conditions across the whole 10->395 range and the 'affordable knee' claim dies; or (ii) under the arm-invariant per_rung_max_fullpool scaler A2_lf_covered recovers R >= 0.25 on sharp__cahn_hilliard or ifc_heat ...",
+  "falsification_seed0_trend": {
+   "clause_i": "NOT falsified on seed 0 (trend): c* = 80 is the lowest rung with mean R >= 0.90 (0.9054; per-draw 0.9074 / 0.9056 / 0.9032, all three draws agree on c*=80), and the step up from c=40 (0.6963) is +0.2091 R - 7.0x the clause's literal 0.030 R and 4.4x the 0.0480 R that 2*tau_rel converts to at the mean effect. The curve is also visibly NOT log-linear: steps rise 0.133 / 0.130 / 0.192 / 0.209 to c=80 then collapse to 0.057 and 0.023.",
+   "clause_ii": "NOT falsified on seed 0 (trend): A2_lf_covered R = -0.0259 mean on ch (-0.0874 / +0.0150 / -0.0052) and -0.0428 on ifc_heat, versus the +0.25 trigger. The re-certified E_cov/E_total is [0.985, 1.087] on ch and 1.043 on ifc_heat.",
+   "resolvability_cross_check": "the ch step into c*=80 is 4.4x the certified 2*tau_rel floor width and 8.7x tau_rel, so it is resolvable rather than floor noise. On ifc_heat only ONE ladder step (c=2->5, +0.2714 R) clears the 0.2181 R floor width; c=5->10 at +0.2163 R misses it by 0.0018 - ifc_heat therefore remains what the card declared it: coarse corroboration.",
+   "note": "SINGLE SEED. No clause verdict is issued here; both clauses are judged on the 3-seed mean +/- percentile-bootstrap CI at the three-seed invocation."
+  },
+  "deliverables": {
+   "D_A_ch_knee": {
+    "axis": "n_distinct_conditions (mean over the 3 HF draws)",
+    "per_cap": {
+     "5": {
+      "n_rows_per_leg": [
+       10,
+       10,
+       10
+      ],
+      "n_distinct_conditions": [
+       10,
+       10,
+       10
+      ],
+      "nrmse_per_draw": [
+       0.936836,
+       1.085413,
+       0.90165
+      ],
+      "R_per_draw": [
+       0.412693,
+       0.080015,
+       0.231656
+      ],
+      "R_mean_over_draws": 0.241455,
+      "R_spread_over_draws": 0.332678,
+      "response_alignment_mean": 0.354544
+     },
+     "10": {
+      "n_rows_per_leg": [
+       20,
+       20,
+       20
+      ],
+      "n_distinct_conditions": [
+       20,
+       19,
+       20
+      ],
+      "nrmse_per_draw": [
+       0.920939,
+       0.901621,
+       0.855736
+      ],
+      "R_per_draw": [
+       0.43451,
+       0.37073,
+       0.319123
+      ],
+      "R_mean_over_draws": 0.374788,
+      "R_spread_over_draws": 0.115387,
+      "response_alignment_mean": 0.453071
+     },
+     "20": {
+      "n_rows_per_leg": [
+       40,
+       40,
+       40
+      ],
+      "n_distinct_conditions": [
+       39,
+       39,
+       39
+      ],
+      "nrmse_per_draw": [
+       0.782566,
+       0.833085,
+       0.808001
+      ],
+      "R_per_draw": [
+       0.624414,
+       0.479138,
+       0.410059
+      ],
+      "R_mean_over_draws": 0.504537,
+      "R_spread_over_draws": 0.214356,
+      "response_alignment_mean": 0.532239
+     },
+     "40": {
+      "n_rows_per_leg": [
+       80,
+       80,
+       80
+      ],
+      "n_distinct_conditions": [
+       76,
+       76,
+       77
+      ],
+      "nrmse_per_draw": [
+       0.706738,
+       0.72482,
+       0.650586
+      ],
+      "R_per_draw": [
+       0.728481,
+       0.65039,
+       0.709939
+      ],
+      "R_mean_over_draws": 0.69627,
+      "R_spread_over_draws": 0.078091,
+      "response_alignment_mean": 0.61312
+     },
+     "80": {
+      "n_rows_per_leg": [
+       160,
+       160,
+       160
+      ],
+      "n_distinct_conditions": [
+       142,
+       143,
+       146
+      ],
+      "nrmse_per_draw": [
+       0.576405,
+       0.563485,
+       0.549118
+      ],
+      "R_per_draw": [
+       0.90735,
+       0.905583,
+       0.903239
+      ],
+      "R_mean_over_draws": 0.905391,
+      "R_spread_over_draws": 0.004112,
+      "response_alignment_mean": 0.698209
+     },
+     "160": {
+      "n_rows_per_leg": [
+       320,
+       320,
+       320
+      ],
+      "n_distinct_conditions": [
+       247,
+       262,
+       254
+      ],
+      "nrmse_per_draw": [
+       0.540114,
+       0.515616,
+       0.525992
+      ],
+      "R_per_draw": [
+       0.957156,
+       0.9813,
+       0.947292
+      ],
+      "R_mean_over_draws": 0.961916,
+      "R_spread_over_draws": 0.034008,
+      "response_alignment_mean": 0.705748
+     },
+     "395": {
+      "n_rows_per_leg": [
+       790,
+       790,
+       790
+      ],
+      "n_distinct_conditions": [
+       395,
+       395,
+       395
+      ],
+      "nrmse_per_draw": [
+       0.513488,
+       0.51596,
+       0.508729
+      ],
+      "R_per_draw": [
+       0.993698,
+       0.980758,
+       0.98018
+      ],
+      "R_mean_over_draws": 0.984879,
+      "R_spread_over_draws": 0.013518,
+      "response_alignment_mean": 0.714612
+     }
+    },
+    "reference_arms_per_draw": {
+     "A0_nolf_nrmse": [
+      1.237544,
+      1.135998,
+      1.023253
+     ],
+     "A1_lf_all_nrmse": [
+      0.508896,
+      0.503794,
+      0.498325
+     ],
+     "A0_minus_A1_effect_nrmse": [
+      0.728648,
+      0.632204,
+      0.524928
+     ]
+    },
+    "step_sizes_R_mean": {
+     "5->10": 0.133333,
+     "10->20": 0.129749,
+     "20->40": 0.191733,
+     "40->80": 0.209121,
+     "80->160": 0.056525,
+     "160->395": 0.022963
+    },
+    "floor_width": {
+     "tau_rel_nrmse": 0.015101,
+     "two_tau_rel_nrmse": 0.030203,
+     "tau_rel_in_R_units_per_draw": [
+      0.020725,
+      0.023887,
+      0.028768
+     ],
+     "two_tau_rel_in_R_units_mean_effect": 0.048048,
+     "note": "the clause states the step threshold BOTH as '0.030 in R units' and as '2 x tau_rel = 0.030202 nRMSE'; converting the nRMSE form through the measured effect gives 0.0480 R at the mean effect (0.0415/0.0478/0.0575 R per draw). BOTH readings are carried; every seed-0 step below is judged against both."
+    },
+    "seed0_trend": {
+     "lowest_cap_with_R_mean_ge_0.90": 80,
+     "lowest_cap_with_R_ge_0.90_per_draw": {
+      "0": 80,
+      "1": 80,
+      "2": 80
+     },
+     "step_into_that_cap_R": 0.209121,
+     "step_exceeds_0.030R": true,
+     "step_exceeds_2tau_rel_0.0480R": true,
+     "note": "SINGLE SEED - a trend, not a clause verdict. Clause (i) is judged on the 3-seed mean +/- CI."
+    }
+   },
+   "D_A_ifc_heat_secondary": {
+    "status": "SECONDARY / coarse corroboration (declared): tau_rel = 0.012137 nRMSE = 21.8% of the 0.055656 A0->A1 effect, so only steps >= 0.218 R are resolvable",
+    "affine_on_hf_train": 0.070918,
+    "paper_bar": 0.074,
+    "per_cap": {
+     "1": {
+      "n_rows": 3,
+      "n_distinct_conditions": 3,
+      "nrmse": 0.044294,
+      "skill_vs_paper_bar": 0.598569,
+      "R": 0.291508,
+      "response_alignment": 0.939677,
+      "beats_affine_on_hf_train_0.070918": true
+     },
+     "2": {
+      "n_rows": 6,
+      "n_distinct_conditions": 6,
+      "nrmse": 0.037915,
+      "skill_vs_paper_bar": 0.512365,
+      "R": 0.406125,
+      "response_alignment": 0.948975,
+      "beats_affine_on_hf_train_0.070918": true
+     },
+     "5": {
+      "n_rows": 15,
+      "n_distinct_conditions": 15,
+      "nrmse": 0.022809,
+      "skill_vs_paper_bar": 0.308228,
+      "R": 0.677546,
+      "response_alignment": 0.984536,
+      "beats_affine_on_hf_train_0.070918": true
+     },
+     "10": {
+      "n_rows": 30,
+      "n_distinct_conditions": 26,
+      "nrmse": 0.010772,
+      "skill_vs_paper_bar": 0.145573,
+      "R": 0.893811,
+      "response_alignment": 0.99662,
+      "beats_affine_on_hf_train_0.070918": true
+     },
+     "15": {
+      "n_rows": 45,
+      "n_distinct_conditions": 37,
+      "nrmse": 0.007292,
+      "skill_vs_paper_bar": 0.098534,
+      "R": 0.956354,
+      "response_alignment": 0.998457,
+      "beats_affine_on_hf_train_0.070918": true
+     },
+     "45": {
+      "n_rows": 105,
+      "n_distinct_conditions": 69,
+      "nrmse": 0.005562,
+      "skill_vs_paper_bar": 0.075161,
+      "R": 0.987431,
+      "response_alignment": 0.9991,
+      "beats_affine_on_hf_train_0.070918": true
+     },
+     "95": {
+      "n_rows": 155,
+      "n_distinct_conditions": 95,
+      "nrmse": 0.005062,
+      "skill_vs_paper_bar": 0.068408,
+      "R": 0.99641,
+      "response_alignment": 0.999211,
+      "beats_affine_on_hf_train_0.070918": true
+     }
+    },
+    "reference_arms": {
+     "A0_nolf_nrmse": 0.060518,
+     "A1_lf_all_nrmse": 0.004862,
+     "effect_nrmse": 0.055656,
+     "tau_rel_in_R_units": 0.21808
+    },
+    "resolvable_steps_seed0": {
+     "1->2": {
+      "dR": 0.114616,
+      "resolvable_gt_0.2181R": false
+     },
+     "2->5": {
+      "dR": 0.271421,
+      "resolvable_gt_0.2181R": true
+     },
+     "5->10": {
+      "dR": 0.216266,
+      "resolvable_gt_0.2181R": false
+     },
+     "10->15": {
+      "dR": 0.062543,
+      "resolvable_gt_0.2181R": false
+     },
+     "15->45": {
+      "dR": 0.031077,
+      "resolvable_gt_0.2181R": false
+     },
+     "45->95": {
+      "dR": 0.008979,
+      "resolvable_gt_0.2181R": false
+     }
+    },
+    "secondary_prediction_R_ge_0.78_below_full_pool": {
+     "caps_meeting_it_seed0": [
+      10,
+      15,
+      45
+     ],
+     "note": "reported, does not alone falsify (card expected_falsification)"
+    }
+   },
+   "D_B_floor_crossing": {
+    "sharp__cahn_hilliard": {
+     "gate": {
+      "nn_condition": 0.96901,
+      "zero": 1.0,
+      "train_mean": 1.001977490272036
+     },
+     "per_draw": {
+      "d0": {
+       "A0_nolf_nrmse": 1.237544,
+       "A0_above_nn_condition_floor": true,
+       "A2_lf_covered_nrmse": 1.301204,
+       "A2_above_nn_condition_floor": true,
+       "first_cap_below_0.96901": 5,
+       "ladder_nrmse": {
+        "5": 0.936836,
+        "10": 0.920939,
+        "20": 0.782566,
+        "40": 0.706738,
+        "80": 0.576405,
+        "160": 0.540114,
+        "395": 0.513488
+       }
+      },
+      "d1": {
+       "A0_nolf_nrmse": 1.135998,
+       "A0_above_nn_condition_floor": true,
+       "A2_lf_covered_nrmse": 1.126536,
+       "A2_above_nn_condition_floor": true,
+       "first_cap_below_0.96901": 10,
+       "ladder_nrmse": {
+        "5": 1.085413,
+        "10": 0.901621,
+        "20": 0.833085,
+        "40": 0.72482,
+        "80": 0.563485,
+        "160": 0.515616,
+        "395": 0.51596
+       }
+      },
+      "d2": {
+       "A0_nolf_nrmse": 1.023253,
+       "A0_above_nn_condition_floor": true,
+       "A2_lf_covered_nrmse": 1.025994,
+       "A2_above_nn_condition_floor": true,
+       "first_cap_below_0.96901": 5,
+       "ladder_nrmse": {
+        "5": 0.90165,
+        "10": 0.855736,
+        "20": 0.808001,
+        "40": 0.650586,
+        "80": 0.549118,
+        "160": 0.525992,
+        "395": 0.508729
+       }
+      }
+     },
+     "floor_crossing_cap_seed0": "c=5 on draws d0 and d2, c=10 on d1 (d1's c=5 leg at 1.085413 is still above 0.96901)"
+    },
+    "ifc_heat": {
+     "gate": {
+      "affine_on_hf_train": 0.070918,
+      "nn_condition": 0.10316,
+      "train_mean": 0.13072869651694966
+     },
+     "A0_nolf_nrmse": 0.060518,
+     "A0_already_below_both_gates": true,
+     "first_cap_below_affine": 1,
+     "first_cap_below_nn_condition": 1,
+     "asymmetry_note": "on ifc_heat the D-B gate is NON-BINDING (A0_nolf 0.060518 already beats affine_on_hf_train 0.070918 and nn_condition 0.10316); on ch every no-LF arm sits ABOVE the nn_condition floor. The card flagged that asymmetry as itself a reportable result and seed 0 reproduces it."
+    }
+   },
+   "D_C_exchange_rate": {
+    "scope": "sharp__cahn_hilliard ONLY (declared ch-only deliverable; ifc_heat is native N_hf=5 and has no HF ladder)",
+    "hf_budget_legs": {
+     "10": {
+      "nrmse_per_draw": [
+       1.174819,
+       0.997897,
+       0.961638
+      ],
+      "R_per_draw": [
+       0.086084,
+       0.218444,
+       0.117378
+      ],
+      "R_mean": 0.140635,
+      "response_alignment_mean": 0.311053
+     },
+     "20": {
+      "nrmse_per_draw": [
+       0.861196,
+       0.861543,
+       0.940974
+      ],
+      "R_per_draw": [
+       0.516503,
+       0.434125,
+       0.156742
+      ],
+      "R_mean": 0.369123,
+      "response_alignment_mean": 0.446151
+     },
+     "40": {
+      "nrmse_per_draw": [
+       0.733256,
+       0.741323,
+       0.645045
+      ],
+      "R_per_draw": [
+       0.692087,
+       0.624285,
+       0.720495
+      ],
+      "R_mean": 0.678955,
+      "response_alignment_mean": 0.604011
+     }
+    },
+    "brackets": {
+     "10": {
+      "R_matched": 0.140635,
+      "extra_hf_rows_over_the_5_row_base": 5,
+      "cap_bracket": [
+       null,
+       5
+      ],
+      "note": "R lands BELOW the ladder's lowest rung (c=5, 10 distinct conditions): the bracket is open at the bottom, < 2.0 distinct conditions per extra HF row"
+     },
+     "20": {
+      "R_matched": 0.369123,
+      "extra_hf_rows_over_the_5_row_base": 15,
+      "cap_bracket": [
+       5,
+       10
+      ],
+      "distinct_condition_bracket": [
+       10.0,
+       19.7
+      ],
+      "lf_rows_bracket": [
+       10.0,
+       20.0
+      ],
+      "distinct_lf_conditions_per_extra_hf_row": [
+       0.666667,
+       1.311111
+      ],
+      "lf_rows_per_extra_hf_row": [
+       0.666667,
+       1.333333
+      ]
+     },
+     "40": {
+      "R_matched": 0.678955,
+      "extra_hf_rows_over_the_5_row_base": 35,
+      "cap_bracket": [
+       20,
+       40
+      ],
+      "distinct_condition_bracket": [
+       39.0,
+       76.3
+      ],
+      "lf_rows_bracket": [
+       40.0,
+       80.0
+      ],
+      "distinct_lf_conditions_per_extra_hf_row": [
+       1.114286,
+       2.180952
+      ],
+      "lf_rows_per_extra_hf_row": [
+       1.142857,
+       2.285714
+      ]
+     }
+    },
+    "card_prediction": "1 HF row ~ 8-40 uncovered LF condition rows per rung",
+    "seed0_reading": "measured exchange rate 0.67-2.18 distinct uncovered LF conditions (0.67-2.29 LF rows) per extra HF row at N_hf 20/40 - roughly an ORDER OF MAGNITUDE below the card's predicted 8-40 bracket. Non-constant in the predicted direction is NOT reproduced either: the rate RISES with budget (0.67-1.31 at +15 HF rows, 1.11-2.18 at +35). SINGLE SEED, trend only."
+   },
+   "D_D_alignment_mediator": {
+    "mediator": "response_decomposition.response_alignment on the scored test split (gate_report, per leg)",
+    "pearson_lf_arms_only_n30": 0.972881,
+    "spearman_lf_arms_only_n30": 0.956803,
+    "pearson_hf_budget_only_n9": 0.923594,
+    "pearson_pooled_n39": 0.964217,
+    "spearman_pooled_n39": 0.971243,
+    "lf_ladder_linear_fit": {
+     "intercept": -0.284906,
+     "slope": 1.687737
+    },
+    "hf_point_residuals_about_the_lf_fit": {
+     "n10_d0": -0.021767,
+     "n20_d0": 0.007653,
+     "n40_d0": -0.00217,
+     "n10_d1": -0.017094,
+     "n20_d1": -0.069591,
+     "n40_d1": -0.075054,
+     "n10_d2": -0.259443,
+     "n20_d2": -0.234929,
+     "n40_d2": -0.089425
+    },
+    "max_abs_hf_residual": 0.259443,
+    "secondary_prediction_collapse_within_0.05R": false,
+    "seed0_reading": "the pooled correlation MEETS the card's >= 0.95 prediction (Pearson 0.9642 / Spearman 0.9712 over 39 ch cells), but the HF-budget points do NOT collapse onto the LF ladder within 0.05 R: 4/9 residuals exceed it and the worst is -0.2594 (n10_d2, n20_d2). The miss is concentrated in HF draw d2. Per the card this secondary prediction does not alone falsify; its failure means the exchange rate publishes as a bracketed table, not a law. SINGLE SEED.",
+    "ifc_heat_alignment_ladder": {
+     "1": 0.939677,
+     "2": 0.948975,
+     "5": 0.984536,
+     "10": 0.99662,
+     "15": 0.998457,
+     "45": 0.9991,
+     "95": 0.999211
+    }
+   },
+   "D_E_stratification": {
+    "terminology": "FORWARD-SENSITIVE subpopulation - condition-space-indistinguishable (max per-dim standardised gap 0.4476 sigma, nearest-train-neighbour ratio 1.0176) but field-distant (nearest-train-field rel-L2 ratio 3.29). The banned vocabulary is not used anywhere in this block.",
+    "split_identity_verified": true,
+    "cond_matrix_sha256_round12": "7558526337372366f9a817995e3efbbb1365808bb2ce9fa7544f182bf6a201f7",
+    "mask_overlap": {
+     "n_overlap": 19,
+     "jaccard": 0.5428571428571428,
+     "overlap_fraction_of_27": 0.7037037037037037,
+     "agree": false,
+     "publication_rule": "card recipe.env._hard_mask: report the overlap and PUBLISH THE STRATIFICATION UNDER BOTH MASKS if they disagree \u2014 both are emitted above unconditionally"
+    },
+    "estimator_note": "the per-row rel-L2 values these means are taken over are exactly the sample set whose mean IS the score_panel per_sample_mean estimator, so the stratified readout is on the same estimator as every R above (S2 honoured).",
+    "masks": {
+     "imported_r3s1_b1": {
+      "n_hard": 27,
+      "per_draw_reference_rows": {
+       "d0": {
+        "hard_A0": 1.216784,
+        "hard_A1": 1.212555,
+        "hard_A2": 1.256439,
+        "hard_denominator_A0_minus_A1": 0.004229,
+        "easy_A0": 1.245223,
+        "easy_A1": 0.248639,
+        "easy_denominator_A0_minus_A1": 0.996584
+       },
+       "d1": {
+        "hard_A0": 1.221348,
+        "hard_A1": 1.205459,
+        "hard_A2": 1.218416,
+        "hard_denominator_A0_minus_A1": 0.015889,
+        "easy_A0": 1.104431,
+        "easy_A1": 0.244275,
+        "easy_denominator_A0_minus_A1": 0.860156
+       },
+       "d2": {
+        "hard_A0": 1.133251,
+        "hard_A1": 1.205739,
+        "hard_A2": 1.144412,
+        "hard_denominator_A0_minus_A1": -0.072488,
+        "easy_A0": 0.982568,
+        "easy_A1": 0.236679,
+        "easy_denominator_A0_minus_A1": 0.74589
+       }
+      },
+      "per_cap": {
+       "5": {
+        "R_hard_mean": 1.562919,
+        "R_easy_mean": 0.257543,
+        "lag_easy_minus_hard": -1.305376,
+        "raw_hard_rel_l2_mean": 1.226793,
+        "raw_easy_rel_l2_mean": 0.881368
+       },
+       "10": {
+        "R_hard_mean": 3.610339,
+        "R_easy_mean": 0.37917,
+        "lag_easy_minus_hard": -3.23117,
+        "raw_hard_rel_l2_mean": 1.200004,
+        "raw_easy_rel_l2_mean": 0.77913
+       },
+       "20": {
+        "R_hard_mean": 3.892822,
+        "R_easy_mean": 0.511357,
+        "lag_easy_minus_hard": -3.381465,
+        "raw_hard_rel_l2_mean": 1.207521,
+        "raw_easy_rel_l2_mean": 0.660074
+       },
+       "40": {
+        "R_hard_mean": -2.135257,
+        "R_easy_mean": 0.719538,
+        "lag_easy_minus_hard": 2.854795,
+        "raw_hard_rel_l2_mean": 1.25425,
+        "raw_easy_rel_l2_mean": 0.48685
+       },
+       "80": {
+        "R_hard_mean": 3.424618,
+        "R_easy_mean": 0.904496,
+        "lag_easy_minus_hard": -2.520123,
+        "raw_hard_rel_l2_mean": 1.20124,
+        "raw_easy_rel_l2_mean": 0.326942
+       },
+       "160": {
+        "R_hard_mean": -1.422023,
+        "R_easy_mean": 0.964702,
+        "lag_easy_minus_hard": 2.386724,
+        "raw_hard_rel_l2_mean": 1.215203,
+        "raw_easy_rel_l2_mean": 0.272789
+       },
+       "395": {
+        "R_hard_mean": 3.768386,
+        "R_easy_mean": 0.981269,
+        "lag_easy_minus_hard": -2.787117,
+        "raw_hard_rel_l2_mean": 1.197482,
+        "raw_easy_rel_l2_mean": 0.259459
+       }
+      },
+      "conditioning_warning": "R_hard is ILL-CONDITIONED under this mask on seed 0: the hard-row denominator (A0 - A1) is +0.00423 / +0.01589 / -0.07249 across d0/d1/d2, i.e. the LF channel moves the imported forward-sensitive rows by essentially nothing (and by the WRONG sign on d2), so the ratio R_hard has no stable magnitude (values swing -2.14 to +3.89). Read the RAW hard-row rel-L2 ladder instead: it stays flat at 1.17-1.27 across the whole 10->395 condition range while the easy bulk falls 0.84 -> 0.27. The reportable statement is 'the coverage channel's entire measured gain lives in the easy bulk under the imported mask', not any R_hard number."
+     },
+     "rederived_model_free": {
+      "n_hard": 27,
+      "per_draw_reference_rows": {
+       "d0": {
+        "hard_A0": 1.218239,
+        "hard_A1": 0.97938,
+        "hard_A2": 1.254712,
+        "hard_denominator_A0_minus_A1": 0.238858,
+        "easy_A0": 1.244685,
+        "easy_A1": 0.334881,
+        "easy_denominator_A0_minus_A1": 0.909804
+       },
+       "d1": {
+        "hard_A0": 1.212979,
+        "hard_A1": 0.961013,
+        "hard_A2": 1.206099,
+        "hard_denominator_A0_minus_A1": 0.251966,
+        "easy_A0": 1.107526,
+        "easy_A1": 0.334686,
+        "easy_denominator_A0_minus_A1": 0.77284
+       },
+       "d2": {
+        "hard_A0": 1.110856,
+        "hard_A1": 0.971732,
+        "hard_A2": 1.107641,
+        "hard_denominator_A0_minus_A1": 0.139124,
+        "easy_A0": 0.990851,
+        "easy_A1": 0.323229,
+        "easy_denominator_A0_minus_A1": 0.667622
+       }
+      },
+      "per_cap": {
+       "5": {
+        "R_hard_mean": 0.213873,
+        "R_easy_mean": 0.243981,
+        "lag_easy_minus_hard": 0.030107,
+        "raw_hard_rel_l2_mean": 1.12785,
+        "raw_easy_rel_l2_mean": 0.917963
+       },
+       "10": {
+        "R_hard_mean": 0.537057,
+        "R_easy_mean": 0.35219,
+        "lag_easy_minus_hard": -0.184867,
+        "raw_hard_rel_l2_mean": 1.047998,
+        "raw_easy_rel_l2_mean": 0.835351
+       },
+       "20": {
+        "R_hard_mean": 0.446596,
+        "R_easy_mean": 0.505794,
+        "lag_easy_minus_hard": 0.059197,
+        "raw_hard_rel_l2_mean": 1.068444,
+        "raw_easy_rel_l2_mean": 0.711513
+       },
+       "40": {
+        "R_hard_mean": 0.46808,
+        "R_easy_mean": 0.714867,
+        "lag_easy_minus_hard": 0.246787,
+        "raw_hard_rel_l2_mean": 1.071209,
+        "raw_easy_rel_l2_mean": 0.55455
+       },
+       "80": {
+        "R_hard_mean": 0.791861,
+        "R_easy_mean": 0.913052,
+        "lag_easy_minus_hard": 0.121192,
+        "raw_hard_rel_l2_mean": 1.005144,
+        "raw_easy_rel_l2_mean": 0.399471
+       },
+       "160": {
+        "R_hard_mean": 1.025049,
+        "R_easy_mean": 0.956288,
+        "lag_easy_minus_hard": -0.068762,
+        "raw_hard_rel_l2_mean": 0.968909,
+        "raw_easy_rel_l2_mean": 0.363885
+       },
+       "395": {
+        "R_hard_mean": 0.956166,
+        "R_easy_mean": 0.986412,
+        "lag_easy_minus_hard": 0.030245,
+        "raw_hard_rel_l2_mean": 0.974027,
+        "raw_easy_rel_l2_mean": 0.342107
+       }
+      },
+      "reading": "well-conditioned (hard denominators +0.239 / +0.252 / +0.139). R_hard lags R_easy at the intermediate caps exactly as the card predicted (+0.247 at c=40, +0.121 at c=80) and the two converge by c=395 (+0.030). The lag at c=40 is 5.1x the ch floor width in R units (0.0480 at 2*tau_rel, 0.0240 at tau_rel)."
+     }
+    },
+    "seed0_reading": "the two masks give qualitatively DIFFERENT stratified stories (overlap 19/27, jaccard 0.5429) and the card requires both to be published; they are, above. Under the model-free mask the forward-sensitive rows need a larger cap than the bulk (the predicted D-E direction); under the imported r3s1-B1 mask those rows are not improved by LF at all at any cap."
+   },
+   "D_F_recertified_decomposition": {
+    "scaler": "per_rung_max_fullpool (arm-invariant; B1 part-7 requirement 1)",
+    "sharp__cahn_hilliard": {
+     "per_draw": {
+      "d0": {
+       "A2_nrmse": 1.301204,
+       "R_A2": -0.087367,
+       "E_total_A0_minus_A1": 0.728648,
+       "E_opt_A0_minus_A2": -0.06366,
+       "E_cov_A2_minus_A1": 0.792308,
+       "E_cov_over_E_total": 1.087367
+      },
+      "d1": {
+       "A2_nrmse": 1.126536,
+       "R_A2": 0.014968,
+       "E_total_A0_minus_A1": 0.632204,
+       "E_opt_A0_minus_A2": 0.009463,
+       "E_cov_A2_minus_A1": 0.622741,
+       "E_cov_over_E_total": 0.985032
+      },
+      "d2": {
+       "A2_nrmse": 1.025994,
+       "R_A2": -0.005223,
+       "E_total_A0_minus_A1": 0.524928,
+       "E_opt_A0_minus_A2": -0.002742,
+       "E_cov_A2_minus_A1": 0.527669,
+       "E_cov_over_E_total": 1.005223
+      }
+     },
+     "R_A2_mean_over_draws": -0.025874,
+     "E_cov_over_E_total_range": [
+      0.985032,
+      1.087367
+     ]
+    },
+    "ifc_heat": {
+     "A2_nrmse": 0.0629,
+     "A2_skill_vs_paper_bar": 0.849999,
+     "R_A2": -0.042793,
+     "E_total": 0.055656,
+     "E_opt_A0_minus_A2": -0.002382,
+     "E_cov_A2_minus_A1": 0.058038,
+     "E_cov_over_E_total": 1.042793,
+     "affine_on_hf_train": 0.070918
+    },
+    "clause_ii_object_seed0": "clause (ii) fires only if A2_lf_covered recovers R >= 0.25 on ch or ifc_heat. Seed 0: ch R_A2 mean -0.0259 (per draw -0.0874 / +0.0150 / -0.0052), ifc_heat R_A2 -0.0428. All five cells are far below +0.25 and three of five are negative. E_cov/E_total lands in [0.985, 1.087] on ch and 1.043 on ifc_heat, reproducing B1's [0.972, 1.024] under the FIXED scaler. TREND ONLY - the clause is judged on the 3-seed mean +/- CI."
+   }
+  },
+  "blocking_preflights": {
+   "scaler_cross_leg_bit_identity_S1": {
+    "method": "S1-compliant: the in-family probe assert is TAUTOLOGICAL and is NOT cited. Instead s_hf, every s_rung and every s_rung/s_hf were compared across ALL 50 seed-0 leg JSONs (training/<tag>/r3s3_row_efficiency/*.json :: row_efficiency.scalers).",
+    "n_legs_checked": 50,
+    "result": "bit-identical within every dataset, all fields",
+    "sharp__cahn_hilliard_39_legs": {
+     "s_hf": 1.1750714778900146,
+     "s_rung": {},
+     "s_rung_over_s_hf": {}
+    },
+    "ifc_heat_10_legs": {},
+    "ifc_heat_s_hf": 0.9999952912330627,
+    "heat_local_guard_leg": {
+     "1": 0.999807596206665,
+     "2": 0.9999974370002747,
+     "3": 1.0,
+     "4": 1.0
+    },
+    "independent_corroboration": "the pre-flight artifact preflight/scaler_invariance_s0.json, computed BEFORE any training, records the identical constants (ch s_hf 1.1750714778900146, ratios 0.9954257866370761 / 0.9993892797701257; ifc_heat s_hf 0.9999952912330627, ratios 0.9941028674916346 / 0.9994923448500183 / 0.9999915957055128), so the training-time and pre-training values agree bit-for-bit.",
+    "arm_dependence_control": "the quantity that DOES move with the arm, hf_arm_rows_max_over_fullpool, takes 8 distinct values on ch (0.850950 .. 0.980039) across the same 39 legs while the scaler does not move at all - the intended semantics."
+   },
+   "data_binding_assert": {
+    "performed": true,
+    "copylf_def_hash": "9753ff24e856f595748492dec6cb6c215d748f97e8ec4a679b651f8846da907a",
+    "nrmse_def_hash": "d3d0ade9191c13bacc40702f3eb26ad290e01641cacee22a1d2233b74c035850",
+    "checks": [
+     "baselines._copylf_def_hash == panel_data.COPYLF_DEF_HASH",
+     "floors._copylf_def_hash == baselines._copylf_def_hash",
+     "floors._nrmse_def_hash == nrmse.NRMSE_DEF_HASH",
+     "dataset present in both files",
+     "baselines[ds].test_nrmse == floors[ds].reference.test_nrmse (exact)"
+    ],
+    "floors_certified_utc": "2026-08-04T05:12:04Z"
+   },
+   "floor_seam_1e-9": {
+    "ch": {
+     "nn_condition": {
+      "in_run": 0.9690069811741324,
+      "frozen": 0.9690069811741324,
+      "abs_diff": 0.0
+     },
+     "train_mean": {
+      "in_run": 1.001977490272036,
+      "frozen": 1.001977490272036,
+      "abs_diff": 0.0
+     },
+     "zero": {
+      "in_run": 1.0,
+      "frozen": 1.0,
+      "abs_diff": 0.0
+     }
+    },
+    "ifc_heat": {
+     "nn_condition": {
+      "in_run": 0.10316357093777939,
+      "frozen": 0.1031635708237208,
+      "abs_diff": 1.1405859590141176e-10
+     },
+     "train_mean": {
+      "in_run": 0.13072869657042785,
+      "frozen": 0.13072869651694966,
+      "abs_diff": 5.347819409529109e-11
+     },
+     "zero": {
+      "in_run": 1.0,
+      "frozen": 1.0,
+      "abs_diff": 0.0
+     }
+    },
+    "max_abs_diff_over_all_checks": 0.0
+   },
+   "stale_checkpoint_audit_preflight": {
+    "file": "preflight/stale_checkpoint_audit_s0_20260810T165324Z.json",
+    "n_legs": 0,
+    "n_stale": 0,
+    "note": "the seed-0 job ran into an EMPTY training tree, so the blocking pre-flight had nothing to audit and passed trivially"
+   },
+   "stale_checkpoint_audit_post": {
+    "file": "preflight/stale_checkpoint_audit_post_s0.json",
+    "n_legs": 50,
+    "n_stale": 1,
+    "flagged_leg": "A1_lf_all__heat_local__d0__n5__c0__e2__s0 (the contract-tier guard leg)",
+    "reason": "train_seconds_collapsed (train_seconds 3.114 < the tool's default --train-seconds-floor 5.0)",
+    "resumed_from_step": 0,
+    "adjudication": "STRUCTURAL FALSE POSITIVE, not a stale re-score: the guard leg is a 2-epoch = 50-step contract-tier leg and legitimately finishes in ~3 s on an H200; resumed_from_step is 0 and its checkpoint and result carry the same mtime minute. See anomalies[0] for the operational consequence."
+   },
+   "preflight_scaler_failures": []
+  },
+  "guard_flags": [
+   {
+    "dataset": "heat_local",
+    "arm": "A1_lf_all",
+    "epochs": 2,
+    "tier": "contract",
+    "nrmse": 0.045299,
+    "skill_vs_copylf": 18.862554,
+    "reference_type": "copylf",
+    "cached": false,
+    "copylf_recorded_reference_test_nrmse": 0.00240152155999517,
+    "regression_check": "NOT APPLICABLE as a >2x regression test: this card claims NO panel win (part 4: 'Delta vs anchor: none claimed on the panel geomean'), so the section-2d guard-set trigger did not fire, and B1 ran no heat_local leg, so this family has no prior same-tier guard value to regress against. The leg is a liveness/binding guard: it trained, scored through score_panel on the stripped view, produced finite metrics and passed the floor and data-binding seams.",
+    "flag": "none on the metric; see anomalies[0] for the audit-side flag this leg raises"
+   }
+  ],
+  "anomalies": [
+   "LAUNCH BLOCKER FOR SEEDS 1-2 (infra, not algorithmic): the post-run audit reports STALE 1/50 - the contract-tier guard leg A1_lf_all__heat_local (train_seconds 3.114) trips the tool's default --train-seconds-floor of 5.0. That artifact now sits in the SHARED $OUT_DIR/training tree, and scripts/01_train_eval.sh runs stale_checkpoint_audit.py --fail-on-stale over that whole tree BEFORE any leg, so a seed-1 or seed-2 job submitted as-is will hard-fail at its pre-flight without running anything. It is a structural false positive (resumed_from_step 0, ckpt and result mtimes in the same minute, 50 steps at 2 epochs genuinely takes ~3 s) and it will recur on every seed. This is exactly the reviewer's S3 class and the orchestrator's recorded adjudication applies: INFRA, does not count toward the 5-ALGO budget, resolved by quarantining/excluding the flagged leg's artifacts (the audit tool already excludes paths matching void/quarantine/backup) - never by relaxing the audit.",
+   "D-D secondary prediction missed on seed 0: the HF-budget points do not collapse onto the LF ladder's R(alignment) curve within 0.05 R (max |residual| 0.2594; 4/9 cells over threshold, all four in HF draws d1/d2). The card pre-registers this as reported-not-falsifying, with the consequence that the exchange rate publishes as a bracketed table rather than a law.",
+   "D-C exchange rate came in an order of magnitude below the card's prediction on seed 0: 0.67-2.18 distinct uncovered LF conditions per extra HF row versus a predicted 8-40, and the rate RISES with budget rather than falling.",
+   "D-E: the two hard masks disagree (overlap 19/27, jaccard 0.5429, agree=false) and give qualitatively different stratified stories; under the imported r3s1-B1 mask the hard-row recovery denominator is ~0 (+0.004 / +0.016 / -0.072) so R_hard is ill-conditioned there and only the raw hard-row rel-L2 ladder is readable. Both stratifications are published as the card requires.",
+   "A0_nolf on ch is worse than the zero predictor on all three HF draws (1.2375 / 1.1360 / 1.0233 vs 1.0) and worse than nn_condition 0.96901 - the D-B premise holds, and it means the ch ladder must cross a floor before any recovery is useful (it does, at c=5 on d0/d2 and c=10 on d1).",
+   "No NaNs, no preemption, no requeue, no checkpoint resume anywhere: resumed_from_step is 0 on all 50 legs and the .err file is empty (0 bytes).",
+   "ch draw d2 is the systematic outlier of the seed-0 grid: it carries the smallest A0->A1 effect (0.5249 vs 0.7286/0.6322), the widest R spread at low caps, and both D-D residual outliers. Worth watching as seeds 1-2 land."
+  ],
+  "wall_clock_per_seed_min": [
+   98.65
+  ],
+  "timing_ledger_input": {
+   "job_id": 166258,
+   "seed": 0,
+   "start_utc": "2026-08-10T16:53:24Z",
+   "end_utc": "2026-08-10T18:32:03Z",
+   "wall_clock_min": 98.65,
+   "legs": 50,
+   "wall_min_per_leg": 1.973,
+   "sum_train_seconds": 5509.5,
+   "sum_train_min": 91.83,
+   "train_fraction_of_wall": 0.931,
+   "per_leg_train_seconds": {
+    "min": 3.11,
+    "max": 135.5,
+    "mean": 110.2
+   },
+   "vs_estimate": "the card budgeted ~2.0 h/job from B1's 2.4 min/leg; actual 1.64 h at 1.97 min/leg, comfortably inside --time 05:00:00",
+   "node": "hpc-sm-01-10, 1x NVIDIA H200"
+  },
+  "seeds_1_2_verdict": "PROCEED - but the seeds-1/2 submission MUST be preceded by clearing the stale-audit false positive described in anomalies[0], or both jobs will die at their pre-flight before running a single leg. Not submitted by this subagent.",
+  "provenance": {
+   "all_metrics_from": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round3/r3s3_lf_value/B2/eval/result_*.json (50 files)",
+   "rich_leg_context_from": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round3/r3s3_lf_value/B2/training/<tag>/r3s3_row_efficiency/*.json (50 files; scalers, lf_row_manifest, gate_report only - never its nRMSE)",
+   "preflight_from": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round3/r3s3_lf_value/B2/preflight/",
+   "slurm_log": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round3/r3s3_lf_value/B2/slurm/r3-r3s3_lf_value-B2-s0_166258.out",
+   "floors": "state/anchors_repaired/floors.json",
+   "noise_floor": "state/anchors_repaired/noise_floor.json",
+   "analysed_utc": "2026-08-10"
+  }
+ },
  "6_analysis": null,
  "7_gap_and_future": null,
  "reanalysis_progress": null,
