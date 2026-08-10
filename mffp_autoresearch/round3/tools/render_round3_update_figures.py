@@ -199,52 +199,79 @@ def fig_performance(cards, best_floor, floors_ds, r2_anchors):
 
 
 ARCH = [
-    ("r3s1 factorised head — 24.96 [24.87, 25.07] · CONFIRMED",
-     ["condition vector", "stage 1: per-direction\ncondition→POD-coefficient maps\n(closed form, OOF-selected)",
-      "stage 2: gated cross-coefficient\ncorrection (OOF inputs)", "HF field"],
-     "Win concentrates in cahn_hilliard (+1.31 skill, ~80/100 rows).\nLimit found: an arbitrary basis cap (SELECT_MAX=32), not the factorisation."),
-    ("r3s2 IC-reach stack — 12.96 [10.32, 17.83] · corrector FALSIFIED",
-     ["condition vector\n(incl. IC coefficients)", "stage 1: FiLM-FNO emulator\ncondition→pseudo-LF field",
-      "stage 2: frozen corrector\n(pseudo-LF→HF)", "HF field"],
-     "IC information is real and lives in stage 1 (63.7% / 85.4% of emulator\nerror removed on ac/fk). Stage 2 adds nothing resolvable — round 2's null replicates."),
-    ("r3s3 LF-value contrast — 11.08 [10.84, 11.25] · no vs-anchor delta",
-     ["condition vector", "multi-rung FNO trained with /\nwithout LF rows (matched budget)",
-      "controlled arms:\ncovered vs uncovered conditions", "HF field"],
-     "LF-at-train's value = supplying NEW distinct condition rows\n(E_cov/E_total ≈ 1.0 on 30/30 cells); covered-only LF learns the same function."),
-    ("r3s4 certifier — 19.64 [19.42, 19.93] · noise floor CERTIFIED",
-     ["condition vector", "reference model +\nfloor reproduction arms", "seed/row bootstrap\n→ per-dataset MDD, τ_rel, τ_abs",
-      "certified noise floor\n(prices every claim)"],
-     "Its certification now licenses all round-3 claims; also priced the audit\ninstruments themselves (train_seconds rule: 0 unique TPs / 62 FPs → deleted)."),
+    ("Two-stage factorised head (r3s1) — 24.96 [24.87, 25.07] · CONFIRMED",
+     ["condition vector\n(the 2–50 numbers that define the physics setup)",
+      "stage 1 — closed-form regression:\npredict the weight of each of ~50 principal field shapes\n(POD basis) from the condition; one small cross-validated\nmap per shape, keep only the predictable ones",
+      "stage 2 — gated correction:\nre-predict the poorly-fit weights from the well-fit ones,\nonly where cross-validation says it helps",
+      "weights × shapes → fine-grid field"],
+     "No neural network anywhere; the whole model is ~150 parameters.\nIts improvement is real only on cahn_hilliard; the found limit is an\narbitrary cap on how many shapes stage 1 may keep — not the idea itself."),
+    ("Initial-condition stack (r3s2) — 12.96 [10.32, 17.83] · corrector FALSIFIED",
+     ["condition vector\n(now includes the initial-condition coefficients)",
+      "stage 1 — neural field generator:\na FiLM-conditioned Fourier neural operator synthesizes\na stand-in coarse field directly from the condition",
+      "stage 2 — frozen corrector:\na network trained earlier on real coarse fields\nupgrades the synthetic coarse field to fine",
+      "fine-grid field"],
+     "Question: does routing through a synthetic coarse field help?\nAnswer so far: all measurable value is stage 1 using the IC information;\nstage 2 adds nothing resolvable (same null as round 2)."),
+    ("Value-of-coarse-data contrast (r3s3) — 11.08 [10.84, 11.25] · no resolvable delta",
+     ["condition vector",
+      "ONE multi-resolution Fourier neural operator,\ntrained repeatedly under controlled data diets:\nall coarse solves / coarse solves only at parameters the\nfine data already covers / no coarse solves at all",
+      "the comparison of those training diets IS the result:\nwhat do coarse solves buy, and through which channel?",
+      "fine-grid field (identical network interface at test)"],
+     "Answer: coarse solves help ONLY by covering new parameter points\n(the covered-only diet learns the same function as no-coarse-data);\nheadline vs-baseline win retracted after the baseline repair."),
+    ("Noise-floor certifier (r3s4) — 19.64 [19.42, 19.93] · thresholds CERTIFIED",
+     ["condition vector",
+      "not a competitor — an instrument:\na fixed reference model plus the training-free predictors,\nre-run across seeds and data resamples",
+      "bootstrap the spread → per-dataset minimum detectable\ndifference and claim thresholds (τ)",
+      "certified noise floor:\nthe bar every other claim in the round must clear"],
+     "Also audits the benchmark itself: this batch it priced the audit\ninstruments (one staleness rule: 0 true positives, 62 false alarms → deleted)."),
 ]
+
+VERDICT_KEY = (
+    "How to read the verdicts\n"
+    "CONFIRMED — the pre-registered prediction passed its threshold at 3 seeds.\n"
+    "FALSIFIED — the pre-registered prediction failed its threshold; reported as a finding, not a process failure.\n"
+    "CERTIFIED — measured at 3 seeds AND priced against the audited minimum-detectable-effect table (the strongest label).\n"
+    "not resolvable — the measured difference is smaller than the certified minimum detectable effect; no claim either way.")
 
 
 def fig_architectures():
-    fig = plt.figure(figsize=(11, 7.4), constrained_layout=True)
-    gs = GridSpec(2, 2, figure=fig)
+    fig = plt.figure(figsize=(12.5, 10.6), constrained_layout=True)
+    gs = GridSpec(3, 2, figure=fig, height_ratios=[1, 1, 0.30])
     fig.suptitle(
-        "Round 3, batch 1 — the four stream architectures (condition → HF field; no solver, no LF at test)\n"
-        "Number = 3-seed panel geomean skill [95% CI], lower is better; training-free floor = 34.42",
+        "Round 3, batch 1 — the four experiment lines (every model maps condition → fine-grid field; no solver, no coarse field at test)\n"
+        "Number = 3-seed panel error [95% CI], lower is better; the no-training reference (best of nearest-neighbor / mean / zero) = 34.42",
         fontsize=10.5, x=0.02, ha="left")
     for k, (title, boxes, note) in enumerate(ARCH):
         ax = fig.add_subplot(gs[k // 2, k % 2])
         ax.set_axis_off()
         ax.set_xlim(0, 1); ax.set_ylim(0, 1)
-        ax.set_title(title, loc="left", fontsize=9.5, fontweight="bold")
+        ax.set_title(title, loc="left", fontsize=9.3, fontweight="bold", pad=6)
+        # geometry: boxes live in [0.30, 0.99]; the note lives in [0.0, 0.24]. All inside the axes.
         n = len(boxes)
-        xs = [0.5] * n
-        ys = [0.88 - i * (0.78 / (n - 1)) for i in range(n)]
-        for i, (bx, by, text) in enumerate(zip(xs, ys, boxes)):
+        heights = [0.10 if i in (0, n - 1) else 0.185 for i in range(n)]
+        top, bottom = 0.99, 0.30
+        gap = (top - bottom - sum(heights)) / (n - 1)
+        ys, y = [], top
+        for i in range(n):
+            ys.append(y - heights[i] / 2)
+            y -= heights[i] + gap
+        for i, (by, text) in enumerate(zip(ys, boxes)):
             first_last = i == 0 or i == n - 1
             fc = "#F1EFF7" if not first_last else "#FFFFFF"
             ec = ACCENT if not first_last else MUTED
-            ax.add_patch(FancyBboxPatch((bx - 0.33, by - 0.075), 0.66, 0.15,
-                                        boxstyle="round,pad=0.012", fc=fc, ec=ec, lw=1.2))
-            ax.text(bx, by, text, ha="center", va="center", fontsize=8.2, color=INK)
+            ax.add_patch(FancyBboxPatch((0.02, by - heights[i] / 2), 0.96, heights[i],
+                                        boxstyle="round,pad=0.010", fc=fc, ec=ec, lw=1.2))
+            ax.text(0.5, by, text, ha="center", va="center", fontsize=8.0, color=INK, linespacing=1.35)
             if i < n - 1:
-                ax.annotate("", xy=(bx, ys[i + 1] + 0.078), xytext=(bx, by - 0.078),
+                ax.annotate("", xy=(0.5, ys[i + 1] + heights[i + 1] / 2 + 0.003),
+                            xytext=(0.5, by - heights[i] / 2 - 0.003),
                             arrowprops=dict(arrowstyle="-|>", color=MUTED, lw=1.2))
-        ax.text(0.5, -0.06, note, ha="center", va="top", fontsize=7.8, color=MUTED,
-                transform=ax.transAxes)
+        ax.text(0.5, 0.12, note, ha="center", va="center", fontsize=7.7, color=MUTED, linespacing=1.4)
+    axk = fig.add_subplot(gs[2, :])
+    axk.set_axis_off()
+    axk.set_xlim(0, 1); axk.set_ylim(0, 1)
+    axk.add_patch(FancyBboxPatch((0.01, 0.04), 0.98, 0.92, boxstyle="round,pad=0.006",
+                                 fc="#FFFFFF", ec="#C9CDC9", lw=1.0))
+    axk.text(0.03, 0.5, VERDICT_KEY, ha="left", va="center", fontsize=8.6, color=INK, linespacing=1.75)
     out = FIGDIR / "r3_architectures_overview.png"
     fig.savefig(out, dpi=170)
     plt.close(fig)

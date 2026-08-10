@@ -75,6 +75,12 @@ These thresholds were installed on 2026-08-10 and govern every claim below.
 
 ## 2. Round 3 batch-1 results (condition vector → HF; no solver at test)
 
+**How to read the verdicts.**
+CONFIRMED means the experiment's pre-registered prediction passed its threshold at 3 seeds.
+FALSIFIED means the pre-registered prediction failed its threshold; because every prediction is registered before the run, a falsification is a finding, not a process failure.
+CERTIFIED is the strongest label: measured at 3 seeds and priced against the audited minimum-detectable-effect table.
+"Not resolvable" means the measured difference is smaller than the certified minimum detectable effect, so no claim is made either way.
+
 Leaderboard (3-seed geometric mean of normalized error across the panel, lower is better; no-training reference 34.4198):
 
 | Rank | Card | Panel geomean [3-seed range/CI] | Verdict | What it is |
