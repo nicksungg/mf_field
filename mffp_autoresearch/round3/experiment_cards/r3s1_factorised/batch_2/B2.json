@@ -128,7 +128,7 @@
   "base_commit_trunk_head_at_start": "79370e02fa56b64215a3712336215b34270059e0",
   "base_commit_note": "ORCHESTRATOR ADJUDICATION 2026-08-10 (starter-flagged): base_commit records the worktree's actual code state = the round3-substrate fork point, per this stream's own B1 convention. Design-time trunk sha kept in base_commit_report_design_time; trunk HEAD at starter time kept in base_commit_trunk_head_at_start."
  },
- "status": "reviewed_suggest",
+ "status": "analyzing",
  "skipped_reason": null,
  "reopen_candidate": false,
  "scripts_path": {
@@ -153,6 +153,18 @@
    "job_id": 163603,
    "submitted": "2026-08-10",
    "by": "orchestrator (post reviewed_suggest; admission-rule ex-ante adjudication on card; --time fix a9acad0 on branch; HOLD absent, data_binding 6/6; wrapper executed)"
+  },
+  {
+   "seed": 1,
+   "job_id": 165213,
+   "submitted": "2026-08-10",
+   "by": "orchestrator (post seed-0 proceed_to_seeds_1_2; HOLD absent, data_binding 6/6)"
+  },
+  {
+   "seed": 2,
+   "job_id": 165214,
+   "submitted": "2026-08-10",
+   "by": "orchestrator (same gate)"
   }
  ],
  "logs": {},
@@ -203,7 +215,658 @@
   }
  ],
  "debug_notes": [],
- "5_actual_result": null,
+ "5_actual_result": {
+  "_provenance": {
+   "scored_result_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round3/r3s1_factorised/B2/eval/result_panel5_s0.json",
+   "per_cell_result_jsons": {
+    "sharp__allen_cahn_2d": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round3/r3s1_factorised/B2/training/r3s1_predcrit_cascade/sharp__allen_cahn_2d_e0_s0.json",
+    "sharp__fisher_kpp_2d": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round3/r3s1_factorised/B2/training/r3s1_predcrit_cascade/sharp__fisher_kpp_2d_e0_s0.json",
+    "sharp__cahn_hilliard": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round3/r3s1_factorised/B2/training/r3s1_predcrit_cascade/sharp__cahn_hilliard_e0_s0.json",
+    "ifc_poisson": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round3/r3s1_factorised/B2/training/r3s1_predcrit_cascade/ifc_poisson_e0_s0.json",
+    "ifc_heat": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round3/r3s1_factorised/B2/training/r3s1_predcrit_cascade/ifc_heat_e0_s0.json"
+   },
+   "slurm_log": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round3/r3s1_factorised/B2/slurm/r3-r3s1_factorised-B2-s0_163603.out",
+   "slurm_err": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round3/r3s1_factorised/B2/slurm/r3-r3s1_factorised-B2-s0_163603.err (0 bytes)",
+   "anchor_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/state/anchors/r3s1_factorised.json",
+   "noise_floor_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/state/anchors_repaired/noise_floor.json",
+   "nrmse_def_hash": "d3d0ade9191c13bacc40702f3eb26ad290e01641cacee22a1d2233b74c035850",
+   "copylf_def_hash": "9753ff24e856f595748492dec6cb6c215d748f97e8ec4a679b651f8846da907a",
+   "code_hash": "07b07ec1831c94750e9c4f3a30984c598c1c7e3a3df4634e31f90c0f6c575fa0",
+   "nrmse_def_hash_consistency": "IDENTICAL across the scored panel JSON and all 5 per-cell result JSONs (d3d0ade9...) and identical to the certified noise floor's _provenance.nrmse_def_hash",
+   "scored_arm": "A2_predcrit (locked pre-registered; scored split test_hf)",
+   "metric_policy": "All nRMSE/skill values are PARSED from score_panel.py / family result JSONs; nothing recomputed from predictions. The only derived aggregation is the 5-cell panel geomean applied to non-scored arm columns, and the formula was verified to reproduce score_panel's own panel_geomean_skill bit-for-bit (abs diff 0.0) on the scored arm.",
+   "panel_geomean_formula_check": {
+    "score_panel_value": 25.27573198183242,
+    "reproduced_from_per_dataset_skills": 25.27573198183242,
+    "abs_diff": 0.0
+   }
+  },
+  "seeds_available": [
+   0
+  ],
+  "per_dataset": {
+   "sharp__allen_cahn_2d": {
+    "per_seed_nrmse": [
+     0.5769440328544434
+    ],
+    "per_seed_skill": [
+     280.15728223289824
+    ],
+    "mean_skill": 280.15728223289824,
+    "ci95": null,
+    "_ci95_note": "null at 1 seed: the stratified percentile bootstrap CI is a 3-seed quantity (contract 2c); it is computed on the seeds-1-2 invocation.",
+    "reference_type": "copylf",
+    "cached": false,
+    "split": "test_hf",
+    "metric_source": "per_sample_mean",
+    "anchor_cell_mean_skill": 279.116540826327,
+    "anchor_cell_seed0_skill": 280.0716592436192,
+    "delta_vs_anchor_mean_skill_lower_is_better": 1.0407414065712146,
+    "delta_vs_anchor_seed0_paired": 0.08562298927904521,
+    "tau_rel": 18.61975759925883,
+    "seed_mce": 13.213463531918507,
+    "delta_vs_anchor_mean_in_tau_rel_units": 0.05589446592004194,
+    "resolvable_vs_tau_rel_seed0_reading": false,
+    "per_arm_skill_seed0": {
+     "A0_b1_replica": 280.0716592436193,
+     "A1_cap_lift": 280.0716592436193,
+     "A2_predcrit": 280.15728223289824,
+     "A3_predcrit_sst": 280.15728223289824,
+     "A4_b1_sst": 280.0716592436193
+    },
+    "per_arm_stage1_only_skill_seed0": {
+     "A0_b1_replica": 280.0716592436193,
+     "A1_cap_lift": 280.0716592436193,
+     "A2_predcrit": 280.15728223289824,
+     "A3_predcrit_sst": 280.15728223289824,
+     "A4_b1_sst": 280.0716592436193
+    },
+    "reference_arm_skill_seed0": {
+     "ref_head_onestage@fit": 280.0716592436193,
+     "ref_head_onestage@full": 277.1679865494667,
+     "ref_dc_only@fit": 327.98049675987176,
+     "ref_dc_only@full": 327.57109560375466,
+     "ref_zero@full": 485.58831754756847,
+     "ref_train_mean@full": 486.4148158976346,
+     "ref_nn_condition@full": 475.85682154308705,
+     "ref_affine_on_hf_train@fit": 277.8051195595685,
+     "ref_affine_on_hf_train@full": 275.6887709344202
+    },
+    "stage2_paired_gain_nRMSE_seed0": {
+     "A0_b1_replica": 0.0,
+     "A1_cap_lift": 0.0,
+     "A2_predcrit": 0.0,
+     "A3_predcrit_sst": 0.0,
+     "A4_b1_sst": 0.0
+    },
+    "n_fit": 320,
+    "small_n_fallback_active": false
+   },
+   "sharp__fisher_kpp_2d": {
+    "per_seed_nrmse": [
+     0.060086215009279284
+    ],
+    "per_seed_skill": [
+     363.61705463463784
+    ],
+    "mean_skill": 363.61705463463784,
+    "ci95": null,
+    "_ci95_note": "null at 1 seed: the stratified percentile bootstrap CI is a 3-seed quantity (contract 2c); it is computed on the seeds-1-2 invocation.",
+    "reference_type": "copylf",
+    "cached": false,
+    "split": "test_hf",
+    "metric_source": "per_sample_mean",
+    "anchor_cell_mean_skill": 374.8380508929541,
+    "anchor_cell_seed0_skill": 376.5182636277145,
+    "delta_vs_anchor_mean_skill_lower_is_better": -11.220996258316234,
+    "delta_vs_anchor_seed0_paired": -12.901208993076636,
+    "tau_rel": 10.312814173562199,
+    "seed_mce": 5.855015380369281,
+    "delta_vs_anchor_mean_in_tau_rel_units": -1.0880634586708873,
+    "resolvable_vs_tau_rel_seed0_reading": true,
+    "per_arm_skill_seed0": {
+     "A0_b1_replica": 376.5182636277146,
+     "A1_cap_lift": 363.6170546346378,
+     "A2_predcrit": 363.6170546346378,
+     "A3_predcrit_sst": 363.6170546346378,
+     "A4_b1_sst": 367.2156300303354
+    },
+    "per_arm_stage1_only_skill_seed0": {
+     "A0_b1_replica": 376.5182636277146,
+     "A1_cap_lift": 363.6170546346378,
+     "A2_predcrit": 363.6170546346378,
+     "A3_predcrit_sst": 363.6170546346378,
+     "A4_b1_sst": 376.5182636277146
+    },
+    "reference_arm_skill_seed0": {
+     "ref_head_onestage@fit": 376.5182636277146,
+     "ref_head_onestage@full": 373.13923731964303,
+     "ref_dc_only@fit": 287.11064375336434,
+     "ref_dc_only@full": 282.7601830501418,
+     "ref_zero@full": 6051.588614434832,
+     "ref_train_mean@full": 390.7014844797183,
+     "ref_nn_condition@full": 410.28175138258905,
+     "ref_affine_on_hf_train@fit": 274.52241844384133,
+     "ref_affine_on_hf_train@full": 266.4814214523057
+    },
+    "stage2_paired_gain_nRMSE_seed0": {
+     "A0_b1_replica": 0.0,
+     "A1_cap_lift": 0.0,
+     "A2_predcrit": 0.0,
+     "A3_predcrit_sst": 0.0,
+     "A4_b1_sst": -0.0015372217429303892
+    },
+    "n_fit": 320,
+    "small_n_fallback_active": false
+   },
+   "sharp__cahn_hilliard": {
+    "per_seed_nrmse": [
+     0.514930197438963
+    ],
+    "per_seed_skill": [
+     12.318031171714935
+    ],
+    "mean_skill": 12.318031171714935,
+    "ci95": null,
+    "_ci95_note": "null at 1 seed: the stratified percentile bootstrap CI is a 3-seed quantity (contract 2c); it is computed on the seeds-1-2 invocation.",
+    "reference_type": "copylf",
+    "cached": false,
+    "split": "test_hf",
+    "metric_source": "per_sample_mean",
+    "anchor_cell_mean_skill": 11.257679547314401,
+    "anchor_cell_seed0_skill": 11.414584784669875,
+    "delta_vs_anchor_mean_skill_lower_is_better": 1.0603516244005338,
+    "delta_vs_anchor_seed0_paired": 0.9034463870450598,
+    "tau_rel": 0.36124864423263325,
+    "seed_mce": 0.09124535322300886,
+    "delta_vs_anchor_mean_in_tau_rel_units": 2.9352404260310503,
+    "resolvable_vs_tau_rel_seed0_reading": true,
+    "per_arm_skill_seed0": {
+     "A0_b1_replica": 11.414584784669877,
+     "A1_cap_lift": 11.414584784669877,
+     "A2_predcrit": 12.318031171714935,
+     "A3_predcrit_sst": 12.810987191580377,
+     "A4_b1_sst": 12.660053564137534
+    },
+    "per_arm_stage1_only_skill_seed0": {
+     "A0_b1_replica": 12.660053564137534,
+     "A1_cap_lift": 12.660053564137534,
+     "A2_predcrit": 12.810987191580377,
+     "A3_predcrit_sst": 12.810987191580377,
+     "A4_b1_sst": 12.660053564137534
+    },
+    "reference_arm_skill_seed0": {
+     "ref_head_onestage@fit": 12.660053564137534,
+     "ref_head_onestage@full": 12.48950355349323,
+     "ref_dc_only@fit": 23.867738508771748,
+     "ref_dc_only@full": 23.867738508771748,
+     "ref_zero@full": 23.92174945843033,
+     "ref_train_mean@full": 23.96905448527446,
+     "ref_nn_condition@full": 23.180342227117514,
+     "ref_affine_on_hf_train@fit": 13.230216704262055,
+     "ref_affine_on_hf_train@full": 12.871083449444269
+    },
+    "stage2_paired_gain_nRMSE_seed0": {
+     "A0_b1_replica": -0.05206428491494541,
+     "A1_cap_lift": -0.05206428491494541,
+     "A2_predcrit": -0.020607022104385364,
+     "A3_predcrit_sst": 0.0,
+     "A4_b1_sst": 0.0
+    },
+    "n_fit": 320,
+    "small_n_fallback_active": false
+   },
+   "ifc_poisson": {
+    "per_seed_nrmse": [
+     0.2970236120480205
+    ],
+    "per_seed_skill": [
+     8.250655890222793
+    ],
+    "mean_skill": 8.250655890222793,
+    "ci95": null,
+    "_ci95_note": "null at 1 seed: the stratified percentile bootstrap CI is a 3-seed quantity (contract 2c); it is computed on the seeds-1-2 invocation.",
+    "reference_type": "paper_bar",
+    "cached": true,
+    "split": "test_hf",
+    "metric_source": "per_sample_mean",
+    "anchor_cell_mean_skill": 8.250655890222793,
+    "anchor_cell_seed0_skill": 8.250655890222793,
+    "delta_vs_anchor_mean_skill_lower_is_better": 0.0,
+    "delta_vs_anchor_seed0_paired": 0.0,
+    "tau_rel": 0.6910000683054431,
+    "seed_mce": 0.5868082704078086,
+    "delta_vs_anchor_mean_in_tau_rel_units": 0.0,
+    "resolvable_vs_tau_rel_seed0_reading": false,
+    "per_arm_skill_seed0": {
+     "A0_b1_replica": 8.250655890222795,
+     "A1_cap_lift": 8.250655890222795,
+     "A2_predcrit": 8.250655890222795,
+     "A3_predcrit_sst": 8.250655890222795,
+     "A4_b1_sst": 8.250655890222795
+    },
+    "per_arm_stage1_only_skill_seed0": {
+     "A0_b1_replica": 8.250655890222795,
+     "A1_cap_lift": 8.250655890222795,
+     "A2_predcrit": 8.250655890222795,
+     "A3_predcrit_sst": 8.250655890222795,
+     "A4_b1_sst": 8.250655890222795
+    },
+    "reference_arm_skill_seed0": {
+     "ref_head_onestage@fit": 8.250655890222795,
+     "ref_head_onestage@full": 8.250655890222795,
+     "ref_dc_only@fit": 11.039316624066041,
+     "ref_dc_only@full": 11.039316624066041,
+     "ref_zero@full": 27.77777777777778,
+     "ref_train_mean@full": 9.004131287667388,
+     "ref_nn_condition@full": 8.040896845727307,
+     "ref_affine_on_hf_train@fit": 1.5937636123306758,
+     "ref_affine_on_hf_train@full": 1.5937636123306758
+    },
+    "stage2_paired_gain_nRMSE_seed0": {
+     "A0_b1_replica": 0.0,
+     "A1_cap_lift": 0.0,
+     "A2_predcrit": 0.0,
+     "A3_predcrit_sst": 0.0,
+     "A4_b1_sst": 0.0
+    },
+    "n_fit": 5,
+    "small_n_fallback_active": true
+   },
+   "ifc_heat": {
+    "per_seed_nrmse": [
+     0.073735137422059
+    ],
+    "per_seed_skill": [
+     0.9964207759737704
+    ],
+    "mean_skill": 0.9964207759737704,
+    "ci95": null,
+    "_ci95_note": "null at 1 seed: the stratified percentile bootstrap CI is a 3-seed quantity (contract 2c); it is computed on the seeds-1-2 invocation.",
+    "reference_type": "paper_bar",
+    "cached": true,
+    "split": "test_hf",
+    "metric_source": "per_sample_mean",
+    "anchor_cell_mean_skill": 0.9964207759737705,
+    "anchor_cell_seed0_skill": 0.9964207759737704,
+    "delta_vs_anchor_mean_skill_lower_is_better": -1.1102230246251565e-16,
+    "delta_vs_anchor_seed0_paired": 0.0,
+    "tau_rel": 0.1640195793751628,
+    "seed_mce": 0.1333034081509522,
+    "delta_vs_anchor_mean_in_tau_rel_units": -6.768844480973445e-16,
+    "resolvable_vs_tau_rel_seed0_reading": false,
+    "per_arm_skill_seed0": {
+     "A0_b1_replica": 0.9964207759737702,
+     "A1_cap_lift": 0.9964207759737702,
+     "A2_predcrit": 0.9964207759737702,
+     "A3_predcrit_sst": 0.9964207759737702,
+     "A4_b1_sst": 0.9964207759737702
+    },
+    "per_arm_stage1_only_skill_seed0": {
+     "A0_b1_replica": 0.9964207759737702,
+     "A1_cap_lift": 0.9964207759737702,
+     "A2_predcrit": 0.9964207759737702,
+     "A3_predcrit_sst": 0.9964207759737702,
+     "A4_b1_sst": 0.9964207759737702
+    },
+    "reference_arm_skill_seed0": {
+     "ref_head_onestage@fit": 0.9964207759737702,
+     "ref_head_onestage@full": 0.9964207759737702,
+     "ref_dc_only@fit": 6.194487257364518,
+     "ref_dc_only@full": 6.194487257364518,
+     "ref_zero@full": 13.513513513513514,
+     "ref_train_mean@full": 1.7666040077084846,
+     "ref_nn_condition@full": 1.3941023099699918,
+     "ref_affine_on_hf_train@fit": 0.9583559719706533,
+     "ref_affine_on_hf_train@full": 0.9583559719706533
+    },
+    "stage2_paired_gain_nRMSE_seed0": {
+     "A0_b1_replica": 0.0,
+     "A1_cap_lift": 0.0,
+     "A2_predcrit": 0.0,
+     "A3_predcrit_sst": 0.0,
+     "A4_b1_sst": 0.0
+    },
+    "n_fit": 5,
+    "small_n_fallback_active": true
+   }
+  },
+  "panel_geomean_skill": {
+   "per_seed": [
+    25.27573198183242
+   ],
+   "mean": 25.27573198183242,
+   "ci95": null,
+   "_ci95_note": "null at 1 seed (3-seed bootstrap deferred to the seeds-1-2 invocation)."
+  },
+  "vs_anchor": {
+   "anchor_source": "state/anchors/r3s1_factorised.json (certified_3seed_panel_geomean, r3s1_factorised-B1)",
+   "anchor_value": 24.957323204986892,
+   "anchor_ci95": [
+    24.872590933262558,
+    25.06624704883453
+   ],
+   "anchor_per_seed": [
+    25.06624704883453,
+    24.93313163286358,
+    24.872590933262558
+   ],
+   "delta": 0.3184087768455264,
+   "delta_sign_convention": "arm minus anchor; skill is LOWER-IS-BETTER, so a POSITIVE delta is a REGRESSION",
+   "direction": "regression (seed 0 scored arm is WORSE than the anchor)",
+   "beyond_ci": false,
+   "beyond_ci_note": "No win to test. The seed-0 point value 25.2757 lies ABOVE the anchor's 3-seed interval upper bound 25.0662 by 0.2095; the card's own CI is not computable at 1 seed.",
+   "beyond_noise_floor": false,
+   "beyond_noise_floor_note": "|delta| 0.3184 vs certified _panel_geomean seed_mce 0.5083 = 0.63x -> NOT resolvable at one seed (sub-mce), in the regression direction.",
+   "paired_within_seed0": {
+    "A0_b1_replica_panel_geomean_seed0": 25.06624704883453,
+    "A0_reproduces_anchor_per_seed[0]": 25.06624704883453,
+    "A0_abs_delta_vs_anchor_per_seed0": 0.0,
+    "A2_minus_A0": 0.2094849329978885,
+    "A1_minus_A0": -0.17418039821573927,
+    "A2_minus_A1": 0.3836653312136278
+   },
+   "vs_launch_best_floor_anchor": {
+    "value": 34.4198,
+    "delta": -9.144068018167584,
+    "note": "scored arm still 9.14 below (better than) the 5-ds training-free best-floor geomean"
+   }
+  },
+  "panel_geomean_by_arm_seed0_derived": {
+   "_note": "REPORT-ONLY derived aggregation: the same 5-cell geometric mean score_panel applies to the scored arm, applied to the family's own per-cell skill_table columns for the non-scored arms. Verified to reproduce score_panel's scored value exactly (abs diff 0.0).",
+   "A0_b1_replica": 25.06624704883453,
+   "A1_cap_lift": 24.89206665061879,
+   "A2_predcrit": 25.27573198183242,
+   "A3_predcrit_sst": 25.474871451694842,
+   "A4_b1_sst": 25.46310863106158,
+   "ref_head_onestage@fit": 25.590831700857155,
+   "ref_dc_only@fit": 43.38416342690659
+  },
+  "cratered_verdict": "proceed_to_seeds_1_2",
+  "cratered_rule_evaluation": {
+   "crash": false,
+   "slurm_state": "COMPLETED, ExitCode 0:0, 0-byte .err, no NaN/Inf/traceback/preemption/resume in the log",
+   "cratered_line_operator_instruction": 51.6297,
+   "cratered_line_vs_stream_anchor": 37.43598480748034,
+   "observed_panel_geomean": 25.27573198183242,
+   "cratered": false,
+   "falsification_fired_decisively_at_seed0": false,
+   "rationale": "No crash; all seven build gates green (G-A anchor reproduction max abs delta 1.14e-13 vs 1e-9 tol on all 5 cells); panel geomean 25.2757 is far below both cratered lines (51.63 operator line; 37.44 vs the stream anchor). The SHIPPING cell clause L1 is SATISFIED at seed 0 (fisher_kpp gain 11.2211 >= tau_rel 10.3128), and the panel-level shortfall (+0.3184 regression) is 0.63x the panel seed_mce, i.e. below the resolution of one seed. Seeds 1-2 are exactly what decide L2/L3."
+  },
+  "falsification_verdict": "pending_seeds",
+  "falsification_seed0_readings": {
+   "_note": "ALL clauses are pre-registered at the 3-SEED MEAN. These are seed-0 readings only, never verdicts. Governed by orchestrator_adjudication_admission_rule_2026_08_10: the SHIPPED conservative permutation p-value form IS the pre-registered admission rule.",
+   "L1_shipping_cell": {
+    "clause": "if neither A1_cap_lift nor A2_predcrit improves sharp__fisher_kpp_2d mean skill relative to the certified anchor cell 374.8381 by >= 10.3128 (fisher_kpp tau_rel; seed_mce 5.8550), the cap-stranded reachable energy is not recoverable by widening stage 1 and the batch's premise is FALSIFIED.",
+    "A1_skill_seed0": 363.6170546346378,
+    "A2_skill_seed0": 363.6170546346378,
+    "anchor_cell": 374.8380508929541,
+    "improvement_vs_anchor_mean": 11.22099625831629,
+    "improvement_vs_anchor_seed0_paired": 12.901208993076693,
+    "threshold": 10.312814173562199,
+    "x_tau_rel": 1.0880634586708928,
+    "x_seed_mce": 1.9164759662183113,
+    "seed0_reading": "NOT falsified at seed 0 (clears the threshold by 0.91 skill, 1.09x tau_rel) \u2014 marginal; the 3-seed mean decides."
+   },
+   "L2_shipping_panel": {
+    "clause": "if A2_predcrit fails to improve the panel geomean relative to the certified stream anchor 24.9573 by >= 0.5083 (certified _panel_geomean seed_mce), FALSIFIED.",
+    "A2_panel_geomean_seed0": 25.27573198183242,
+    "anchor": 24.957323204986892,
+    "observed_change": 0.3184087768455264,
+    "required_improvement": 0.5082844131597604,
+    "seed0_reading": "TRENDING FALSIFIED: seed 0 moves the panel the WRONG way by 0.3184 (0.63x the panel seed_mce), i.e. a sub-mce regression rather than the required >= 0.5083 improvement. Reaching the clause from here would need seeds 1-2 to swing the 3-seed mean by > 0.83 in the improvement direction."
+   },
+   "L3_novelty_scope": {
+    "clause": "if A2_predcrit fails to beat A1_cap_lift on the panel geomean by >= 0.5083, the criterion claim is FALSIFIED, the batch must be reported as the SELECT_MAX bug-fix with no novelty claim, and D1's residue stays open. Card-level shipping verdict unaffected.",
+    "A1_panel_geomean_seed0_derived": 24.89206665061879,
+    "A2_panel_geomean_seed0": 25.27573198183242,
+    "A2_minus_A1": 0.3836653312136278,
+    "required": 0.5082844131597604,
+    "seed0_reading": "TRENDING FALSIFIED, and structurally so: on fisher_kpp A1 and A2 select the IDENTICAL 49-direction set and score bit-identically (363.6171), so the criterion contributes nothing where the gain lives; on cahn_hilliard A1 is bitwise A0 (11.4146) while A2 is 12.3180, so the criterion's only differential effect at seed 0 is a 0.9034 regression. A2 is 0.3836 WORSE than A1 on the panel geomean."
+   },
+   "L3b_criterion1_second_cell": {
+    "clause": "if A2_predcrit fails to beat ref_dc_only@fit on sharp__fisher_kpp_2d by >= 10.3128, the 'second scored dataset for round-3 success criterion 1' sub-claim is FALSIFIED; L1/L2 stand independently.",
+    "A2_fk_skill_seed0": 363.6170546346378,
+    "ref_dc_only@fit_seed0": 287.11064375336434,
+    "ref_dc_only@full_seed0": 282.7601830501418,
+    "A2_minus_dc_only@fit": 76.50641088127344,
+    "required": 10.312814173562199,
+    "seed0_reading": "DECISIVELY FALSIFIED in direction at seed 0: the condition->level law dc_only@fit (287.1106) BEATS A2 (363.6171) by 76.5065 skill = 7.42x tau_rel = 13.07x fk seed_mce. Non-load-bearing by pre-registration; L1/L2 stand independently. (Card part 4's expectation of A2 <= ~272.4 is missed by ~91.)"
+   },
+   "L4_sst_minimal_repair": {
+    "clause": "if A4_b1_sst fails to improve sharp__cahn_hilliard mean skill vs A0_b1_replica by >= 0.3612 (ch tau_rel; seed_mce 0.0912), the input-space expansion of arXiv:1211.6581 is a no-op on this panel and is reported as a certified null. (Modal expected outcome; its firing is itself the deliverable.)",
+    "A4_ch_skill_seed0": 12.660053564137534,
+    "A0_ch_skill_seed0": 11.414584784669877,
+    "A4_minus_A0": 1.2454687794676573,
+    "required_improvement": 0.36124864423263325,
+    "seed0_reading": "FIRING at seed 0 (the modal pre-registered outcome): A4 is 1.2455 WORSE than A0, not 0.3612 better. Mechanically A4's stage-2 gate admits 0 directions on ch (paired gain exactly 0.0), so A4 collapses onto ref_head_onestage@fit (12.6601): concatenating the condition to the stage-2 input DESTROYS the 9-direction gate that A0's prediction-only input opens. On fisher_kpp A4 does gate 13 directions and moves -9.3026 skill (an improvement) but ends at 367.2156, still worse than A1/A2's 363.6171."
+   },
+   "L5_discriminator": {
+    "clause": "S(cell, arm) = E_rem x max(R_reach, 0) on the fit fold; S* = 0.05. Prediction: stage-2 paired gain >= that cell's tau_rel when S >= S*, and |gain| < tau_rel when S < S*. Evaluated on the six configurations {allen_cahn, fisher_kpp, cahn_hilliard} x {A1, A2}. Wrong on >= 2 of 6 => the n_SET/E_rem x reachability discriminator is FALSIFIED as a pre-fit predictor.",
+    "per_configuration_seed0": {
+     "sharp__allen_cahn_2d|A1_cap_lift": {
+      "E_rem": 0.06107895122156806,
+      "R_reach": -0.005540227044905199,
+      "S": 0.0,
+      "S_star": 0.05,
+      "side_of_S_star": "S < S*",
+      "predicts_stage2_pays": 0,
+      "n_set": 17,
+      "n_gate": 0,
+      "stage2_paired_gain_skill": 0.0,
+      "tau_rel": 18.61975759925883,
+      "observed_stage2_moves_ge_tau_rel": 0,
+      "seed0_prediction_correct": 1
+     },
+     "sharp__allen_cahn_2d|A2_predcrit": {
+      "E_rem": 0.05769335858787148,
+      "R_reach": -0.004790260712433492,
+      "S": 0.0,
+      "S_star": 0.05,
+      "side_of_S_star": "S < S*",
+      "predicts_stage2_pays": 0,
+      "n_set": 18,
+      "n_gate": 0,
+      "stage2_paired_gain_skill": 0.0,
+      "tau_rel": 18.61975759925883,
+      "observed_stage2_moves_ge_tau_rel": 0,
+      "seed0_prediction_correct": 1
+     },
+     "sharp__fisher_kpp_2d|A1_cap_lift": {
+      "E_rem": 0.06364789555198593,
+      "R_reach": -0.003181038792860802,
+      "S": 0.0,
+      "S_star": 0.05,
+      "side_of_S_star": "S < S*",
+      "predicts_stage2_pays": 0,
+      "n_set": 49,
+      "n_gate": 0,
+      "stage2_paired_gain_skill": 0.0,
+      "tau_rel": 10.312814173562199,
+      "observed_stage2_moves_ge_tau_rel": 0,
+      "seed0_prediction_correct": 1
+     },
+     "sharp__fisher_kpp_2d|A2_predcrit": {
+      "E_rem": 0.06364789555198593,
+      "R_reach": -0.003181038792860802,
+      "S": 0.0,
+      "S_star": 0.05,
+      "side_of_S_star": "S < S*",
+      "predicts_stage2_pays": 0,
+      "n_set": 49,
+      "n_gate": 0,
+      "stage2_paired_gain_skill": 0.0,
+      "tau_rel": 10.312814173562199,
+      "observed_stage2_moves_ge_tau_rel": 0,
+      "seed0_prediction_correct": 1
+     },
+     "sharp__cahn_hilliard|A1_cap_lift": {
+      "E_rem": 0.3350919201274836,
+      "R_reach": 0.669611091812371,
+      "S": 0.22438126649406812,
+      "S_star": 0.05,
+      "side_of_S_star": "S >= S*",
+      "predicts_stage2_pays": 1,
+      "n_set": 3,
+      "n_gate": 9,
+      "stage2_paired_gain_skill": -1.2454687794676573,
+      "tau_rel": 0.36124864423263325,
+      "observed_stage2_moves_ge_tau_rel": 1,
+      "seed0_prediction_correct": 1
+     },
+     "sharp__cahn_hilliard|A2_predcrit": {
+      "E_rem": 0.11884149170812319,
+      "R_reach": 0.30961446360070044,
+      "S": 0.03679504470871765,
+      "S_star": 0.05,
+      "side_of_S_star": "S < S*",
+      "predicts_stage2_pays": 0,
+      "n_set": 7,
+      "n_gate": 2,
+      "stage2_paired_gain_skill": -0.49295601986544213,
+      "tau_rel": 0.36124864423263325,
+      "observed_stage2_moves_ge_tau_rel": 1,
+      "seed0_prediction_correct": 0
+     }
+    },
+    "n_wrong_seed0": 1,
+    "threshold_wrong": 2,
+    "seed0_reading": "1 of 6 wrong at seed 0 -> would NOT falsify. The single miss is cahn_hilliard x A2: S = 0.0368 < S* = 0.05 predicts no move, but stage 2 still moved the arm by 0.4930 skill (1.36x ch tau_rel 0.3612). The other five are correct, four of them trivially (S = 0.0 exactly, gain exactly 0.0). NOTE the sign convention: a NEGATIVE stage2_paired_gain_skill is an IMPROVEMENT (skill is lower-is-better); the clause is stated on the magnitude."
+   }
+  },
+  "build_gates_seed0": {
+   "G-A_anchor_reproduction": {
+    "status": "ok on all 5 cells (HARD INTEGRITY CHECK PASSED)",
+    "max_abs_delta_skill": 1.1368683772161603e-13,
+    "tol": 1e-09,
+    "per_cell_abs_delta_skill": {
+     "sharp__allen_cahn_2d": 1.1368683772161603e-13,
+     "sharp__fisher_kpp_2d": 1.1368683772161603e-13,
+     "sharp__cahn_hilliard": 1.7763568394002505e-15,
+     "ifc_poisson": 1.7763568394002505e-15,
+     "ifc_heat": 2.220446049250313e-16
+    },
+    "panel_level_corroboration": "A0_b1_replica's derived panel geomean 25.06624704883453 equals the anchor's per_seed[0] 25.06624704883453 to 0.00e+00"
+   },
+   "G-B_floor_seam": {
+    "status": "ok on all 5 cells",
+    "max_abs_delta": 2.6517887885546543e-10,
+    "tol": 1e-09
+   },
+   "G-B_affine_floor_seam": {
+    "status": "ok_dtype_limited on both ifc cells; no_frozen_entry (reported, not seam-checked) on the 3 sharp cells"
+   },
+   "G-C_leakage_tripwire": {
+    "status": "ok on all 5 cells",
+    "lf_used_at_any_stage": 0,
+    "under_stripped_view": 1,
+    "test_lf_fids": "[] on every cell"
+   },
+   "G-D_target_scale_preflight": {
+    "status": "ok on sharp__cahn_hilliard (the only carded cell); not_required_for_this_cell elsewhere",
+    "artifact": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round3/r3s1_factorised/B2/eval/target_scale_preflight.json"
+   },
+   "G-E_stage2_noop": {
+    "status": "ok on all 5 cells",
+    "tol": 1e-12
+   },
+   "G-F_small_n_fallback": {
+    "status": "ok on both ifc cells (A1-A4 bitwise identical to A0, delta 0.0); not_required elsewhere",
+    "tol": 1e-12
+   },
+   "G-G_permutation_scope": {
+    "status": "ok on the 3 sharp cells; not_required on the ifc cells (null did not run, n_fit = 5 < 20)",
+    "n_permuted_rows": 360,
+    "n_fit_rows": 320,
+    "n_model_rows": 40,
+    "calibration_rows_touched": 0,
+    "test_rows_touched": 0,
+    "subset_of_train_split": 1
+   },
+   "selection_seam_vs_vendored": {
+    "max_abs_delta_best_oof_r2": 0.0,
+    "status": "ok on all 5 cells \u2014 A0 is bitwise the batch-1 arm, so the five arms are genuine single-knob deltas"
+   }
+  },
+  "admission_rule_sensitivity_report_only": {
+   "_governing_adjudication": "orchestrator_adjudication_admission_rule_2026_08_10 \u2014 the SHIPPED conservative p-value form p = (1 + #{null >= obs}) / (1 + B) <= alpha IS the pre-registered rule for all scoring and falsification purposes.",
+   "method": "Recomputed the literal part-3 variant ('max_f OOF-R^2 exceeds the 95th percentile of its own permutation null') from the per-direction critical_value_per_direction / permutation_p_value_per_direction emitted in each result JSON. Selection-set comparison only \u2014 no arm was re-scored (that would need a re-run).",
+   "sharp__allen_cahn_2d": {
+    "shipped_n_set": 18,
+    "literal_q95_n_set": 18,
+    "symmetric_difference": []
+   },
+   "sharp__fisher_kpp_2d": {
+    "shipped_n_set": 49,
+    "literal_q95_n_set": 49,
+    "symmetric_difference": []
+   },
+   "sharp__cahn_hilliard": {
+    "shipped_n_set": 7,
+    "literal_q95_n_set": 8,
+    "symmetric_difference": [
+     33
+    ],
+    "boundary_direction_33": {
+     "observed_best_oof_r2": 0.0006,
+     "critical_value": 0.0006,
+     "n_null_ge_observed": 10,
+     "permutation_p_value": 0.0547
+    }
+   },
+   "summary": "The two forms differ on exactly 1 of 153 per-direction decisions at seed 0 (3 sharp cells x 51 directions), on a direction whose OOF R^2 from the condition is 6e-4 \u2014 i.e. at the noise level. fisher_kpp (where L1/L2 live) is UNAFFECTED by the drift. The scored effect of the literal variant on the ch cell is not measurable without a re-run and is not claimed."
+  },
+  "guard_flags": [],
+  "guard_set_check": {
+   "contract": "2d \u2014 the guard set is run only if the card claims a panel win (3-seed geomean beats the anchor beyond the CI).",
+   "triggered": false,
+   "reason": "No panel win exists to guard: the seed-0 scored panel geomean 25.2757 is a REGRESSION of +0.3184 vs the anchor 24.9573, and lies above the anchor's own 3-seed interval upper bound. Contract 2d is therefore not engaged at this invocation.",
+   "guard_leg_status": "not submitted for this card as of this invocation \u2014 no result_guards_s0.json under the eval/ output path (scripts/submit_guards.sh exists and is unused; the analyzer does not submit).",
+   "guard_reference_source_if_needed": "mffp_autoresearch/round2/eval/copylf_baselines.json (heat_local, fluid, sharp__sod_1d)",
+   "note": "G-C (the in-family stripped-view leakage tripwire) is green on every scored cell; that is a build gate, not the \u00a72d guard-set regression check."
+  },
+  "anomalies": [
+   "CACHE-SERVED ifc LEGS (provenance, not a defect): ifc_poisson and ifc_heat carry cached=true in result_panel5_s0.json. Their per-cell result JSONs and checkpoints were written 2026-08-10 08:43/08:44, i.e. BEFORE job 163603 started at 09:10:27; the cache entries carry the identical code_hash 07b07ec1... and nrmse_def_hash d3d0ade9..., and both cells reproduce the certified anchor to <= 1.8e-15 (G-A). The three sharp cells were computed fresh in-job (cached=false).",
+   "CARD-vs-CODE ADMISSION-RULE DRIFT (adjudicated ex ante, carried per the reviewer's instruction): the shipped rule is the conservative permutation p-value form, not part 3's 'exceeds the 95th percentile' prose. Report-only sensitivity computed above: the forms differ on exactly 1 of 153 direction decisions at seed 0 (ch direction 33), and not at all on fisher_kpp.",
+   "NULL-SCOPE KNOB IS A MISNOMER: R3S1B2_PERM_SCOPE='fit_fold_rows_only' but the null permutes the observed statistic's own 360 rows (fit 320 + model-selection 40). G-G asserts 0 calibration rows and 0 test rows touched and subset_of_train_split=1. Report as 'statistic-row scope, 360 rows'; the paired comparands in L1-L5 remain @fit = 320 rows. Different row sets, different purposes \u2014 not a scoring inconsistency.",
+   "A1 == A2 BIT-FOR-BIT ON fisher_kpp: both admit the same 49-direction set and score 363.61705463463784 / nRMSE 0.06008621500927927 identically. The entire fisher_kpp movement is attributable to the SELECT_MAX cap lift (the named bug-fix instrument), not to the permutation criterion. This is the structural reason L3 cannot be carried by fisher_kpp.",
+   "BUILDER'S ADVERSE DEV PREVIEW CONFIRMED IN PRODUCTION, BIT-FOR-BIT: cahn_hilliard A2 12.318031171714935 vs A0 11.414584784669877 (A2 worse by 0.9034 = 2.50x ch tau_rel), with the stage-2 gate collapsing 9 -> 2 directions as the stage-1 set widens 3 -> 7. The 5 fold resamples all agree in sign (A2 two-stage nRMSE 0.4935-0.5273 across resamples with n_set 5-8, vs A0's fold-invariant 0.47716 at n_set 3 / gate 9), so this is not a fold artefact within seed 0.",
+   "TWO STANDING NEGATIVES CARRIED FORWARD UNCHANGED (pre-declared in part 4, enforced by G-F): ifc_poisson 8.2507 still loses to the nn_condition floor 8.0409, and both ifc cells lose to affine_on_hf_train (1.5938 / 0.9584).",
+   "allen_cahn SPECIFICITY HOLDS (report-only, no clause): |A2 - A0| = 0.0856 skill, 0.005x the ac tau_rel 18.6198 \u2014 the null-calibrated criterion admits 18 vs 17 directions and the leftover residual stays unreachable (stage-2 gate 0 for every arm).",
+   "NO TRAINING PATHOLOGY: epochs 0 (closed-form family, gradient_trained_arms none), sacct COMPLETED 00:11:20 ExitCode 0:0 on hpc-sm-01-10 (gpu/H200), 0-byte .err, no NaN/Inf/traceback, no preemption, no resume (permutation_null.resumed_from_draw = 0 on all three sharp cells). timing_preflight status 'within_budget' with reduced=0 on every cell, so B stayed at the carded 200 (the B=50 fallback did NOT fire).",
+   "LOG COSMETIC: the panel result JSON appears twice in the .out (score_panel prints it to stdout, then the wrapper echoes the file). One run, two prints \u2014 verified identical."
+  ],
+  "wall_clock_per_seed_min": [
+   11.333333333333334
+  ],
+  "timing_ledger_feed": {
+   "job_id": 163603,
+   "job_name": "r3-r3s1_factorised-B2-s0",
+   "state": "COMPLETED",
+   "exit_code": "0:0",
+   "elapsed": "00:11:20",
+   "elapsed_min": 11.333333333333334,
+   "start": "2026-08-10T09:10:27",
+   "end": "2026-08-10T09:21:47",
+   "node": "hpc-sm-01-10",
+   "partition": "gpu",
+   "requested_time": "05:00:00 (reviewer SUGGEST 3.5 noted this as ~2.5x headroom; measured 11m20s => the wall request is ~26x the actual)",
+   "per_cell_total_seconds": {
+    "sharp__allen_cahn_2d": 168.12055039405823,
+    "sharp__fisher_kpp_2d": 336.0074315071106,
+    "sharp__cahn_hilliard": 165.9921009540558,
+    "ifc_poisson": 2.7022483348846436,
+    "ifc_heat": 2.736959218978882
+   },
+   "note": "2 of 5 cells were cache-served, so 11m20s understates a cold-cache seed. Fresh in-job compute was ac 168.1s + fk 336.0s + ch 166.0s = 670.1s; the ifc cells cost ~2.7s each when computed. A cold seed is therefore ~12 min, still ~25x inside the 5h request."
+  },
+  "notes_for_the_report": [
+   "The 3e06423 basis.py provenance must be described as 'debugger-authored, post-review, verified bitwise-inert on the scored panel' \u2014 NOT 'the reviewed rank-truncation repair'.",
+   "The stage-1 admission rule must be reported AS IMPLEMENTED (conservative permutation p-value <= alpha), with the literal-q95 variant only as the report-only sensitivity recorded above.",
+   "The permutation null's row scope must be reported as 'statistic-row scope, 360 rows (fit 320 + model-selection 40)', never 'fit-fold rows only'.",
+   "This batch makes NO ifc claim by construction (G-F small-N fallback, n_fit = 5 < R3S1B2_PERM_MIN_ROWS = 20); all panel movement is sharp-cell movement."
+  ]
+ },
  "6_analysis": null,
  "7_gap_and_future": null,
  "reanalysis_progress": null,
