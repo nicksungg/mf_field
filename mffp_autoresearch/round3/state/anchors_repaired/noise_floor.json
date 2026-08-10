@@ -1,102 +1,492 @@
 {
-  "_certified_utc": "2026-08-04T05:12:04Z",
-  "_note": "Per-seed nRMSE spreads from round-1 batch 0 (LF-consuming families), skills recomputed under the corrected round-2 denominators. PROVISIONAL: not a numeric threshold (r1 program \u00a74.5) until r2s4-B1 certifies a condition->HF 3-seed spread at smoke tier.",
-  "_provisional": true,
-  "_source": "round1-batch0-rescaled",
-  "ext__helmholtz_2d": {
-    "family": "mf_fno_transfer_film",
-    "mean_skill": 15.22274712956998,
-    "min_claimable_effect": 10.681106622068137,
+  "_certified_utc": "2026-08-08T20:00:07Z",
+  "_note": "Replaces the PROVISIONAL round-1-rescaled file (program.md \u00a73). INSTALLED BY THE ORCHESTRATOR; this probe never writes state/.",
+  "_panel_geomean": {
+    "anchor_best_floor_panel_geomean_5ds_adr_r3_0004": 34.4198,
+    "anchor_best_floor_panel_geomean_6ds_card_constant": 36.3912,
+    "ci95_stratified_bootstrap": [
+      19.423546977863886,
+      19.931831391023646
+    ],
+    "iqm": 19.64377844535652,
+    "iqm_method": "scipy.stats.trim_mean semantics, proportiontocut=0.25; with n=3 it trims nothing and equals the mean",
+    "mean": 19.64377844535652,
+    "n_seeds": 3,
+    "null_iqm_diff_95": 0.3388562754398414,
+    "paired_null_95": 0.40667775361433317,
+    "paired_null_definition": "95th percentile of |mean of 3 signed same-model pairwise seed deltas| under a bootstrap over the 6-element signed null pool (Du, paired per-seed deltas)",
+    "pairwise_seed_deltas": [
+      -0.15240998931814076,
+      -0.5082844131597604,
+      -0.3558744238416196
+    ],
+    "panel": [
+      "ifc_heat",
+      "ifc_poisson",
+      "sharp__allen_cahn_2d",
+      "sharp__cahn_hilliard",
+      "sharp__fisher_kpp_2d"
+    ],
+    "per_seed": [
+      19.423546977863886,
+      19.575956967182027,
+      19.931831391023646
+    ],
+    "seed_mce": 0.5082844131597604,
+    "seed_mce_definition": "max(spread_maxmin, paired_null_95) \u2014 guarantees a usable constant even when the conservative paired protocol declares nothing",
+    "sign_flip_min_attainable_p": 0.25,
+    "sign_flip_p": 0.25,
+    "spread_maxmin": 0.5082844131597604
+  },
+  "_protocol": {
+    "bootstrap_rng_seed": 0,
+    "iqm_and_stratified_bootstrap": "Agarwal et al., arXiv:2108.13264",
+    "mdd_scored": "relative bootstrap width of the SCORED copy-LF reference cell (probe D0); identically 0 for paper-bar references",
+    "n_boot_row": 10000,
+    "n_boot_seed": 10000,
+    "paired_per_seed_deltas": "Du, arXiv:2511.19794",
+    "ratio_of_normals_caveat": "the documented ratio-of-normals caveat applies to cahn_hilliard (denominator uncertainty large => normal approximation fails)",
+    "row_paired_95": "95th pct of |mean per-row skill delta| under a paired row bootstrap of same-model seed pairs",
+    "seed_mce": "max(spread_maxmin, paired_null_95)",
+    "tau_abs": "tau_rel + mdd_scored * skill_level \u2014 absolute-bar or cross-era claims (the reference does not cancel); skill_level = the certifier's IQM skill on that dataset",
+    "tau_rel": "max(seed_mce, row_paired_95) \u2014 same-reference, within-era arm comparisons (the reference cancels in the ratio)"
+  },
+  "_provenance": {
+    "code_hash": "ad31cfb8d531b1719383666fea68808da288f946c12d2b5151dd7f1960bf5df2",
+    "copylf_def_hash": "9753ff24e856f595748492dec6cb6c215d748f97e8ec4a679b651f8846da907a",
+    "env": {
+      "R3S4B1_ANCHORS_JSON": "mffp_autoresearch/round3/state/anchors/launch_anchors.json",
+      "R3S4B1_BATCH": "16",
+      "R3S4B1_BLOCKS": "2",
+      "R3S4B1_BOOT_SEED": "0",
+      "R3S4B1_CELL_RUNGS": "finest_lf,coarsest_lf",
+      "R3S4B1_CLIP": "1.0",
+      "R3S4B1_DATA_MANIFEST": "mffp_autoresearch/round3/state/data_hashes.json",
+      "R3S4B1_DEGEN_ABS_FLOOR": "1e-6",
+      "R3S4B1_DEGEN_MEDIAN_FRAC": "0.01",
+      "R3S4B1_DIAG_OUT": "mffp_autoresearch_outputs/round3/r3s4_audit/B1/eval",
+      "R3S4B1_EXPECTED_BEST_FLOOR_GEOMEAN": "36.3912",
+      "R3S4B1_FILM_MLP_WIDTH": "64",
+      "R3S4B1_FLOORS_JSON": "mffp_autoresearch/round3/state/anchors_repaired/floors.json",
+      "R3S4B1_FLOORS_LINEAGE_JSONS": "mffp_autoresearch/round3/state/anchors_repaired/floors_pre_ifc_swap_2026-08-05.json,mffp_autoresearch/round3/state/anchors_repaired/floors_pre_ac_trim_2026-08-06.json,mffp_autoresearch/round3/state/anchors_repaired/floors_pre_pfc_box_2026-08-06.json",
+      "R3S4B1_FLOOR_ARMS": "nn_condition,train_mean,zero,affine_on_hf_train",
+      "R3S4B1_FLOOR_TOL": "1e-9",
+      "R3S4B1_GUARD_DATASETS": "heat_local,fluid,sharp__sod_1d",
+      "R3S4B1_LEAVE_TOP_K": "1,3,5,10",
+      "R3S4B1_LR": "1e-3",
+      "R3S4B1_MODES": "16",
+      "R3S4B1_ROW_BOOTSTRAP_B": "10000",
+      "R3S4B1_SCHED": "cosine",
+      "R3S4B1_SEED_BOOTSTRAP_B": "10000",
+      "R3S4B1_TARGET_NORM": "train_zscore_global",
+      "R3S4B1_VAL_FRAC": "0.1",
+      "R3S4B1_VAL_MIN_N": "20",
+      "R3S4B1_WD": "1e-5",
+      "R3S4B1_WIDTH": "32"
+    },
+    "epochs": 200,
+    "family": "r3s4_cert_min",
+    "nrmse_def_hash": "d3d0ade9191c13bacc40702f3eb26ad290e01641cacee22a1d2233b74c035850",
+    "per_row_results_dir": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round3/r3s4_audit/B1/training",
+    "result_files": [
+      "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round3/r3s4_audit/B1/eval/result_panel5_s0.json",
+      "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round3/r3s4_audit/B1/eval/result_panel5_s1.json",
+      "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round3/r3s4_audit/B1/eval/result_panel5_s2.json"
+    ],
+    "seeds": [
+      0,
+      1,
+      2
+    ]
+  },
+  "_provisional": false,
+  "_report_only_adr_r3_0004": [
+    "sharp__phase_field_crystal_2d"
+  ],
+  "_scored_panel_adr_r3_0004": [
+    "sharp__allen_cahn_2d",
+    "sharp__fisher_kpp_2d",
+    "sharp__cahn_hilliard",
+    "ifc_poisson",
+    "ifc_heat"
+  ],
+  "_source": "r3s4_audit-B1 condition->HF 3-seed spread (family r3s4_cert_min, smoke tier 200 epochs, seeds 0,1,2) fused with a paired test-row bootstrap of the scored cell",
+  "ifc_heat": {
+    "ci95_stratified_bootstrap": [
+      0.8270075149783622,
+      0.9603109231293144
+    ],
+    "delta_vs_provisional": null,
+    "family": "r3s4_cert_min",
+    "first_certification": "no provisional constant exists for this dataset; this is its first certified threshold and it is cited in no falsification clause (card \u00a7'vs noise floor')",
+    "iqm": 0.9099159980415482,
+    "iqm_method": "scipy.stats.trim_mean semantics, proportiontocut=0.25; with n=3 it trims nothing and equals the mean",
+    "mdd_scored": 0.0,
+    "mdd_scored_source": "CERTIFIED 0: the reference is a published paper bar, a constant with no test-row sampling distribution",
+    "mean": 0.9099159980415482,
+    "mean_skill": 0.9099159980415482,
+    "min_claimable_effect": 0.1640195793751628,
+    "min_claimable_effect_definition": "tau_rel (same-reference comparisons). Use tau_abs against an absolute bar or across eras.",
+    "n_seeds": 3,
+    "null_iqm_diff_95": 0.08886893876730151,
+    "paired_null_95": 0.1213824967427211,
+    "paired_null_definition": "95th percentile of |mean of 3 signed same-model pairwise seed deltas| under a bootstrap over the 6-element signed null pool (Du, paired per-seed deltas)",
+    "pairwise_seed_deltas": [
+      -0.1333034081509522,
+      -0.11542204103860554,
+      0.01788136711234667
+    ],
     "per_seed_nrmse": [
-      6.202266339979611,
-      3.0082601525304,
-      4.445796838641283
+      0.061198556108398805,
+      0.07106300831156927,
+      0.06973978714525561
     ],
     "per_seed_skill": [
-      20.74105815326945,
-      10.059951531201312,
-      14.867231704239172
+      0.8270075149783622,
+      0.9603109231293144,
+      0.9424295560169678
     ],
-    "spread": 10.681106622068137
+    "provisional_agrees_with_card": null,
+    "provisional_min_claimable_effect": null,
+    "provisional_quoted_in_card": null,
+    "reference_test_nrmse": 0.074,
+    "reference_type": "paper_bar",
+    "row_noise": {
+      "definition": "95th percentile of |mean per-row skill delta| under a PAIRED row bootstrap of same-model seed pairs, pooled over the 3 pairs; measures test-split composition noise",
+      "n_boot": 10000,
+      "n_rows": 128,
+      "per_pair": {
+        "0v1": {
+          "boot95_abs_mean": 0.18282405497132234,
+          "observed_mean_skill_delta": -0.13330340815095254
+        },
+        "0v2": {
+          "boot95_abs_mean": 0.13604207062124657,
+          "observed_mean_skill_delta": -0.11542204103860543
+        },
+        "1v2": {
+          "boot95_abs_mean": 0.07384279199639891,
+          "observed_mean_skill_delta": 0.017881367112347123
+        }
+      },
+      "row_paired_95": 0.1640195793751628,
+      "status": "OK"
+    },
+    "row_paired_95": 0.1640195793751628,
+    "scoring_status": "scored",
+    "seed_mce": 0.1333034081509522,
+    "seed_mce_definition": "max(spread_maxmin, paired_null_95) \u2014 guarantees a usable constant even when the conservative paired protocol declares nothing",
+    "sign_flip_min_attainable_p": 0.25,
+    "sign_flip_p": 0.5,
+    "skill_level_used_for_tau_abs": 0.9099159980415482,
+    "spread": 0.1333034081509522,
+    "spread_maxmin": 0.1333034081509522,
+    "tau_abs": 0.1640195793751628,
+    "tau_abs_licenses": "absolute-bar or cross-era claims",
+    "tau_abs_over_tau_rel": 1.0,
+    "tau_rel": 0.1640195793751628,
+    "tau_rel_licenses": "same-reference, within-era arm comparisons"
   },
   "ifc_poisson": {
-    "family": "mf_fno_transfer_film",
-    "mean_skill": 1.5656334312786022,
-    "min_claimable_effect": 0.23990756041925798,
+    "ci95_stratified_bootstrap": [
+      4.842352700174657,
+      5.4291609705824655
+    ],
+    "delta_vs_provisional": 0.45109250788618516,
+    "family": "r3s4_cert_min",
+    "iqm": 5.177118584131834,
+    "iqm_method": "scipy.stats.trim_mean semantics, proportiontocut=0.25; with n=3 it trims nothing and equals the mean",
+    "mdd_scored": 0.0,
+    "mdd_scored_source": "CERTIFIED 0: the reference is a published paper bar, a constant with no test-row sampling distribution",
+    "mean": 5.177118584131835,
+    "mean_skill": 5.177118584131835,
+    "min_claimable_effect": 0.6910000683054431,
+    "min_claimable_effect_definition": "tau_rel (same-reference comparisons). Use tau_abs against an absolute bar or across eras.",
+    "n_seeds": 3,
+    "null_iqm_diff_95": 0.3912055136052057,
+    "paired_null_95": 0.47392901111175184,
+    "paired_null_definition": "95th percentile of |mean of 3 signed same-model pairwise seed deltas| under a bootstrap over the 6-element signed null pool (Du, paired per-seed deltas)",
+    "pairwise_seed_deltas": [
+      0.5868082704078086,
+      0.1693188889440851,
+      -0.4174893814637235
+    ],
     "per_seed_nrmse": [
-      0.05560809884697858,
-      0.05242181977800858,
-      0.06105849195310187
+      0.19544979494096876,
+      0.17432469720628763,
+      0.18935431493898167
     ],
     "per_seed_skill": [
-      1.5446694124160718,
-      1.4561616605002385,
-      1.6960692209194965
+      5.4291609705824655,
+      4.842352700174657,
+      5.25984208163838
     ],
-    "spread": 0.23990756041925798
+    "provisional_agrees_with_card": true,
+    "provisional_min_claimable_effect": 0.23990756041925798,
+    "provisional_quoted_in_card": 0.2399,
+    "reference_test_nrmse": 0.036,
+    "reference_type": "paper_bar",
+    "row_noise": {
+      "definition": "95th percentile of |mean per-row skill delta| under a PAIRED row bootstrap of same-model seed pairs, pooled over the 3 pairs; measures test-split composition noise",
+      "n_boot": 10000,
+      "n_rows": 128,
+      "per_pair": {
+        "0v1": {
+          "boot95_abs_mean": 0.753297885988186,
+          "observed_mean_skill_delta": 0.5868082704078093
+        },
+        "0v2": {
+          "boot95_abs_mean": 0.3325893614822783,
+          "observed_mean_skill_delta": 0.16931888894408736
+        },
+        "1v2": {
+          "boot95_abs_mean": 0.517370595501317,
+          "observed_mean_skill_delta": -0.41748938146372183
+        }
+      },
+      "row_paired_95": 0.6910000683054431,
+      "status": "OK"
+    },
+    "row_paired_95": 0.6910000683054431,
+    "scoring_status": "scored",
+    "seed_mce": 0.5868082704078086,
+    "seed_mce_definition": "max(spread_maxmin, paired_null_95) \u2014 guarantees a usable constant even when the conservative paired protocol declares nothing",
+    "sign_flip_min_attainable_p": 0.25,
+    "sign_flip_p": 0.75,
+    "skill_level_used_for_tau_abs": 5.177118584131834,
+    "spread": 0.5868082704078086,
+    "spread_maxmin": 0.5868082704078086,
+    "tau_abs": 0.6910000683054431,
+    "tau_abs_licenses": "absolute-bar or cross-era claims",
+    "tau_abs_over_tau_rel": 1.0,
+    "tau_rel": 0.6910000683054431,
+    "tau_rel_licenses": "same-reference, within-era arm comparisons"
   },
   "sharp__allen_cahn_2d": {
-    "family": "mf_fno_pinn_transfer",
-    "mean_skill": 164.22284630500033,
-    "min_claimable_effect": 16.422284630500034,
+    "ci95_stratified_bootstrap": [
+      227.95209636705,
+      241.1655598989685
+    ],
+    "delta_vs_provisional": 2.1974729687587953,
+    "family": "r3s4_cert_min",
+    "iqm": 235.06539659412817,
+    "iqm_method": "scipy.stats.trim_mean semantics, proportiontocut=0.25; with n=3 it trims nothing and equals the mean",
+    "mdd_scored": 0.1709787076080977,
+    "mdd_scored_source": "probe D0 scored cell (copylf_prediction, finest LF rung)",
+    "mean": 235.06539659412817,
+    "mean_skill": 235.06539659412817,
+    "min_claimable_effect": 18.61975759925883,
+    "min_claimable_effect_definition": "tau_rel (same-reference comparisons). Use tau_abs against an absolute bar or across eras.",
+    "n_seeds": 3,
+    "null_iqm_diff_95": 8.80897568794569,
+    "paired_null_95": 10.504651148813139,
+    "paired_null_definition": "95th percentile of |mean of 3 signed same-model pairwise seed deltas| under a bootstrap over the 6-element signed null pool (Du, paired per-seed deltas)",
+    "pairwise_seed_deltas": [
+      -8.126437149316104,
+      -13.213463531918507,
+      -5.087026382602403
+    ],
     "per_seed_nrmse": [
-      0.2638331949457305,
-      0.2637054122632834,
-      0.26393395849093787
+      0.4694348857450008,
+      0.48617012597968795,
+      0.4966461325036795
     ],
     "per_seed_skill": [
-      164.2284525127383,
-      164.14891152775905,
-      164.2911748745037
+      227.95209636705,
+      236.0785335163661,
+      241.1655598989685
     ],
-    "spread": 0.1422633467446417
+    "provisional_agrees_with_card": true,
+    "provisional_min_claimable_effect": 16.422284630500034,
+    "provisional_quoted_in_card": 16.4223,
+    "reference_test_nrmse": 0.0020593576160366327,
+    "reference_type": "copylf",
+    "row_noise": {
+      "definition": "95th percentile of |mean per-row skill delta| under a PAIRED row bootstrap of same-model seed pairs, pooled over the 3 pairs; measures test-split composition noise",
+      "n_boot": 10000,
+      "n_rows": 78,
+      "per_pair": {
+        "0v1": {
+          "boot95_abs_mean": 16.53875282690521,
+          "observed_mean_skill_delta": -8.12643714931619
+        },
+        "0v2": {
+          "boot95_abs_mean": 20.943366426971973,
+          "observed_mean_skill_delta": -13.213463531918483
+        },
+        "1v2": {
+          "boot95_abs_mean": 13.611782315375777,
+          "observed_mean_skill_delta": -5.087026382602292
+        }
+      },
+      "row_paired_95": 18.61975759925883,
+      "status": "OK"
+    },
+    "row_paired_95": 18.61975759925883,
+    "scoring_status": "scored",
+    "seed_mce": 13.213463531918507,
+    "seed_mce_definition": "max(spread_maxmin, paired_null_95) \u2014 guarantees a usable constant even when the conservative paired protocol declares nothing",
+    "sign_flip_min_attainable_p": 0.25,
+    "sign_flip_p": 0.25,
+    "skill_level_used_for_tau_abs": 235.06539659412817,
+    "spread": 13.213463531918507,
+    "spread_maxmin": 13.213463531918507,
+    "tau_abs": 58.81093531230779,
+    "tau_abs_licenses": "absolute-bar or cross-era claims",
+    "tau_abs_over_tau_rel": 3.1585231439666432,
+    "tau_rel": 18.61975759925883,
+    "tau_rel_licenses": "same-reference, within-era arm comparisons"
   },
   "sharp__cahn_hilliard": {
-    "family": "mf_fno_pinn_transfer",
-    "mean_skill": 11.603569120520158,
-    "min_claimable_effect": 1.1603569120520159,
+    "ci95_stratified_bootstrap": [
+      13.125780297601219,
+      13.217025650824231
+    ],
+    "delta_vs_provisional": -0.7991082678193826,
+    "family": "r3s4_cert_min",
+    "interval_method": "BOOTSTRAP ONLY \u2014 no normal-approximation interval is reported for this dataset",
+    "iqm": 13.17806662874691,
+    "iqm_method": "scipy.stats.trim_mean semantics, proportiontocut=0.25; with n=3 it trims nothing and equals the mean",
+    "mdd_scored": 1.6736767478839116,
+    "mdd_scored_source": "probe D0 scored cell (copylf_prediction, finest LF rung)",
+    "mean": 13.17806662874691,
+    "mean_skill": 13.17806662874691,
+    "min_claimable_effect": 0.36124864423263325,
+    "min_claimable_effect_definition": "tau_rel (same-reference comparisons). Use tau_abs against an absolute bar or across eras.",
+    "n_seeds": 3,
+    "null_iqm_diff_95": 0.060830235482004724,
+    "paired_null_95": 0.07415754455037298,
+    "paired_null_definition": "95th percentile of |mean of 3 signed same-model pairwise seed deltas| under a bootstrap over the 6-element signed null pool (Du, paired per-seed deltas)",
+    "pairwise_seed_deltas": [
+      0.025631713008953838,
+      0.09124535322300886,
+      0.06561364021405502
+    ],
     "per_seed_nrmse": [
-      0.4876164761203968,
-      0.4921948954190091,
-      0.47537932937702465
+      0.5525108301042916,
+      0.5514393485617942,
+      0.5486965040082187
     ],
     "per_seed_skill": [
-      11.664639173554809,
-      11.774162972931855,
-      11.371905215073813
+      13.21702565082423,
+      13.191393937815276,
+      13.12578029760122
     ],
-    "spread": 0.40225775785804174
+    "provisional_agrees_with_card": true,
+    "provisional_min_claimable_effect": 1.1603569120520159,
+    "provisional_quoted_in_card": 1.1604,
+    "ratio_of_normals_caveat": "the documented ratio-of-normals caveat applies to cahn_hilliard (denominator uncertainty large => normal approximation fails)",
+    "reference_test_nrmse": 0.041802962686225575,
+    "reference_type": "copylf",
+    "row_noise": {
+      "definition": "95th percentile of |mean per-row skill delta| under a PAIRED row bootstrap of same-model seed pairs, pooled over the 3 pairs; measures test-split composition noise",
+      "n_boot": 10000,
+      "n_rows": 100,
+      "per_pair": {
+        "0v1": {
+          "boot95_abs_mean": 0.34445257328961504,
+          "observed_mean_skill_delta": 0.02563171300895138
+        },
+        "0v2": {
+          "boot95_abs_mean": 0.38846467441120114,
+          "observed_mean_skill_delta": 0.09124535322299822
+        },
+        "1v2": {
+          "boot95_abs_mean": 0.3444690562108419,
+          "observed_mean_skill_delta": 0.06561364021404685
+        }
+      },
+      "row_paired_95": 0.36124864423263325,
+      "status": "OK"
+    },
+    "row_paired_95": 0.36124864423263325,
+    "scoring_status": "scored",
+    "seed_mce": 0.09124535322300886,
+    "seed_mce_definition": "max(spread_maxmin, paired_null_95) \u2014 guarantees a usable constant even when the conservative paired protocol declares nothing",
+    "sign_flip_min_attainable_p": 0.25,
+    "sign_flip_p": 0.25,
+    "skill_level_used_for_tau_abs": 13.17806662874691,
+    "spread": 0.09124535322300886,
+    "spread_maxmin": 0.09124535322300886,
+    "tau_abs": 22.41707234283126,
+    "tau_abs_licenses": "absolute-bar or cross-era claims",
+    "tau_abs_over_tau_rel": 62.0544123852693,
+    "tau_rel": 0.36124864423263325,
+    "tau_rel_licenses": "same-reference, within-era arm comparisons"
   },
   "sharp__fisher_kpp_2d": {
-    "family": "mf_fno_pinn_transfer",
-    "mean_skill": 1583.3215324637433,
-    "min_claimable_effect": 158.33215324637433,
+    "ci95_stratified_bootstrap": [
+      198.5178358233767,
+      204.372851203746
+    ],
+    "delta_vs_provisional": -148.01933907281213,
+    "family": "r3s4_cert_min",
+    "iqm": 201.12401602184687,
+    "iqm_method": "scipy.stats.trim_mean semantics, proportiontocut=0.25; with n=3 it trims nothing and equals the mean",
+    "mdd_scored": 0.3105619532241984,
+    "mdd_scored_source": "probe D0 scored cell (copylf_prediction, finest LF rung)",
+    "mean": 201.12401602184687,
+    "mean_skill": 201.12401602184687,
+    "min_claimable_effect": 10.312814173562199,
+    "min_claimable_effect_definition": "tau_rel (same-reference comparisons). Use tau_abs against an absolute bar or across eras.",
+    "n_seeds": 3,
+    "null_iqm_diff_95": 3.903343586912854,
+    "paired_null_95": 4.557851991926602,
+    "paired_null_definition": "95th percentile of |mean of 3 signed same-model pairwise seed deltas| under a bootstrap over the 6-element signed null pool (Du, paired per-seed deltas)",
+    "pairwise_seed_deltas": [
+      5.855015380369281,
+      3.8914901653280367,
+      -1.963525215041244
+    ],
     "per_seed_nrmse": [
-      0.26463871182832954,
-      0.2588897501906785,
-      0.2613835503509599
+      0.03377176874122874,
+      0.03280425165548313,
+      0.03312871607964403
     ],
     "per_seed_skill": [
-      1601.4846154390195,
-      1566.694264647788,
-      1581.7857173044226
+      204.372851203746,
+      198.5178358233767,
+      200.48136103841796
     ],
-    "spread": 34.7903507912315
-  },
-  "sharp__phase_field_crystal_2d": {
-    "family": "mf_fno_transfer_film",
-    "mean_skill": 88.59540060286325,
-    "min_claimable_effect": 8.859540060286326,
-    "per_seed_nrmse": [
-      0.5147787161491543,
-      0.5139619404866399,
-      0.5176627182289554
-    ],
-    "per_seed_skill": [
-      88.4769665929838,
-      88.33658426803682,
-      88.97265094756914
-    ],
-    "spread": 0.6360666795323198
+    "provisional_agrees_with_card": true,
+    "provisional_min_claimable_effect": 158.33215324637433,
+    "provisional_quoted_in_card": 158.3322,
+    "reference_test_nrmse": 0.00016524586579046429,
+    "reference_type": "copylf",
+    "row_noise": {
+      "definition": "95th percentile of |mean per-row skill delta| under a PAIRED row bootstrap of same-model seed pairs, pooled over the 3 pairs; measures test-split composition noise",
+      "n_boot": 10000,
+      "n_rows": 100,
+      "per_pair": {
+        "0v1": {
+          "boot95_abs_mean": 11.720515338918595,
+          "observed_mean_skill_delta": 5.8550153803692435
+        },
+        "0v2": {
+          "boot95_abs_mean": 9.508326932781962,
+          "observed_mean_skill_delta": 3.891490165328037
+        },
+        "1v2": {
+          "boot95_abs_mean": 8.490497979723745,
+          "observed_mean_skill_delta": -1.9635252150412048
+        }
+      },
+      "row_paired_95": 10.312814173562199,
+      "status": "OK"
+    },
+    "row_paired_95": 10.312814173562199,
+    "scoring_status": "scored",
+    "seed_mce": 5.855015380369281,
+    "seed_mce_definition": "max(spread_maxmin, paired_null_95) \u2014 guarantees a usable constant even when the conservative paired protocol declares nothing",
+    "sign_flip_min_attainable_p": 0.25,
+    "sign_flip_p": 0.5,
+    "skill_level_used_for_tau_abs": 201.12401602184687,
+    "spread": 5.855015380369281,
+    "spread_maxmin": 5.855015380369281,
+    "tau_abs": 72.77428142960193,
+    "tau_abs_licenses": "absolute-bar or cross-era claims",
+    "tau_abs_over_tau_rel": 7.056685033282687,
+    "tau_rel": 10.312814173562199,
+    "tau_rel_licenses": "same-reference, within-era arm comparisons"
   }
 }

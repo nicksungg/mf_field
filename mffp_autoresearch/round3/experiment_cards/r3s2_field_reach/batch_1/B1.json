@@ -270,777 +270,1540 @@
   "debug_notes": [],
   "5_actual_result": {
     "seeds_available": [
-      0
+      0,
+      1,
+      2
     ],
-    "invocation": "seed-0 only (first of two invocations); 3-seed aggregation, bootstrap CIs and the binding falsification verdict are deferred to the ALL-3-SEEDS invocation.",
+    "invocation": "ALL 3 SEEDS (second invocation). Analysed 2026-08-10 after the STOP-THE-LINE #2 HOLD cleared; this stage was deliberately withheld 2026-08-08..2026-08-10. All vs-anchor comparisons use the CURRENT (post-repair, 2026-08-10) state/anchors/launch_anchors.json. The seed-0-only reading is preserved verbatim under `seed0_invocation_superseded`.",
     "source_result_jsons": {
-      "scored_panel_5ds": "mffp_autoresearch_outputs/round3/r3s2_field_reach/B1/eval/result_scored5_s0.json",
+      "scored_panel_5ds": [
+        "mffp_autoresearch_outputs/round3/r3s2_field_reach/B1/eval/result_scored5_s0.json",
+        "mffp_autoresearch_outputs/round3/r3s2_field_reach/B1/eval/result_scored5_s1.json",
+        "mffp_autoresearch_outputs/round3/r3s2_field_reach/B1/eval/result_scored5_s2.json"
+      ],
       "guard": "mffp_autoresearch_outputs/round3/r3s2_field_reach/B1/eval/result_guard_s0.json",
-      "per_cell_result_jsons": "mffp_autoresearch_outputs/round3/r3s2_field_reach/B1/training/r3s2_stack_ic/{dataset}_e200_s0.json (8: 5 scored + 3 guard)",
-      "arm_sidecars": "mffp_autoresearch_outputs/round3/r3s2_field_reach/B1/eval/diag_{dataset}_e200_s0.json (8)",
-      "slurm_log": "mffp_autoresearch_outputs/round3/r3s2_field_reach/B1/slurm/r3-r3s2_field_reach-B1-s0_66832670.out"
+      "per_cell_result_jsons": "mffp_autoresearch_outputs/round3/r3s2_field_reach/B1/training/r3s2_stack_ic/{dataset}_e200_s{0,1,2}.json (18: 5 scored x 3 seeds + 3 guard x seed 0)",
+      "arm_sidecars": "mffp_autoresearch_outputs/round3/r3s2_field_reach/B1/eval/diag_{dataset}_e200_s{0,1,2}.json (18)",
+      "slurm_logs": [
+        "mffp_autoresearch_outputs/round3/r3s2_field_reach/B1/slurm/r3-r3s2_field_reach-B1-s0_66832670.out",
+        "mffp_autoresearch_outputs/round3/r3s2_field_reach/B1/slurm/r3-r3s2_field_reach-B1-s1_66928385.out",
+        "mffp_autoresearch_outputs/round3/r3s2_field_reach/B1/slurm/r3-r3s2_field_reach-B1-s2_66928386.out"
+      ],
+      "anchor_file_used": "mffp_autoresearch/round3/state/anchors/launch_anchors.json (sha256 fac904570217457120a5ea60e08e88be7bde8051bbcbce9bb4b819071fdf59d9, rebuilt 2026-08-10 post STOP-THE-LINE #2)",
+      "noise_floor_file": "mffp_autoresearch/round3/state/anchors_repaired/noise_floor.json (PROVISIONAL)"
     },
     "nrmse_def_hash": "d3d0ade9191c13bacc40702f3eb26ad290e01641cacee22a1d2233b74c035850",
-    "nrmse_def_hash_consistency": "VERIFIED identical across all 18 parsed JSONs (2 score_panel results, 8 per-cell results, 8 diag sidecars) and equal to _nrmse_def_hash in round2/eval/copylf_baselines.json. copylf_def_hash 9753ff24e856f595748492dec6cb6c215d748f97e8ec4a679b651f8846da907a identical in both score_panel results and equal to the baselines file. code_hash f521a811ef3bcbc797a029d22337001de46505cf4786972823a0780f1bdef216 identical across the scored and guard invocations.",
+    "nrmse_def_hash_consistency": "VERIFIED: a single nrmse_def_hash d3d0ade9... across ALL 40 parsed JSONs (4 score_panel results = 3 scored + 1 guard, 18 diag sidecars, 18 per-cell result JSONs) and equal to the live round2/eval/nrmse.py::NRMSE_DEF_HASH and to _nrmse_def_hash in round2/eval/copylf_baselines.json. copylf_def_hash 9753ff24e856f595748492dec6cb6c215d748f97e8ec4a679b651f8846da907a identical across all 4 score_panel results and equal to the baselines file. code_hash f521a811ef3bcbc797a029d22337001de46505cf4786972823a0780f1bdef216 identical across all 4 score_panel invocations (3 seeds + guard) -- i.e. all three seeds ran the same family bytes. No mismatch; no seam assertion fired.",
     "scored_arm": "E1_frozen (pre-registered)",
+    "aggregation_method": "Mean +/- stratified percentile bootstrap 95% CI over the 3 per-seed values, computed with round2/eval/nrmse.py::bootstrap_ci (n_boot=10000, rng seed 0). At n=3 the percentile interval degenerates to [min, max] of the per-seed values; per-seed values are therefore published alongside every interval and the interval must be read as a 3-point range, not a sampling CI. No metric was recomputed by hand: every nRMSE/skill is read verbatim from a score_panel result JSON (scored cells) or from a diag sidecar's arms.<arm>.nrmse divided by that cell's own score_panel reference (arm contrasts).",
     "per_dataset": {
       "sharp__allen_cahn_2d": {
         "per_seed_nrmse": [
-          0.1780451597142817
+          0.1780451597142817,
+          0.1713811421827185,
+          0.16704044146637165
         ],
         "per_seed_skill": [
+          86.45664955314616,
+          83.2206804918869,
+          81.11288693405851
+        ],
+        "mean_skill": 83.59673899303051,
+        "ci95": [
+          81.11288693405851,
           86.45664955314616
         ],
-        "mean_skill": 86.45664955314616,
-        "ci95": null,
-        "ci95_note": "null by construction: seeds_available=[0]; across-seed CI is not computable at n=1. The within-seed per-sample rel-L2 CI from the eval layer is published separately below.",
+        "mean_nrmse": 0.17215558112112395,
+        "nrmse_ci95": [
+          0.16704044146637165,
+          0.1780451597142817
+        ],
         "reference_type": "copylf",
         "reference_nrmse": 0.0020593576160366327,
-        "cached": false,
+        "cached": [
+          false,
+          false,
+          false
+        ],
         "split": "test_hf",
         "metric_source": "per_sample_mean",
         "n_test": 78,
-        "within_seed_per_sample_skill_ci95": [
-          78.95517688784658,
-          93.9829324733503
-        ],
-        "pooled_nrmse_for_contrast": 0.18831338039663112,
-        "floors_measured_in_job": {
-          "nn_condition": {
-            "nrmse": 0.9799593695877411,
-            "skill": 475.85682154308705
-          },
-          "train_mean": {
-            "nrmse": 1.0017020557264869,
-            "skill": 486.41481592416545
-          },
-          "zero": {
-            "nrmse": 1.0,
-            "skill": 485.58831754756847
-          },
-          "affine_on_hf_train": null
-        },
-        "scored_arm_beats_floor": {
-          "nn_condition": true,
-          "train_mean": true,
-          "zero": true
-        },
-        "ic_synth_applicable": true
+        "best_floor_arm": "nn_condition",
+        "best_floor_skill": 475.85682154308705,
+        "beats_best_floor": "yes, all 3 seeds; margin 392.2601 = 23.9x the provisional mce 16.4223 (30.6x the denominator-rescaled mce 12.8110)"
       },
       "sharp__fisher_kpp_2d": {
         "per_seed_nrmse": [
-          0.004987189267385295
+          0.004987189267385295,
+          0.004891770348217589,
+          0.004721466664603788
         ],
         "per_seed_skill": [
+          30.180417788540442,
+          29.602981743703474,
+          28.57237391094989
+        ],
+        "mean_skill": 29.451924481064605,
+        "ci95": [
+          28.57237391094989,
           30.180417788540442
         ],
-        "mean_skill": 30.180417788540442,
-        "ci95": null,
-        "ci95_note": "null by construction: seeds_available=[0]; across-seed CI is not computable at n=1. The within-seed per-sample rel-L2 CI from the eval layer is published separately below.",
+        "mean_nrmse": 0.004866808760068891,
+        "nrmse_ci95": [
+          0.004721466664603788,
+          0.004987189267385295
+        ],
         "reference_type": "copylf",
         "reference_nrmse": 0.00016524586579046429,
-        "cached": false,
+        "cached": [
+          false,
+          false,
+          false
+        ],
         "split": "test_hf",
         "metric_source": "per_sample_mean",
         "n_test": 100,
-        "within_seed_per_sample_skill_ci95": [
-          24.56876114662017,
-          36.47449147741777
-        ],
-        "pooled_nrmse_for_contrast": 0.006741284443677577,
-        "floors_measured_in_job": {
-          "nn_condition": {
-            "nrmse": 0.06779736322524395,
-            "skill": 410.28175138258905
-          },
-          "train_mean": {
-            "nrmse": 0.0645618050684707,
-            "skill": 390.7014844797183
-          },
-          "zero": {
-            "nrmse": 1.0,
-            "skill": 6051.588614434832
-          },
-          "affine_on_hf_train": null
-        },
-        "scored_arm_beats_floor": {
-          "nn_condition": true,
-          "train_mean": true,
-          "zero": true
-        },
-        "ic_synth_applicable": true
+        "best_floor_arm": "train_mean",
+        "best_floor_skill": 390.7014844797183,
+        "beats_best_floor": "yes, all 3 seeds; margin 361.2496 = 2.28x the provisional mce 158.3322 (weak-gap cell: its mce is ~5.4x the model value, so only floor-scale effects are resolvable here)"
       },
       "sharp__cahn_hilliard": {
         "per_seed_nrmse": [
-          0.35209902947692484
+          0.35209902947692484,
+          0.36027130445563754,
+          0.3665078625126635
         ],
         "per_seed_skill": [
-          8.422824767703473
+          8.422824767703473,
+          8.618319882249637,
+          8.767509261572766
         ],
-        "mean_skill": 8.422824767703473,
-        "ci95": null,
-        "ci95_note": "null by construction: seeds_available=[0]; across-seed CI is not computable at n=1. The within-seed per-sample rel-L2 CI from the eval layer is published separately below.",
+        "mean_skill": 8.602884637175292,
+        "ci95": [
+          8.422824767703473,
+          8.767509261572766
+        ],
+        "mean_nrmse": 0.359626065481742,
+        "nrmse_ci95": [
+          0.35209902947692484,
+          0.3665078625126635
+        ],
         "reference_type": "copylf",
         "reference_nrmse": 0.041802962686225575,
-        "cached": false,
+        "cached": [
+          false,
+          false,
+          false
+        ],
         "split": "test_hf",
         "metric_source": "per_sample_mean",
         "n_test": 100,
-        "within_seed_per_sample_skill_ci95": [
-          6.395776497443146,
-          10.539163895781899
-        ],
-        "pooled_nrmse_for_contrast": 0.591568695685219,
-        "floors_measured_in_job": {
-          "nn_condition": {
-            "nrmse": 0.9690069811741324,
-            "skill": 23.180342227117514
-          },
-          "train_mean": {
-            "nrmse": 1.001977490272036,
-            "skill": 23.96905448527446
-          },
-          "zero": {
-            "nrmse": 1.0,
-            "skill": 23.92174945843033
-          },
-          "affine_on_hf_train": null
-        },
-        "scored_arm_beats_floor": {
-          "nn_condition": true,
-          "train_mean": true,
-          "zero": true
-        },
-        "ic_synth_applicable": true
+        "best_floor_arm": "nn_condition",
+        "best_floor_skill": 23.180342227117514,
+        "beats_best_floor": "yes, all 3 seeds; margin 14.5775 = 12.6x the provisional mce 1.1604"
       },
       "ifc_poisson": {
         "per_seed_nrmse": [
-          0.14781592067124033
+          0.14781592067124033,
+          0.12503151360946127,
+          2.0409339449082076
         ],
         "per_seed_skill": [
-          4.105997796423343
+          4.105997796423343,
+          3.4730976002628133,
+          56.69260958078355
         ],
-        "mean_skill": 4.105997796423343,
-        "ci95": null,
-        "ci95_note": "null by construction: seeds_available=[0]; across-seed CI is not computable at n=1. The within-seed per-sample rel-L2 CI from the eval layer is published separately below.",
+        "mean_skill": 21.42390165915657,
+        "ci95": [
+          3.4730976002628133,
+          56.69260958078355
+        ],
+        "mean_nrmse": 0.7712604597296364,
+        "nrmse_ci95": [
+          0.12503151360946127,
+          2.0409339449082076
+        ],
         "reference_type": "paper_bar",
         "reference_nrmse": 0.036,
-        "cached": false,
+        "cached": [
+          false,
+          false,
+          false
+        ],
         "split": "test_hf",
         "metric_source": "per_sample_mean",
         "n_test": 128,
-        "within_seed_per_sample_skill_ci95": [
-          3.81237363158324,
-          4.410546852465519
-        ],
-        "pooled_nrmse_for_contrast": 0.14758585032298913,
-        "floors_measured_in_job": {
-          "nn_condition": {
-            "nrmse": 0.2894722861810042,
-            "skill": 8.040896838361228
-          },
-          "train_mean": {
-            "nrmse": 0.32414872615981205,
-            "skill": 9.004131282217003
-          },
-          "zero": {
-            "nrmse": 1.0,
-            "skill": 27.77777777777778
-          },
-          "affine_on_hf_train": {
-            "nrmse": 0.057375492822121524,
-            "skill": 1.5937636895033758
-          }
-        },
-        "scored_arm_beats_floor": {
-          "affine_on_hf_train": false,
-          "nn_condition": true,
-          "train_mean": true,
-          "zero": true
-        },
-        "ic_synth_applicable": false
+        "best_floor_arm": "nn_condition",
+        "best_floor_skill": 8.040896838361228,
+        "affine_on_hf_train_floor_skill": 1.5937636895033758,
+        "beats_best_floor": "NO on the 3-seed mean (21.4239 vs 8.0409, margin -13.383 = -55.8x mce 0.2399); seeds 0 and 1 beat it (4.1060 / 3.4731), seed 2 does not (56.6926). Loses the mandatory affine_on_hf_train floor 1.5938 on every seed. NO ifc claim is available from this card.",
+        "seed2_instability": "seed 2 stage-2 corrector blow-up: scored nRMSE 2.0409 vs 0.1478 / 0.1250 on seeds 0-1. Present in the E0 replay arm too (E0_frozen seed-2 skill 56.6926) and matching the round-2 record (r2s2_stacked-B1 ifc_poisson seed-2 instability). The condition->pseudo-LF emulator is stable across seeds (E*_emul_only 87.6152 / 87.5763 / 87.9653), so the variance is entirely in the trained stage 2."
       },
       "ifc_heat": {
         "per_seed_nrmse": [
-          0.11616123975718323
+          0.11616123975718323,
+          0.1173539002799162,
+          0.11568259514775676
         ],
         "per_seed_skill": [
-          1.5697464832051788
+          1.5697464832051788,
+          1.5858635172961648,
+          1.5632783128075238
         ],
-        "mean_skill": 1.5697464832051788,
-        "ci95": null,
-        "ci95_note": "null by construction: seeds_available=[0]; across-seed CI is not computable at n=1. The within-seed per-sample rel-L2 CI from the eval layer is published separately below.",
+        "mean_skill": 1.572962771102956,
+        "ci95": [
+          1.5632783128075236,
+          1.5858635172961648
+        ],
+        "mean_nrmse": 0.11639924506161874,
+        "nrmse_ci95": [
+          0.11568259514775676,
+          0.1173539002799162
+        ],
         "reference_type": "paper_bar",
         "reference_nrmse": 0.074,
-        "cached": false,
+        "cached": [
+          false,
+          false,
+          false
+        ],
         "split": "test_hf",
         "metric_source": "per_sample_mean",
         "n_test": 128,
-        "within_seed_per_sample_skill_ci95": [
-          1.3838152344406922,
-          1.7638966093551778
-        ],
-        "pooled_nrmse_for_contrast": 0.1520890920123963,
-        "floors_measured_in_job": {
-          "nn_condition": {
-            "nrmse": 0.1031635708237208,
-            "skill": 1.3941023084286595
-          },
-          "train_mean": {
-            "nrmse": 0.13072869651694966,
-            "skill": 1.7666040069858062
-          },
-          "zero": {
-            "nrmse": 1.0,
-            "skill": 13.513513513513514
-          },
-          "affine_on_hf_train": {
-            "nrmse": 0.07091833937569547,
-            "skill": 0.9583559375093983
-          }
-        },
-        "scored_arm_beats_floor": {
-          "affine_on_hf_train": false,
-          "nn_condition": false,
-          "train_mean": true,
-          "zero": true
-        },
-        "ic_synth_applicable": false
+        "best_floor_arm": "nn_condition",
+        "best_floor_skill": 1.3941023084286595,
+        "affine_on_hf_train_floor_skill": 0.9583559375093983,
+        "beats_best_floor": "NO on any seed (mean 1.5730 vs 1.3941, margin -0.1789). Also loses the mandatory affine_on_hf_train floor 0.9584 on every seed. noise_floor.json has NO ifc_heat entry, so this cell is not mce-checkable at all."
       }
     },
     "panel_geomean_skill": {
       "per_seed": [
-        10.721262489424966
+        10.721262489424966,
+        10.317973904757508,
+        17.827688357224755
       ],
-      "mean": 10.721262489424966,
-      "ci95": null,
-      "note": "5-dataset ADR r3-0004 scored panel (pfc report-only and NOT RUN: absent from recipe.datasets, so no pfc cell exists in this batch). Value read verbatim from result_scored5_s0.json::panel_geomean_skill; independently reproduced as the geomean of the 5 published cells to 1e-12. Across-seed CI null at n=1."
+      "mean": 12.955641583802409,
+      "ci95": [
+        10.317973904757508,
+        17.827688357224755
+      ],
+      "note": "5-dataset ADR r3-0004 scored panel (pfc report-only and NOT RUN: absent from recipe.datasets, so no pfc cell exists in this batch). Each per-seed value read verbatim from result_scored5_s{seed}.json::panel_geomean_skill and independently reproduced as the geomean of that seed's 5 published cells to 0.0 absolute error. Matches the maintainer's on-disk report (10.7213 / 10.3180 / 17.8277) exactly. The spread is entirely the ifc_poisson seed-2 stage-2 blow-up: dropping ifc_poisson, the 4-cell geomeans are stable across seeds."
     },
-    "arm_contrast_table_10_arms": {
-      "units": "per-arm nRMSE is read verbatim from diag_{ds}_e200_s0.json::arms.<arm>.nrmse; skill = nrmse / the cell's own copy-LF (or paper-bar) reference, the same reference score_panel.py used for the scored arm (reference recovered as nRMSE/skill from result_scored5_s0.json and cross-checked against diag floor_arms.reference.test_nrmse).",
-      "arms": {
-        "E0_emul_only": {
-          "sharp__allen_cahn_2d": {
-            "nrmse": 0.4703814199969422,
-            "skill": 228.41172234195136
-          },
-          "sharp__fisher_kpp_2d": {
-            "nrmse": 0.03541030737328368,
-            "skill": 214.2886129338013
-          },
-          "sharp__cahn_hilliard": {
-            "nrmse": 0.47185198774003806,
-            "skill": 11.28752503217953
-          },
-          "ifc_poisson": {
-            "nrmse": 3.1541462756948944,
-            "skill": 87.61517432485819
-          },
-          "ifc_heat": {
-            "nrmse": 0.11721377191953879,
-            "skill": 1.5839698908045783
-          },
-          "_geomean_skill_5ds": 37.751002757779865,
-          "_role": "round-2 replay internal floor; replication check vs certified r2s2-B1",
-          "_optimizer_epochs": 100
-        },
-        "E0_frozen": {
-          "sharp__allen_cahn_2d": {
-            "nrmse": 0.47058314271039964,
-            "skill": 228.5096765349903
-          },
-          "sharp__fisher_kpp_2d": {
-            "nrmse": 0.035423280164065575,
-            "skill": 214.36711892679446
-          },
-          "sharp__cahn_hilliard": {
-            "nrmse": 0.4715950163875624,
-            "skill": 11.281377827867614
-          },
-          "ifc_poisson": {
-            "nrmse": 0.14781592067124033,
-            "skill": 4.105997796423343
-          },
-          "ifc_heat": {
-            "nrmse": 0.1161612397571832,
-            "skill": 1.5697464832051786
-          },
-          "_geomean_skill_5ds": 20.43311731087989,
-          "_role": "pre-registered NULL arm (round-2 primary)",
-          "_optimizer_epochs": 300
-        },
-        "E0_finetuned": {
-          "sharp__allen_cahn_2d": {
-            "nrmse": 0.4699848053350662,
-            "skill": 228.21913089557628
-          },
-          "sharp__fisher_kpp_2d": {
-            "nrmse": 0.03529401987697942,
-            "skill": 213.58488884516532
-          },
-          "sharp__cahn_hilliard": {
-            "nrmse": 0.47185198774003806,
-            "skill": 11.28752503217953
-          },
-          "ifc_poisson": {
-            "nrmse": 0.1490548930181243,
-            "skill": 4.140413694947898
-          },
-          "ifc_heat": {
-            "nrmse": 0.116363744716184,
-            "skill": 1.5724830367051894
-          },
-          "_geomean_skill_5ds": 20.456446784382038,
-          "_role": "budget-matched shift estimator on the null front end",
-          "_optimizer_epochs": 300
-        },
-        "E0_end_to_end": {
-          "sharp__allen_cahn_2d": {
-            "nrmse": 0.47181018702337496,
-            "skill": 229.1055149184843
-          },
-          "sharp__fisher_kpp_2d": {
-            "nrmse": 0.03535769691425985,
-            "skill": 213.9702360789725
-          },
-          "sharp__cahn_hilliard": {
-            "nrmse": 0.4828024156217902,
-            "skill": 11.549478424429415
-          },
-          "ifc_poisson": {
-            "nrmse": 0.13489477934364258,
-            "skill": 3.747077203990072
-          },
-          "ifc_heat": {
-            "nrmse": 0.11725608567720591,
-            "skill": 1.5845416983406204
-          },
-          "_geomean_skill_5ds": 20.198053535937465,
-          "_role": "two-stage vs end-to-end on the null front end",
-          "_optimizer_epochs": 300
-        },
-        "E1_emul_only": {
-          "sharp__allen_cahn_2d": {
-            "nrmse": 0.17827991992346917,
-            "skill": 86.57064636815262
-          },
-          "sharp__fisher_kpp_2d": {
-            "nrmse": 0.004982505128961716,
-            "skill": 30.15207130978788
-          },
-          "sharp__cahn_hilliard": {
-            "nrmse": 0.3524137267894046,
-            "skill": 8.430352877967854
-          },
-          "ifc_poisson": {
-            "nrmse": 3.1541462756948944,
-            "skill": 87.61517432485819
-          },
-          "ifc_heat": {
-            "nrmse": 0.11721377191953879,
-            "skill": 1.5839698908045783
-          },
-          "_geomean_skill_5ds": 19.81399108952269,
-          "_role": "PRIMARY CONTRAST vs E0_emul_only (clause F1)",
-          "_optimizer_epochs": 100
-        },
-        "E1_frozen": {
-          "sharp__allen_cahn_2d": {
-            "nrmse": 0.17804515971428167,
-            "skill": 86.45664955314615
-          },
-          "sharp__fisher_kpp_2d": {
-            "nrmse": 0.004987189267385297,
-            "skill": 30.180417788540453
-          },
-          "sharp__cahn_hilliard": {
-            "nrmse": 0.3520990294769249,
-            "skill": 8.422824767703473
-          },
-          "ifc_poisson": {
-            "nrmse": 0.14781592067124033,
-            "skill": 4.105997796423343
-          },
-          "ifc_heat": {
-            "nrmse": 0.1161612397571832,
-            "skill": 1.5697464832051786
-          },
-          "_geomean_skill_5ds": 10.72126248942496,
-          "_role": "SCORED ARM; pure pseudo-LF distribution-shift exposure",
-          "_optimizer_epochs": 300
-        },
-        "E1_finetuned": {
-          "sharp__allen_cahn_2d": {
-            "nrmse": 0.17612195670441386,
-            "skill": 85.52276463928203
-          },
-          "sharp__fisher_kpp_2d": {
-            "nrmse": 0.004978439492753749,
-            "skill": 30.127467752001305
-          },
-          "sharp__cahn_hilliard": {
-            "nrmse": 0.3521062124897171,
-            "skill": 8.422996597935844
-          },
-          "ifc_poisson": {
-            "nrmse": 0.1490548930181243,
-            "skill": 4.140413694947898
-          },
-          "ifc_heat": {
-            "nrmse": 0.116363744716184,
-            "skill": 1.5724830367051894
-          },
-          "_geomean_skill_5ds": 10.715887326942886,
-          "_role": "budget-matched shift estimator (frozen - finetuned)",
-          "_optimizer_epochs": 300
-        },
-        "E1_end_to_end": {
-          "sharp__allen_cahn_2d": {
-            "nrmse": 0.1801911488010186,
-            "skill": 87.49871678325019
-          },
-          "sharp__fisher_kpp_2d": {
-            "nrmse": 0.004903758246399278,
-            "skill": 29.67552757185079
-          },
-          "sharp__cahn_hilliard": {
-            "nrmse": 0.3529084650080621,
-            "skill": 8.44218788168209
-          },
-          "ifc_poisson": {
-            "nrmse": 0.13489477934364258,
-            "skill": 3.747077203990072
-          },
-          "ifc_heat": {
-            "nrmse": 0.11725608567720591,
-            "skill": 1.5845416983406204
-          },
-          "_geomean_skill_5ds": 10.541205789612386,
-          "_role": "two-stage vs end-to-end on the contrast front end",
-          "_optimizer_epochs": 300
-        },
-        "E1n_emul_only": {
-          "sharp__allen_cahn_2d": {
-            "nrmse": 0.7708700820184249,
-            "skill": 374.3255061750831
-          },
-          "sharp__fisher_kpp_2d": {
-            "nrmse": 0.04199679643047618,
-            "skill": 254.14733512140705
-          },
-          "sharp__cahn_hilliard": {
-            "nrmse": 1.1683113460883814,
-            "skill": 27.94805131056775
-          },
-          "ifc_poisson": {
-            "nrmse": 3.1541462756948944,
-            "skill": 87.61517432485819
-          },
-          "ifc_heat": {
-            "nrmse": 0.11721377191953879,
-            "skill": 1.5839698908045783
-          },
-          "_geomean_skill_5ds": 51.68952637627819,
-          "_role": "ZERO-INFORMATION NULL for the IC channel (row-shuffled coefficients)",
-          "_optimizer_epochs": 100
-        },
-        "condmean_lf": {
-          "sharp__allen_cahn_2d": {
-            "nrmse": 1.0017248524647069,
-            "skill": 486.4258857539233
-          },
-          "sharp__fisher_kpp_2d": {
-            "nrmse": 0.06388740042018151,
-            "skill": 386.62026498860956
-          },
-          "sharp__cahn_hilliard": {
-            "nrmse": 1.0020280550954146,
-            "skill": 23.97026408431073
-          },
-          "ifc_poisson": {
-            "nrmse": 0.3573823819278329,
-            "skill": 9.927288386884248
-          },
-          "ifc_heat": {
-            "nrmse": 0.1436761029340814,
-            "skill": 1.9415689585686675
-          },
-          "_geomean_skill_5ds": 38.707178380830555,
-          "_role": "ADR r2-0003 null; frozen - condmean_lf = value of the emulator",
-          "_optimizer_epochs": 300
-        }
-      },
-      "geomean_ranking_5ds": [
-        [
-          10.541205789612386,
-          "E1_end_to_end"
+    "arm_panel_geomean_3seed": {
+      "units": "5-dataset geomean of per-arm skill, per seed, from diag_{ds}_e200_s{seed}.json::arms.<arm>.nrmse divided by that cell's own score_panel reference; mean + bootstrap CI over the 3 seeds.",
+      "E0_emul_only": {
+        "per_seed": [
+          37.751,
+          36.9256,
+          37.1016
         ],
-        [
-          10.715887326942886,
-          "E1_finetuned"
-        ],
-        [
-          10.72126248942496,
-          "E1_frozen"
-        ],
-        [
-          19.81399108952269,
-          "E1_emul_only"
-        ],
-        [
-          20.198053535937465,
-          "E0_end_to_end"
-        ],
-        [
-          20.43311731087989,
-          "E0_frozen"
-        ],
-        [
-          20.456446784382038,
-          "E0_finetuned"
-        ],
-        [
-          37.751002757779865,
-          "E0_emul_only"
-        ],
-        [
-          38.707178380830555,
-          "condmean_lf"
-        ],
-        [
-          51.68952637627819,
-          "E1n_emul_only"
+        "mean": 37.2594,
+        "ci95": [
+          36.9256,
+          37.751
         ]
-      ],
-      "ic_synth_aliasing": "On ifc_poisson and ifc_heat meta.json carries no param_names, so ic_synth is not applicable and E1 / E1n alias the single E0 emulator BY RECORD (R3S2_IC_FALLBACK=film_only_recorded; gate V10 pass). Every E1-E0 difference on those two cells is exactly 0.0 by construction, not by measurement."
+      },
+      "E0_frozen": {
+        "per_seed": [
+          20.4331,
+          19.3297,
+          33.9219
+        ],
+        "mean": 24.5616,
+        "ci95": [
+          19.3297,
+          33.9219
+        ]
+      },
+      "E0_finetuned": {
+        "per_seed": [
+          20.4564,
+          19.3842,
+          33.1258
+        ],
+        "mean": 24.3222,
+        "ci95": [
+          19.3842,
+          33.1258
+        ]
+      },
+      "E0_end_to_end": {
+        "per_seed": [
+          20.1981,
+          19.5917,
+          23.8889
+        ],
+        "mean": 21.2262,
+        "ci95": [
+          19.5917,
+          23.8889
+        ]
+      },
+      "E1_emul_only": {
+        "per_seed": [
+          19.814,
+          19.717,
+          19.5058
+        ],
+        "mean": 19.6789,
+        "ci95": [
+          19.5058,
+          19.814
+        ]
+      },
+      "E1_frozen_SCORED": {
+        "per_seed": [
+          10.7213,
+          10.318,
+          17.8277
+        ],
+        "mean": 12.9556,
+        "ci95": [
+          10.318,
+          17.8277
+        ]
+      },
+      "E1_finetuned": {
+        "per_seed": [
+          10.7159,
+          10.2935,
+          17.3023
+        ],
+        "mean": 12.7706,
+        "ci95": [
+          10.2935,
+          17.3023
+        ]
+      },
+      "E1_end_to_end": {
+        "per_seed": [
+          10.5412,
+          10.2938,
+          12.2592
+        ],
+        "mean": 11.0314,
+        "ci95": [
+          10.2938,
+          12.2592
+        ]
+      },
+      "E1n_emul_only_ZERO_INFO_NULL": {
+        "per_seed": [
+          51.6895,
+          51.3928,
+          51.9413
+        ],
+        "mean": 51.6745,
+        "ci95": [
+          51.3928,
+          51.9413
+        ]
+      },
+      "condmean_lf": {
+        "per_seed": [
+          38.7072,
+          38.7262,
+          37.3524
+        ],
+        "mean": 38.2619,
+        "ci95": [
+          37.3524,
+          38.7262
+        ]
+      },
+      "reading": "The ordering is stable across all 3 seeds: front end dominates (E1_* ~10-20 vs E0_* ~20-38), stage-2 arm choice barely moves the panel except through the ifc_poisson seed-2 instability (E1_end_to_end 11.0314 is the best arm precisely because it is the least unstable there, not because it corrects better). The zero-information IC null E1n is WORSE than E0 on every seed (51.67 vs 37.26), so the IC channel's value is information, not extra capacity."
     },
     "vs_anchor": {
-      "anchor_source": "mffp_autoresearch/round3/state/anchors/launch_anchors.json (re-read at analysis time per adr_r3_0004_addendum); best_floor over the 5-dataset scored panel",
+      "anchor_source": "state/anchors/launch_anchors.json::best_floor (CURRENT post-repair file, sha256 fac90457..., rebuilt 2026-08-10 through the stale-checkpoint gate); best_floor over the ADR r3-0004 5-dataset scored panel",
       "anchor_value": 34.4198,
-      "delta": -23.6985,
-      "beyond_ci": null,
-      "beyond_ci_note": "Not adjudicable at n=1: no across-seed CI exists. The seed-0 point is 3.21x below the anchor and 4 of the 5 cells beat their own best training-free floor by 3.9-389 skill units, so the direction is unambiguous, but the CI test is the 3-seed invocation's job.",
+      "delta": -21.4642,
+      "beyond_ci": true,
+      "beyond_ci_detail": "The whole 3-seed interval [10.3180, 17.8277] lies below the anchor 34.4198; the worst seed (17.8277) still beats it by 16.59. The anchor is a deterministic training-free quantity with no seed spread of its own.",
       "beyond_noise_floor": true,
       "beyond_noise_floor_detail": {
-        "sharp__allen_cahn_2d": "model 86.4566 vs floor 475.8568 (nn_condition): -389.400, = 23.7x the noise-floor mce 16.4223 (30.4x the denominator-rescaled mce 12.8110)",
-        "sharp__fisher_kpp_2d": "model 30.1804 vs floor 390.7015 (train_mean): -360.521, = 2.28x mce 158.3322",
-        "sharp__cahn_hilliard": "model 8.4228 vs floor 23.1803 (nn_condition): -14.758, = 12.7x mce 1.1604",
-        "ifc_poisson": "model 4.1060 vs floor 8.0409 (nn_condition): -3.935, = 16.4x mce 0.2399 -- BUT the model LOSES to affine_on_hf_train (4.1060 vs 1.5938)",
-        "ifc_heat": "model 1.5697 vs floor 1.3941 (nn_condition): +0.176, the model LOSES this floor and also loses affine_on_hf_train (0.9584). NO mce entry for ifc_heat exists in state/anchors_repaired/noise_floor.json, so this cell is not floor-checkable."
+        "sharp__allen_cahn_2d": "83.5967 vs floor 475.8568: -392.260 = 23.9x mce 16.4223 (30.6x the denominator-rescaled 12.8110) -- RESOLVABLE",
+        "sharp__fisher_kpp_2d": "29.4519 vs floor 390.7015: -361.250 = 2.28x mce 158.3322 -- RESOLVABLE but on a weak-gap cell",
+        "sharp__cahn_hilliard": "8.6029 vs floor 23.1803: -14.578 = 12.6x mce 1.1604 -- RESOLVABLE",
+        "ifc_poisson": "21.4239 vs floor 8.0409: +13.383 = 55.8x mce 0.2399 in the WRONG direction on the 3-seed mean (seeds 0-1 beat the floor by 3.9/4.6, seed 2 loses by 48.7); also loses affine_on_hf_train 1.5938 on every seed",
+        "ifc_heat": "1.5730 vs floor 1.3941: +0.179 in the WRONG direction; no mce entry exists for ifc_heat, so not floor-checkable at all; also loses affine_on_hf_train 0.9584",
+        "panel_level": "There is no panel-level certified mce. The panel win is carried entirely by ac/fk/ch, each resolvable at >= 2.28x its own provisional mce; both ifc cells lose their floors. All mce values are PROVISIONAL (program.md 3: r3s4 re-certifies before any criterion is adjudicated)."
       },
-      "per_dataset_vs_best_floor": {
-        "sharp__allen_cahn_2d": {
-          "model_skill": 86.45664955314616,
-          "floor_arm": "nn_condition",
-          "floor_skill": 475.85682154308705,
-          "beats_floor": true
+      "anchor_repair_adjudication": {
+        "rule": "Locked/pre-registered thresholds that cite pre-2026-08-10 anchor numbers are recorded here as CITED vs CURRENT; nothing is silently substituted (adjudication stays in the contract).",
+        "part4_cited_launch_anchor": {
+          "cited": 36.3912,
+          "current": 34.4198,
+          "why": "36.3912 is the PRE-ADR-r3-0004 six-dataset best floor (pfc included). Not a repair effect: the best_floor is training-free and the 2026-08-10 rebuild left it unchanged. Delta vs the cited value would be -25.67; vs the current value -21.46. Both are decisive wins in the same direction."
         },
-        "sharp__fisher_kpp_2d": {
-          "model_skill": 30.180417788540442,
-          "floor_arm": "train_mean",
-          "floor_skill": 390.7014844797183,
-          "beats_floor": true
+        "part4_cited_r2s2_B1_comparand": {
+          "cited": 27.5068,
+          "current": 24.3501,
+          "why": "27.5068 is the pre-ADR-r3-0004 SIX-dataset r2s2_stacked-B1 mean; the current value is the 5-dataset mean re-aggregated after the 2026-08-10 stale-checkpoint repair (seeds 0-1 fresh-trained). Both are recorded; the replication check below is judged on the CURRENT value."
         },
-        "sharp__cahn_hilliard": {
-          "model_skill": 8.422824767703473,
-          "floor_arm": "nn_condition",
-          "floor_skill": 23.180342227117514,
-          "beats_floor": true
+        "seed0_invocation_cited_values_now_void": {
+          "r2s2_stacked-B1_mean": {
+            "cited_2026_08_08": 24.728,
+            "current": 24.3501,
+            "cited_per_seed": [
+              21.1369,
+              19.1762,
+              33.8708
+            ],
+            "current_per_seed": [
+              20.1366,
+              19.0429,
+              33.8708
+            ],
+            "cited_ci95": [
+              15.6996,
+              33.7564
+            ],
+            "current_ci95": [
+              14.9993,
+              33.7009
+            ]
+          },
+          "r2s3_lf_train_signal-B3_mean": {
+            "cited_2026_08_08": 12.3288,
+            "current": 11.1689,
+            "cited_ci95": [
+              11.9785,
+              12.679
+            ],
+            "current_ci95": [
+              10.9988,
+              11.339
+            ]
+          }
         },
-        "ifc_poisson": {
-          "model_skill": 4.105997796423343,
-          "floor_arm": "nn_condition",
-          "floor_skill": 8.040896838361228,
-          "beats_floor": true
-        },
-        "ifc_heat": {
-          "model_skill": 1.5697464832051788,
-          "floor_arm": "nn_condition",
-          "floor_skill": 1.3941023084286595,
-          "beats_floor": false
-        }
-      },
-      "also_vs_best_certified_round2_card": "r2s3_lf_train_signal-B3, 5-ds 3-seed mean 12.3288 (ci95 [11.9785, 12.679]); this card's seed-0 E1_frozen 10.7213 is below it, but that is a 1-seed vs 3-seed comparison and is NOT a claim.",
-      "noise_floor_provisional": "state/anchors_repaired/noise_floor.json is flagged _provisional: true (r3s4 re-certifies mce on the repaired panel). Its allen_cahn mce was computed against the PRE-TRIM ac denominator 0.0016065 (current 0.00205936), so the card's ac threshold 24.6334 is in stale skill units; denominator-rescaled it is 19.2165. Both readings give the same F1 verdict."
+        "in_job_floor_seam": "The diag sidecars sourced their floors from the WORKTREE copy of launch_anchors.json (sha256 9412cae1..., the pre-ADR-r3-0004 6-dataset file). Verified byte-for-byte that its `ifc_floors_repaired` block is IDENTICAL to the current file and that its `best_floor.per_dataset` differs ONLY by the extra pfc column -- all five scored per-dataset floors are identical. floors.json is identical (sha256 a2773d89...). The stale `cards` block in that copy was never read by the job (scoring uses floors only). No scored number is affected.",
+        "also_vs_best_certified_round2_card": "r2s3_lf_train_signal-B3, 5-ds 3-seed mean 11.1689 ci95 [10.9988, 11.339] (CURRENT). This card's 12.9556 [10.3180, 17.8277] does NOT beat it: seeds 0-1 (10.72 / 10.32) are at or below it, seed 2 (17.83) is far above. Cross-card comparison only; not a claim."
+      }
     },
     "cratered_verdict": "proceed_to_seeds_1_2",
-    "cratered_detail": "Job 66832670 COMPLETED, exit 0:0, empty .err, no crash. Panel geomean 10.7213 is far BELOW the cratered line 51.6297 (= CRATERED_SKILL_FACTOR 1.5 x anchor 34.4198); lower skill is better, so the card improves on the anchor by 3.21x rather than cratering. The falsification clause did not fire decisively against proceeding: F1 (the reach clause) does NOT fire on the seed-0 data, and F2 firing is the pre-registered modal outcome the card explicitly counts as a success-criterion result, not a crater. Pairing gate did not fire (see anomalies).",
-    "falsification_verdict": "pending_seeds",
-    "falsification_seed0_reading": {
-      "clause_verbatim": "H is FALSIFIED if (F1) `E1/emul_only` fails to beat `E0/emul_only` by >= 1.5x the in-force per-dataset `min_claimable_effect` on at least 2 of {`sharp__cahn_hilliard`, `sharp__allen_cahn_2d`, `sharp__phase_field_crystal_2d`} (interim provisional thresholds 1.7406 / 24.6334 / 13.2893 skill units, from provisional mce 1.1604 / 16.4223 / 8.8595) OR (F2) the best stack arm fails to beat its own front-end-matched `emul_only` arm by >= 1.5x that same effect on all three of those datasets - disjunctive and independently reportable, because round-2's conjunctive clause let a decisive sub-failure pass as \"confirmed\".",
-      "pfc_void": "Under adr_r3_0004_addendum sharp__phase_field_crystal_2d is report-only and its threshold is VOID for claim purposes; pfc is absent from recipe.datasets and no pfc cell was produced. Both clauses are therefore adjudicated over the surviving set {sharp__cahn_hilliard, sharp__allen_cahn_2d}: F1's 'at least 2 of' requires BOTH, F2's 'on all three' requires BOTH.",
-      "F1_reach": {
-        "seed0_verdict": "DOES NOT FIRE (H not falsified by F1) -- i.e. the reach effect is present and beyond threshold on both surviving datasets",
+    "cratered_detail": "Carried from the seed-0 invocation (the cratered rule is a seed-0 gate only). It remains satisfied on the full 3-seed data: all three jobs COMPLETED exit 0:0 with empty .err, and the 3-seed mean 12.9556 (worst seed 17.8277) is far below the cratered line 51.6297 = CRATERED_SKILL_FACTOR 1.5 x anchor 34.4198.",
+    "falsification_verdict": "falsified",
+    "falsification_detail": {
+      "clause_verbatim": "H \u2014 *\"the round-2 stacking ceiling was caused by the realised IC being absent from the condition vector, so under the completeness-repaired panel an exact zero-parameter IC-synthesis front end reaches field structure the FiLM-only path cannot, and a realisation-faithful pseudo-LF restores the defect corrector's value\"* \u2014 is FALSIFIED if **(F1)** `E1/emul_only` fails to beat `E0/emul_only` by >= 1.5x the in-force per-dataset `min_claimable_effect` on at least 2 of {`sharp__cahn_hilliard`, `sharp__allen_cahn_2d`, `sharp__phase_field_crystal_2d`} (interim provisional thresholds **1.7406 / 24.6334 / 13.2893** skill units, from provisional mce 1.1604 / 16.4223 / 8.8595) **OR (F2)** the best stack arm fails to beat its own front-end-matched `emul_only` arm by >= 1.5x that same effect on all three of those datasets \u2014 disjunctive and independently reportable, because round-2's conjunctive clause let a decisive sub-failure pass as \"confirmed\".",
+      "verdict": "H is FALSIFIED. The clause is disjunctive: F2 FIRES decisively on the 3-seed data; F1 does NOT fire. Both legs are reported independently as the clause requires.",
+      "pfc_void": "Under adr_r3_0004_addendum sharp__phase_field_crystal_2d is report-only and its 13.2893 threshold is VOID for claim purposes; no pfc cell was produced. Both legs are adjudicated over the surviving set {sharp__cahn_hilliard, sharp__allen_cahn_2d}: F1's 'at least 2 of' requires BOTH, F2's 'on all three' requires BOTH.",
+      "F1_reach_leg": {
+        "verdict": "DOES NOT FIRE -- the reach effect is present and beyond threshold on both surviving datasets, on the 3-seed mean AND on every individual seed AND with the whole bootstrap interval above the threshold.",
         "sharp__cahn_hilliard": {
-          "E0_emul_only_skill": 11.2875,
-          "E1_emul_only_skill": 8.4304,
-          "improvement_skill_units": 2.8572,
-          "card_threshold": 1.7406,
-          "beats_threshold": true,
-          "rescaled_threshold": 1.7405,
-          "beats_rescaled": true,
-          "x_mce": 2.46
+          "E0_emul_only_per_seed_skill": [
+            11.28752503217953,
+            11.344877729979231,
+            10.647828648775144
+          ],
+          "E1_emul_only_per_seed_skill": [
+            8.430352877967854,
+            8.626320135102413,
+            8.776223834446935
+          ],
+          "improvement_per_seed": [
+            2.8571721542116766,
+            2.7185575948768186,
+            1.8716048143282098
+          ],
+          "mean_improvement": 2.482444854472235,
+          "ci95": [
+            1.8716048143282098,
+            2.8571721542116766
+          ],
+          "threshold_1p5mce": 1.7406,
+          "beats_threshold_on_mean": true,
+          "beats_threshold_on_every_seed": true,
+          "ci_lower_beats_threshold": true,
+          "x_mce": 2.14
         },
         "sharp__allen_cahn_2d": {
-          "E0_emul_only_skill": 228.4117,
-          "E1_emul_only_skill": 86.5706,
-          "improvement_skill_units": 141.8411,
-          "card_threshold": 24.6334,
-          "beats_threshold": true,
-          "rescaled_threshold": 19.2165,
-          "beats_rescaled": true,
-          "x_mce": 8.64
+          "E0_emul_only_per_seed_skill": [
+            228.41172234195136,
+            227.48665568885565,
+            235.89655991736723
+          ],
+          "E1_emul_only_per_seed_skill": [
+            86.57064636815262,
+            83.33701533505383,
+            81.2334501648766
+          ],
+          "improvement_per_seed": [
+            141.84107597379875,
+            144.14964035380183,
+            154.66310975249064
+          ],
+          "mean_improvement": 146.88460869336373,
+          "ci95": [
+            141.84107597379875,
+            154.66310975249064
+          ],
+          "threshold_1p5mce_card": 24.6334,
+          "threshold_1p5mce_denominator_rescaled": 19.216457011561637,
+          "beats_threshold_on_mean": true,
+          "beats_threshold_on_every_seed": true,
+          "ci_lower_beats_threshold": true,
+          "x_mce": 8.94
         },
         "sharp__phase_field_crystal_2d": "VOID (ADR r3-0004; cell not produced)",
-        "off_clause_datasets": {
-          "sharp__fisher_kpp_2d": "E0_emul_only 214.2886 -> E1_emul_only 30.1521, improvement 184.1365 skill units; that is 1.16x the fk mce 158.3322 but only 0.78x the 1.5x threshold 237.4982. fk is NOT in the F1 clause and the card itself flags fk as undecidable by construction (its mce is ~79% of the cell's own value).",
-          "ifc_poisson / ifc_heat": "exactly 0.0 by construction (ic_synth not applicable; E1 aliases E0)."
+        "off_clause": {
+          "sharp__fisher_kpp_2d": "E0_emul_only [214.2886, 189.8083, 201.7515] -> E1_emul_only [30.1521, 29.5786, 28.5505]; improvement mean 172.5224 [160.2297, 184.1365]. That is 1.09x the fk mce 158.3322 but only 0.73x the 1.5x threshold 237.4983. NOT in the F1 clause and flagged undecidable by construction on this cell.",
+          "ifc_poisson / ifc_heat": "exactly 0.0 on every seed by construction (no ic_* dims; E1 aliases E0 -- verified identical arm values)."
         },
-        "zero_information_null_check": "E1n_emul_only (row-shuffled IC coefficients, derangement gate V9 pass, 0 fixed points) is WORSE than E0_emul_only on every applicable cell -- ch 27.9481 vs 11.2875, ac 374.3255 vs 228.4117, fk 254.1473 vs 214.2886. The IC channel's gain therefore cannot be attributed to the extra input channel or to added capacity; the shuffled channel actively harms."
+        "zero_information_null": "E1n_emul_only (row-shuffled IC coefficients, V9 derangement gate passes, 0 fixed points) is WORSE than E0_emul_only on every applicable cell and every seed -- ac [374.3255, 373.3617, 372.3581] vs [228.4117, 227.4867, 235.8966]; ch [27.9481, 26.9868, 28.5246] vs [11.2875, 11.3449, 10.6478]; fk [254.1473, 253.9009, 256.5794] vs [214.2886, 189.8083, 201.7515]. The reach effect is therefore attributable to IC INFORMATION, not to the extra input channel."
       },
-      "F2_corrector_value": {
-        "seed0_verdict": "FIRES (H falsified by F2) -- the corrector earns essentially nothing on both surviving datasets, on either front end",
-        "definition_used": "best stack arm = the lowest-skill arm among {frozen, finetuned, end_to_end} on the same front end; improvement = emul_only skill - best stack arm skill.",
-        "sharp__cahn_hilliard": {
-          "E0": {
-            "best_arm": "E0_frozen",
-            "improvement_skill_units": 0.006147,
-            "threshold": 1.7406,
-            "beats": false
+      "F2_corrector_leg": {
+        "verdict": "FIRES on both surviving datasets, on both front ends, on the 3-seed mean and on every seed -- H is falsified by F2.",
+        "definition_used": "best stack arm = the best of {frozen, finetuned, end_to_end} within each front end; reported both as best-by-that-dataset's-skill and as the max improvement over all three stack arms, so the leg cannot pass on an arm-selection technicality.",
+        "E1_front_end": {
+          "sharp__cahn_hilliard": {
+            "emul_only_per_seed": [
+              8.430352877967854,
+              8.626320135102413,
+              8.776223834446935
+            ],
+            "best_stack_arm": "E1_finetuned",
+            "max_improvement_over_all_stack_arms_mean": 0.010694752597342946,
+            "improvement_per_seed_best_arm": [
+              0.007356280032009721,
+              0.008037501435973482,
+              0.016690476324045633
+            ],
+            "threshold_1p5mce": 1.7406,
+            "fires": true,
+            "shortfall_factor": "163x below threshold; also 108x below 1 mce (1.1604) -- the corrector effect is NOT RESOLVABLE"
           },
-          "E1": {
-            "best_arm": "E1_frozen",
-            "improvement_skill_units": 0.007528,
+          "sharp__allen_cahn_2d": {
+            "emul_only_per_seed": [
+              86.57064636815262,
+              83.33701533505383,
+              81.2334501648766
+            ],
+            "best_stack_arm": "E1_finetuned",
+            "max_improvement_over_all_stack_arms_mean": 1.7594839309844492,
+            "improvement_per_seed_best_arm": [
+              1.0478817288705926,
+              2.1753212935135338,
+              2.0552487705692215
+            ],
+            "threshold_1p5mce_card": 24.6334,
+            "threshold_1p5mce_denominator_rescaled": 19.216457011561637,
+            "fires": true,
+            "shortfall_factor": "14.0x below the card threshold (10.9x below the rescaled one); also 9.3x below 1 mce (16.4223, rescaled 12.8110) -- NOT RESOLVABLE"
+          },
+          "scored_arm_specifically": "E1_frozen (the scored arm) improves on E1_emul_only by only 0.0081 [0.0075, 0.0087] on ch and 0.1170 [0.1140, 0.1206] on ac; E1_end_to_end is NEGATIVE on ch (-0.0075)."
+        },
+        "E0_front_end": {
+          "sharp__cahn_hilliard": {
+            "best_stack_arm": "E0_frozen",
+            "max_improvement_mean": 0.0055951589450652746,
+            "improvement_per_seed": [
+              0.006147204311917065,
+              0.005261864761799018,
+              0.00537640776147974
+            ],
             "threshold": 1.7406,
-            "beats": false
+            "fires": true
+          },
+          "sharp__allen_cahn_2d": {
+            "best_stack_arm": "E0_finetuned",
+            "max_improvement_mean": 0.1301589482390284,
+            "improvement_per_seed": [
+              0.19259144637507575,
+              0.0,
+              0.19788539834200947
+            ],
+            "threshold_card": 24.6334,
+            "threshold_rescaled": 19.216457011561637,
+            "fires": true
           }
         },
-        "sharp__allen_cahn_2d": {
-          "E0": {
-            "best_arm": "E0_finetuned",
-            "improvement_skill_units": 0.192591,
-            "threshold": 24.6334,
-            "beats": false
-          },
-          "E1": {
-            "best_arm": "E1_finetuned",
-            "improvement_skill_units": 1.047882,
-            "threshold": 24.6334,
-            "beats": false
-          }
-        },
-        "sharp__phase_field_crystal_2d": "VOID (ADR r3-0004)",
-        "round2_replication": "The E0 corrector value on cahn_hilliard is 0.006147 skill units against round 2's recorded 0.0061 -- the round-2 null replicates to 3 significant figures under the repaired denominators and the 1.5x budget.",
-        "off_clause_exception": "ifc_poisson is the one cell where the corrector is worth a lot: F2_corrector_value = +83.868 skill units (E0_emul_only 87.6152 -> E0_frozen 4.1060). ifc is NOT in the F2 clause. And the value is not attributable to the trained corrector: the training-free zero-gradient ladder S3 reaches test nRMSE 0.104857 (skill 2.913) on the SAME pseudo-LF intermediate with a single scalar gain a*=0.2331, beating the trained arm's 0.147816 (skill 4.106).",
-        "pre_registration_note": "Part 4 pre-registered this outcome verbatim: 'I honestly expect the round-2 null to replicate (best arm minus its own emul_only under 1 mce everywhere; round 2 measured 0.0061 on ch) -- i.e. F2 firing is the modal outcome, and that is a certified negative with a mechanism, which round-3 success criterion 1 counts as a result.' The seed-0 data matches that prediction."
+        "round2_null_replicates": "Round 2 measured the corrector worth 0.0061 skill units on ch; this card's E0 replay arm measures 0.0056 [0.0053, 0.0061] on ch across 3 fresh seeds. The pre-registered modal outcome of part 4 ('F2 firing is the modal outcome, and that is a certified negative with a mechanism') is exactly what happened."
       },
-      "net_seed0_reading": "The two clauses are disjunctive by design, so on the seed-0 data H as a whole reads FALSIFIED (via F2 alone) while its reach half (F1) reads CONFIRMED and beyond the provisional noise floor on both surviving datasets. Attribution: the entire panel gain comes from the ZERO-PARAMETER analytic IC-synthesis front end (stage 1), not from the learned corrector (stage 2). Binding verdict deferred to the 3-seed invocation."
+      "resolvability_cross_check": "Cross-checked against state/anchors_repaired/noise_floor.json (PROVISIONAL). F1's effects are 2.1x-8.9x their own 1.5-mce thresholds, i.e. comfortably resolvable. F2 fires precisely BECAUSE the corrector effect sits 9x-163x BELOW one mce on both clause datasets -- so F2's firing is the 'not resolvable' finding stated as a falsification, not a measured harm. Whether the F1 reach effect can be CLAIMED (round-3 success criterion 1) still waits on r3s4 certifying the mce on the repaired panel.",
+      "clause_verbatim_note": "Copied byte-exact from the card's locked `expected_falsification` field. (An ASCII-normalised transcription was replaced to keep the quote literally verbatim.)"
     },
-    "e0_replication_check": {
-      "flag": "BUDGET-REPAIRED REPLAY, NOT A BYTE REPLAY (card build_notes[14], review_notes attempt-2 STANDING item): under R3S2_BUDGET_MATCH=arm_equal_total every stage-2 arm spends E_emu + 2*E_dc = 300 optimizer epochs against round-2's E_emu + E_dc = 200, a 1.5x budget change asserted by gate V11. Part 4's '27.5068' expectation is therefore a replication check ACROSS that budget change and must never be reported as an unqualified replication.",
-      "comparand_note": "Part 4's 27.5068 is the pre-ADR-r3-0004 SIX-dataset number. The live 5-dataset re-aggregation of the same certified card in state/anchors/launch_anchors.json is r2s2_stacked-B1 mean 24.728, per-seed geomeans [21.1369, 19.1762, 33.8708], ci95 [15.6996, 33.7564].",
-      "E0_frozen_5ds_geomean_seed0": 20.4331,
-      "inside_r2s2_B1_seed_band": true,
-      "inside_r2s2_B1_ci95": true,
-      "per_dataset_E0_frozen_vs_r2s2_B1_3seed_mean": {
+    "closed_form_price_check": {
+      "why": "Card part 3 requires the training-free zero-gradient stage ladder (sidecar S3, built on the same pseudo-LF test intermediate) be priced FIRST; a trained stage that does not beat it earned nothing.",
+      "per_dataset_best_ladder_nrmse_vs_scored_arm_nrmse": {
         "sharp__allen_cahn_2d": {
-          "this_card": 228.5097,
-          "r2s2_B1": 231.7681,
-          "ratio": 0.9859
+          "ladder": [
+            0.17828,
+            0.171621,
+            0.167289
+          ],
+          "trained": [
+            0.178045,
+            0.171381,
+            0.16704
+          ],
+          "ratio_trained_over_ladder": [
+            0.9987,
+            0.9986,
+            0.9985
+          ]
         },
         "sharp__fisher_kpp_2d": {
-          "this_card": 214.3671,
-          "r2s2_B1": 201.7014,
-          "ratio": 1.0628
+          "ladder": [
+            0.004983,
+            0.004888,
+            0.004718
+          ],
+          "trained": [
+            0.004987,
+            0.004892,
+            0.004721
+          ],
+          "ratio_trained_over_ladder": [
+            1.0009,
+            1.0008,
+            1.0008
+          ]
         },
         "sharp__cahn_hilliard": {
-          "this_card": 11.2814,
-          "r2s2_B1": 11.0948,
-          "ratio": 1.0168
+          "ladder": [
+            0.352414,
+            0.360606,
+            0.366362
+          ],
+          "trained": [
+            0.352099,
+            0.360271,
+            0.366508
+          ],
+          "ratio_trained_over_ladder": [
+            0.9991,
+            0.9991,
+            1.0004
+          ]
         },
         "ifc_poisson": {
-          "this_card": 4.106,
-          "r2s2_B1": 21.1396,
-          "ratio": 0.1942
+          "ladder": [
+            0.104857,
+            0.076393,
+            0.171145
+          ],
+          "trained": [
+            0.147816,
+            0.125032,
+            2.040934
+          ],
+          "ratio_trained_over_ladder": [
+            1.4097,
+            1.6367,
+            11.9252
+          ],
+          "ladder_stage": "S1_gain (single calib-selected scalar gain) on all 3 seeds"
         },
         "ifc_heat": {
-          "this_card": 1.5697,
-          "r2s2_B1": 1.5737,
-          "ratio": 0.9975
+          "ladder": [
+            0.117214,
+            0.118416,
+            0.116703
+          ],
+          "trained": [
+            0.116161,
+            0.117354,
+            0.115683
+          ],
+          "ratio_trained_over_ladder": [
+            0.991,
+            0.991,
+            0.9913
+          ]
         }
       },
-      "reading": "Four of five cells replicate within 6%; ifc_poisson is 5.1x better than the round-2 record. That cell's data changed between the rounds (repaired nested ladder, adopted 2026-08-05), so the departure is a denominator/data effect, not a model effect, and no cross-round comparison may be made on it without the honest-denominator flag."
+      "caveat": "The 'ladder' row is the MINIMUM over stages S0-S5 chosen on TEST nRMSE, i.e. an oracle-over-stages read (each individual stage is training-free and calib-selected, but the choice among them here is not). On ac/fk/ch/ifc_heat the choice is moot -- every stage collapses to S0_raw to 4 decimals, so the comparison is honest there. On ifc_poisson the named single estimator S1_gain (not an oracle pick) beats the trained arm on all 3 seeds.",
+      "reading": "The trained stage 2 earns nothing anywhere on all 3 seeds (0.1-0.9% either side of the closed form on the four stable cells) and LOSES to a one-scalar closed form on ifc_poisson by 1.41x / 1.64x / 11.93x. This replicates the seed-0 finding on 3 seeds."
     },
     "guard_flags": [],
     "guard_detail": {
-      "run": "in-job SEPARATE score_panel.py --datasets guard invocation at SMOKE tier (epochs 200, seed 0) -- stricter than the contract-tier check my own \u00a72d prescribes, so no re-run was needed. Source: result_guard_s0.json.",
+      "run": "in-job SEPARATE score_panel.py --datasets guard invocation at SMOKE tier (epochs 200, seed 0) -- STRICTER than the contract-tier check the analyzer protocol prescribes for a panel win, so no re-run was performed. Source: result_guard_s0.json (same code_hash and nrmse_def_hash as the three scored runs). Guard was run at seed 0 only, per the card's recipe.",
       "guard_geomean_skill": 0.2423736559468944,
       "per_dataset": {
         "heat_local": {
           "nRMSE": 0.0010473862820661308,
-          "skill": 0.4361344488900768,
-          "copylf_reference_nrmse": 0.00240152155999517,
+          "recorded_guard_reference_nrmse": 0.00240152155999517,
           "ratio_model_over_reference": 0.4361344488900768,
           "regressed_more_than_2x": false
         },
         "fluid": {
           "nRMSE": 0.06926115759527078,
-          "skill": 0.31762492182992724,
-          "copylf_reference_nrmse": 0.21805958171115042,
+          "recorded_guard_reference_nrmse": 0.21805958171115042,
           "ratio_model_over_reference": 0.31762492182992724,
           "regressed_more_than_2x": false
         },
         "sharp__sod_1d": {
           "nRMSE": 0.003401107524693309,
-          "skill": 0.10278299738422371,
-          "copylf_reference_nrmse": 0.0330901765,
-          "ratio_model_over_reference": 0.10278299738574405,
+          "recorded_guard_reference_nrmse": 0.03309017650048946,
+          "ratio_model_over_reference": 0.10278299738422371,
           "regressed_more_than_2x": false
         }
       },
-      "verdict": "NO guard dataset regressed. All three beat their recorded copy-LF guard reference outright (ratios 0.10-0.44, i.e. 2.3-9.7x BETTER than copy-LF), far from the >2x regression flag."
+      "verdict": "NO guard dataset regressed. References re-verified against round2/eval/copylf_baselines.json (test_nrmse column) at analysis time; all three ratios 0.10-0.44, i.e. 2.3-9.7x BETTER than copy-LF and far from the >2x regression flag."
     },
     "anomalies": [
-      "ifc_poisson emulator blow-up: E0/E1_emul_only test nRMSE 3.154146 (skill 87.6152) -- the condition->pseudo-LF emulator is 3.15x WORSE than the zero field on this cell. The stage-2 corrector fit on real LF rescues it to 0.147816 (skill 4.1060). The ifc cells are extreme small-sample (n_hf_train 5, S3 n_fit 3, n_calib 1, S1/S2 sidecar n=2), so this cell's arm contrasts are fragile.",
-      "The trained stage-2 earns nothing anywhere, and on ifc_poisson it LOSES to the closed form: the training-free zero-gradient stage ladder (sidecar S3, built on the same pseudo-LF test intermediate) reaches 0.104857 with a single scalar gain a*=0.2331 vs the scored trained arm's 0.147816. On ac (S3 best 0.178280 vs E1_frozen 0.178045), ch (0.352414 vs 0.352099), fk (0.0049825 vs 0.0049872 -- closed form slightly BETTER) and ifc_heat (0.117214 vs 0.116161) the trained and closed-form numbers are indistinguishable. Card part 3 requires the closed form be priced first; it is not beaten.",
-      "Both ifc cells lose their mandatory affine_on_hf_train floor (program.md \u00a72 affine-floor rule): ifc_poisson model 4.1060 vs floor 1.5938; ifc_heat model 1.5697 vs floor 0.9584. ifc_heat additionally loses its nn_condition floor (1.3941). Exactly as part 4 pre-registered. No ifc claim is available from this card.",
-      "state/anchors_repaired/noise_floor.json has NO ifc_heat entry, so ifc_heat effects cannot be checked against a certified mce at all.",
-      "noise_floor.json allen_cahn mce 16.4223 was computed against the PRE-TRIM ac denominator (0.0016065; current 0.00205936 after ADR r3-0003). The card's ac threshold 24.6334 is therefore in stale skill units; denominator-rescaled it is 19.2165. F1's ac verdict is unchanged either way (effect 141.8411).",
-      "Pairing gate did NOT fire: the job completed with exit 0:0 and an empty .err. Per review_notes the gate RAISES and would have presented as a job crash; max|dX| = 0.0 on all 5 scored and all 3 guard cells, paired_real_lf true everywhere, cell_is_pairing_valid true everywhere -- so the all-6 vs pairing-valid-subset geomean distinction is moot (the subsets coincide).",
-      "All 11 validity gates PASS on all 8 cells (V1, V2 no-test-LF, V3 frozen-corrector sha match, V4, V6, V6b, V7 upsampler 4.4e-16, V8 IC equivalence 2.2e-15 <= 1e-12, V9 derangement 0 fixed points, V10 IC channel live/recorded-fallback, V11 arm-equal-total budget).",
-      "cahn_hilliard remains outlier-dominated: pooled test nRMSE 0.591569 vs per-sample mean 0.352099 (std 0.440), a 1.68x gap. score_panel scores metric_source=per_sample_mean, so the published cell is the mean-of-per-sample number; the standing ch outlier caveat applies.",
-      "allen_cahn test n=78 confirms the ADR r3-0003 task-void trim landed in the scored data.",
-      "S5 ic_cos (IC field vs HF field at readout, train rows, vs shuffled null): ac |cos| 0.2700 vs null 0.0736; fk 0.4478 vs 0.0550; ch 0.3439 vs 0.2378 -- the ch margin over its own null is much narrower than ac/fk, which is the natural place to probe why ch's F1 gain (2.86 units) is an order of magnitude smaller in mce terms than ac's.",
-      "S4 centred-gamma stays directional-only per the r2s2-B2 stop-export: on every cell every band reads 'above_null' for both real LF and E1 pseudo-LF, but E1's band-4 gamma collapses (ac 0.110, fk 0.098, ch 0.119) against real LF's (ac 0.218, fk 0.262, ch 0.307) -- the pseudo-LF is missing the high-band content.",
-      "Resource note (not a defect): MaxRSS 5.07 GiB against --mem=64G requested, ~12.6x over-provisioned; 44m20s against --time 03:00:00."
+      "ifc_poisson SEED-2 STAGE-2 BLOW-UP (new at 3 seeds; the single largest source of panel spread): scored nRMSE 2.0409 (skill 56.6926) vs 0.1478 / 0.1250 on seeds 0-1. The condition->pseudo-LF emulator is seed-stable (E*_emul_only 87.6152 / 87.5763 / 87.9653), so all of the variance is in the trained stage 2. Present identically in the E0 replay arm (E1 aliases E0 on ifc by construction) and matching the round-2 record (r2s2_stacked-B1 ifc_poisson seed-2 instability). The training-free S1_gain closed form on the SAME intermediate is stable at 0.1711 that seed.",
+      "ifc_poisson emulator blow-up on every seed: E*_emul_only test nRMSE ~3.15 (skill ~87.6) -- the emulator is ~3.15x WORSE than the zero field on this cell; only the stage-2 fit on real LF rescues it, and unstably.",
+      "The trained stage 2 earns nothing on any seed (see closed_form_price_check) and loses to a single-scalar closed form on ifc_poisson every seed.",
+      "Both ifc cells lose their mandatory affine_on_hf_train floors on all 3 seeds (ifc_poisson 21.4239 mean vs 1.5938; ifc_heat 1.5730 vs 0.9584) and their nn_condition floors on the 3-seed mean. Exactly as part 4 pre-registered. No ifc claim is available from this card.",
+      "state/anchors_repaired/noise_floor.json has NO ifc_heat entry, so ifc_heat effects cannot be checked against a certified mce at all; and the whole file is PROVISIONAL pending r3s4.",
+      "noise_floor.json allen_cahn mce 16.4223 was computed against the PRE-TRIM ac denominator (0.0016065; current 0.00205936 after ADR r3-0003). Both the card threshold 24.6334 and the denominator-rescaled 19.2165 are reported; neither changes any verdict here.",
+      "At n=3 the percentile bootstrap interval equals [min, max] of the per-seed values. Every interval in this part is published with its per-seed values and must not be read as a sampling CI.",
+      "All 11 validity gates PASS on all 15 scored cells (5 datasets x 3 seeds): V1, V2 no-test-LF, V3 frozen-corrector sha, V4, V6, V6b paired_real_lf (max|dX| = 0.0 everywhere), V7 upsampler, V8 IC equivalence, V9 derangement, V10 IC channel, V11 arm-equal-total budget. V8/V9 are legitimately 'skipped: ic_synth not applicable' on the two ifc cells on all seeds. The pairing gate did not fire on any seed, so the all-cells vs pairing-valid-subset geomean distinction stays moot.",
+      "STALE-CHECKPOINT AUDIT CLEAN for this card: tools/stale_checkpoint_audit.py --root .../B1/training --pattern '*_e200_s*.json' --data-changed-after 2026-08-05T18:33 -> STALE 0/18 (train_seconds 12-672 s, resumed None, ckpt mtime == result mtime on every cell). This card's numbers are NOT touched by STOP-THE-LINE #2.",
+      "cahn_hilliard remains outlier-dominated and allen_cahn is on the trimmed test split (n=78); fisher_kpp's weak gap makes only floor-scale effects resolvable there."
     ],
     "wall_clock_per_seed_min": [
-      44.333
+      44.333,
+      36.55,
+      36.55
     ],
     "job_accounting": {
-      "seed": 0,
-      "job_id": 66832670,
-      "state": "COMPLETED",
-      "exit_code": "0:0",
-      "elapsed": "00:44:20",
-      "node": "hpc-sm-02-04",
-      "gpu": "NVIDIA H200",
-      "maxrss_kb": 5316544,
-      "reqmem": "64G",
-      "stderr_bytes": 0,
-      "log_scan": "no NaN / Inf / traceback / error / preemption / requeue / resume string anywhere in the .out; the only greps that hit were the literal env key R3S2_EMU_ERROR_SIDECAR. Start 2026-08-08 09:42:41 PDT, 'ALL DONE seed=0' 10:27:00 PDT.",
-      "per_cell_train_seconds": {
-        "sharp__allen_cahn_2d": 670.2422142028809,
-        "sharp__fisher_kpp_2d": 669.2412662506104,
-        "sharp__cahn_hilliard": 669.9731116294861,
-        "ifc_poisson": 13.629379987716675,
-        "ifc_heat": 12.28372073173523,
-        "heat_local": 312.75884652137756,
-        "fluid": 60.085986852645874,
-        "sharp__sod_1d": 73.37987208366394
-      }
+      "note": "SLURM job-ID space was reset after 2026-08-08; the 66xxxxxx IDs below still resolve in sacct and were re-queried at analysis time (2026-08-10).",
+      "seeds": [
+        {
+          "seed": 0,
+          "job_id": 66832670,
+          "state": "COMPLETED",
+          "exit_code": "0:0",
+          "elapsed": "00:44:20",
+          "node": "hpc-sm-02-04",
+          "maxrss_kb": 5316544,
+          "reqmem": "64G",
+          "start": "2026-08-08T09:42:40",
+          "end": "2026-08-08T10:27:00",
+          "stderr_bytes": 0
+        },
+        {
+          "seed": 1,
+          "job_id": 66928385,
+          "state": "COMPLETED",
+          "exit_code": "0:0",
+          "elapsed": "00:36:33",
+          "node": "hpc-sm-02-17",
+          "maxrss_kb": 5264656,
+          "reqmem": "64G",
+          "start": "2026-08-08T12:57:12",
+          "end": "2026-08-08T13:33:45",
+          "stderr_bytes": 0
+        },
+        {
+          "seed": 2,
+          "job_id": 66928386,
+          "state": "COMPLETED",
+          "exit_code": "0:0",
+          "elapsed": "00:36:33",
+          "node": "hpc-sm-02-17",
+          "maxrss_kb": 5314376,
+          "reqmem": "64G",
+          "start": "2026-08-08T12:57:12",
+          "end": "2026-08-08T13:33:45",
+          "stderr_bytes": 0
+        }
+      ],
+      "log_scan": "All three .out files scanned for NaN / Inf / traceback / error / preempt / requeue / resume: the ONLY hits on any seed are the literal env key R3S2_EMU_ERROR_SIDECAR (2 per log). All three .err files are 0 bytes. No preemption, no requeue, no resume on any seed."
     },
-    "standing_caveats_carried": "pfc report-only / scored cell task-void (ADR r3-0004) and absent from this batch; fisher_kpp weak fidelity gap (denominator caveat, mce ~79% of the cell value); allen_cahn trimmed test n=78; cahn_hilliard outlier domination; ifc_poisson exactly-affine condition->HF map; no cross-round comparison without the honest-denominator flag."
+    "e0_replication_check": {
+      "flag": "BUDGET-REPAIRED REPLAY, NOT A BYTE REPLAY (card build_notes[14], review_notes attempt-2 STANDING item): under R3S2_BUDGET_MATCH=arm_equal_total every stage-2 arm spends E_emu + 2*E_dc = 300 optimizer epochs against round-2's 200, a 1.5x budget change asserted by gate V11. Never report as an unqualified replication.",
+      "comparand": "state/anchors/launch_anchors.json::cards.r2s2_stacked-B1, CURRENT post-repair values (5-ds): mean 24.3501, per-seed [20.1366, 19.0429, 33.8708], ci95 [14.9993, 33.7009]. (The seed-0 invocation compared against the now-void pre-repair 24.728 / [21.1369, 19.1762, 33.8708].)",
+      "E0_frozen_3seed": {
+        "per_seed": [
+          20.4331,
+          19.3297,
+          33.9219
+        ],
+        "mean": 24.5616,
+        "ci95": [
+          19.3297,
+          33.9219
+        ]
+      },
+      "panel_ratio_vs_current_r2s2_B1": 1.0087,
+      "per_dataset_ratio_vs_current_r2s2_B1": {
+        "sharp__allen_cahn_2d": 0.9954,
+        "sharp__fisher_kpp_2d": 1.0015,
+        "sharp__cahn_hilliard": 0.9994,
+        "ifc_poisson": 1.0325,
+        "ifc_heat": 0.9995
+      },
+      "reading": "Against the REPAIRED anchor the replay is now excellent on ALL FIVE cells (ratios 0.995-1.033) and on the panel (24.5616 vs 24.3501, +0.9%), including a seed-for-seed match of the ifc_poisson seed-2 instability (33.9219 vs 33.8708). The seed-0 invocation's 'ifc_poisson 5.1x better than the round-2 record' finding was an artefact of the CONTAMINATED anchor and is withdrawn: the round-2 ifc_poisson mean was 20.7493 (fresh), not the stale value, and this card reproduces it. This is an independent, seed-resolved confirmation that the 2026-08-10 anchor repair landed correctly."
+    },
+    "standing_caveats_carried": "pfc report-only / scored cell task-void (ADR r3-0004) and absent from this batch; fisher_kpp weak fidelity gap (mce ~5.4x the model value); allen_cahn trimmed test n=78 and a stale-denominator mce; cahn_hilliard outlier domination; ifc_poisson exactly-affine condition->HF map and a seed-2 stage-2 instability; ifc_heat has no mce entry; all mce values PROVISIONAL pending r3s4; no cross-round comparison without the honest-denominator flag.",
+    "anchor_file_written": "state/anchors/r3s2_field_reach.json -- stream anchor ESTABLISHED at certified_3seed_panel_geomean 12.9556 [10.3180, 17.8277], superseding the training-free launch best-floor 34.4198 for this stream's cratered-rule comparisons. Mechanics only; not a claim (see the file's caveats).",
+    "seed0_invocation_superseded": {
+      "seeds_available": [
+        0
+      ],
+      "invocation": "seed-0 only (first of two invocations); 3-seed aggregation, bootstrap CIs and the binding falsification verdict are deferred to the ALL-3-SEEDS invocation.",
+      "source_result_jsons": {
+        "scored_panel_5ds": "mffp_autoresearch_outputs/round3/r3s2_field_reach/B1/eval/result_scored5_s0.json",
+        "guard": "mffp_autoresearch_outputs/round3/r3s2_field_reach/B1/eval/result_guard_s0.json",
+        "per_cell_result_jsons": "mffp_autoresearch_outputs/round3/r3s2_field_reach/B1/training/r3s2_stack_ic/{dataset}_e200_s0.json (8: 5 scored + 3 guard)",
+        "arm_sidecars": "mffp_autoresearch_outputs/round3/r3s2_field_reach/B1/eval/diag_{dataset}_e200_s0.json (8)",
+        "slurm_log": "mffp_autoresearch_outputs/round3/r3s2_field_reach/B1/slurm/r3-r3s2_field_reach-B1-s0_66832670.out"
+      },
+      "nrmse_def_hash": "d3d0ade9191c13bacc40702f3eb26ad290e01641cacee22a1d2233b74c035850",
+      "nrmse_def_hash_consistency": "VERIFIED identical across all 18 parsed JSONs (2 score_panel results, 8 per-cell results, 8 diag sidecars) and equal to _nrmse_def_hash in round2/eval/copylf_baselines.json. copylf_def_hash 9753ff24e856f595748492dec6cb6c215d748f97e8ec4a679b651f8846da907a identical in both score_panel results and equal to the baselines file. code_hash f521a811ef3bcbc797a029d22337001de46505cf4786972823a0780f1bdef216 identical across the scored and guard invocations.",
+      "scored_arm": "E1_frozen (pre-registered)",
+      "per_dataset": {
+        "sharp__allen_cahn_2d": {
+          "per_seed_nrmse": [
+            0.1780451597142817
+          ],
+          "per_seed_skill": [
+            86.45664955314616
+          ],
+          "mean_skill": 86.45664955314616,
+          "ci95": null,
+          "ci95_note": "null by construction: seeds_available=[0]; across-seed CI is not computable at n=1. The within-seed per-sample rel-L2 CI from the eval layer is published separately below.",
+          "reference_type": "copylf",
+          "reference_nrmse": 0.0020593576160366327,
+          "cached": false,
+          "split": "test_hf",
+          "metric_source": "per_sample_mean",
+          "n_test": 78,
+          "within_seed_per_sample_skill_ci95": [
+            78.95517688784658,
+            93.9829324733503
+          ],
+          "pooled_nrmse_for_contrast": 0.18831338039663112,
+          "floors_measured_in_job": {
+            "nn_condition": {
+              "nrmse": 0.9799593695877411,
+              "skill": 475.85682154308705
+            },
+            "train_mean": {
+              "nrmse": 1.0017020557264869,
+              "skill": 486.41481592416545
+            },
+            "zero": {
+              "nrmse": 1.0,
+              "skill": 485.58831754756847
+            },
+            "affine_on_hf_train": null
+          },
+          "scored_arm_beats_floor": {
+            "nn_condition": true,
+            "train_mean": true,
+            "zero": true
+          },
+          "ic_synth_applicable": true
+        },
+        "sharp__fisher_kpp_2d": {
+          "per_seed_nrmse": [
+            0.004987189267385295
+          ],
+          "per_seed_skill": [
+            30.180417788540442
+          ],
+          "mean_skill": 30.180417788540442,
+          "ci95": null,
+          "ci95_note": "null by construction: seeds_available=[0]; across-seed CI is not computable at n=1. The within-seed per-sample rel-L2 CI from the eval layer is published separately below.",
+          "reference_type": "copylf",
+          "reference_nrmse": 0.00016524586579046429,
+          "cached": false,
+          "split": "test_hf",
+          "metric_source": "per_sample_mean",
+          "n_test": 100,
+          "within_seed_per_sample_skill_ci95": [
+            24.56876114662017,
+            36.47449147741777
+          ],
+          "pooled_nrmse_for_contrast": 0.006741284443677577,
+          "floors_measured_in_job": {
+            "nn_condition": {
+              "nrmse": 0.06779736322524395,
+              "skill": 410.28175138258905
+            },
+            "train_mean": {
+              "nrmse": 0.0645618050684707,
+              "skill": 390.7014844797183
+            },
+            "zero": {
+              "nrmse": 1.0,
+              "skill": 6051.588614434832
+            },
+            "affine_on_hf_train": null
+          },
+          "scored_arm_beats_floor": {
+            "nn_condition": true,
+            "train_mean": true,
+            "zero": true
+          },
+          "ic_synth_applicable": true
+        },
+        "sharp__cahn_hilliard": {
+          "per_seed_nrmse": [
+            0.35209902947692484
+          ],
+          "per_seed_skill": [
+            8.422824767703473
+          ],
+          "mean_skill": 8.422824767703473,
+          "ci95": null,
+          "ci95_note": "null by construction: seeds_available=[0]; across-seed CI is not computable at n=1. The within-seed per-sample rel-L2 CI from the eval layer is published separately below.",
+          "reference_type": "copylf",
+          "reference_nrmse": 0.041802962686225575,
+          "cached": false,
+          "split": "test_hf",
+          "metric_source": "per_sample_mean",
+          "n_test": 100,
+          "within_seed_per_sample_skill_ci95": [
+            6.395776497443146,
+            10.539163895781899
+          ],
+          "pooled_nrmse_for_contrast": 0.591568695685219,
+          "floors_measured_in_job": {
+            "nn_condition": {
+              "nrmse": 0.9690069811741324,
+              "skill": 23.180342227117514
+            },
+            "train_mean": {
+              "nrmse": 1.001977490272036,
+              "skill": 23.96905448527446
+            },
+            "zero": {
+              "nrmse": 1.0,
+              "skill": 23.92174945843033
+            },
+            "affine_on_hf_train": null
+          },
+          "scored_arm_beats_floor": {
+            "nn_condition": true,
+            "train_mean": true,
+            "zero": true
+          },
+          "ic_synth_applicable": true
+        },
+        "ifc_poisson": {
+          "per_seed_nrmse": [
+            0.14781592067124033
+          ],
+          "per_seed_skill": [
+            4.105997796423343
+          ],
+          "mean_skill": 4.105997796423343,
+          "ci95": null,
+          "ci95_note": "null by construction: seeds_available=[0]; across-seed CI is not computable at n=1. The within-seed per-sample rel-L2 CI from the eval layer is published separately below.",
+          "reference_type": "paper_bar",
+          "reference_nrmse": 0.036,
+          "cached": false,
+          "split": "test_hf",
+          "metric_source": "per_sample_mean",
+          "n_test": 128,
+          "within_seed_per_sample_skill_ci95": [
+            3.81237363158324,
+            4.410546852465519
+          ],
+          "pooled_nrmse_for_contrast": 0.14758585032298913,
+          "floors_measured_in_job": {
+            "nn_condition": {
+              "nrmse": 0.2894722861810042,
+              "skill": 8.040896838361228
+            },
+            "train_mean": {
+              "nrmse": 0.32414872615981205,
+              "skill": 9.004131282217003
+            },
+            "zero": {
+              "nrmse": 1.0,
+              "skill": 27.77777777777778
+            },
+            "affine_on_hf_train": {
+              "nrmse": 0.057375492822121524,
+              "skill": 1.5937636895033758
+            }
+          },
+          "scored_arm_beats_floor": {
+            "affine_on_hf_train": false,
+            "nn_condition": true,
+            "train_mean": true,
+            "zero": true
+          },
+          "ic_synth_applicable": false
+        },
+        "ifc_heat": {
+          "per_seed_nrmse": [
+            0.11616123975718323
+          ],
+          "per_seed_skill": [
+            1.5697464832051788
+          ],
+          "mean_skill": 1.5697464832051788,
+          "ci95": null,
+          "ci95_note": "null by construction: seeds_available=[0]; across-seed CI is not computable at n=1. The within-seed per-sample rel-L2 CI from the eval layer is published separately below.",
+          "reference_type": "paper_bar",
+          "reference_nrmse": 0.074,
+          "cached": false,
+          "split": "test_hf",
+          "metric_source": "per_sample_mean",
+          "n_test": 128,
+          "within_seed_per_sample_skill_ci95": [
+            1.3838152344406922,
+            1.7638966093551778
+          ],
+          "pooled_nrmse_for_contrast": 0.1520890920123963,
+          "floors_measured_in_job": {
+            "nn_condition": {
+              "nrmse": 0.1031635708237208,
+              "skill": 1.3941023084286595
+            },
+            "train_mean": {
+              "nrmse": 0.13072869651694966,
+              "skill": 1.7666040069858062
+            },
+            "zero": {
+              "nrmse": 1.0,
+              "skill": 13.513513513513514
+            },
+            "affine_on_hf_train": {
+              "nrmse": 0.07091833937569547,
+              "skill": 0.9583559375093983
+            }
+          },
+          "scored_arm_beats_floor": {
+            "affine_on_hf_train": false,
+            "nn_condition": false,
+            "train_mean": true,
+            "zero": true
+          },
+          "ic_synth_applicable": false
+        }
+      },
+      "panel_geomean_skill": {
+        "per_seed": [
+          10.721262489424966
+        ],
+        "mean": 10.721262489424966,
+        "ci95": null,
+        "note": "5-dataset ADR r3-0004 scored panel (pfc report-only and NOT RUN: absent from recipe.datasets, so no pfc cell exists in this batch). Value read verbatim from result_scored5_s0.json::panel_geomean_skill; independently reproduced as the geomean of the 5 published cells to 1e-12. Across-seed CI null at n=1."
+      },
+      "arm_contrast_table_10_arms": {
+        "units": "per-arm nRMSE is read verbatim from diag_{ds}_e200_s0.json::arms.<arm>.nrmse; skill = nrmse / the cell's own copy-LF (or paper-bar) reference, the same reference score_panel.py used for the scored arm (reference recovered as nRMSE/skill from result_scored5_s0.json and cross-checked against diag floor_arms.reference.test_nrmse).",
+        "arms": {
+          "E0_emul_only": {
+            "sharp__allen_cahn_2d": {
+              "nrmse": 0.4703814199969422,
+              "skill": 228.41172234195136
+            },
+            "sharp__fisher_kpp_2d": {
+              "nrmse": 0.03541030737328368,
+              "skill": 214.2886129338013
+            },
+            "sharp__cahn_hilliard": {
+              "nrmse": 0.47185198774003806,
+              "skill": 11.28752503217953
+            },
+            "ifc_poisson": {
+              "nrmse": 3.1541462756948944,
+              "skill": 87.61517432485819
+            },
+            "ifc_heat": {
+              "nrmse": 0.11721377191953879,
+              "skill": 1.5839698908045783
+            },
+            "_geomean_skill_5ds": 37.751002757779865,
+            "_role": "round-2 replay internal floor; replication check vs certified r2s2-B1",
+            "_optimizer_epochs": 100
+          },
+          "E0_frozen": {
+            "sharp__allen_cahn_2d": {
+              "nrmse": 0.47058314271039964,
+              "skill": 228.5096765349903
+            },
+            "sharp__fisher_kpp_2d": {
+              "nrmse": 0.035423280164065575,
+              "skill": 214.36711892679446
+            },
+            "sharp__cahn_hilliard": {
+              "nrmse": 0.4715950163875624,
+              "skill": 11.281377827867614
+            },
+            "ifc_poisson": {
+              "nrmse": 0.14781592067124033,
+              "skill": 4.105997796423343
+            },
+            "ifc_heat": {
+              "nrmse": 0.1161612397571832,
+              "skill": 1.5697464832051786
+            },
+            "_geomean_skill_5ds": 20.43311731087989,
+            "_role": "pre-registered NULL arm (round-2 primary)",
+            "_optimizer_epochs": 300
+          },
+          "E0_finetuned": {
+            "sharp__allen_cahn_2d": {
+              "nrmse": 0.4699848053350662,
+              "skill": 228.21913089557628
+            },
+            "sharp__fisher_kpp_2d": {
+              "nrmse": 0.03529401987697942,
+              "skill": 213.58488884516532
+            },
+            "sharp__cahn_hilliard": {
+              "nrmse": 0.47185198774003806,
+              "skill": 11.28752503217953
+            },
+            "ifc_poisson": {
+              "nrmse": 0.1490548930181243,
+              "skill": 4.140413694947898
+            },
+            "ifc_heat": {
+              "nrmse": 0.116363744716184,
+              "skill": 1.5724830367051894
+            },
+            "_geomean_skill_5ds": 20.456446784382038,
+            "_role": "budget-matched shift estimator on the null front end",
+            "_optimizer_epochs": 300
+          },
+          "E0_end_to_end": {
+            "sharp__allen_cahn_2d": {
+              "nrmse": 0.47181018702337496,
+              "skill": 229.1055149184843
+            },
+            "sharp__fisher_kpp_2d": {
+              "nrmse": 0.03535769691425985,
+              "skill": 213.9702360789725
+            },
+            "sharp__cahn_hilliard": {
+              "nrmse": 0.4828024156217902,
+              "skill": 11.549478424429415
+            },
+            "ifc_poisson": {
+              "nrmse": 0.13489477934364258,
+              "skill": 3.747077203990072
+            },
+            "ifc_heat": {
+              "nrmse": 0.11725608567720591,
+              "skill": 1.5845416983406204
+            },
+            "_geomean_skill_5ds": 20.198053535937465,
+            "_role": "two-stage vs end-to-end on the null front end",
+            "_optimizer_epochs": 300
+          },
+          "E1_emul_only": {
+            "sharp__allen_cahn_2d": {
+              "nrmse": 0.17827991992346917,
+              "skill": 86.57064636815262
+            },
+            "sharp__fisher_kpp_2d": {
+              "nrmse": 0.004982505128961716,
+              "skill": 30.15207130978788
+            },
+            "sharp__cahn_hilliard": {
+              "nrmse": 0.3524137267894046,
+              "skill": 8.430352877967854
+            },
+            "ifc_poisson": {
+              "nrmse": 3.1541462756948944,
+              "skill": 87.61517432485819
+            },
+            "ifc_heat": {
+              "nrmse": 0.11721377191953879,
+              "skill": 1.5839698908045783
+            },
+            "_geomean_skill_5ds": 19.81399108952269,
+            "_role": "PRIMARY CONTRAST vs E0_emul_only (clause F1)",
+            "_optimizer_epochs": 100
+          },
+          "E1_frozen": {
+            "sharp__allen_cahn_2d": {
+              "nrmse": 0.17804515971428167,
+              "skill": 86.45664955314615
+            },
+            "sharp__fisher_kpp_2d": {
+              "nrmse": 0.004987189267385297,
+              "skill": 30.180417788540453
+            },
+            "sharp__cahn_hilliard": {
+              "nrmse": 0.3520990294769249,
+              "skill": 8.422824767703473
+            },
+            "ifc_poisson": {
+              "nrmse": 0.14781592067124033,
+              "skill": 4.105997796423343
+            },
+            "ifc_heat": {
+              "nrmse": 0.1161612397571832,
+              "skill": 1.5697464832051786
+            },
+            "_geomean_skill_5ds": 10.72126248942496,
+            "_role": "SCORED ARM; pure pseudo-LF distribution-shift exposure",
+            "_optimizer_epochs": 300
+          },
+          "E1_finetuned": {
+            "sharp__allen_cahn_2d": {
+              "nrmse": 0.17612195670441386,
+              "skill": 85.52276463928203
+            },
+            "sharp__fisher_kpp_2d": {
+              "nrmse": 0.004978439492753749,
+              "skill": 30.127467752001305
+            },
+            "sharp__cahn_hilliard": {
+              "nrmse": 0.3521062124897171,
+              "skill": 8.422996597935844
+            },
+            "ifc_poisson": {
+              "nrmse": 0.1490548930181243,
+              "skill": 4.140413694947898
+            },
+            "ifc_heat": {
+              "nrmse": 0.116363744716184,
+              "skill": 1.5724830367051894
+            },
+            "_geomean_skill_5ds": 10.715887326942886,
+            "_role": "budget-matched shift estimator (frozen - finetuned)",
+            "_optimizer_epochs": 300
+          },
+          "E1_end_to_end": {
+            "sharp__allen_cahn_2d": {
+              "nrmse": 0.1801911488010186,
+              "skill": 87.49871678325019
+            },
+            "sharp__fisher_kpp_2d": {
+              "nrmse": 0.004903758246399278,
+              "skill": 29.67552757185079
+            },
+            "sharp__cahn_hilliard": {
+              "nrmse": 0.3529084650080621,
+              "skill": 8.44218788168209
+            },
+            "ifc_poisson": {
+              "nrmse": 0.13489477934364258,
+              "skill": 3.747077203990072
+            },
+            "ifc_heat": {
+              "nrmse": 0.11725608567720591,
+              "skill": 1.5845416983406204
+            },
+            "_geomean_skill_5ds": 10.541205789612386,
+            "_role": "two-stage vs end-to-end on the contrast front end",
+            "_optimizer_epochs": 300
+          },
+          "E1n_emul_only": {
+            "sharp__allen_cahn_2d": {
+              "nrmse": 0.7708700820184249,
+              "skill": 374.3255061750831
+            },
+            "sharp__fisher_kpp_2d": {
+              "nrmse": 0.04199679643047618,
+              "skill": 254.14733512140705
+            },
+            "sharp__cahn_hilliard": {
+              "nrmse": 1.1683113460883814,
+              "skill": 27.94805131056775
+            },
+            "ifc_poisson": {
+              "nrmse": 3.1541462756948944,
+              "skill": 87.61517432485819
+            },
+            "ifc_heat": {
+              "nrmse": 0.11721377191953879,
+              "skill": 1.5839698908045783
+            },
+            "_geomean_skill_5ds": 51.68952637627819,
+            "_role": "ZERO-INFORMATION NULL for the IC channel (row-shuffled coefficients)",
+            "_optimizer_epochs": 100
+          },
+          "condmean_lf": {
+            "sharp__allen_cahn_2d": {
+              "nrmse": 1.0017248524647069,
+              "skill": 486.4258857539233
+            },
+            "sharp__fisher_kpp_2d": {
+              "nrmse": 0.06388740042018151,
+              "skill": 386.62026498860956
+            },
+            "sharp__cahn_hilliard": {
+              "nrmse": 1.0020280550954146,
+              "skill": 23.97026408431073
+            },
+            "ifc_poisson": {
+              "nrmse": 0.3573823819278329,
+              "skill": 9.927288386884248
+            },
+            "ifc_heat": {
+              "nrmse": 0.1436761029340814,
+              "skill": 1.9415689585686675
+            },
+            "_geomean_skill_5ds": 38.707178380830555,
+            "_role": "ADR r2-0003 null; frozen - condmean_lf = value of the emulator",
+            "_optimizer_epochs": 300
+          }
+        },
+        "geomean_ranking_5ds": [
+          [
+            10.541205789612386,
+            "E1_end_to_end"
+          ],
+          [
+            10.715887326942886,
+            "E1_finetuned"
+          ],
+          [
+            10.72126248942496,
+            "E1_frozen"
+          ],
+          [
+            19.81399108952269,
+            "E1_emul_only"
+          ],
+          [
+            20.198053535937465,
+            "E0_end_to_end"
+          ],
+          [
+            20.43311731087989,
+            "E0_frozen"
+          ],
+          [
+            20.456446784382038,
+            "E0_finetuned"
+          ],
+          [
+            37.751002757779865,
+            "E0_emul_only"
+          ],
+          [
+            38.707178380830555,
+            "condmean_lf"
+          ],
+          [
+            51.68952637627819,
+            "E1n_emul_only"
+          ]
+        ],
+        "ic_synth_aliasing": "On ifc_poisson and ifc_heat meta.json carries no param_names, so ic_synth is not applicable and E1 / E1n alias the single E0 emulator BY RECORD (R3S2_IC_FALLBACK=film_only_recorded; gate V10 pass). Every E1-E0 difference on those two cells is exactly 0.0 by construction, not by measurement."
+      },
+      "vs_anchor": {
+        "anchor_source": "mffp_autoresearch/round3/state/anchors/launch_anchors.json (re-read at analysis time per adr_r3_0004_addendum); best_floor over the 5-dataset scored panel",
+        "anchor_value": 34.4198,
+        "delta": -23.6985,
+        "beyond_ci": null,
+        "beyond_ci_note": "Not adjudicable at n=1: no across-seed CI exists. The seed-0 point is 3.21x below the anchor and 4 of the 5 cells beat their own best training-free floor by 3.9-389 skill units, so the direction is unambiguous, but the CI test is the 3-seed invocation's job.",
+        "beyond_noise_floor": true,
+        "beyond_noise_floor_detail": {
+          "sharp__allen_cahn_2d": "model 86.4566 vs floor 475.8568 (nn_condition): -389.400, = 23.7x the noise-floor mce 16.4223 (30.4x the denominator-rescaled mce 12.8110)",
+          "sharp__fisher_kpp_2d": "model 30.1804 vs floor 390.7015 (train_mean): -360.521, = 2.28x mce 158.3322",
+          "sharp__cahn_hilliard": "model 8.4228 vs floor 23.1803 (nn_condition): -14.758, = 12.7x mce 1.1604",
+          "ifc_poisson": "model 4.1060 vs floor 8.0409 (nn_condition): -3.935, = 16.4x mce 0.2399 -- BUT the model LOSES to affine_on_hf_train (4.1060 vs 1.5938)",
+          "ifc_heat": "model 1.5697 vs floor 1.3941 (nn_condition): +0.176, the model LOSES this floor and also loses affine_on_hf_train (0.9584). NO mce entry for ifc_heat exists in state/anchors_repaired/noise_floor.json, so this cell is not floor-checkable."
+        },
+        "per_dataset_vs_best_floor": {
+          "sharp__allen_cahn_2d": {
+            "model_skill": 86.45664955314616,
+            "floor_arm": "nn_condition",
+            "floor_skill": 475.85682154308705,
+            "beats_floor": true
+          },
+          "sharp__fisher_kpp_2d": {
+            "model_skill": 30.180417788540442,
+            "floor_arm": "train_mean",
+            "floor_skill": 390.7014844797183,
+            "beats_floor": true
+          },
+          "sharp__cahn_hilliard": {
+            "model_skill": 8.422824767703473,
+            "floor_arm": "nn_condition",
+            "floor_skill": 23.180342227117514,
+            "beats_floor": true
+          },
+          "ifc_poisson": {
+            "model_skill": 4.105997796423343,
+            "floor_arm": "nn_condition",
+            "floor_skill": 8.040896838361228,
+            "beats_floor": true
+          },
+          "ifc_heat": {
+            "model_skill": 1.5697464832051788,
+            "floor_arm": "nn_condition",
+            "floor_skill": 1.3941023084286595,
+            "beats_floor": false
+          }
+        },
+        "also_vs_best_certified_round2_card": "r2s3_lf_train_signal-B3, 5-ds 3-seed mean 12.3288 (ci95 [11.9785, 12.679]); this card's seed-0 E1_frozen 10.7213 is below it, but that is a 1-seed vs 3-seed comparison and is NOT a claim.",
+        "noise_floor_provisional": "state/anchors_repaired/noise_floor.json is flagged _provisional: true (r3s4 re-certifies mce on the repaired panel). Its allen_cahn mce was computed against the PRE-TRIM ac denominator 0.0016065 (current 0.00205936), so the card's ac threshold 24.6334 is in stale skill units; denominator-rescaled it is 19.2165. Both readings give the same F1 verdict."
+      },
+      "cratered_verdict": "proceed_to_seeds_1_2",
+      "cratered_detail": "Job 66832670 COMPLETED, exit 0:0, empty .err, no crash. Panel geomean 10.7213 is far BELOW the cratered line 51.6297 (= CRATERED_SKILL_FACTOR 1.5 x anchor 34.4198); lower skill is better, so the card improves on the anchor by 3.21x rather than cratering. The falsification clause did not fire decisively against proceeding: F1 (the reach clause) does NOT fire on the seed-0 data, and F2 firing is the pre-registered modal outcome the card explicitly counts as a success-criterion result, not a crater. Pairing gate did not fire (see anomalies).",
+      "falsification_verdict": "pending_seeds",
+      "falsification_seed0_reading": {
+        "clause_verbatim": "H is FALSIFIED if (F1) `E1/emul_only` fails to beat `E0/emul_only` by >= 1.5x the in-force per-dataset `min_claimable_effect` on at least 2 of {`sharp__cahn_hilliard`, `sharp__allen_cahn_2d`, `sharp__phase_field_crystal_2d`} (interim provisional thresholds 1.7406 / 24.6334 / 13.2893 skill units, from provisional mce 1.1604 / 16.4223 / 8.8595) OR (F2) the best stack arm fails to beat its own front-end-matched `emul_only` arm by >= 1.5x that same effect on all three of those datasets - disjunctive and independently reportable, because round-2's conjunctive clause let a decisive sub-failure pass as \"confirmed\".",
+        "pfc_void": "Under adr_r3_0004_addendum sharp__phase_field_crystal_2d is report-only and its threshold is VOID for claim purposes; pfc is absent from recipe.datasets and no pfc cell was produced. Both clauses are therefore adjudicated over the surviving set {sharp__cahn_hilliard, sharp__allen_cahn_2d}: F1's 'at least 2 of' requires BOTH, F2's 'on all three' requires BOTH.",
+        "F1_reach": {
+          "seed0_verdict": "DOES NOT FIRE (H not falsified by F1) -- i.e. the reach effect is present and beyond threshold on both surviving datasets",
+          "sharp__cahn_hilliard": {
+            "E0_emul_only_skill": 11.2875,
+            "E1_emul_only_skill": 8.4304,
+            "improvement_skill_units": 2.8572,
+            "card_threshold": 1.7406,
+            "beats_threshold": true,
+            "rescaled_threshold": 1.7405,
+            "beats_rescaled": true,
+            "x_mce": 2.46
+          },
+          "sharp__allen_cahn_2d": {
+            "E0_emul_only_skill": 228.4117,
+            "E1_emul_only_skill": 86.5706,
+            "improvement_skill_units": 141.8411,
+            "card_threshold": 24.6334,
+            "beats_threshold": true,
+            "rescaled_threshold": 19.2165,
+            "beats_rescaled": true,
+            "x_mce": 8.64
+          },
+          "sharp__phase_field_crystal_2d": "VOID (ADR r3-0004; cell not produced)",
+          "off_clause_datasets": {
+            "sharp__fisher_kpp_2d": "E0_emul_only 214.2886 -> E1_emul_only 30.1521, improvement 184.1365 skill units; that is 1.16x the fk mce 158.3322 but only 0.78x the 1.5x threshold 237.4982. fk is NOT in the F1 clause and the card itself flags fk as undecidable by construction (its mce is ~79% of the cell's own value).",
+            "ifc_poisson / ifc_heat": "exactly 0.0 by construction (ic_synth not applicable; E1 aliases E0)."
+          },
+          "zero_information_null_check": "E1n_emul_only (row-shuffled IC coefficients, derangement gate V9 pass, 0 fixed points) is WORSE than E0_emul_only on every applicable cell -- ch 27.9481 vs 11.2875, ac 374.3255 vs 228.4117, fk 254.1473 vs 214.2886. The IC channel's gain therefore cannot be attributed to the extra input channel or to added capacity; the shuffled channel actively harms."
+        },
+        "F2_corrector_value": {
+          "seed0_verdict": "FIRES (H falsified by F2) -- the corrector earns essentially nothing on both surviving datasets, on either front end",
+          "definition_used": "best stack arm = the lowest-skill arm among {frozen, finetuned, end_to_end} on the same front end; improvement = emul_only skill - best stack arm skill.",
+          "sharp__cahn_hilliard": {
+            "E0": {
+              "best_arm": "E0_frozen",
+              "improvement_skill_units": 0.006147,
+              "threshold": 1.7406,
+              "beats": false
+            },
+            "E1": {
+              "best_arm": "E1_frozen",
+              "improvement_skill_units": 0.007528,
+              "threshold": 1.7406,
+              "beats": false
+            }
+          },
+          "sharp__allen_cahn_2d": {
+            "E0": {
+              "best_arm": "E0_finetuned",
+              "improvement_skill_units": 0.192591,
+              "threshold": 24.6334,
+              "beats": false
+            },
+            "E1": {
+              "best_arm": "E1_finetuned",
+              "improvement_skill_units": 1.047882,
+              "threshold": 24.6334,
+              "beats": false
+            }
+          },
+          "sharp__phase_field_crystal_2d": "VOID (ADR r3-0004)",
+          "round2_replication": "The E0 corrector value on cahn_hilliard is 0.006147 skill units against round 2's recorded 0.0061 -- the round-2 null replicates to 3 significant figures under the repaired denominators and the 1.5x budget.",
+          "off_clause_exception": "ifc_poisson is the one cell where the corrector is worth a lot: F2_corrector_value = +83.868 skill units (E0_emul_only 87.6152 -> E0_frozen 4.1060). ifc is NOT in the F2 clause. And the value is not attributable to the trained corrector: the training-free zero-gradient ladder S3 reaches test nRMSE 0.104857 (skill 2.913) on the SAME pseudo-LF intermediate with a single scalar gain a*=0.2331, beating the trained arm's 0.147816 (skill 4.106).",
+          "pre_registration_note": "Part 4 pre-registered this outcome verbatim: 'I honestly expect the round-2 null to replicate (best arm minus its own emul_only under 1 mce everywhere; round 2 measured 0.0061 on ch) -- i.e. F2 firing is the modal outcome, and that is a certified negative with a mechanism, which round-3 success criterion 1 counts as a result.' The seed-0 data matches that prediction."
+        },
+        "net_seed0_reading": "The two clauses are disjunctive by design, so on the seed-0 data H as a whole reads FALSIFIED (via F2 alone) while its reach half (F1) reads CONFIRMED and beyond the provisional noise floor on both surviving datasets. Attribution: the entire panel gain comes from the ZERO-PARAMETER analytic IC-synthesis front end (stage 1), not from the learned corrector (stage 2). Binding verdict deferred to the 3-seed invocation."
+      },
+      "e0_replication_check": {
+        "flag": "BUDGET-REPAIRED REPLAY, NOT A BYTE REPLAY (card build_notes[14], review_notes attempt-2 STANDING item): under R3S2_BUDGET_MATCH=arm_equal_total every stage-2 arm spends E_emu + 2*E_dc = 300 optimizer epochs against round-2's E_emu + E_dc = 200, a 1.5x budget change asserted by gate V11. Part 4's '27.5068' expectation is therefore a replication check ACROSS that budget change and must never be reported as an unqualified replication.",
+        "comparand_note": "Part 4's 27.5068 is the pre-ADR-r3-0004 SIX-dataset number. The live 5-dataset re-aggregation of the same certified card in state/anchors/launch_anchors.json is r2s2_stacked-B1 mean 24.728, per-seed geomeans [21.1369, 19.1762, 33.8708], ci95 [15.6996, 33.7564].",
+        "E0_frozen_5ds_geomean_seed0": 20.4331,
+        "inside_r2s2_B1_seed_band": true,
+        "inside_r2s2_B1_ci95": true,
+        "per_dataset_E0_frozen_vs_r2s2_B1_3seed_mean": {
+          "sharp__allen_cahn_2d": {
+            "this_card": 228.5097,
+            "r2s2_B1": 231.7681,
+            "ratio": 0.9859
+          },
+          "sharp__fisher_kpp_2d": {
+            "this_card": 214.3671,
+            "r2s2_B1": 201.7014,
+            "ratio": 1.0628
+          },
+          "sharp__cahn_hilliard": {
+            "this_card": 11.2814,
+            "r2s2_B1": 11.0948,
+            "ratio": 1.0168
+          },
+          "ifc_poisson": {
+            "this_card": 4.106,
+            "r2s2_B1": 21.1396,
+            "ratio": 0.1942
+          },
+          "ifc_heat": {
+            "this_card": 1.5697,
+            "r2s2_B1": 1.5737,
+            "ratio": 0.9975
+          }
+        },
+        "reading": "Four of five cells replicate within 6%; ifc_poisson is 5.1x better than the round-2 record. That cell's data changed between the rounds (repaired nested ladder, adopted 2026-08-05), so the departure is a denominator/data effect, not a model effect, and no cross-round comparison may be made on it without the honest-denominator flag."
+      },
+      "guard_flags": [],
+      "guard_detail": {
+        "run": "in-job SEPARATE score_panel.py --datasets guard invocation at SMOKE tier (epochs 200, seed 0) -- stricter than the contract-tier check my own \u00a72d prescribes, so no re-run was needed. Source: result_guard_s0.json.",
+        "guard_geomean_skill": 0.2423736559468944,
+        "per_dataset": {
+          "heat_local": {
+            "nRMSE": 0.0010473862820661308,
+            "skill": 0.4361344488900768,
+            "copylf_reference_nrmse": 0.00240152155999517,
+            "ratio_model_over_reference": 0.4361344488900768,
+            "regressed_more_than_2x": false
+          },
+          "fluid": {
+            "nRMSE": 0.06926115759527078,
+            "skill": 0.31762492182992724,
+            "copylf_reference_nrmse": 0.21805958171115042,
+            "ratio_model_over_reference": 0.31762492182992724,
+            "regressed_more_than_2x": false
+          },
+          "sharp__sod_1d": {
+            "nRMSE": 0.003401107524693309,
+            "skill": 0.10278299738422371,
+            "copylf_reference_nrmse": 0.0330901765,
+            "ratio_model_over_reference": 0.10278299738574405,
+            "regressed_more_than_2x": false
+          }
+        },
+        "verdict": "NO guard dataset regressed. All three beat their recorded copy-LF guard reference outright (ratios 0.10-0.44, i.e. 2.3-9.7x BETTER than copy-LF), far from the >2x regression flag."
+      },
+      "anomalies": [
+        "ifc_poisson emulator blow-up: E0/E1_emul_only test nRMSE 3.154146 (skill 87.6152) -- the condition->pseudo-LF emulator is 3.15x WORSE than the zero field on this cell. The stage-2 corrector fit on real LF rescues it to 0.147816 (skill 4.1060). The ifc cells are extreme small-sample (n_hf_train 5, S3 n_fit 3, n_calib 1, S1/S2 sidecar n=2), so this cell's arm contrasts are fragile.",
+        "The trained stage-2 earns nothing anywhere, and on ifc_poisson it LOSES to the closed form: the training-free zero-gradient stage ladder (sidecar S3, built on the same pseudo-LF test intermediate) reaches 0.104857 with a single scalar gain a*=0.2331 vs the scored trained arm's 0.147816. On ac (S3 best 0.178280 vs E1_frozen 0.178045), ch (0.352414 vs 0.352099), fk (0.0049825 vs 0.0049872 -- closed form slightly BETTER) and ifc_heat (0.117214 vs 0.116161) the trained and closed-form numbers are indistinguishable. Card part 3 requires the closed form be priced first; it is not beaten.",
+        "Both ifc cells lose their mandatory affine_on_hf_train floor (program.md \u00a72 affine-floor rule): ifc_poisson model 4.1060 vs floor 1.5938; ifc_heat model 1.5697 vs floor 0.9584. ifc_heat additionally loses its nn_condition floor (1.3941). Exactly as part 4 pre-registered. No ifc claim is available from this card.",
+        "state/anchors_repaired/noise_floor.json has NO ifc_heat entry, so ifc_heat effects cannot be checked against a certified mce at all.",
+        "noise_floor.json allen_cahn mce 16.4223 was computed against the PRE-TRIM ac denominator (0.0016065; current 0.00205936 after ADR r3-0003). The card's ac threshold 24.6334 is therefore in stale skill units; denominator-rescaled it is 19.2165. F1's ac verdict is unchanged either way (effect 141.8411).",
+        "Pairing gate did NOT fire: the job completed with exit 0:0 and an empty .err. Per review_notes the gate RAISES and would have presented as a job crash; max|dX| = 0.0 on all 5 scored and all 3 guard cells, paired_real_lf true everywhere, cell_is_pairing_valid true everywhere -- so the all-6 vs pairing-valid-subset geomean distinction is moot (the subsets coincide).",
+        "All 11 validity gates PASS on all 8 cells (V1, V2 no-test-LF, V3 frozen-corrector sha match, V4, V6, V6b, V7 upsampler 4.4e-16, V8 IC equivalence 2.2e-15 <= 1e-12, V9 derangement 0 fixed points, V10 IC channel live/recorded-fallback, V11 arm-equal-total budget).",
+        "cahn_hilliard remains outlier-dominated: pooled test nRMSE 0.591569 vs per-sample mean 0.352099 (std 0.440), a 1.68x gap. score_panel scores metric_source=per_sample_mean, so the published cell is the mean-of-per-sample number; the standing ch outlier caveat applies.",
+        "allen_cahn test n=78 confirms the ADR r3-0003 task-void trim landed in the scored data.",
+        "S5 ic_cos (IC field vs HF field at readout, train rows, vs shuffled null): ac |cos| 0.2700 vs null 0.0736; fk 0.4478 vs 0.0550; ch 0.3439 vs 0.2378 -- the ch margin over its own null is much narrower than ac/fk, which is the natural place to probe why ch's F1 gain (2.86 units) is an order of magnitude smaller in mce terms than ac's.",
+        "S4 centred-gamma stays directional-only per the r2s2-B2 stop-export: on every cell every band reads 'above_null' for both real LF and E1 pseudo-LF, but E1's band-4 gamma collapses (ac 0.110, fk 0.098, ch 0.119) against real LF's (ac 0.218, fk 0.262, ch 0.307) -- the pseudo-LF is missing the high-band content.",
+        "Resource note (not a defect): MaxRSS 5.07 GiB against --mem=64G requested, ~12.6x over-provisioned; 44m20s against --time 03:00:00."
+      ],
+      "wall_clock_per_seed_min": [
+        44.333
+      ],
+      "job_accounting": {
+        "seed": 0,
+        "job_id": 66832670,
+        "state": "COMPLETED",
+        "exit_code": "0:0",
+        "elapsed": "00:44:20",
+        "node": "hpc-sm-02-04",
+        "gpu": "NVIDIA H200",
+        "maxrss_kb": 5316544,
+        "reqmem": "64G",
+        "stderr_bytes": 0,
+        "log_scan": "no NaN / Inf / traceback / error / preemption / requeue / resume string anywhere in the .out; the only greps that hit were the literal env key R3S2_EMU_ERROR_SIDECAR. Start 2026-08-08 09:42:41 PDT, 'ALL DONE seed=0' 10:27:00 PDT.",
+        "per_cell_train_seconds": {
+          "sharp__allen_cahn_2d": 670.2422142028809,
+          "sharp__fisher_kpp_2d": 669.2412662506104,
+          "sharp__cahn_hilliard": 669.9731116294861,
+          "ifc_poisson": 13.629379987716675,
+          "ifc_heat": 12.28372073173523,
+          "heat_local": 312.75884652137756,
+          "fluid": 60.085986852645874,
+          "sharp__sod_1d": 73.37987208366394
+        }
+      },
+      "standing_caveats_carried": "pfc report-only / scored cell task-void (ADR r3-0004) and absent from this batch; fisher_kpp weak fidelity gap (denominator caveat, mce ~79% of the cell value); allen_cahn trimmed test n=78; cahn_hilliard outlier domination; ifc_poisson exactly-affine condition->HF map; no cross-round comparison without the honest-denominator flag."
+    }
   },
   "6_analysis": null,
   "7_gap_and_future": null,
