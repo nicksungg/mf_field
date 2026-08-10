@@ -1,6 +1,8 @@
-# ADR r3-0005 (PROPOSED): pfc scored cell re-pointed to L1 with a spectral reference
+# ADR r3-0005 (RATIFIED): pfc scored cell re-pointed to L1 with a spectral reference
 
-**Status: PROPOSED — requires operator (Eloise) AND mentor sign-off before execution.**
+**Status: RATIFIED 2026-08-10 — option A, by Eloise (operator, and deciding on behalf of the mentor per her 2026-08-10 instruction). Execution split in two phases (orchestrator sequencing decision, recorded in `state/orchestrator_flow.md`):**
+**Phase 1 (executed 2026-08-10): stripped view serves pfc fids {1, 3}** (`train_l2.npz` symlink removed, marker `SERVED_FIDS_ADR_r3-0005.md` in the stripped pfc dir; data-hash manifest unaffected — it binds the original arrays, which do not change).
+**Phase 2 (gated on ALL batch-2 SLURM compute landing): the `panel_data.copylf_prediction` spectral amendment + reference/floors recompute + pfc anchor re-scores + 6-dataset panel restoration.** Rationale for the gate: amending `panel_data.py` changes the global `copylf_def_hash`; executing mid-batch would give batch-2 cards mixed hashes across seeds (seed 0 already landed under the current hash), breaking their per-card seam assertions. No batch-2 clause touches pfc, so the deferral costs nothing.
 This ADR amends the frozen round-2 eval convention (ADR r2-0001) for one dataset; that layer was frozen precisely so rounds stay comparable, so the amendment is not an orchestrator-level decision.
 Prepared 2026-08-07 under ADR r3-0004 §4 (repair prepared in parallel; pfc is report-only until this is ratified).
 

@@ -1,5 +1,9 @@
 # Round-3 orchestrator decision log
 
+- **2026-08-10 — ADR r3-0005 RATIFIED (option A; Eloise, deciding for the mentor) — phase 1 executed, phase 2 gated.**
+  Phase 1 (done): stripped view serves pfc fids {1, 3} (`train_l2.npz` symlink removed + marker file; no manifest change needed — `data_hashes.json` binds the original arrays at `factory_mffp/data`, which are untouched; serving-layer only, verified `verify` still 6/6 MATCH). ADR file renamed to `0005-pfc-spectral-rung-repair.md`, status RATIFIED.
+  Phase 2 (gated on all batch-2 SLURM compute landing): `panel_data.copylf_prediction` gains the pfc spectral entry (vendoring `mffp_sharp.common.spectral.spectral_interp`, the exact function the ADR measurements used) with a rung override to fid 1 and a seam assertion that every other dataset's reference is byte-identical; `make_copylf_baselines.py` re-run (archive first — the global `copylf_def_hash` changes, which is WHY phase 2 waits: batch-2 cards assert one hash across seeds and their seed-0 artifacts carry the current hash); floors recompute; pfc anchor cells + ckpts quarantined (including the 2026-08-10 fresh r2s3 pfc legs — trained under L2 serving, stale-by-construction under {1,3}); 12 re-score jobs; `make_round3_anchors.py` PANEL restored to 6 datasets; preflight fifth-class on the new cell (expected OK + OUTLIER_DOMINATED warn, MDD 65.8%); B1 cards get MDD-priced pfc threshold addenda; HF dataset card gains the "scored at L1" note.
+
 - **2026-08-10 — repair extension VERIFIED CLOSED**: pfc fresh-train jobs 147119–21 COMPLETED (~8 min each); `zero_work_resume_scan --fail-on-zero-work` on the pfc pattern → 0/54 zero-work, ckpts rewritten in-job. The 18 allen_cahn zero-work legs remain by adjudication (benign test-split-trim variant). STOP-THE-LINE #2 is now fully repaired on both the scored and report-only surfaces.
 
 - **2026-08-10 — BATCH 1 CLOSED (all 4 cards `complete`), batch-2 cycle dispatched.**
