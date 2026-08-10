@@ -1,5 +1,5 @@
 {
- "purpose": "STOP-THE-LINE #2 repair (stale-checkpoint anchor contamination, HOLD 2026-08-08T19:51:50Z) — fresh-train the audit-confirmed stale ifc_poisson anchor legs with empty ckpt dirs. Operator adjudication: Eloise 2026-08-09 'continue' -> execute the on-file repair plan (orchestrator_flow.md top entry of 2026-08-08).",
+ "purpose": "STOP-THE-LINE #2 repair (stale-checkpoint anchor contamination, HOLD 2026-08-08T19:51:50Z) \u2014 fresh-train the audit-confirmed stale ifc_poisson anchor legs with empty ckpt dirs. Operator adjudication: Eloise 2026-08-09 'continue' -> execute the on-file repair plan (orchestrator_flow.md top entry of 2026-08-08).",
  "submitted_utc": "2026-08-09",
  "mail": "ezeng@caltech.edu END,FAIL",
  "audit_scope_note": "Stale set audit-verified with tools/stale_checkpoint_audit.py (--data-changed-after 2026-08-05T18:33): r2s1-B2 3/3 seeds, r2s1-B3 3/3 seeds, r2s3-B3 ifc_A0+ifc_A1 all seeds, r2s2-B1 seeds 0-1 ONLY (trained+scored 2026-08-05T13:33 pre-adoption, never re-scored post-repair); r2s2-B1 seed 2 fresh-trained 2026-08-06 and CLEAN (kept). This resolves the HOLD's 'r2s2 possibly mixed'.",
@@ -12,10 +12,36 @@
   "r2s3_lf_train_signal-B3": "round3_anchors/scripts/r2s3_lf_train_signal-B3.ifc_poisson.sh <seed> (legs ifc_A0/A0_nolf + ifc_A1/A1_lf_cov)"
  },
  "jobs": {
-  "r2s1_direct-B2": {"0": 89201, "1": 89204, "2": 89207},
-  "r2s1_direct-B3": {"0": 89202, "1": 89205, "2": 89208},
-  "r2s2_stacked-B1": {"0": 89210, "1": 89211},
-  "r2s3_lf_train_signal-B3": {"0": 89203, "1": 89206, "2": 89209}
+  "r2s1_direct-B2": {
+   "0": 89201,
+   "1": 89204,
+   "2": 89207
+  },
+  "r2s1_direct-B3": {
+   "0": 89202,
+   "1": 89205,
+   "2": 89208
+  },
+  "r2s2_stacked-B1": {
+   "0": 89210,
+   "1": 89211
+  },
+  "r2s3_lf_train_signal-B3": {
+   "0": 89203,
+   "1": 89206,
+   "2": 89209
+  }
  },
- "on_completion": "stale_checkpoint_audit --fail-on-stale over all 4 anchor trees -> make_round3_anchors.py rebuild (now audit-gated) -> recompute r3s3-B1 vs-anchor deltas -> clear HOLD -> dispatch withheld initial-analyzers (r3s1/r3s2/r3s4)."
+ "on_completion": "stale_checkpoint_audit --fail-on-stale over all 4 anchor trees -> make_round3_anchors.py rebuild (now audit-gated) -> recompute r3s3-B1 vs-anchor deltas -> clear HOLD -> dispatch withheld initial-analyzers (r3s1/r3s2/r3s4).",
+ "extension_2026_08_10": {
+  "trigger": "r3s4-B1 mechanism T1 (zero_work_resume_scan.py): 36 zero-work legs live in r2s3-B3's tree; 18 pfc legs contaminated (ckpts 2026-08-03/04 predate the 2026-08-06 box swap; missed because the 08-10 re-audit was ifc-scoped), 18 allen_cahn legs benign (test-split trim, adjudicated). Blast radius: REPORT-ONLY pfc diagnostics (ADR r3-0004) - no scored cell, gate, or claim consumes them; repair extended under the existing STOP-THE-LINE #2 adjudication, no new HOLD.",
+  "quarantine_manifest": "round3_anchors/quarantine_stale_ckpt_pfc_r2s3_manifest_2026-08-10.json (90 paths: 72 artifacts + 18 cache entries)",
+  "script": "round3_anchors/scripts/r2s3_lf_train_signal-B3.pfc.sh <seed> (6 legs pfc_A{0,1}_d{0,1,2})",
+  "jobs": {
+   "0": 147119,
+   "1": 147120,
+   "2": 147121
+  },
+  "on_completion": "zero_work_resume_scan --fail-on-zero-work (pfc pattern) -> confirm report-only diagnostics fresh; no anchor rebuild needed (pfc not in PANEL)."
+ }
 }
