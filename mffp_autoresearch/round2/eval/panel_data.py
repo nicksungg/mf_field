@@ -39,13 +39,18 @@ from scipy.ndimage import map_coordinates, zoom
 # ADR r2-0001: reference convention per dataset. A panel/guard dataset MUST be
 # classified here or in LEGACY_CELL_DATASETS — an unknown 2-D dataset raises.
 PERIODIC_NODE_DATASETS = {
-    "sharp__phase_field_crystal_2d",
     "sharp__allen_cahn_2d",
     "sharp__fisher_kpp_2d",
     "sharp__cahn_hilliard",
 }
 DIRICHLET_NODE_DATASETS = {"ext__helmholtz_2d"}
 LEGACY_CELL_DATASETS = {"heat_local", "fluid", "sharp__sod_1d", "ifc_poisson", "ifc_heat"}
+# ADR r3-0005 (ratified 2026-08-10): pfc's scored cell is re-pointed to the
+# coarsest rung with an exact spectral (FFT zero-pad, node-periodic) reference —
+# the crystalline fields are band-limited below L2's Nyquist, so the L2 cell is
+# task-void and a linear lift's error would dominate the true L1 gap (~0.07 vs
+# ~0.012). The rung override + spectral lift are inseparable, per the ADR.
+SPECTRAL_RUNG_DATASETS = {"sharp__phase_field_crystal_2d": 1}
 
 
 def repo_root() -> Path:
@@ -106,6 +111,28 @@ def _node_aligned_periodic_up(lf2d: np.ndarray, hf_grid: tuple) -> np.ndarray:
     return map_coordinates(lf2d, coords, order=1, mode="grid-wrap")
 
 
+def _spectral_zeropad_up(lf2d: np.ndarray, hf_grid: tuple) -> np.ndarray:
+    """ADR r3-0005: exact band-limited (FFT zero-pad) lift for node-periodic
+    band-limited fields. Vendored verbatim (2-D branch) from
+    `mffp_sharp.common.spectral.spectral_interp` — the function the ADR's
+    acceptance measurements used — so reference and measurement share bytes.
+    """
+    n_c = lf2d.shape[0]
+    H, W = hf_grid
+    if H != W or lf2d.shape[0] != lf2d.shape[1]:
+        raise ValueError(f"spectral lift requires square grids, got {lf2d.shape} -> {hf_grid}")
+    if (H - n_c) % 2:
+        raise ValueError(f"spectral lift requires even padding, got {n_c} -> {H}")
+    if H == n_c:
+        return lf2d.astype(np.float64).copy()
+    F = np.fft.fftshift(np.fft.fft2(lf2d))
+    pad = (H - n_c) // 2
+    Fp = np.zeros((H, W), dtype=complex)
+    Fp[pad:pad + n_c, pad:pad + n_c] = F
+    out = np.fft.ifft2(np.fft.ifftshift(Fp)) * (H / n_c) ** 2
+    return np.real(out)
+
+
 def _dirichlet_node_up(lf2d: np.ndarray, hf_grid: tuple) -> np.ndarray:
     """Variant E: interior-node Dirichlet grids x_j=(j+1)/(n+1) (helmholtz)."""
     h, w = lf2d.shape
@@ -127,7 +154,16 @@ def copylf_prediction(data: dict, dataset_name: str = None) -> np.ndarray:
     hf_fid = data["hf_fid"]
     if not data["lf_fids"]:
         raise ValueError("no LF fidelities present")
-    lf_fid = max(data["lf_fids"])
+    if dataset_name in SPECTRAL_RUNG_DATASETS:
+        # ADR r3-0005 rung override: score from the designated (coarsest) rung.
+        lf_fid = SPECTRAL_RUNG_DATASETS[dataset_name]
+        if lf_fid not in data["lf_fids"]:
+            raise ValueError(
+                f"{dataset_name}: ADR r3-0005 designates rung {lf_fid}, "
+                f"but only {sorted(data['lf_fids'])} are present"
+            )
+    else:
+        lf_fid = max(data["lf_fids"])
 
     lf = np.asarray(data["field_by_fid"][lf_fid], dtype=np.float64)
     hf = np.asarray(data["field_by_fid"][hf_fid], dtype=np.float64)
@@ -157,7 +193,9 @@ def copylf_prediction(data: dict, dataset_name: str = None) -> np.ndarray:
     if tuple(lf_grid) == tuple(hf_grid):
         return lf
 
-    if dataset_name in PERIODIC_NODE_DATASETS:
+    if dataset_name in SPECTRAL_RUNG_DATASETS:
+        up_fn = _spectral_zeropad_up
+    elif dataset_name in PERIODIC_NODE_DATASETS:
         up_fn = _node_aligned_periodic_up
     elif dataset_name in DIRICHLET_NODE_DATASETS:
         up_fn = _dirichlet_node_up

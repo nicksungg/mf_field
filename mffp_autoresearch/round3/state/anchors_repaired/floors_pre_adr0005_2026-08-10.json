@@ -248,23 +248,35 @@
   }
  },
  "sharp__phase_field_crystal_2d": {
-  "nn_condition": {
-   "nrmse": 1.187748002107592,
-   "skill": 96.10870094793651
-  },
-  "train_mean": {
-   "nrmse": 0.877766362761513,
-   "skill": 71.02599601187322
-  },
-  "zero": {
-   "nrmse": 1.0,
-   "skill": 80.91674393675851
-  },
   "_data_note": "crystalline-box data (2026-08-06, ADR r3-0002); pre-box floors archived",
   "cond_dim": 18,
   "n_test": 100,
   "n_train_hf": 400,
-  "_adr_r3_0005": "reference 0.0182574091 -> 0.0123583816 (spectral rung-1 cell); floors recomputed 2026-08-10; pre-ADR entry archived in floors_pre_adr0005_2026-08-10.json"
+  "nn_condition": {
+   "definition": "L2 nearest in per-dim train-standardized condition space; tie -> lowest train index",
+   "nn_index_hist_top5": {
+    "263": 3,
+    "313": 3,
+    "371": 2,
+    "372": 3,
+    "373": 3
+   },
+   "nrmse": 1.187748002107592,
+   "skill": 65.05567126356075
+  },
+  "reference": {
+   "convention": "node_aligned_periodic",
+   "reference_type": "copylf",
+   "test_nrmse": 0.018257409062703473
+  },
+  "train_mean": {
+   "nrmse": 0.8777663624871362,
+   "skill": 48.07726876647856
+  },
+  "zero": {
+   "nrmse": 1.0,
+   "skill": 54.7722843129377
+  }
  },
  "sharp__sod_1d": {
   "cond_dim": 3,

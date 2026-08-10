@@ -1,5 +1,5 @@
 {
-  "_copylf_def_hash": "9794cc89f1647861a6188803361bdfbb571991c91f206685824a80a900ba09a7",
+  "_copylf_def_hash": "9753ff24e856f595748492dec6cb6c215d748f97e8ec4a679b651f8846da907a",
   "_notes": {
     "ac_trim_2026_08_06": "allen_cahn_2d reference recomputed on the trimmed test split (0.0016065 -> 0.00205936); pre-trim file archived at copylf_baselines_pre_ac_trim_2026-08-06.json. Skills across the trim are not comparable.",
     "comparability": "round-2 skills are NOT comparable to round-1 skills on the corrected datasets: the round-1 denominators were inflated 2.0-8.6x by the registration defect (r1 report \u00a75). r1_frozen_nrmse is recorded per dataset.",
@@ -73,14 +73,14 @@
     "test_nrmse": 0.00016524586579046429
   },
   "sharp__phase_field_crystal_2d": {
-    "convention": "spectral_zeropad_rung1",
+    "convention": "node_aligned_periodic",
     "pre_box_nrmse": 0.005818222933854245,
     "r1_frozen_nrmse": 0.04478044719481978,
-    "ratio_to_r1": 0.2759771815955714,
+    "ratio_to_r1": 0.164821457206456,
     "recomputed": "2026-08-06 ADR r3-0002 (crystalline-box regeneration)",
     "reference_type": "copylf",
     "round2_frozen_nrmse": 0.00738077856100695,
-    "test_nrmse": 0.012358381607415673
+    "test_nrmse": 0.018257409062703473
   },
   "sharp__sod_1d": {
     "convention": "legacy_cell_centred",
@@ -88,8 +88,5 @@
     "ratio_to_r1": 1.0,
     "reference_type": "copylf",
     "test_nrmse": 0.03309017650048946
-  },
-  "_changes": {
-    "pfc_spectral_rung_2026_08_10": "ADR r3-0005: pfc scored cell re-pointed to L1 with the exact spectral reference (0.0182574091 -> 0.0123583816); every other dataset's reference verified byte-identical pre/post the panel_data amendment (seam hashes in /tmp/claude-28156/-resnick-groups-Hippo-ezeng-mf-field/4079bc92-1a19-4e4f-bf78-aa24f8b36a1a/scratchpad/copylf_seam_pre.json); file-level _copylf_def_hash re-stamped (source amendment sanctioned by the ADR); pre-ADR score caches self-invalidate via the per-entry cache hash check. Skills across this change are not comparable on pfc."
   }
 }
