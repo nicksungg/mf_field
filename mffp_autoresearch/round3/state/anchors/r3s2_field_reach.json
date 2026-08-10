@@ -8,47 +8,116 @@
     "ifc_poisson",
     "ifc_heat"
   ],
-  "value": 12.955641583802409,
+  "value": 10.085286087664684,
   "per_seed": [
-    10.721262489424966,
-    10.317973904757508,
-    17.827688357224755
+    10.352823048481836,
+    9.724940363157677,
+    10.178094851354539
   ],
   "ci95": [
-    10.317973904757508,
-    17.827688357224755
+    9.724940363157677,
+    10.352823048481836
   ],
-  "source_card": "r3s2_field_reach-B1",
-  "certified_utc": "2026-08-10T13:06:29Z",
+  "source_card": "r3s2_field_reach-B2",
+  "certified_utc": "2026-08-10T17:47:43Z",
   "provisional": false,
-  "note": "Certified 3-seed panel geomean skill of the pre-registered scored arm E1_frozen (family r3s2_stack_ic, ic_synth front end -> pseudo-LF -> frozen DC corrector, smoke tier 200 epochs, seeds 0/1/2) over the ADR r3-0004 5-dataset scored panel. Read verbatim from mffp_autoresearch_outputs/round3/r3s2_field_reach/B1/eval/result_scored5_s{0,1,2}.json::panel_geomean_skill; mean + percentile bootstrap CI via round2/eval/nrmse.py::bootstrap_ci over the three per-seed geomeans. Lower is better. Beats the training-free launch best-floor anchor 34.4198 by 21.4642 with the whole 3-seed interval [10.3180, 17.8277] below it. The superseded launch anchor is preserved below and remains intact in state/anchors/launch_anchors.json and program.md 2; per-dataset floor arms stay the mandatory reported columns on every model card.",
+  "note": "Certified 3-seed panel geomean skill of the pre-registered scored arm A1_stack_ic_reg (family r3s2_route, condition -> ic_synth front end -> pseudo-LF -> frozen DC corrector with a LOOCV-ridge + LF-Nyquist band-limited LSI transfer stage, smoke tier 200 epochs, seeds 0/1/2) over the ADR r3-0004 5-dataset scored panel. Read verbatim from mffp_autoresearch_outputs/round3/r3s2_field_reach/B2/eval/result_scored5_s{0,1,2}.json::panel_geomean_skill; mean + percentile bootstrap CI via round2/eval/nrmse.py::bootstrap_ci over the three per-seed geomeans. Lower is better. nrmse_def_hash d3d0ade9191c13bacc40702f3eb26ad290e01641cacee22a1d2233b74c035850 and copylf_def_hash 9753ff24e856f595748492dec6cb6c215d748f97e8ec4a679b651f8846da907a are identical to the superseded B1 anchor's, so the comparison is like-for-like. Beats the B1 anchor 12.9556 by 2.8704 skill units with the whole 3-seed interval [9.7249, 10.3528] below it (5.65 x the certified panel seed_mce 0.5083), and beats the training-free launch best-floor anchor 34.4198 by 24.3345. This is a MECHANICS anchor (the cratered-rule comparand for later r3s2 batches), NOT an adjudicated claim.",
   "per_dataset_mean_skill": {
-    "sharp__allen_cahn_2d": 83.59673899303051,
-    "sharp__fisher_kpp_2d": 29.451924481064605,
-    "sharp__cahn_hilliard": 8.602884637175292,
-    "ifc_poisson": 21.42390165915657,
-    "ifc_heat": 1.572962771102956
+    "sharp__allen_cahn_2d": 82.74140489056391,
+    "sharp__fisher_kpp_2d": 30.01503842361288,
+    "sharp__cahn_hilliard": 8.605321347532621,
+    "ifc_poisson": 3.1297607953690787,
+    "ifc_heat": 1.5755150572460888
+  },
+  "per_dataset_ci95": {
+    "sharp__allen_cahn_2d": [
+      80.76069544465025,
+      85.85359777280975
+    ],
+    "sharp__fisher_kpp_2d": [
+      27.904077940077144,
+      31.589784028395076
+    ],
+    "sharp__cahn_hilliard": [
+      8.407515514306041,
+      8.768444867330922
+    ],
+    "ifc_poisson": [
+      2.542743141868695,
+      3.5294714139179404
+    ],
+    "ifc_heat": [
+      1.5661469111914619,
+      1.5879847403937564
+    ]
   },
   "caveats": [
-    "This is a MECHANICS anchor (cratered-rule comparand for later r3s2 batches), NOT an adjudicated claim: round-3 success criterion 1 additionally requires exceeding the condition->level closed-form law by >= 1 CERTIFIED mce on >= 2 scored datasets, and state/anchors_repaired/noise_floor.json is still PROVISIONAL pending r3s4 certification.",
-    "The scored arm does NOT beat the training-free stage ladder anywhere: on ac/fk/ch/ifc_heat trained and closed-form are indistinguishable (ratio 0.9985-1.0009) and on ifc_poisson the closed-form S1_gain beats it every seed (0.1049/0.0764/0.1711 vs 0.1478/0.1250/2.0409 nRMSE).",
-    "ifc_poisson and ifc_heat both LOSE their mandatory affine_on_hf_train floors (1.5938 / 0.9584) and their nn_condition floors on the 3-seed mean; the panel win is carried entirely by ac/fk/ch.",
-    "Seed 2's ifc_poisson stage-2 instability (skill 56.6926 vs 4.1060/3.4731) drives the upper CI bound; the same instability is present in the E0 replay arm and in the round-2 record (r2s2_stacked-B1 seed 2).",
-    "Standing panel caveats apply: fisher_kpp weak fidelity gap, allen_cahn trimmed test n=78, cahn_hilliard outlier domination, ifc_poisson exactly-affine condition->HF map, pfc report-only (ADR r3-0004), no cross-round comparison without the honest-denominator flag."
+    "THE CARD THAT SET THIS ANCHOR IS FALSIFIED ON ITS OWN PRE-REGISTRATION. r3s2_field_reach-B2's expected_falsification is a disjunction over G1/G2/G3; G2 leg (iii) fires (tools/lsi_transfer_stability_audit.py reports band-mean |T| = 1.1851/1.1851/1.1494 > 1 on the scored cell ifc_poisson at seeds 0/1/2), so the pre-registered instrument repair is NOT accepted. The nRMSE numbers are unaffected - the leg is about the transfer function's stability, not the score - but no claim may be built on this anchor without carrying the failure.",
+    "THE IMPROVEMENT OVER THE B1 ANCHOR IS ONE CELL ON ONE SEED. The paired same-job comparand A5_stack_ic_unreg (the literal B1 replay, ridge 0, no band-limit) gives 12.9425, reproducing the B1 anchor to 0.0131. The paired repair effect A5 - A1 is 0.3773 / 0.4620 / 7.7325 skill units on seeds 0 / 1 / 2: BELOW the panel seed_mce 0.5083 on seeds 0 and 1, and carried entirely by seed 2's ifc_poisson blow-up removal (56.12 skill units on that one cell).",
+    "The ridge half of the repair never engaged: LOOCV selected ridge = 0 in 13 of 15 (cell x seed) legs (the exceptions are cahn_hilliard seeds 0 and 2 at 1e-6). The whole measured effect is the band-limit, and band 4 of the regularised arm is identically 0 BY CONSTRUCTION on every cell (ring-inclusive k_cut on 2x ladders), which is exactly the band B1 failed in.",
+    "ifc_poisson and ifc_heat both LOSE their mandatory affine_on_hf_train floors (3.1298 vs 1.5938 and 1.5755 vs 0.9584) on the 3-seed mean, and ifc_heat also loses nn_condition (1.3941); the panel win is carried entirely by ac/fk/ch. Under the card's own floor-arm rule neither ifc cell yields a claimable route delta.",
+    "The scored arm does not beat the training-free stage ladder on ac/fk/ch: A7_emul_only_ic (the front end alone, 100 epochs) is within 0.11 skill units of A1 on all three sharp cells, so the stack's sharp-cell performance IS its front end and the frozen corrector adds nothing there.",
+    "Standing panel caveats apply: fisher_kpp weak fidelity gap, allen_cahn trimmed test n=78, cahn_hilliard outlier domination and ratio-of-normals caveat, ifc_poisson exactly-affine condition->HF map, pfc report-only (ADR r3-0004), no cross-round comparison without the honest-denominator flag.",
+    "Round-3 success criterion 1 additionally requires exceeding the condition->level closed-form law by >= 1 certified mce on >= 2 scored datasets; this anchor does not adjudicate that."
   ],
   "supersedes": {
-    "anchor_type": "best_floor_panel_geomean",
-    "value": 34.4198,
-    "source": "training_free_floors",
-    "certified_utc": "2026-08-07T12:16Z",
-    "rebuilt_utc": "2026-08-10T12:55Z",
-    "note": "Round-3 launch anchor (state/anchors/launch_anchors.json, best_floor): geomean over the ADR r3-0004 5-dataset scored panel of the best training-free floor per dataset. Rebuilt through the stale-checkpoint gate on 2026-08-10 after STOP-THE-LINE #2; the value is unchanged by the repair because it is training-free.",
-    "per_dataset": {
-      "sharp__allen_cahn_2d": {"arm": "nn_condition", "skill": 475.85682154308705},
-      "sharp__fisher_kpp_2d": {"arm": "train_mean", "skill": 390.7014844797183},
-      "sharp__cahn_hilliard": {"arm": "nn_condition", "skill": 23.180342227117514},
-      "ifc_poisson": {"arm": "nn_condition", "skill": 8.040896838361228},
-      "ifc_heat": {"arm": "nn_condition", "skill": 1.3941023084286595}
+    "anchor_type": "certified_3seed_panel_geomean",
+    "value": 12.955641583802409,
+    "per_seed": [
+      10.721262489424966,
+      10.317973904757508,
+      17.827688357224755
+    ],
+    "ci95": [
+      10.317973904757508,
+      17.827688357224755
+    ],
+    "source_card": "r3s2_field_reach-B1",
+    "certified_utc": "2026-08-10T13:06:29Z",
+    "note": "Certified 3-seed panel geomean skill of the pre-registered scored arm E1_frozen (family r3s2_stack_ic, ic_synth front end -> pseudo-LF -> frozen DC corrector, smoke tier 200 epochs, seeds 0/1/2) over the ADR r3-0004 5-dataset scored panel. Read verbatim from mffp_autoresearch_outputs/round3/r3s2_field_reach/B1/eval/result_scored5_s{0,1,2}.json::panel_geomean_skill; mean + percentile bootstrap CI via round2/eval/nrmse.py::bootstrap_ci over the three per-seed geomeans. Lower is better. Beats the training-free launch best-floor anchor 34.4198 by 21.4642 with the whole 3-seed interval [10.3180, 17.8277] below it. The superseded launch anchor is preserved below and remains intact in state/anchors/launch_anchors.json and program.md 2; per-dataset floor arms stay the mandatory reported columns on every model card.",
+    "caveats": [
+      "This is a MECHANICS anchor (cratered-rule comparand for later r3s2 batches), NOT an adjudicated claim: round-3 success criterion 1 additionally requires exceeding the condition->level closed-form law by >= 1 CERTIFIED mce on >= 2 scored datasets, and state/anchors_repaired/noise_floor.json is still PROVISIONAL pending r3s4 certification.",
+      "The scored arm does NOT beat the training-free stage ladder anywhere: on ac/fk/ch/ifc_heat trained and closed-form are indistinguishable (ratio 0.9985-1.0009) and on ifc_poisson the closed-form S1_gain beats it every seed (0.1049/0.0764/0.1711 vs 0.1478/0.1250/2.0409 nRMSE).",
+      "ifc_poisson and ifc_heat both LOSE their mandatory affine_on_hf_train floors (1.5938 / 0.9584) and their nn_condition floors on the 3-seed mean; the panel win is carried entirely by ac/fk/ch.",
+      "Seed 2's ifc_poisson stage-2 instability (skill 56.6926 vs 4.1060/3.4731) drives the upper CI bound; the same instability is present in the E0 replay arm and in the round-2 record (r2s2_stacked-B1 seed 2).",
+      "Standing panel caveats apply: fisher_kpp weak fidelity gap, allen_cahn trimmed test n=78, cahn_hilliard outlier domination, ifc_poisson exactly-affine condition->HF map, pfc report-only (ADR r3-0004), no cross-round comparison without the honest-denominator flag."
+    ],
+    "per_dataset_mean_skill": {
+      "sharp__allen_cahn_2d": 83.59673899303051,
+      "sharp__fisher_kpp_2d": 29.451924481064605,
+      "sharp__cahn_hilliard": 8.602884637175292,
+      "ifc_poisson": 21.42390165915657,
+      "ifc_heat": 1.572962771102956
+    },
+    "supersedes": {
+      "anchor_type": "best_floor_panel_geomean",
+      "value": 34.4198,
+      "source": "training_free_floors",
+      "certified_utc": "2026-08-07T12:16Z",
+      "rebuilt_utc": "2026-08-10T12:55Z",
+      "note": "Round-3 launch anchor (state/anchors/launch_anchors.json, best_floor): geomean over the ADR r3-0004 5-dataset scored panel of the best training-free floor per dataset. Rebuilt through the stale-checkpoint gate on 2026-08-10 after STOP-THE-LINE #2; the value is unchanged by the repair because it is training-free.",
+      "per_dataset": {
+        "sharp__allen_cahn_2d": {
+          "arm": "nn_condition",
+          "skill": 475.85682154308705
+        },
+        "sharp__fisher_kpp_2d": {
+          "arm": "train_mean",
+          "skill": 390.7014844797183
+        },
+        "sharp__cahn_hilliard": {
+          "arm": "nn_condition",
+          "skill": 23.180342227117514
+        },
+        "ifc_poisson": {
+          "arm": "nn_condition",
+          "skill": 8.040896838361228
+        },
+        "ifc_heat": {
+          "arm": "nn_condition",
+          "skill": 1.3941023084286595
+        }
+      }
     }
   }
 }
