@@ -189,7 +189,7 @@
    ]
   }
  },
- "status": "reviewed_suggest",
+ "status": "analyzing",
  "skipped_reason": null,
  "reopen_candidate": false,
  "scripts_path": {
@@ -210,6 +210,18 @@
    "job_id": 158775,
    "submitted": "2026-08-10",
    "by": "orchestrator (post reviewed_suggest; review finding-4 citation fix e606a4f on branch; HOLD absent, data_binding verify 6/6; wrapper executed)"
+  },
+  {
+   "seed": 1,
+   "job_id": 165550,
+   "submitted": "2026-08-10",
+   "by": "orchestrator (post seed-0 proceed_to_seeds_1_2; A5 replication gate PASS +0.0089; HOLD absent, data_binding 6/6)"
+  },
+  {
+   "seed": 2,
+   "job_id": 165551,
+   "submitted": "2026-08-10",
+   "by": "orchestrator (same gate)"
   }
  ],
  "logs": {},
@@ -247,7 +259,711 @@
   }
  ],
  "debug_notes": [],
- "5_actual_result": null,
+ "5_actual_result": {
+  "seeds_available": [
+   0
+  ],
+  "_invocation": "seed-0 initial analysis (parse-only). All 3-seed quantities (CIs, G1/G2(i,ii,iv)/G3 verdicts) are deferred to the 3-seed invocation. Nothing here is recomputed from predictions: every nRMSE is read from a JSON on disk.",
+  "_provenance": {
+   "certified_scored_panel_json": "mffp_autoresearch_outputs/round3/r3s2_field_reach/B2/eval/result_scored5_s0.json",
+   "certified_guard_json": "mffp_autoresearch_outputs/round3/r3s2_field_reach/B2/eval/result_guard_s0.json",
+   "per_arm_source": "mffp_autoresearch_outputs/round3/r3s2_field_reach/B2/eval/diag_<dataset>_e200_s0.json :: arms.<tag>.nrmse (family diag; only A1 is scored by score_panel.py)",
+   "skill_conversion": "skill = arm_test_nRMSE / reference_test_nRMSE, reference read verbatim from mffp_autoresearch/round2/eval/copylf_baselines.json (ac 0.0020593576160366327 copylf, fk 0.00016524586579046429 copylf, ch 0.041802962686225575 copylf, ifc_poisson 0.036 paper_bar, ifc_heat 0.074 paper_bar). Validated before use: A1's diag nRMSE reproduces result_scored5_s0.json to <1e-12 on all 5 cells and the derived skills reproduce score_panel's to ~1e-14, so the same linear conversion is then applied to the unscored arms A2-A7.",
+   "nrmse_def_hash": "d3d0ade9191c13bacc40702f3eb26ad290e01641cacee22a1d2233b74c035850",
+   "copylf_def_hash": "9753ff24e856f595748492dec6cb6c215d748f97e8ec4a679b651f8846da907a",
+   "code_hash": "323fdd48c421222bbdb5d836a0137c402bf4daf6b4bd03f41581cb06609d0358",
+   "hash_consistency": "nrmse_def_hash identical across all 10 B2 seed-0 JSONs (2 result + 8 diag) AND identical to B1's result_scored5_s{0,1,2}.json (the stream-anchor source), so the A5-vs-B1 replication comparison is like-for-like. copylf_def_hash matches copylf_baselines.json::_copylf_def_hash.",
+   "slurm": "mffp_autoresearch_outputs/round3/r3s2_field_reach/B2/slurm/r3-r3s2_field_reach-B2-s0_158775.out (.err empty, 0 lines)",
+   "noise_floor": "state/anchors_repaired/noise_floor.json (CERTIFIED 2026-08-08T20:00:07Z): panel seed_mce 0.5082844131597604; tau_rel ac 18.61975759925883 / fk 10.312814173562199 / ch 0.36124864423263325 / ifc_poisson 0.6910000683054431 / ifc_heat 0.1640195793751628",
+   "anchor": "state/anchors/r3s2_field_reach.json (certified_3seed_panel_geomean 12.955641583802409, per_seed [10.721262489424966, 10.317973904757508, 17.827688357224755], source_card r3s2_field_reach-B1)"
+  },
+  "per_dataset": {
+   "_scored_arm": "A1_stack_ic_reg (R3S2B2_ARM); split test_hf; cached=false on all 5 cells; reference_type copylf on ac/fk/ch, paper_bar on both ifc cells. ci95 null because a percentile bootstrap over per-seed geomeans is undefined at n=1.",
+   "sharp__allen_cahn_2d": {
+    "per_seed_nrmse": [
+     0.17680326043758143
+    ],
+    "per_seed_skill": [
+     85.85359777280975
+    ],
+    "mean_skill": 85.85359777280975,
+    "ci95": null,
+    "reference_type": "copylf",
+    "cached": false
+   },
+   "sharp__fisher_kpp_2d": {
+    "per_seed_nrmse": [
+     0.005220081211905926
+    ],
+    "per_seed_skill": [
+     31.58978402839508
+    ],
+    "mean_skill": 31.58978402839508,
+    "ci95": null,
+    "reference_type": "copylf",
+    "cached": false
+   },
+   "sharp__cahn_hilliard": {
+    "per_seed_nrmse": [
+     0.35145905732839805
+    ],
+    "per_seed_skill": [
+     8.407515514306041
+    ],
+    "mean_skill": 8.407515514306041,
+    "ci95": null,
+    "reference_type": "copylf",
+    "cached": false
+   },
+   "ifc_poisson": {
+    "per_seed_nrmse": [
+     0.11941444189154164
+    ],
+    "per_seed_skill": [
+     3.3170678303206014
+    ],
+    "mean_skill": 3.3170678303206014,
+    "ci95": null,
+    "reference_type": "paper_bar",
+    "cached": false
+   },
+   "ifc_heat": {
+    "per_seed_nrmse": [
+     0.11635860049132556
+    ],
+    "per_seed_skill": [
+     1.572413520153048
+    ],
+    "mean_skill": 1.572413520153048,
+    "ci95": null,
+    "reference_type": "paper_bar",
+    "cached": false
+   }
+  },
+  "panel_geomean_skill": {
+   "per_seed": [
+    10.352823048481836
+   ],
+   "mean": 10.352823048481836,
+   "ci95": null
+  },
+  "vs_anchor": {
+   "anchor_value": 12.955641583802409,
+   "delta": -2.602818535320573,
+   "beyond_ci": null,
+   "beyond_noise_floor": true,
+   "same_seed_comparison": {
+    "anchor_seed0_value": 10.721262489424966,
+    "delta": -0.36843944094313,
+    "beyond_noise_floor": false,
+    "why_this_is_the_honest_read": "the anchor's 3-seed mean is inflated by B1's seed-2 ifc_poisson blow-up (skill 56.6926). Against the anchor's OWN seed-0 value the A1 improvement is 0.3684 skill units, BELOW the certified panel seed_mce 0.5083 - not resolvable at one seed. The -2.6028 figure compares 1 seed against a 3-seed mean and must not be published as the effect."
+   }
+  },
+  "cratered_verdict": "proceed_to_seeds_1_2",
+  "cratered_rule_evaluation": {
+   "crash": false,
+   "slurm_state": "COMPLETED, ExitCode 0:0 (sacct job 158775), .err empty, 0 preemption/requeue/resume events in the .out",
+   "panel_geomean_skill_seed0": 10.352823048481836,
+   "cratered_bar": 19.433462375703613,
+   "cratered_bar_definition": "CRATERED_SKILL_FACTOR 1.5 (project.yaml seed_protocol) x stream anchor 12.955641583802409",
+   "exceeds_bar": false,
+   "replication_gate_A5": "PASS at seed 0 - see falsification_seed0.G2_instrument_acceptance.leg_iv. No integrity stop.",
+   "falsification_clause_fired_decisively": false,
+   "reasoning": "no crash; the panel geomean is 1.88x below the cratered bar; the A5 replication gate reproduces the stream anchor's own seed-0 value to 0.0089 skill units (1.7% of one panel seed_mce), so the vendoring is not the story. G1's falsification is a CONJUNCTION of two failures and its panel conjunct is satisfied in A1's favour, so G1 cannot fire; G3 is not falsified. The one clause tripped at seed 0 is G2 leg (iii) (anomalies[0]) - recorded as the dominant risk, but G2 legs (i) and (ii) are unmeasurable without seeds 1-2 (leg (i) names seed 2 explicitly; leg (ii) is a 3-seed spread), leg (iv) is a 3-seed panel check, and the audit's own SEED_UNSTABLE test needs >=2 seeds. Stopping now would leave 3 of 4 G2 legs and all of G1/G3 undecided on a run that is 20.6% better than its anchor's seed-0 comparand."
+  },
+  "falsification_verdict": "pending_seeds",
+  "falsification_seed0": {
+   "_status": "SEED-0 MEASUREMENTS ONLY. The pre-registered clauses are judged on the 3-seed mean +- CI at the second invocation; nothing below is a verdict.",
+   "G1_route": {
+    "clause_verbatim": "A1_stack_ic_reg fails to beat A3_direct_ic by >= 1.5 x the certified panel seed_mce = 0.7624 skill units on the 3-seed 5-dataset panel geomean AND fails to beat it by >= 1.5 x the certified per-dataset tau_rel on >= 2 of the 5 scored datasets (ac 27.9296 / fk 15.4692 / ch 0.5419 / ifc_poisson 1.0365 / ifc_heat 0.2460) - the reverse inequality at the same magnitudes being recorded as the affirmative negative ('the LF intermediate is a strict tax')",
+    "branch_fired_at_seed0": "AFFIRMATIVE branch (the repaired stack beats the matched-budget direct head) on the PANEL leg; NEITHER branch clears the per-dataset leg",
+    "panel_leg": {
+     "A1": 10.352823048481836,
+     "A3": 11.557272911981537,
+     "delta_A1_minus_A3": -1.204449863499701,
+     "bar": 0.7624266197396407,
+     "met_in_A1_favour": true
+    },
+    "per_dataset_leg": {
+     "sharp__allen_cahn_2d": {
+      "delta_A1_minus_A3": -9.239574,
+      "bar_1p5_tau_rel": 27.929636,
+      "meets_bar": false,
+      "claimable": true
+     },
+     "sharp__fisher_kpp_2d": {
+      "delta_A1_minus_A3": -3.35003,
+      "bar_1p5_tau_rel": 15.469221,
+      "meets_bar": false,
+      "claimable": true
+     },
+     "sharp__cahn_hilliard": {
+      "delta_A1_minus_A3": 0.346577,
+      "bar_1p5_tau_rel": 0.541873,
+      "meets_bar": false,
+      "claimable": true,
+      "sign_note": "the only cell where the DIRECT head is ahead"
+     },
+     "ifc_poisson": {
+      "delta_A1_minus_A3": -1.291884,
+      "bar_1p5_tau_rel": 1.0365,
+      "meets_bar": true,
+      "claimable": false,
+      "claimable_reason": "floor-arm rule: A1 (skill 3.3171) and A3 (4.6090) BOTH lose the mandatory affine_on_hf_train floor (1.5938), so this cell yields no claimable route delta"
+     },
+     "ifc_heat": {
+      "delta_A1_minus_A3": -0.097981,
+      "bar_1p5_tau_rel": 0.246029,
+      "meets_bar": false,
+      "claimable": false,
+      "claimable_reason": "A1 and A3 both lose affine_on_hf_train (0.9584) AND nn_condition (1.3941)"
+     },
+     "_count_meeting_bar": 1,
+     "_count_meeting_bar_and_claimable": 0,
+     "_required": 2
+    },
+    "falsified_at_seed0": false,
+    "falsification_logic": "the clause falsifies only if BOTH conjuncts fail. The panel conjunct is satisfied in A1's favour (-1.2044 against the -0.7624 bar), so G1 does not fire at seed 0 - even though the per-dataset conjunct fails at 1/5 (0/5 once the floor-arm rule is applied).",
+    "fractional_error_reduction_units": {
+     "ifc_poisson": 0.2802989030991899,
+     "_source": "diag attribution.G1_route_delta_A1_minus_A3_fractional_vs_A3",
+     "_note": "R3S2B2_REPORT_UNITS mandates skill AND fractional-error-reduction; the fractional form is reference-free and survives the M5 denominator critique."
+    },
+    "route_delta_replication_at_the_null_front_end_A2_minus_A4": {
+     "panel": -1.40064148924429,
+     "per_dataset": {
+      "sharp__allen_cahn_2d": -7.165015,
+      "sharp__fisher_kpp_2d": 3.955202,
+      "sharp__cahn_hilliard": 0.601533,
+      "ifc_poisson": -1.291884,
+      "ifc_heat": -0.097981
+     },
+     "independence_caveat": "NOT independent on the two ifc cells: diag attribution.ic_synth_applicable=false there (no ic_c* columns), so A1 == A2 and A3 == A4 bit-for-bit and the A2-A4 contrast is a literal duplicate of A1-A3. It is genuinely independent only on ac/fk/ch, where it FLIPS SIGN on fisher_kpp (+3.9552, the direct head wins) - the route delta is not stable across front ends at seed 0."
+    }
+   },
+   "G2_instrument_acceptance": {
+    "_framing": "the card's own words: 'a pre-registered repair, NOT a contribution'.",
+    "leg_i_ifc_poisson_seed2_nrmse_above_0p50": {
+     "status": "PENDING_SEED_2",
+     "bar": 0.5,
+     "seed0_value": 0.11941444189154164,
+     "b1_seed0_comparand": 0.14781592067124033,
+     "b1_seed2_value": 2.0409339449082076
+    },
+    "leg_ii_3seed_panel_spread_above_2p0": {
+     "status": "PENDING_SEEDS_1_2",
+     "bar": 2.0,
+     "b1_spread": 7.509714452467247
+    },
+    "leg_iii_band_mean_absT_above_1_on_any_scored_cell": {
+     "status": "TRIPPED_AT_SEED_0",
+     "tool_invocation": "python mffp_autoresearch/round3/tools/lsi_transfer_stability_audit.py --diag-root mffp_autoresearch_outputs/round3/r3s2_field_reach/B2/eval --pattern 'diag_*_e200_s*.json'",
+     "verdict_line": "ifc_poisson  n_fit=3  ridge=0.0  |T|=[0.740, 0.636, 1.19, 0]  AMPLIFYING(b3:1.19),SEED_UNSTABLE(b4:infx),SAMPLE_STARVED(n_fit=3),UNREGULARISED(ridge=0)   [FLAGGED 7/8 cells]",
+     "offending_cell": "ifc_poisson band 3 (k in [8,16)) mean |T| = 1.1850706552283459 > 1.0",
+     "T_band_mean_abs_regularised_A1": {
+      "sharp__allen_cahn_2d": [
+       0.007243,
+       0.021093,
+       0.109484,
+       0.0
+      ],
+      "sharp__fisher_kpp_2d": [
+       0.012051,
+       0.059345,
+       0.416703,
+       0.0
+      ],
+      "sharp__cahn_hilliard": [
+       0.080364,
+       0.003623,
+       2.1e-05,
+       0.0
+      ],
+      "ifc_poisson": [
+       0.739907,
+       0.63603,
+       1.185071,
+       0.0
+      ],
+      "ifc_heat": [
+       0.058332,
+       0.086279,
+       0.177487,
+       0.0
+      ]
+     },
+     "T_band_mean_abs_unregularised_A5": {
+      "sharp__allen_cahn_2d": [
+       0.007243,
+       0.021093,
+       0.109484,
+       0.919361
+      ],
+      "sharp__fisher_kpp_2d": [
+       0.012051,
+       0.059345,
+       0.416703,
+       0.969598
+      ],
+      "sharp__cahn_hilliard": [
+       0.112547,
+       0.070269,
+       0.143811,
+       0.925531
+      ],
+      "ifc_poisson": [
+       0.739907,
+       0.63603,
+       1.185071,
+       6.239806
+      ],
+      "ifc_heat": [
+       0.058332,
+       0.086279,
+       0.177487,
+       0.426624
+      ]
+     },
+     "band_4_zero_by_construction": "MANDATORY DISCLOSURE (builder judgment call (a); code-reviewer handoff explicitly asked the analyzer to record it): the band-limit zeroes kr >= k_cut with the k_cut RING INCLUDED, and S6_BAND_EDGES_FRAC puts band 4 at kr >= k_Nyq_HF/2; since every panel ladder is 2x, band 4 of A1 is identically 0.0 on EVERY cell BY CONSTRUCTION. B1's failure was in exactly that band (ifc_poisson band-4 |T| = 66.219). A band-4 pass is therefore NOT evidence that the repair worked; leg (iii) is decidable only on bands 1-3, and there it FAILS on ifc_poisson.",
+     "repair_was_inert_in_the_offending_band": "on ifc_poisson T_reg[band3] == T_unreg[band3] == 1.1850706552283459 exactly: LOOCV selected ridge = 0 on that cell (n_fit = 3) and the band-limit only touches band 4, so neither half of the repair acted where the amplification lives.",
+     "guard_side_note": "the guard cell fluid also trips AMPLIFYING (band 3 |T| = 1.7296), higher than the scored trip; not a scored cell so it does not enter the clause, but it is the same defect mode."
+    },
+    "leg_iv_A5_reproduces_anchor_within_1_panel_seed_mce": {
+     "status": "PASS_AT_SEED_0 (the 3-seed panel check is deferred)",
+     "A5_panel_geomean_seed0": 10.730113789478905,
+     "vs_anchor_own_seed0": {
+      "anchor_seed0": 10.721262489424966,
+      "delta": 0.008851300053939,
+      "tolerance": 0.5082844131597604,
+      "within": true
+     },
+     "vs_anchor_3seed_mean": {
+      "anchor_mean": 12.955641583802409,
+      "delta": -2.225527794323504,
+      "note": "a 1-seed value cannot be compared to a 3-seed mean; the per-seed comparison above is the valid replication test at this invocation"
+     },
+     "per_cell_A5_minus_B1_seed0_skill": {
+      "sharp__allen_cahn_2d": -0.611453,
+      "sharp__fisher_kpp_2d": 1.406269,
+      "sharp__cahn_hilliard": -0.011833,
+      "ifc_poisson": -0.134133,
+      "ifc_heat": 0.000471
+     },
+     "reading": "the vendored family reproduces B1's estimator: every per-cell delta is inside that cell's tau_rel and the panel delta is 1.7% of one seed_mce. The vendoring did NOT move the number, so any B2 effect is attributable to the repair rather than to the re-implementation."
+    },
+    "repair_delta_A5_minus_A1_skill": {
+     "panel": 0.377290741,
+     "per_dataset": {
+      "sharp__allen_cahn_2d": -0.008402,
+      "sharp__fisher_kpp_2d": -0.003097,
+      "sharp__cahn_hilliard": 0.003476,
+      "ifc_poisson": 0.654797,
+      "ifc_heat": -0.002196
+     },
+     "reading": "the repair is a no-op (|delta| < 0.01 skill) on 4 of 5 scored cells and acts only on ifc_poisson (+0.6548 skill in A1's favour; 16.49% fractional error reduction per diag attribution.G2_repair_delta_fractional_vs_A5). LOOCV selected ridge = 0 on ac/fk/ifc_poisson/ifc_heat and 1e-6 only on cahn_hilliard, so on 4/5 scored cells the ridge half of the instrument never engaged and the band-limit alone carries the repair."
+    }
+   },
+   "G3_prospective_approximability": {
+    "clause_verbatim": "the declaration made before the run - 'sharp__cahn_hilliard is approximability-limited (nn/random field-difference ratio 0.980), so the ROUTE is not a binding constraint there' - fails, i.e. |A1 - A3| on sharp__cahn_hilliard exceeds 1.5 x tau_rel(ch) = 0.5419 skill units (affirmative confirmation requires that delta below tau_rel(ch) = 0.3612 AND a route delta above 1.5 x its own tau_rel on at least one of {ac, fk, ifc_poisson, ifc_heat})",
+    "measured_ch_delta_abs": 0.3465765826604597,
+    "falsification_bar": 0.5418729663489499,
+    "falsified_at_seed0": false,
+    "affirmative_conjunct_1_ch_below_tau_rel": {
+     "value": 0.3465765826604597,
+     "bar": 0.36124864423263325,
+     "met": true,
+     "margin": "95.9% of tau_rel - marginal; one seed of movement could flip it"
+    },
+    "affirmative_conjunct_2_a_cell_above_1p5_tau_rel": {
+     "met_numerically": true,
+     "cell": "ifc_poisson",
+     "met_claimably": false,
+     "why": "ifc_poisson is the ONLY cell clearing 1.5 x tau_rel, and under the card's own binding floor-arm rule it yields no claimable route delta (both A1 and A3 lose affine_on_hf_train). Numerically the affirmative branch holds; claimably it does not."
+    },
+    "instrument_reading": "the E3 map-smoothness sidecar measured IN-JOB confirms the prospective premise: ch map_smoothness_ratio 0.9796 (declared 0.980; tol 0.95; non_smooth_flag true). Other cells: ac 0.7912, fk 0.7982, ifc_poisson 0.3477, ifc_heat 0.1414."
+   }
+  },
+  "arms_seed0": {
+   "_units": "[test nRMSE, skill]; skill = nRMSE / certified reference; LOWER IS BETTER on both. nRMSE read from diag arms.<tag>.nrmse.",
+   "_optimizer_epochs": {
+    "A1_stack_ic_reg": 300,
+    "A2_stack_film_reg": 300,
+    "A3_direct_ic": 300,
+    "A4_direct_film": 300,
+    "A5_stack_ic_unreg": 300,
+    "A6_ifc_loo_selector": 0,
+    "A7_emul_only_ic": 100,
+    "_gate": "V11_arm_equal_total_budget PASS on all 5 cells (E_emu 100 + 2 x E_dc 100 = 300 for every stack arm; every direct arm spends the same 300 in one stage on the HF grid)"
+   },
+   "_panel_geomean_skill": {
+    "A1_stack_ic_reg": 10.352823,
+    "A2_stack_film_reg": 19.524711,
+    "A3_direct_ic": 11.557273,
+    "A4_direct_film": 20.925352,
+    "A5_stack_ic_unreg": 10.730114,
+    "A7_emul_only_ic": 19.961807
+   },
+   "table": {
+    "A1_stack_ic_reg": {
+     "sharp__allen_cahn_2d": [
+      0.176803,
+      85.853598
+     ],
+     "sharp__fisher_kpp_2d": [
+      0.00522,
+      31.589784
+     ],
+     "sharp__cahn_hilliard": [
+      0.351459,
+      8.407516
+     ],
+     "ifc_poisson": [
+      0.119414,
+      3.317068
+     ],
+     "ifc_heat": [
+      0.116359,
+      1.572414
+     ]
+    },
+    "A2_stack_film_reg": {
+     "sharp__allen_cahn_2d": [
+      0.471413,
+      228.912601
+     ],
+     "sharp__fisher_kpp_2d": [
+      0.034843,
+      210.856294
+     ],
+     "sharp__cahn_hilliard": [
+      0.471143,
+      11.270565
+     ],
+     "ifc_poisson": [
+      0.119414,
+      3.317068
+     ],
+     "ifc_heat": [
+      0.116359,
+      1.572414
+     ]
+    },
+    "A3_direct_ic": {
+     "sharp__allen_cahn_2d": [
+      0.195831,
+      95.093172
+     ],
+     "sharp__fisher_kpp_2d": [
+      0.005774,
+      34.939814
+     ],
+     "sharp__cahn_hilliard": [
+      0.336971,
+      8.060939
+     ],
+     "ifc_poisson": [
+      0.165922,
+      4.608952
+     ],
+     "ifc_heat": [
+      0.123609,
+      1.670395
+     ]
+    },
+    "A4_direct_film": {
+     "sharp__allen_cahn_2d": [
+      0.486168,
+      236.077616
+     ],
+     "sharp__fisher_kpp_2d": [
+      0.03419,
+      206.901092
+     ],
+     "sharp__cahn_hilliard": [
+      0.445997,
+      10.669032
+     ],
+     "ifc_poisson": [
+      0.165922,
+      4.608952
+     ],
+     "ifc_heat": [
+      0.123609,
+      1.670395
+     ]
+    },
+    "A5_stack_ic_unreg": {
+     "sharp__allen_cahn_2d": [
+      0.176786,
+      85.845196
+     ],
+     "sharp__fisher_kpp_2d": [
+      0.00522,
+      31.586687
+     ],
+     "sharp__cahn_hilliard": [
+      0.351604,
+      8.410992
+     ],
+     "ifc_poisson": [
+      0.142987,
+      3.971865
+     ],
+     "ifc_heat": [
+      0.116196,
+      1.570218
+     ]
+    },
+    "A7_emul_only_ic": {
+     "sharp__allen_cahn_2d": [
+      0.177027,
+      85.96229
+     ],
+     "sharp__fisher_kpp_2d": [
+      0.005216,
+      31.567035
+     ],
+     "sharp__cahn_hilliard": [
+      0.351918,
+      8.418495
+     ],
+     "ifc_poisson": [
+      3.153125,
+      87.586817
+     ],
+     "ifc_heat": [
+      0.117224,
+      1.584106
+     ]
+    }
+   },
+   "A6_ifc_loo_selector": {
+    "_role": "the pre-registered ifc HEADLINE (card part 7 item 4); closed form, 0 GPU epochs; selection on the 5 HF TRAIN rows only, test never read by the selection",
+    "selected": {
+     "ifc_poisson": "A3_direct_ic",
+     "ifc_heat": "A3_direct_ic"
+    },
+    "selected_test_nrmse": {
+     "ifc_poisson": 0.1659222730182937,
+     "ifc_heat": 0.12360920862863084
+    },
+    "selected_test_skill": {
+     "ifc_poisson": 4.608952,
+     "ifc_heat": 1.670395
+    },
+    "read_as_verbatim": "a selection of affine_on_hf_train is CONSERVATIVE (it won under a handicap) and lower-bounds the closed form's advantage; a selection of a trained arm is OPTIMISTIC and upper-bounds the trained route's value - it is NOT a certified win. Read heldout_only_nrmse beside every score.",
+    "handicap_evidence": {
+     "A3_direct_ic": {
+      "n_rows_fitted_by_this_candidate": 5,
+      "loo_is_exact_out_of_sample": false,
+      "heldout_only_nrmse": null,
+      "loo_nrmse_all_train_rows": {
+       "ifc_poisson": 0.011636968320158623,
+       "ifc_heat": 0.03142872652653868
+      }
+     },
+     "A1_stack_ic_reg": {
+      "n_rows_fitted_by_this_candidate": 3,
+      "loo_is_exact_out_of_sample": false,
+      "heldout_only_nrmse": {
+       "ifc_poisson": 0.12701520410815875,
+       "ifc_heat": 0.12580818828942578
+      },
+      "loo_nrmse_all_train_rows": {
+       "ifc_poisson": 0.12438680846332165,
+       "ifc_heat": 0.10432663629894623
+      }
+     },
+     "affine_on_hf_train": {
+      "n_rows_fitted_by_this_candidate": 0,
+      "loo_is_exact_out_of_sample": true,
+      "loo_nrmse_all_train_rows": {
+       "ifc_poisson": 0.17248281887212363,
+       "ifc_heat": 0.16705988943648478
+      }
+     }
+    },
+    "honest_reading": "A3 won the selection on an IN-SAMPLE score (it was fitted on all 5 HF train rows; heldout_only_nrmse is null and its LOO figures 0.0116/0.0314 are training error), while the only exactly-out-of-sample candidate (affine) has the best ACTUAL test nRMSE on both cells (0.057375 / 0.070918 vs the selected 0.165922 / 0.123609). Per the builder's recorded read_as this selection is OPTIMISTIC and must NOT be written up as a win for the direct route. The seed-0 ifc headline is: at 5 HF rows and a 0-epoch refit budget the LOO selector is not discriminating, and it selects an arm that is 2.9x / 1.7x worse on test than the floor it rejected.",
+    "affine_floor_cross_check": {
+     "in_job_vs_certified_nrmse_ifc_poisson": [
+      0.057375490043904326,
+      0.057375492822121524
+     ],
+     "in_job_vs_certified_nrmse_ifc_heat": [
+      0.07091834192582834,
+      0.07091833937569547
+     ],
+     "agreement": "7-8 significant figures - the selector and the certified floor share one estimator"
+    }
+   },
+   "front_end_delta_ic_minus_film_skill": {
+    "stack_A1_minus_A2": {
+     "sharp__allen_cahn_2d": -143.059003,
+     "sharp__fisher_kpp_2d": -179.26651,
+     "sharp__cahn_hilliard": -2.863049,
+     "ifc_poisson": 0.0,
+     "ifc_heat": 0.0
+    },
+    "direct_A3_minus_A4": {
+     "sharp__allen_cahn_2d": -140.984444,
+     "sharp__fisher_kpp_2d": -171.961278,
+     "sharp__cahn_hilliard": -2.608093,
+     "ifc_poisson": 0.0,
+     "ifc_heat": 0.0
+    },
+    "reading": "the ic_synth FRONT END, not the route, is the dominant term on the sharp cells: it is worth 141-179 skill units on ac/fk against a route delta of 9.24/3.35, i.e. 15x-53x larger. On both ifc cells it is a literal no-op (no ic_c* columns; front_end_fell_back_to_film_only=true)."
+   },
+   "A4_calibration_vs_r2s1_direct_B2": {
+    "A4_panel_geomean_seed0": 20.925352,
+    "pre_registered_target_3seed": 23.7753,
+    "delta": -2.849948,
+    "reading": "1-seed vs 3-seed-mean, so indicative only; A4 lands in the pre-registered neighbourhood, so the FAMILY is not the story (recipe _novelty_declaration)."
+   },
+   "stage_decomposition": {
+    "stage1_reference_A7_nrmse": {
+     "sharp__allen_cahn_2d": 0.177027,
+     "sharp__fisher_kpp_2d": 0.005216,
+     "sharp__cahn_hilliard": 0.351918,
+     "ifc_poisson": 3.153125,
+     "ifc_heat": 0.117224
+    },
+    "transport_term_A1_minus_A7_nrmse_ifc_poisson": -3.0337109606212587,
+    "reading": "on ac/fk/ch the frozen corrector adds essentially nothing over the front end alone (|A1 - A7| < 0.0005 nRMSE), so the stack's sharp-cell performance IS its front end. On ifc_poisson A7 alone is catastrophic (skill 87.59, losing every floor including zero) and the corrector recovers it - the stack's ifc value is entirely a stage-2 effect."
+   },
+   "route_data_disclosure_n_train_route": {
+    "ifc_poisson_and_ifc_heat": {
+     "stack_stage1_emulator": {
+      "n_fit": 18,
+      "n_heldout": 2
+     },
+     "stack_stage2_corrector": {
+      "n_fit": 3,
+      "n_val": 2
+     },
+     "direct_head": {
+      "n_train_route": 5,
+      "val_disjoint": false,
+      "rule": "n_train_hf=5 < 20 so no val slice is affordable; the direct head trains on ALL HF train rows and holds none out (R3S2B2_DIRECT_VAL=..._else_none_recorded)"
+     }
+    },
+    "sharp_cells": {
+     "n_fit": 320,
+     "n_val": 80,
+     "disjoint": true,
+     "shared_by": "ALL seven arms and both routes consume the identical folds"
+    },
+    "card_claim_reproduced": "the card's '18 of 20 LF rows vs 5 HF rows' disclosure is reproduced verbatim by the diag on both ifc cells"
+   },
+   "floor_arm_rule": {
+    "sharp__allen_cahn_2d__sharp__fisher_kpp_2d__sharp__cahn_hilliard": "every field arm beats nn_condition / train_mean / zero (affine_on_hf_train not applicable - certified for the ifc cells only)",
+    "ifc_poisson": "A1/A2/A3/A4/A5/A6 all LOSE affine_on_hf_train (nRMSE 0.057375, skill 1.5938) while beating nn_condition/train_mean/zero; A7_emul_only_ic loses ALL FOUR floors (skill 87.59)",
+    "ifc_heat": "ALL arms including A7 lose BOTH affine_on_hf_train (0.070918, skill 0.9584) AND nn_condition (0.103164, skill 1.3941)",
+    "consequence": "under the card's own binding floor-arm rule NEITHER ifc cell yields a claimable route delta at seed 0 - which removes the only cell (ifc_poisson) that clears the G1 per-dataset bar and the only cell satisfying G3's second affirmative conjunct. The claimable per-dataset count is 0 of 5, not 1 of 5."
+   },
+   "band_error_columns_A1_vs_A3": {
+    "_edges_wavenumber_ifc": [
+     0.0,
+     4.0,
+     8.0,
+     16.0,
+     32.0
+    ],
+    "_note": "4-band error energy (Duraisamy arXiv:2604.20061 reporting standard) from diag band_err_energy_by_arm; band 4 is the octave above the LF Nyquist",
+    "ifc_poisson": {
+     "A1": [
+      0.86309,
+      0.08383,
+      0.06919,
+      0.54598
+     ],
+     "A3": [
+      3.29976,
+      0.13231,
+      0.05873,
+      0.03868
+     ],
+     "reading": "the stack's ifc_poisson win is entirely a BAND-1 win (0.863 vs 3.300); it is WORSE than the direct head in bands 3 and 4, i.e. the frozen corrector buys large-scale accuracy and pays it back above the LF Nyquist"
+    },
+    "ifc_heat": {
+     "A1": [
+      14092253.6,
+      220791.4,
+      88945.2,
+      68244.9
+     ],
+     "A3": [
+      12936794.2,
+      201009.3,
+      76080.3,
+      47224.8
+     ]
+    }
+   }
+  },
+  "guard_flags": [],
+  "guard_set_seed0": {
+   "source": "mffp_autoresearch_outputs/round3/r3s2_field_reach/B2/eval/result_guard_s0.json (run in-job, --datasets guard, smoke tier 200 epochs, seed 0)",
+   "panel_geomean_skill": 0.23183399663280294,
+   "per_dataset": {
+    "heat_local": {
+     "nRMSE": 0.001095966719653108,
+     "skill": 0.45636347302054303,
+     "reference_nrmse": 0.00240152155999517
+    },
+    "fluid": {
+     "nRMSE": 0.06847689862757063,
+     "skill": 0.314028386600675,
+     "reference_nrmse": 0.21805958171115042
+    },
+    "sharp__sod_1d": {
+     "nRMSE": 0.002877071571258075,
+     "skill": 0.08694639544202848,
+     "reference_nrmse": 0.03309017650048946
+    }
+   },
+   "regression_test": "no guard dataset regressed > 2x its recorded reference in mffp_autoresearch/round2/eval/copylf_baselines.json - the worst ratio is 0.456x, i.e. every guard cell is 2.2x-11.5x BETTER than copy-LF. 0 flags."
+  },
+  "anomalies": [
+   "G2 leg (iii) IS TRIPPED AT SEED 0: tools/lsi_transfer_stability_audit.py reports AMPLIFYING on the SCORED cell ifc_poisson, band 3 mean |T| = 1.1851 > 1.0 (FLAGGED 7/8 cells overall). The repair was inert in that band - T_reg[b3] == T_unreg[b3] exactly - because LOOCV selected ridge = 0 there and the band-limit only touches band 4. This is the single largest risk to the card's instrument-acceptance block and must be re-checked at 3 seeds.",
+   "BAND-4-ZERO-BY-CONSTRUCTION (mandatory disclosure, builder judgment call (a) + code-reviewer handoff): with the k_cut ring included and S6_BAND_EDGES_FRAC placing band 4 at kr >= k_Nyq_HF/2 on 2x ladders, band 4 of A1 is identically 0.0 on every cell BY CONSTRUCTION. B1's failure (ifc_poisson band-4 |T| = 66.219) was in exactly that band. A band-4 pass is not evidence the repair worked; legs (i), (ii), (iv), bands 1-3 and the T_band_mean_abs_unregularised_A5 column must be read jointly.",
+   "LOOCV selected ridge = 0 on 4 of the 5 scored cells (ac, fk, ifc_poisson, ifc_heat) and 1e-6 only on cahn_hilliard, so the ridge half of the pre-registered repair never engaged where it was needed; the entire measured repair effect (+0.6548 skill on ifc_poisson, ~0 elsewhere) is the band-limit.",
+   "SAMPLE_STARVED n_fit = 3 on both ifc cells (audit tolerance 32) - the LOOCV coefficient is chosen from 3 fit rows, which is exactly the low-sample-support condition the repair was meant to make safe.",
+   "ic_synth is NOT applicable on either ifc cell (attribution.ic_synth_applicable=false; front_end_fell_back_to_film_only=true; no ic_c* columns), so A1 == A2 and A3 == A4 bit-for-bit there. The pre-registered 'independent replication of the route contrast at the null front end' is therefore a literal duplicate on 2 of 5 cells and independent only on ac/fk/ch - where it FLIPS SIGN on fisher_kpp (+3.9552, direct wins).",
+   "FLOOR-ARM RULE BITES: on both ifc cells every field arm loses affine_on_hf_train (and on ifc_heat also nn_condition), so neither ifc cell yields a claimable route delta - and ifc_poisson is the only cell clearing the G1 per-dataset bar and the only cell satisfying G3's second affirmative conjunct.",
+   "A6 (the pre-registered ifc headline) selected A3_direct_ic on both cells on an IN-SAMPLE score (A3 fitted on all 5 HF train rows; loo_is_exact_out_of_sample=false; heldout_only_nrmse=null), while the only exactly-out-of-sample candidate (affine) has the best actual test nRMSE. Per read_as this is OPTIMISTIC and is not a certified win for the direct route.",
+   "A7_emul_only_ic on ifc_poisson is skill 87.59 (nRMSE 3.1531) and loses ALL FOUR floors including zero: the stage-1 pseudo-LF alone is catastrophic there and the frozen corrector recovers it (transport term -3.0337 nRMSE). On ac/fk/ch, by contrast, A7 ~ A1 to <0.0005 nRMSE - the corrector adds nothing on the sharp cells.",
+   "guard cell sharp__sod_1d reports NaN for band-mean |T| in bands 2-3 (k_cut 0.5, 64 of 65 modes zeroed on a 1-D cell); benign for a guard cell, but the audit prints nan rather than a value.",
+   "A1's improvement over the stream anchor is NOT resolvable at one seed against the like-for-like comparand: A1 seed 0 (10.3528) vs B1 seed 0 (10.7213) = 0.3684 skill units < the certified panel seed_mce 0.5083.",
+   "CLEAN: sacct COMPLETED 0:0; .err empty; no NaN/preemption/resume/requeue lines in the .out; zero_work_resume_scan 8/8 WORK_DONE (0 ZERO_WORK, 0 CKPT_NOT_REWRITTEN, 0 UNDERIVABLE, 0 binding mismatches against state/data_hashes.json); stale_checkpoint_audit STALE 0/16 with --exclude stale_ckpt; all 13 validity gates (V1, V2, V3, V6, V6b, V8, V10-V16) PASS on all 5 scored cells; V3 chains_degenerate false everywhere, so the G2 repair attribution is non-empty."
+  ],
+  "wall_clock_per_seed_min": [
+   54.7
+  ],
+  "wall_clock_detail": {
+   "seed_0": {
+    "job_id": 158775,
+    "state": "COMPLETED",
+    "exit_code": "0:0",
+    "elapsed": "00:54:42",
+    "node": "hpc-sm-01-17",
+    "maxrss_kb": 5704684,
+    "start_local": "2026-08-10T08:31:01-07:00",
+    "end_local": "2026-08-10T09:25:42-07:00",
+    "time_limit": "03:00:00"
+   },
+   "per_cell_train_seconds": {
+    "sharp__allen_cahn_2d": 831.7,
+    "sharp__fisher_kpp_2d": 832.6,
+    "sharp__cahn_hilliard": 828.6,
+    "ifc_poisson": 14.7,
+    "ifc_heat": 14.3,
+    "heat_local": 430.2,
+    "fluid": 82.0,
+    "sharp__sod_1d": 97.2
+   },
+   "for_the_timing_ledger": "54.7 min/seed measured, against the recipe's 45-70 min estimate (correct) and the code-reviewer's 90-120 min watch (finding 5, did not materialise: the HF-grid direct heads cost ~830 s per sharp cell and ~14 s per ifc cell). Budget seeds 1+2 at ~55 min each; --time 03:00:00 keeps ~2h05m headroom and needs no change."
+  }
+ },
  "6_analysis": null,
  "7_gap_and_future": null,
  "reanalysis_progress": null
