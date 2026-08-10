@@ -136,6 +136,26 @@ Their fields are nevertheless 3.29× farther away.
 LF training data specifically repairs this group.
 It repairs 92 of the no-LF variant’s worse-than-zero rows and accounts for 97% of that comparison’s gain.
 
+### 2.1 The top two models, in detail
+
+Both winners share the deployment premise (condition in, fine field out, no solver at test), and both owe their standing to mechanism work rather than architecture novelty.
+Detailed diagrams: `round3/docs/figures/r3_model_detail_ic_stack.png` and `r3_model_detail_lf_channels.png` (Figs. 3-4 in the rendered page).
+
+**The initial-condition stack (r3s2; the round's best model after the batch-2 repair, 0.72× the film-transfer baseline).**
+Stage 1 is a FiLM-conditioned Fourier neural operator (4 spectral blocks, width 64, 12 Fourier modes) that synthesizes the coarse field the solver would have produced, directly from the condition vector.
+The condition enters every block as a learned affine modulation, so one network serves all conditions.
+The certified per-dataset interpolation convention lifts the synthetic coarse field to the fine grid.
+Stage 2 is a frozen local CNN corrector (7×7 kernels, depth 4, width 32) trained on real coarse→fine pairs in an earlier round; batch 2 added a cross-validated ridge plus a hard band-limit at the coarse grid's Nyquist frequency, repairing the one failure mode (a 66× spectral amplification fitted from 3 samples).
+Training uses ~400 (condition → coarse field) pairs per sharp dataset; the fine fields never enter stage 1, and stage 2's weights never change — which is why the mechanism stage located a covariate shift there.
+Established: the initial-condition information is the entire measurable effect and acts in stage 1; the corrector adds nothing resolvable (round 2's null replicates); the repair's attribution was proven by a replication arm that reproduced the old defect digit-for-digit; both ifc cells still lose to a 6-parameter affine fit.
+
+**The LF-trained multi-resolution FNO (r3s3's A1 arm, 0.79× the film-transfer baseline; best model on ifc_heat and fisher_kpp).**
+One conditioned FNO (4 spectral blocks, width 64) with its Fourier modes pinned to the coarsest rung's Nyquist so every resolution shares one spectral basis, and per-rung output heads sharing the backbone.
+Training minimizes a joint loss: predict the coarse solve at every rung AND the fine field, equally weighted, with ~400 coarse rows against as few as 5 fine rows.
+At test only the fine head is read out; the coarse heads exist purely to absorb training signal.
+The controlled arms (no coarse data / coarse data only at already-covered conditions / full pool) are what let the round attribute the effect: the value is supply of new condition points, not regularization — the covered-only arm learns the same function as the no-coarse-data arm.
+Established: recovery tracks condition-response alignment at r = 0.985; the pre-repair −10.1% headline was retracted as a stale-baseline artifact; batch 2 is measuring the cost curve (seed-0 knee at ~80 distinct coarse conditions on cahn_hilliard).
+
 ## 3. Benchmark-integrity findings (the part most relevant to the benchmark paper)
 
 - **The evaluated `pfc` task contained essentially no fidelity gap.**

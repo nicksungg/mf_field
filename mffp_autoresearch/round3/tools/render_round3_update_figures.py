@@ -304,6 +304,98 @@ def fig_architectures():
     return out
 
 
+def _flow_panel(ax, title, boxes, kinds):
+    """Vertical box flow inside one axes. kinds: 'io' | 'core' | 'note' per box."""
+    ax.set_axis_off()
+    ax.set_xlim(0, 1); ax.set_ylim(0, 1)
+    ax.set_title(title, loc="left", fontsize=9.0, fontweight="bold", pad=5)
+    n = len(boxes)
+    weights = [1.0 if k == "io" else 1.9 for k in kinds]
+    total_w = sum(weights)
+    avail = 0.97
+    gap = 0.035
+    box_space = avail - gap * (n - 1)
+    heights = [box_space * w / total_w for w in weights]
+    ys, y = [], 0.985
+    for i in range(n):
+        ys.append(y - heights[i] / 2)
+        y -= heights[i] + gap
+    for i, (by, text, kind) in enumerate(zip(ys, boxes, kinds)):
+        fc = {"io": "#FFFFFF", "core": "#F1EFF7", "note": "#FBFAFC"}[kind]
+        ec = {"io": MUTED, "core": ACCENT, "note": "#C9CDC9"}[kind]
+        ax.add_patch(FancyBboxPatch((0.015, by - heights[i] / 2), 0.97, heights[i],
+                                    boxstyle="round,pad=0.008", fc=fc, ec=ec, lw=1.1))
+        ax.text(0.5, by, text, ha="center", va="center", fontsize=7.4, color=INK, linespacing=1.3)
+        if i < n - 1:
+            ax.annotate("", xy=(0.5, ys[i + 1] + heights[i + 1] / 2 + 0.002),
+                        xytext=(0.5, by - heights[i] / 2 - 0.002),
+                        arrowprops=dict(arrowstyle="-|>", color=MUTED, lw=1.1))
+
+
+def fig_model_detail(fname, suptitle, left_title, left_boxes, left_kinds,
+                     right_title, right_boxes, right_kinds, findings):
+    fig = plt.figure(figsize=(12.5, 8.6), constrained_layout=True)
+    gs = GridSpec(2, 2, figure=fig, height_ratios=[1, 0.22])
+    fig.suptitle(suptitle, fontsize=10.2, x=0.02, ha="left")
+    _flow_panel(fig.add_subplot(gs[0, 0]), left_title, left_boxes, left_kinds)
+    _flow_panel(fig.add_subplot(gs[0, 1]), right_title, right_boxes, right_kinds)
+    axk = fig.add_subplot(gs[1, :])
+    axk.set_axis_off(); axk.set_xlim(0, 1); axk.set_ylim(0, 1)
+    axk.add_patch(FancyBboxPatch((0.005, 0.03), 0.99, 0.94, boxstyle="round,pad=0.006",
+                                 fc="#FFFFFF", ec="#C9CDC9", lw=1.0))
+    axk.text(0.02, 0.5, findings, ha="left", va="center", fontsize=8.0, color=INK, linespacing=1.6)
+    out = FIGDIR / fname
+    fig.savefig(out, dpi=170)
+    plt.close(fig)
+    return out
+
+
+def fig_top_models():
+    p3 = fig_model_detail(
+        "r3_model_detail_ic_stack.png",
+        "Model detail 1 — the initial-condition stack (r3s2; repaired batch-2 version = best model of the round, 0.72× the film-transfer baseline)\n"
+        "Two learned stages: a neural generator invents the coarse field the solver would have produced, then a frozen corrector upgrades it.",
+        "How it predicts (test time — condition only, no solver)",
+        ["condition vector  (2–50 numbers: PDE coefficients, boundary/forcing\nparameters, and — new in round 3 — the initial-condition coefficients)",
+         "STAGE 1 · pseudo-coarse generator\nFiLM-conditioned Fourier neural operator: 4 spectral blocks, width 64,\n12 Fourier modes; the condition enters every block as a learned\naffine modulation (FiLM), so one network serves all conditions.\nOutput: a synthetic coarse-grid field (32²/64² sharp, 8–32² ifc)",
+         "registered lift  (the benchmark's certified per-dataset interpolation\nconvention raises the coarse field onto the fine grid)",
+         "STAGE 2 · frozen corrector\nlocal CNN with a pixel-wise gate (7×7 kernels, depth 4, width 32),\ntrained in an earlier round on REAL coarse→fine pairs and frozen;\nbatch 2 adds the repaired spectral (LSI) filter: cross-validated ridge\n+ hard band-limit at the coarse grid's Nyquist frequency",
+         "fine-grid field  (128² sharp / 64² ifc)"],
+        ["io", "core", "io", "core", "io"],
+        "How it is trained",
+        ["training data: ~400 (condition → coarse field) pairs per sharp dataset\n+ only 5 fine-grid fields on the ifc datasets",
+         "STAGE 1 trains condition → real coarse field (supervised on the\ncheap solves; relative-L2 loss; the fine fields never enter stage 1)",
+         "STAGE 2 stays frozen (its weights come from coarse→fine supervision\nin an earlier round); only its input distribution changes —\nwhich is exactly the covariate shift the mechanism stage identified",
+         "at test the real solver is gone: the stack must generate its own\ncoarse field — the benchmark's deployment premise"],
+        ["io", "core", "core", "note"],
+        "What the round established:  the initial-condition information is the entire measurable effect, and it acts in STAGE 1 (63.7% / 85.4% of generator error removed on\n"
+        "allen_cahn / fisher_kpp; a fake IC does worse than none).  The corrector stage adds nothing resolvable — round 2's null replicates (0.0056 vs 0.0061).  Batch 2's repair\n"
+        "removed the one failure mode (a 66× spectral amplification fitted from 3 samples) — proven by a replication arm that reproduced the defect digit-for-digit — improving the\n"
+        "stream best from 12.96 to 10.09 (0.72× film-transfer).  Its remaining weakness: both ifc cells still lose to a 6-parameter affine fit.")
+
+    p4 = fig_model_detail(
+        "r3_model_detail_lf_channels.png",
+        "Model detail 2 — the LF-trained multi-resolution FNO (r3s3's A1 arm, 0.79× the film-transfer baseline)\n"
+        "One network, one loss trick: it learns from cheap coarse solves at hundreds of conditions while seeing only 5–400 expensive fine fields.",
+        "How it predicts (test time — condition only, no solver)",
+        ["condition vector",
+         "multi-resolution Fourier neural operator\n4 spectral blocks, width 64; Fourier modes pinned to the coarsest\nrung's Nyquist (cap 12) so every resolution shares one spectral\nbasis; per-rung output heads share the backbone",
+         "only the FINE head is read out at test\n(the coarse heads exist purely to absorb training signal)",
+         "fine-grid field"],
+        ["io", "core", "core", "io"],
+        "How it is trained (the part that makes it the round's best value-of-data story)",
+        ["joint loss over resolutions: predict the coarse solve at every rung\nAND the fine field, equally weighted (λ_LF = 1);\nHF batch 5, LF batch 16; ~400 coarse rows vs as few as 5 fine rows",
+         "the coarse rows enter at conditions the fine data never covers —\nhundreds of extra (condition → field) examples at low cost",
+         "controlled arms isolate WHY it works: same network trained with\nno coarse data (A0), coarse data only at already-covered conditions\n(A2), and the full pool (A1)",
+         "batch 2 is measuring the cost curve: recovery vs number of distinct\ncoarse conditions (knee at ~80 on cahn_hilliard at seed 0)"],
+        ["core", "note", "core", "note"],
+        "What the round established:  the coarse data's value is SUPPLY, not regularization — the covered-only arm (A2) learns the same function as no-coarse-data (A0), while new\n"
+        "condition rows explain E_cov/E_total ≈ 1.0 on 30/30 cells.  Recovery tracks a measurable intermediate (condition–response alignment, r = 0.985).  Its headline vs-baseline\n"
+        "win from before the anchor repair (−10.1%) was retracted as a stale-baseline artifact; what survives is the mechanism and the strongest panel number of batch 1 (11.08,\n"
+        "0.79× film-transfer).  It is the best model on ifc_heat (0.07 = 15× better than copying the solver) and fisher_kpp.")
+    return p3, p4
+
+
 def main():
     cards = load_cards()
     best_floor, floors_ds, r2 = load_anchors()
@@ -315,6 +407,9 @@ def main():
         print("WARN: per-dataset values not found for:", missing)
     p1 = fig_performance(cards, best_floor, floors_ds, r2, film)
     p2 = fig_architectures()
+    p3, p4 = fig_top_models()
+    print("wrote", p3)
+    print("wrote", p4)
     print("wrote", p1)
     print("wrote", p2)
     for cid, d in cards.items():
