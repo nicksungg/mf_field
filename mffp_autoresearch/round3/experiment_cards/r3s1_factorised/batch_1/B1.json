@@ -1,242 +1,671 @@
 {
-  "id": "r3s1_factorised-B1",
-  "stream": "r3s1_factorised",
-  "batch": 1,
-  "category": "gap / factorised-head composition — propagation-aware two-stage cross-coefficient closed-form head shipped as the scored condition->HF arm, with the condition-dimension discriminator (M15) as a pre-registered mechanism test at n = 4 high-cond_dim vs n = 2 low-cond_dim cells",
-  "card_type": "model",
-  "created_utc": "2026-08-07T17:52:11Z",
-  "worktree_path": "mffp_autoresearch/round3/worktrees/r3s1_factorised/B1",
-  "source_iteration": "brainstormer/r3s1_factorised/batch_1/iteration_1.md",
-  "reopened_from": null,
-  "1_id_category": "r3s1_factorised-B1 / gap / factorised-head composition — propagation-aware two-stage cross-coefficient closed-form head shipped as the scored condition->HF arm, with the condition-dimension discriminator (M15) as a pre-registered mechanism test at n = 4 high-cond_dim vs n = 2 low-cond_dim cells",
-  "2_motivation": "The stream question (`project.yaml`) is \"does the recorded two-stage cross-coefficient factorised closed-form head beat the shipped condition->level law on the honest (completeness-certified) panel?\". The object exists and was pre-measured offline in `r2s1_direct-B3` (T3-F24/F25) but never shipped as a scored arm, and its round-2 numbers are void because the panel changed. Round 3 also converts the hypothesis that generated it (M15: \"the pattern is a CONDITION-DIMENSION effect ... Caveat: n = 1 high-cond_dim cell in this panel\") from untestable to testable **for free**: option-A regeneration moved the IC coefficients into the condition vector, raising cond_dim on pfc 2->18, allen_cahn 3->19, fisher_kpp 2->50 while cahn_hilliard stays at 19 on byte-identical data — n = 4 high vs n = 2 low (ifc_heat 3, ifc_poisson 5). The websearcher's D1 verdict is **`preempted-but-MF-composition-open (cite)`** and its open residue reads, verbatim: *\"Only the **composition**: OOF-corrected target-as-input stacking on **reduced-basis coefficients of a parametric PDE field**, where stage-1 targets are themselves regressed from the condition vector, scored on a copy-LF-skill panel in the **no-LF-at-test** regime at N_hf down to 5. [...] **The card must name SST/ERC and state that F25 rediscovered the published train/predict discrepancy.**\"*; the D2 verdict is also **`preempted-but-MF-composition-open (cite)`**, residue verbatim: *\"the **independent variable and estimator** — both published criteria key on task affinity / heterotopic design geometry, neither on **condition dimension vs fit-row count** [...] **Strongest novelty position available to this batch — and it is a diagnostic claim, not an architecture claim.**\"* Accordingly the card claims the **composition** and the **discriminator**, names Spyromitros-Xioufis et al. (arXiv:1211.6581, Stacked Single-Target / Ensemble of Regressor Chains) as owning both the cascade and the OOF-corrected gate, and records F25 as a rediscovery of that paper's train/predict discrepancy rather than a finding.",
-  "3_description": "new from-scratch round-3 family `models_r3/r3s1_twostage_crosscoef`; condition-only forward signature; stripped view only; leakage tripwire; no LF array opened at any stage; **no gradient-trained arm** (every arm closed-form).\n- **Scored column `test_hf`** — two-stage propagation-aware cross-coefficient head. Stage 1 is the shipped head unchanged (centering `ratio = ||mean_i y_i|| / geomean_i ||y_i||`, tau = 1.0 over {fact, add}; bank = {DC/spatial-mean} u {POD 0-49 of the DC-removed fit-fold residual in the selected centering form}; per direction a 5-fold OOF R^2 from the condition over {affine, quadratic, RBF kernel ridge, k-NN}, best family out of fold; SET = directions clearing tau = 0.1, min 1, max 32). **Stage 2 (new)**: remaining directions regressed on the **out-of-fold stage-1 predicted** SET coefficients over the same map bank, with the stage-2 gate both **selected and fitted** on those OOF predictions (tau2 = 0.1). Empty gate => bitwise no-op.\n- **Reference arms**: `ref_head_onestage` (the shipped law; matched folds/bases/seed — paired control *and* reproduction seam), `ref_twostage_true_gate` (F25 negative control, reported as a named rediscovery), `ref_dc_only` (the condition->level law, required by round-3 success criterion 1), floors `ref_zero` / `ref_train_mean` / `ref_nn_condition` (seam-checked to `state/anchors_repaired/floors.json` at 1e-9, RAISING on mismatch), `ref_affine_on_hf_train` (seam-checked on both ifc cells to `launch_anchors.json:ifc_floors_repaired`, reported on the sharp cells).\n- **Diagnostic columns (L3-bearing)**: per direction and per cell, OOF R^2 (A) from the condition vs (B) from the SET coefficients, the margin B - A, the stage-2 gate size, and the per-cell 3-seed spread of every scored quantity (handed to `r3s4_audit` for mce re-certification). Instrument: `round2/tools/coefficient_factorisation_audit.py`, adapted on use.\n- **Folds**: identical to the shipped head so the control is procedure-matched — disjoint 80/10/10, 5 resamples, LOO when `N_train < 20`; the calibration fold is **asserted unused** (no post-hoc stage in this card) rather than merged, keeping the fit fold at exactly 320 rows so the reproduction seam is meaningful.\n- **Build gates**: **G-A** reproduction seam (`ref_head_onestage` per-cell 3-seed mean within 3 % of `launch_anchors.json:cards.r2s1_direct-B3.per_dataset_mean_skill`, panel geomean within 28.2174 +/- 0.3612; RAISE, INFRA-class); **G-B** floor seam checks at 1e-9; **G-C** stripped-view leakage tripwire + guard set at the same tier; **G-D** target-scaler pre-flight (`tools/target_scale_spread_audit.py`) on pfc and cahn_hilliard before any test tensor is touched; **G-E** stage-2 no-op assertion (empty gate => `test_hf` == `ref_head_onestage` to 1e-12, which bounds the panel delta below by 0).",
-  "4_expected_result": "(3 seeds {0,1,2}; skill units; anchor = best-floor panel geomean **36.3912**; named comparand = the shipped closed-form law **28.2174**):\n\n| cell | cond_dim | best frozen floor | shipped law (certified) | expected `test_hf` | provisional mce |\n|---|---|---|---|---|---|\n| `sharp__phase_field_crystal_2d` | 18 | 48.0773 (train_mean) | 46.7083 | 42.0-46.8 | 8.8595 |\n| `sharp__allen_cahn_2d` | 19 | 475.8568 (nn) | 279.1165 | 250-279 | 16.4223 |\n| `sharp__fisher_kpp_2d` | 50 | 390.7015 (train_mean) | 374.8381 | 330-375 | 158.3322 |\n| `sharp__cahn_hilliard` | 19 | 23.1803 (nn) | 12.5650 | 11.30-11.45 | 1.1604 |\n| `ifc_poisson` | 5 | 8.0409 (nn) / affine 1.5938 | 8.2507 | 8.20-8.40 (no-op expected) | 0.2399 |\n| `ifc_heat` | 3 | 1.3941 (nn) / affine 0.9584 | 0.9964 | 0.99-1.01 (no-op expected) | **absent from the file** |\n| **panel geomean** | — | **36.3912** | **28.2174** [28.1096, 28.3253] | **25.5-27.8, point ~26.8** | panel spread **0.1806** |\n\nMetric that moves: the 6-cell panel geomean of scored `test_hf` skill and the paired per-cell delta against `ref_head_onestage`. Point estimate **-26 %** vs the anchor 36.3912 and **-5 %** (delta ~1.4) vs the shipped law 28.2174, with a pessimistic floor of **-1.6 %** (delta **0.4479**, computed by propagating the pre-measured cahn_hilliard ratio 11.4148/12.5650 = 0.90846 through the 6-cell geomean) if only cahn_hilliard moves. **Vs the noise floor**: the L1 threshold 0.3612 is **2.00x** the measured panel instrument 0.1806 and 4.84x r2s1-B2's 0.0746, and the predicted delta is **1.24x-4.38x** that threshold. Mechanism prediction: max per-direction margin [OOF R^2 from SET coefficients - OOF R^2 from the condition] **>= 0.30 on >= 3 of 4** high-cond_dim cells and **< 0.30 on both** low-cond_dim cells, against round-2's measured no-op margins +0.0054 / +0.0323 / +0.0430 / -0.0751 (bar = 7.0x the largest). Mandatory floor-arm reading: `test_hf` should beat `ref_nn_condition`, `ref_train_mean` and `ref_zero` on all four sharp cells and is expected to **lose to `ref_affine_on_hf_train` on both ifc cells** (8.2507 / 0.9964 vs 1.5938 / 0.9584) — the card makes **no ifc claim** and states the program.md §2 affine-floor verdict explicitly. Criterion-1 reading: `test_hf` vs `ref_dc_only` reported per cell, adjudicated against `r3s4_audit`'s certified mce.",
-  "expected_falsification": "H-r3s1-B1 — \"the cahn_hilliard cross-coefficient effect is a **condition-dimension mechanism**, not a dataset accident, and shipping it with a propagation-aware gate beats the shipped condition->level closed-form law on the honest panel\" — is FALSIFIED if **(L1)** the seed-mean panel geomean of `test_hf` fails to beat the matched `ref_head_onestage` by more than **0.3612** skill units (2 x the certified 3-seed panel spread 0.1806 of `r2s1_direct-B3`; `noise_floor.json` has no panel entry) or the sign of that paired delta is not identical at all three seeds, **or (L2)** on `sharp__cahn_hilliard` — byte-identical data to round 2 (same copy-LF reference 0.041802962686225575, same `nn_condition` nRMSE 0.9690069811741324), where the effect was pre-measured at 12.6601 -> 11.4148 — `test_hf` fails to beat `ref_head_onestage` by more than **1.1603569120520159** skill units (that cell's provisional `min_claimable_effect`), **or (L3)** fewer than 3 of the 4 high-cond_dim cells {pfc 18, allen_cahn 19, cahn_hilliard 19, fisher_kpp 50} reach a maximum per-direction margin [OOF R^2 from the SET coefficients - OOF R^2 from the condition] **>= 0.30** at the 3-seed mean, or either low-cond_dim cell {ifc_heat 3, ifc_poisson 5} reaches it (recorded **unresolved**, not fired, on any cell whose 3-seed spread of that margin exceeds 0.10), **or (L4)** `test_hf` is worse than the best frozen floor on any of the four sharp cells (pfc > 48.0773, allen_cahn > 475.8568, fisher_kpp > 390.7015, cahn_hilliard > 23.1803); the two ifc cells carry no falsification weight (N_hf = 5, anecdote-grade per §12.1; `noise_floor.json` has no `ifc_heat` entry) but are reported against both the frozen floors and `affine_on_hf_train`; every number is `provisional` until the in-round 3-seed confirm and `r3s4_audit`'s mce re-certification land.",
-  "anchor_reference": null,
-  "prior_art": {
-    "verdict": "preempted-but-MF-composition-open (cite)",
-    "citations": [
-      "D1: Spyromitros-Xioufis et al., *Multi-Target Regression via Input Space Expansion* — https://arxiv.org/abs/1211.6581 (**owns both the cascade (SST/ERC) and the OOF-corrected gate**)",
-      "D1: mlxtend `StackingCVRegressor` — https://rasbt.github.io/mlxtend/user_guide/regressor/StackingCVRegressor/",
-      "D1: Callaham/Brunton/Loiseau JFM nonlinear correlations — https://www.cambridge.org/core/journals/journal-of-fluid-mechanics/article/on-the-role-of-nonlinear-correlations-in-reducedorder-modelling/CC2980F9AA4AC20A7453C3056ED950C4",
-      "D2: Ayman/Mukhopadhyay/Laszka, *Task Grouping ... via Task Affinity Prediction* — https://arxiv.org/abs/2310.16241",
-      "D2: Chen/Fan/Wang, *When is multivariate kriging worthwhile?* — https://arxiv.org/abs/2607.06832"
+ "id": "r3s1_factorised-B1",
+ "stream": "r3s1_factorised",
+ "batch": 1,
+ "category": "gap / factorised-head composition \u2014 propagation-aware two-stage cross-coefficient closed-form head shipped as the scored condition->HF arm, with the condition-dimension discriminator (M15) as a pre-registered mechanism test at n = 4 high-cond_dim vs n = 2 low-cond_dim cells",
+ "card_type": "model",
+ "created_utc": "2026-08-07T17:52:11Z",
+ "worktree_path": "mffp_autoresearch/round3/worktrees/r3s1_factorised/B1",
+ "source_iteration": "brainstormer/r3s1_factorised/batch_1/iteration_1.md",
+ "reopened_from": null,
+ "1_id_category": "r3s1_factorised-B1 / gap / factorised-head composition \u2014 propagation-aware two-stage cross-coefficient closed-form head shipped as the scored condition->HF arm, with the condition-dimension discriminator (M15) as a pre-registered mechanism test at n = 4 high-cond_dim vs n = 2 low-cond_dim cells",
+ "2_motivation": "The stream question (`project.yaml`) is \"does the recorded two-stage cross-coefficient factorised closed-form head beat the shipped condition->level law on the honest (completeness-certified) panel?\". The object exists and was pre-measured offline in `r2s1_direct-B3` (T3-F24/F25) but never shipped as a scored arm, and its round-2 numbers are void because the panel changed. Round 3 also converts the hypothesis that generated it (M15: \"the pattern is a CONDITION-DIMENSION effect ... Caveat: n = 1 high-cond_dim cell in this panel\") from untestable to testable **for free**: option-A regeneration moved the IC coefficients into the condition vector, raising cond_dim on pfc 2->18, allen_cahn 3->19, fisher_kpp 2->50 while cahn_hilliard stays at 19 on byte-identical data \u2014 n = 4 high vs n = 2 low (ifc_heat 3, ifc_poisson 5). The websearcher's D1 verdict is **`preempted-but-MF-composition-open (cite)`** and its open residue reads, verbatim: *\"Only the **composition**: OOF-corrected target-as-input stacking on **reduced-basis coefficients of a parametric PDE field**, where stage-1 targets are themselves regressed from the condition vector, scored on a copy-LF-skill panel in the **no-LF-at-test** regime at N_hf down to 5. [...] **The card must name SST/ERC and state that F25 rediscovered the published train/predict discrepancy.**\"*; the D2 verdict is also **`preempted-but-MF-composition-open (cite)`**, residue verbatim: *\"the **independent variable and estimator** \u2014 both published criteria key on task affinity / heterotopic design geometry, neither on **condition dimension vs fit-row count** [...] **Strongest novelty position available to this batch \u2014 and it is a diagnostic claim, not an architecture claim.**\"* Accordingly the card claims the **composition** and the **discriminator**, names Spyromitros-Xioufis et al. (arXiv:1211.6581, Stacked Single-Target / Ensemble of Regressor Chains) as owning both the cascade and the OOF-corrected gate, and records F25 as a rediscovery of that paper's train/predict discrepancy rather than a finding.",
+ "3_description": "new from-scratch round-3 family `models_r3/r3s1_twostage_crosscoef`; condition-only forward signature; stripped view only; leakage tripwire; no LF array opened at any stage; **no gradient-trained arm** (every arm closed-form).\n- **Scored column `test_hf`** \u2014 two-stage propagation-aware cross-coefficient head. Stage 1 is the shipped head unchanged (centering `ratio = ||mean_i y_i|| / geomean_i ||y_i||`, tau = 1.0 over {fact, add}; bank = {DC/spatial-mean} u {POD 0-49 of the DC-removed fit-fold residual in the selected centering form}; per direction a 5-fold OOF R^2 from the condition over {affine, quadratic, RBF kernel ridge, k-NN}, best family out of fold; SET = directions clearing tau = 0.1, min 1, max 32). **Stage 2 (new)**: remaining directions regressed on the **out-of-fold stage-1 predicted** SET coefficients over the same map bank, with the stage-2 gate both **selected and fitted** on those OOF predictions (tau2 = 0.1). Empty gate => bitwise no-op.\n- **Reference arms**: `ref_head_onestage` (the shipped law; matched folds/bases/seed \u2014 paired control *and* reproduction seam), `ref_twostage_true_gate` (F25 negative control, reported as a named rediscovery), `ref_dc_only` (the condition->level law, required by round-3 success criterion 1), floors `ref_zero` / `ref_train_mean` / `ref_nn_condition` (seam-checked to `state/anchors_repaired/floors.json` at 1e-9, RAISING on mismatch), `ref_affine_on_hf_train` (seam-checked on both ifc cells to `launch_anchors.json:ifc_floors_repaired`, reported on the sharp cells).\n- **Diagnostic columns (L3-bearing)**: per direction and per cell, OOF R^2 (A) from the condition vs (B) from the SET coefficients, the margin B - A, the stage-2 gate size, and the per-cell 3-seed spread of every scored quantity (handed to `r3s4_audit` for mce re-certification). Instrument: `round2/tools/coefficient_factorisation_audit.py`, adapted on use.\n- **Folds**: identical to the shipped head so the control is procedure-matched \u2014 disjoint 80/10/10, 5 resamples, LOO when `N_train < 20`; the calibration fold is **asserted unused** (no post-hoc stage in this card) rather than merged, keeping the fit fold at exactly 320 rows so the reproduction seam is meaningful.\n- **Build gates**: **G-A** reproduction seam (`ref_head_onestage` per-cell 3-seed mean within 3 % of `launch_anchors.json:cards.r2s1_direct-B3.per_dataset_mean_skill`, panel geomean within 28.2174 +/- 0.3612; RAISE, INFRA-class); **G-B** floor seam checks at 1e-9; **G-C** stripped-view leakage tripwire + guard set at the same tier; **G-D** target-scaler pre-flight (`tools/target_scale_spread_audit.py`) on pfc and cahn_hilliard before any test tensor is touched; **G-E** stage-2 no-op assertion (empty gate => `test_hf` == `ref_head_onestage` to 1e-12, which bounds the panel delta below by 0).",
+ "4_expected_result": "(3 seeds {0,1,2}; skill units; anchor = best-floor panel geomean **36.3912**; named comparand = the shipped closed-form law **28.2174**):\n\n| cell | cond_dim | best frozen floor | shipped law (certified) | expected `test_hf` | provisional mce |\n|---|---|---|---|---|---|\n| `sharp__phase_field_crystal_2d` | 18 | 48.0773 (train_mean) | 46.7083 | 42.0-46.8 | 8.8595 |\n| `sharp__allen_cahn_2d` | 19 | 475.8568 (nn) | 279.1165 | 250-279 | 16.4223 |\n| `sharp__fisher_kpp_2d` | 50 | 390.7015 (train_mean) | 374.8381 | 330-375 | 158.3322 |\n| `sharp__cahn_hilliard` | 19 | 23.1803 (nn) | 12.5650 | 11.30-11.45 | 1.1604 |\n| `ifc_poisson` | 5 | 8.0409 (nn) / affine 1.5938 | 8.2507 | 8.20-8.40 (no-op expected) | 0.2399 |\n| `ifc_heat` | 3 | 1.3941 (nn) / affine 0.9584 | 0.9964 | 0.99-1.01 (no-op expected) | **absent from the file** |\n| **panel geomean** | \u2014 | **36.3912** | **28.2174** [28.1096, 28.3253] | **25.5-27.8, point ~26.8** | panel spread **0.1806** |\n\nMetric that moves: the 6-cell panel geomean of scored `test_hf` skill and the paired per-cell delta against `ref_head_onestage`. Point estimate **-26 %** vs the anchor 36.3912 and **-5 %** (delta ~1.4) vs the shipped law 28.2174, with a pessimistic floor of **-1.6 %** (delta **0.4479**, computed by propagating the pre-measured cahn_hilliard ratio 11.4148/12.5650 = 0.90846 through the 6-cell geomean) if only cahn_hilliard moves. **Vs the noise floor**: the L1 threshold 0.3612 is **2.00x** the measured panel instrument 0.1806 and 4.84x r2s1-B2's 0.0746, and the predicted delta is **1.24x-4.38x** that threshold. Mechanism prediction: max per-direction margin [OOF R^2 from SET coefficients - OOF R^2 from the condition] **>= 0.30 on >= 3 of 4** high-cond_dim cells and **< 0.30 on both** low-cond_dim cells, against round-2's measured no-op margins +0.0054 / +0.0323 / +0.0430 / -0.0751 (bar = 7.0x the largest). Mandatory floor-arm reading: `test_hf` should beat `ref_nn_condition`, `ref_train_mean` and `ref_zero` on all four sharp cells and is expected to **lose to `ref_affine_on_hf_train` on both ifc cells** (8.2507 / 0.9964 vs 1.5938 / 0.9584) \u2014 the card makes **no ifc claim** and states the program.md \u00a72 affine-floor verdict explicitly. Criterion-1 reading: `test_hf` vs `ref_dc_only` reported per cell, adjudicated against `r3s4_audit`'s certified mce.",
+ "expected_falsification": "H-r3s1-B1 \u2014 \"the cahn_hilliard cross-coefficient effect is a **condition-dimension mechanism**, not a dataset accident, and shipping it with a propagation-aware gate beats the shipped condition->level closed-form law on the honest panel\" \u2014 is FALSIFIED if **(L1)** the seed-mean panel geomean of `test_hf` fails to beat the matched `ref_head_onestage` by more than **0.3612** skill units (2 x the certified 3-seed panel spread 0.1806 of `r2s1_direct-B3`; `noise_floor.json` has no panel entry) or the sign of that paired delta is not identical at all three seeds, **or (L2)** on `sharp__cahn_hilliard` \u2014 byte-identical data to round 2 (same copy-LF reference 0.041802962686225575, same `nn_condition` nRMSE 0.9690069811741324), where the effect was pre-measured at 12.6601 -> 11.4148 \u2014 `test_hf` fails to beat `ref_head_onestage` by more than **1.1603569120520159** skill units (that cell's provisional `min_claimable_effect`), **or (L3)** fewer than 3 of the 4 high-cond_dim cells {pfc 18, allen_cahn 19, cahn_hilliard 19, fisher_kpp 50} reach a maximum per-direction margin [OOF R^2 from the SET coefficients - OOF R^2 from the condition] **>= 0.30** at the 3-seed mean, or either low-cond_dim cell {ifc_heat 3, ifc_poisson 5} reaches it (recorded **unresolved**, not fired, on any cell whose 3-seed spread of that margin exceeds 0.10), **or (L4)** `test_hf` is worse than the best frozen floor on any of the four sharp cells (pfc > 48.0773, allen_cahn > 475.8568, fisher_kpp > 390.7015, cahn_hilliard > 23.1803); the two ifc cells carry no falsification weight (N_hf = 5, anecdote-grade per \u00a712.1; `noise_floor.json` has no `ifc_heat` entry) but are reported against both the frozen floors and `affine_on_hf_train`; every number is `provisional` until the in-round 3-seed confirm and `r3s4_audit`'s mce re-certification land.",
+ "anchor_reference": null,
+ "prior_art": {
+  "verdict": "preempted-but-MF-composition-open (cite)",
+  "citations": [
+   "D1: Spyromitros-Xioufis et al., *Multi-Target Regression via Input Space Expansion* \u2014 https://arxiv.org/abs/1211.6581 (**owns both the cascade (SST/ERC) and the OOF-corrected gate**)",
+   "D1: mlxtend `StackingCVRegressor` \u2014 https://rasbt.github.io/mlxtend/user_guide/regressor/StackingCVRegressor/",
+   "D1: Callaham/Brunton/Loiseau JFM nonlinear correlations \u2014 https://www.cambridge.org/core/journals/journal-of-fluid-mechanics/article/on-the-role-of-nonlinear-correlations-in-reducedorder-modelling/CC2980F9AA4AC20A7453C3056ED950C4",
+   "D2: Ayman/Mukhopadhyay/Laszka, *Task Grouping ... via Task Affinity Prediction* \u2014 https://arxiv.org/abs/2310.16241",
+   "D2: Chen/Fan/Wang, *When is multivariate kriging worthwhile?* \u2014 https://arxiv.org/abs/2607.06832"
+  ],
+  "verdict_quoted": "- **Prior-art verdict quoted** (verbatim from `round3/websearches/r3s1_factorised/batch_1/report.md`, \"Prior-art verdict\" table):\n  - **D1** \u2014 \"ship the propagation-aware **two-stage cross-coefficient closed-form head** (condition->SET coefficients; remaining coefficients regressed on **out-of-fold stage-1 predictions**) as the scored condition->HF arm on the honest panel\" | **`preempted-but-MF-composition-open (cite)`** | Citations: \"Spyromitros-Xioufis et al., *Multi-Target Regression via Input Space Expansion* \u2014 https://arxiv.org/abs/1211.6581 (**owns both the cascade (SST/ERC) and the OOF-corrected gate**); mlxtend `StackingCVRegressor` \u2014 https://rasbt.github.io/mlxtend/user_guide/regressor/StackingCVRegressor/ ; Callaham/Brunton/Loiseau JFM nonlinear correlations \u2014 https://www.cambridge.org/core/journals/journal-of-fluid-mechanics/article/on-the-role-of-nonlinear-correlations-in-reducedorder-modelling/CC2980F9AA4AC20A7453C3056ED950C4\" | What remains open: \"Only the **composition**: OOF-corrected target-as-input stacking on **reduced-basis coefficients of a parametric PDE field**, where stage-1 targets are themselves regressed from the condition vector, scored on a copy-LF-skill panel in the **no-LF-at-test** regime at N_hf down to 5. Three refutation searches returned nothing; the field's stated default (\"model modal coefficients independently\") is a *linear*-decorrelation argument that B3-F24's OOF R^2 0.92-0.94 contradicts. **The card must name SST/ERC and state that F25 rediscovered the published train/predict discrepancy.**\"\n  - **D2** \u2014 \"**condition-dimension discriminator**: per-direction OOF R^2 from the condition vs from the SET coefficients across all 6 cells (cond_dim 3/5/18/19/19/50) as a **training-free pre-fit predictor** of whether the two-stage arm pays (M15, now n = 4 high-cond_dim cells)\" | **`preempted-but-MF-composition-open (cite)`** | Citations: \"Ayman/Mukhopadhyay/Laszka, *Task Grouping ... via Task Affinity Prediction* \u2014 https://arxiv.org/abs/2310.16241 ; Chen/Fan/Wang, *When is multivariate kriging worthwhile?* \u2014 https://arxiv.org/abs/2607.06832\" | What remains open: \"The **idea** of a pre-fit \"should we share?\" predictor is published. Open: the **independent variable and estimator** \u2014 both published criteria key on task affinity / heterotopic design geometry, neither on **condition dimension vs fit-row count**, neither predicts the payoff of a **cascade fed by predicted stage-1 coefficients**, neither is instantiated on PDE reduced-basis coefficients. **Strongest novelty position available to this batch \u2014 and it is a diagnostic claim, not an architecture claim.**\"\n  - **D3** \u2014 \"**fitted closed-form floor battery** (`affine_on_hf_train` + nn_condition + train_mean + zero) as the mandatory arm every learned condition->HF claim must clear\" | **`preempted (cite)`** at the level of the individual baselines | \"Ship the affine floor **with its oracle-affine residual** (ifc_poisson 5.4e-16) as an instrument/bug-fix, never as a contribution.\""
+ },
+ "recipe": {
+  "base_family": "none (new from-scratch round-3 family on round3-substrate; condition-only forward signature; the ONE-STAGE control arm is vendored verbatim with provenance comments from branch round2/exp-r2s1_direct-B3 @ 2b030f02da70cde80c90de2463935461bd56debb, files models_r2/r2s1_stagefree_permode/{basis,common,config,floors,head,maps,registration}.py; decoder.py, stages.py and prelude.py are NOT vendored; no round-1 code; no LF array opened at any stage; sole factory contact is a read-only import of mf_field/factory_mffp/data_adapters/loaders.py)",
+  "base_commit": "44f2404a2561cf4e7faaf70105fa0845dd69e804",
+  "family_dir": "models_r3/r3s1_twostage_crosscoef",
+  "datasets": "sharp__allen_cahn_2d,sharp__fisher_kpp_2d,sharp__cahn_hilliard,ifc_poisson,ifc_heat",
+  "epochs": 0,
+  "seeds": [
+   0,
+   1,
+   2
+  ],
+  "env": {
+   "R3S1B1_SCORED_ARM": "twostage_crosscoef_oof_gate",
+   "R3S1B1_STAGE_POLICY": "scored_arm_is_stage_free_no_wiener_no_blend_no_bg",
+   "R3S1B1_TRAINED_ARMS": "none",
+   "R3S1B1_EPOCHS_RATIONALE": "every arm is closed-form least-squares/kernel; family asserts epochs==0 and instantiates no gradient-trained arm",
+   "R3S1B1_DATA_VIEW": "stripped",
+   "R3S1B1_LF_AT_ANY_STAGE": "0",
+   "R3S1B1_LEAKAGE_TRIPWIRE": "1",
+   "R3S1B1_PANEL": "sharp__phase_field_crystal_2d,sharp__allen_cahn_2d,sharp__fisher_kpp_2d,sharp__cahn_hilliard,ifc_poisson,ifc_heat",
+   "R3S1B1_GUARDS": "heat_local,fluid,sharp__sod_1d",
+   "R3S1B1_DIRECTION_BANK": "dc_meanfield,pod_0_49",
+   "R3S1B1_POD_BASIS_N": "50",
+   "R3S1B1_POD_DC_ORTHOGONALIZE": "1",
+   "R3S1B1_CENTER_STAT": "norm_meanfield_over_geomean_norm_y",
+   "R3S1B1_CENTER_TAU": "1.0",
+   "R3S1B1_CENTER_FORMS": "fact,add",
+   "R3S1B1_BASIS_FORM_MATCHED": "1",
+   "R3S1B1_SELECT_INDEXING": "set",
+   "R3S1B1_SELECT_STAT": "oof_r2_per_direction_best_family",
+   "R3S1B1_SELECT_TAU": "0.1",
+   "R3S1B1_SELECT_KFOLD": "5",
+   "R3S1B1_SELECT_MIN": "1",
+   "R3S1B1_SELECT_MAX": "32",
+   "R3S1B1_MAP_BANK": "affine,quadratic,rbf_kernel_ridge,knn",
+   "R3S1B1_MAP_SELECT": "oof_r2_per_direction",
+   "R3S1B1_MAP_RIDGE_ALPHA": "exact_loo_grid_1e-6:1e2:13",
+   "R3S1B1_MAP_KNN_K": "1,2,4,8",
+   "R3S1B1_MAP_RBF_GAMMA": "median_heuristic",
+   "R3S1B1_STAGE2_ENABLE": "1",
+   "R3S1B1_STAGE2_INPUT": "oof_stage1_predictions",
+   "R3S1B1_STAGE2_GATE_SELECT_ON": "oof_stage1_predictions",
+   "R3S1B1_STAGE2_GATE_FIT_ON": "oof_stage1_predictions",
+   "R3S1B1_STAGE2_TAU2": "0.1",
+   "R3S1B1_STAGE2_MAP_BANK": "affine,quadratic,rbf_kernel_ridge,knn",
+   "R3S1B1_STAGE2_KFOLD": "5",
+   "R3S1B1_STAGE2_MIN_DIRECTIONS": "0",
+   "R3S1B1_STAGE2_MAX_DIRECTIONS": "50",
+   "R3S1B1_STAGE2_NOOP_ASSERT": "1e-12",
+   "R3S1B1_REF_ARMS": "head_onestage,twostage_true_gate,dc_only,zero,train_mean,nn_condition,affine_on_hf_train",
+   "R3S1B1_DECODER_ARMS": "none",
+   "R3S1B1_FLOOR_SEAM_CHECK": "mffp_autoresearch/round3/state/anchors_repaired/floors.json@1e-9",
+   "R3S1B1_AFFINE_FLOOR_SEAM_CHECK": "mffp_autoresearch/round3/state/anchors/launch_anchors.json:ifc_floors_repaired@1e-9",
+   "R3S1B1_AFFINE_FLOOR_ALL_CELLS": "1",
+   "R3S1B1_ANCHOR_REPRO_SEAM": "launch_anchors.json:cards.r2s1_direct-B3.per_dataset_mean_skill@3pct",
+   "R3S1B1_FOLD_MODEL_FRAC": "0.10",
+   "R3S1B1_FOLD_CALIB_FRAC": "0.10",
+   "R3S1B1_CALIB_FOLD_USE": "none_asserted_unused",
+   "R3S1B1_FOLD_DISJOINT": "1",
+   "R3S1B1_FOLD_RESAMPLES": "5",
+   "R3S1B1_SMALL_N_PROTOCOL": "loo",
+   "R3S1B1_SMALL_N_THRESHOLD": "20",
+   "R3S1B1_CONDDIM_DISCRIMINATOR": "1",
+   "R3S1B1_DISCRIM_STAT": "per_direction_oof_r2_from_condition_vs_from_set_coefficients",
+   "R3S1B1_DISCRIM_TOOL": "mffp_autoresearch/round2/tools/coefficient_factorisation_audit.py@adapted",
+   "R3S1B1_DISCRIM_REPORT_CELLS": "panel6",
+   "R3S1B1_TARGET_SCALE_PREFLIGHT": "sharp__phase_field_crystal_2d,sharp__cahn_hilliard",
+   "R3S1B1_PER_CELL_SEED_SPREAD_REPORT": "1",
+   "R3S1B1_CKPT_RESUME": "1",
+   "R3S1B1_CKPT_PATH": "<ckpt_dir>/last.pt"
+  },
+  "datasets_pre_adr_r3_0004": "panel",
+  "base_commit_pre_adr_r3_0004": "8aae33a7fab11ef8234f4bb7158c2bc1a8b4bf51"
+ },
+ "status": "analyzing",
+ "skipped_reason": null,
+ "reopen_candidate": false,
+ "scripts_path": {
+  "submit": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/worktrees/r3s1_factorised/B1/scripts/submit.sh",
+  "seeds_2_3": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/worktrees/r3s1_factorised/B1/scripts/submit_seeds_2_3.sh",
+  "train_eval": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/worktrees/r3s1_factorised/B1/scripts/01_train_eval.sh",
+  "guards": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/worktrees/r3s1_factorised/B1/scripts/03_guards.sh",
+  "submit_guards": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/worktrees/r3s1_factorised/B1/scripts/submit_guards.sh",
+  "target_scale_preflight": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/worktrees/r3s1_factorised/B1/scripts/00_target_scale_preflight.sh"
+ },
+ "output_paths": {
+  "training": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round3/r3s1_factorised/B1/training",
+  "eval": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round3/r3s1_factorised/B1/eval",
+  "slurm": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round3/r3s1_factorised/B1/slurm",
+  "result_panel5_pattern": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round3/r3s1_factorised/B1/eval/result_panel5_s{seed}.json",
+  "result_guard": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round3/r3s1_factorised/B1/eval/result_guard_s0.json",
+  "target_scale_preflight": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round3/r3s1_factorised/B1/eval/target_scale_preflight.json",
+  "cache": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round3/r3s1_factorised/B1/cache",
+  "_note": "training/ and cache/ are score_panel.py's per-(family, dataset, seed) result JSONs, checkpoint dirs and score cache, redirected there by ROUND2_EVAL_RESULTS / ROUND2_EVAL_CACHE exported in scripts/01_train_eval.sh and scripts/03_guards.sh (without those exports score_panel.py defaults into the FROZEN round-2 eval layer)."
+ },
+ "build_commit": "6770381",
+ "job_ids": [
+  {
+   "seed": 0,
+   "job_id": 66829977,
+   "submitted": "2026-08-07T19:05 PDT",
+   "by": "orchestrator (post reviewed_pass attempt 2; HOLD absent, data_binding OK; wrapper executed)"
+  },
+  {
+   "leg": "guards",
+   "seed": 0,
+   "job_id": 66829978,
+   "submitted": "2026-08-07T19:05 PDT",
+   "by": "orchestrator"
+  },
+  {
+   "leg": "guards",
+   "seed": 0,
+   "job_id": 66922977,
+   "submitted": "2026-08-08T10:05 PDT",
+   "by": "experiment-debugger attempt 1 (ALGO; bash scripts/submit_guards.sh)"
+  },
+  {
+   "seed": 1,
+   "job_id": 144591,
+   "submitted": "2026-08-10",
+   "by": "orchestrator (post seed-0 initial-analysis proceed_to_seeds_1_2; HOLD absent, data_binding verify OK: all 6 match; wrapper checks executed)"
+  },
+  {
+   "seed": 2,
+   "job_id": 144592,
+   "submitted": "2026-08-10",
+   "by": "orchestrator (same gate)"
+  }
+ ],
+ "logs": {},
+ "build_notes": [
+  "FAMILY: models_r3/r3s1_twostage_crosscoef (new). Vendored per recipe.base_family from branch round2/exp-r2s1_direct-B3 @ 2b030f02da70cde80c90de2463935461bd56debb, path models_r2/r2s1_stagefree_permode/: basis.py, head.py, maps.py, registration.py are VERIFIED BYTE-IDENTICAL below a 14-line provenance header (checked with `diff` against `git show 2b030f02:...`); common.py and floors.py are adapted, each deviation marked `[R3-ADAPT]` (7 markers each). decoder.py/stages.py/prelude.py NOT vendored (no gradient-trained arm, no post-hoc stage). config.py written fresh (this card's R3S1B1_* knob set). New code: stage2.py, discriminator.py, gates.py, ckpt.py, smoke_eval.py. Sole factory contact is the read-only import of data_adapters/loaders.py; the metric is imported from the frozen round2/eval/nrmse.py.",
+  "CONTRACT SMOKE (mandatory, in-session): `python round2/eval/score_panel.py --family_dir models_r3/r3s1_twostage_crosscoef --datasets sharp__allen_cahn_2d,sharp__fisher_kpp_2d,sharp__cahn_hilliard,ifc_poisson,ifc_heat --epochs 0 --seed 0 --out scratchpad/contract_smoke.json --no_cache` -> EXIT 0, all five cells finite: panel_geomean_skill 25.0662; skills allen_cahn 280.0717, fisher_kpp 376.5183, cahn_hilliard 11.4146, ifc_poisson 8.2507, ifc_heat 0.9964 (nRMSE 0.576768 / 0.062218 / 0.477163 / 0.297024 / 0.073735). Result JSON committed at <worktree>/scratchpad/contract_smoke.json. Tier note: run at `--epochs 0`, NOT the 2-epoch contract tier, because recipe.epochs = 0 and R3S1B1_EPOCHS_RATIONALE requires the family to assert epochs == 0 (every arm closed-form); config.assert_zero_epochs() is that assertion.",
+  "BUILD GATES, all exercised on all 5 cells in the smoke. G-A reproduction seam vs launch_anchors.json:cards.r2s1_direct-B3.per_dataset_mean_skill: ok at rel deviations allen_cahn +0.34%, fisher_kpp +0.45%, cahn_hilliard +0.76%, ifc_poisson +0.0002%, ifc_heat +0.002% (tol 3%); the ch one-stage arm lands on skill 12.6601, the exact value the card quotes from the round-2 offline measurement. G-B floor seam max|delta| 0.0 / 5.5e-11 / 1.1e-10 across cells (tol 1e-9). G-C leakage tripwire structural (common.Panel raises off the stripped view; test split exposes no LF) + guard leg scripted (03_guards.sh). G-D target-scaler pre-flight artifact required before the test tensor unlocks (common.Panel test lock); pfc and cahn_hilliard both verdict OK. G-E stage-2 no-op assertion: max|test_hf - ref_head_onestage| = 0.0 exactly on every no-op cell.",
+  "SCIENCE READINGS AT SEED 0 (provisional, single seed, for the analyzer): stage-2 gate fires only on sharp__cahn_hilliard (9 of 48 remaining directions, max propagation-aware OOF R^2 0.6696) -> test_hf 0.477163 vs one-stage 0.529228, i.e. skill 11.4146 vs 12.6601 (the card's pre-measured 11.4148/12.6601). On allen_cahn (max OOF R^2 -0.0055), fisher_kpp (-0.0045), ifc_poisson and ifc_heat the gate is EMPTY and test_hf is bit-identical to the shipped law, as part 4 predicted. L3 discriminator max margin_tool: cahn_hilliard 0.6755 (reaches 0.30), allen_cahn 0.0091, fisher_kpp -0.0013, ifc_heat -0.0268 (below 0.30). ref_twostage_true_gate (the SST/ERC train-predict discrepancy) is worse than the propagation-aware arm on ch (0.477978 vs 0.477163) and identical elsewhere.",
+  "BUILDER JUDGMENT CALL FLAGGED FOR THE REVIEWER \u2014 affine-floor seam is DTYPE-LIMITED. R3S1B1_AFFINE_FLOOR_SEAM_CHECK fixes @1e-9 ABSOLUTE, but the frozen ifc_floors_repaired.affine_on_hf_train was computed by round3/tools/make_round3_anchors.py::ifc_floors in float64 straight off the .npy files, while the guarded factory loader casts every array to float32 and the family may not read the original data_root at test time (immutable #9). The in-job recompute therefore differs by 2.55e-09 absolute / 3.6e-08 relative on ifc_heat, inside float32 machine epsilon (1.19e-07). floors.py records status `ok_dtype_limited` with the exact numbers instead of raising, and still RAISES beyond float32 eps. Raising at 1e-9 would be an infrastructure false alarm; this is the only place the implementation does not take a card tolerance literally.",
+  "BUILDER-CHOSEN CONSTANTS (the card fixes none of these; none is a hyperparameter that can move a score). (1) Diagnostics path DIAG_OUT_DEFAULT = outputs eval dir, overridable via R3S1B1_DIAG_OUT. (2) G-D pre-flight artifact path PREFLIGHT_JSON_DEFAULT = <outputs>/eval/target_scale_preflight.json, overridable via R3S1B1_PREFLIGHT_JSON; the named tool (round2/tools/target_scale_spread_audit.py) needs the LF fields the family may never open, so it runs as a separate TRAIN-SPLIT-ONLY process in scripts/00_target_scale_preflight.sh. (3) Stage-2 row convention: X_oof, the gate's OOF table and the final stage-2 fits all live on the FITTING fold, transcribed from the card's named instrument round2/tools/coefficient_factorisation_audit.py::run; the stage-1 selection stage keeps its own fit+model-fold convention (vendored verbatim) so the G-A seam stays exact. (4) The L3 margin is reported in two pairings: `margin_tool` (the instrument's own, pre-registered) and `margin_matched_rows` (both terms on the fitting rows) \u2014 the summary names which is pre-registered. (5) ref_dc_only is fitted on the FULL train split, matching r2s1_direct-B3's frozen-floor convention.",
+  "SCRIPTS. 01_train_eval.sh takes SEED=$1 and runs ONE score_panel.py invocation over recipe.datasets (the explicit 5-dataset ADR r3-0004 panel; the literal `panel` keyword is deliberately NOT used because it resolves to the ROUND-2 panel via round2/project.yaml). All 58 recipe.env knobs are passed through --env and were verified key-for-key equal to the card's recipe.env by a parse-and-compare script (0 missing, 0 extra, 0 value mismatches). Headers: partition gpu, gres gpu:nvidia_h200:1 (project.yaml), --mem 32G, --mail-user=ezeng@caltech.edu --mail-type=END,FAIL, logs under outputs slurm/. Job names r3-r3s1_factorised-B1-s<seed> are set by the submit scripts (SBATCH directives cannot see $1). All six scripts pass `bash -n`; every path is absolute. --time 04:00:00 for the panel leg / 02:00:00 for the guard leg: state/timing_ledger.json has NO round-3 entries, so this is the slurm_rules.md no-analog default, and it is generous against the measured in-family compute (fisher_kpp 432 s, cahn_hilliard 177 s, allen_cahn 79 s, ifc ~75 s at 4 threads) plus a saturated shared filesystem (a bare `import torch` measured 18 min on the login node during the build).",
+  "CHECKPOINT RESUME verified end-to-end, not just by inspection: two consecutive runs against the same --ckpt_dir print `[resume] loaded .../last.pt` and `[resume] reusing checkpointed unit ...` for all five units (select_r0, condA_r0, xoof_r0, s2tab_prop_r0, s2tab_true_r0) and reproduce test_hf bit-identically. Because epochs = 0 there is no epoch loop; the resumable unit is the out-of-fold TABLE, and the checkpoint is meta-guarded on (model, dataset, seed, epochs, n_train, n_cells, cond_dim, env) so a stale checkpoint is ignored rather than reused.",
+  "NO TBDs. Every hyperparameter in the implementation is a recipe.env value; the fold-resample diagnostic returned identical arms at all 5 resamples on every cell, which is a genuine selection-stability reading (the model fold enters only through the selection outcome, which was stable), not a bug \u2014 recorded in the result JSON as paired_delta_spread_max_minus_min = 0.0.",
+  "REVIEW FIX (code-reviewer verdict reviewed_fail, findings 3.1/3.3/3.7; build_commit 960d88f -> 6770381, new commit, no amend). DEFECT: neither 01_train_eval.sh nor 03_guards.sh exported ROUND2_EVAL_RESULTS / ROUND2_EVAL_CACHE, so score_panel.py (round2/eval/score_panel.py::_results_dir/_cache_dir) defaulted its per-(family, dataset, seed) result JSONs, checkpoint dirs and score cache into the FROZEN round-2 eval layer; the build smoke had already deposited 5 result JSONs + 5 ckpt dirs (28 MB total) + 5 cache entries there, invisible to git because round2/.gitignore covers them. FIX: both scripts now `export ROUND2_EVAL_RESULTS=\"$OUT_DIR/training\"` and `export ROUND2_EVAL_CACHE=\"$OUT_DIR/cache\"` immediately after OUT_DIR= and before the score_panel.py call, with \"$OUT_DIR/cache\" added to the existing mkdir -p. CLEANUP: removed round2/eval/results/r3s1_twostage_crosscoef and the 5 cache entries d910d5ed/c3e85cc0/d4a9c696/696f6e46/f6bee212; verified by `grep -l r3s1_twostage_crosscoef round2/eval/cache/*.json | wc -l` = 0 and no r3s1 dir under round2/eval/results. This also makes output_paths.training real \u2014 nothing wrote it before.",
+  "RE-SMOKE AFTER THE FIX, run through the ACTUAL script (scratchpad/rerun_smoke.sh sed-substitutes only the --out path of scripts/01_train_eval.sh, so the env exports, the 58 --env knobs and the dataset list are the shipped ones; log at scratchpad/rerun_smoke.log): exit 0, panel_geomean_skill 25.0662 and all five per-cell nRMSE/skill values BIT-IDENTICAL to the pre-fix smoke (ac 280.0717, fk 376.5183, ch 11.4146, ifc_poisson 8.2507, ifc_heat 0.9964) \u2014 which also empirically confirms the reviewer's 3.6(b) point that the in-file RECIPE_ENV defaults are byte-equal to the --env list. The result JSON now records all 58 env knobs under \"env\" (was {}) and a different code_hash (88d6bfcd..., env enters code_hash), and all 5 result JSONs + 5 ckpt dirs + 5 cache entries landed under outputs/.../training and outputs/.../cache with the frozen eval tree verified clean afterwards.",
+  "SUGGESTs applied. (a) --time trimmed against the measured ~14 min of in-family compute: panel leg 04:00:00 -> 01:30:00 (the reviewer's number, ~6x headroom), guard leg 02:00:00 -> 01:00:00; slurm_rules \u00a74 warns that oversized --time blocks backfill. (b) The --env plumbing is now exercised by the committed smoke evidence (see the re-smoke note).",
+  "DISCLOSED ANALYST READINGS (reviewer flagged these as undisclosed; I recomputed every number independently from the per-cell result JSONs against round2/eval/copylf_baselines.json before recording them). ref_affine_on_hf_train BEATS the scored arm on 4 of 5 cells and on the panel geomean (17.0581 vs 25.0662): allen_cahn 275.6888 < 280.0717, fisher_kpp 266.4814 < 376.5183, ifc_poisson 1.5938 < 8.2507, ifc_heat 0.9584 < 0.9964; sharp__cahn_hilliard is the only cell where the scored arm wins (11.4146 vs 12.8711). Part 4 carved out only the two ifc cells, so the allen_cahn and fisher_kpp affine losses are NEW and adverse relative to the card's expectation. ref_dc_only ALSO beats the scored arm on fisher_kpp (282.7602 vs 376.5183) \u2014 directly adverse for round-3 success criterion 1 on that cell (dc_only loses on the other four: ac 327.5711, ch 23.8677, ifc_poisson 11.0393, ifc_heat 6.1945). For completeness at seed 0: one-stage panel geomean 25.5908 (anchor 3-seed mean 25.5119), so the paired panel delta is 0.5246, and the scored arm is BITWISE identical to the one-stage control on 4 of 5 cells (G-E delta exactly 0.0) \u2014 the whole panel movement comes from cahn_hilliard alone."
+ ],
+ "review_notes": [
+  {
+   "attempt": 1,
+   "verdict": "reviewed_fail",
+   "build_commit_reviewed": "960d88f8fc9cf56377d6ce332bc85484e396d62d",
+   "findings": [
+    "Q3.1 card-implementation alignment \u2014 FAIL: every part-3 item traces to code (stage-1 vendored, stage-2 stage2.py, 7 ref arms, gates A-E, folds, L3 diagnostics), but the card's declared output_paths.training is written by nothing; per-cell result JSONs and checkpoints land in round2/eval/results/r3s1_twostage_crosscoef/ because scripts/01_train_eval.sh never exports ROUND2_EVAL_RESULTS.",
+    "Q3.2 recipe fidelity \u2014 PASS: 58/58 recipe.env knobs verbatim in 01_train_eval.sh and 03_guards.sh (0 missing / 0 extra / 0 mismatched, programmatic compare) and config.py:RECIPE_ENV byte-equal to the card; DATASETS is the exact 5-name ADR r3-0004 list (literal 'panel' correctly avoided); epochs 0; seeds {0,1,2}. Only score-affecting literals in new code are 0.30 (the card's own L3 threshold) and 1e-300 numerical guards; the 5 builder-chosen constants are output paths/conventions, all declared in build_notes.",
+    "Q3.3 \u00a75 immutable compliance \u2014 FAIL (BLOCKING): immutable #3 (eval layer frozen during the round). scripts/01_train_eval.sh and scripts/03_guards.sh do not export ROUND2_EVAL_RESULTS / ROUND2_EVAL_CACHE, which round2/eval/score_panel.py:38-43 defaults into the frozen round-2 eval tree. The build smoke already deposited 5 result JSONs, 5 ckpt dirs (11.7 MB last.pt each) and 5 cache entries under round2/eval/{results/r3s1_twostage_crosscoef,cache}/ dated 2026-08-07; submission would add ~4x more (3 seeds + guards). Files are gitignored (round2/.gitignore:4-5) so git status cannot catch it, but a round-2 aggregator glob over eval/results/* would pick up a round-3 family. Both sibling streams already redirect (r3s3_lf_value/B1/scripts/01_train_eval.sh:48,121 and r3s4_audit/B1/scripts/01_train_eval.sh:97,102). MINIMAL FIX: in BOTH 01_train_eval.sh and 03_guards.sh, after OUT_DIR= and before the score_panel.py call, add `export ROUND2_EVAL_RESULTS=\"$OUT_DIR/training\"` and `export ROUND2_EVAL_CACHE=\"$OUT_DIR/cache\"` and add \"$OUT_DIR/cache\" to the existing mkdir -p; then `rm -rf mffp_autoresearch/round2/eval/results/r3s1_twostage_crosscoef` and delete the 5 stray cache entries d910d5ed/c3e85cc0/d4a9c696/696f6e46/f6bee212; re-run the smoke and confirm nothing new lands under round2/eval/. All other immutables clean: stripped view only (G-C records under_stripped_view=1 and test_lf_fids=[] on all 5 cells), no guarded-factory writes, no data regeneration, scoring only through score_panel.py, no pre-falsified lever re-proposed.",
+    "Q3.4 contract compliance \u2014 PASS: manifest.json complete; smoke_eval.py:207-212 exposes all 6 contract args; checkpoint resume from <ckpt_dir>/last.pt implemented (ckpt.py:37) with config.py:404-405 RAISING if the knob deviates, meta-guarded on (model,dataset,seed,epochs,n_train,n_cells,cond_dim,env); seed_everything covers random/numpy/torch/torch.cuda from --seed; INSPIRATION.md cites all 5 prior_art citations, names SST/ERC as owning the cascade and the OOF gate, and records F25 as a rediscovery (the websearcher's two explicit requirements).",
+    "Q3.5 SLURM correctness \u2014 SUGGEST: all 6 scripts pass `bash -n` (verified in-session, no output on any). partition gpu + typed gres gpu:nvidia_h200:1 match project.yaml; job names r3-r3s1_factorised-B1-s$SEED via sbatch --job-name (r3- prefix uniform across all four round-3 streams; the stale grep '^r2-' in subagents/maintainer.md:36 is a round-3-wide harness gap, not this card's defect); --output/--error under OUTPUTS_ROOT/r3s1_factorised/B1/slurm/%x_%j; paths absolute; 01_train_eval.sh takes SEED=$1; submit.sh seed 0 only; submit_seeds_2_3.sh present; both >=1h legs carry --mail-user=ezeng@caltech.edu --mail-type=END,FAIL. SUGGEST: --time 04:00:00 is ~12x the measured in-family compute (~14 min total); slurm_rules.md \u00a74 warns oversized --time blocks backfill \u2014 01:30:00 still gives 6x headroom.",
+    "Q3.6 smoke-test evidence \u2014 SUGGEST: build_notes cite the exact score_panel.py command and scratchpad/contract_smoke.json is committed (exit 0, 5/5 cells finite, panel_geomean_skill 25.0662). Two benign caveats: run at --epochs 0 rather than tier-2 contract epochs (correct \u2014 config.assert_zero_epochs() would RAISE at 2 and recipe.epochs=0), and run WITHOUT --env so the result records env {} (numerically harmless since config.RECIPE_ENV defaults are byte-equal to recipe.env, but the --env plumbing path is unexercised). No stale-cache replay risk: env enters code_hash (score_panel.py:78-80), so the SLURM run recomputes.",
+    "Q3.7 blast radius \u2014 FAIL (runtime, out-of-repo): the in-repo diff is clean (27 files, +8886/-0, only models_r3/, scripts/, notes/, scratchpad/); the violation is the gitignored round2/eval/ contamination in Q3.3.",
+    "Q3.8 round-2/3 novelty \u2014 PASS: new from-scratch family, new INSPIRATION.md, condition-only forward on the stripped view. The vendored round-2 code is the DECLARED paired control arm ref_head_onestage, named verbatim in recipe.base_family; basis/head/maps/registration.py verified byte-identical below a 14-line provenance header against `git show 2b030f02:models_r2/r2s1_stagefree_permode/*`; common/floors.py carry 7 [R3-ADAPT] markers each. The scored pathway (stage2.py) is new code. No round-1 code. Not a rebadge."
+   ],
+   "adjudications": [
+    "float64->float32 affine-floor seam ACCEPTED, matching the r3s4/r3s3 precedent: strict 1e-9 kept where floors genuinely reproduce (G-B frozen floors max|delta| 0.0 / 5.46e-11 / 1.1e-10, status ok); the separate ok_dtype_limited enum applies only to the affine seam (ifc_heat rel 3.60e-08, ifc_poisson rel 4.84e-08, both under float32 eps 1.19e-07) with exact numbers recorded; floors.py still RAISES beyond float32 eps. Distinct status value, never overloaded onto ok.",
+    "epochs 0 honored end-to-end: recipe.epochs=0 -> both scripts pass --epochs 0 -> config.assert_zero_epochs() raises otherwise; result JSONs carry epochs: 0 and epochs_assertion with gradient_trained_arms: 0."
+   ],
+   "analyst_readings_not_defects": [
+    "The panel claim rests on ONE cell: G-E records max_abs_delta_vs_onestage = 0.0 on allen_cahn, fisher_kpp, ifc_poisson and ifc_heat (bitwise no-op vs the vendored control); only cahn_hilliard moves (0.4657). Pre-registered, but seeds 1-2 can vary only through ch.",
+    "Both primary clauses are far tighter than part 4 predicted, because part 4's numbers were 6-cell (pre-ADR-r3-0004). On the 5-cell scored panel at seed 0: paired panel delta 0.5246 vs L1 threshold 0.3612 (1.45x, not the predicted ~1.4 units); ch cell delta 1.2455 vs L2 mce 1.1604 (1.07x). The 3-seed sign-consistency half of L1 becomes the binding test.",
+    "L3 fires as written at seed 0: max_margin_tool cahn_hilliard 0.6755 (reaches 0.30), allen_cahn 0.0091, fisher_kpp -0.0013, ifc_poisson 0.0501, ifc_heat -0.0268. With pfc report-only the '>=3 of the 4 high-cond_dim cells' clause reads 1 of 3.",
+    "ref_affine_on_hf_train beats the scored arm on 4 of 5 cells and on the panel geomean (17.06 vs 25.07): ifc_heat 0.9584<0.9964, ifc_poisson 1.5938<8.2507, allen_cahn 275.69<280.07, fisher_kpp 266.48<376.52; ch is the only win (12.87 vs 11.41). Part 4 carved out only the ifc cells; the allen_cahn and fisher_kpp affine losses are undisclosed in build_notes.",
+    "ref_dc_only beats the scored arm on fisher_kpp (282.76 vs 376.52) \u2014 directly relevant to success criterion 1 and absent from build_notes."
+   ],
+   "handoff": "mffp_autoresearch/round3/worktrees/r3s1_factorised/B1/notes/handoff_code_reviewer.md",
+   "utc": "2026-08-08T00:23:33Z"
+  },
+  {
+   "attempt": 2,
+   "verdict": "reviewed_pass",
+   "scope": "delta-only re-review of the attempt-1 FAIL",
+   "build_commit_reviewed": "6770381d260360879655210a8edc152f11649f97",
+   "findings": [
+    "(1) Redirect present and correctly placed \u2014 PASS: 01_train_eval.sh:50-51 and 03_guards.sh:45-46 export ROUND2_EVAL_RESULTS=\"$OUT_DIR/training\" and ROUND2_EVAL_CACHE=\"$OUT_DIR/cache\" after OUT_DIR= and before the score_panel.py call; \"$OUT_DIR/cache\" added to mkdir -p (01:41, 03:36). The 960d88f..6770381 script diff contains only these lines plus the --time trims. All 6 scripts re-pass `bash -n`.",
+    "(2) Frozen round-2 eval tree clean \u2014 PASS, re-verified by me rather than taken on report: round2/eval/results/ is back to its 11 round-2 families with no r3s1_twostage_crosscoef dir; `grep -rl r3s1_twostage_crosscoef mffp_autoresearch/round2/eval/cache/ | wc -l` = 0; `find mffp_autoresearch/round2/eval -newermt '2026-08-07 17:05' -type f` returns nothing.",
+    "(3) Re-smoke through the shipped script \u2014 PASS: scratchpad/rerun_smoke.sh sed-substitutes only the --out path; I re-derived the body and diffed it against the committed 01_train_eval.sh, confirming the delta is exactly the two --out/cat lines, so the exports, the 58 --env knobs and the dataset list are the shipped ones. result.env now carries all 58 knobs (was {}), matching recipe.env with 0 missing / 0 extra / 0 mismatched; all 5 cells cached=False (genuine recompute; code_hash 8bf62cdd -> 88d6bfcd because env enters code_hash); every per-cell nRMSE and the panel geomean 25.06624704883453 are BIT-IDENTICAL to the pre-fix run; nrmse_def_hash and copylf_def_hash unchanged. This empirically confirms the attempt-1 3.6(b) reading that config.RECIPE_ENV was byte-equal to the --env list.",
+    "(3b) Gates still green in the redirected location \u2014 PASS: G-A status ok on all 5 cells; G-B frozen-floor seam max |delta| <= 2.65e-10; affine seam ok_dtype_limited on the two ifc cells only (no_frozen_entry elsewhere); G-E max|delta| vs one-stage exactly 0.0 on the four no-op cells and 0.465627 on cahn_hilliard; G-C under_stripped_view=1 and lf_used_at_any_stage=0 on all 5. Checkpoints land at outputs/.../training/r3s1_twostage_crosscoef/ckpt_*/last.pt, so output_paths.training is real for the first time.",
+    "(4) --time trims \u2014 PASS: panel 04:00:00 -> 01:30:00 (~6x the measured ~14 min of in-family compute), guards 02:00:00 -> 01:00:00. Both legs remain >= 1 h so the mandatory --mail-user=ezeng@caltech.edu --mail-type=END,FAIL is still correct and still present.",
+    "(5) Analyst readings disclosed \u2014 PASS: build_notes[12] records that ref_affine_on_hf_train beats the scored arm on 4 of 5 cells and on the panel geomean (17.0581 vs 25.0662) with correct per-cell numbers, that ref_dc_only beats it on fisher_kpp (282.7602 vs 376.5183), the one-stage geomean 25.5908 / paired delta 0.5246, and the bitwise no-op on 4 of 5 cells. I independently re-derived every figure from the per-cell result JSONs against round2/eval/copylf_baselines.json; all match. The builder additionally supplied the one-stage 3-seed anchor mean 25.5119.",
+    "(6) Locked fields and blast radius \u2014 PASS: locked fields unchanged vs current HEAD (bea0596); the only movement since the card's first commit (44f2404a2) is recipe + adr_r3_0004_addendum, which is the orchestrator's ADR r3-0004 execution (873075c), not a builder or reviewer write. The attempt-1 review_notes entry is intact (verdict reviewed_fail, 8 findings). Delta touches only scripts/, notes/, scratchpad/ (7 files); handoff_code_reviewer.md appears as +41/-0, i.e. swept into the commit unmodified. Worktree clean.",
+    "(7) RESIDUAL, NOT THIS CARD'S \u2014 round2/eval/cache/68e9fdb2...json (2026-08-07 14:00) carries \"family\": \"r3s4_cert_min\", ifc_heat, epochs 2: one round-3 stray still in the frozen cache, from the r3s4_audit stream (whose committed scripts do redirect). It is the only remaining r3 entry in the frozen tree. Not a blocker for r3s1-B1; orchestrator should route it to r3s4's owner for deletion."
+   ],
+   "carried_forward_for_the_analyzer": [
+    "The panel claim rests on cahn_hilliard alone (G-E delta exactly 0.0 on the other four cells).",
+    "Paired panel delta 0.5246 vs L1 threshold 0.3612 (1.45x); ch cell delta 1.2455 vs L2 mce 1.1604 (1.07x). Both survive but far tighter than part 4's 6-cell prediction; the 3-seed sign-consistency half of L1 is the binding test.",
+    "L3 fires as written at seed 0: only cahn_hilliard reaches 0.30; with pfc report-only the '>=3 of the 4 high-cond_dim cells' clause reads 1 of 3."
+   ],
+   "handoff": "mffp_autoresearch/round3/worktrees/r3s1_factorised/B1/notes/handoff_code_reviewer.md",
+   "utc": "2026-08-08T00:45:40Z"
+  }
+ ],
+ "debug_notes": [
+  {
+   "attempt": 1,
+   "class": "ALGO",
+   "classification": "ALGO",
+   "leg": "guards (seed 0) \u2014 the scored panel leg 66829977 COMPLETED and was not touched",
+   "symptom": "job 66829978 FAILED after 12s: score_panel.py -> smoke_eval.py exit 1 on the FIRST guard cell heat_local; basis.py:164 RuntimeError \"direction bank is not orthonormal: max|DD'-I| = 8.351e-01\" inside selection_stage. The G-D target-scaler pre-flight (pfc/ch) had passed immediately before.",
+   "diagnosis": "Rank deficiency, not a broken bank. basis.pod_basis takes the method-of-snapshots route (eigh of the n x n Gram G = R R'), which squares the condition number, so eigh resolves w_j only to an ABSOLUTE accuracy ~ eps*w_max and s_j = sqrt(w_j) is trustworthy only while s_j is comfortably ABOVE sqrt(eps)*s_max. The vendored rank cut keeps every mode with s > sqrt(eps)*s_max \u2014 the boundary itself, zero safety margin. heat_local is a smooth guard field whose DC-removed residual spectrum crosses s/s_max = 1e-5 at mode ~19, so modes 19..33 were numerically undetermined and their reconstructed rows V[:,j]/s_j @ R were neither unit-norm nor mutually orthogonal. Reproduced and instrumented on the login node: scratchpad/diagnose_attempt_1.py (spectrum, per-mode row norms, threshold sweep \u2014 cut 1e-8 -> 8.4e-01, 1e-7 -> 3.7e-04, 1e-6 -> 3.4e-07) and scratchpad/diagnose_attempt_1b.py (blast radius: all 5 scored panel cells and the guards fluid/sharp__sod_1d sit at max|DD'-I| <= 6.1e-14 / 3.7e-10, i.e. nowhere near the boundary; only heat_local is affected). Dataset-general defect, surfaced by a dataset-specific spectrum \u2014 NOT special-cased on heat_local.",
+   "fix": "basis.py only ([R3-DEBUG-1]). Added `orthonormal_prefix_rank(D, tol)`, which returns the longest leading block of D satisfying the SAME 1e-8 orthonormality tolerance (|DD'-I|[:k,:k].max() is nondecreasing in k, so one searchsorted). DirectionBank now truncates to that rank BEFORE asserting; the tolerance is unchanged and the assertion still raises, with the identical message, when not even the DC direction plus one POD mode survive (unit-tested). WindowBasis gets the same truncation (same defect, it simply never asserted, so undetermined modes were reported silently); it stays non-raising as it feeds diagnostics only in this card. Both record a `rank_truncation` block in meta(). The tolerance was NOT loosened and no recipe value changed.",
+   "panel_invariance": "Bitwise no-op wherever the bank already passed, by construction (keep == m returns the arrays unsliced) and verified twice: (a) bank level \u2014 scratchpad/verify_attempt_1.log shows BITWISE-IDENTICAL D/coeff/svals/error on all 5 scored cells plus fluid and sharp__sod_1d; (b) end to end \u2014 a full 5-cell rescore through the shipped 01_train_eval.sh (OUT_DIR redirected to scratchpad, DATASETS line untouched) recomputed every cell (cached=False, code_hash invalidated) and returned every nRMSE and the geomean 25.06624704883453 bit-identical to the reviewed result_panel5_s0.json, with nrmse_def_hash and copylf_def_hash unchanged (scratchpad/repro_panel_full_1_result.json). Only heat_local truncates: bank 34 -> 19 directions, window 32 -> 18.",
+   "repro_of_the_failing_command": "scratchpad/repro_guards_1.sh \u2014 the shipped 03_guards.sh with the OUT_DIR line alone substituted (diffed to confirm); post-fix it exits 0 on all three guard cells: heat_local nRMSE 0.00016525410470694669 (skill 0.0688), fluid 0.034257808711001425 (0.1571), sharp__sod_1d 0.1060749721818537 (3.2056) -> scratchpad/repro_guards_1_result.json.",
+   "files_touched": [
+    "models_r3/r3s1_twostage_crosscoef/basis.py"
+   ],
+   "eval_layer_untouched": "verified: nothing under mffp_autoresearch/round2/eval modified after 2026-08-08 09:00, 0 cache entries and 0 results dirs naming the family",
+   "relaunched_job_ids": [
+    66922977
+   ],
+   "next_suggestion": "If the relaunched guard leg fails again, look DOWNSTREAM of the bank rather than at it: with only 19 directions on heat_local, select_max=32 and stage2_max_directions=50 stop binding, so suspect an index/arity assumption in stage2.py or discriminator.py. For the analyzer: panel seeds 1-2 will run under the NEW code_hash and therefore recompute rather than cache-hit \u2014 the numbers are provably identical, so do not read the hash change as a result change; and the panel diag_*.json artifacts now carry an extra bank.rank_truncation block (applied=false on every scored cell).",
+   "utc": "2026-08-08T17:05:34Z"
+  }
+ ],
+ "5_actual_result": {
+  "_invocation": "seed-0 only (experiment-initial-analyzer, 2026-08-10). Seeds 1-2 not submitted; scripts/submit_seeds_2_3.sh unexecuted. Every number below is parsed from a score_panel.py result JSON or the family's own per-cell artifact; nothing was recomputed by hand. The only aggregation applied by the analyzer is round2/eval/nrmse.py::panel_geomean over per-cell skills read from artifacts.",
+  "_provenance": {
+   "scored_panel_result_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round3/r3s1_factorised/B1/eval/result_panel5_s0.json",
+   "guard_result_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round3/r3s1_factorised/B1/eval/result_guard_s0.json",
+   "per_cell_artifacts": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round3/r3s1_factorised/B1/training/r3s1_twostage_crosscoef/{dataset}_e0_s0.json",
+   "target_scale_preflight": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round3/r3s1_factorised/B1/eval/target_scale_preflight.json",
+   "anchors": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/state/anchors/launch_anchors.json (rebuilt 2026-08-10 05:55 after STOP-THE-LINE #2)",
+   "noise_floor": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/state/anchors_repaired/noise_floor.json",
+   "guard_reference": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round2/eval/copylf_baselines.json",
+   "slurm_logs": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round3/r3s1_factorised/B1/slurm/",
+   "_arm_skill_convention": "test_hf skills are read verbatim from result_panel5_s0.json. ref_head_onestage skills are read verbatim from each cell's build_gates['G-A_reproduction_seam'].in_job_skill. The remaining reference arms (dc_only, affine_on_hf_train, twostage_true_gate, zero, train_mean, nn_condition) are published in the artifacts as nRMSE only; their skill columns here are nrmse.py::skill(arm_nRMSE, copylf_baselines.json[dataset].test_nrmse) - the round's own skill definition applied to artifact-read numbers, never a re-derived nRMSE."
+  },
+  "_seam_assertions": {
+   "nrmse_def_hash": "d3d0ade9191c13bacc40702f3eb26ad290e01641cacee22a1d2233b74c035850",
+   "nrmse_def_hash_consistent_across_parsed_jsons": true,
+   "nrmse_def_hash_sources": [
+    "result_panel5_s0.json",
+    "result_guard_s0.json",
+    "all 5 per-cell training JSONs",
+    "copylf_baselines.json:_nrmse_def_hash"
+   ],
+   "copylf_def_hash": "9753ff24e856f595748492dec6cb6c215d748f97e8ec4a679b651f8846da907a",
+   "copylf_def_hash_consistent": true,
+   "code_hash_panel5": "88d6bfcd03b59400673dcb283aa703d60e4557c7dadff4db275c21fdc2ad952a",
+   "code_hash_guard": "3e7f87a3745b9ab61175e8ea4c2a0bde7cc56cf95a479996de60c87a44cd6fa5",
+   "code_hash_note": "panel and guard JSONs carry DIFFERENT code_hashes: the guard leg ran after the ALGO-1 basis.py rank-cut fix (debug_notes[0]). Metric-definition seams are identical. The debugger's post-fix full 5-cell recompute at the guard hash reproduced the panel bit-identically (geomean 25.06624704883453, all cells cached=false) - worktrees/r3s1_factorised/B1/scratchpad/repro_panel_full_1_result.json.",
+   "stale_checkpoint_audit": "tools/stale_checkpoint_audit.py --root <outputs>/training --fail-on-stale -> STALE 0/8, exit 0 (run 2026-08-10)"
+  },
+  "seeds_available": [
+   0
+  ],
+  "per_dataset": {
+   "sharp__allen_cahn_2d": {
+    "per_seed_nrmse": [
+     0.5767677044993638
     ],
-    "verdict_quoted": "- **Prior-art verdict quoted** (verbatim from `round3/websearches/r3s1_factorised/batch_1/report.md`, \"Prior-art verdict\" table):\n  - **D1** — \"ship the propagation-aware **two-stage cross-coefficient closed-form head** (condition->SET coefficients; remaining coefficients regressed on **out-of-fold stage-1 predictions**) as the scored condition->HF arm on the honest panel\" | **`preempted-but-MF-composition-open (cite)`** | Citations: \"Spyromitros-Xioufis et al., *Multi-Target Regression via Input Space Expansion* — https://arxiv.org/abs/1211.6581 (**owns both the cascade (SST/ERC) and the OOF-corrected gate**); mlxtend `StackingCVRegressor` — https://rasbt.github.io/mlxtend/user_guide/regressor/StackingCVRegressor/ ; Callaham/Brunton/Loiseau JFM nonlinear correlations — https://www.cambridge.org/core/journals/journal-of-fluid-mechanics/article/on-the-role-of-nonlinear-correlations-in-reducedorder-modelling/CC2980F9AA4AC20A7453C3056ED950C4\" | What remains open: \"Only the **composition**: OOF-corrected target-as-input stacking on **reduced-basis coefficients of a parametric PDE field**, where stage-1 targets are themselves regressed from the condition vector, scored on a copy-LF-skill panel in the **no-LF-at-test** regime at N_hf down to 5. Three refutation searches returned nothing; the field's stated default (\"model modal coefficients independently\") is a *linear*-decorrelation argument that B3-F24's OOF R^2 0.92-0.94 contradicts. **The card must name SST/ERC and state that F25 rediscovered the published train/predict discrepancy.**\"\n  - **D2** — \"**condition-dimension discriminator**: per-direction OOF R^2 from the condition vs from the SET coefficients across all 6 cells (cond_dim 3/5/18/19/19/50) as a **training-free pre-fit predictor** of whether the two-stage arm pays (M15, now n = 4 high-cond_dim cells)\" | **`preempted-but-MF-composition-open (cite)`** | Citations: \"Ayman/Mukhopadhyay/Laszka, *Task Grouping ... via Task Affinity Prediction* — https://arxiv.org/abs/2310.16241 ; Chen/Fan/Wang, *When is multivariate kriging worthwhile?* — https://arxiv.org/abs/2607.06832\" | What remains open: \"The **idea** of a pre-fit \"should we share?\" predictor is published. Open: the **independent variable and estimator** — both published criteria key on task affinity / heterotopic design geometry, neither on **condition dimension vs fit-row count**, neither predicts the payoff of a **cascade fed by predicted stage-1 coefficients**, neither is instantiated on PDE reduced-basis coefficients. **Strongest novelty position available to this batch — and it is a diagnostic claim, not an architecture claim.**\"\n  - **D3** — \"**fitted closed-form floor battery** (`affine_on_hf_train` + nn_condition + train_mean + zero) as the mandatory arm every learned condition->HF claim must clear\" | **`preempted (cite)`** at the level of the individual baselines | \"Ship the affine floor **with its oracle-affine residual** (ifc_poisson 5.4e-16) as an instrument/bug-fix, never as a contribution.\""
-  },
-  "recipe": {
-    "base_family": "none (new from-scratch round-3 family on round3-substrate; condition-only forward signature; the ONE-STAGE control arm is vendored verbatim with provenance comments from branch round2/exp-r2s1_direct-B3 @ 2b030f02da70cde80c90de2463935461bd56debb, files models_r2/r2s1_stagefree_permode/{basis,common,config,floors,head,maps,registration}.py; decoder.py, stages.py and prelude.py are NOT vendored; no round-1 code; no LF array opened at any stage; sole factory contact is a read-only import of mf_field/factory_mffp/data_adapters/loaders.py)",
-    "base_commit": "44f2404a2561cf4e7faaf70105fa0845dd69e804",
-    "family_dir": "models_r3/r3s1_twostage_crosscoef",
-    "datasets": "sharp__allen_cahn_2d,sharp__fisher_kpp_2d,sharp__cahn_hilliard,ifc_poisson,ifc_heat",
-    "epochs": 0,
-    "seeds": [
-      0,
-      1,
-      2
+    "per_seed_skill": [
+     280.0716592436192
     ],
-    "env": {
-      "R3S1B1_SCORED_ARM": "twostage_crosscoef_oof_gate",
-      "R3S1B1_STAGE_POLICY": "scored_arm_is_stage_free_no_wiener_no_blend_no_bg",
-      "R3S1B1_TRAINED_ARMS": "none",
-      "R3S1B1_EPOCHS_RATIONALE": "every arm is closed-form least-squares/kernel; family asserts epochs==0 and instantiates no gradient-trained arm",
-      "R3S1B1_DATA_VIEW": "stripped",
-      "R3S1B1_LF_AT_ANY_STAGE": "0",
-      "R3S1B1_LEAKAGE_TRIPWIRE": "1",
-      "R3S1B1_PANEL": "sharp__phase_field_crystal_2d,sharp__allen_cahn_2d,sharp__fisher_kpp_2d,sharp__cahn_hilliard,ifc_poisson,ifc_heat",
-      "R3S1B1_GUARDS": "heat_local,fluid,sharp__sod_1d",
-      "R3S1B1_DIRECTION_BANK": "dc_meanfield,pod_0_49",
-      "R3S1B1_POD_BASIS_N": "50",
-      "R3S1B1_POD_DC_ORTHOGONALIZE": "1",
-      "R3S1B1_CENTER_STAT": "norm_meanfield_over_geomean_norm_y",
-      "R3S1B1_CENTER_TAU": "1.0",
-      "R3S1B1_CENTER_FORMS": "fact,add",
-      "R3S1B1_BASIS_FORM_MATCHED": "1",
-      "R3S1B1_SELECT_INDEXING": "set",
-      "R3S1B1_SELECT_STAT": "oof_r2_per_direction_best_family",
-      "R3S1B1_SELECT_TAU": "0.1",
-      "R3S1B1_SELECT_KFOLD": "5",
-      "R3S1B1_SELECT_MIN": "1",
-      "R3S1B1_SELECT_MAX": "32",
-      "R3S1B1_MAP_BANK": "affine,quadratic,rbf_kernel_ridge,knn",
-      "R3S1B1_MAP_SELECT": "oof_r2_per_direction",
-      "R3S1B1_MAP_RIDGE_ALPHA": "exact_loo_grid_1e-6:1e2:13",
-      "R3S1B1_MAP_KNN_K": "1,2,4,8",
-      "R3S1B1_MAP_RBF_GAMMA": "median_heuristic",
-      "R3S1B1_STAGE2_ENABLE": "1",
-      "R3S1B1_STAGE2_INPUT": "oof_stage1_predictions",
-      "R3S1B1_STAGE2_GATE_SELECT_ON": "oof_stage1_predictions",
-      "R3S1B1_STAGE2_GATE_FIT_ON": "oof_stage1_predictions",
-      "R3S1B1_STAGE2_TAU2": "0.1",
-      "R3S1B1_STAGE2_MAP_BANK": "affine,quadratic,rbf_kernel_ridge,knn",
-      "R3S1B1_STAGE2_KFOLD": "5",
-      "R3S1B1_STAGE2_MIN_DIRECTIONS": "0",
-      "R3S1B1_STAGE2_MAX_DIRECTIONS": "50",
-      "R3S1B1_STAGE2_NOOP_ASSERT": "1e-12",
-      "R3S1B1_REF_ARMS": "head_onestage,twostage_true_gate,dc_only,zero,train_mean,nn_condition,affine_on_hf_train",
-      "R3S1B1_DECODER_ARMS": "none",
-      "R3S1B1_FLOOR_SEAM_CHECK": "mffp_autoresearch/round3/state/anchors_repaired/floors.json@1e-9",
-      "R3S1B1_AFFINE_FLOOR_SEAM_CHECK": "mffp_autoresearch/round3/state/anchors/launch_anchors.json:ifc_floors_repaired@1e-9",
-      "R3S1B1_AFFINE_FLOOR_ALL_CELLS": "1",
-      "R3S1B1_ANCHOR_REPRO_SEAM": "launch_anchors.json:cards.r2s1_direct-B3.per_dataset_mean_skill@3pct",
-      "R3S1B1_FOLD_MODEL_FRAC": "0.10",
-      "R3S1B1_FOLD_CALIB_FRAC": "0.10",
-      "R3S1B1_CALIB_FOLD_USE": "none_asserted_unused",
-      "R3S1B1_FOLD_DISJOINT": "1",
-      "R3S1B1_FOLD_RESAMPLES": "5",
-      "R3S1B1_SMALL_N_PROTOCOL": "loo",
-      "R3S1B1_SMALL_N_THRESHOLD": "20",
-      "R3S1B1_CONDDIM_DISCRIMINATOR": "1",
-      "R3S1B1_DISCRIM_STAT": "per_direction_oof_r2_from_condition_vs_from_set_coefficients",
-      "R3S1B1_DISCRIM_TOOL": "mffp_autoresearch/round2/tools/coefficient_factorisation_audit.py@adapted",
-      "R3S1B1_DISCRIM_REPORT_CELLS": "panel6",
-      "R3S1B1_TARGET_SCALE_PREFLIGHT": "sharp__phase_field_crystal_2d,sharp__cahn_hilliard",
-      "R3S1B1_PER_CELL_SEED_SPREAD_REPORT": "1",
-      "R3S1B1_CKPT_RESUME": "1",
-      "R3S1B1_CKPT_PATH": "<ckpt_dir>/last.pt"
-    },
-    "datasets_pre_adr_r3_0004": "panel",
-    "base_commit_pre_adr_r3_0004": "8aae33a7fab11ef8234f4bb7158c2bc1a8b4bf51"
+    "mean_skill": 280.0716592436192,
+    "ci95": null,
+    "reference_type": "copylf",
+    "cached": true,
+    "cond_dim": 19,
+    "ref_head_onestage_skill": 280.0716592436192,
+    "paired_delta_skill_vs_onestage": 0.0,
+    "stage2_gate_size": 0,
+    "stage2_is_noop": true,
+    "l3_max_margin_tool": 0.009116684146649456,
+    "l3_reading_this_seed": "below_0.30",
+    "best_frozen_floor_skill": 475.85682154308705,
+    "beats_best_frozen_floor": true,
+    "ref_dc_only_skill": 327.5710962117553,
+    "beats_dc_only": true,
+    "ref_affine_on_hf_train_skill": 275.688771,
+    "beats_affine_on_hf_train": false,
+    "noise_floor_min_claimable_effect": 16.422284630500034,
+    "paired_delta_above_noise_floor": false
+   },
+   "sharp__fisher_kpp_2d": {
+    "per_seed_nrmse": [
+     0.06221808645908396
+    ],
+    "per_seed_skill": [
+     376.5182636277145
+    ],
+    "mean_skill": 376.5182636277145,
+    "ci95": null,
+    "reference_type": "copylf",
+    "cached": true,
+    "cond_dim": 50,
+    "ref_head_onestage_skill": 376.5182636277145,
+    "paired_delta_skill_vs_onestage": 0.0,
+    "stage2_gate_size": 0,
+    "stage2_is_noop": true,
+    "l3_max_margin_tool": -0.0012941096935688012,
+    "l3_reading_this_seed": "below_0.30",
+    "best_frozen_floor_skill": 390.7014844797183,
+    "beats_best_frozen_floor": true,
+    "ref_dc_only_skill": 282.7601827,
+    "beats_dc_only": false,
+    "ref_affine_on_hf_train_skill": 266.4814208,
+    "beats_affine_on_hf_train": false,
+    "noise_floor_min_claimable_effect": 158.33215324637433,
+    "paired_delta_above_noise_floor": false
+   },
+   "sharp__cahn_hilliard": {
+    "per_seed_nrmse": [
+     0.477163461832313
+    ],
+    "per_seed_skill": [
+     11.414584784669875
+    ],
+    "mean_skill": 11.414584784669875,
+    "ci95": null,
+    "reference_type": "copylf",
+    "cached": true,
+    "cond_dim": 19,
+    "ref_head_onestage_skill": 12.660053564137534,
+    "paired_delta_skill_vs_onestage": 1.2454687794676593,
+    "stage2_gate_size": 9,
+    "stage2_is_noop": false,
+    "stage2_max_oof_r2": 0.669611091812371,
+    "l3_max_margin_tool": 0.6754833666166551,
+    "l3_reading_this_seed": "reaches_0.30",
+    "best_frozen_floor_skill": 23.180342227117514,
+    "beats_best_frozen_floor": true,
+    "ref_dc_only_skill": 23.8677392,
+    "beats_dc_only": true,
+    "ref_affine_on_hf_train_skill": 12.8710826,
+    "beats_affine_on_hf_train": true,
+    "ref_twostage_true_gate_skill": 11.4340804,
+    "noise_floor_min_claimable_effect": 1.1603569120520159,
+    "paired_delta_above_noise_floor": true
+   },
+   "ifc_poisson": {
+    "per_seed_nrmse": [
+     0.2970236120480205
+    ],
+    "per_seed_skill": [
+     8.250655890222793
+    ],
+    "mean_skill": 8.250655890222793,
+    "ci95": null,
+    "reference_type": "paper_bar",
+    "cached": true,
+    "cond_dim": 5,
+    "ref_head_onestage_skill": 8.250655890222793,
+    "paired_delta_skill_vs_onestage": 0.0,
+    "stage2_gate_size": 0,
+    "stage2_is_noop": true,
+    "l3_max_margin_tool": 0.050147151653790134,
+    "l3_reading_this_seed": "below_0.30",
+    "best_frozen_floor_skill": 8.040896838361228,
+    "beats_best_frozen_floor": false,
+    "ref_dc_only_skill": 11.0393168,
+    "beats_dc_only": true,
+    "ref_affine_on_hf_train_skill": 1.5937636895033758,
+    "beats_affine_on_hf_train": false,
+    "noise_floor_min_claimable_effect": 0.23990756041925798,
+    "paired_delta_above_noise_floor": false,
+    "_note": "carries no falsification weight per the card's L4 clause (N_hf = 5, anecdote-grade, program.md section 12.1). Data is the repaired nested ladder; the launch-anchor ifc_poisson columns were rebuilt 2026-08-10 and r2s1_direct-B3's value was UNCHANGED by the repair (orchestrator_flow 2026-08-10)."
+   },
+   "ifc_heat": {
+    "per_seed_nrmse": [
+     0.073735137422059
+    ],
+    "per_seed_skill": [
+     0.9964207759737704
+    ],
+    "mean_skill": 0.9964207759737704,
+    "ci95": null,
+    "reference_type": "paper_bar",
+    "cached": true,
+    "cond_dim": 3,
+    "ref_head_onestage_skill": 0.9964207759737704,
+    "paired_delta_skill_vs_onestage": 0.0,
+    "stage2_gate_size": 0,
+    "stage2_is_noop": true,
+    "l3_max_margin_tool": -0.026829128637992916,
+    "l3_reading_this_seed": "below_0.30",
+    "best_frozen_floor_skill": 1.3941023084286595,
+    "beats_best_frozen_floor": true,
+    "ref_dc_only_skill": 6.1944873,
+    "beats_dc_only": true,
+    "ref_affine_on_hf_train_skill": 0.9583559375093983,
+    "beats_affine_on_hf_train": false,
+    "noise_floor_min_claimable_effect": null,
+    "paired_delta_above_noise_floor": null,
+    "_note": "no noise_floor.json entry; carries no falsification weight (N_hf = 5)."
+   },
+   "sharp__phase_field_crystal_2d": {
+    "per_seed_nrmse": null,
+    "per_seed_skill": null,
+    "mean_skill": null,
+    "ci95": null,
+    "_note": "REPORT-ONLY and NOT PRODUCED. ADR r3-0004 made the pfc scored cell task-void and the orchestrator replaced recipe.datasets with the explicit 5-dataset panel; no pfc training/eval artifact exists for seed 0 (only its G-D target-scaler pre-flight row, which passed: norm max/median 1.292, top-1 energy share 0.004, effective N 395.6/400). Consequence for clause L3, which enumerates 4 high-cond_dim cells including pfc: only 3 are measurable."
+   }
   },
-  "status": "running",
-  "skipped_reason": null,
-  "reopen_candidate": false,
-  "scripts_path": {
-    "submit": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/worktrees/r3s1_factorised/B1/scripts/submit.sh",
-    "seeds_2_3": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/worktrees/r3s1_factorised/B1/scripts/submit_seeds_2_3.sh",
-    "train_eval": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/worktrees/r3s1_factorised/B1/scripts/01_train_eval.sh",
-    "guards": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/worktrees/r3s1_factorised/B1/scripts/03_guards.sh",
-    "submit_guards": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/worktrees/r3s1_factorised/B1/scripts/submit_guards.sh",
-    "target_scale_preflight": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/worktrees/r3s1_factorised/B1/scripts/00_target_scale_preflight.sh"
+  "panel_geomean_skill": {
+   "per_seed": [
+    25.06624704883453
+   ],
+   "mean": 25.06624704883453,
+   "ci95": null,
+   "_source": "result_panel5_s0.json:panel_geomean_skill (verified to reproduce exactly from that JSON's own per-cell skills via nrmse.py::panel_geomean)",
+   "_scored_panel": [
+    "sharp__allen_cahn_2d",
+    "sharp__fisher_kpp_2d",
+    "sharp__cahn_hilliard",
+    "ifc_poisson",
+    "ifc_heat"
+   ],
+   "matched_ref_head_onestage_panel_geomean_per_seed": [
+    25.590831700857155
+   ],
+   "paired_panel_delta_onestage_minus_test_hf_per_seed": [
+    0.5245846520226252
+   ],
+   "_paired_delta_note": "the in-job matched one-stage control; its per-cell skills are the G-A reproduction-seam in_job_skill values, aggregated with nrmse.py::panel_geomean. The whole delta comes from sharp__cahn_hilliard - stage 2 is a bitwise no-op (G-E max|delta| = 0.0) on the other four cells.",
+   "other_arms_panel_geomean_seed0": {
+    "ref_twostage_true_gate": 25.074803412953234,
+    "ref_dc_only": 43.24107979794395,
+    "ref_affine_on_hf_train": 17.058089001483193
+   }
   },
-  "output_paths": {
-    "training": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round3/r3s1_factorised/B1/training",
-    "eval": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round3/r3s1_factorised/B1/eval",
-    "slurm": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round3/r3s1_factorised/B1/slurm",
-    "result_panel5_pattern": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round3/r3s1_factorised/B1/eval/result_panel5_s{seed}.json",
-    "result_guard": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round3/r3s1_factorised/B1/eval/result_guard_s0.json",
-    "target_scale_preflight": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round3/r3s1_factorised/B1/eval/target_scale_preflight.json",
-    "cache": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round3/r3s1_factorised/B1/cache",
-    "_note": "training/ and cache/ are score_panel.py's per-(family, dataset, seed) result JSONs, checkpoint dirs and score cache, redirected there by ROUND2_EVAL_RESULTS / ROUND2_EVAL_CACHE exported in scripts/01_train_eval.sh and scripts/03_guards.sh (without those exports score_panel.py defaults into the FROZEN round-2 eval layer)."
+  "vs_anchor": {
+   "anchor_id": "state/anchors/launch_anchors.json:best_floor (5-dataset, rebuilt 2026-08-10)",
+   "anchor_value": 34.4198,
+   "value": 25.06624704883453,
+   "delta": -9.35355295116547,
+   "delta_pct": -27.18,
+   "beyond_ci": null,
+   "beyond_noise_floor": null,
+   "_beyond_note": "seed-0 only: no 3-seed CI exists yet, and noise_floor.json carries no panel entry. Both flags are decided at the 3-seed invocation.",
+   "named_comparand": {
+    "id": "state/anchors/launch_anchors.json:cards.r2s1_direct-B3 (the shipped condition->level closed-form law, CERTIFIED, 5-dataset)",
+    "per_seed": [
+     25.5908,
+     25.4975,
+     25.4473
+    ],
+    "mean": 25.5119,
+    "ci95": [
+     25.4295,
+     25.5943
+    ],
+    "seed0_delta_vs_test_hf_seed0": 0.52455295116547,
+    "_note": "the seed-0 in-job matched control (25.590832) reproduces this anchor's seed-0 geomean (25.5908) to 8e-5 - a clean reproduction seam."
+   },
+   "cited_vs_current_anchor_values": {
+    "_why": "Locked part 4 / expected_falsification were written pre-ADR-r3-0004 (6-dataset panel) and pre-2026-08-10 (contaminated ifc_poisson anchor columns). Per the analyzer's instructions, both the cited and current values are recorded; adjudication stays in the contract and no threshold was silently substituted.",
+    "best_floor_panel_geomean": {
+     "cited_in_part4": 36.3912,
+     "current": 34.4198,
+     "reason": "ADR r3-0004 re-aggregation to the 5-dataset scored panel (pfc report-only). Training-free, so the 2026-08-10 stale-checkpoint repair did not move it (orchestrator_flow 2026-08-10)."
+    },
+    "shipped_law_panel_geomean": {
+     "cited_in_part4": 28.2174,
+     "cited_ci95": [
+      28.1096,
+      28.3253
+     ],
+     "current": 25.5119,
+     "current_ci95": [
+      25.4295,
+      25.5943
+     ],
+     "reason": "same ADR r3-0004 re-aggregation; r2s1_direct-B3's ifc_poisson column was re-trained fresh on 2026-08-10 and reproduced its prior value exactly, so the repair left this card's comparand unchanged."
+    },
+    "L1_threshold": {
+     "cited_in_clause": 0.3612,
+     "cited_derivation": "2 x the certified 3-seed panel spread 0.1806 of r2s1_direct-B3 (6-dataset, pre-repair)",
+     "current_equivalent": 0.287,
+     "current_derivation": "2 x (max - min) of launch_anchors cards.r2s1_direct-B3.seed_geomeans [25.5908, 25.4975, 25.4473] = 2 x 0.1435",
+     "seed0_reading": 0.5245846520226252,
+     "_status": "seed-0 paired delta clears BOTH the cited 0.3612 (1.45x) and the current-anchor equivalent 0.2870 (1.83x). No substitution made; the orchestrator/mechanism-analyzer adjudicates which threshold governs at the 3-seed confirm."
+    },
+    "L2_threshold": {
+     "cited_in_clause": 1.1603569120520159,
+     "current": 1.1603569120520159,
+     "reason": "noise_floor.json sharp__cahn_hilliard.min_claimable_effect; a sharp cell, untouched by the ifc_poisson repair - the cited value stands."
+    },
+    "L4_floors": {
+     "cited_in_clause": {
+      "sharp__phase_field_crystal_2d": 48.0773,
+      "sharp__allen_cahn_2d": 475.8568,
+      "sharp__fisher_kpp_2d": 390.7015,
+      "sharp__cahn_hilliard": 23.1803
+     },
+     "current": {
+      "sharp__allen_cahn_2d": 475.85682154308705,
+      "sharp__fisher_kpp_2d": 390.7014844797183,
+      "sharp__cahn_hilliard": 23.180342227117514
+     },
+     "reason": "the three non-pfc floors are unchanged in the current launch_anchors best_floor.per_dataset; the pfc floor is void per ADR r3-0004."
+    }
+   }
   },
-  "build_commit": "6770381",
-  "job_ids": [
-    {
-      "seed": 0,
-      "job_id": 66829977,
-      "submitted": "2026-08-07T19:05 PDT",
-      "by": "orchestrator (post reviewed_pass attempt 2; HOLD absent, data_binding OK; wrapper executed)"
+  "cratered_verdict": "proceed_to_seeds_1_2",
+  "cratered_reasoning": "(a) no crash: panel leg 66829977 COMPLETED (exit 0, empty .err); the guard leg failed once on an ALGO defect and its relaunch 66922977 COMPLETED. (b) panel geomean 25.0662 is NOT above CRATERED_SKILL_FACTOR (1.5) x the stream anchor 34.4198 = 51.6297 - it is 27.2% BELOW the anchor. (c) no falsification clause fired decisively at seed 0: L1 clears at 0.5246 > 0.3612 (cited) and > 0.2870 (current-anchor equivalent); L2 clears at 1.2455 > 1.1604 (margin only +0.0851, i.e. 1.073x); L4 clears on all three measurable sharp cells. L3 reads adversely (1 of 3 measurable high-cond_dim cells at >= 0.30) but the clause is explicitly adjudicated on the 3-seed mean and can record UNRESOLVED on spread, so it is not decisive at seed 0 - and its '3 of 4' arithmetic is itself contract-ambiguous now that pfc is report-only.",
+  "falsification_verdict": "pending_seeds",
+  "falsification_seed0_readings": {
+   "clause_L1": {
+    "verbatim": "the seed-mean panel geomean of `test_hf` fails to beat the matched `ref_head_onestage` by more than **0.3612** skill units (2 x the certified 3-seed panel spread 0.1806 of `r2s1_direct-B3`; `noise_floor.json` has no panel entry) or the sign of that paired delta is not identical at all three seeds",
+    "seed0_paired_delta": 0.5245846520226252,
+    "threshold_cited": 0.3612,
+    "threshold_current_equivalent": 0.287,
+    "seed0_status": "clears (1.45x cited / 1.83x current). Sign-identity half is UNTESTABLE at one seed and is the binding test.",
+    "caveat": "the entire delta is one cell (sharp__cahn_hilliard); stage 2 is a bitwise no-op elsewhere, so the panel delta is exactly a 5th-root propagation of the ch ratio 11.414585/12.660054."
+   },
+   "clause_L2": {
+    "verbatim": "on `sharp__cahn_hilliard` ... `test_hf` fails to beat `ref_head_onestage` by more than **1.1603569120520159** skill units (that cell's provisional `min_claimable_effect`)",
+    "seed0_delta": 1.2454687794676593,
+    "threshold": 1.1603569120520159,
+    "seed0_status": "clears, but by only +0.0851 (1.073x). Near-coin-flip, exactly as the starter's handoff disclosed.",
+    "reproduction": "the one-stage arm lands on 12.660054, matching the offline round-2 T3 value 12.6601, and test_hf on 11.414585 vs the pre-measured 11.4148."
+   },
+   "clause_L3": {
+    "verbatim": "fewer than 3 of the 4 high-cond_dim cells {pfc 18, allen_cahn 19, cahn_hilliard 19, fisher_kpp 50} reach a maximum per-direction margin [OOF R^2 from the SET coefficients - OOF R^2 from the condition] **>= 0.30** at the 3-seed mean, or either low-cond_dim cell {ifc_heat 3, ifc_poisson 5} reaches it",
+    "statistic": "margin_tool (pre-registered), per the family's own l3_statistic field",
+    "seed0_margins": {
+     "sharp__allen_cahn_2d": 0.009116684146649456,
+     "sharp__fisher_kpp_2d": -0.0012941096935688012,
+     "sharp__cahn_hilliard": 0.6754833666166551,
+     "ifc_poisson": 0.050147151653790134,
+     "ifc_heat": -0.026829128637992916,
+     "sharp__phase_field_crystal_2d": "not produced (ADR r3-0004 report-only)"
     },
-    {
-      "leg": "guards",
-      "seed": 0,
-      "job_id": 66829978,
-      "submitted": "2026-08-07T19:05 PDT",
-      "by": "orchestrator"
+    "seed0_status": "reads ADVERSE: 1 of 3 measurable high-cond_dim cells reaches 0.30; no low-cond_dim cell reaches it. Not fired - the clause is adjudicated on the 3-seed mean and records UNRESOLVED where the 3-seed margin spread exceeds 0.10.",
+    "contract_flag": "the clause enumerates 4 high-cond_dim cells but pfc is void per ADR r3-0004 ('any falsification clause or threshold citing pfc is void for claim purposes; clauses over the remaining datasets stand as written'), so '>= 3 of 4' cannot be evaluated as written. Adjudication required BEFORE the 3-seed verdict - flagged, not resolved here."
+   },
+   "clause_L4": {
+    "verbatim": "`test_hf` is worse than the best frozen floor on any of the four sharp cells (pfc > 48.0773, allen_cahn > 475.8568, fisher_kpp > 390.7015, cahn_hilliard > 23.1803)",
+    "seed0": {
+     "sharp__allen_cahn_2d": [
+      280.0716592436192,
+      475.85682154308705,
+      "clears"
+     ],
+     "sharp__fisher_kpp_2d": [
+      376.5182636277145,
+      390.7014844797183,
+      "clears by 3.6% only"
+     ],
+     "sharp__cahn_hilliard": [
+      11.414584784669875,
+      23.180342227117514,
+      "clears"
+     ],
+     "sharp__phase_field_crystal_2d": "void (ADR r3-0004)"
     },
-    {
-      "leg": "guards",
-      "seed": 0,
-      "job_id": 66922977,
-      "submitted": "2026-08-08T10:05 PDT",
-      "by": "experiment-debugger attempt 1 (ALGO; bash scripts/submit_guards.sh)"
-    }
-  ],
-  "logs": {},
-  "build_notes": [
-    "FAMILY: models_r3/r3s1_twostage_crosscoef (new). Vendored per recipe.base_family from branch round2/exp-r2s1_direct-B3 @ 2b030f02da70cde80c90de2463935461bd56debb, path models_r2/r2s1_stagefree_permode/: basis.py, head.py, maps.py, registration.py are VERIFIED BYTE-IDENTICAL below a 14-line provenance header (checked with `diff` against `git show 2b030f02:...`); common.py and floors.py are adapted, each deviation marked `[R3-ADAPT]` (7 markers each). decoder.py/stages.py/prelude.py NOT vendored (no gradient-trained arm, no post-hoc stage). config.py written fresh (this card's R3S1B1_* knob set). New code: stage2.py, discriminator.py, gates.py, ckpt.py, smoke_eval.py. Sole factory contact is the read-only import of data_adapters/loaders.py; the metric is imported from the frozen round2/eval/nrmse.py.",
-    "CONTRACT SMOKE (mandatory, in-session): `python round2/eval/score_panel.py --family_dir models_r3/r3s1_twostage_crosscoef --datasets sharp__allen_cahn_2d,sharp__fisher_kpp_2d,sharp__cahn_hilliard,ifc_poisson,ifc_heat --epochs 0 --seed 0 --out scratchpad/contract_smoke.json --no_cache` -> EXIT 0, all five cells finite: panel_geomean_skill 25.0662; skills allen_cahn 280.0717, fisher_kpp 376.5183, cahn_hilliard 11.4146, ifc_poisson 8.2507, ifc_heat 0.9964 (nRMSE 0.576768 / 0.062218 / 0.477163 / 0.297024 / 0.073735). Result JSON committed at <worktree>/scratchpad/contract_smoke.json. Tier note: run at `--epochs 0`, NOT the 2-epoch contract tier, because recipe.epochs = 0 and R3S1B1_EPOCHS_RATIONALE requires the family to assert epochs == 0 (every arm closed-form); config.assert_zero_epochs() is that assertion.",
-    "BUILD GATES, all exercised on all 5 cells in the smoke. G-A reproduction seam vs launch_anchors.json:cards.r2s1_direct-B3.per_dataset_mean_skill: ok at rel deviations allen_cahn +0.34%, fisher_kpp +0.45%, cahn_hilliard +0.76%, ifc_poisson +0.0002%, ifc_heat +0.002% (tol 3%); the ch one-stage arm lands on skill 12.6601, the exact value the card quotes from the round-2 offline measurement. G-B floor seam max|delta| 0.0 / 5.5e-11 / 1.1e-10 across cells (tol 1e-9). G-C leakage tripwire structural (common.Panel raises off the stripped view; test split exposes no LF) + guard leg scripted (03_guards.sh). G-D target-scaler pre-flight artifact required before the test tensor unlocks (common.Panel test lock); pfc and cahn_hilliard both verdict OK. G-E stage-2 no-op assertion: max|test_hf - ref_head_onestage| = 0.0 exactly on every no-op cell.",
-    "SCIENCE READINGS AT SEED 0 (provisional, single seed, for the analyzer): stage-2 gate fires only on sharp__cahn_hilliard (9 of 48 remaining directions, max propagation-aware OOF R^2 0.6696) -> test_hf 0.477163 vs one-stage 0.529228, i.e. skill 11.4146 vs 12.6601 (the card's pre-measured 11.4148/12.6601). On allen_cahn (max OOF R^2 -0.0055), fisher_kpp (-0.0045), ifc_poisson and ifc_heat the gate is EMPTY and test_hf is bit-identical to the shipped law, as part 4 predicted. L3 discriminator max margin_tool: cahn_hilliard 0.6755 (reaches 0.30), allen_cahn 0.0091, fisher_kpp -0.0013, ifc_heat -0.0268 (below 0.30). ref_twostage_true_gate (the SST/ERC train-predict discrepancy) is worse than the propagation-aware arm on ch (0.477978 vs 0.477163) and identical elsewhere.",
-    "BUILDER JUDGMENT CALL FLAGGED FOR THE REVIEWER — affine-floor seam is DTYPE-LIMITED. R3S1B1_AFFINE_FLOOR_SEAM_CHECK fixes @1e-9 ABSOLUTE, but the frozen ifc_floors_repaired.affine_on_hf_train was computed by round3/tools/make_round3_anchors.py::ifc_floors in float64 straight off the .npy files, while the guarded factory loader casts every array to float32 and the family may not read the original data_root at test time (immutable #9). The in-job recompute therefore differs by 2.55e-09 absolute / 3.6e-08 relative on ifc_heat, inside float32 machine epsilon (1.19e-07). floors.py records status `ok_dtype_limited` with the exact numbers instead of raising, and still RAISES beyond float32 eps. Raising at 1e-9 would be an infrastructure false alarm; this is the only place the implementation does not take a card tolerance literally.",
-    "BUILDER-CHOSEN CONSTANTS (the card fixes none of these; none is a hyperparameter that can move a score). (1) Diagnostics path DIAG_OUT_DEFAULT = outputs eval dir, overridable via R3S1B1_DIAG_OUT. (2) G-D pre-flight artifact path PREFLIGHT_JSON_DEFAULT = <outputs>/eval/target_scale_preflight.json, overridable via R3S1B1_PREFLIGHT_JSON; the named tool (round2/tools/target_scale_spread_audit.py) needs the LF fields the family may never open, so it runs as a separate TRAIN-SPLIT-ONLY process in scripts/00_target_scale_preflight.sh. (3) Stage-2 row convention: X_oof, the gate's OOF table and the final stage-2 fits all live on the FITTING fold, transcribed from the card's named instrument round2/tools/coefficient_factorisation_audit.py::run; the stage-1 selection stage keeps its own fit+model-fold convention (vendored verbatim) so the G-A seam stays exact. (4) The L3 margin is reported in two pairings: `margin_tool` (the instrument's own, pre-registered) and `margin_matched_rows` (both terms on the fitting rows) — the summary names which is pre-registered. (5) ref_dc_only is fitted on the FULL train split, matching r2s1_direct-B3's frozen-floor convention.",
-    "SCRIPTS. 01_train_eval.sh takes SEED=$1 and runs ONE score_panel.py invocation over recipe.datasets (the explicit 5-dataset ADR r3-0004 panel; the literal `panel` keyword is deliberately NOT used because it resolves to the ROUND-2 panel via round2/project.yaml). All 58 recipe.env knobs are passed through --env and were verified key-for-key equal to the card's recipe.env by a parse-and-compare script (0 missing, 0 extra, 0 value mismatches). Headers: partition gpu, gres gpu:nvidia_h200:1 (project.yaml), --mem 32G, --mail-user=ezeng@caltech.edu --mail-type=END,FAIL, logs under outputs slurm/. Job names r3-r3s1_factorised-B1-s<seed> are set by the submit scripts (SBATCH directives cannot see $1). All six scripts pass `bash -n`; every path is absolute. --time 04:00:00 for the panel leg / 02:00:00 for the guard leg: state/timing_ledger.json has NO round-3 entries, so this is the slurm_rules.md no-analog default, and it is generous against the measured in-family compute (fisher_kpp 432 s, cahn_hilliard 177 s, allen_cahn 79 s, ifc ~75 s at 4 threads) plus a saturated shared filesystem (a bare `import torch` measured 18 min on the login node during the build).",
-    "CHECKPOINT RESUME verified end-to-end, not just by inspection: two consecutive runs against the same --ckpt_dir print `[resume] loaded .../last.pt` and `[resume] reusing checkpointed unit ...` for all five units (select_r0, condA_r0, xoof_r0, s2tab_prop_r0, s2tab_true_r0) and reproduce test_hf bit-identically. Because epochs = 0 there is no epoch loop; the resumable unit is the out-of-fold TABLE, and the checkpoint is meta-guarded on (model, dataset, seed, epochs, n_train, n_cells, cond_dim, env) so a stale checkpoint is ignored rather than reused.",
-    "NO TBDs. Every hyperparameter in the implementation is a recipe.env value; the fold-resample diagnostic returned identical arms at all 5 resamples on every cell, which is a genuine selection-stability reading (the model fold enters only through the selection outcome, which was stable), not a bug — recorded in the result JSON as paired_delta_spread_max_minus_min = 0.0.",
-    "REVIEW FIX (code-reviewer verdict reviewed_fail, findings 3.1/3.3/3.7; build_commit 960d88f -> 6770381, new commit, no amend). DEFECT: neither 01_train_eval.sh nor 03_guards.sh exported ROUND2_EVAL_RESULTS / ROUND2_EVAL_CACHE, so score_panel.py (round2/eval/score_panel.py::_results_dir/_cache_dir) defaulted its per-(family, dataset, seed) result JSONs, checkpoint dirs and score cache into the FROZEN round-2 eval layer; the build smoke had already deposited 5 result JSONs + 5 ckpt dirs (28 MB total) + 5 cache entries there, invisible to git because round2/.gitignore covers them. FIX: both scripts now `export ROUND2_EVAL_RESULTS=\"$OUT_DIR/training\"` and `export ROUND2_EVAL_CACHE=\"$OUT_DIR/cache\"` immediately after OUT_DIR= and before the score_panel.py call, with \"$OUT_DIR/cache\" added to the existing mkdir -p. CLEANUP: removed round2/eval/results/r3s1_twostage_crosscoef and the 5 cache entries d910d5ed/c3e85cc0/d4a9c696/696f6e46/f6bee212; verified by `grep -l r3s1_twostage_crosscoef round2/eval/cache/*.json | wc -l` = 0 and no r3s1 dir under round2/eval/results. This also makes output_paths.training real — nothing wrote it before.",
-    "RE-SMOKE AFTER THE FIX, run through the ACTUAL script (scratchpad/rerun_smoke.sh sed-substitutes only the --out path of scripts/01_train_eval.sh, so the env exports, the 58 --env knobs and the dataset list are the shipped ones; log at scratchpad/rerun_smoke.log): exit 0, panel_geomean_skill 25.0662 and all five per-cell nRMSE/skill values BIT-IDENTICAL to the pre-fix smoke (ac 280.0717, fk 376.5183, ch 11.4146, ifc_poisson 8.2507, ifc_heat 0.9964) — which also empirically confirms the reviewer's 3.6(b) point that the in-file RECIPE_ENV defaults are byte-equal to the --env list. The result JSON now records all 58 env knobs under \"env\" (was {}) and a different code_hash (88d6bfcd..., env enters code_hash), and all 5 result JSONs + 5 ckpt dirs + 5 cache entries landed under outputs/.../training and outputs/.../cache with the frozen eval tree verified clean afterwards.",
-    "SUGGESTs applied. (a) --time trimmed against the measured ~14 min of in-family compute: panel leg 04:00:00 -> 01:30:00 (the reviewer's number, ~6x headroom), guard leg 02:00:00 -> 01:00:00; slurm_rules §4 warns that oversized --time blocks backfill. (b) The --env plumbing is now exercised by the committed smoke evidence (see the re-smoke note).",
-    "DISCLOSED ANALYST READINGS (reviewer flagged these as undisclosed; I recomputed every number independently from the per-cell result JSONs against round2/eval/copylf_baselines.json before recording them). ref_affine_on_hf_train BEATS the scored arm on 4 of 5 cells and on the panel geomean (17.0581 vs 25.0662): allen_cahn 275.6888 < 280.0717, fisher_kpp 266.4814 < 376.5183, ifc_poisson 1.5938 < 8.2507, ifc_heat 0.9584 < 0.9964; sharp__cahn_hilliard is the only cell where the scored arm wins (11.4146 vs 12.8711). Part 4 carved out only the two ifc cells, so the allen_cahn and fisher_kpp affine losses are NEW and adverse relative to the card's expectation. ref_dc_only ALSO beats the scored arm on fisher_kpp (282.7602 vs 376.5183) — directly adverse for round-3 success criterion 1 on that cell (dc_only loses on the other four: ac 327.5711, ch 23.8677, ifc_poisson 11.0393, ifc_heat 6.1945). For completeness at seed 0: one-stage panel geomean 25.5908 (anchor 3-seed mean 25.5119), so the paired panel delta is 0.5246, and the scored arm is BITWISE identical to the one-stage control on 4 of 5 cells (G-E delta exactly 0.0) — the whole panel movement comes from cahn_hilliard alone."
-  ],
-  "review_notes": [
-    {
-      "attempt": 1,
-      "verdict": "reviewed_fail",
-      "build_commit_reviewed": "960d88f8fc9cf56377d6ce332bc85484e396d62d",
-      "findings": [
-        "Q3.1 card-implementation alignment — FAIL: every part-3 item traces to code (stage-1 vendored, stage-2 stage2.py, 7 ref arms, gates A-E, folds, L3 diagnostics), but the card's declared output_paths.training is written by nothing; per-cell result JSONs and checkpoints land in round2/eval/results/r3s1_twostage_crosscoef/ because scripts/01_train_eval.sh never exports ROUND2_EVAL_RESULTS.",
-        "Q3.2 recipe fidelity — PASS: 58/58 recipe.env knobs verbatim in 01_train_eval.sh and 03_guards.sh (0 missing / 0 extra / 0 mismatched, programmatic compare) and config.py:RECIPE_ENV byte-equal to the card; DATASETS is the exact 5-name ADR r3-0004 list (literal 'panel' correctly avoided); epochs 0; seeds {0,1,2}. Only score-affecting literals in new code are 0.30 (the card's own L3 threshold) and 1e-300 numerical guards; the 5 builder-chosen constants are output paths/conventions, all declared in build_notes.",
-        "Q3.3 §5 immutable compliance — FAIL (BLOCKING): immutable #3 (eval layer frozen during the round). scripts/01_train_eval.sh and scripts/03_guards.sh do not export ROUND2_EVAL_RESULTS / ROUND2_EVAL_CACHE, which round2/eval/score_panel.py:38-43 defaults into the frozen round-2 eval tree. The build smoke already deposited 5 result JSONs, 5 ckpt dirs (11.7 MB last.pt each) and 5 cache entries under round2/eval/{results/r3s1_twostage_crosscoef,cache}/ dated 2026-08-07; submission would add ~4x more (3 seeds + guards). Files are gitignored (round2/.gitignore:4-5) so git status cannot catch it, but a round-2 aggregator glob over eval/results/* would pick up a round-3 family. Both sibling streams already redirect (r3s3_lf_value/B1/scripts/01_train_eval.sh:48,121 and r3s4_audit/B1/scripts/01_train_eval.sh:97,102). MINIMAL FIX: in BOTH 01_train_eval.sh and 03_guards.sh, after OUT_DIR= and before the score_panel.py call, add `export ROUND2_EVAL_RESULTS=\"$OUT_DIR/training\"` and `export ROUND2_EVAL_CACHE=\"$OUT_DIR/cache\"` and add \"$OUT_DIR/cache\" to the existing mkdir -p; then `rm -rf mffp_autoresearch/round2/eval/results/r3s1_twostage_crosscoef` and delete the 5 stray cache entries d910d5ed/c3e85cc0/d4a9c696/696f6e46/f6bee212; re-run the smoke and confirm nothing new lands under round2/eval/. All other immutables clean: stripped view only (G-C records under_stripped_view=1 and test_lf_fids=[] on all 5 cells), no guarded-factory writes, no data regeneration, scoring only through score_panel.py, no pre-falsified lever re-proposed.",
-        "Q3.4 contract compliance — PASS: manifest.json complete; smoke_eval.py:207-212 exposes all 6 contract args; checkpoint resume from <ckpt_dir>/last.pt implemented (ckpt.py:37) with config.py:404-405 RAISING if the knob deviates, meta-guarded on (model,dataset,seed,epochs,n_train,n_cells,cond_dim,env); seed_everything covers random/numpy/torch/torch.cuda from --seed; INSPIRATION.md cites all 5 prior_art citations, names SST/ERC as owning the cascade and the OOF gate, and records F25 as a rediscovery (the websearcher's two explicit requirements).",
-        "Q3.5 SLURM correctness — SUGGEST: all 6 scripts pass `bash -n` (verified in-session, no output on any). partition gpu + typed gres gpu:nvidia_h200:1 match project.yaml; job names r3-r3s1_factorised-B1-s$SEED via sbatch --job-name (r3- prefix uniform across all four round-3 streams; the stale grep '^r2-' in subagents/maintainer.md:36 is a round-3-wide harness gap, not this card's defect); --output/--error under OUTPUTS_ROOT/r3s1_factorised/B1/slurm/%x_%j; paths absolute; 01_train_eval.sh takes SEED=$1; submit.sh seed 0 only; submit_seeds_2_3.sh present; both >=1h legs carry --mail-user=ezeng@caltech.edu --mail-type=END,FAIL. SUGGEST: --time 04:00:00 is ~12x the measured in-family compute (~14 min total); slurm_rules.md §4 warns oversized --time blocks backfill — 01:30:00 still gives 6x headroom.",
-        "Q3.6 smoke-test evidence — SUGGEST: build_notes cite the exact score_panel.py command and scratchpad/contract_smoke.json is committed (exit 0, 5/5 cells finite, panel_geomean_skill 25.0662). Two benign caveats: run at --epochs 0 rather than tier-2 contract epochs (correct — config.assert_zero_epochs() would RAISE at 2 and recipe.epochs=0), and run WITHOUT --env so the result records env {} (numerically harmless since config.RECIPE_ENV defaults are byte-equal to recipe.env, but the --env plumbing path is unexercised). No stale-cache replay risk: env enters code_hash (score_panel.py:78-80), so the SLURM run recomputes.",
-        "Q3.7 blast radius — FAIL (runtime, out-of-repo): the in-repo diff is clean (27 files, +8886/-0, only models_r3/, scripts/, notes/, scratchpad/); the violation is the gitignored round2/eval/ contamination in Q3.3.",
-        "Q3.8 round-2/3 novelty — PASS: new from-scratch family, new INSPIRATION.md, condition-only forward on the stripped view. The vendored round-2 code is the DECLARED paired control arm ref_head_onestage, named verbatim in recipe.base_family; basis/head/maps/registration.py verified byte-identical below a 14-line provenance header against `git show 2b030f02:models_r2/r2s1_stagefree_permode/*`; common/floors.py carry 7 [R3-ADAPT] markers each. The scored pathway (stage2.py) is new code. No round-1 code. Not a rebadge."
-      ],
-      "adjudications": [
-        "float64->float32 affine-floor seam ACCEPTED, matching the r3s4/r3s3 precedent: strict 1e-9 kept where floors genuinely reproduce (G-B frozen floors max|delta| 0.0 / 5.46e-11 / 1.1e-10, status ok); the separate ok_dtype_limited enum applies only to the affine seam (ifc_heat rel 3.60e-08, ifc_poisson rel 4.84e-08, both under float32 eps 1.19e-07) with exact numbers recorded; floors.py still RAISES beyond float32 eps. Distinct status value, never overloaded onto ok.",
-        "epochs 0 honored end-to-end: recipe.epochs=0 -> both scripts pass --epochs 0 -> config.assert_zero_epochs() raises otherwise; result JSONs carry epochs: 0 and epochs_assertion with gradient_trained_arms: 0."
-      ],
-      "analyst_readings_not_defects": [
-        "The panel claim rests on ONE cell: G-E records max_abs_delta_vs_onestage = 0.0 on allen_cahn, fisher_kpp, ifc_poisson and ifc_heat (bitwise no-op vs the vendored control); only cahn_hilliard moves (0.4657). Pre-registered, but seeds 1-2 can vary only through ch.",
-        "Both primary clauses are far tighter than part 4 predicted, because part 4's numbers were 6-cell (pre-ADR-r3-0004). On the 5-cell scored panel at seed 0: paired panel delta 0.5246 vs L1 threshold 0.3612 (1.45x, not the predicted ~1.4 units); ch cell delta 1.2455 vs L2 mce 1.1604 (1.07x). The 3-seed sign-consistency half of L1 becomes the binding test.",
-        "L3 fires as written at seed 0: max_margin_tool cahn_hilliard 0.6755 (reaches 0.30), allen_cahn 0.0091, fisher_kpp -0.0013, ifc_poisson 0.0501, ifc_heat -0.0268. With pfc report-only the '>=3 of the 4 high-cond_dim cells' clause reads 1 of 3.",
-        "ref_affine_on_hf_train beats the scored arm on 4 of 5 cells and on the panel geomean (17.06 vs 25.07): ifc_heat 0.9584<0.9964, ifc_poisson 1.5938<8.2507, allen_cahn 275.69<280.07, fisher_kpp 266.48<376.52; ch is the only win (12.87 vs 11.41). Part 4 carved out only the ifc cells; the allen_cahn and fisher_kpp affine losses are undisclosed in build_notes.",
-        "ref_dc_only beats the scored arm on fisher_kpp (282.76 vs 376.52) — directly relevant to success criterion 1 and absent from build_notes."
-      ],
-      "handoff": "mffp_autoresearch/round3/worktrees/r3s1_factorised/B1/notes/handoff_code_reviewer.md",
-      "utc": "2026-08-08T00:23:33Z"
+    "seed0_status": "not fired"
+   },
+   "criterion_1_reading": {
+    "rule": "round-3 success criterion 1: the scored arm vs ref_dc_only (the condition->level law), per cell",
+    "seed0": {
+     "sharp__allen_cahn_2d": "beats (280.07 vs 327.57)",
+     "sharp__fisher_kpp_2d": "LOSES (376.52 vs 282.76)",
+     "sharp__cahn_hilliard": "beats (11.41 vs 23.87)",
+     "ifc_poisson": "beats (8.25 vs 11.04)",
+     "ifc_heat": "beats (0.996 vs 6.194)"
     },
-    {
-      "attempt": 2,
-      "verdict": "reviewed_pass",
-      "scope": "delta-only re-review of the attempt-1 FAIL",
-      "build_commit_reviewed": "6770381d260360879655210a8edc152f11649f97",
-      "findings": [
-        "(1) Redirect present and correctly placed — PASS: 01_train_eval.sh:50-51 and 03_guards.sh:45-46 export ROUND2_EVAL_RESULTS=\"$OUT_DIR/training\" and ROUND2_EVAL_CACHE=\"$OUT_DIR/cache\" after OUT_DIR= and before the score_panel.py call; \"$OUT_DIR/cache\" added to mkdir -p (01:41, 03:36). The 960d88f..6770381 script diff contains only these lines plus the --time trims. All 6 scripts re-pass `bash -n`.",
-        "(2) Frozen round-2 eval tree clean — PASS, re-verified by me rather than taken on report: round2/eval/results/ is back to its 11 round-2 families with no r3s1_twostage_crosscoef dir; `grep -rl r3s1_twostage_crosscoef mffp_autoresearch/round2/eval/cache/ | wc -l` = 0; `find mffp_autoresearch/round2/eval -newermt '2026-08-07 17:05' -type f` returns nothing.",
-        "(3) Re-smoke through the shipped script — PASS: scratchpad/rerun_smoke.sh sed-substitutes only the --out path; I re-derived the body and diffed it against the committed 01_train_eval.sh, confirming the delta is exactly the two --out/cat lines, so the exports, the 58 --env knobs and the dataset list are the shipped ones. result.env now carries all 58 knobs (was {}), matching recipe.env with 0 missing / 0 extra / 0 mismatched; all 5 cells cached=False (genuine recompute; code_hash 8bf62cdd -> 88d6bfcd because env enters code_hash); every per-cell nRMSE and the panel geomean 25.06624704883453 are BIT-IDENTICAL to the pre-fix run; nrmse_def_hash and copylf_def_hash unchanged. This empirically confirms the attempt-1 3.6(b) reading that config.RECIPE_ENV was byte-equal to the --env list.",
-        "(3b) Gates still green in the redirected location — PASS: G-A status ok on all 5 cells; G-B frozen-floor seam max |delta| <= 2.65e-10; affine seam ok_dtype_limited on the two ifc cells only (no_frozen_entry elsewhere); G-E max|delta| vs one-stage exactly 0.0 on the four no-op cells and 0.465627 on cahn_hilliard; G-C under_stripped_view=1 and lf_used_at_any_stage=0 on all 5. Checkpoints land at outputs/.../training/r3s1_twostage_crosscoef/ckpt_*/last.pt, so output_paths.training is real for the first time.",
-        "(4) --time trims — PASS: panel 04:00:00 -> 01:30:00 (~6x the measured ~14 min of in-family compute), guards 02:00:00 -> 01:00:00. Both legs remain >= 1 h so the mandatory --mail-user=ezeng@caltech.edu --mail-type=END,FAIL is still correct and still present.",
-        "(5) Analyst readings disclosed — PASS: build_notes[12] records that ref_affine_on_hf_train beats the scored arm on 4 of 5 cells and on the panel geomean (17.0581 vs 25.0662) with correct per-cell numbers, that ref_dc_only beats it on fisher_kpp (282.7602 vs 376.5183), the one-stage geomean 25.5908 / paired delta 0.5246, and the bitwise no-op on 4 of 5 cells. I independently re-derived every figure from the per-cell result JSONs against round2/eval/copylf_baselines.json; all match. The builder additionally supplied the one-stage 3-seed anchor mean 25.5119.",
-        "(6) Locked fields and blast radius — PASS: locked fields unchanged vs current HEAD (bea0596); the only movement since the card's first commit (44f2404a2) is recipe + adr_r3_0004_addendum, which is the orchestrator's ADR r3-0004 execution (873075c), not a builder or reviewer write. The attempt-1 review_notes entry is intact (verdict reviewed_fail, 8 findings). Delta touches only scripts/, notes/, scratchpad/ (7 files); handoff_code_reviewer.md appears as +41/-0, i.e. swept into the commit unmodified. Worktree clean.",
-        "(7) RESIDUAL, NOT THIS CARD'S — round2/eval/cache/68e9fdb2...json (2026-08-07 14:00) carries \"family\": \"r3s4_cert_min\", ifc_heat, epochs 2: one round-3 stray still in the frozen cache, from the r3s4_audit stream (whose committed scripts do redirect). It is the only remaining r3 entry in the frozen tree. Not a blocker for r3s1-B1; orchestrator should route it to r3s4's owner for deletion."
-      ],
-      "carried_forward_for_the_analyzer": [
-        "The panel claim rests on cahn_hilliard alone (G-E delta exactly 0.0 on the other four cells).",
-        "Paired panel delta 0.5246 vs L1 threshold 0.3612 (1.45x); ch cell delta 1.2455 vs L2 mce 1.1604 (1.07x). Both survive but far tighter than part 4's 6-cell prediction; the 3-seed sign-consistency half of L1 is the binding test.",
-        "L3 fires as written at seed 0: only cahn_hilliard reaches 0.30; with pfc report-only the '>=3 of the 4 high-cond_dim cells' clause reads 1 of 3."
-      ],
-      "handoff": "mffp_autoresearch/round3/worktrees/r3s1_factorised/B1/notes/handoff_code_reviewer.md",
-      "utc": "2026-08-08T00:45:40Z"
-    }
+    "panel": "test_hf 25.0662 vs ref_dc_only 43.2411 - beats on the panel geomean, loses on fisher_kpp"
+   },
+   "mandatory_floor_arm_readings": {
+    "vs_ref_zero_train_mean_nn_condition_on_sharp_cells": "test_hf beats all three on all three measurable sharp cells (as predicted in part 4)",
+    "vs_ref_affine_on_hf_train": "test_hf LOSES on 4 of 5 cells (allen_cahn 280.07 vs 275.69, fisher_kpp 376.52 vs 266.48, ifc_poisson 8.25 vs 1.59, ifc_heat 0.996 vs 0.958) and wins only on cahn_hilliard (11.41 vs 12.87). Panel: 25.0662 vs 17.0581. Part 4 predicted only the two ifc losses; the two sharp losses are NOT predicted and are the strongest negative reading of seed 0. The affine arm is a FITTED closed-form floor (not training-free) and is not in best_floor.",
+    "vs_ref_twostage_true_gate": "the F25 negative control is essentially tied with the scored arm on cahn_hilliard (11.4341 vs 11.4146 - the propagation-aware gate is marginally BETTER) and bitwise identical elsewhere; panel 25.0748 vs 25.0662."
+   }
+  },
+  "guard_flags": [
+   {
+    "dataset": "sharp__sod_1d",
+    "nRMSE": 0.1060749721818537,
+    "guard_reference_nrmse": 0.03309017650048946,
+    "ratio_vs_reference": 3.2056,
+    "threshold": "> 2x",
+    "flag": true,
+    "note": "FLAGGED per section 2d: 3.21x the copylf_baselines.json guard reference (skill 3.2056). Advisory only - no auto-reject. Contextual: this is a condition-only, LF-blind family run on a 1-D shock cell, where copy-LF is a strong reference; the guard leg is the leakage/robustness tripwire (G-C), not a scored claim. Recorded so the mechanism-analyzer can weigh it."
+   },
+   {
+    "dataset": "fluid",
+    "nRMSE": 0.034257808711001425,
+    "guard_reference_nrmse": 0.21805958171115042,
+    "ratio_vs_reference": 0.1571,
+    "flag": false
+   },
+   {
+    "dataset": "heat_local",
+    "nRMSE": 0.00016525410470694669,
+    "guard_reference_nrmse": 0.00240152155999517,
+    "ratio_vs_reference": 0.0688,
+    "flag": false
+   }
   ],
-  "debug_notes": [
-    {
-      "attempt": 1,
-      "class": "ALGO",
-      "classification": "ALGO",
-      "leg": "guards (seed 0) — the scored panel leg 66829977 COMPLETED and was not touched",
-      "symptom": "job 66829978 FAILED after 12s: score_panel.py -> smoke_eval.py exit 1 on the FIRST guard cell heat_local; basis.py:164 RuntimeError \"direction bank is not orthonormal: max|DD'-I| = 8.351e-01\" inside selection_stage. The G-D target-scaler pre-flight (pfc/ch) had passed immediately before.",
-      "diagnosis": "Rank deficiency, not a broken bank. basis.pod_basis takes the method-of-snapshots route (eigh of the n x n Gram G = R R'), which squares the condition number, so eigh resolves w_j only to an ABSOLUTE accuracy ~ eps*w_max and s_j = sqrt(w_j) is trustworthy only while s_j is comfortably ABOVE sqrt(eps)*s_max. The vendored rank cut keeps every mode with s > sqrt(eps)*s_max — the boundary itself, zero safety margin. heat_local is a smooth guard field whose DC-removed residual spectrum crosses s/s_max = 1e-5 at mode ~19, so modes 19..33 were numerically undetermined and their reconstructed rows V[:,j]/s_j @ R were neither unit-norm nor mutually orthogonal. Reproduced and instrumented on the login node: scratchpad/diagnose_attempt_1.py (spectrum, per-mode row norms, threshold sweep — cut 1e-8 -> 8.4e-01, 1e-7 -> 3.7e-04, 1e-6 -> 3.4e-07) and scratchpad/diagnose_attempt_1b.py (blast radius: all 5 scored panel cells and the guards fluid/sharp__sod_1d sit at max|DD'-I| <= 6.1e-14 / 3.7e-10, i.e. nowhere near the boundary; only heat_local is affected). Dataset-general defect, surfaced by a dataset-specific spectrum — NOT special-cased on heat_local.",
-      "fix": "basis.py only ([R3-DEBUG-1]). Added `orthonormal_prefix_rank(D, tol)`, which returns the longest leading block of D satisfying the SAME 1e-8 orthonormality tolerance (|DD'-I|[:k,:k].max() is nondecreasing in k, so one searchsorted). DirectionBank now truncates to that rank BEFORE asserting; the tolerance is unchanged and the assertion still raises, with the identical message, when not even the DC direction plus one POD mode survive (unit-tested). WindowBasis gets the same truncation (same defect, it simply never asserted, so undetermined modes were reported silently); it stays non-raising as it feeds diagnostics only in this card. Both record a `rank_truncation` block in meta(). The tolerance was NOT loosened and no recipe value changed.",
-      "panel_invariance": "Bitwise no-op wherever the bank already passed, by construction (keep == m returns the arrays unsliced) and verified twice: (a) bank level — scratchpad/verify_attempt_1.log shows BITWISE-IDENTICAL D/coeff/svals/error on all 5 scored cells plus fluid and sharp__sod_1d; (b) end to end — a full 5-cell rescore through the shipped 01_train_eval.sh (OUT_DIR redirected to scratchpad, DATASETS line untouched) recomputed every cell (cached=False, code_hash invalidated) and returned every nRMSE and the geomean 25.06624704883453 bit-identical to the reviewed result_panel5_s0.json, with nrmse_def_hash and copylf_def_hash unchanged (scratchpad/repro_panel_full_1_result.json). Only heat_local truncates: bank 34 -> 19 directions, window 32 -> 18.",
-      "repro_of_the_failing_command": "scratchpad/repro_guards_1.sh — the shipped 03_guards.sh with the OUT_DIR line alone substituted (diffed to confirm); post-fix it exits 0 on all three guard cells: heat_local nRMSE 0.00016525410470694669 (skill 0.0688), fluid 0.034257808711001425 (0.1571), sharp__sod_1d 0.1060749721818537 (3.2056) -> scratchpad/repro_guards_1_result.json.",
-      "files_touched": [
-        "models_r3/r3s1_twostage_crosscoef/basis.py"
-      ],
-      "eval_layer_untouched": "verified: nothing under mffp_autoresearch/round2/eval modified after 2026-08-08 09:00, 0 cache entries and 0 results dirs naming the family",
-      "relaunched_job_ids": [
-        66922977
-      ],
-      "next_suggestion": "If the relaunched guard leg fails again, look DOWNSTREAM of the bank rather than at it: with only 19 directions on heat_local, select_max=32 and stage2_max_directions=50 stop binding, so suspect an index/arity assumption in stage2.py or discriminator.py. For the analyzer: panel seeds 1-2 will run under the NEW code_hash and therefore recompute rather than cache-hit — the numbers are provably identical, so do not read the hash change as a result change; and the panel diag_*.json artifacts now carry an extra bank.rank_truncation block (applied=false on every scored cell).",
-      "utc": "2026-08-08T17:05:34Z"
-    }
+  "guard_note": "The guard set was already run at the card's contract tier (epochs 0 - this family asserts epochs==0 and instantiates no gradient-trained arm) by job 66922977, all three cells cached=false. Section 2d's panel-win trigger is not yet reachable (seed-0 only), so this is a recorded reading, not the section-2d re-run.",
+  "anomalies": [
+   "SLURM leg 66829977 was 100% CACHE-SERVED: 7 s wall clock, all five scored cells `cached: true`. The cache entries under the card's redirected cache dir were written 2026-08-07 17:29-17:37 PDT by the builder's own post-fix re-smoke through the shipped 01_train_eval.sh (same code_hash 88d6bfcd, same 58 env knobs), i.e. the card's own artifacts, not foreign ones. The scored numbers therefore date from the builder's run; the SLURM leg contributed zero compute.",
+   "Guard leg 66829978 FAILED after 12 s (ALGO): basis.py:164 'direction bank is not orthonormal: max|DD'-I| = 8.351e-01' on heat_local. Root cause was a zero-margin POD rank cut under the method-of-snapshots (debug_notes[0]); fixed in basis.py by rank-aware truncation and relaunched as 66922977 (COMPLETED, 35 s). Only heat_local truncates (bank 34->19, window 32->18); bitwise no-op on all five scored cells.",
+   "code_hash differs between result_panel5_s0.json (88d6bfcd, pre-fix) and result_guard_s0.json (3e7f87a3, post-fix). nrmse_def_hash and copylf_def_hash are identical everywhere. Panel seeds 1-2 will RECOMPUTE rather than cache-hit under the new hash; per the debugger's verified full recompute the numbers are unchanged, so a hash change must not be read as a result change.",
+   "MECHANISM-CRITICAL: stage 2 is a BITWISE no-op on 4 of the 5 scored cells (G-E max|delta vs onestage| = 0.0 on allen_cahn, fisher_kpp, ifc_poisson, ifc_heat; empty gate). The entire panel effect is sharp__cahn_hilliard, where the gate admits 9 directions at max OOF R^2 0.670.",
+   "test_hf loses to ref_dc_only on sharp__fisher_kpp_2d (376.52 vs 282.76) - a per-cell failure of round-3 success criterion 1.",
+   "test_hf loses to ref_affine_on_hf_train on 4 of 5 cells including the two sharp cells allen_cahn and fisher_kpp, which part 4 did not predict (it predicted only the two ifc losses).",
+   "The F25 negative control ref_twostage_true_gate does NOT beat the scored arm on cahn_hilliard (11.4341 vs 11.4146) - the round-2 F25 'true-gate is better' reading does not reproduce under the propagation-aware gate.",
+   "No NaNs, no non-finite values, no preemption, no resume events: diagnostics.checkpoint.resumed_units is [] on all cells; both .err files for the surviving legs are empty. tools/stale_checkpoint_audit.py --fail-on-stale reports STALE 0/8 over this card's training tree.",
+   "Affine-floor seam status is `ok_dtype_limited` on both ifc cells (float32 guarded loader vs the float64 frozen floor, ~3.6e-8 relative) - a documented metrology property adjudicated at build time, not a failure. On the sharp cells the seam status is `no_frozen_entry` (arm reported, not seam-checked).",
+   "sharp__phase_field_crystal_2d produced NO training/eval artifact for seed 0 (ADR r3-0004 report-only; recipe.datasets is the explicit 5-dataset panel). Only its G-D target-scaler pre-flight row exists. Clause L3's '4 high-cond_dim cells' is therefore only 3-measurable.",
+   "The 5 fold-resamples return an identical paired delta on every cell (spread 0.0, sign identical); on the two ifc cells the resample diagnostic is skipped under the LOO protocol (N_train = 5). This is selection-stability, NOT seed spread - the 3-seed spread is still unmeasured.",
+   "G-A reproduction seam green on all five cells (|rel| <= 0.76%, worst on cahn_hilliard); G-B floor seam max|delta| <= 2.65e-10; G-C under_stripped_view = 1 and lf_used_at_any_stage = 0 on every cell; G-D OK on both audited cells."
   ],
-  "5_actual_result": null,
-  "6_analysis": null,
-  "7_gap_and_future": null,
-  "reanalysis_progress": null,
-  "adr_r3_0004_addendum": "ADR r3-0004 (2026-08-07, operator-adjudicated): sharp__phase_field_crystal_2d is REPORT-ONLY — its scored cell (l2->l3) is task-void (spectrally converged; the 0.018257 reference is linear-interpolation artifact). recipe.datasets has been replaced by the orchestrator with the explicit 5-dataset scored panel (the literal 'panel' resolves to the ROUND-2 panel via round2/project.yaml and must not be used). Any falsification clause or threshold citing pfc is void for claim purposes; clauses over the remaining datasets stand as written. pfc cells MAY still be produced and reported as non-scoring diagnostics. Locked brainstormer prose above is intentionally untouched. Anchors re-aggregated: best-floor geomean 34.4198; comparand card values are the 5-ds per-seed geomeans in state/anchors/launch_anchors.json (re-read at build/analysis time). Substrate fast-forwarded (r3s3-B1 staleness finding): worktree branches merged to 44f2404a2 (current trunk: post-trim baselines, ifc_heat reference, r3-0004 state); recipe.base_commit updated to match the worktree HEAD."
+  "wall_clock_per_seed_min": [
+   0.12
+  ],
+  "wall_clock_notes": {
+   "slurm_elapsed_min_seed0_panel": 0.12,
+   "slurm_elapsed_min_seed0_guard": 0.58,
+   "slurm_elapsed_min_failed_guard_66829978": 0.2,
+   "_caveat": "the seed-0 panel elapsed is NOT a compute measurement - the leg was fully cache-served.",
+   "underlying_compute_min_per_seed_panel": 9.34,
+   "underlying_compute_per_cell_seconds": {
+    "sharp__allen_cahn_2d": 155.2,
+    "sharp__fisher_kpp_2d": 245.2,
+    "sharp__cahn_hilliard": 156.6,
+    "ifc_poisson": 1.7,
+    "ifc_heat": 2.0
+   },
+   "_for_the_timing_ledger": "budget seeds 1-2 at ~10-15 min of real panel compute each (they will recompute, not cache-hit, because the ALGO-1 fix changed code_hash); the shipped --time is 01:30:00 for the panel leg and 01:00:00 for guards, both amply above measurement. The builder's login-node timings (fk 432 s, ch 177 s, ac 79 s) were FS-contended and run 1.4-1.8x slower than the compute-node numbers above.",
+   "jobs": {
+    "66829977": "COMPLETED 00:00:07 hpc-sm-02-03",
+    "66829978": "FAILED 00:00:12 exit 1:0",
+    "66922977": "COMPLETED 00:00:35 hpc-sm-02-03"
+   },
+   "_slurm_id_space": "these are pre-reset 66xxxxxx IDs; they still resolve in sacct."
+  },
+  "next_step": "Submit seeds 1 and 2 via scripts/submit_seeds_2_3.sh. The binding tests are (i) L1's sign-identity of the paired panel delta across all three seeds and (ii) whether cahn_hilliard's +1.2455 holds above 1.1604 at the 3-seed mean, where it currently has only 7% of headroom."
+ },
+ "6_analysis": null,
+ "7_gap_and_future": null,
+ "reanalysis_progress": null,
+ "adr_r3_0004_addendum": "ADR r3-0004 (2026-08-07, operator-adjudicated): sharp__phase_field_crystal_2d is REPORT-ONLY \u2014 its scored cell (l2->l3) is task-void (spectrally converged; the 0.018257 reference is linear-interpolation artifact). recipe.datasets has been replaced by the orchestrator with the explicit 5-dataset scored panel (the literal 'panel' resolves to the ROUND-2 panel via round2/project.yaml and must not be used). Any falsification clause or threshold citing pfc is void for claim purposes; clauses over the remaining datasets stand as written. pfc cells MAY still be produced and reported as non-scoring diagnostics. Locked brainstormer prose above is intentionally untouched. Anchors re-aggregated: best-floor geomean 34.4198; comparand card values are the 5-ds per-seed geomeans in state/anchors/launch_anchors.json (re-read at build/analysis time). Substrate fast-forwarded (r3s3-B1 staleness finding): worktree branches merged to 44f2404a2 (current trunk: post-trim baselines, ifc_heat reference, r3-0004 state); recipe.base_commit updated to match the worktree HEAD. [ORCHESTRATOR ADJUDICATION 2026-08-10, L3 arithmetic: the L3 falsification clause enumerates pfc among its '>= 3 of 4' high-cond_dim cells; pfc is report-only under this ADR and produced no scored artifact, so the clause CANNOT be evaluated as written. Per this addendum's standing rule ('any falsification clause or threshold citing pfc is void for claim purposes'), L3 is VOID for claim purposes at the 3-seed verdict; it is NOT re-scoped to a '3 of 3' variant (that would change its strictness ex post). The initial-analyzer's measured seed-0 margins (ch 0.6755 / ac 0.0091 / fk -0.0013 / ifcp 0.0501 / ifch -0.0268) stay on record as descriptive evidence for the mechanism stage. L1/L2/L4 stand as written.]"
 }
