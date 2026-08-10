@@ -63,3 +63,7 @@ The `direct_*` arms are declared **matched controls** inside the route contrast 
 
 - Li et al., *Fourier Neural Operator for Parametric PDEs* — <https://arxiv.org/abs/2010.08895>
 - Perez et al., *FiLM: Visual Reasoning with a General Conditioning Layer* — <https://arxiv.org/abs/1709.07871>
+
+<!-- Appended post-review (code-reviewer finding 4, orchestrator, 2026-08-10): the two E3 prior_art citations missing from this file -->
+- https://arxiv.org/abs/2512.03113 (E3 — prior_art citation, per card prior_art list)
+- https://arxiv.org/abs/2605.28076 (E3 — prior_art citation, per card prior_art list)
