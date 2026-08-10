@@ -12,87 +12,205 @@ Companion decision page for §5.1: [ADR r3-0005 decision memo](https://claude.ai
 
 ## TL;DR
 
-- **Round 3 launched 2026-08-05 on the repaired, completeness-certified panel; batch 1 (4 experiment cards, one per stream) is closed with every card at 3 seeds.**
-  All four models beat the training-free floor anchor (34.4198 panel geomean skill, lower is better); the range is 11.08–24.96.
-- **The round survived two stop-the-line integrity events, both caught by the system's own instruments.**
-  First, the phase-field-crystal scored cell was found task-void (the coarse solve is spectrally converged to the fine one, so the certified reference was ~100% our own interpolation error) — pfc moved to report-only and the scored panel is now 5 datasets (ADR r3-0004).
-  Second, a stale-checkpoint audit found that several launch-anchor cells had been re-*scored* on repaired data without being re-*trained* (the mandatory checkpoint-resume made the retrain a silent no-op) — 32 legs were quarantined and fresh-trained, anchors rebuilt, and a permanent gate now blocks the defect class at every anchor build.
-- **The most consequential correction: r3s3's headline "LF-at-train improves the panel by 10.1% (ifc_poisson by 39%)" was entirely the stale-anchor artifact.**
-  Against the repaired anchors there is no resolvable vs-anchor delta anywhere on that card (panel −0.81% at 0.08× the certified noise floor); the honest deliverable is its mechanism decomposition, which survived.
-- **Mechanism findings replaced two pre-registered stories with sharper ones** (§2): the factorised head's discriminator is stage-1 residual saturation, not condition dimension; and the initial-condition "reach" effect lives entirely in stage 1 while the corrector stage is a certified null for the second consecutive round.
-- **The audit stream certified the round's noise floor** (per-dataset minimum claimable effects now price every claim) **and priced the audit instruments themselves**: one staleness heuristic had 0 unique true positives against 62 false alarms in 859 legs and is being deleted in favor of content hashes bound into checkpoints.
-- **Batch 2 is designed, reviewed, and launching now** (first two jobs on the cluster today); prior-art discipline held — nothing in 7 searched directions is claimed as novel, each card claims only its measured composition.
-- **ADR r3-0005 RATIFIED 2026-08-10 (option A)**: pfc's scored cell re-points to the coarsest rung with a spectral reference — the only amendment to the frozen round-2 eval convention this round.
-  Phase 1 (serving change) is executed; phase 2 (reference amendment + re-scores, restoring the 6-dataset panel) is gated on batch-2 compute closing so no in-flight card sees mixed reference hashes.
-- New figures: `round3/docs/figures/r3_performance_vs_baselines.png` and `r3_architectures_overview.png` (both regenerable from the cards via `round3/tools/render_round3_update_figures.py`; embedded in the rendered page).
+- **Round 3 launched on 2026-08-05 on the repaired benchmark; batch 1 closed with four experiments, each run at 3 random seeds.**
+  All four models beat the no-training reference error of 34.4198.
+  Their geometric-mean normalized errors across the evaluated datasets range from 11.08–24.96, and lower is better.
+- **The system detected and stopped work for two benchmark-integrity failures.**
+  First, the evaluated phase-field-crystal (`pfc`) task contained essentially no fidelity gap because the coarse solution was already spectrally converged to the fine solution.
+  The reported reference error was therefore ~100% interpolation error introduced by our evaluation.
+  We made `pfc` report-only and reduced the evaluated set to 5 datasets (ADR r3-0004).
+  Second, an audit found that several baseline models had been evaluated on repaired data without being retrained.
+  Mandatory checkpoint resumption had silently skipped training.
+  We quarantined and retrained 32 individual runs, rebuilt the baselines, and added a permanent check to every baseline build.
+- **The apparent 10.1% benefit from low-fidelity data during training was entirely caused by the stale baselines.**
+  The original result also claimed a 39% improvement on `ifc_poisson`.
+  After baseline repair, no dataset in that experiment has a resolvable change relative to its baseline.
+  The panel change is −0.81%, only 0.08× the certified minimum detectable effect.
+  The experiment still provides a valid decomposition of the mechanism.
+- **The mechanism tests replaced two preregistered explanations with better-supported ones.**
+  The factorised output head succeeds when the first-stage residual saturates, not when the condition vector has a particular dimension.
+  The benefit of initial-condition information arises entirely in stage 1.
+  The corrective second stage again has no detectable effect.
+- **The audit experiment established the round’s minimum detectable effects and measured the reliability of the audit tools.**
+  One checkpoint-staleness heuristic found 0 unique true positives but raised 62 false alarms across 859 individual runs.
+  We are replacing it with content hashes stored in checkpoints.
+- **Batch 2 is designed, reviewed, and now launching.**
+  The first two cluster jobs start today.
+  Searches in 7 research directions found no basis for outright novelty claims, so each experiment claims only its measured composition.
+- **ADR r3-0005 was ratified on 2026-08-10 with option A.**
+  The evaluated `pfc` task will use the coarsest available input resolution and a spectral reference.
+  This is the round’s only amendment to the frozen round-2 evaluation convention.
+  Phase 1, the serving change, is complete.
+  Phase 2, the reference amendment and re-evaluation that restore the 6-dataset panel, waits until batch-2 computation closes so no active experiment uses mixed reference hashes.
+- **Two new figures summarize performance and architectures.**
+  They are `round3/docs/figures/r3_performance_vs_baselines.png` and `r3_architectures_overview.png`.
+  Both are regenerated from the experiment records by `round3/tools/render_round3_update_figures.py` and embedded in the rendered page.
 
 ## 1. What round 3 asked, and how it ran
 
-**Regime**: unchanged from round 2 — models see LF fields only during training; at test they receive the condition vector alone (the stripped view physically omits test LF).
-Round 3 runs on the repaired benchmark: completeness-certified condition vectors (the IC coefficients are now *in* the vector, so ADR r2-0003's stochastic-map caveat is retired), repaired nested IFC ladders, and `ifc_heat` promoted to the scored panel.
-Scored panel after ADR r3-0004: `allen_cahn_2d`, `fisher_kpp_2d`, `cahn_hilliard`, `ifc_poisson`, `ifc_heat` (helmholtz and pfc report-only).
+**The learning regime is unchanged from round 2.**
+Models receive low-fidelity (LF) fields during training but only the condition vector at test time.
+The test interface physically excludes LF fields.
 
-**Scale so far**: 4 streams (factorised heads / IC reach / value-of-LF / audit), 4 batch-1 cards closed at 3 seeds each, 5 ADRs, 7 new probe tools promoted, ~2 days of stop-the-line repair in the middle, and the full websearch → pre-registered design → build → adversarial review → GPU → two-stage analysis pipeline on every card.
-The certified noise floor is no longer provisional: r3s4-B1's certification (per-dataset `seed_mce` / `tau_rel` / `tau_abs`, panel `seed_mce` 0.5083) was installed 2026-08-10 and prices every claim below.
+**The repaired benchmark now provides complete condition vectors and corrected fidelity hierarchies.**
+Initial-condition coefficients are included in the condition vector, which retires the stochastic-map caveat from ADR r2-0003.
+The nested `ifc` fidelity hierarchies are repaired.
+`ifc_heat` is now evaluated in the scored panel.
+
+**The evaluated set contains 5 datasets after ADR r3-0004.**
+They are `allen_cahn_2d`, `fisher_kpp_2d`, `cahn_hilliard`, `ifc_poisson`, and `ifc_heat`.
+`helmholtz` and `pfc` are report-only.
+
+**Batch 1 covered four experiment lines: factorised heads, initial-condition reach, the value of LF training data, and benchmark auditing.**
+All 4 experiments closed at 3 seeds.
+The round also produced 5 architecture decision records and promoted 7 new diagnostic tools.
+A stop-the-line repair consumed ~2 days.
+Every experiment followed the full sequence of literature search, preregistration, implementation, adversarial review, GPU execution, and two-stage analysis.
+
+**The round now has certified minimum detectable effects.**
+The batch-1 audit experiment (`r3s4-B1`) established per-dataset `seed_mce`, `tau_rel`, and `tau_abs`.
+These denote the seed-based minimum claimable effect, its relative threshold, and its absolute threshold.
+The geometric-mean `seed_mce` across the panel is 0.5083.
+These thresholds were installed on 2026-08-10 and govern every claim below.
 
 ## 2. Round 3 batch-1 results (condition vector → HF; no solver at test)
 
-Leaderboard (3-seed panel geomean skill, lower is better; training-free floor anchor 34.4198):
+Leaderboard (3-seed geometric mean of normalized error across the panel, lower is better; no-training reference 34.4198):
 
 | Rank | Card | Panel geomean [3-seed range/CI] | Verdict | What it is |
 |---|---|---|---|---|
-| 1 | r3s3-B1 LF-channels | **11.0789** [10.84, 11.25] | confirmed (mechanism card) | Budget-matched ±LF contrast; **no resolvable vs-anchor delta after the repair** — the value is the decomposition |
-| 2 | r3s2-B1 IC-stack | **12.9556** [10.32, 17.83] | F1 confirmed / **F2 falsified** | IC information helps (stage 1); the corrector stage is unresolvable — round 2's null replicates |
-| 3 | r3s4-B1 certifier | **19.6438** [19.42, 19.93] | F2–F4 confirm; F1 fired at metrology margin | The round's certified noise-floor source |
-| 4 | r3s1-B1 two-stage factorised head | **24.9573** [24.87, 25.07] | confirmed (L1/L2/L4) | Closed-form condition→coefficient cascade; win is one cell (cahn_hilliard) |
+| 1 | r3s3-B1 LF-channels | **11.0789** [10.84, 11.25] | confirmed (mechanism card) | Compute-matched comparison with and without LF training data; **no resolvable change from the repaired baseline**; the decomposition is the result |
+| 2 | r3s2-B1 IC-stack | **12.9556** [10.32, 17.83] | F1 confirmed / **F2 falsified** | Initial-condition information helps in stage 1; the corrective stage is unresolvable, replicating round 2’s null result |
+| 3 | r3s4-B1 certifier | **19.6438** [19.42, 19.93] | F2–F4 confirm; F1 fired at metrology margin | Source of the round’s certified minimum detectable effects |
+| 4 | r3s1-B1 two-stage factorised head | **24.9573** [24.87, 25.07] | confirmed (L1/L2/L4) | Closed-form condition-to-coefficient cascade; the improvement occurs only on `cahn_hilliard` |
 
-Headline mechanism results (each from a causal probe, not a hunch):
+**The factorised head is distinguished by first-stage residual saturation, not condition dimension.**
+`allen_cahn` and `cahn_hilliard` both have condition dimension 19, but their stage-2 margins differ 47×.
+`fisher_kpp` has the largest condition dimension, 50, and the smallest margin.
+The decisive quantity is the predictable energy left after stage 1.
+On `fisher_kpp`, a hyperparameter limit causes the loss relative to an affine reference.
+Specifically, `SELECT_MAX = 32` excludes 0.0713 of the condition-reachable energy.
+Within the selected subspace, the head is better than the affine reference.
+Its loss outside that subspace is 17× larger.
+The `cahn_hilliard` improvement is broad rather than driven by outliers.
+It improves 78–82 of 100 rows and remains 2.9–3.2× above the certified minimum detectable effect after adversarially removing 10 rows.
 
-- **The factorised head's discriminator is stage-1 residual saturation, not condition dimension.**
-  The controlled pair: allen_cahn and cahn_hilliard share cond_dim 19, yet their stage-2 margins differ 47×; fisher_kpp has the largest cond_dim (50) and the smallest margin.
-  What separates them is how much predictable energy stage 1 leaves behind — and on fisher_kpp the head's loss to the affine floor is a hyperparameter clip (`SELECT_MAX = 32` strands 0.0713 of condition-reachable energy; the head is *better* than affine inside its selected subspace, losing 17× more outside it).
-  The cahn_hilliard win is broad-based (78–82 of 100 rows improve; survives an adversarial 10-row trim at 2.9–3.2× the certified floor), not outlier exploitation.
-- **The IC-reach effect is created at stage 1 and is approximability-limited, not information-limited.**
-  Fractional emulator-error removal: 63.7% (allen_cahn) / 22.3% (cahn_hilliard) / 85.4% (fisher_kpp); the zero-information IC null is worse than the no-IC control everywhere, so the effect is IC *information*.
-  The residual cahn_hilliard gap is approximability: its nearest-condition neighbour is 98% as different as a random sample.
-- **The corrector stage is dead weight, decisively, for the second round in a row**: the best stack arm beats its own front-end-matched emulator-only control by 9–163× *less* than one minimum-detectable effect; round 2's 0.0061 null replicates at 0.0056 [0.0053, 0.0061].
-  Its one dramatic failure (ifc_poisson seed-2 nRMSE 2.04 vs 0.15) was root-caused to a deterministic instrument defect: an unregularised spectral Wiener transfer fit from **3** samples amplifying 66× in a band where the LF carries no power — the identical mode as round 2's anchor instability, and the same audit tool flags the pfc anchor legs and the `fluid` guard cell.
-- **LF-at-train's value is identifiability supply, quantified.**
-  The covered-input control arm (extra LF only at parameters HF already covers) learns the *same function* as the no-LF arm (as-functions distance ratios 0.098–0.307); supplying new distinct condition rows accounts for E_cov/E_total ∈ [0.972, 1.024] on 30/30 cells.
-  Recovery is a near-deterministic function of a measurable intermediate (condition-response alignment, Pearson r = 0.985) — batch 2 tests whether that mediator makes the LF-row ↔ HF-row exchange rate a law.
-- **A seed-invariant hard subpopulation exists on cahn_hilliard**: 27 of 100 test rows whose conditions are indistinguishable from training (max gap 0.45σ, nearest-neighbour ratio 1.02) but whose fields are 3.29× farther — and LF-at-train specifically repairs them (92 of the no-LF arm's worse-than-zero rows; 97% of that pair's gain).
+**Initial-condition information helps entirely through stage 1, and the remaining error is limited by approximation.**
+The fractions of emulator error removed are 63.7% for `allen_cahn`, 22.3% for `cahn_hilliard`, and 85.4% for `fisher_kpp`.
+A control given a fake, information-free initial condition performs worse than a control given no initial condition at all, on every dataset.
+The benefit therefore comes from the information in the real initial conditions, not from the extra input channel.
+The remaining `cahn_hilliard` gap is an approximation problem.
+Even its nearest training neighbor in condition space is 98% as different as a randomly chosen sample.
+
+**The corrective second stage is decisively ineffective for the second consecutive round.**
+The best two-stage variant improves over its own front-end-matched emulator-only control by 9–163× less than one minimum detectable effect.
+Round 2’s null result of 0.0061 replicates at 0.0056 [0.0053, 0.0061].
+The one dramatic failure was `ifc_poisson` seed-2, with nRMSE 2.04 versus 0.15.
+A deterministic measurement defect caused it.
+An unregularised spectral Wiener transfer was fitted from **3** samples and amplified the signal 66× in a frequency band where the LF input has no power.
+This is the same failure mode as round 2’s baseline instability.
+The same audit tool flags the `pfc` baseline runs and the `fluid` guard dataset.
+
+**LF training data helps by supplying identifiable condition–response pairs.**
+A control receiving extra LF data only at conditions already covered by HF data learns the same function as the no-LF variant.
+Their function-distance ratios are 0.098–0.307.
+New, distinct condition rows explain E_cov/E_total ∈ [0.972, 1.024] in 30/30 evaluated cases.
+Recovery is nearly deterministic given the measurable condition–response alignment, with Pearson r = 0.985.
+Batch 2 tests whether this mediator yields a stable exchange rate between LF rows and HF rows.
+
+**A seed-invariant hard subpopulation exists in `cahn_hilliard`.**
+It contains 27 of 100 test rows.
+Their conditions are nearly indistinguishable from training conditions, with maximum gap 0.45σ and nearest-neighbor ratio 1.02.
+Their fields are nevertheless 3.29× farther away.
+LF training data specifically repairs this group.
+It repairs 92 of the no-LF variant’s worse-than-zero rows and accounts for 97% of that comparison’s gain.
 
 ## 3. Benchmark-integrity findings (the part most relevant to the benchmark paper)
 
-- **The pfc scored cell was task-void** (stop-the-line #1, 2026-08-07): the eval convention scores at `max(lf_fids)` = 64²→128², where the crystalline fields are band-limited below the coarse Nyquist — exact per-row copy gap ≤ 1.66e-6 on all 100 test rows.
-  The certified reference 0.018257 was ~100% linear-interpolation error of the frozen lift.
-  The real fidelity gap lives at 32²→128², which the convention never scores; the rung-convention mismatch is how the box-swap repair certified.
-  Interim resolution: pfc report-only, 5-dataset scored panel (ADR r3-0004); the durable repair is ADR r3-0005, pending sign-off (§5).
-- **Checkpoint-resume can silently void a re-score campaign** (stop-the-line #2, 2026-08-08): re-scoring anchor models on repaired data resumed completed checkpoints (`resumed_from_step = 5000`, train 1.3–2.9 s), so pre-repair weights were scored on post-repair arrays.
-  Every existing hash/floor seam passed, because references recompute live while only the weights were stale.
-  Blast radius: launch-anchor ifc_poisson columns (and, found later by the audit stream's tooling, 18 report-only pfc legs); round-3's own experiment legs audited clean (0/225).
-  Repair: 32 legs quarantined + fresh-trained, anchors rebuilt with the diff confined to the contaminated columns, and a stale-checkpoint gate now runs inside the anchor builder.
-  Notably, fresh training *improved* every contaminated anchor — the contamination had been biasing comparisons in the flattering direction.
-- **The audit instruments were themselves priced** (r3s4-B1 mechanism): the `train_seconds` staleness heuristic contributes 0 unique true positives and 62 false alarms over 859 legs (strictly dominated by checkpoint-mtime evidence) and is being deleted; file mtimes are *not* a witness (the repair copy preserved them); only a content hash bound into the checkpoint separates a train-invalidating mutation from a benign test-split trim.
-  Checkpoint↔data binding coverage today: 0/18 — building that instrument is r3s4's batch-2 card.
-- **Tolerance-setting now has a measured metrology floor**: r3s4's F1 clause fired at 1.106e-9 against a 1e-9 tolerance — ~70× *below* the float64→float32 loader seam's own spread — and the per-dataset ULP-band analysis shows the correct tolerances range from 2e-9 to **0.31** (sod_1d, where an exact-equality `std == 0` guard amplifies one ULP 8.4e6×; guard-cell bounded, nothing shipped is wrong).
-  Batch-2 contract change: floor F1-class tolerances at max(1e-9, measured per-dataset band).
-- **`mdd_scored = 0` means unobservable, not zero**: on both ifc cells the reference's own uncertainty cannot be observed from this round's data, understating `tau_abs` ~2.15×; no live claim flips, but absolute-bar claims in the affected band are licensed by the certified constants only.
+- **The evaluated `pfc` task contained essentially no fidelity gap.**
+  On 2026-08-07, this triggered the first stop-the-line event.
+  The evaluation convention selected the highest available LF resolution, `max(lf_fids)`, producing the 64²→128² task.
+  The crystalline fields are band-limited below the coarse-grid Nyquist frequency.
+  Consequently, the exact per-row copy error is ≤ 1.66e-6 on all 100 test rows.
+  The certified reference error of 0.018257 was ~100% linear-interpolation error introduced by the fixed lifting operation.
+  The real fidelity gap occurs at 32²→128², which the convention did not evaluate.
+  The box-swap repair exposed this resolution-convention mismatch.
+  We made `pfc` report-only and reduced the evaluated set to 5 datasets under ADR r3-0004.
+  ADR r3-0005 provides the durable repair described in §5.
+- **Checkpoint resumption silently invalidated a baseline re-evaluation campaign.**
+  On 2026-08-08, this triggered the second stop-the-line event.
+  Models being re-evaluated on repaired data resumed already-completed checkpoints.
+  The records showed `resumed_from_step = 5000` and training times of 1.3–2.9 s.
+  Pre-repair weights were therefore evaluated on post-repair arrays.
+  Existing hash and reference-consistency checks all passed because the references were recomputed live while the weights remained stale.
+  The failure affected the launch baselines for the `ifc_poisson` columns.
+  Later audit tools found 18 affected individual runs for report-only `pfc`.
+  All of round 3’s own experiment runs were clean, with 0/225 affected.
+  We quarantined and retrained 32 individual runs.
+  We then rebuilt the baselines, with changes confined to the contaminated columns.
+  A permanent stale-checkpoint check now runs inside every baseline build.
+  Fresh training improved every contaminated baseline, so the contamination had made experimental comparisons look better than they were.
+- **The audit experiment measured the audit tools’ own accuracy.**
+  The `train_seconds` checkpoint-staleness heuristic found 0 unique true positives and raised 62 false alarms across 859 individual runs.
+  Checkpoint modification-time evidence strictly dominated it, so the heuristic is being deleted.
+  File modification times cannot establish data identity because the repair copy preserved them.
+  Only a content hash stored in the checkpoint can distinguish a training-invalidating data change from a harmless test-split trim.
+  Current checkpoint-to-data hash coverage is 0/18.
+  Building this mechanism is the batch-2 audit experiment.
+- **Tolerance setting now rests on a measured numerical-precision limit.**
+  The audit experiment’s F1 condition triggered at 1.106e-9 against a 1e-9 tolerance.
+  This is ~70× below the variation introduced by the float64→float32 data-loading boundary.
+  Per-dataset analysis in units of floating-point spacing shows that suitable tolerances range from 2e-9 to **0.31**.
+  The upper value occurs for `sod_1d`.
+  There, an exact-equality `std == 0` check amplifies one unit in the last place by 8.4e6×.
+  The issue is confined to a guard dataset, and no released result is wrong.
+  Batch 2 changes the contract by setting F1-class tolerances to max(1e-9, measured per-dataset band).
+- **A reported minimum detectable difference of `mdd_scored = 0` means unobservable, not zero.**
+  For both `ifc` datasets, this round cannot observe uncertainty in the reference itself.
+  The resulting absolute threshold, `tau_abs`, is understated by ~2.15×.
+  No current claim changes.
+  Claims involving absolute error bars in the affected range remain authorized only by the certified constants.
 
 ## 4. How the harness itself is performing
 
-- **Throughput**: batch 1 closed at 3 seeds on all four streams in ~5 days wall clock, of which ~2 were the stop-the-line repair; batch 2 went websearch → brainstorm → pre-registered card → build → adversarial review → first SLURM jobs in under a day.
-- **The discipline is doing its job in both directions**: the pre-registration + certified-floor rules turned two would-be headlines into precise retractions (r3s3's −10.1% panel "win"; r3s1's cond_dim mechanism story), and the adversarial reviews caught real defects pre-submission (a falsification clause gated on the wrong statistic; an admission rule differing measurably from its pre-registered prose, adjudicated *ex ante* on the card before any result existed).
-- **Honest accounting**: the only numbers called certified carry the r3s4 certification; every retraction is annotated in place on the card with the historical numbers preserved; the prior-art record across 7 batch-2 directions is 0-for-7 on outright novelty and is reported that way, with each card claiming only its measured composition.
-- **Autonomy**: the launch orchestrator session died 2026-08-08; a fresh session resumed from state files losslessly, executed the repair under the standing delegation (with the stop-the-line held for operator adjudication per the global rule), and has run the round since.
-  One operational note: the cluster's SLURM job-ID space reset mid-round (8-digit → 5-digit IDs); job accounting was re-anchored and old IDs still resolve.
+- **Batch 1 completed all four experiment lines at 3 seeds in ~5 days.**
+  Stop-the-line repair consumed ~2 of those days.
+  Batch 2 progressed from literature search through brainstorming, preregistration, implementation, adversarial review, and first SLURM jobs in under a day.
+- **Preregistration and minimum-effect thresholds prevented two false headlines.**
+  They retracted the apparent −10.1% panel improvement from the LF-training experiment and the condition-dimension explanation from the factorised-head experiment.
+  Adversarial reviews also caught substantive defects before submission.
+  One falsification condition used the wrong statistic.
+  One admission rule differed measurably from its preregistered description and was adjudicated before any result existed.
+- **Certified and retracted results remain explicitly traceable.**
+  Only results backed by the batch-1 audit certification are called certified.
+  Every retraction is annotated in its experiment record with the historical numbers preserved.
+  Searches across 7 batch-2 directions found 0-for-7 cases of outright novelty.
+  Each experiment therefore claims only its measured composition.
+- **The state-file design allowed the round to survive an orchestrator failure.**
+  The launch orchestrator session died on 2026-08-08.
+  A fresh session resumed losslessly from the state files.
+  It executed the repair under the standing delegation while holding the stop-the-line decision for operator adjudication, as required by the global rule.
+  It has run the round since.
+  The cluster’s SLURM job-ID space also reset mid-round from 8-digit to 5-digit IDs.
+  Job accounting was re-established, and old IDs still resolve.
 
 ## 5. Gated next steps
 
-1. **ADR r3-0005 (pfc spectral-rung repair) — RATIFIED 2026-08-10, option A** (Eloise, deciding for the mentor); phase 1 executed, phase 2 gated on batch-2 compute close.
-   Two inseparable changes: serve pfc rungs {1, 3} so the scored cell becomes 32²→128² (where the measured per-row gap is real: mean 0.0124, 0/100 task-void), and give the copy-LF reference a pfc-specific spectral lift (the linear lift's error at 32²→128² is ~0.07, which would again swamp the ~0.012 true gap).
-   The measured caveat, stated up front: the repaired cell is outlier-dominated (top-5 rows carry 38.8% of the denominator; min-detectable delta **65.8%**), so it returns to the panel as an honest but low-resolution cell — every claim on it must be priced against that MDD.
-   Alternatives on the table: keep pfc report-only permanently (conservative, loses the panel's only stiff-map dataset), or regenerate with a higher-resolution ladder (most compute; the sweep suggests the same convergence reappears one rung up, since the crystal wavelength, not the grid, sets it).
-2. **Batch 2 completes**: 4 cards through the SLURM → analysis pipeline (first two seed-0 jobs running as of this update).
-3. **Round-1 2500-epoch full runs** — still on hold (unchanged).
-
+1. **ADR r3-0005, the `pfc` spectral-resolution repair, was ratified on 2026-08-10 with option A.**
+   Eloise made the decision for the mentor.
+   Phase 1 is complete, and phase 2 waits for batch-2 computation to close.
+   The repair has two inseparable parts.
+   First, serving `pfc` resolutions {1, 3} changes the evaluated task to 32²→128².
+   At that resolution, the measured per-row gap is real, with mean 0.0124 and 0/100 task-void rows.
+   Second, the reference that copies the LF field must use a `pfc`-specific spectral lift.
+   A linear lift has ~0.07 error at 32²→128² and would again overwhelm the ~0.012 true gap.
+   The repaired task remains dominated by outliers.
+   Its top-5 rows contribute 38.8% of the denominator, and its minimum detectable change is **65.8%**.
+   It therefore returns to the evaluated panel as an honest but low-resolution dataset.
+   Every claim about it must exceed that minimum detectable change.
+   One alternative is to keep `pfc` permanently report-only, which is conservative but removes the panel’s only stiff-map dataset.
+   Another is to regenerate a higher-resolution hierarchy, which costs the most computation.
+   The sweep suggests that the same convergence would recur one resolution level higher because crystal wavelength, rather than grid spacing, determines it.
+2. **Batch 2 will complete 4 experiments through the SLURM and analysis pipeline.**
+   The first two seed-0 jobs are running as of this update.
+3. **The round-1 full runs of 2500 epochs remain on hold.**
