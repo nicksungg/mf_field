@@ -1,0 +1,116 @@
+{
+ "stream": "r3s1_factorised",
+ "anchor_type": "certified_3seed_panel_geomean",
+ "datasets": [
+  "sharp__allen_cahn_2d",
+  "sharp__fisher_kpp_2d",
+  "sharp__cahn_hilliard",
+  "ifc_poisson",
+  "ifc_heat"
+ ],
+ "value": 24.957323204986892,
+ "per_seed": [
+  25.06624704883453,
+  24.93313163286358,
+  24.872590933262558
+ ],
+ "ci95": [
+  24.872590933262558,
+  25.06624704883453
+ ],
+ "source_card": "r3s1_factorised-B1",
+ "certified_utc": "2026-08-10T13:26:37Z",
+ "provisional": false,
+ "note": "Certified 3-seed panel geomean skill of the pre-registered scored arm test_hf = twostage_crosscoef_oof_gate (family r3s1_twostage_crosscoef, closed-form epochs=0, seeds 0/1/2) over the ADR r3-0004 5-dataset scored panel. Read verbatim from /resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round3/r3s1_factorised/B1/eval/result_panel5_s{0,1,2}.json::panel_geomean_skill; mean + percentile bootstrap CI via round2/eval/nrmse.py::bootstrap_ci over the three per-seed geomeans. Lower is better. FIRST anchor for this stream (no prior state/anchors/r3s1_factorised.json existed). Beats the training-free launch best-floor anchor 34.4198 by 9.4625 with the whole 3-seed interval [24.8726, 25.0662] below it, and beats the shipped condition->level law r2s1_direct-B3 (25.5119 [25.4295, 25.5943]) by a paired in-job delta of 0.5546 [0.5246, 0.5747], sign-identical at all three seeds.",
+ "per_dataset_mean_skill": {
+  "sharp__allen_cahn_2d": 279.116540826327,
+  "sharp__fisher_kpp_2d": 374.8380508929541,
+  "sharp__cahn_hilliard": 11.257679547314401,
+  "ifc_poisson": 8.250655890222793,
+  "ifc_heat": 0.9964207759737705
+ },
+ "per_dataset_per_seed_skill": {
+  "sharp__allen_cahn_2d": [
+   280.0716592436192,
+   278.08881355079154,
+   279.18914968457045
+  ],
+  "sharp__fisher_kpp_2d": [
+   376.5182636277145,
+   376.2172748569498,
+   371.7786141941979
+  ],
+  "sharp__cahn_hilliard": [
+   11.414584784669875,
+   11.202904871007366,
+   11.15554898626596
+  ],
+  "ifc_poisson": [
+   8.250655890222793,
+   8.250655890222793,
+   8.250655890222793
+  ],
+  "ifc_heat": [
+   0.9964207759737704,
+   0.9964207759737704,
+   0.9964207759737704
+  ]
+ },
+ "caveats": [
+  "MECHANICS anchor (cratered-rule comparand for later r3s1 batches), NOT an adjudicated claim. Round-3 success criterion 1 additionally requires exceeding the condition->level closed-form law by >= 1 CERTIFIED mce on >= 2 scored datasets; this arm does so on exactly ONE dataset (sharp__cahn_hilliard, delta 1.3073 vs tau_rel 0.3612) and is numerically identical to the one-stage law on the other four.",
+  "SINGLE-CELL EFFECT: stage 2 is a bitwise empty-gate no-op on allen_cahn, fisher_kpp, ifc_poisson and ifc_heat at all three seeds, so this anchor's per-dataset columns coincide with r2s1_direct-B3's everywhere except cahn_hilliard (11.2577 vs 12.5650).",
+  "The panel-level paired delta 0.5546 clears the CERTIFIED panel noise floor only narrowly against the conservative unpaired constant (1.09x seed_mce 0.5083; 1.36x paired_null_95 0.4067).",
+  "Falsification clause L3 (the condition-dimension mechanism half of the hypothesis) is VOID for claim purposes per ADR r3-0004 + orchestrator adjudication 2026-08-10; the descriptive 3-seed margins read ADVERSE to it (cahn_hilliard 0.6945 vs allen_cahn 0.0148 at IDENTICAL cond_dim 19; fisher_kpp cond_dim 50 margin 0.0117).",
+  "The arm LOSES to ref_affine_on_hf_train on 4 of 5 cells (panel 24.9573 vs 17.0581) and to ref_dc_only on fisher_kpp; guard sharp__sod_1d is flagged at 3.21x its copy-LF guard reference (advisory).",
+  "Standing panel caveats apply: fisher_kpp weak fidelity gap, allen_cahn trimmed test n=78, cahn_hilliard outlier domination, ifc cells N_hf=5 anecdote-grade with an exactly-affine ifc_poisson condition->HF map, pfc report-only (ADR r3-0004), no cross-round comparison without the honest-denominator flag."
+ ],
+ "noise_floor_version_used": "CERTIFIED state/anchors_repaired/noise_floor.json (r3s4_audit-B1, _provisional=false, installed 2026-08-10); panel entry seed_mce 0.5082844131597604, paired_null_95 0.40667775361433317",
+ "compared_against": {
+  "best_floor_panel_geomean": {
+   "value": 34.4198,
+   "source": "state/anchors/launch_anchors.json:best_floor (training-free, rebuilt 2026-08-10)",
+   "beaten_by": 9.46247679501311,
+   "whole_ci_below": true
+  },
+  "shipped_condition_to_level_law": {
+   "card": "r2s1_direct-B3",
+   "value": 25.5119,
+   "ci95": [
+    25.4295,
+    25.5943
+   ],
+   "paired_in_job_delta_mean": 0.5545504446886689,
+   "paired_delta_ci95": [
+    0.5245846520226252,
+    0.5747280580936049
+   ],
+   "sign_identical_3seeds": true
+  }
+ },
+ "_provenance": {
+  "result_files": [
+   "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round3/r3s1_factorised/B1/eval/result_panel5_s0.json",
+   "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round3/r3s1_factorised/B1/eval/result_panel5_s1.json",
+   "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round3/r3s1_factorised/B1/eval/result_panel5_s2.json"
+  ],
+  "nrmse_def_hash": "d3d0ade9191c13bacc40702f3eb26ad290e01641cacee22a1d2233b74c035850",
+  "copylf_def_hash": "9753ff24e856f595748492dec6cb6c215d748f97e8ec4a679b651f8846da907a",
+  "code_hash": {
+   "seed0": "88d6bfcd03b59400673dcb283aa703d60e4557c7dadff4db275c21fdc2ad952a (pre ALGO-1 basis.py fix; the debugger's post-fix recompute reproduced it bit-identically)",
+   "seeds1_2": "3e7f87a3745b9ab61175e8ea4c2a0bde7cc56cf95a479996de60c87a44cd6fa5"
+  },
+  "seeds": [
+   0,
+   1,
+   2
+  ],
+  "epochs": 0,
+  "family": "r3s1_twostage_crosscoef",
+  "job_ids": {
+   "seed0": 66829977,
+   "seed1": 144591,
+   "seed2": 144592
+  },
+  "freshness": "stale_checkpoint_audit STALE 0/18; seeds 1-2 all cells cached=false with fresh diag sidecars and no resume events."
+ }
+}

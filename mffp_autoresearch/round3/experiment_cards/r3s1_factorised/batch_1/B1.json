@@ -247,192 +247,701 @@
   }
  ],
  "5_actual_result": {
-  "_invocation": "seed-0 only (experiment-initial-analyzer, 2026-08-10). Seeds 1-2 not submitted; scripts/submit_seeds_2_3.sh unexecuted. Every number below is parsed from a score_panel.py result JSON or the family's own per-cell artifact; nothing was recomputed by hand. The only aggregation applied by the analyzer is round2/eval/nrmse.py::panel_geomean over per-cell skills read from artifacts.",
+  "_invocation": "3-seed aggregation (experiment-initial-analyzer, second invocation, 2026-08-10). Seeds 1-2 = SLURM 144591/144592, both COMPLETED. Every number below is parsed from a score_panel.py result JSON or the family's own per-cell artifact; nothing was recomputed by hand. The only aggregations applied by the analyzer are round2/eval/nrmse.py::panel_geomean over per-cell skills read from artifacts and round2/eval/nrmse.py::bootstrap_ci (scipy-free percentile bootstrap, n_boot=10000, rng seed 0) over the three per-seed values. The seed-0 blocks are preserved verbatim under _seed0_invocation_record.",
   "_provenance": {
-   "scored_panel_result_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round3/r3s1_factorised/B1/eval/result_panel5_s0.json",
+   "scored_panel_result_jsons": [
+    "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round3/r3s1_factorised/B1/eval/result_panel5_s0.json",
+    "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round3/r3s1_factorised/B1/eval/result_panel5_s1.json",
+    "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round3/r3s1_factorised/B1/eval/result_panel5_s2.json"
+   ],
    "guard_result_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round3/r3s1_factorised/B1/eval/result_guard_s0.json",
-   "per_cell_artifacts": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round3/r3s1_factorised/B1/training/r3s1_twostage_crosscoef/{dataset}_e0_s0.json",
+   "per_cell_artifacts": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round3/r3s1_factorised/B1/training/r3s1_twostage_crosscoef/{dataset}_e0_s{seed}.json (5 datasets x 3 seeds = 15 files, all parsed)",
    "target_scale_preflight": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round3/r3s1_factorised/B1/eval/target_scale_preflight.json",
-   "anchors": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/state/anchors/launch_anchors.json (rebuilt 2026-08-10 05:55 after STOP-THE-LINE #2)",
-   "noise_floor": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/state/anchors_repaired/noise_floor.json",
+   "slurm_logs": [
+    "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round3/r3s1_factorised/B1/slurm/r3-r3s1_factorised-B1-s0_66829977.out",
+    "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round3/r3s1_factorised/B1/slurm/r3-r3s1_factorised-B1-s1_144591.out",
+    "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round3/r3s1_factorised/B1/slurm/r3-r3s1_factorised-B1-s2_144592.out"
+   ],
+   "anchors": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/state/anchors/launch_anchors.json (CURRENT, rebuilt 2026-08-10 05:55 after STOP-THE-LINE #2)",
+   "noise_floor": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/state/anchors_repaired/noise_floor.json (CERTIFIED by r3s4_audit-B1, _provisional=false, installed 2026-08-10; the superseded provisional file is archived alongside as noise_floor_provisional_pre_certify_2026-08-10.json)",
    "guard_reference": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round2/eval/copylf_baselines.json",
-   "slurm_logs": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round3/r3s1_factorised/B1/slurm/",
-   "_arm_skill_convention": "test_hf skills are read verbatim from result_panel5_s0.json. ref_head_onestage skills are read verbatim from each cell's build_gates['G-A_reproduction_seam'].in_job_skill. The remaining reference arms (dc_only, affine_on_hf_train, twostage_true_gate, zero, train_mean, nn_condition) are published in the artifacts as nRMSE only; their skill columns here are nrmse.py::skill(arm_nRMSE, copylf_baselines.json[dataset].test_nrmse) - the round's own skill definition applied to artifact-read numbers, never a re-derived nRMSE."
+   "aggregation_code": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round2/eval/nrmse.py::{panel_geomean,bootstrap_ci,skill}",
+   "_arm_skill_convention": "test_hf skills are read verbatim from result_panel5_s{seed}.json. ref_head_onestage skills are read verbatim from each cell's build_gates['G-A_reproduction_seam'].in_job_skill. The remaining reference arms are published in the artifacts as nRMSE only; their skill columns are nrmse.py::skill(arm_nRMSE, that cell's own G-A reference test_nrmse) - the round's skill definition applied to artifact-read numbers, never a re-derived nRMSE."
   },
   "_seam_assertions": {
    "nrmse_def_hash": "d3d0ade9191c13bacc40702f3eb26ad290e01641cacee22a1d2233b74c035850",
    "nrmse_def_hash_consistent_across_parsed_jsons": true,
    "nrmse_def_hash_sources": [
     "result_panel5_s0.json",
+    "result_panel5_s1.json",
+    "result_panel5_s2.json",
     "result_guard_s0.json",
-    "all 5 per-cell training JSONs",
-    "copylf_baselines.json:_nrmse_def_hash"
+    "all 15 per-cell training JSONs (5 datasets x 3 seeds)",
+    "copylf_baselines.json:_nrmse_def_hash",
+    "live import of round2/eval/nrmse.py::NRMSE_DEF_HASH"
    ],
    "copylf_def_hash": "9753ff24e856f595748492dec6cb6c215d748f97e8ec4a679b651f8846da907a",
    "copylf_def_hash_consistent": true,
-   "code_hash_panel5": "88d6bfcd03b59400673dcb283aa703d60e4557c7dadff4db275c21fdc2ad952a",
-   "code_hash_guard": "3e7f87a3745b9ab61175e8ea4c2a0bde7cc56cf95a479996de60c87a44cd6fa5",
-   "code_hash_note": "panel and guard JSONs carry DIFFERENT code_hashes: the guard leg ran after the ALGO-1 basis.py rank-cut fix (debug_notes[0]). Metric-definition seams are identical. The debugger's post-fix full 5-cell recompute at the guard hash reproduced the panel bit-identically (geomean 25.06624704883453, all cells cached=false) - worktrees/r3s1_factorised/B1/scratchpad/repro_panel_full_1_result.json.",
-   "stale_checkpoint_audit": "tools/stale_checkpoint_audit.py --root <outputs>/training --fail-on-stale -> STALE 0/8, exit 0 (run 2026-08-10)"
+   "code_hash_by_result_json": {
+    "result_panel5_s0.json": "88d6bfcd03b59400673dcb283aa703d60e4557c7dadff4db275c21fdc2ad952a",
+    "result_panel5_s1.json": "3e7f87a3745b9ab61175e8ea4c2a0bde7cc56cf95a479996de60c87a44cd6fa5",
+    "result_panel5_s2.json": "3e7f87a3745b9ab61175e8ea4c2a0bde7cc56cf95a479996de60c87a44cd6fa5",
+    "result_guard_s0.json": "3e7f87a3745b9ab61175e8ea4c2a0bde7cc56cf95a479996de60c87a44cd6fa5"
+   },
+   "code_hash_note": "seeds 1-2 and the guard leg all carry 3e7f87a3 (post ALGO-1 basis.py rank-cut fix); seed 0's panel JSON carries the pre-fix 88d6bfcd. The family source has not been touched since 2026-08-08 09:52, so guard and 3-seed panel are byte-identical code. The debugger's post-fix full 5-cell recompute at 3e7f87a3 reproduced seed 0 bit-identically (geomean 25.06624704883453), and seeds 1-2 reproduce every seed-independent cell (both ifc cells, all reference floors) to the last digit - the hash change is not a result change.",
+   "stale_checkpoint_audit": "tools/stale_checkpoint_audit.py --root <outputs>/training --pattern '*_e0_s*.json' --fail-on-stale -> STALE 0/18, exit 0 (re-run 2026-08-10 at the 3-seed invocation).",
+   "freshness_reverification_seeds_1_2": "INDEPENDENTLY VERIFIED, not taken on report: (a) all 10 scored cells in result_panel5_s{1,2}.json carry cached=false; (b) all 10 per-cell training JSONs, their ckpt dirs and their diag_* sidecars have mtime 2026-08-10 06:12-06:13, after job start 06:12:30; (c) in-job total_seconds sum to 32.8 s (s1) and 33.8 s (s2) inside a 55 s wall clock - real compute, not a 7 s cache serve like seed 0's SLURM leg; (d) diagnostics.checkpoint.resumed_units is [] on all 10 cells (no resume-from-completed-checkpoint); (e) stale-checkpoint audit 0/18."
   },
   "seeds_available": [
-   0
+   0,
+   1,
+   2
   ],
   "per_dataset": {
    "sharp__allen_cahn_2d": {
     "per_seed_nrmse": [
-     0.5767677044993638
+     0.5767677044993638,
+     0.5726843161204137,
+     0.5749503017177116
     ],
     "per_seed_skill": [
+     280.0716592436192,
+     278.08881355079154,
+     279.18914968457045
+    ],
+    "mean_skill": 279.116540826327,
+    "ci95": [
+     278.08881355079154,
      280.0716592436192
     ],
-    "mean_skill": 280.0716592436192,
-    "ci95": null,
     "reference_type": "copylf",
-    "cached": true,
+    "cached": [
+     true,
+     false,
+     false
+    ],
+    "cached_note": "seed 0 was cache-served from the builder's own 2026-08-07 re-smoke (code_hash 88d6bfcd); seeds 1-2 are fresh compute (cached=false) at the post-ALGO-1-fix hash 3e7f87a3 and reproduce seed 0's independent-of-seed cells bit-identically.",
     "cond_dim": 19,
-    "ref_head_onestage_skill": 280.0716592436192,
-    "paired_delta_skill_vs_onestage": 0.0,
-    "stage2_gate_size": 0,
-    "stage2_is_noop": true,
-    "l3_max_margin_tool": 0.009116684146649456,
-    "l3_reading_this_seed": "below_0.30",
+    "ref_head_onestage_per_seed_skill": [
+     280.0716592436193,
+     278.0888135507915,
+     279.18914968457045
+    ],
+    "paired_delta_skill_vs_onestage_per_seed": [
+     1.1368683772161603e-13,
+     -5.684341886080802e-14,
+     0.0
+    ],
+    "paired_delta_mean": 1.8947806286936004e-14,
+    "paired_delta_ci95": [
+     -5.684341886080802e-14,
+     1.1368683772161603e-13
+    ],
+    "paired_delta_sign_identical_3seed": false,
+    "stage2_gate_size_per_seed": [
+     0,
+     0,
+     0
+    ],
+    "stage2_is_noop_per_seed": [
+     1,
+     1,
+     1
+    ],
+    "l3_margin_tool_per_seed": [
+     0.009116684146649456,
+     0.013903011402506493,
+     0.02125404795338448
+    ],
+    "l3_margin_mean": 0.01475791450084681,
+    "l3_margin_ci95": [
+     0.009116684146649456,
+     0.02125404795338448
+    ],
+    "l3_margin_spread_maxmin": 0.012137363806735024,
+    "l3_reading_3seed_mean": "below_0.30",
+    "l3_unresolved_on_spread": false,
+    "best_frozen_floor_arm": "nn_condition",
     "best_frozen_floor_skill": 475.85682154308705,
-    "beats_best_frozen_floor": true,
-    "ref_dc_only_skill": 327.5710962117553,
-    "beats_dc_only": true,
-    "ref_affine_on_hf_train_skill": 275.688771,
-    "beats_affine_on_hf_train": false,
-    "noise_floor_min_claimable_effect": 16.422284630500034,
-    "paired_delta_above_noise_floor": false
+    "beats_best_frozen_floor_3seed_mean": true,
+    "noise_floor_certified": {
+     "version": "CERTIFIED (state/anchors_repaired/noise_floor.json, _certified_utc 2026-08-08T20:00:07Z, installed 2026-08-10, _provisional=false; source r3s4_audit-B1)",
+     "tau_rel": 18.61975759925883,
+     "tau_abs": 58.81093531230779,
+     "seed_mce": 13.213463531918507,
+     "min_claimable_effect": 18.61975759925883,
+     "paired_delta_over_tau_rel": 1.0176183114054199e-15,
+     "paired_delta_above_certified_tau_rel": false
+    },
+    "noise_floor_provisional_cited_in_card": {
+     "min_claimable_effect": 16.422284630500034,
+     "quoted_in_card": 16.4223,
+     "provisional_agrees_with_card": true,
+     "delta_vs_provisional": 2.1974729687587953
+    },
+    "ref_dc_only_per_seed_skill": [
+     327.57109560375466,
+     327.57109560375466,
+     327.57109560375466
+    ],
+    "ref_dc_only_mean_skill": 327.57109560375466,
+    "beats_dc_only_3seed_mean": true,
+    "ref_affine_on_hf_train_per_seed_skill": [
+     275.6887709344202,
+     275.6887709344202,
+     275.6887709344202
+    ],
+    "ref_affine_on_hf_train_mean_skill": 275.6887709344202,
+    "beats_affine_on_hf_train_3seed_mean": false,
+    "ref_twostage_true_gate_per_seed_skill": [
+     280.0716592436193,
+     278.0888135507915,
+     279.18914968457045
+    ],
+    "ref_twostage_true_gate_mean_skill": 279.1165408263271,
+    "beats_twostage_true_gate_3seed_mean": true,
+    "ref_nn_condition_per_seed_skill": [
+     475.85682154308705,
+     475.85682154308705,
+     475.85682154308705
+    ],
+    "ref_nn_condition_mean_skill": 475.85682154308705,
+    "beats_nn_condition_3seed_mean": true,
+    "ref_train_mean_per_seed_skill": [
+     486.4148158976346,
+     486.4148158976346,
+     486.4148158976346
+    ],
+    "ref_train_mean_mean_skill": 486.4148158976346,
+    "beats_train_mean_3seed_mean": true,
+    "ref_zero_per_seed_skill": [
+     485.58831754756847,
+     485.58831754756847,
+     485.58831754756847
+    ],
+    "ref_zero_mean_skill": 485.58831754756847,
+    "beats_zero_3seed_mean": true
    },
    "sharp__fisher_kpp_2d": {
     "per_seed_nrmse": [
-     0.06221808645908396
+     0.06221808645908396,
+     0.06216834930906574,
+     0.06143487898489923
     ],
     "per_seed_skill": [
+     376.5182636277145,
+     376.2172748569498,
+     371.7786141941979
+    ],
+    "mean_skill": 374.8380508929541,
+    "ci95": [
+     371.7786141941979,
      376.5182636277145
     ],
-    "mean_skill": 376.5182636277145,
-    "ci95": null,
     "reference_type": "copylf",
-    "cached": true,
+    "cached": [
+     true,
+     false,
+     false
+    ],
+    "cached_note": "seed 0 was cache-served from the builder's own 2026-08-07 re-smoke (code_hash 88d6bfcd); seeds 1-2 are fresh compute (cached=false) at the post-ALGO-1-fix hash 3e7f87a3 and reproduce seed 0's independent-of-seed cells bit-identically.",
     "cond_dim": 50,
-    "ref_head_onestage_skill": 376.5182636277145,
-    "paired_delta_skill_vs_onestage": 0.0,
-    "stage2_gate_size": 0,
-    "stage2_is_noop": true,
-    "l3_max_margin_tool": -0.0012941096935688012,
-    "l3_reading_this_seed": "below_0.30",
+    "ref_head_onestage_per_seed_skill": [
+     376.5182636277146,
+     376.2172748569498,
+     371.7786141941978
+    ],
+    "paired_delta_skill_vs_onestage_per_seed": [
+     1.1368683772161603e-13,
+     0.0,
+     -1.1368683772161603e-13
+    ],
+    "paired_delta_mean": 0.0,
+    "paired_delta_ci95": [
+     -1.1368683772161603e-13,
+     1.1368683772161603e-13
+    ],
+    "paired_delta_sign_identical_3seed": false,
+    "stage2_gate_size_per_seed": [
+     0,
+     0,
+     0
+    ],
+    "stage2_is_noop_per_seed": [
+     1,
+     1,
+     1
+    ],
+    "l3_margin_tool_per_seed": [
+     -0.0012941096935688012,
+     0.0018619609255521308,
+     0.03439489701487264
+    ],
+    "l3_margin_mean": 0.011654249415618656,
+    "l3_margin_ci95": [
+     -0.0012941096935688012,
+     0.03439489701487264
+    ],
+    "l3_margin_spread_maxmin": 0.03568900670844144,
+    "l3_reading_3seed_mean": "below_0.30",
+    "l3_unresolved_on_spread": false,
+    "best_frozen_floor_arm": "train_mean",
     "best_frozen_floor_skill": 390.7014844797183,
-    "beats_best_frozen_floor": true,
-    "ref_dc_only_skill": 282.7601827,
-    "beats_dc_only": false,
-    "ref_affine_on_hf_train_skill": 266.4814208,
-    "beats_affine_on_hf_train": false,
-    "noise_floor_min_claimable_effect": 158.33215324637433,
-    "paired_delta_above_noise_floor": false
+    "beats_best_frozen_floor_3seed_mean": true,
+    "noise_floor_certified": {
+     "version": "CERTIFIED (state/anchors_repaired/noise_floor.json, _certified_utc 2026-08-08T20:00:07Z, installed 2026-08-10, _provisional=false; source r3s4_audit-B1)",
+     "tau_rel": 10.312814173562199,
+     "tau_abs": 72.77428142960193,
+     "seed_mce": 5.855015380369281,
+     "min_claimable_effect": 10.312814173562199,
+     "paired_delta_over_tau_rel": 0.0,
+     "paired_delta_above_certified_tau_rel": false
+    },
+    "noise_floor_provisional_cited_in_card": {
+     "min_claimable_effect": 158.33215324637433,
+     "quoted_in_card": 158.3322,
+     "provisional_agrees_with_card": true,
+     "delta_vs_provisional": -148.01933907281213
+    },
+    "ref_dc_only_per_seed_skill": [
+     282.7601830501418,
+     282.7601830501418,
+     282.7601830501418
+    ],
+    "ref_dc_only_mean_skill": 282.7601830501418,
+    "beats_dc_only_3seed_mean": false,
+    "ref_affine_on_hf_train_per_seed_skill": [
+     266.4814214523057,
+     266.4814214523057,
+     266.4814214523057
+    ],
+    "ref_affine_on_hf_train_mean_skill": 266.4814214523057,
+    "beats_affine_on_hf_train_3seed_mean": false,
+    "ref_twostage_true_gate_per_seed_skill": [
+     376.5182636277146,
+     376.2172748569498,
+     371.93762795740184
+    ],
+    "ref_twostage_true_gate_mean_skill": 374.89105548068875,
+    "beats_twostage_true_gate_3seed_mean": true,
+    "ref_nn_condition_per_seed_skill": [
+     410.28175138258905,
+     410.28175138258905,
+     410.28175138258905
+    ],
+    "ref_nn_condition_mean_skill": 410.2817513825891,
+    "beats_nn_condition_3seed_mean": true,
+    "ref_train_mean_per_seed_skill": [
+     390.7014844797183,
+     390.7014844797183,
+     390.7014844797183
+    ],
+    "ref_train_mean_mean_skill": 390.7014844797183,
+    "beats_train_mean_3seed_mean": true,
+    "ref_zero_per_seed_skill": [
+     6051.588614434832,
+     6051.588614434832,
+     6051.588614434832
+    ],
+    "ref_zero_mean_skill": 6051.588614434832,
+    "beats_zero_3seed_mean": true
    },
    "sharp__cahn_hilliard": {
     "per_seed_nrmse": [
-     0.477163461832313
+     0.477163461832313,
+     0.46831461430005566,
+     0.46633499801723743
     ],
     "per_seed_skill": [
+     11.414584784669875,
+     11.202904871007366,
+     11.15554898626596
+    ],
+    "mean_skill": 11.257679547314401,
+    "ci95": [
+     11.155548986265961,
      11.414584784669875
     ],
-    "mean_skill": 11.414584784669875,
-    "ci95": null,
     "reference_type": "copylf",
-    "cached": true,
+    "cached": [
+     true,
+     false,
+     false
+    ],
+    "cached_note": "seed 0 was cache-served from the builder's own 2026-08-07 re-smoke (code_hash 88d6bfcd); seeds 1-2 are fresh compute (cached=false) at the post-ALGO-1-fix hash 3e7f87a3 and reproduce seed 0's independent-of-seed cells bit-identically.",
     "cond_dim": 19,
-    "ref_head_onestage_skill": 12.660053564137534,
-    "paired_delta_skill_vs_onestage": 1.2454687794676593,
-    "stage2_gate_size": 9,
-    "stage2_is_noop": false,
-    "stage2_max_oof_r2": 0.669611091812371,
-    "l3_max_margin_tool": 0.6754833666166551,
-    "l3_reading_this_seed": "reaches_0.30",
+    "ref_head_onestage_per_seed_skill": [
+     12.660053564137534,
+     12.52944886684222,
+     12.50535372067985
+    ],
+    "paired_delta_skill_vs_onestage_per_seed": [
+     1.245468779467659,
+     1.3265439958348537,
+     1.3498047344138904
+    ],
+    "paired_delta_mean": 1.307272503238801,
+    "paired_delta_ci95": [
+     1.245468779467659,
+     1.3498047344138904
+    ],
+    "paired_delta_sign_identical_3seed": true,
+    "stage2_gate_size_per_seed": [
+     9,
+     10,
+     9
+    ],
+    "stage2_is_noop_per_seed": [
+     0,
+     0,
+     0
+    ],
+    "l3_margin_tool_per_seed": [
+     0.6754833666166551,
+     0.714041891185034,
+     0.6940294333957698
+    ],
+    "l3_margin_mean": 0.6945182303991531,
+    "l3_margin_ci95": [
+     0.6754833666166551,
+     0.714041891185034
+    ],
+    "l3_margin_spread_maxmin": 0.03855852456837894,
+    "l3_reading_3seed_mean": "reaches_0.30",
+    "l3_unresolved_on_spread": false,
+    "best_frozen_floor_arm": "nn_condition",
     "best_frozen_floor_skill": 23.180342227117514,
-    "beats_best_frozen_floor": true,
-    "ref_dc_only_skill": 23.8677392,
-    "beats_dc_only": true,
-    "ref_affine_on_hf_train_skill": 12.8710826,
-    "beats_affine_on_hf_train": true,
-    "ref_twostage_true_gate_skill": 11.4340804,
-    "noise_floor_min_claimable_effect": 1.1603569120520159,
-    "paired_delta_above_noise_floor": true
+    "beats_best_frozen_floor_3seed_mean": true,
+    "noise_floor_certified": {
+     "version": "CERTIFIED (state/anchors_repaired/noise_floor.json, _certified_utc 2026-08-08T20:00:07Z, installed 2026-08-10, _provisional=false; source r3s4_audit-B1)",
+     "tau_rel": 0.36124864423263325,
+     "tau_abs": 22.41707234283126,
+     "seed_mce": 0.09124535322300886,
+     "min_claimable_effect": 0.36124864423263325,
+     "paired_delta_over_tau_rel": 3.6187609949809443,
+     "paired_delta_above_certified_tau_rel": true
+    },
+    "noise_floor_provisional_cited_in_card": {
+     "min_claimable_effect": 1.1603569120520159,
+     "quoted_in_card": 1.1604,
+     "provisional_agrees_with_card": true,
+     "delta_vs_provisional": -0.7991082678193826
+    },
+    "ref_dc_only_per_seed_skill": [
+     23.867738508771748,
+     23.867738508771748,
+     23.867738508771748
+    ],
+    "ref_dc_only_mean_skill": 23.867738508771748,
+    "beats_dc_only_3seed_mean": true,
+    "ref_affine_on_hf_train_per_seed_skill": [
+     12.871083449444269,
+     12.871083449444269,
+     12.871083449444269
+    ],
+    "ref_affine_on_hf_train_mean_skill": 12.871083449444269,
+    "beats_affine_on_hf_train_3seed_mean": true,
+    "ref_twostage_true_gate_per_seed_skill": [
+     11.43407993361579,
+     11.243024964125029,
+     12.19463272888903
+    ],
+    "ref_twostage_true_gate_mean_skill": 11.62391254220995,
+    "beats_twostage_true_gate_3seed_mean": true,
+    "ref_nn_condition_per_seed_skill": [
+     23.180342227117514,
+     23.180342227117514,
+     23.180342227117514
+    ],
+    "ref_nn_condition_mean_skill": 23.180342227117517,
+    "beats_nn_condition_3seed_mean": true,
+    "ref_train_mean_per_seed_skill": [
+     23.96905448527446,
+     23.96905448527446,
+     23.96905448527446
+    ],
+    "ref_train_mean_mean_skill": 23.96905448527446,
+    "beats_train_mean_3seed_mean": true,
+    "ref_zero_per_seed_skill": [
+     23.92174945843033,
+     23.92174945843033,
+     23.92174945843033
+    ],
+    "ref_zero_mean_skill": 23.92174945843033,
+    "beats_zero_3seed_mean": true
    },
    "ifc_poisson": {
     "per_seed_nrmse": [
+     0.2970236120480205,
+     0.2970236120480205,
      0.2970236120480205
     ],
     "per_seed_skill": [
+     8.250655890222793,
+     8.250655890222793,
      8.250655890222793
     ],
     "mean_skill": 8.250655890222793,
-    "ci95": null,
+    "ci95": [
+     8.250655890222793,
+     8.250655890222793
+    ],
     "reference_type": "paper_bar",
-    "cached": true,
+    "cached": [
+     true,
+     false,
+     false
+    ],
+    "cached_note": "seed 0 was cache-served from the builder's own 2026-08-07 re-smoke (code_hash 88d6bfcd); seeds 1-2 are fresh compute (cached=false) at the post-ALGO-1-fix hash 3e7f87a3 and reproduce seed 0's independent-of-seed cells bit-identically.",
     "cond_dim": 5,
-    "ref_head_onestage_skill": 8.250655890222793,
-    "paired_delta_skill_vs_onestage": 0.0,
-    "stage2_gate_size": 0,
-    "stage2_is_noop": true,
-    "l3_max_margin_tool": 0.050147151653790134,
-    "l3_reading_this_seed": "below_0.30",
+    "ref_head_onestage_per_seed_skill": [
+     8.250655890222795,
+     8.250655890222795,
+     8.250655890222795
+    ],
+    "paired_delta_skill_vs_onestage_per_seed": [
+     1.7763568394002505e-15,
+     1.7763568394002505e-15,
+     1.7763568394002505e-15
+    ],
+    "paired_delta_mean": 1.7763568394002505e-15,
+    "paired_delta_ci95": [
+     1.7763568394002505e-15,
+     1.7763568394002505e-15
+    ],
+    "paired_delta_sign_identical_3seed": true,
+    "stage2_gate_size_per_seed": [
+     0,
+     0,
+     0
+    ],
+    "stage2_is_noop_per_seed": [
+     1,
+     1,
+     1
+    ],
+    "l3_margin_tool_per_seed": [
+     0.050147151653790134,
+     0.050147151653790134,
+     0.050147151653790134
+    ],
+    "l3_margin_mean": 0.050147151653790134,
+    "l3_margin_ci95": [
+     0.050147151653790134,
+     0.050147151653790134
+    ],
+    "l3_margin_spread_maxmin": 0.0,
+    "l3_reading_3seed_mean": "below_0.30",
+    "l3_unresolved_on_spread": false,
+    "best_frozen_floor_arm": "nn_condition",
     "best_frozen_floor_skill": 8.040896838361228,
-    "beats_best_frozen_floor": false,
-    "ref_dc_only_skill": 11.0393168,
-    "beats_dc_only": true,
-    "ref_affine_on_hf_train_skill": 1.5937636895033758,
-    "beats_affine_on_hf_train": false,
-    "noise_floor_min_claimable_effect": 0.23990756041925798,
-    "paired_delta_above_noise_floor": false,
-    "_note": "carries no falsification weight per the card's L4 clause (N_hf = 5, anecdote-grade, program.md section 12.1). Data is the repaired nested ladder; the launch-anchor ifc_poisson columns were rebuilt 2026-08-10 and r2s1_direct-B3's value was UNCHANGED by the repair (orchestrator_flow 2026-08-10)."
+    "beats_best_frozen_floor_3seed_mean": false,
+    "noise_floor_certified": {
+     "version": "CERTIFIED (state/anchors_repaired/noise_floor.json, _certified_utc 2026-08-08T20:00:07Z, installed 2026-08-10, _provisional=false; source r3s4_audit-B1)",
+     "tau_rel": 0.6910000683054431,
+     "tau_abs": 0.6910000683054431,
+     "seed_mce": 0.5868082704078086,
+     "min_claimable_effect": 0.6910000683054431,
+     "paired_delta_over_tau_rel": 2.5707042891565193e-15,
+     "paired_delta_above_certified_tau_rel": false
+    },
+    "noise_floor_provisional_cited_in_card": {
+     "min_claimable_effect": 0.23990756041925798,
+     "quoted_in_card": 0.2399,
+     "provisional_agrees_with_card": true,
+     "delta_vs_provisional": 0.45109250788618516
+    },
+    "ref_dc_only_per_seed_skill": [
+     11.039316624066041,
+     11.039316624066041,
+     11.039316624066041
+    ],
+    "ref_dc_only_mean_skill": 11.039316624066041,
+    "beats_dc_only_3seed_mean": true,
+    "ref_affine_on_hf_train_per_seed_skill": [
+     1.5937636123306758,
+     1.5937636123306758,
+     1.5937636123306758
+    ],
+    "ref_affine_on_hf_train_mean_skill": 1.5937636123306758,
+    "beats_affine_on_hf_train_3seed_mean": false,
+    "ref_twostage_true_gate_per_seed_skill": [
+     8.250655890222795,
+     8.250655890222795,
+     8.250655890222795
+    ],
+    "ref_twostage_true_gate_mean_skill": 8.250655890222795,
+    "beats_twostage_true_gate_3seed_mean": true,
+    "ref_nn_condition_per_seed_skill": [
+     8.040896845727307,
+     8.040896845727307,
+     8.040896845727307
+    ],
+    "ref_nn_condition_mean_skill": 8.040896845727307,
+    "beats_nn_condition_3seed_mean": false,
+    "ref_train_mean_per_seed_skill": [
+     9.004131287667388,
+     9.004131287667388,
+     9.004131287667388
+    ],
+    "ref_train_mean_mean_skill": 9.004131287667388,
+    "beats_train_mean_3seed_mean": true,
+    "ref_zero_per_seed_skill": [
+     27.77777777777778,
+     27.77777777777778,
+     27.77777777777778
+    ],
+    "ref_zero_mean_skill": 27.777777777777782,
+    "beats_zero_3seed_mean": true,
+    "_note": "carries NO falsification weight (N_hf = 5, anecdote-grade, program.md section 12.1). Stage 2 is an empty gate on every seed, so test_hf is numerically identical to ref_head_onestage and the cell is seed-independent (zero 3-seed spread)."
    },
    "ifc_heat": {
     "per_seed_nrmse": [
+     0.073735137422059,
+     0.073735137422059,
      0.073735137422059
     ],
     "per_seed_skill": [
+     0.9964207759737704,
+     0.9964207759737704,
      0.9964207759737704
     ],
-    "mean_skill": 0.9964207759737704,
-    "ci95": null,
+    "mean_skill": 0.9964207759737705,
+    "ci95": [
+     0.9964207759737705,
+     0.9964207759737705
+    ],
     "reference_type": "paper_bar",
-    "cached": true,
+    "cached": [
+     true,
+     false,
+     false
+    ],
+    "cached_note": "seed 0 was cache-served from the builder's own 2026-08-07 re-smoke (code_hash 88d6bfcd); seeds 1-2 are fresh compute (cached=false) at the post-ALGO-1-fix hash 3e7f87a3 and reproduce seed 0's independent-of-seed cells bit-identically.",
     "cond_dim": 3,
-    "ref_head_onestage_skill": 0.9964207759737704,
-    "paired_delta_skill_vs_onestage": 0.0,
-    "stage2_gate_size": 0,
-    "stage2_is_noop": true,
-    "l3_max_margin_tool": -0.026829128637992916,
-    "l3_reading_this_seed": "below_0.30",
+    "ref_head_onestage_per_seed_skill": [
+     0.9964207759737702,
+     0.9964207759737702,
+     0.9964207759737702
+    ],
+    "paired_delta_skill_vs_onestage_per_seed": [
+     -2.220446049250313e-16,
+     -2.220446049250313e-16,
+     -2.220446049250313e-16
+    ],
+    "paired_delta_mean": -2.220446049250313e-16,
+    "paired_delta_ci95": [
+     -2.220446049250313e-16,
+     -2.220446049250313e-16
+    ],
+    "paired_delta_sign_identical_3seed": true,
+    "stage2_gate_size_per_seed": [
+     0,
+     0,
+     0
+    ],
+    "stage2_is_noop_per_seed": [
+     1,
+     1,
+     1
+    ],
+    "l3_margin_tool_per_seed": [
+     -0.026829128637992916,
+     -0.026829128637992916,
+     -0.026829128637992916
+    ],
+    "l3_margin_mean": -0.026829128637992916,
+    "l3_margin_ci95": [
+     -0.026829128637992916,
+     -0.026829128637992916
+    ],
+    "l3_margin_spread_maxmin": 0.0,
+    "l3_reading_3seed_mean": "below_0.30",
+    "l3_unresolved_on_spread": false,
+    "best_frozen_floor_arm": "nn_condition",
     "best_frozen_floor_skill": 1.3941023084286595,
-    "beats_best_frozen_floor": true,
-    "ref_dc_only_skill": 6.1944873,
-    "beats_dc_only": true,
-    "ref_affine_on_hf_train_skill": 0.9583559375093983,
-    "beats_affine_on_hf_train": false,
-    "noise_floor_min_claimable_effect": null,
-    "paired_delta_above_noise_floor": null,
-    "_note": "no noise_floor.json entry; carries no falsification weight (N_hf = 5)."
+    "beats_best_frozen_floor_3seed_mean": true,
+    "noise_floor_certified": {
+     "version": "CERTIFIED (state/anchors_repaired/noise_floor.json, _certified_utc 2026-08-08T20:00:07Z, installed 2026-08-10, _provisional=false; source r3s4_audit-B1)",
+     "tau_rel": 0.1640195793751628,
+     "tau_abs": 0.1640195793751628,
+     "seed_mce": 0.1333034081509522,
+     "min_claimable_effect": 0.1640195793751628,
+     "paired_delta_over_tau_rel": -1.353768896194689e-15,
+     "paired_delta_above_certified_tau_rel": false
+    },
+    "noise_floor_provisional_cited_in_card": {
+     "min_claimable_effect": null,
+     "quoted_in_card": null,
+     "provisional_agrees_with_card": null,
+     "delta_vs_provisional": null
+    },
+    "ref_dc_only_per_seed_skill": [
+     6.194487257364518,
+     6.194487257364518,
+     6.194487257364518
+    ],
+    "ref_dc_only_mean_skill": 6.194487257364518,
+    "beats_dc_only_3seed_mean": true,
+    "ref_affine_on_hf_train_per_seed_skill": [
+     0.9583559719706533,
+     0.9583559719706533,
+     0.9583559719706533
+    ],
+    "ref_affine_on_hf_train_mean_skill": 0.9583559719706533,
+    "beats_affine_on_hf_train_3seed_mean": false,
+    "ref_twostage_true_gate_per_seed_skill": [
+     0.9964207759737702,
+     0.9964207759737702,
+     0.9964207759737702
+    ],
+    "ref_twostage_true_gate_mean_skill": 0.9964207759737702,
+    "beats_twostage_true_gate_3seed_mean": false,
+    "ref_nn_condition_per_seed_skill": [
+     1.3941023099699918,
+     1.3941023099699918,
+     1.3941023099699918
+    ],
+    "ref_nn_condition_mean_skill": 1.3941023099699918,
+    "beats_nn_condition_3seed_mean": true,
+    "ref_train_mean_per_seed_skill": [
+     1.7666040077084846,
+     1.7666040077084846,
+     1.7666040077084846
+    ],
+    "ref_train_mean_mean_skill": 1.7666040077084846,
+    "beats_train_mean_3seed_mean": true,
+    "ref_zero_per_seed_skill": [
+     13.513513513513514,
+     13.513513513513514,
+     13.513513513513514
+    ],
+    "ref_zero_mean_skill": 13.513513513513514,
+    "beats_zero_3seed_mean": true,
+    "_note": "carries NO falsification weight (N_hf = 5, anecdote-grade, program.md section 12.1). Stage 2 is an empty gate on every seed, so test_hf is numerically identical to ref_head_onestage and the cell is seed-independent (zero 3-seed spread)."
    },
    "sharp__phase_field_crystal_2d": {
     "per_seed_nrmse": null,
     "per_seed_skill": null,
     "mean_skill": null,
     "ci95": null,
-    "_note": "REPORT-ONLY and NOT PRODUCED. ADR r3-0004 made the pfc scored cell task-void and the orchestrator replaced recipe.datasets with the explicit 5-dataset panel; no pfc training/eval artifact exists for seed 0 (only its G-D target-scaler pre-flight row, which passed: norm max/median 1.292, top-1 energy share 0.004, effective N 395.6/400). Consequence for clause L3, which enumerates 4 high-cond_dim cells including pfc: only 3 are measurable."
+    "_note": "REPORT-ONLY and NOT PRODUCED at any seed (ADR r3-0004; recipe.datasets is the explicit 5-dataset scored panel). Only its G-D target-scaler pre-flight row exists (norm max/median 1.292, top-1 energy share 0.004, effective N 395.6/400, OK) and it was re-emitted by both seed-1 and seed-2 jobs. Consequence: clause L3, which enumerates 4 high-cond_dim cells including pfc, is VOID for claim purposes per the orchestrator adjudication recorded in adr_r3_0004_addendum."
    }
   },
   "panel_geomean_skill": {
    "per_seed": [
+    25.06624704883453,
+    24.93313163286358,
+    24.872590933262558
+   ],
+   "mean": 24.957323204986892,
+   "ci95": [
+    24.872590933262558,
     25.06624704883453
    ],
-   "mean": 25.06624704883453,
-   "ci95": null,
-   "_source": "result_panel5_s0.json:panel_geomean_skill (verified to reproduce exactly from that JSON's own per-cell skills via nrmse.py::panel_geomean)",
+   "ci95_method": "round2/eval/nrmse.py::bootstrap_ci - percentile bootstrap (n_boot=10000, numpy default_rng(0)) over the 3 per-seed panel geomeans. With n=3 the percentile interval degenerates to [min, max]; the per-seed values are published alongside as required.",
+   "spread_maxmin": 0.19365611557197226,
+   "_source": "result_panel5_s{0,1,2}.json::panel_geomean_skill, each verified to reproduce exactly from that JSON's own per-cell skills via nrmse.py::panel_geomean",
    "_scored_panel": [
     "sharp__allen_cahn_2d",
     "sharp__fisher_kpp_2d",
@@ -441,27 +950,53 @@
     "ifc_heat"
    ],
    "matched_ref_head_onestage_panel_geomean_per_seed": [
-    25.590831700857155
+    25.590831700857155,
+    25.497470256813358,
+    25.447318991356163
    ],
-   "paired_panel_delta_onestage_minus_test_hf_per_seed": [
-    0.5245846520226252
-   ],
-   "_paired_delta_note": "the in-job matched one-stage control; its per-cell skills are the G-A reproduction-seam in_job_skill values, aggregated with nrmse.py::panel_geomean. The whole delta comes from sharp__cahn_hilliard - stage 2 is a bitwise no-op (G-E max|delta| = 0.0) on the other four cells.",
-   "other_arms_panel_geomean_seed0": {
-    "ref_twostage_true_gate": 25.074803412953234,
-    "ref_dc_only": 43.24107979794395,
-    "ref_affine_on_hf_train": 17.058089001483193
+   "paired_panel_delta_onestage_minus_test_hf": {
+    "per_seed": [
+     0.5245846520226252,
+     0.5643386239497765,
+     0.5747280580936049
+    ],
+    "mean": 0.5545504446886689,
+    "ci95": [
+     0.5245846520226252,
+     0.5747280580936049
+    ],
+    "sign_identical_across_3_seeds": true,
+    "sign": "positive at all three seeds (test_hf below the one-stage control on every seed; lower skill is better)",
+    "_note": "the in-job matched one-stage control; its per-cell skills are the G-A reproduction-seam in_job_skill values, aggregated with nrmse.py::panel_geomean. The whole delta is sharp__cahn_hilliard - stage 2 is a bitwise empty-gate no-op (G-E) on the other four cells at ALL THREE seeds."
+   },
+   "other_arms_panel_geomean_per_seed": {
+    "ref_twostage_true_gate": [
+     25.074803412953234,
+     24.950964323562047,
+     25.321750502831826
+    ],
+    "ref_dc_only": [
+     43.24107979794395,
+     43.24107979794395,
+     43.24107979794395
+    ],
+    "ref_affine_on_hf_train": [
+     17.058089001483193,
+     17.058089001483193,
+     17.058089001483193
+    ]
    }
   },
   "vs_anchor": {
-   "anchor_id": "state/anchors/launch_anchors.json:best_floor (5-dataset, rebuilt 2026-08-10)",
+   "anchor_id": "state/anchors/launch_anchors.json:best_floor (5-dataset ADR r3-0004 scored panel, rebuilt 2026-08-10 05:55). No pre-existing state/anchors/r3s1_factorised.json existed; this card is the stream's first 3-seed result.",
    "anchor_value": 34.4198,
-   "value": 25.06624704883453,
-   "delta": -9.35355295116547,
-   "delta_pct": -27.18,
-   "beyond_ci": null,
-   "beyond_noise_floor": null,
-   "_beyond_note": "seed-0 only: no 3-seed CI exists yet, and noise_floor.json carries no panel entry. Both flags are decided at the 3-seed invocation.",
+   "value": 24.957323204986892,
+   "delta": -9.46247679501311,
+   "delta_pct": -27.491376460679927,
+   "beyond_ci": true,
+   "beyond_ci_detail": "the whole 3-seed interval [24.872591, 25.066247] lies below the anchor 34.4198; lower skill is better.",
+   "beyond_noise_floor": true,
+   "beyond_noise_floor_detail": "|delta| 9.462477 vs the CERTIFIED panel-level seed_mce 0.508284 = 18.6x. Floor version: CERTIFIED noise_floor.json::_panel_geomean (r3s4_audit-B1), which - unlike the state cited in clause L1 - now DOES carry a panel entry.",
    "named_comparand": {
     "id": "state/anchors/launch_anchors.json:cards.r2s1_direct-B3 (the shipped condition->level closed-form law, CERTIFIED, 5-dataset)",
     "per_seed": [
@@ -474,15 +1009,20 @@
      25.4295,
      25.5943
     ],
-    "seed0_delta_vs_test_hf_seed0": 0.52455295116547,
-    "_note": "the seed-0 in-job matched control (25.590832) reproduces this anchor's seed-0 geomean (25.5908) to 8e-5 - a clean reproduction seam."
+    "in_job_matched_control_per_seed": [
+     25.590831700857155,
+     25.497470256813358,
+     25.447318991356163
+    ],
+    "reproduction_seam": "the in-job matched one-stage control reproduces this anchor seed-for-seed: 25.590832/25.497470/25.447319 vs the frozen 25.5908/25.4975/25.4473 (max |rel| 3e-6). G-A status 'ok' on all 15 cells (|rel| <= 0.76%).",
+    "_note": "the scored arm's 3-seed mean 24.9573 beats this comparand's 25.5119 by 0.5546 on the paired in-job control; the frozen-anchor difference is 25.5119 - 24.9573 = 0.5546 as well."
    },
    "cited_vs_current_anchor_values": {
-    "_why": "Locked part 4 / expected_falsification were written pre-ADR-r3-0004 (6-dataset panel) and pre-2026-08-10 (contaminated ifc_poisson anchor columns). Per the analyzer's instructions, both the cited and current values are recorded; adjudication stays in the contract and no threshold was silently substituted.",
+    "_why": "Locked part 4 / expected_falsification were written pre-ADR-r3-0004 (6-dataset panel), pre-2026-08-10 (contaminated ifc_poisson anchor columns) and pre-noise-floor-certification. Both the cited and current values are recorded and NO threshold was silently substituted; the pre-registered constants govern the verdict below and the current-floor readings are reported beside them.",
     "best_floor_panel_geomean": {
      "cited_in_part4": 36.3912,
      "current": 34.4198,
-     "reason": "ADR r3-0004 re-aggregation to the 5-dataset scored panel (pfc report-only). Training-free, so the 2026-08-10 stale-checkpoint repair did not move it (orchestrator_flow 2026-08-10)."
+     "reason": "ADR r3-0004 re-aggregation to the 5-dataset scored panel (pfc report-only). Training-free, so the 2026-08-10 stale-checkpoint repair did not move it."
     },
     "shipped_law_panel_geomean": {
      "cited_in_part4": 28.2174,
@@ -495,20 +1035,40 @@
       25.4295,
       25.5943
      ],
-     "reason": "same ADR r3-0004 re-aggregation; r2s1_direct-B3's ifc_poisson column was re-trained fresh on 2026-08-10 and reproduced its prior value exactly, so the repair left this card's comparand unchanged."
+     "reason": "same ADR r3-0004 re-aggregation; r2s1_direct-B3's ifc_poisson column was re-trained fresh on 2026-08-10 and reproduced its prior value exactly."
     },
     "L1_threshold": {
      "cited_in_clause": 0.3612,
-     "cited_derivation": "2 x the certified 3-seed panel spread 0.1806 of r2s1_direct-B3 (6-dataset, pre-repair)",
-     "current_equivalent": 0.287,
-     "current_derivation": "2 x (max - min) of launch_anchors cards.r2s1_direct-B3.seed_geomeans [25.5908, 25.4975, 25.4473] = 2 x 0.1435",
-     "seed0_reading": 0.5245846520226252,
-     "_status": "seed-0 paired delta clears BOTH the cited 0.3612 (1.45x) and the current-anchor equivalent 0.2870 (1.83x). No substitution made; the orchestrator/mechanism-analyzer adjudicates which threshold governs at the 3-seed confirm."
+     "cited_derivation": "2 x the certified 3-seed panel spread 0.1806 of r2s1_direct-B3 (6-dataset, pre-repair); the clause states 'noise_floor.json has no panel entry'",
+     "current_anchor_equivalent": 0.287,
+     "current_anchor_equivalent_derivation": "2 x (max - min) of launch_anchors cards.r2s1_direct-B3.seed_geomeans [25.5908, 25.4975, 25.4473] = 2 x 0.1435",
+     "certified_panel_floor_now_exists": {
+      "seed_mce": 0.5082844131597604,
+      "paired_null_95": 0.40667775361433317,
+      "null_iqm_diff_95": 0.3388562754398414,
+      "spread_maxmin": 0.5082844131597604,
+      "note": "the CERTIFIED noise_floor.json now carries a _panel_geomean entry, which did not exist when the clause was written. paired_null_95 (0.4067) is the definitionally matched comparand for a PAIRED delta; seed_mce (0.5083) is the conservative unpaired constant."
+     },
+     "measured_3seed_mean": 0.5545504446886689,
+     "ratios": {
+      "vs_cited_0.3612": 1.535300234464753,
+      "vs_current_anchor_equivalent_0.2870": 1.9322315145946651,
+      "vs_certified_panel_paired_null_95": 1.3636114583601457,
+      "vs_certified_panel_seed_mce": 1.0910239038047513
+     },
+     "_status": "clears every one of the four thresholds, most narrowly the conservative certified seed_mce (1.09x). The paired delta's own 3-seed interval [0.5246, 0.5747] lies entirely above all four."
     },
     "L2_threshold": {
      "cited_in_clause": 1.1603569120520159,
-     "current": 1.1603569120520159,
-     "reason": "noise_floor.json sharp__cahn_hilliard.min_claimable_effect; a sharp cell, untouched by the ifc_poisson repair - the cited value stands."
+     "cited_floor_version": "PROVISIONAL noise_floor (sharp__cahn_hilliard.min_claimable_effect), archived 2026-08-10 as noise_floor_provisional_pre_certify_2026-08-10.json",
+     "certified_replacement": 0.36124864423263325,
+     "certified_floor_version": "CERTIFIED noise_floor.json sharp__cahn_hilliard.tau_rel = min_claimable_effect = row_paired_95 (seed_mce 0.0912); certification LOWERED this cell's threshold by 0.7991",
+     "measured_3seed_mean": 1.307272503238801,
+     "ratios": {
+      "vs_cited_provisional_1.1604": 1.1266124152498687,
+      "vs_certified_tau_rel_0.3612": 3.6187609949809443
+     },
+     "_status": "clears the PRE-REGISTERED provisional threshold at 1.127x (seed 0 alone cleared it at only 1.073x; the 3-seed mean widened the margin) and clears the CERTIFIED threshold at 3.62x. The delta's 3-seed interval [1.2455, 1.3498] is entirely above both."
     },
     "L4_floors": {
      "cited_in_clause": {
@@ -527,75 +1087,188 @@
    }
   },
   "cratered_verdict": "proceed_to_seeds_1_2",
-  "cratered_reasoning": "(a) no crash: panel leg 66829977 COMPLETED (exit 0, empty .err); the guard leg failed once on an ALGO defect and its relaunch 66922977 COMPLETED. (b) panel geomean 25.0662 is NOT above CRATERED_SKILL_FACTOR (1.5) x the stream anchor 34.4198 = 51.6297 - it is 27.2% BELOW the anchor. (c) no falsification clause fired decisively at seed 0: L1 clears at 0.5246 > 0.3612 (cited) and > 0.2870 (current-anchor equivalent); L2 clears at 1.2455 > 1.1604 (margin only +0.0851, i.e. 1.073x); L4 clears on all three measurable sharp cells. L3 reads adversely (1 of 3 measurable high-cond_dim cells at >= 0.30) but the clause is explicitly adjudicated on the 3-seed mean and can record UNRESOLVED on spread, so it is not decisive at seed 0 - and its '3 of 4' arithmetic is itself contract-ambiguous now that pfc is report-only.",
-  "falsification_verdict": "pending_seeds",
-  "falsification_seed0_readings": {
+  "cratered_verdict_note": "This is the 3-seed invocation; the cratered rule is a seed-0 gate and its seed-0 verdict (proceed_to_seeds_1_2) stands unchanged. Re-checked at 3 seeds for completeness: NOT cratered - (a) no crash, both seed legs 144591/144592 COMPLETED with empty .err; (b) 3-seed panel geomean 24.9573 (worst seed 25.0662) is far below CRATERED_SKILL_FACTOR 1.5 x the stream anchor 34.4198 = 51.6297; (c) no evaluable falsification clause fired.",
+  "falsification_verdict": "confirmed",
+  "falsification_verdict_scope": "CONFIRMED ON THE EVALUABLE CLAUSES ONLY: L1, L2 and L4 all fail to fire at the 3-seed mean, and each effect that carries the verdict sits above the CERTIFIED noise floor. L3 - the CONDITION-DIMENSION half of hypothesis H-r3s1-B1 - is VOID for claim purposes per the orchestrator adjudication recorded in adr_r3_0004_addendum (it enumerates report-only pfc among its '>= 3 of 4' cells and is NOT re-scoped to '3 of 3' ex post). The measured L3 margins are therefore recorded below as DESCRIPTIVE evidence only, and they read ADVERSE to the condition-dimension mechanism. Net: the SHIPPING half of the hypothesis ('beats the shipped condition->level law on the honest panel') is confirmed; the MECHANISM half is unevaluable as written and the descriptive evidence does not support it.",
+  "falsification_3seed_readings": {
    "clause_L1": {
     "verbatim": "the seed-mean panel geomean of `test_hf` fails to beat the matched `ref_head_onestage` by more than **0.3612** skill units (2 x the certified 3-seed panel spread 0.1806 of `r2s1_direct-B3`; `noise_floor.json` has no panel entry) or the sign of that paired delta is not identical at all three seeds",
-    "seed0_paired_delta": 0.5245846520226252,
-    "threshold_cited": 0.3612,
-    "threshold_current_equivalent": 0.287,
-    "seed0_status": "clears (1.45x cited / 1.83x current). Sign-identity half is UNTESTABLE at one seed and is the binding test.",
-    "caveat": "the entire delta is one cell (sharp__cahn_hilliard); stage 2 is a bitwise no-op elsewhere, so the panel delta is exactly a 5th-root propagation of the ch ratio 11.414585/12.660054."
+    "half_a_magnitude": {
+     "measured_3seed_mean_paired_delta": 0.5545504446886689,
+     "ci95": [
+      0.5245846520226252,
+      0.5747280580936049
+     ],
+     "threshold": 0.3612,
+     "ratio": 1.535300234464753,
+     "fires": false
+    },
+    "half_b_sign_identity": {
+     "per_seed_paired_delta": [
+      0.5245846520226252,
+      0.5643386239497765,
+      0.5747280580936049
+     ],
+     "signs": [
+      "+",
+      "+",
+      "+"
+     ],
+     "sign_identical": true,
+     "fires": false,
+     "_note": "this was the BINDING half - untestable at seed 0. All three seeds put test_hf below the matched one-stage control, and the per-seed deltas are monotone in seed (0.5246 / 0.5643 / 0.5747), not a sign-flip regime."
+    },
+    "verdict": "DOES NOT FIRE on either half -> L1 clears",
+    "noise_floor_crosscheck": {
+     "floor_version": "CERTIFIED noise_floor.json::_panel_geomean (this entry did not exist when the clause was written)",
+     "paired_null_95": 0.40667775361433317,
+     "seed_mce": 0.5082844131597604,
+     "ratios": {
+      "vs_paired_null_95": 1.3636114583601457,
+      "vs_seed_mce": 1.0910239038047513
+     },
+     "resolvable": true,
+     "_note": "RESOLVABLE BUT NARROW against the conservative unpaired constant: 1.09x seed_mce. Against the definitionally matched paired null it is 1.36x. Both are cleared by the delta's entire 3-seed interval [0.5246, 0.5747], but this is not a large-margin panel effect."
+    },
+    "caveat": "the entire panel delta is ONE CELL. Stage 2 is a bitwise empty-gate no-op on allen_cahn, fisher_kpp, ifc_poisson and ifc_heat at all three seeds, so the panel delta is exactly the 5th-root propagation of the cahn_hilliard ratio."
    },
    "clause_L2": {
-    "verbatim": "on `sharp__cahn_hilliard` ... `test_hf` fails to beat `ref_head_onestage` by more than **1.1603569120520159** skill units (that cell's provisional `min_claimable_effect`)",
-    "seed0_delta": 1.2454687794676593,
-    "threshold": 1.1603569120520159,
-    "seed0_status": "clears, but by only +0.0851 (1.073x). Near-coin-flip, exactly as the starter's handoff disclosed.",
-    "reproduction": "the one-stage arm lands on 12.660054, matching the offline round-2 T3 value 12.6601, and test_hf on 11.414585 vs the pre-measured 11.4148."
+    "verbatim": "on `sharp__cahn_hilliard` - byte-identical data to round 2 (same copy-LF reference 0.041802962686225575, same `nn_condition` nRMSE 0.9690069811741324), where the effect was pre-measured at 12.6601 -> 11.4148 - `test_hf` fails to beat `ref_head_onestage` by more than **1.1603569120520159** skill units (that cell's provisional `min_claimable_effect`)",
+    "per_seed_delta": [
+     1.245468779467659,
+     1.3265439958348537,
+     1.3498047344138904
+    ],
+    "measured_3seed_mean": 1.307272503238801,
+    "ci95": [
+     1.245468779467659,
+     1.3498047344138904
+    ],
+    "threshold_pre_registered_provisional": 1.1603569120520159,
+    "ratio_vs_pre_registered": 1.1266124152498687,
+    "threshold_certified": 0.36124864423263325,
+    "ratio_vs_certified": 3.6187609949809443,
+    "verdict": "DOES NOT FIRE -> L2 clears. Every seed individually clears the pre-registered threshold (1.245/1.327/1.350 vs 1.1604) and the 3-seed lower CI bound 1.2455 is above it.",
+    "reproduction": "the one-stage arm lands on 12.660054/12.529449/12.505354 against the round-2 T3 value 12.6601, and test_hf on 11.414585/11.202905/11.155549 against the pre-measured 11.4148 - the round-2 pre-measurement reproduces at seed 0 to 4 decimals and the other two seeds improve on it."
    },
    "clause_L3": {
-    "verbatim": "fewer than 3 of the 4 high-cond_dim cells {pfc 18, allen_cahn 19, cahn_hilliard 19, fisher_kpp 50} reach a maximum per-direction margin [OOF R^2 from the SET coefficients - OOF R^2 from the condition] **>= 0.30** at the 3-seed mean, or either low-cond_dim cell {ifc_heat 3, ifc_poisson 5} reaches it",
-    "statistic": "margin_tool (pre-registered), per the family's own l3_statistic field",
-    "seed0_margins": {
-     "sharp__allen_cahn_2d": 0.009116684146649456,
-     "sharp__fisher_kpp_2d": -0.0012941096935688012,
-     "sharp__cahn_hilliard": 0.6754833666166551,
+    "verbatim": "fewer than 3 of the 4 high-cond_dim cells {pfc 18, allen_cahn 19, cahn_hilliard 19, fisher_kpp 50} reach a maximum per-direction margin [OOF R^2 from the SET coefficients - OOF R^2 from the condition] **>= 0.30** at the 3-seed mean, or either low-cond_dim cell {ifc_heat 3, ifc_poisson 5} reaches it (recorded **unresolved**, not fired, on any cell whose 3-seed spread of that margin exceeds 0.10)",
+    "adjudication": "VOID for claim purposes - orchestrator adjudication 2026-08-10 recorded in card.adr_r3_0004_addendum: the clause enumerates report-only pfc, which produced no scored artifact, so it cannot be evaluated as written and is NOT re-scoped to a '3 of 3' variant. Recorded here as descriptive evidence for the mechanism stage.",
+    "statistic": "margin_tool (pre-registered), per the family's own l3_statistic field; margin_matched_rows is reported beside it in each artifact",
+    "margins_3seed_mean": {
+     "sharp__allen_cahn_2d": 0.01475791450084681,
+     "sharp__fisher_kpp_2d": 0.011654249415618656,
+     "sharp__cahn_hilliard": 0.6945182303991531,
      "ifc_poisson": 0.050147151653790134,
-     "ifc_heat": -0.026829128637992916,
-     "sharp__phase_field_crystal_2d": "not produced (ADR r3-0004 report-only)"
+     "ifc_heat": -0.026829128637992916
     },
-    "seed0_status": "reads ADVERSE: 1 of 3 measurable high-cond_dim cells reaches 0.30; no low-cond_dim cell reaches it. Not fired - the clause is adjudicated on the 3-seed mean and records UNRESOLVED where the 3-seed margin spread exceeds 0.10.",
-    "contract_flag": "the clause enumerates 4 high-cond_dim cells but pfc is void per ADR r3-0004 ('any falsification clause or threshold citing pfc is void for claim purposes; clauses over the remaining datasets stand as written'), so '>= 3 of 4' cannot be evaluated as written. Adjudication required BEFORE the 3-seed verdict - flagged, not resolved here."
+    "margins_per_seed": {
+     "sharp__allen_cahn_2d": [
+      0.009116684146649456,
+      0.013903011402506493,
+      0.02125404795338448
+     ],
+     "sharp__fisher_kpp_2d": [
+      -0.0012941096935688012,
+      0.0018619609255521308,
+      0.03439489701487264
+     ],
+     "sharp__cahn_hilliard": [
+      0.6754833666166551,
+      0.714041891185034,
+      0.6940294333957698
+     ],
+     "ifc_poisson": [
+      0.050147151653790134,
+      0.050147151653790134,
+      0.050147151653790134
+     ],
+     "ifc_heat": [
+      -0.026829128637992916,
+      -0.026829128637992916,
+      -0.026829128637992916
+     ]
+    },
+    "margins_spread_maxmin": {
+     "sharp__allen_cahn_2d": 0.012137363806735024,
+     "sharp__fisher_kpp_2d": 0.03568900670844144,
+     "sharp__cahn_hilliard": 0.03855852456837894,
+     "ifc_poisson": 0.0,
+     "ifc_heat": 0.0
+    },
+    "unresolved_on_spread": {
+     "sharp__allen_cahn_2d": false,
+     "sharp__fisher_kpp_2d": false,
+     "sharp__cahn_hilliard": false,
+     "ifc_poisson": false,
+     "ifc_heat": false
+    },
+    "descriptive_reading": "1 of the 3 MEASURABLE high-cond_dim cells reaches 0.30 (cahn_hilliard 0.6945; allen_cahn 0.0148, fisher_kpp 0.0117), and neither low-cond_dim cell reaches it (ifc_poisson 0.0501, ifc_heat -0.0268). No cell is 'unresolved' - every 3-seed spread is <= 0.0386, far under the 0.10 bar. Had the clause been evaluable, this pattern would have FIRED it. The condition-dimension reading of M15 is NOT supported: fisher_kpp carries the largest cond_dim (50) and the smallest margin.",
+    "pfc": "not produced at any seed (ADR r3-0004 report-only)."
    },
    "clause_L4": {
     "verbatim": "`test_hf` is worse than the best frozen floor on any of the four sharp cells (pfc > 48.0773, allen_cahn > 475.8568, fisher_kpp > 390.7015, cahn_hilliard > 23.1803)",
-    "seed0": {
-     "sharp__allen_cahn_2d": [
-      280.0716592436192,
-      475.85682154308705,
-      "clears"
-     ],
-     "sharp__fisher_kpp_2d": [
-      376.5182636277145,
-      390.7014844797183,
-      "clears by 3.6% only"
-     ],
-     "sharp__cahn_hilliard": [
-      11.414584784669875,
-      23.180342227117514,
-      "clears"
-     ],
-     "sharp__phase_field_crystal_2d": "void (ADR r3-0004)"
+    "measured_3seed_mean_vs_floor": {
+     "sharp__allen_cahn_2d": {
+      "test_hf_mean": 279.116540826327,
+      "worst_seed": 280.0716592436192,
+      "floor": 475.85682154308705,
+      "clears": true,
+      "headroom_pct": 41.344427947629185
+     },
+     "sharp__fisher_kpp_2d": {
+      "test_hf_mean": 374.8380508929541,
+      "worst_seed": 376.5182636277145,
+      "floor": 390.7014844797183,
+      "clears": true,
+      "headroom_pct": 4.0602440013477175
+     },
+     "sharp__cahn_hilliard": {
+      "test_hf_mean": 11.257679547314401,
+      "worst_seed": 11.414584784669875,
+      "floor": 23.180342227117514,
+      "clears": true,
+      "headroom_pct": 51.43436866887751
+     }
     },
-    "seed0_status": "not fired"
+    "pfc": "void (ADR r3-0004)",
+    "verdict": "DOES NOT FIRE -> L4 clears at the 3-seed mean and at every individual seed. Thinnest margin is fisher_kpp at 4.1% below its train_mean floor (worst seed 376.5183 vs 390.7015)."
    },
    "criterion_1_reading": {
-    "rule": "round-3 success criterion 1: the scored arm vs ref_dc_only (the condition->level law), per cell",
-    "seed0": {
-     "sharp__allen_cahn_2d": "beats (280.07 vs 327.57)",
-     "sharp__fisher_kpp_2d": "LOSES (376.52 vs 282.76)",
-     "sharp__cahn_hilliard": "beats (11.41 vs 23.87)",
-     "ifc_poisson": "beats (8.25 vs 11.04)",
-     "ifc_heat": "beats (0.996 vs 6.194)"
+    "rule": "round-3 success criterion 1: the scored arm vs ref_dc_only (the condition->level law), per cell, at the 3-seed mean",
+    "per_cell": {
+     "sharp__allen_cahn_2d": {
+      "test_hf_mean": 279.116540826327,
+      "dc_only": 327.57109560375466,
+      "beats": true
+     },
+     "sharp__fisher_kpp_2d": {
+      "test_hf_mean": 374.8380508929541,
+      "dc_only": 282.7601830501418,
+      "beats": false
+     },
+     "sharp__cahn_hilliard": {
+      "test_hf_mean": 11.257679547314401,
+      "dc_only": 23.867738508771748,
+      "beats": true
+     },
+     "ifc_poisson": {
+      "test_hf_mean": 8.250655890222793,
+      "dc_only": 11.039316624066041,
+      "beats": true
+     },
+     "ifc_heat": {
+      "test_hf_mean": 0.9964207759737705,
+      "dc_only": 6.194487257364518,
+      "beats": true
+     }
     },
-    "panel": "test_hf 25.0662 vs ref_dc_only 43.2411 - beats on the panel geomean, loses on fisher_kpp"
+    "panel": "test_hf 24.9573 vs ref_dc_only 43.2411 - beats on the panel geomean; LOSES on fisher_kpp (374.84 vs 282.76) at every seed."
    },
    "mandatory_floor_arm_readings": {
-    "vs_ref_zero_train_mean_nn_condition_on_sharp_cells": "test_hf beats all three on all three measurable sharp cells (as predicted in part 4)",
-    "vs_ref_affine_on_hf_train": "test_hf LOSES on 4 of 5 cells (allen_cahn 280.07 vs 275.69, fisher_kpp 376.52 vs 266.48, ifc_poisson 8.25 vs 1.59, ifc_heat 0.996 vs 0.958) and wins only on cahn_hilliard (11.41 vs 12.87). Panel: 25.0662 vs 17.0581. Part 4 predicted only the two ifc losses; the two sharp losses are NOT predicted and are the strongest negative reading of seed 0. The affine arm is a FITTED closed-form floor (not training-free) and is not in best_floor.",
-    "vs_ref_twostage_true_gate": "the F25 negative control is essentially tied with the scored arm on cahn_hilliard (11.4341 vs 11.4146 - the propagation-aware gate is marginally BETTER) and bitwise identical elsewhere; panel 25.0748 vs 25.0662."
+    "vs_ref_zero_train_mean_nn_condition_on_sharp_cells": "test_hf beats all three on all three measurable sharp cells at every seed (as predicted in part 4).",
+    "vs_ref_affine_on_hf_train": "test_hf LOSES on 4 of 5 cells at the 3-seed mean (allen_cahn 279.12 vs 275.69, fisher_kpp 374.84 vs 266.48, ifc_poisson 8.25 vs 1.59, ifc_heat 0.9964 vs 0.9584) and wins only on cahn_hilliard (11.258 vs 12.871). Panel 24.9573 vs 17.0581. Part 4 predicted only the two ifc losses; the two SHARP losses are unpredicted and are the strongest negative reading. The affine arm is a FITTED closed-form floor (not training-free) and is not in best_floor.",
+    "vs_ref_twostage_true_gate": "the F25 negative control does NOT beat the scored arm anywhere at 3 seeds: cahn_hilliard 11.4341/11.2430/12.1946 vs test_hf 11.4146/11.2029/11.1555, and the panel 25.0748/24.9510/25.3218 vs 25.0662/24.9331/24.8726 - the propagation-aware gate wins on all three seeds and its advantage GROWS with seed. Round-2's F25 'true-gate is better' reading does not reproduce, and the true-gate control is the noisier arm (panel spread 0.371 vs the scored arm's 0.194)."
    }
   },
   "guard_flags": [
@@ -603,66 +1276,467 @@
     "dataset": "sharp__sod_1d",
     "nRMSE": 0.1060749721818537,
     "guard_reference_nrmse": 0.03309017650048946,
-    "ratio_vs_reference": 3.2056,
+    "ratio_vs_reference": 3.205633314778018,
     "threshold": "> 2x",
     "flag": true,
-    "note": "FLAGGED per section 2d: 3.21x the copylf_baselines.json guard reference (skill 3.2056). Advisory only - no auto-reject. Contextual: this is a condition-only, LF-blind family run on a 1-D shock cell, where copy-LF is a strong reference; the guard leg is the leakage/robustness tripwire (G-C), not a scored claim. Recorded so the mechanism-analyzer can weigh it."
+    "note": "FLAGGED per section 2d: 3.21x the copylf_baselines.json guard reference. Advisory only - no auto-reject. Contextual: this is a condition-only, LF-blind family run on a 1-D shock cell where copy-LF is a very strong reference; the guard leg is the leakage/robustness tripwire (G-C), not a scored claim. Unchanged from the seed-0 invocation."
    },
    {
     "dataset": "fluid",
     "nRMSE": 0.034257808711001425,
     "guard_reference_nrmse": 0.21805958171115042,
-    "ratio_vs_reference": 0.1571,
+    "ratio_vs_reference": 0.15710297361012346,
     "flag": false
    },
    {
     "dataset": "heat_local",
     "nRMSE": 0.00016525410470694669,
     "guard_reference_nrmse": 0.00240152155999517,
-    "ratio_vs_reference": 0.0688,
+    "ratio_vs_reference": 0.06881225114101372,
     "flag": false
    }
   ],
-  "guard_note": "The guard set was already run at the card's contract tier (epochs 0 - this family asserts epochs==0 and instantiates no gradient-trained arm) by job 66922977, all three cells cached=false. Section 2d's panel-win trigger is not yet reachable (seed-0 only), so this is a recorded reading, not the section-2d re-run.",
+  "guard_note": "Section 2d applies (the card DOES claim a panel win beyond the CI: the whole 3-seed interval [24.8726, 25.0662] sits below the anchor 34.4198). The guard set was NOT re-run at this invocation and did not need to be: result_guard_s0.json carries code_hash 3e7f87a3, byte-identical to the code that produced the seed-1/2 panel legs (the family source is untouched since 2026-08-08 09:52), all three guard cells were computed fresh (cached=false), and the family is deterministic closed-form at epochs=0, so a re-run reproduces it exactly while risking a clobber of a landed artifact. Guard is seed-0 only by card design (recipe/output_paths define exactly one guard artifact).",
   "anomalies": [
-   "SLURM leg 66829977 was 100% CACHE-SERVED: 7 s wall clock, all five scored cells `cached: true`. The cache entries under the card's redirected cache dir were written 2026-08-07 17:29-17:37 PDT by the builder's own post-fix re-smoke through the shipped 01_train_eval.sh (same code_hash 88d6bfcd, same 58 env knobs), i.e. the card's own artifacts, not foreign ones. The scored numbers therefore date from the builder's run; the SLURM leg contributed zero compute.",
-   "Guard leg 66829978 FAILED after 12 s (ALGO): basis.py:164 'direction bank is not orthonormal: max|DD'-I| = 8.351e-01' on heat_local. Root cause was a zero-margin POD rank cut under the method-of-snapshots (debug_notes[0]); fixed in basis.py by rank-aware truncation and relaunched as 66922977 (COMPLETED, 35 s). Only heat_local truncates (bank 34->19, window 32->18); bitwise no-op on all five scored cells.",
-   "code_hash differs between result_panel5_s0.json (88d6bfcd, pre-fix) and result_guard_s0.json (3e7f87a3, post-fix). nrmse_def_hash and copylf_def_hash are identical everywhere. Panel seeds 1-2 will RECOMPUTE rather than cache-hit under the new hash; per the debugger's verified full recompute the numbers are unchanged, so a hash change must not be read as a result change.",
-   "MECHANISM-CRITICAL: stage 2 is a BITWISE no-op on 4 of the 5 scored cells (G-E max|delta vs onestage| = 0.0 on allen_cahn, fisher_kpp, ifc_poisson, ifc_heat; empty gate). The entire panel effect is sharp__cahn_hilliard, where the gate admits 9 directions at max OOF R^2 0.670.",
-   "test_hf loses to ref_dc_only on sharp__fisher_kpp_2d (376.52 vs 282.76) - a per-cell failure of round-3 success criterion 1.",
+   "MECHANISM-CRITICAL, now confirmed at 3 seeds: stage 2 is a BITWISE empty-gate no-op on 4 of the 5 scored cells at EVERY seed (G-E max|delta vs onestage| = 0.0; n_gate = 0 on allen_cahn, fisher_kpp, ifc_poisson, ifc_heat, seeds 0/1/2). The entire panel effect is sharp__cahn_hilliard, where the gate admits 9/10/9 directions at max OOF R^2 0.6696/0.6847/0.6821.",
+   "Both ifc cells are EXACTLY seed-invariant (zero 3-seed spread in nRMSE, skill and L3 margin) - a consequence of the N_train=5 LOO protocol with an empty stage-2 gate, not a bug. Their bootstrap CIs are degenerate points and they contribute no seed variance to the panel.",
+   "test_hf loses to ref_dc_only on sharp__fisher_kpp_2d at every seed (374.84 vs 282.76 at the mean) - a per-cell failure of round-3 success criterion 1.",
    "test_hf loses to ref_affine_on_hf_train on 4 of 5 cells including the two sharp cells allen_cahn and fisher_kpp, which part 4 did not predict (it predicted only the two ifc losses).",
-   "The F25 negative control ref_twostage_true_gate does NOT beat the scored arm on cahn_hilliard (11.4341 vs 11.4146) - the round-2 F25 'true-gate is better' reading does not reproduce under the propagation-aware gate.",
-   "No NaNs, no non-finite values, no preemption, no resume events: diagnostics.checkpoint.resumed_units is [] on all cells; both .err files for the surviving legs are empty. tools/stale_checkpoint_audit.py --fail-on-stale reports STALE 0/8 over this card's training tree.",
-   "Affine-floor seam status is `ok_dtype_limited` on both ifc cells (float32 guarded loader vs the float64 frozen floor, ~3.6e-8 relative) - a documented metrology property adjudicated at build time, not a failure. On the sharp cells the seam status is `no_frozen_entry` (arm reported, not seam-checked).",
-   "sharp__phase_field_crystal_2d produced NO training/eval artifact for seed 0 (ADR r3-0004 report-only; recipe.datasets is the explicit 5-dataset panel). Only its G-D target-scaler pre-flight row exists. Clause L3's '4 high-cond_dim cells' is therefore only 3-measurable.",
-   "The 5 fold-resamples return an identical paired delta on every cell (spread 0.0, sign identical); on the two ifc cells the resample diagnostic is skipped under the LOO protocol (N_train = 5). This is selection-stability, NOT seed spread - the 3-seed spread is still unmeasured.",
-   "G-A reproduction seam green on all five cells (|rel| <= 0.76%, worst on cahn_hilliard); G-B floor seam max|delta| <= 2.65e-10; G-C under_stripped_view = 1 and lf_used_at_any_stage = 0 on every cell; G-D OK on both audited cells."
+   "The F25 negative control ref_twostage_true_gate is beaten by the scored arm on all three seeds on cahn_hilliard and on the panel, and its seed spread (panel 0.371) is nearly 2x the scored arm's (0.194) - the round-2 F25 reading reverses under the propagation-aware gate.",
+   "L3 evidence contradicts the condition-dimension mechanism it was written to test: fisher_kpp has the LARGEST cond_dim (50) and the SMALLEST 3-seed margin (0.0117), while cahn_hilliard (cond_dim 19) is the only cell above 0.30 (0.6945). Both allen_cahn and cahn_hilliard sit at cond_dim 19 with margins 0.0148 vs 0.6945 - a 47x split at IDENTICAL cond_dim, which is the sharpest single refutation of the cond_dim reading in the artifact set.",
+   "Seed-dependence is monotone and small: the panel geomean improves with seed (25.0662 -> 24.9331 -> 24.8726, spread 0.1937) and so does the cahn_hilliard delta (1.2455 -> 1.3265 -> 1.3498). No seed is anomalous; nothing crossed a threshold on seed variance alone.",
+   "No NaNs, no non-finite arm values, no preemption, no resume events across all 15 scored cells: diagnostics.checkpoint.resumed_units is [] everywhere and both seed-1/2 .err files are empty. Every build gate is green at every seed (G-A ok x15, G-B floor seam ok x15, G-C under_stripped_view=1 and lf_used_at_any_stage=0 x15, G-D ok on the audited cell, G-E ok x15).",
+   "Affine-floor seam status is `ok_dtype_limited` on both ifc cells at all three seeds (float32 guarded loader vs the float64 frozen floor, ~3.6e-8 relative) and `no_frozen_entry` on the sharp cells (arm reported, not seam-checked) - documented metrology, adjudicated at build time, not a failure.",
+   "The 5 fold-resamples return an identical paired delta on every sharp cell at every seed (spread 0.0, sign identical); on the two ifc cells the resample diagnostic is skipped under the LOO protocol (N_train=5). Selection is stable; the residual variation is genuine seed variation.",
+   "BENIGN CONCURRENCY: seeds 1 and 2 ran simultaneously (both jobs started 06:12:30, both wrote the SHARED, seed-independent artifact eval/target_scale_preflight.json at 06:12:42). Last writer wins; the file's content is a seed-independent train-split statistic and both jobs' console copies are byte-identical in the .out logs, so no number is affected. Worth fixing in the harness (seed the filename) rather than re-running.",
+   "sharp__phase_field_crystal_2d produced NO training/eval artifact at any seed (ADR r3-0004 report-only) - only its G-D pre-flight row, re-emitted by both new jobs. Clause L3's '4 high-cond_dim cells' remains only 3-measurable, which is why the orchestrator voided it.",
+   "Wall-clock note (for the timing ledger): the builder-era 9.34 min/seed figure was contended-node training sidecars, NOT this family's cost. On an idle H200 the closed-form family costs 55 s/seed wall (in-job compute 32.8 s / 33.8 s summed over 5 cells). Seed 0's SLURM leg is not comparable (7 s, 100% cache-served)."
   ],
   "wall_clock_per_seed_min": [
-   0.12
+   0.12,
+   0.92,
+   0.92
   ],
-  "wall_clock_notes": {
-   "slurm_elapsed_min_seed0_panel": 0.12,
-   "slurm_elapsed_min_seed0_guard": 0.58,
-   "slurm_elapsed_min_failed_guard_66829978": 0.2,
-   "_caveat": "the seed-0 panel elapsed is NOT a compute measurement - the leg was fully cache-served.",
-   "underlying_compute_min_per_seed_panel": 9.34,
-   "underlying_compute_per_cell_seconds": {
-    "sharp__allen_cahn_2d": 155.2,
-    "sharp__fisher_kpp_2d": 245.2,
-    "sharp__cahn_hilliard": 156.6,
-    "ifc_poisson": 1.7,
-    "ifc_heat": 2.0
+  "wall_clock_notes": "seed 0 = SLURM 66829977, 7 s, 100% CACHE-SERVED from the builder's own 2026-08-07 re-smoke (zero compute contributed by the leg; the underlying builder-era per-cell compute was 560.7 s summed). seeds 1-2 = SLURM 144591/144592, both 06:12:30 -> 06:13:25 = 55 s = 0.92 min, FRESH compute (all cells cached=false; in-job total_seconds 32.8 s and 33.8 s summed over the 5 cells). Both seed jobs ran concurrently on separate H200s.",
+  "next_step": "experiment-mechanism-analyzer: the shipping claim is confirmed on L1/L2/L4 but it is a single-cell effect whose mechanism story (condition dimension) is contradicted by the descriptive L3 margins. Probe sharp__cahn_hilliard's gated directions against allen_cahn's empty gate at IDENTICAL cond_dim 19.",
+  "_seed0_invocation_record": {
+   "_invocation": "seed-0 only (experiment-initial-analyzer, 2026-08-10). Seeds 1-2 not submitted; scripts/submit_seeds_2_3.sh unexecuted. Every number below is parsed from a score_panel.py result JSON or the family's own per-cell artifact; nothing was recomputed by hand. The only aggregation applied by the analyzer is round2/eval/nrmse.py::panel_geomean over per-cell skills read from artifacts.",
+   "_provenance": {
+    "scored_panel_result_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round3/r3s1_factorised/B1/eval/result_panel5_s0.json",
+    "guard_result_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round3/r3s1_factorised/B1/eval/result_guard_s0.json",
+    "per_cell_artifacts": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round3/r3s1_factorised/B1/training/r3s1_twostage_crosscoef/{dataset}_e0_s0.json",
+    "target_scale_preflight": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round3/r3s1_factorised/B1/eval/target_scale_preflight.json",
+    "anchors": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/state/anchors/launch_anchors.json (rebuilt 2026-08-10 05:55 after STOP-THE-LINE #2)",
+    "noise_floor": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/state/anchors_repaired/noise_floor.json",
+    "guard_reference": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round2/eval/copylf_baselines.json",
+    "slurm_logs": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round3/r3s1_factorised/B1/slurm/",
+    "_arm_skill_convention": "test_hf skills are read verbatim from result_panel5_s0.json. ref_head_onestage skills are read verbatim from each cell's build_gates['G-A_reproduction_seam'].in_job_skill. The remaining reference arms (dc_only, affine_on_hf_train, twostage_true_gate, zero, train_mean, nn_condition) are published in the artifacts as nRMSE only; their skill columns here are nrmse.py::skill(arm_nRMSE, copylf_baselines.json[dataset].test_nrmse) - the round's own skill definition applied to artifact-read numbers, never a re-derived nRMSE."
    },
-   "_for_the_timing_ledger": "budget seeds 1-2 at ~10-15 min of real panel compute each (they will recompute, not cache-hit, because the ALGO-1 fix changed code_hash); the shipped --time is 01:30:00 for the panel leg and 01:00:00 for guards, both amply above measurement. The builder's login-node timings (fk 432 s, ch 177 s, ac 79 s) were FS-contended and run 1.4-1.8x slower than the compute-node numbers above.",
-   "jobs": {
-    "66829977": "COMPLETED 00:00:07 hpc-sm-02-03",
-    "66829978": "FAILED 00:00:12 exit 1:0",
-    "66922977": "COMPLETED 00:00:35 hpc-sm-02-03"
+   "_seam_assertions": {
+    "nrmse_def_hash": "d3d0ade9191c13bacc40702f3eb26ad290e01641cacee22a1d2233b74c035850",
+    "nrmse_def_hash_consistent_across_parsed_jsons": true,
+    "nrmse_def_hash_sources": [
+     "result_panel5_s0.json",
+     "result_guard_s0.json",
+     "all 5 per-cell training JSONs",
+     "copylf_baselines.json:_nrmse_def_hash"
+    ],
+    "copylf_def_hash": "9753ff24e856f595748492dec6cb6c215d748f97e8ec4a679b651f8846da907a",
+    "copylf_def_hash_consistent": true,
+    "code_hash_panel5": "88d6bfcd03b59400673dcb283aa703d60e4557c7dadff4db275c21fdc2ad952a",
+    "code_hash_guard": "3e7f87a3745b9ab61175e8ea4c2a0bde7cc56cf95a479996de60c87a44cd6fa5",
+    "code_hash_note": "panel and guard JSONs carry DIFFERENT code_hashes: the guard leg ran after the ALGO-1 basis.py rank-cut fix (debug_notes[0]). Metric-definition seams are identical. The debugger's post-fix full 5-cell recompute at the guard hash reproduced the panel bit-identically (geomean 25.06624704883453, all cells cached=false) - worktrees/r3s1_factorised/B1/scratchpad/repro_panel_full_1_result.json.",
+    "stale_checkpoint_audit": "tools/stale_checkpoint_audit.py --root <outputs>/training --fail-on-stale -> STALE 0/8, exit 0 (run 2026-08-10)"
    },
-   "_slurm_id_space": "these are pre-reset 66xxxxxx IDs; they still resolve in sacct."
-  },
-  "next_step": "Submit seeds 1 and 2 via scripts/submit_seeds_2_3.sh. The binding tests are (i) L1's sign-identity of the paired panel delta across all three seeds and (ii) whether cahn_hilliard's +1.2455 holds above 1.1604 at the 3-seed mean, where it currently has only 7% of headroom."
+   "seeds_available": [
+    0
+   ],
+   "per_dataset": {
+    "sharp__allen_cahn_2d": {
+     "per_seed_nrmse": [
+      0.5767677044993638
+     ],
+     "per_seed_skill": [
+      280.0716592436192
+     ],
+     "mean_skill": 280.0716592436192,
+     "ci95": null,
+     "reference_type": "copylf",
+     "cached": true,
+     "cond_dim": 19,
+     "ref_head_onestage_skill": 280.0716592436192,
+     "paired_delta_skill_vs_onestage": 0.0,
+     "stage2_gate_size": 0,
+     "stage2_is_noop": true,
+     "l3_max_margin_tool": 0.009116684146649456,
+     "l3_reading_this_seed": "below_0.30",
+     "best_frozen_floor_skill": 475.85682154308705,
+     "beats_best_frozen_floor": true,
+     "ref_dc_only_skill": 327.5710962117553,
+     "beats_dc_only": true,
+     "ref_affine_on_hf_train_skill": 275.688771,
+     "beats_affine_on_hf_train": false,
+     "noise_floor_min_claimable_effect": 16.422284630500034,
+     "paired_delta_above_noise_floor": false
+    },
+    "sharp__fisher_kpp_2d": {
+     "per_seed_nrmse": [
+      0.06221808645908396
+     ],
+     "per_seed_skill": [
+      376.5182636277145
+     ],
+     "mean_skill": 376.5182636277145,
+     "ci95": null,
+     "reference_type": "copylf",
+     "cached": true,
+     "cond_dim": 50,
+     "ref_head_onestage_skill": 376.5182636277145,
+     "paired_delta_skill_vs_onestage": 0.0,
+     "stage2_gate_size": 0,
+     "stage2_is_noop": true,
+     "l3_max_margin_tool": -0.0012941096935688012,
+     "l3_reading_this_seed": "below_0.30",
+     "best_frozen_floor_skill": 390.7014844797183,
+     "beats_best_frozen_floor": true,
+     "ref_dc_only_skill": 282.7601827,
+     "beats_dc_only": false,
+     "ref_affine_on_hf_train_skill": 266.4814208,
+     "beats_affine_on_hf_train": false,
+     "noise_floor_min_claimable_effect": 158.33215324637433,
+     "paired_delta_above_noise_floor": false
+    },
+    "sharp__cahn_hilliard": {
+     "per_seed_nrmse": [
+      0.477163461832313
+     ],
+     "per_seed_skill": [
+      11.414584784669875
+     ],
+     "mean_skill": 11.414584784669875,
+     "ci95": null,
+     "reference_type": "copylf",
+     "cached": true,
+     "cond_dim": 19,
+     "ref_head_onestage_skill": 12.660053564137534,
+     "paired_delta_skill_vs_onestage": 1.2454687794676593,
+     "stage2_gate_size": 9,
+     "stage2_is_noop": false,
+     "stage2_max_oof_r2": 0.669611091812371,
+     "l3_max_margin_tool": 0.6754833666166551,
+     "l3_reading_this_seed": "reaches_0.30",
+     "best_frozen_floor_skill": 23.180342227117514,
+     "beats_best_frozen_floor": true,
+     "ref_dc_only_skill": 23.8677392,
+     "beats_dc_only": true,
+     "ref_affine_on_hf_train_skill": 12.8710826,
+     "beats_affine_on_hf_train": true,
+     "ref_twostage_true_gate_skill": 11.4340804,
+     "noise_floor_min_claimable_effect": 1.1603569120520159,
+     "paired_delta_above_noise_floor": true
+    },
+    "ifc_poisson": {
+     "per_seed_nrmse": [
+      0.2970236120480205
+     ],
+     "per_seed_skill": [
+      8.250655890222793
+     ],
+     "mean_skill": 8.250655890222793,
+     "ci95": null,
+     "reference_type": "paper_bar",
+     "cached": true,
+     "cond_dim": 5,
+     "ref_head_onestage_skill": 8.250655890222793,
+     "paired_delta_skill_vs_onestage": 0.0,
+     "stage2_gate_size": 0,
+     "stage2_is_noop": true,
+     "l3_max_margin_tool": 0.050147151653790134,
+     "l3_reading_this_seed": "below_0.30",
+     "best_frozen_floor_skill": 8.040896838361228,
+     "beats_best_frozen_floor": false,
+     "ref_dc_only_skill": 11.0393168,
+     "beats_dc_only": true,
+     "ref_affine_on_hf_train_skill": 1.5937636895033758,
+     "beats_affine_on_hf_train": false,
+     "noise_floor_min_claimable_effect": 0.23990756041925798,
+     "paired_delta_above_noise_floor": false,
+     "_note": "carries no falsification weight per the card's L4 clause (N_hf = 5, anecdote-grade, program.md section 12.1). Data is the repaired nested ladder; the launch-anchor ifc_poisson columns were rebuilt 2026-08-10 and r2s1_direct-B3's value was UNCHANGED by the repair (orchestrator_flow 2026-08-10)."
+    },
+    "ifc_heat": {
+     "per_seed_nrmse": [
+      0.073735137422059
+     ],
+     "per_seed_skill": [
+      0.9964207759737704
+     ],
+     "mean_skill": 0.9964207759737704,
+     "ci95": null,
+     "reference_type": "paper_bar",
+     "cached": true,
+     "cond_dim": 3,
+     "ref_head_onestage_skill": 0.9964207759737704,
+     "paired_delta_skill_vs_onestage": 0.0,
+     "stage2_gate_size": 0,
+     "stage2_is_noop": true,
+     "l3_max_margin_tool": -0.026829128637992916,
+     "l3_reading_this_seed": "below_0.30",
+     "best_frozen_floor_skill": 1.3941023084286595,
+     "beats_best_frozen_floor": true,
+     "ref_dc_only_skill": 6.1944873,
+     "beats_dc_only": true,
+     "ref_affine_on_hf_train_skill": 0.9583559375093983,
+     "beats_affine_on_hf_train": false,
+     "noise_floor_min_claimable_effect": null,
+     "paired_delta_above_noise_floor": null,
+     "_note": "no noise_floor.json entry; carries no falsification weight (N_hf = 5)."
+    },
+    "sharp__phase_field_crystal_2d": {
+     "per_seed_nrmse": null,
+     "per_seed_skill": null,
+     "mean_skill": null,
+     "ci95": null,
+     "_note": "REPORT-ONLY and NOT PRODUCED. ADR r3-0004 made the pfc scored cell task-void and the orchestrator replaced recipe.datasets with the explicit 5-dataset panel; no pfc training/eval artifact exists for seed 0 (only its G-D target-scaler pre-flight row, which passed: norm max/median 1.292, top-1 energy share 0.004, effective N 395.6/400). Consequence for clause L3, which enumerates 4 high-cond_dim cells including pfc: only 3 are measurable."
+    }
+   },
+   "panel_geomean_skill": {
+    "per_seed": [
+     25.06624704883453
+    ],
+    "mean": 25.06624704883453,
+    "ci95": null,
+    "_source": "result_panel5_s0.json:panel_geomean_skill (verified to reproduce exactly from that JSON's own per-cell skills via nrmse.py::panel_geomean)",
+    "_scored_panel": [
+     "sharp__allen_cahn_2d",
+     "sharp__fisher_kpp_2d",
+     "sharp__cahn_hilliard",
+     "ifc_poisson",
+     "ifc_heat"
+    ],
+    "matched_ref_head_onestage_panel_geomean_per_seed": [
+     25.590831700857155
+    ],
+    "paired_panel_delta_onestage_minus_test_hf_per_seed": [
+     0.5245846520226252
+    ],
+    "_paired_delta_note": "the in-job matched one-stage control; its per-cell skills are the G-A reproduction-seam in_job_skill values, aggregated with nrmse.py::panel_geomean. The whole delta comes from sharp__cahn_hilliard - stage 2 is a bitwise no-op (G-E max|delta| = 0.0) on the other four cells.",
+    "other_arms_panel_geomean_seed0": {
+     "ref_twostage_true_gate": 25.074803412953234,
+     "ref_dc_only": 43.24107979794395,
+     "ref_affine_on_hf_train": 17.058089001483193
+    }
+   },
+   "vs_anchor": {
+    "anchor_id": "state/anchors/launch_anchors.json:best_floor (5-dataset, rebuilt 2026-08-10)",
+    "anchor_value": 34.4198,
+    "value": 25.06624704883453,
+    "delta": -9.35355295116547,
+    "delta_pct": -27.18,
+    "beyond_ci": null,
+    "beyond_noise_floor": null,
+    "_beyond_note": "seed-0 only: no 3-seed CI exists yet, and noise_floor.json carries no panel entry. Both flags are decided at the 3-seed invocation.",
+    "named_comparand": {
+     "id": "state/anchors/launch_anchors.json:cards.r2s1_direct-B3 (the shipped condition->level closed-form law, CERTIFIED, 5-dataset)",
+     "per_seed": [
+      25.5908,
+      25.4975,
+      25.4473
+     ],
+     "mean": 25.5119,
+     "ci95": [
+      25.4295,
+      25.5943
+     ],
+     "seed0_delta_vs_test_hf_seed0": 0.52455295116547,
+     "_note": "the seed-0 in-job matched control (25.590832) reproduces this anchor's seed-0 geomean (25.5908) to 8e-5 - a clean reproduction seam."
+    },
+    "cited_vs_current_anchor_values": {
+     "_why": "Locked part 4 / expected_falsification were written pre-ADR-r3-0004 (6-dataset panel) and pre-2026-08-10 (contaminated ifc_poisson anchor columns). Per the analyzer's instructions, both the cited and current values are recorded; adjudication stays in the contract and no threshold was silently substituted.",
+     "best_floor_panel_geomean": {
+      "cited_in_part4": 36.3912,
+      "current": 34.4198,
+      "reason": "ADR r3-0004 re-aggregation to the 5-dataset scored panel (pfc report-only). Training-free, so the 2026-08-10 stale-checkpoint repair did not move it (orchestrator_flow 2026-08-10)."
+     },
+     "shipped_law_panel_geomean": {
+      "cited_in_part4": 28.2174,
+      "cited_ci95": [
+       28.1096,
+       28.3253
+      ],
+      "current": 25.5119,
+      "current_ci95": [
+       25.4295,
+       25.5943
+      ],
+      "reason": "same ADR r3-0004 re-aggregation; r2s1_direct-B3's ifc_poisson column was re-trained fresh on 2026-08-10 and reproduced its prior value exactly, so the repair left this card's comparand unchanged."
+     },
+     "L1_threshold": {
+      "cited_in_clause": 0.3612,
+      "cited_derivation": "2 x the certified 3-seed panel spread 0.1806 of r2s1_direct-B3 (6-dataset, pre-repair)",
+      "current_equivalent": 0.287,
+      "current_derivation": "2 x (max - min) of launch_anchors cards.r2s1_direct-B3.seed_geomeans [25.5908, 25.4975, 25.4473] = 2 x 0.1435",
+      "seed0_reading": 0.5245846520226252,
+      "_status": "seed-0 paired delta clears BOTH the cited 0.3612 (1.45x) and the current-anchor equivalent 0.2870 (1.83x). No substitution made; the orchestrator/mechanism-analyzer adjudicates which threshold governs at the 3-seed confirm."
+     },
+     "L2_threshold": {
+      "cited_in_clause": 1.1603569120520159,
+      "current": 1.1603569120520159,
+      "reason": "noise_floor.json sharp__cahn_hilliard.min_claimable_effect; a sharp cell, untouched by the ifc_poisson repair - the cited value stands."
+     },
+     "L4_floors": {
+      "cited_in_clause": {
+       "sharp__phase_field_crystal_2d": 48.0773,
+       "sharp__allen_cahn_2d": 475.8568,
+       "sharp__fisher_kpp_2d": 390.7015,
+       "sharp__cahn_hilliard": 23.1803
+      },
+      "current": {
+       "sharp__allen_cahn_2d": 475.85682154308705,
+       "sharp__fisher_kpp_2d": 390.7014844797183,
+       "sharp__cahn_hilliard": 23.180342227117514
+      },
+      "reason": "the three non-pfc floors are unchanged in the current launch_anchors best_floor.per_dataset; the pfc floor is void per ADR r3-0004."
+     }
+    }
+   },
+   "cratered_verdict": "proceed_to_seeds_1_2",
+   "cratered_reasoning": "(a) no crash: panel leg 66829977 COMPLETED (exit 0, empty .err); the guard leg failed once on an ALGO defect and its relaunch 66922977 COMPLETED. (b) panel geomean 25.0662 is NOT above CRATERED_SKILL_FACTOR (1.5) x the stream anchor 34.4198 = 51.6297 - it is 27.2% BELOW the anchor. (c) no falsification clause fired decisively at seed 0: L1 clears at 0.5246 > 0.3612 (cited) and > 0.2870 (current-anchor equivalent); L2 clears at 1.2455 > 1.1604 (margin only +0.0851, i.e. 1.073x); L4 clears on all three measurable sharp cells. L3 reads adversely (1 of 3 measurable high-cond_dim cells at >= 0.30) but the clause is explicitly adjudicated on the 3-seed mean and can record UNRESOLVED on spread, so it is not decisive at seed 0 - and its '3 of 4' arithmetic is itself contract-ambiguous now that pfc is report-only.",
+   "falsification_verdict": "pending_seeds",
+   "falsification_seed0_readings": {
+    "clause_L1": {
+     "verbatim": "the seed-mean panel geomean of `test_hf` fails to beat the matched `ref_head_onestage` by more than **0.3612** skill units (2 x the certified 3-seed panel spread 0.1806 of `r2s1_direct-B3`; `noise_floor.json` has no panel entry) or the sign of that paired delta is not identical at all three seeds",
+     "seed0_paired_delta": 0.5245846520226252,
+     "threshold_cited": 0.3612,
+     "threshold_current_equivalent": 0.287,
+     "seed0_status": "clears (1.45x cited / 1.83x current). Sign-identity half is UNTESTABLE at one seed and is the binding test.",
+     "caveat": "the entire delta is one cell (sharp__cahn_hilliard); stage 2 is a bitwise no-op elsewhere, so the panel delta is exactly a 5th-root propagation of the ch ratio 11.414585/12.660054."
+    },
+    "clause_L2": {
+     "verbatim": "on `sharp__cahn_hilliard` ... `test_hf` fails to beat `ref_head_onestage` by more than **1.1603569120520159** skill units (that cell's provisional `min_claimable_effect`)",
+     "seed0_delta": 1.2454687794676593,
+     "threshold": 1.1603569120520159,
+     "seed0_status": "clears, but by only +0.0851 (1.073x). Near-coin-flip, exactly as the starter's handoff disclosed.",
+     "reproduction": "the one-stage arm lands on 12.660054, matching the offline round-2 T3 value 12.6601, and test_hf on 11.414585 vs the pre-measured 11.4148."
+    },
+    "clause_L3": {
+     "verbatim": "fewer than 3 of the 4 high-cond_dim cells {pfc 18, allen_cahn 19, cahn_hilliard 19, fisher_kpp 50} reach a maximum per-direction margin [OOF R^2 from the SET coefficients - OOF R^2 from the condition] **>= 0.30** at the 3-seed mean, or either low-cond_dim cell {ifc_heat 3, ifc_poisson 5} reaches it",
+     "statistic": "margin_tool (pre-registered), per the family's own l3_statistic field",
+     "seed0_margins": {
+      "sharp__allen_cahn_2d": 0.009116684146649456,
+      "sharp__fisher_kpp_2d": -0.0012941096935688012,
+      "sharp__cahn_hilliard": 0.6754833666166551,
+      "ifc_poisson": 0.050147151653790134,
+      "ifc_heat": -0.026829128637992916,
+      "sharp__phase_field_crystal_2d": "not produced (ADR r3-0004 report-only)"
+     },
+     "seed0_status": "reads ADVERSE: 1 of 3 measurable high-cond_dim cells reaches 0.30; no low-cond_dim cell reaches it. Not fired - the clause is adjudicated on the 3-seed mean and records UNRESOLVED where the 3-seed margin spread exceeds 0.10.",
+     "contract_flag": "the clause enumerates 4 high-cond_dim cells but pfc is void per ADR r3-0004 ('any falsification clause or threshold citing pfc is void for claim purposes; clauses over the remaining datasets stand as written'), so '>= 3 of 4' cannot be evaluated as written. Adjudication required BEFORE the 3-seed verdict - flagged, not resolved here."
+    },
+    "clause_L4": {
+     "verbatim": "`test_hf` is worse than the best frozen floor on any of the four sharp cells (pfc > 48.0773, allen_cahn > 475.8568, fisher_kpp > 390.7015, cahn_hilliard > 23.1803)",
+     "seed0": {
+      "sharp__allen_cahn_2d": [
+       280.0716592436192,
+       475.85682154308705,
+       "clears"
+      ],
+      "sharp__fisher_kpp_2d": [
+       376.5182636277145,
+       390.7014844797183,
+       "clears by 3.6% only"
+      ],
+      "sharp__cahn_hilliard": [
+       11.414584784669875,
+       23.180342227117514,
+       "clears"
+      ],
+      "sharp__phase_field_crystal_2d": "void (ADR r3-0004)"
+     },
+     "seed0_status": "not fired"
+    },
+    "criterion_1_reading": {
+     "rule": "round-3 success criterion 1: the scored arm vs ref_dc_only (the condition->level law), per cell",
+     "seed0": {
+      "sharp__allen_cahn_2d": "beats (280.07 vs 327.57)",
+      "sharp__fisher_kpp_2d": "LOSES (376.52 vs 282.76)",
+      "sharp__cahn_hilliard": "beats (11.41 vs 23.87)",
+      "ifc_poisson": "beats (8.25 vs 11.04)",
+      "ifc_heat": "beats (0.996 vs 6.194)"
+     },
+     "panel": "test_hf 25.0662 vs ref_dc_only 43.2411 - beats on the panel geomean, loses on fisher_kpp"
+    },
+    "mandatory_floor_arm_readings": {
+     "vs_ref_zero_train_mean_nn_condition_on_sharp_cells": "test_hf beats all three on all three measurable sharp cells (as predicted in part 4)",
+     "vs_ref_affine_on_hf_train": "test_hf LOSES on 4 of 5 cells (allen_cahn 280.07 vs 275.69, fisher_kpp 376.52 vs 266.48, ifc_poisson 8.25 vs 1.59, ifc_heat 0.996 vs 0.958) and wins only on cahn_hilliard (11.41 vs 12.87). Panel: 25.0662 vs 17.0581. Part 4 predicted only the two ifc losses; the two sharp losses are NOT predicted and are the strongest negative reading of seed 0. The affine arm is a FITTED closed-form floor (not training-free) and is not in best_floor.",
+     "vs_ref_twostage_true_gate": "the F25 negative control is essentially tied with the scored arm on cahn_hilliard (11.4341 vs 11.4146 - the propagation-aware gate is marginally BETTER) and bitwise identical elsewhere; panel 25.0748 vs 25.0662."
+    }
+   },
+   "guard_flags": [
+    {
+     "dataset": "sharp__sod_1d",
+     "nRMSE": 0.1060749721818537,
+     "guard_reference_nrmse": 0.03309017650048946,
+     "ratio_vs_reference": 3.2056,
+     "threshold": "> 2x",
+     "flag": true,
+     "note": "FLAGGED per section 2d: 3.21x the copylf_baselines.json guard reference (skill 3.2056). Advisory only - no auto-reject. Contextual: this is a condition-only, LF-blind family run on a 1-D shock cell, where copy-LF is a strong reference; the guard leg is the leakage/robustness tripwire (G-C), not a scored claim. Recorded so the mechanism-analyzer can weigh it."
+    },
+    {
+     "dataset": "fluid",
+     "nRMSE": 0.034257808711001425,
+     "guard_reference_nrmse": 0.21805958171115042,
+     "ratio_vs_reference": 0.1571,
+     "flag": false
+    },
+    {
+     "dataset": "heat_local",
+     "nRMSE": 0.00016525410470694669,
+     "guard_reference_nrmse": 0.00240152155999517,
+     "ratio_vs_reference": 0.0688,
+     "flag": false
+    }
+   ],
+   "guard_note": "The guard set was already run at the card's contract tier (epochs 0 - this family asserts epochs==0 and instantiates no gradient-trained arm) by job 66922977, all three cells cached=false. Section 2d's panel-win trigger is not yet reachable (seed-0 only), so this is a recorded reading, not the section-2d re-run.",
+   "anomalies": [
+    "SLURM leg 66829977 was 100% CACHE-SERVED: 7 s wall clock, all five scored cells `cached: true`. The cache entries under the card's redirected cache dir were written 2026-08-07 17:29-17:37 PDT by the builder's own post-fix re-smoke through the shipped 01_train_eval.sh (same code_hash 88d6bfcd, same 58 env knobs), i.e. the card's own artifacts, not foreign ones. The scored numbers therefore date from the builder's run; the SLURM leg contributed zero compute.",
+    "Guard leg 66829978 FAILED after 12 s (ALGO): basis.py:164 'direction bank is not orthonormal: max|DD'-I| = 8.351e-01' on heat_local. Root cause was a zero-margin POD rank cut under the method-of-snapshots (debug_notes[0]); fixed in basis.py by rank-aware truncation and relaunched as 66922977 (COMPLETED, 35 s). Only heat_local truncates (bank 34->19, window 32->18); bitwise no-op on all five scored cells.",
+    "code_hash differs between result_panel5_s0.json (88d6bfcd, pre-fix) and result_guard_s0.json (3e7f87a3, post-fix). nrmse_def_hash and copylf_def_hash are identical everywhere. Panel seeds 1-2 will RECOMPUTE rather than cache-hit under the new hash; per the debugger's verified full recompute the numbers are unchanged, so a hash change must not be read as a result change.",
+    "MECHANISM-CRITICAL: stage 2 is a BITWISE no-op on 4 of the 5 scored cells (G-E max|delta vs onestage| = 0.0 on allen_cahn, fisher_kpp, ifc_poisson, ifc_heat; empty gate). The entire panel effect is sharp__cahn_hilliard, where the gate admits 9 directions at max OOF R^2 0.670.",
+    "test_hf loses to ref_dc_only on sharp__fisher_kpp_2d (376.52 vs 282.76) - a per-cell failure of round-3 success criterion 1.",
+    "test_hf loses to ref_affine_on_hf_train on 4 of 5 cells including the two sharp cells allen_cahn and fisher_kpp, which part 4 did not predict (it predicted only the two ifc losses).",
+    "The F25 negative control ref_twostage_true_gate does NOT beat the scored arm on cahn_hilliard (11.4341 vs 11.4146) - the round-2 F25 'true-gate is better' reading does not reproduce under the propagation-aware gate.",
+    "No NaNs, no non-finite values, no preemption, no resume events: diagnostics.checkpoint.resumed_units is [] on all cells; both .err files for the surviving legs are empty. tools/stale_checkpoint_audit.py --fail-on-stale reports STALE 0/8 over this card's training tree.",
+    "Affine-floor seam status is `ok_dtype_limited` on both ifc cells (float32 guarded loader vs the float64 frozen floor, ~3.6e-8 relative) - a documented metrology property adjudicated at build time, not a failure. On the sharp cells the seam status is `no_frozen_entry` (arm reported, not seam-checked).",
+    "sharp__phase_field_crystal_2d produced NO training/eval artifact for seed 0 (ADR r3-0004 report-only; recipe.datasets is the explicit 5-dataset panel). Only its G-D target-scaler pre-flight row exists. Clause L3's '4 high-cond_dim cells' is therefore only 3-measurable.",
+    "The 5 fold-resamples return an identical paired delta on every cell (spread 0.0, sign identical); on the two ifc cells the resample diagnostic is skipped under the LOO protocol (N_train = 5). This is selection-stability, NOT seed spread - the 3-seed spread is still unmeasured.",
+    "G-A reproduction seam green on all five cells (|rel| <= 0.76%, worst on cahn_hilliard); G-B floor seam max|delta| <= 2.65e-10; G-C under_stripped_view = 1 and lf_used_at_any_stage = 0 on every cell; G-D OK on both audited cells."
+   ],
+   "wall_clock_per_seed_min": [
+    0.12
+   ],
+   "wall_clock_notes": {
+    "slurm_elapsed_min_seed0_panel": 0.12,
+    "slurm_elapsed_min_seed0_guard": 0.58,
+    "slurm_elapsed_min_failed_guard_66829978": 0.2,
+    "_caveat": "the seed-0 panel elapsed is NOT a compute measurement - the leg was fully cache-served.",
+    "underlying_compute_min_per_seed_panel": 9.34,
+    "underlying_compute_per_cell_seconds": {
+     "sharp__allen_cahn_2d": 155.2,
+     "sharp__fisher_kpp_2d": 245.2,
+     "sharp__cahn_hilliard": 156.6,
+     "ifc_poisson": 1.7,
+     "ifc_heat": 2.0
+    },
+    "_for_the_timing_ledger": "budget seeds 1-2 at ~10-15 min of real panel compute each (they will recompute, not cache-hit, because the ALGO-1 fix changed code_hash); the shipped --time is 01:30:00 for the panel leg and 01:00:00 for guards, both amply above measurement. The builder's login-node timings (fk 432 s, ch 177 s, ac 79 s) were FS-contended and run 1.4-1.8x slower than the compute-node numbers above.",
+    "jobs": {
+     "66829977": "COMPLETED 00:00:07 hpc-sm-02-03",
+     "66829978": "FAILED 00:00:12 exit 1:0",
+     "66922977": "COMPLETED 00:00:35 hpc-sm-02-03"
+    },
+    "_slurm_id_space": "these are pre-reset 66xxxxxx IDs; they still resolve in sacct."
+   },
+   "next_step": "Submit seeds 1 and 2 via scripts/submit_seeds_2_3.sh. The binding tests are (i) L1's sign-identity of the paired panel delta across all three seeds and (ii) whether cahn_hilliard's +1.2455 holds above 1.1604 at the 3-seed mean, where it currently has only 7% of headroom."
+  }
  },
  "6_analysis": null,
  "7_gap_and_future": null,
