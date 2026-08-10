@@ -1,95 +1,97 @@
-# MFFP Autoresearch Round 3 — Dashboard (updated 2026-08-08T20:38:04Z)
+# MFFP Autoresearch Round 3 — Dashboard (updated 2026-08-10T03:22:14Z)
 
-## MILESTONE — ALL BATCH-1 SLURM COMPUTE IS NOW COMPLETE ACROSS ALL FOUR STREAMS. Queue is empty.
+## STOP-THE-LINE #2 IS ACTIVE — HOLD SET, REPAIR NOW EXECUTING
 
-`squeue -u $USER` returns zero rows (confirmed via `squeue` + `sacct`, no transient-empty ambiguity).
-Every SLURM job that batch 1 needed has now landed: r3s1's main seed-0 leg and guard relaunch, r3s2's all 3 seeds, r3s3's all 3 seeds (card already `complete`), and r3s4's all 3 seeds plus its D2-D4 certifier.
-The round is paused at **full batch-1 readiness**.
-Nothing here is compute-gated anymore — the sole remaining blocker is the STOP-THE-LINE #2 HOLD below, awaiting operator adjudication.
-
-## STOP-THE-LINE #2 IS ACTIVE — HOLD SET (2026-08-08T19:51:50Z, commit `26089e8`)
+(2026-08-08T19:51:50Z HOLD set, commit `26089e8`; 2026-08-09 operator adjudication "continue", repair executing, commit `3fd7388`)
 
 Stale-checkpoint anchor contamination.
-r3s3_lf_value-B1's mechanism analyzer (turn 2) discovered that the mandated `last.pt` checkpoint-resume contract silently no-op'd several ADR r3-0002/r3-0003 anchor re-scores: the launch-anchor **ifc_poisson** cells for `r2s3_lf_train_signal-B3` (all 6 legs) and `r2s1_direct-B2`/`B3` (all seeds) resumed pre-repair weights (`resumed_from_step=5000`, `train_seconds` 1.3-2.9s, checkpoint mtimes 2026-08-03/04 vs ladder adoption 2026-08-05) and were re-scored on the repaired arrays with stale weights.
-`r2s2_stacked-B1` is possibly mixed.
-Checkpoints carry no data hash — the sibling gap to the score-cache hole that ADR r3-0003 D4 already closed.
+r3s3_lf_value-B1's mechanism analyzer (turn 2) discovered that the mandated `last.pt` checkpoint-resume contract silently no-op'd several ADR r3-0002/r3-0003 anchor re-scores: the launch-anchor **ifc_poisson** cells for `r2s3_lf_train_signal-B3` (all 6 legs) and `r2s1_direct-B2`/`B3` (all seeds) resumed pre-repair weights and were re-scored on the repaired arrays with stale weights.
+`r2s2_stacked-B1` seeds 0-1 were also stale (trained+scored before the ladder adoption, never re-scored post-repair); seed 2 was fresh-trained and audited CLEAN.
 
-**Blast radius:** `state/anchors/launch_anchors.json` **ifc_poisson columns + panel geomeans are invalid pending repair**.
-r3s3-B1's own vs-anchor deltas (-38.97% ifc_poisson, -10.14% panel) are **artefacts of this contamination**, already recorded as such on the card — not real effects.
-Round-3's own experiment legs are audited **CLEAN (0/225 stale)** — the contamination is confined to the launch-anchor tree, not batch-1 training.
-No queued job depended on the stale cells; **none cancelled**.
+**Blast radius (unchanged):** `state/anchors/launch_anchors.json` **ifc_poisson columns + panel geomeans are invalid pending repair**.
+Round-3's own experiment legs are audited **CLEAN (0/225 stale)**.
 
-**Batch advancement and claim adjudication are halted under HOLD.**
-As a direct consequence, the orchestrator is **deliberately withholding the analyzer stages for r3s1_factorised-B1, r3s2_field_reach-B1, and r3s4_audit-B1** even though all their underlying SLURM jobs have now landed (see Streams table below) — their certified thresholds and claims would otherwise need recomputation once the anchor repair lands, so advancing them now would be wasted or misleading work.
-This is why all three cards' `current_stage.txt` and card `status` are unchanged this cycle despite the queue draining to zero.
-Repair plan on file (`state/orchestrator_flow.md` top entry): quarantine stale anchor cells + delete stale checkpoints -> fresh-train those anchor legs with empty checkpoint dirs -> re-audit with `stale_checkpoint_audit.py` -> rebuild anchors -> recompute affected deltas; permanent fix binds data hashes into checkpoints (sixth-class check) run at every anchor certification.
-Operator adjudication pending.
+**Eloise adjudicated "continue" on 2026-08-09** — accepts the on-file repair plan.
+The orchestrator has executed the first three steps:
+
+1. **89 stale paths quarantined** (scored cells + ckpt dirs + derived eval artifacts + 14 score-cache entries) — manifest `mffp_autoresearch_outputs/round3_anchors/quarantine_stale_ckpt_manifest_2026-08-09.json` (confirmed present on disk).
+2. **11 fresh-train repair jobs submitted** — `r3RPR-*` names, SLURM 89201-89211 (all still **PENDING(Priority)**, see Running/pending table below — cluster-wide queue congestion, not a stall).
+3. **Permanent sixth-class check wired in** — `tools/make_round3_anchors.py` now runs `stale_gate()` (`--fail-on-stale` over every panel cell) at every future anchor certification.
+
+**`state/HOLD.json` itself is unchanged** (`set_at` still `2026-08-08T19:51:50Z`) — the HOLD has **not** been cleared, only the repair it gates has begun.
+Remaining sequence per `state/stale_ckpt_repair_jobs_2026-08-09.json`'s `on_completion`: repair jobs land → `--fail-on-stale` re-audit clean → anchor rebuild (audit-gated) → r3s3-B1 vs-anchor delta recompute → HOLD clear → dispatch of the withheld r3s1/r3s2/r3s4 initial-analyzer stages.
+**Batch advancement and claim adjudication remain halted under HOLD** — the three withheld analyzer stages are confirmed still withheld this cycle (see Streams table).
 The maintainer takes no action on cards or anchors (read-only) — this section exists to surface the HOLD prominently for the orchestrator/operator.
 
-## Status: r3s2 seeds 1-2 COMPLETED this cycle — this drains the SLURM queue to empty and closes out all batch-1 compute for the round
+## Status: repair jobs queued, no compute landed yet this cycle
 
-Since the last maintainer snapshot (2026-08-08T20:19:30Z):
+Since the last maintainer snapshot (2026-08-08T20:38:04Z, ~30.7h ago):
 
-1. **r3s2_field_reach-B1 seeds 1-2 (`66928385`/`66928386`) COMPLETED** — 00:36:33 each (36.55 min), exit `0:0`, `gpu` partition.
-   All 3 scored-panel roll-ups now on disk: seed-0 panel_geomean_skill 10.7213, seed-1 10.3180, seed-2 17.8277 (raw per-seed values only — 3-seed aggregation, bootstrap CI, and the binding falsification verdict are deferred to the withheld analyzer stage).
-   Card `5_actual_result.seeds_available` still `[0]` — not a stall, the analyzer stage is deliberately withheld under HOLD (see banner above).
-
-Unchanged this cycle:
-
-2. **r3s3_lf_value-B1 remains `complete`** (first and only card of the round to finish all 7 parts) — no new activity.
-3. **r3s1_factorised-B1** and **r3s4_audit-B1** — no new jobs; both have all their SLURM work landed and are awaiting the withheld analyzer stage.
-
-**Orchestrator policy note**: r3s1/r3s2/r3s4's analyzer stages are deliberately withheld under the HOLD (see banner above) — this is not a stall.
-`current_stage.txt` is unchanged for all three (`slurm-seed0`, `slurm-seeds12`, `certify` respectively) despite the queue now being fully empty; card `status` fields are likewise unchanged (`running`, `analyzing`, `analyzing`).
-
-No card fields were modified by this maintainer run (`git status --short experiment_cards/` clean).
-
-All three launch gates remain **GREEN** on the 5-dataset scored panel per `state/gates.md` (unchanged since 2026-08-07T12:17Z certification) — **but G3-r3's anchor evidence is now under active dispute** per STOP-THE-LINE #2 above; read G3 alongside the HOLD, not as an unqualified green.
-ADR r3-0005 (pfc spectral-rung repair) remains **PROPOSED**, unchanged, still awaiting operator + mentor sign-off.
+1. **Operator adjudication landed and repair execution began** (commit `3fd7388`) — quarantine + gate confirmed on disk; 11 `r3RPR-*` repair jobs submitted 2026-08-09T20:13:24, still PENDING(Priority) after ~7h05m (cluster `gpu` partition currently carries 299 queued/running jobs, `expansion` 1331, across all users — congestion, not an error).
+2. **No new SLURM completions** since the last walk. Timing ledger unchanged at 12 entries.
+3. **All 4 cards unchanged** — no card files modified (`git status --short experiment_cards/` clean). r3s1/r3s2/r3s4's analyzer stages correctly remain withheld pending the repair; r3s3 remains the round's only `complete` card.
 
 **Program:** `program.md` · **Config:** `project.yaml` · **ADRs:** `docs/adr/` (0001 launch panel + A1, 0002 pfc crystalline box, 0003 estimator-integrity repairs, 0004 pfc report-only, 0005 pfc spectral-rung repair — PROPOSED) · **Card schema:** `experiment_cards/SCHEMA.md` · **Runbook:** `HOW_TO_LAUNCH.md`
 
 ## Streams
 | Stream | Anchor (skill) | Current batch | Card | Status | Jobs | Last change |
 |---|---|---|---|---|---|---|
-| r3s1_factorised (gap) | 5-ds best-floor geomean 34.4198 (see anchor-dispute flag) | 1 | r3s1_factorised-B1 | `running`; main leg COMPLETED (cache-served, panel geomean 25.0662), guard leg RELAUNCH COMPLETED (panel_geomean_skill 0.3260, fix verified in production); stage=slurm-seed0 (analyzer stage withheld under HOLD) | seed 0 main: `66829977` COMPLETED (0:07); guard (orig): `66829978` FAILED (0:12, exit 1); guard (relaunch): `66922977` COMPLETED (0:35, exit 0:0) | all SLURM work landed; unchanged this cycle |
-| r3s2_field_reach (gap) | 5-ds best-floor geomean 34.4198 (see anchor-dispute flag) | 1 | r3s2_field_reach-B1 | `analyzing`; seed-0 initial-analysis landed (panel geomean **10.7213**, verdict `proceed_to_seeds_1_2`); seeds 1-2 raw panel geomeans 10.3180 / 17.8277 now on disk; stage=slurm-seeds12 (analyzer stage withheld under HOLD) | seed 0: `66832670` COMPLETED (00:44:20); seeds 1-2: `66928385`/`66928386` (`r3-r3s2_field_reach-B1-s{1,2}`), **COMPLETED (00:36:33 each, exit 0:0)** | **new this cycle — seeds 1-2 RUNNING -> COMPLETED; all 3 seeds landed** |
-| r3s3_lf_value (lever) | 5-ds best-floor geomean 34.4198 (**ifc_poisson columns invalid — stale-checkpoint contamination, see HOLD banner**) | 1 | r3s3_lf_value-B1 | **`complete`** — first card of the round to finish all 7 parts; 3-seed panel geomean **11.0789** (ci95 [10.8445, 11.2471]); `falsification_verdict` **confirmed**; vs-anchor -10.14%/-38.97% deltas flagged as anchor artefacts (STOP-THE-LINE #2); 2 tools promoted; stage=mechanism-analysis | seed 0: `66825323` COMPLETED (150m15s); seeds 1-2: `66879960`/`66879961` COMPLETED (02:20:08 / 02:20:09, exit 0:0, 60 legs each) | unchanged |
-| r3s4_audit (diag) | 5-ds best-floor geomean 34.4198 | 1 | r3s4_audit-B1 | `analyzing`; all 3 seeds COMPLETED (geomeans 19.4235 / 19.5760 / 19.9318); certifier COMPLETED (D2-D4 artifacts landed, **PROVISIONAL** pending anchor repair); stage=certify (analyzer stage withheld under HOLD) | seed 0: `66826610` COMPLETED (6m46s); seed 1: `66879667` COMPLETED (3m16s); seed 2: `66879668` COMPLETED (3m13s); certifier: `66921555` (`r3-r3s4_audit-B1-certify`) COMPLETED (0:23, exit 0:0), `expansion` partition (CPU-only) | all SLURM work landed; unchanged this cycle |
+| r3s1_factorised (gap) | 5-ds best-floor geomean 34.4198 (see anchor-dispute flag) | 1 | r3s1_factorised-B1 | `running`; main leg COMPLETED (cache-served, panel geomean 25.0662), guard leg COMPLETED (panel_geomean_skill 0.3260, fix verified in production); stage=slurm-seed0 (analyzer stage withheld under HOLD) | seed 0 main: `66829977` COMPLETED (0:07); guard (orig): `66829978` FAILED (0:12, exit 1); guard (relaunch): `66922977` COMPLETED (0:35, exit 0:0) | none — unchanged since 2026-08-08T20:19:30Z |
+| r3s2_field_reach (gap) | 5-ds best-floor geomean 34.4198 (see anchor-dispute flag) | 1 | r3s2_field_reach-B1 | `analyzing`; all 3 seeds' raw panel geomeans landed (10.7213 / 10.3180 / 17.8277); stage=slurm-seeds12 (analyzer stage withheld under HOLD) | seed 0: `66832670` COMPLETED (00:44:20); seeds 1-2: `66928385`/`66928386` COMPLETED (00:36:33 each, exit 0:0) | none — unchanged since 2026-08-08T20:38:04Z |
+| r3s3_lf_value (lever) | 5-ds best-floor geomean 34.4198 (**ifc_poisson columns invalid — stale-checkpoint contamination, see HOLD banner**) | 1 | r3s3_lf_value-B1 | **`complete`** — 3-seed panel geomean **11.0789** (ci95 [10.8445, 11.2471]); `falsification_verdict` **confirmed**; vs-anchor -10.14%/-38.97% deltas flagged as anchor artefacts (STOP-THE-LINE #2); 2 tools promoted; stage=mechanism-analysis | seed 0: `66825323` COMPLETED (150m15s); seeds 1-2: `66879960`/`66879961` COMPLETED (02:20:08 / 02:20:09, exit 0:0) | none — unchanged since 2026-08-08T19:58:33Z |
+| r3s4_audit (diag) | 5-ds best-floor geomean 34.4198 | 1 | r3s4_audit-B1 | `analyzing`; all 3 seeds COMPLETED (geomeans 19.4235 / 19.5760 / 19.9318); certifier COMPLETED (D2-D4 artifacts landed, **PROVISIONAL** pending anchor repair); stage=certify (analyzer stage withheld under HOLD) | seed 0: `66826610` COMPLETED (6m46s); seed 1: `66879667` COMPLETED (3m16s); seed 2: `66879668` COMPLETED (3m13s); certifier: `66921555` COMPLETED (0:23, exit 0:0) | none — unchanged since 2026-08-08T20:19:30Z |
+| **r2s1_direct-B2** (anchor, ifc_poisson repair) | n/a — this is an anchor leg, not a round-3 stream | — | anchor tree | STALE (3/3 seeds), quarantined 2026-08-09 | repair: `89201`/`89204`/`89207` all **PENDING(Priority)** | new this cycle — repair job submitted |
+| **r2s1_direct-B3** (anchor, ifc_poisson repair) | n/a | — | anchor tree | STALE (3/3 seeds), quarantined 2026-08-09 | repair: `89202`/`89205`/`89208` all **PENDING(Priority)** | new this cycle — repair job submitted |
+| **r2s2_stacked-B1** (anchor, ifc_poisson repair) | n/a | — | anchor tree | STALE (seeds 0-1 only; seed 2 CLEAN, kept), quarantined 2026-08-09 | repair: `89210`/`89211` (seeds 0-1) all **PENDING(Priority)** | new this cycle — repair job submitted |
+| **r2s3_lf_train_signal-B3** (anchor, ifc_poisson repair) | n/a | — | anchor tree | STALE (6/6 legs, both ifc_A0/ifc_A1), quarantined 2026-08-09 | repair: `89203`/`89206`/`89209` all **PENDING(Priority)** | new this cycle — repair job submitted |
 
-Per-dataset best-floor skills (5-ds scored panel): allen_cahn_2d 475.8568 (nn_condition), fisher_kpp_2d 390.7015 (train_mean), cahn_hilliard 23.1803 (nn_condition), ifc_poisson 8.0409 (nn_condition, **DISPUTED — stale-checkpoint contamination**), ifc_heat 1.3941 (nn_condition). pfc 48.0773 (train_mean) is **report-only**, excluded from the geomean per ADR r3-0004 (pending possible reinstatement under ADR r3-0005 — still PROPOSED, no sign-off).
-Source: `state/anchors/launch_anchors.json` (file itself unchanged this cycle, mtime 2026-08-07T12:16Z — rendered as-is per instruction, never recomputed by the maintainer; flagged disputed per STOP-THE-LINE #2, repair pending operator adjudication).
+Per-dataset best-floor skills (5-ds scored panel): allen_cahn_2d 475.8568 (nn_condition), fisher_kpp_2d 390.7015 (train_mean), cahn_hilliard 23.1803 (nn_condition), ifc_poisson 8.0409 (nn_condition, **DISPUTED — stale-checkpoint contamination, repair in progress**), ifc_heat 1.3941 (nn_condition). pfc 48.0773 (train_mean) is **report-only**, excluded from the geomean per ADR r3-0004 (pending possible reinstatement under ADR r3-0005 — still PROPOSED, no sign-off).
+Source: `state/anchors/launch_anchors.json` (file itself unchanged this cycle, mtime 2026-08-07T12:16Z — rendered as-is per instruction, never recomputed by the maintainer; flagged disputed per STOP-THE-LINE #2, repair pending).
 
 ## Running / pending jobs
 | Job | Card | State | Elapsed | Node/Reason |
 |---|---|---|---|---|
-| — | — | — | — | **none — queue is empty.** All batch-1 SLURM compute across all 4 streams has landed (confirmed via `squeue` returning zero rows for the user + `sacct`, no transient-empty ambiguity). |
+| `89201` | r2s1_direct-B2 (anchor repair, ifc_poisson seed 0) | PENDING | 0:00 | (Priority) |
+| `89204` | r2s1_direct-B2 (anchor repair, ifc_poisson seed 1) | PENDING | 0:00 | (Priority) |
+| `89207` | r2s1_direct-B2 (anchor repair, ifc_poisson seed 2) | PENDING | 0:00 | (Priority) |
+| `89202` | r2s1_direct-B3 (anchor repair, ifc_poisson seed 0) | PENDING | 0:00 | (Priority) |
+| `89205` | r2s1_direct-B3 (anchor repair, ifc_poisson seed 1) | PENDING | 0:00 | (Priority) |
+| `89208` | r2s1_direct-B3 (anchor repair, ifc_poisson seed 2) | PENDING | 0:00 | (Priority) |
+| `89203` | r2s3_lf_train_signal-B3 (anchor repair, ifc_A0/A1 seed 0) | PENDING | 0:00 | (Priority) |
+| `89206` | r2s3_lf_train_signal-B3 (anchor repair, ifc_A0/A1 seed 1) | PENDING | 0:00 | (Priority) |
+| `89209` | r2s3_lf_train_signal-B3 (anchor repair, ifc_A0/A1 seed 2) | PENDING | 0:00 | (Priority) |
+| `89210` | r2s2_stacked-B1 (anchor repair, ifc_poisson seed 0) | PENDING | 0:00 | (Priority) |
+| `89211` | r2s2_stacked-B1 (anchor repair, ifc_poisson seed 1) | PENDING | 0:00 | (Priority) |
+
+No round-3 batch-1 experiment jobs are running or pending — all batch-1 SLURM compute for r3s1/r3s2/r3s3/r3s4 landed by 2026-08-08T20:38:04Z.
+The only live jobs in the round are the 11 STOP-THE-LINE #2 anchor repair jobs above, all submitted 2026-08-09T20:13:24, all still PENDING(Priority) ~7h05m later.
+Cluster-wide congestion context: `squeue` currently shows 299 jobs on the `gpu` partition and 1331 on `expansion` across all users — consistent with ordinary priority queueing, not an error or dependency block.
 
 ## Completed cards
 | Card | Type | Panel geomean skill (±CI) | Falsification verdict | Tools promoted |
 |---|---|---|---|---|
-| r3s3_lf_value-B1 | model (lever) | **11.0789** (ci95 [10.8445, 11.2471], 3-seed 5-ds panel) | **confirmed** — coverage channel (supply of distinct condition rows), not optimization channel, explains the LF-at-train benefit. vs-anchor delta -10.14% (ifc_poisson -38.97%) recorded on the card as a **stale-checkpoint anchor artefact (STOP-THE-LINE #2)**, not a real effect — do not cite as a claim. | `response_decomposition.py`, `stale_checkpoint_audit.py` |
+| r3s3_lf_value-B1 | model (lever) | **11.0789** (ci95 [10.8445, 11.2471], 3-seed 5-ds panel) | **confirmed** — coverage channel (supply of distinct condition rows), not optimization channel, explains the LF-at-train benefit. vs-anchor delta -10.14% (ifc_poisson -38.97%) recorded on the card as a **stale-checkpoint anchor artefact (STOP-THE-LINE #2)**, not a real effect — do not cite as a claim; will be recomputed once the anchor repair lands. | `response_decomposition.py`, `stale_checkpoint_audit.py` |
 
-r3s2_field_reach-B1 has all 3 seeds' raw results landed (10.7213 / 10.3180 / 17.8277) — analyzer write-back (3-seed aggregation, CI, falsification verdict) withheld under HOLD, card not yet `complete`.
+r3s2_field_reach-B1 has all 3 seeds' raw results landed (10.7213 / 10.3180 / 17.8277) — analyzer write-back withheld under HOLD, card not yet `complete`.
 r3s4_audit-B1 has all 3 seeds' raw results landed (19.4235 / 19.5760 / 19.9318) and the certifier is COMPLETED (D2-D4 landed, provisional) — analyzer write-back withheld under HOLD, card not yet `complete`.
-r3s1_factorised-B1 has no `5_actual_result` yet — main leg cache-served, guard leg relaunch COMPLETED — analyzer stage withheld under HOLD.
+r3s1_factorised-B1 has no `5_actual_result` yet — main leg cache-served, guard leg COMPLETED — analyzer stage withheld under HOLD.
 
 ## Flags
 
-- **STOP-THE-LINE #2 — stale-checkpoint anchor contamination, HOLD ACTIVE (see banner at top of this file).** `state/HOLD.json` set 2026-08-08T19:51:50Z, commit `26089e8`, unchanged this cycle. Launch-anchor ifc_poisson cells (r2s3-B3 all legs, r2s1-B2/B3 all seeds, r2s2-B1 possibly mixed) resumed pre-repair checkpoints and were scored on repaired data. `launch_anchors.json` ifc_poisson columns + panel geomeans invalid pending repair. Round-3's own experiment legs audited CLEAN (0/225). No queued job cancelled — none depended on the stale cells. **This cycle's queue-drain makes the HOLD the sole remaining blocker** — all four streams' compute is done; only the analyzer stages for r3s1/r3s2/r3s4 (and the anchor repair itself) remain pending operator adjudication.
-- **r3s2_field_reach-B1: seeds 1-2 (`66928385`/`66928386`) COMPLETED this cycle (00:36:33 each), draining the SLURM queue to empty.** Raw per-seed panel geomeans 10.7213 / 10.3180 / 17.8277 (5-ds scored panel) now all on disk; 3-seed aggregation deferred to the withheld analyzer stage. seed-0 initial-analysis (already landed prior cycle): F1 does not fire, F2 fires (pre-registered modal outcome). Guard panel geomean skill 0.2424, `guard_flags: []`.
-- **r3s4_audit-B1: certifier `66921555` COMPLETED (prior cycle) — D2-D4 artifacts landed but marked PROVISIONAL.** F1 unavailable, F2/F3/F4 all `not_fired`. The D2/D3 fusion sub-panel scores only ifc_heat + cahn_hilliard (not the full 5-ds panel) but reads `state/anchors_repaired/floors.json`, which is in-scope for the STOP-THE-LINE #2 repair — recompute expected once the anchor repair lands.
-- **r3s1_factorised-B1: guard relaunch `66922977` COMPLETED (prior cycle) — debug fix verified in production.** `result_guard_s0.json` landed, panel_geomean_skill 0.3260, guards `heat_local,fluid,sharp__sod_1d` all clean. Debug attempt 1 of 5 used (cap `slurm_algo_attempts: 5`). Root cause: POD rank cut sitting exactly on the numerical accuracy boundary; fix proven bitwise no-op on all 5 scored panel cells plus both other guards.
+- **STOP-THE-LINE #2 — stale-checkpoint anchor contamination, HOLD ACTIVE, repair now EXECUTING (see banner at top of this file).** `state/HOLD.json` itself unchanged (`set_at` 2026-08-08T19:51:50Z, not cleared). Operator adjudication ("continue", 2026-08-09) accepted the on-file repair plan; commit `3fd7388`: 89-path quarantine done, 11 `r3RPR-*` fresh-train jobs submitted (89201-89211, all PENDING(Priority)), permanent `stale_gate()` check wired into `tools/make_round3_anchors.py`. Remaining: jobs land → `--fail-on-stale` re-audit → audit-gated anchor rebuild → r3s3-B1 delta recompute → HOLD clear → dispatch withheld r3s1/r3s2/r3s4 analyzer stages.
+- **Scheduler job-ID space reset.** Cluster `central`'s job-ID space reset since 2026-08-08 — prior round jobs were 66xxxxxx (last round-3 job 66928386), the repair jobs are 5-digit 892xx (89201-89211). `sacct` resolves both ranges without ambiguity (confirmed this walk).
+- **Queue congestion.** The 11 repair jobs have been PENDING(Priority) for ~7h05m as of this walk — cluster-wide `squeue` shows 299 jobs on `gpu` and 1331 on `expansion` across all users. Not a stall; watch next cycle for job starts.
+- **r3s1/r3s2/r3s4 analyzer stages remain correctly withheld.** `current_stage.txt` unchanged for all three (`slurm-seed0`, `slurm-seeds12`, `certify`) — this is deliberate orchestrator policy per the HOLD, confirmed not to have advanced prematurely this cycle.
+- **r3s3_lf_value-B1: `status: complete`, unchanged this cycle.** Two tools promoted (`response_decomposition.py`, `stale_checkpoint_audit.py`), both verified in `tools/index.md`. `guard_flags: ["heat_local"]` carried forward, unexplained but not gating. `next_direction` recorded for batch 2: LF-condition-row-count sweep on ch + ifc_heat, fixing the per-rung scaler bug, dropping ifc_poisson as a probe. **This card's own vs-anchor deltas remain flagged as anchor artefacts pending the repair.**
 - **r3s1_factorised-B1 main seed-0 leg is cache-served, not a fresh run** (`66829977` completed in 7s, `epochs: 0`, `code_hash` unchanged) — expected caching behavior per `eval/score.py`, not a defect.
-- **r3s3_lf_value-B1: `status: complete`, unchanged this cycle.** Two tools promoted (`response_decomposition.py`, `stale_checkpoint_audit.py`), both verified in `tools/index.md`. `guard_flags: ["heat_local"]` carried forward, unexplained but not gating. `next_direction` recorded for batch 2: LF-condition-row-count sweep on ch + ifc_heat, fixing the per-rung scaler bug, dropping ifc_poisson as a probe.
 - **Eval-tree hygiene — resolved for all 4 streams, convention codified in `subagents/experiment-builder.md:218`.** No open items.
 - **ADR r3-0005 (pfc spectral-rung repair) — still PROPOSED, blocking on operator + mentor sign-off.** Unchanged this cycle.
-- **Gates** (`state/gates.md`): G1-r3 **GREEN** (2026-08-05, data), G2-r3 **GREEN** (2026-08-07, 5-ds preflight), G3-r3 **GREEN** (2026-08-07, 5-ds anchor re-aggregation, best-floor 34.4198) — file unchanged this cycle, **but read G3 alongside STOP-THE-LINE #2**: its ifc_poisson anchor evidence is now under active dispute (not a gate-file edit — maintainer is read-only for gates).
+- **Gates** (`state/gates.md`): G1-r3 **GREEN** (2026-08-05, data), G2-r3 **GREEN** (2026-08-07, 5-ds preflight), G3-r3 **GREEN** (2026-08-07, 5-ds anchor re-aggregation, best-floor 34.4198) — file unchanged this cycle (pre-dates STOP-THE-LINE #2), **but read G3 alongside the HOLD**: its ifc_poisson anchor evidence remains under active dispute with a repair now in flight (not a gate-file edit — maintainer is read-only for gates).
 - **Reopen candidates**: none (`reopen_candidate: false` on all 4 batch-1 cards).
 - **blocked.md**: none found under any stream directory.
-- **Abandoned streams**: none. All 4 streams are on batch 1, all actively progressing or complete (1 guard relaunch landed + analyzer withheld, 1 all-3-seeds landed + analyzer withheld, 1 `complete`, 1 certifier landed + analyzer withheld). The 3-consecutive-skipped/blocked cap does not apply this early. No `state/streams/{stream}.json` markers exist (directory still does not exist).
+- **Abandoned streams**: none. All 4 streams are on batch 1, all actively progressing or complete. The 3-consecutive-skipped/blocked cap does not apply this early. No `state/streams/{stream}.json` markers exist (directory still does not exist).
 - **Transcripts inbox**: empty — nothing to archive this run.
-- **Timing ledger**: 12 entries (was 10). **New this cycle**: `66928385` (r3s2_field_reach-B1 seed 1, 36.55m, panel_geomean_skill_scored5 10.3180) and `66928386` (r3s2_field_reach-B1 seed 2, 36.55m, panel_geomean_skill_scored5 17.8277). Unchanged: r3s3_lf_value-B1 seed 0 `66825323` 150.25m, seed 1 `66879960` 140.13m, seed 2 `66879961` 140.15m; r3s4_audit-B1 seed 0 `66826610` 6.77m, seed 1 `66879667` 3.27m, seed 2 `66879668` 3.22m, certify `66921555` 0.38m; r3s1_factorised-B1 seed 0 `66829977` 0.12m cache-served, guard-s0 `66922977` 0.58m; r3s2_field_reach-B1 seed 0 `66832670` 44.33m. FAILED guard leg (`66829978`) intentionally not upserted (ledger upserts COMPLETED jobs only).
-- **Watch for next cycle**: operator adjudication on the STOP-THE-LINE #2 repair plan (quarantine + fresh retrain + ckpt data-hash binding) — this is now the sole item that can move the round forward, since all batch-1 compute is complete and the queue is empty. No jobs are expected to appear until either the HOLD is adjudicated (unblocking the withheld analyzer stages for r3s1/r3s2/r3s4) or a new debug/repair job is dispatched against the anchor tree.
+- **Timing ledger**: 12 entries, unchanged this cycle (no new COMPLETED jobs to upsert — the 11 repair jobs are all still PENDING).
+- **Watch for next cycle**: the 11 `r3RPR-*` repair jobs starting/completing (queue congestion permitting); once they land, the sequence is `--fail-on-stale` re-audit → anchor rebuild → r3s3-B1 delta recompute → HOLD clear → dispatch of the withheld r3s1/r3s2/r3s4 analyzer stages.
 
 Maintained by the maintainer cron.
