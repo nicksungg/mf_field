@@ -241,7 +241,51 @@ def load_card_skills(card, mode, family, floors_by_ds, include_void_ifc):
     return out
 
 
+# ---- stale-checkpoint gate (STOP-THE-LINE #2 permanent instrument, 2026-08-09) ----
+# Every scored panel cell must have been TRAINED against the data it is scored
+# on — a resume from a completed checkpoint silently no-ops the training and
+# passes every hash/floor seam (references recompute live; only weights are
+# stale). Benign-stale adjudications are explicit and carry provenance:
+STALE_ADJUDICATED_OK = {
+    # ADR r3-0003 D1 trimmed allen_cahn's TEST split only; training rows are
+    # bit-identical, so the 2026-08-06 resumed re-scores remain valid
+    # (blast-radius determination 2026-08-08, orchestrator_flow.md).
+    "sharp__allen_cahn_2d",
+}
+AUDIT_ROOTS = {
+    "r2s1_direct-B2": OUT_ANCHORS / "r2s1_direct-B2" / "results",
+    "r2s1_direct-B3": OUT_ANCHORS / "r2s1_direct-B3" / "results",
+    # r2s2's anchor source is its cache; the results tree is written by the
+    # same training events, so it is the auditable surface for those cells.
+    "r2s2_stacked-B1": OUT_ANCHORS / "r2s2_stacked-B1" / "results",
+    "r2s3_lf_train_signal-B3": OUT_ANCHORS / "r2s3_lf_train_signal-B3" / "eval",
+}
+
+
+def stale_gate():
+    import subprocess
+    audit = ROUND3 / "tools" / "stale_checkpoint_audit.py"
+    for card, root in AUDIT_ROOTS.items():
+        for ds in PANEL:
+            r = subprocess.run(
+                [sys.executable, str(audit), "--root", str(root),
+                 "--pattern", f"{ds}_e*_s*.json", "--fail-on-stale"],
+                capture_output=True, text=True)
+            if r.returncode != 0:
+                if ds in STALE_ADJUDICATED_OK:
+                    print(f"[stale-gate] {card}/{ds}: stale signature ADJUDICATED-OK "
+                          f"(see STALE_ADJUDICATED_OK provenance)")
+                    continue
+                raise SystemExit(
+                    f"STALE-CHECKPOINT GATE FAILED: {card}/{ds} — anchors NOT built.\n"
+                    f"{r.stdout}\n{r.stderr}\n"
+                    f"Quarantine the stale legs and fresh-train them "
+                    f"(see state/stale_ckpt_repair_jobs_2026-08-09.json for the pattern).")
+    print("[stale-gate] all panel cells clean (or adjudicated-OK)")
+
+
 def main():
+    stale_gate()
     certified = json.loads((ROUND3 / "state" / "anchor_summary_3seed_2026-08-03.json").read_text())
     floors_repaired = json.loads((ROUND3 / "state" / "anchors_repaired" / "floors.json").read_text())
 
