@@ -113,6 +113,7 @@ def main():
     new_entry["_adr_r3_0005"] = (f"reference {old_ref:.9g} -> {ref:.9g} (spectral rung-1 cell); "
                                  f"floors recomputed {STAMP}; pre-ADR entry archived in {farch.name}")
     f[NAME] = new_entry
+    f["_copylf_def_hash"] = COPYLF_DEF_HASH  # BOTH files carry the stamp (2026-08-10 miss: only baselines was stamped)
     fafter = {k: v for k, v in f.items() if k != NAME and not k.startswith("_")}
     assert json.dumps(fbefore, sort_keys=True) == json.dumps(fafter, sort_keys=True), "non-pfc floor drifted"
     fp.write_text(json.dumps(f, indent=1) + "\n")
