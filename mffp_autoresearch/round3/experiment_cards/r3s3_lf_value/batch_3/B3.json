@@ -102,7 +102,7 @@
    "_note": "Keys prefixed _ are card directives, NOT passed to --env. The --env set is exactly the 49 R3S3B3_* keys above; each leg overrides only R3S3B3_ARM, R3S3B3_LF_COND_SET, R3S3B3_LF_COND_CAP and R3S3B3_SPLIT_SEED (the guard leg also sets epochs=2). ARM<->selector binding asserted in smoke_eval: A0_nolf=(COND_SET none, CAP 0); A1_lf_all=(all, 0); A3c_lf_uncov_cap=(uncovered, CAP in the sealed ladder for that dataset). Any other combination raises."
   }
  },
- "status": "running",
+ "status": "analyzing",
  "skipped_reason": null,
  "reopen_candidate": false,
  "scripts_path": {
@@ -127,6 +127,18 @@
    "job_id": "261111",
    "submitted_utc": "2026-08-11",
    "note": "seed 0; seeds 1-2 gated on initial analysis per pipeline; submitted at fix commit ad5430c (post micro-review cleared-for-submission)"
+  },
+  {
+   "seeds": [
+    1,
+    2
+   ],
+   "job_ids": [
+    "326392",
+    "326394"
+   ],
+   "submitted_utc": "2026-08-11",
+   "note": "gated-open by initial analyzer (proceed_to_seeds_1_2; nothing blocks); seal re-verified at submit"
   }
  ],
  "logs": {},
@@ -183,9 +195,1612 @@
   }
  ],
  "debug_notes": [],
- "5_actual_result": null,
+ "5_actual_result": {
+  "seeds_available": [
+   0
+  ],
+  "invocation": "SEED-0 ONLY (first invocation). Every nRMSE below was READ from eval/result_<tag>.json :: per_dataset[ds].nRMSE (score_panel aggregate, metric_source per_sample_mean); no metric was recomputed. The rich per-leg JSONs supply only floor arms, stratified/mean-removed readouts, gate reports and provenance. Clause verdicts are NOT issued here \u2014 see falsification_verdict.",
+  "legs": {
+   "expected_per_seed": 66,
+   "eval_result_jsons": 66,
+   "done_markers": 66,
+   "training_leg_dirs": 65,
+   "guard_leg_dirs": 1,
+   "rich_leg_jsons_parsed": 66,
+   "composition": "5 scored cells x 5 arms (A0_nolf, A3c@r1, A3c@r2, A3c@r3, A1_lf_all); 4 sharp cells x 3 HF draws = 60 legs + ifc_heat native 1 draw = 5 legs + 1 heat_local guard leg at contract tier (2 epochs) = 66.",
+   "job_id": 261111,
+   "slurm_state": "COMPLETED 0:0",
+   "ifc_poisson": "no leg exists: ADR r3-0007 option C makes ifc_poisson report-only and the card's _ifc_clause_status deletes its predictive-cell clause (gate_report.reporting_discipline.dropped)."
+  },
+  "hash_consistency": {
+   "nrmse_def_hash": [
+    "d3d0ade9191c13bacc40702f3eb26ad290e01641cacee22a1d2233b74c035850"
+   ],
+   "n_distinct_over_66_result_jsons": 1,
+   "copylf_def_hash": [
+    "9794cc89f1647861a6188803361bdfbb571991c91f206685824a80a900ba09a7"
+   ],
+   "copylf_n_distinct": 1,
+   "metric_source_all_legs": [
+    "per_sample_mean"
+   ],
+   "split_all_legs": [
+    "test_hf"
+   ],
+   "cached_all_legs": [
+    "False"
+   ],
+   "reference_type_by_cell": {
+    "ifc_heat": "paper_bar",
+    "the 4 sharp cells + heat_local": "copylf"
+   },
+   "seam_assertion": "PASS \u2014 a single nrmse_def_hash and a single copylf_def_hash over all 66 result JSONs."
+  },
+  "prereg_seal_verification": {
+   "seal_path": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/state/r3s3_lf_value/prereg_knees_B3.json",
+   "payload_sha256_recorded": "e98f6dc78ab18d80d75f4ef1f819525682d0d01c61e11081939dee30fcea3e2c",
+   "payload_sha256_recomputed_by_analyzer": "e98f6dc78ab18d80d75f4ef1f819525682d0d01c61e11081939dee30fcea3e2c",
+   "payload_digest_match": true,
+   "sealed_utc": "2026-08-11T04:59:09Z",
+   "legs_carrying_the_sealed_sha": {
+    "result_json_env.R3S3B3_PREREG_SHA256": [
+     "e98f6dc78ab18d80d75f4ef1f819525682d0d01c61e11081939dee30fcea3e2c"
+    ],
+    "leg_json_knee_prereg.prereg.payload_sha256": [
+     "e98f6dc78ab18d80d75f4ef1f819525682d0d01c61e11081939dee30fcea3e2c"
+    ],
+    "leg_json_sealed_utc": [
+     "2026-08-11T04:59:09Z"
+    ],
+    "seal_precedes_leg": [
+     "True"
+    ],
+    "assert_enforced": [
+     "True"
+    ],
+    "n_legs_checked": 66,
+    "verdict": "PASS \u2014 all 66 legs (65 scored + 1 guard) carry the sealed payload sha e98f6dc7... and _sealed_utc 2026-08-11T04:59:09Z with seal_precedes_leg=true. NO leg is missing the sha.",
+    "single_partial_block_flagged": {
+     "leg": "A1_lf_all__heat_local__d0__n5__c0__e2__s0 (the contract-tier GUARD leg)",
+     "what": "its knee_prereg.prereg block omits the instrument/driver sub-blocks (is_card_cell=false: heat_local is not a card cell and has no sealed ladder). It still carries payload_sha256, sealed_utc and ordering.",
+     "material": false
+    }
+   },
+   "instrument_sha256": "657494247911a979be02f79f5f4fc844bab31d16c932417d23682cdfc40ad222",
+   "driver_provenance": {
+    "rule": "card orchestrator_note_analyzer_driver_provenance \u2014 resolve the pinned blob, never the tree",
+    "seal_records": "62aba4e6017bf2bb6a49c792f2cb979fe3971a8dd86289df325e34755cb1902a",
+    "sha256_of_git_show_5db0aeb_scripts_phase_p_prereg_py": "62aba4e6017bf2bb6a49c792f2cb979fe3971a8dd86289df325e34755cb1902a",
+    "match": true,
+    "worktree_sha256_do_not_use": "db893bc5a60d4b10db8f00d297f5275c972f66b16ea10da2860acb4983005c32",
+    "reading": "PASS. The pinned blob reproduces 62aba4e6...; the worktree file hashes to db893bc5... because of the post-seal comment-only edit (8aa09f3). Provenance resolved on the blob per the card note."
+   }
+  },
+  "per_dataset": {
+   "sharp__cahn_hilliard": {
+    "per_seed_nrmse": [
+     0.50366811
+    ],
+    "per_seed_skill": [
+     12.048622
+    ],
+    "mean_skill": 12.048622,
+    "ci95": null,
+    "reference_type": "copylf",
+    "cached": false,
+    "arm": "A1_lf_all (r4 = FULL rung; the card's reproduction seam)",
+    "per_draw_nrmse": {
+     "0": 0.5088908,
+     "1": 0.50379136,
+     "2": 0.49832217
+    },
+    "skill_film_mean": 0.724963,
+    "ci95_note": "single seed: no seed CI is computable; CI is issued on the 3-seed invocation"
+   },
+   "sharp__allen_cahn_2d": {
+    "per_seed_nrmse": [
+     0.37598098
+    ],
+    "per_seed_skill": [
+     182.57197
+    ],
+    "mean_skill": 182.57197,
+    "ci95": null,
+    "reference_type": "copylf",
+    "cached": false,
+    "arm": "A1_lf_all (r4 = FULL rung; the card's reproduction seam)",
+    "per_draw_nrmse": {
+     "0": 0.35815018,
+     "1": 0.36535878,
+     "2": 0.40443398
+    },
+    "skill_film_mean": 0.746216,
+    "ci95_note": "single seed: no seed CI is computable; CI is issued on the 3-seed invocation"
+   },
+   "sharp__fisher_kpp_2d": {
+    "per_seed_nrmse": [
+     0.02825893
+    ],
+    "per_seed_skill": [
+     171.011442
+    ],
+    "mean_skill": 171.011442,
+    "ci95": null,
+    "reference_type": "copylf",
+    "cached": false,
+    "arm": "A1_lf_all (r4 = FULL rung; the card's reproduction seam)",
+    "per_draw_nrmse": {
+     "0": 0.0274733,
+     "1": 0.02900864,
+     "2": 0.02829486
+    },
+    "skill_film_mean": 0.754269,
+    "ci95_note": "single seed: no seed CI is computable; CI is issued on the 3-seed invocation"
+   },
+   "sharp__phase_field_crystal_2d": {
+    "per_seed_nrmse": [
+     0.96044851
+    ],
+    "per_seed_skill": [
+     77.716366
+    ],
+    "mean_skill": 77.716366,
+    "ci95": null,
+    "reference_type": "copylf",
+    "cached": false,
+    "arm": "A1_lf_all (r4 = FULL rung; the card's reproduction seam)",
+    "per_draw_nrmse": {
+     "0": 0.956403,
+     "1": 0.93415374,
+     "2": 0.99078879
+    },
+    "skill_film_mean": 1.008073,
+    "ci95_note": "single seed: no seed CI is computable; CI is issued on the 3-seed invocation"
+   },
+   "ifc_heat": {
+    "per_seed_nrmse": [
+     0.0048644
+    ],
+    "per_seed_skill": [
+     0.065735
+    ],
+    "mean_skill": 0.065735,
+    "ci95": null,
+    "reference_type": "paper_bar",
+    "cached": false,
+    "arm": "A1_lf_all (r4 = FULL rung; the card's reproduction seam)",
+    "per_draw_nrmse": {
+     "native": 0.0048644
+    },
+    "skill_film_mean": 0.134623,
+    "ci95_note": "single seed: no seed CI is computable; CI is issued on the 3-seed invocation"
+   }
+  },
+  "panel_geomean_skill": {
+   "per_seed": [
+    18.060984
+   ],
+   "mean": 18.060984,
+   "ci95": null,
+   "arm": "A1_lf_all",
+   "panel": [
+    "sharp__cahn_hilliard",
+    "sharp__allen_cahn_2d",
+    "sharp__fisher_kpp_2d",
+    "sharp__phase_field_crystal_2d",
+    "ifc_heat"
+   ],
+   "units": "copy-LF skill on the 4 sharp cells, paper-bar skill on ifc_heat (the same mix the launch anchors use)",
+   "per_dataset_skill_copylf": {
+    "sharp__cahn_hilliard": 12.048622,
+    "sharp__allen_cahn_2d": 182.57197,
+    "sharp__fisher_kpp_2d": 171.011442,
+    "sharp__phase_field_crystal_2d": 77.716366,
+    "ifc_heat": 0.065735
+   },
+   "film_units": {
+    "geomean_skill_film": 0.560613,
+    "per_dataset_skill_film": {
+     "sharp__cahn_hilliard": 0.724963,
+     "sharp__allen_cahn_2d": 0.746216,
+     "sharp__fisher_kpp_2d": 0.754269,
+     "sharp__phase_field_crystal_2d": 1.008073,
+     "ifc_heat": 0.134623
+    },
+    "note": "FILM is this card's primary unit (ADR r3-0006 / batch-3 scope rule 1); skill_film = nRMSE / nrmse_film_mean(ds)."
+   },
+   "control_arm_A0_nolf": {
+    "geomean_skill_copylf": 56.39623,
+    "geomean_skill_film": 1.75054,
+    "per_dataset_skill_copylf": {
+     "sharp__cahn_hilliard": 27.085762,
+     "sharp__allen_cahn_2d": 576.471785,
+     "sharp__fisher_kpp_2d": 469.376298,
+     "sharp__phase_field_crystal_2d": 95.182133,
+     "ifc_heat": 0.817814
+    }
+   },
+   "aggregation_note": "round-3-side aggregation (project.yaml: the 5-ds aggregation is round-3-side); geomean of the per-dataset skills the score_panel result JSONs report, over the HF-draw-mean nRMSE per cell. NO metric recomputed."
+  },
+  "vs_anchor": {
+   "claim_on_the_panel_geomean": "NONE \u2014 card part 4: 'Delta vs anchor: none claimed on the panel geomean.' The A1_lf_all legs are only expected to REPRODUCE the seam.",
+   "anchor_value": 18.7197,
+   "anchor_source": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/state/anchors/launch_anchors.json :: cards['r2s3_lf_train_signal-B3'].mean (3-seed, 5-ds panel [pfc, ac, fkpp, ch, ifc_heat] as amended by ADR r3-0005/r3-0007)",
+   "anchor_ci95": [
+    18.1534,
+    19.2859
+   ],
+   "measured": 18.060984,
+   "delta": -0.658716,
+   "beyond_ci": false,
+   "beyond_ci_note": "single seed \u2014 no CI on this side; the seed-0 value 18.0610 sits just below the anchor's 3-seed CI lower bound 18.1534 (lower skill = better), which is the expected size of a seed-0-vs-3-seed-mean offset, not a claim.",
+   "beyond_noise_floor": false,
+   "noise_floor_cross_check": {
+    "certified_utc": "2026-08-08T20:00:07Z",
+    "tau_rel": 0.36124864423263325,
+    "panel_seed_mce": 0.5082844131597604,
+    "paired_null_95": 0.40667775361433317,
+    "reading": "|delta| 0.6587 exceeds the panel seed_mce 0.5083, but the comparison is a single seed against a 3-seed mean and the card claims no panel effect; not resolvable as an effect and not claimed as one."
+   },
+   "per_cell_reproduction_seam_A1_vs_anchor": {
+    "sharp__phase_field_crystal_2d": {
+     "B3_seed0": 77.7164,
+     "r2s3_B3_3seed_mean": 76.7478
+    },
+    "sharp__allen_cahn_2d": {
+     "B3_seed0": 182.572,
+     "r2s3_B3_3seed_mean": 186.7596
+    },
+    "sharp__fisher_kpp_2d": {
+     "B3_seed0": 171.0114,
+     "r2s3_B3_3seed_mean": 172.2459
+    },
+    "sharp__cahn_hilliard": {
+     "B3_seed0": 12.0486,
+     "r2s3_B3_3seed_mean": 12.8723
+    },
+    "ifc_heat": {
+     "B3_seed0": 0.0657,
+     "r2s3_B3_3seed_mean": 0.0725
+    }
+   },
+   "card_quoted_anchor_11_1689_note": "card part 4 quotes the r2s3 anchor as 11.1689; that is the PRE-ADR-r3-0005/0007 5-ds composition (ifc_poisson in, pfc out, r3s3-B1 build_notes). On the CURRENT 5-ds panel the same card's anchor is 18.7197. Both are recorded; neither is adjudicated here.",
+   "best_floor_anchor": {
+    "value": 53.2146,
+    "source": "launch_anchors.json :: best_floor (current 5-ds panel)"
+   }
+  },
+  "cratered_verdict": "proceed_to_seeds_1_2",
+  "cratered_evidence": {
+   "rule": "cratered iff crash, OR panel geomean skill > 1.5 x the stream anchor's skill, OR the falsification clause already fired decisively",
+   "crash": false,
+   "crash_evidence": "job 261111 COMPLETED 0:0 in 02:08:55; .err is 0 bytes; 66/66 result JSONs and 66/66 done markers; log reports 'legs run=66 skipped_as_done=0'; zero NaN/Traceback/error lines.",
+   "measured_panel_geomean_A1_lf_all": 18.060984,
+   "cratered_line_vs_stream_model_anchor": 28.0795,
+   "cratered_line_vs_launch_best_floor": 79.8219,
+   "verdict_reasoning": "18.0610 is below BOTH candidate cratered lines (28.0796 against the r2s3 model anchor, 79.8219 against the launch best-floor anchor), so the verdict does not depend on which anchor reading is taken. The A0_nolf control arm geomean 56.3962 is above the model-anchor line by construction (it is the no-LF control, not the card's primary arm) and below the best-floor line.",
+   "falsification_fired_decisively": false,
+   "falsification_fired_reasoning": "the clause's own adjudicability gate requires per-seed knee unanimity over seeds {0,1,2}; with one seed no cell is yet adjudicable, so the clause cannot have fired decisively."
+  },
+  "falsification_verdict": "pending_seeds",
+  "falsification_reading": {
+   "clause_verbatim": "FALSIFIED if the sealed pre-declared rbf-surrogate knee cap misses the trained step-max knee cap on **\u2265 2 adjudicable predictive cells**, or if the `sharp__cahn_hilliard` reproduction control misses its pre-declared cap 80 (instrument instability) \u2014 where a cell counts as adjudicable only when its trained deciding-step margin exceeds one certified `tau_rel_film` (0.076103 `allen_cahn`, 0.045486 `fisher_kpp`, 0.021736 ch; pfc only if a pfc `tau_rel` is certified; the ifc cells pre-declared non-adjudicable at 0.335905 / 0.562718) and its per-seed knee is unanimous over seeds {0,1,2}",
+   "why_pending": "adjudicability condition (b) \u2014 per-seed knee unanimity over seeds {0,1,2} \u2014 is undecidable with seed 0 alone. No cell is adjudicable yet, and the clause's own fallback ('fewer than two adjudicable predictive cells is published as INCONCLUSIVE') is likewise not yet triggerable.",
+   "seed0_deciding_numbers": {
+    "sharp__allen_cahn_2d (predictive, tau certified)": {
+     "c_pred": 20,
+     "K_trained_seed0": 395,
+     "match": false,
+     "M_film": 0.512621,
+     "tau_rel_film": 0.07610344579435356,
+     "M_film_over_tau": 6.736,
+     "fold_knees_within_seed0": [
+      395,
+      395,
+      395
+     ]
+    },
+    "sharp__fisher_kpp_2d (predictive, tau certified)": {
+     "c_pred": 10,
+     "K_trained_seed0": 395,
+     "match": false,
+     "M_film": 0.879609,
+     "tau_rel_film": 0.045486029308412695,
+     "M_film_over_tau": 19.338,
+     "fold_knees_within_seed0": [
+      395,
+      395,
+      395
+     ]
+    },
+    "sharp__cahn_hilliard (reproduction control)": {
+     "c_pred": 80,
+     "K_trained_seed0": 80,
+     "match": true,
+     "M_film": 0.124438,
+     "tau_rel_film": 0.021736254275144935,
+     "M_film_over_tau": 5.725,
+     "fold_knees_within_seed0": [
+      80,
+      80,
+      80
+     ],
+     "reading": "the instrument-instability branch does NOT fire at seed 0: the control hits its pre-declared cap 80."
+    },
+    "sharp__phase_field_crystal_2d (CONDITIONAL \u2014 not adjudicated this pass)": {
+     "c_pred": 320,
+     "K_trained_seed0": 320,
+     "match": true,
+     "M_film": 0.028617,
+     "tau_rel_film": null,
+     "tau_rel_certified": false,
+     "orchestrator_instruction": "no certified pfc mce exists (certification jobs completed, extension pending orchestrator review) \u2014 value PRESENTED, clause NOT adjudicated."
+    },
+    "ifc_heat (reproduction control, pre-declared UNRESOLVED)": {
+     "c_pred": 10,
+     "K_trained_seed0": 10,
+     "match": true,
+     "M_film": 0.575271,
+     "tau_rel_film": 0.33590501702088815,
+     "M_film_over_tau": 1.713,
+     "M_R": 0.373498,
+     "mechanical_reading": "M_film 0.5753 > tau_rel_film 0.3359 (1.71x), i.e. the margin gate (a) is met at seed 0 although part 4 pre-declared this cell UNRESOLVED and expected M_R > 0.4-0.8 (measured M_R 0.3735). PRESENTED MECHANICALLY, not adjudicated.",
+     "reproduction_control_cap_5_unreachable": {
+      "b2_measured_knee_cap": 5,
+      "cap_in_dense_ladder": true,
+      "cap_in_registered_ladder": false,
+      "consequence": "the sealed ladder is [1, 2, 10, 95], so cap 5 is not a candidate step-max knee: this cell can neither confirm nor contradict B2's measured cap 5. K=10 matching c_pred=10 is therefore a surrogate-vs-trained agreement, NOT a B2 reproduction. Stated mechanically per the seal; nothing was adjusted.",
+      "seal_field": "payload.cells.ifc_heat.reproduction_control.cap_in_registered_ladder = false"
+     }
+    }
+   },
+   "direction_if_seeds_confirm": "Directional only, NOT a verdict: both always-certified predictive cells (allen_cahn, fisher_kpp) MISS at seed 0, each with a deciding-step margin far above its certified tau_rel_film (6.74x and 19.34x) and with the knee unanimous across all 3 HF draws within seed 0. If seeds 1 and 2 reproduce the seed-0 knee, both cells become adjudicable and the '>= 2 adjudicable predictive cells missed' branch fires. The mechanism-analyzer, not this subagent, interprets why.",
+   "seal_caveat_read_against_the_cells": {
+    "ch": "the seal's own 64-draw fold-population histogram says ch's per-fold knee is NOT stable (modal 20 at 65.6%, c_pred=80 at 34.4%). The trained ch knee is nevertheless 80 on all 3 HF draws of seed 0 (per-fold knees [80, 80, 80], jackknife [80, 80, 80]) \u2014 the trained ladder is more decisive on this cell than the surrogate's fold population predicted. The control HIT must be read with that instability caveat attached: 34.4% of the surrogate fold population would have predicted 20.",
+    "pfc": "stable at 98.4% (63/64 draws at 320) and the trained knee is 320 on all 3 draws \u2014 but no certified tau, so no adjudication.",
+    "ac": "surrogate fold population modal 20 at 75.0% (= c_pred); trained knee 395 on all 3 draws.",
+    "fk": "surrogate fold population modal 10 at 71.9% (= c_pred); trained knee 395 on all 3 draws."
+   },
+   "clause_verbatim_is_exact_prefix_of_expected_falsification": true,
+   "clause_remainder_verbatim": "; exactly one miss among the adjudicable predictive cells is published as \"predicts on some cells, not a law\", and fewer than two adjudicable predictive cells is published as INCONCLUSIVE with the sealed predictions and measured margins as the deliverable. Supporting floor-arm condition (mandatory, spec \u00a73): every confirming leg is reported against `nn_condition` / `train_mean` / `zero` (and `affine_on_hf_train` on ifc) with the per-cell floor-crossing rung; if no rung of a cell's ladder beats all three training-free floors, that cell's knee is published as a shape result only and carries no value-of-LF claim."
+  },
+  "cells": {
+   "sharp__cahn_hilliard": {
+    "cell_role": "reproduction control (B2 measured knee cap 80)",
+    "registered_ladder": [
+     5,
+     20,
+     80,
+     395
+    ],
+    "c_pred_REGISTERED": 80,
+    "c_hat_dense": 80,
+    "c_pred_linear_specificity_control": 80,
+    "trained_R_foldmean": {
+     "5": 0.241453,
+     "20": 0.504653,
+     "80": 0.905386,
+     "395": 1.0
+    },
+    "trained_steps": [
+     0.2632,
+     0.400733,
+     0.094614
+    ],
+    "K_trained_seed0": 80,
+    "knee_match_seed0": true,
+    "M_R": 0.137534,
+    "E_ds": 0.628597,
+    "nrmse_film_mean": 0.6947500431375798,
+    "M_film": 0.124438,
+    "tau_rel_film": 0.021736254275144935,
+    "tau_rel_certified": true,
+    "M_film_over_tau_rel_film": 5.7249,
+    "margin_exceeds_tau_seed0": true,
+    "per_fold_seed0": {
+     "0": {
+      "knee": 80,
+      "margin_R": 0.07238,
+      "nRMSE_A0": 1.23754427,
+      "nRMSE_A1": 0.5088908,
+      "nRMSE_by_cap": {
+       "5": 0.93683586,
+       "20": 0.78299018,
+       "80": 0.57640472
+      },
+      "R": {
+       "5": 0.412691,
+       "20": 0.623828,
+       "80": 0.907344,
+       "395": 1.0
+      },
+      "steps": [
+       0.211137,
+       0.283517,
+       0.092656
+      ]
+     },
+     "1": {
+      "knee": 80,
+      "margin_R": 0.025869,
+      "nRMSE_A0": 1.13599845,
+      "nRMSE_A1": 0.50379136,
+      "nRMSE_by_cap": {
+       "5": 1.08541263,
+       "20": 0.83262809,
+       "80": 0.56348919
+      },
+      "R": {
+       "5": 0.080015,
+       "20": 0.479859,
+       "80": 0.905572,
+       "395": 1.0
+      },
+      "steps": [
+       0.399845,
+       0.425713,
+       0.094428
+      ]
+     },
+     "2": {
+      "knee": 80,
+      "margin_R": 0.314352,
+      "nRMSE_A0": 1.02325253,
+      "nRMSE_A1": 0.49832217,
+      "nRMSE_by_cap": {
+       "5": 0.9016497,
+       "20": 0.80788813,
+       "80": 0.54911356
+      },
+      "R": {
+       "5": 0.231655,
+       "20": 0.410272,
+       "80": 0.903242,
+       "395": 1.0
+      },
+      "steps": [
+       0.178617,
+       0.492969,
+       0.096758
+      ]
+     }
+    },
+    "fold_knees_within_seed0": [
+     80,
+     80,
+     80
+    ],
+    "folds_unanimous_within_seed0": true,
+    "jackknife_leave_one_fold_out_knees_seed0": [
+     80,
+     80,
+     80
+    ],
+    "adjudicable": null,
+    "adjudicability_note": "PENDING: the pre-declared gate is (a) M_film > tau_rel_film with a certified tau_rel AND (b) per-seed knee unanimous over seeds {0,1,2}. Only seed 0 exists, so (b) is undecidable this pass. (a) is measured above.",
+    "surrogate_R_curve_rbf": {
+     "5": 0.243026,
+     "20": 0.519334,
+     "80": 0.87761,
+     "395": 1.000265
+    },
+    "surrogate_R_curve_linear": {
+     "5": 0.186905,
+     "20": 0.23929,
+     "80": 0.895617,
+     "395": 0.999511
+    },
+    "surrogate_margin_R": 0.081968,
+    "surrogate_vs_trained_mean_abs_dR_rbf": 0.014677,
+    "surrogate_vs_trained_per_rung_abs_dR_rbf": [
+     0.001573,
+     0.014681,
+     0.027776
+    ],
+    "surrogate_vs_trained_mean_abs_dR_linear": 0.109893,
+    "seal_fold_population_histogram": {
+     "applicable": true,
+     "counts": {
+      "20": 42,
+      "80": 22
+     },
+     "modal_knee": 20,
+     "modal_frequency": 0.65625,
+     "c_pred_frequency": 0.34375
+    },
+    "seal_surrogate_draw_unanimous": false,
+    "structural_nulls": {
+     "design_rank": {
+      "saturation_cap": 20,
+      "max_rank": 20,
+      "by_cap": {
+       "5": 10,
+       "20": 20,
+       "80": 20,
+       "395": 20
+      },
+      "reading": "if this saturates far BELOW the knee, the knee is not a condition-space-rank story"
+     },
+     "nnc_field_oracle": {
+      "min": 0.9682217548423632,
+      "max": 1.1716289040283987,
+      "by_cap": {
+       "5": 1.151473252810801,
+       "20": 1.1716289040283987,
+       "80": 1.0022187756437695,
+       "395": 0.9682217548423632
+      },
+      "reading": "if it never goes usefully below 1.0, the knee is not a coverage-radius story"
+     }
+    },
+    "reproduction_control": {
+     "b2_measured_knee_cap": 80,
+     "source": "card recipe.env._cell_roles",
+     "cap_in_dense_ladder": true,
+     "cap_in_registered_ladder": true,
+     "note": "STATED, NOT ADJUSTED. The dense ladder is the card's own verbatim {5,10,20,40,80,160,320,FULL} and the registered ladder is the card's own mechanical rule applied to c_hat; neither was moved to make a control cap reachable."
+    },
+    "stratified_readout_reported_only": {
+     "hard_forward_sensitive": {
+      "R_foldmean": {
+       "5": 0.213861,
+       "20": 0.447182,
+       "80": 0.791837,
+       "395": 1.0
+      },
+      "steps": [
+       0.233321,
+       0.344655,
+       0.208163
+      ],
+      "knee": 80,
+      "margin_R": 0.111334
+     },
+     "easy_bulk": {
+      "R_foldmean": {
+       "5": 0.243979,
+       "20": 0.505875,
+       "80": 0.91305,
+       "395": 1.0
+      },
+      "steps": [
+       0.261896,
+       0.407174,
+       0.08695
+      ],
+      "knee": 80,
+      "margin_R": 0.145279
+     },
+     "n_hard": 27,
+     "nearest_train_field_rel_l2_hard_over_easy": 3.669,
+     "source": "splits.test_hf.rel_l2_per_sample subset means (gate_report.forward_sensitive_stratification), model-free top-27% mask; REPORTED-ONLY, never gating"
+    },
+    "floors": {
+     "floor_arms_foldmean_nrmse": {
+      "ref_nn_condition_n5": 1.258112,
+      "ref_train_mean_n5": 1.066047,
+      "ref_zero": 1.0
+     },
+     "best_floor": 1.0,
+     "best_floor_arm": "ref_zero",
+     "full_pool_floor_arms_reported_only": {
+      "ref_nn_condition_full": 0.969007,
+      "ref_train_mean_full": 1.001977
+     },
+     "arm_foldmean_nrmse": {
+      "A0_nolf": 1.132265,
+      "A3c_lf_uncov_cap@c5": 0.974633,
+      "A3c_lf_uncov_cap@c20": 0.807835,
+      "A3c_lf_uncov_cap@c80": 0.563002,
+      "A1_lf_all": 0.503668
+     },
+     "first_rung_beating_all_floors": 5,
+     "note": null
+    }
+   },
+   "sharp__allen_cahn_2d": {
+    "cell_role": "predictive (zero anchors on the cell)",
+    "registered_ladder": [
+     1,
+     5,
+     20,
+     395
+    ],
+    "c_pred_REGISTERED": 20,
+    "c_hat_dense": 20,
+    "c_pred_linear_specificity_control": 20,
+    "trained_R_foldmean": {
+     "1": 0.03144,
+     "5": 0.156377,
+     "20": 0.418986,
+     "395": 1.0
+    },
+    "trained_steps": [
+     0.124937,
+     0.262609,
+     0.581014
+    ],
+    "K_trained_seed0": 395,
+    "knee_match_seed0": false,
+    "M_R": 0.318406,
+    "E_ds": 0.811181,
+    "nrmse_film_mean": 0.5038502425291576,
+    "M_film": 0.512621,
+    "tau_rel_film": 0.07610344579435356,
+    "tau_rel_certified": true,
+    "M_film_over_tau_rel_film": 6.7358,
+    "margin_exceeds_tau_seed0": true,
+    "per_fold_seed0": {
+     "0": {
+      "knee": 395,
+      "margin_R": 0.402893,
+      "nRMSE_A0": 0.9546297,
+      "nRMSE_A1": 0.35815018,
+      "nRMSE_by_cap": {
+       "1": 1.06307296,
+       "5": 1.0778096,
+       "20": 0.8381386
+      },
+      "R": {
+       "1": -0.181805,
+       "5": -0.206512,
+       "20": 0.195298,
+       "395": 1.0
+      },
+      "steps": [
+       -0.024706,
+       0.401809,
+       0.804702
+      ]
+     },
+     "1": {
+      "knee": 395,
+      "margin_R": 0.179997,
+      "nRMSE_A0": 1.07760208,
+      "nRMSE_A1": 0.36535878,
+      "nRMSE_by_cap": {
+       "1": 1.1420075,
+       "5": 0.8944594,
+       "20": 0.74110876
+      },
+      "R": {
+       "1": -0.090426,
+       "5": 0.257135,
+       "20": 0.472442,
+       "395": 1.0
+      },
+      "steps": [
+       0.347561,
+       0.215307,
+       0.527558
+      ]
+     },
+     "2": {
+      "knee": 395,
+      "margin_R": 0.240072,
+      "nRMSE_A0": 1.52925291,
+      "nRMSE_A1": 0.40443398,
+      "nRMSE_by_cap": {
+       "1": 1.11694962,
+       "5": 1.05850756,
+       "20": 0.8664894
+      },
+      "R": {
+       "1": 0.366551,
+       "5": 0.418508,
+       "20": 0.589218,
+       "395": 1.0
+      },
+      "steps": [
+       0.051957,
+       0.17071,
+       0.410782
+      ]
+     }
+    },
+    "fold_knees_within_seed0": [
+     395,
+     395,
+     395
+    ],
+    "folds_unanimous_within_seed0": true,
+    "jackknife_leave_one_fold_out_knees_seed0": [
+     395,
+     395,
+     395
+    ],
+    "adjudicable": null,
+    "adjudicability_note": "PENDING: the pre-declared gate is (a) M_film > tau_rel_film with a certified tau_rel AND (b) per-seed knee unanimous over seeds {0,1,2}. Only seed 0 exists, so (b) is undecidable this pass. (a) is measured above.",
+    "surrogate_R_curve_rbf": {
+     "1": -0.181741,
+     "5": 0.079727,
+     "20": 0.579026,
+     "395": 0.99966
+    },
+    "surrogate_R_curve_linear": {
+     "1": -0.12123,
+     "5": -0.092396,
+     "20": 0.475326,
+     "395": 1.000607
+    },
+    "surrogate_margin_R": 0.078665,
+    "surrogate_vs_trained_mean_abs_dR_rbf": 0.149957,
+    "surrogate_vs_trained_per_rung_abs_dR_rbf": [
+     0.213181,
+     0.07665,
+     0.16004
+    ],
+    "surrogate_vs_trained_mean_abs_dR_linear": 0.152594,
+    "seal_fold_population_histogram": {
+     "applicable": true,
+     "counts": {
+      "5": 9,
+      "20": 48,
+      "395": 7
+     },
+     "modal_knee": 20,
+     "modal_frequency": 0.75,
+     "c_pred_frequency": 0.75
+    },
+    "seal_surrogate_draw_unanimous": false,
+    "structural_nulls": {
+     "design_rank": {
+      "saturation_cap": 20,
+      "max_rank": 20,
+      "by_cap": {
+       "1": 2,
+       "5": 10,
+       "20": 20,
+       "395": 20
+      },
+      "reading": "if this saturates far BELOW the knee, the knee is not a condition-space-rank story"
+     },
+     "nnc_field_oracle": {
+      "min": 0.9740294078268797,
+      "max": 1.2372604625812833,
+      "by_cap": {
+       "1": 1.2372604625812833,
+       "5": 1.1552537517272583,
+       "20": 1.154643164371931,
+       "395": 0.9740294078268797
+      },
+      "reading": "if it never goes usefully below 1.0, the knee is not a coverage-radius story"
+     }
+    },
+    "reproduction_control": null,
+    "stratified_readout_reported_only": {
+     "hard_forward_sensitive": {
+      "R_foldmean": {
+       "1": 0.00637,
+       "5": 0.044063,
+       "20": 0.235565,
+       "395": 1.0
+      },
+      "steps": [
+       0.037693,
+       0.191502,
+       0.764435
+      ],
+      "knee": 395,
+      "margin_R": 0.572932
+     },
+     "easy_bulk": {
+      "R_foldmean": {
+       "1": 0.040652,
+       "5": 0.201402,
+       "20": 0.491542,
+       "395": 1.0
+      },
+      "steps": [
+       0.160751,
+       0.29014,
+       0.508458
+      ],
+      "knee": 395,
+      "margin_R": 0.218318
+     },
+     "n_hard": 21,
+     "nearest_train_field_rel_l2_hard_over_easy": 2.1983,
+     "source": "splits.test_hf.rel_l2_per_sample subset means (gate_report.forward_sensitive_stratification), model-free top-27% mask; REPORTED-ONLY, never gating"
+    },
+    "floors": {
+     "floor_arms_foldmean_nrmse": {
+      "ref_nn_condition_n5": 1.213803,
+      "ref_train_mean_n5": 1.09911,
+      "ref_zero": 1.0
+     },
+     "best_floor": 1.0,
+     "best_floor_arm": "ref_zero",
+     "full_pool_floor_arms_reported_only": {
+      "ref_nn_condition_full": 0.979959,
+      "ref_train_mean_full": 1.001702
+     },
+     "arm_foldmean_nrmse": {
+      "A0_nolf": 1.187162,
+      "A3c_lf_uncov_cap@c1": 1.107343,
+      "A3c_lf_uncov_cap@c5": 1.010259,
+      "A3c_lf_uncov_cap@c20": 0.815246,
+      "A1_lf_all": 0.375981
+     },
+     "first_rung_beating_all_floors": 20,
+     "note": null
+    }
+   },
+   "sharp__fisher_kpp_2d": {
+    "cell_role": "predictive (zero anchors on the cell)",
+    "registered_ladder": [
+     1,
+     2,
+     10,
+     395
+    ],
+    "c_pred_REGISTERED": 10,
+    "c_hat_dense": 10,
+    "c_pred_linear_specificity_control": 395,
+    "trained_R_foldmean": {
+     "1": 0.141048,
+     "2": 0.18808,
+     "10": 0.259836,
+     "395": 1.0
+    },
+    "trained_steps": [
+     0.047032,
+     0.071756,
+     0.740164
+    ],
+    "K_trained_seed0": 395,
+    "knee_match_seed0": false,
+    "M_R": 0.668407,
+    "E_ds": 0.049304,
+    "nrmse_film_mean": 0.037465347772865996,
+    "M_film": 0.879609,
+    "tau_rel_film": 0.045486029308412695,
+    "tau_rel_certified": true,
+    "M_film_over_tau_rel_film": 19.338,
+    "margin_exceeds_tau_seed0": true,
+    "per_fold_seed0": {
+     "0": {
+      "knee": 395,
+      "margin_R": 0.782921,
+      "nRMSE_A0": 0.07568697,
+      "nRMSE_A1": 0.0274733,
+      "nRMSE_by_cap": {
+       "1": 0.06835692,
+       "2": 0.06849135,
+       "10": 0.06685607
+      },
+      "R": {
+       "1": 0.152033,
+       "2": 0.149244,
+       "10": 0.183162,
+       "395": 1.0
+      },
+      "steps": [
+       -0.002788,
+       0.033917,
+       0.816838
+      ]
+     },
+     "1": {
+      "knee": 395,
+      "margin_R": 0.697407,
+      "nRMSE_A0": 0.07769492,
+      "nRMSE_A1": 0.02900864,
+      "nRMSE_by_cap": {
+       "1": 0.06681074,
+       "2": 0.06514244,
+       "10": 0.06463111
+      },
+      "R": {
+       "1": 0.223557,
+       "2": 0.257824,
+       "10": 0.268326,
+       "395": 1.0
+      },
+      "steps": [
+       0.034266,
+       0.010503,
+       0.731674
+      ]
+     },
+     "2": {
+      "knee": 395,
+      "margin_R": 0.50113,
+      "nRMSE_A0": 0.07930559,
+      "nRMSE_A1": 0.02829486,
+      "nRMSE_by_cap": {
+       "1": 0.07687987,
+       "2": 0.07128814,
+       "10": 0.06257299
+      },
+      "R": {
+       "1": 0.047553,
+       "2": 0.157172,
+       "10": 0.328021,
+       "395": 1.0
+      },
+      "steps": [
+       0.109619,
+       0.170849,
+       0.671979
+      ]
+     }
+    },
+    "fold_knees_within_seed0": [
+     395,
+     395,
+     395
+    ],
+    "folds_unanimous_within_seed0": true,
+    "jackknife_leave_one_fold_out_knees_seed0": [
+     395,
+     395,
+     395
+    ],
+    "adjudicable": null,
+    "adjudicability_note": "PENDING: the pre-declared gate is (a) M_film > tau_rel_film with a certified tau_rel AND (b) per-seed knee unanimous over seeds {0,1,2}. Only seed 0 exists, so (b) is undecidable this pass. (a) is measured above.",
+    "surrogate_R_curve_rbf": {
+     "1": -0.870168,
+     "2": -0.062373,
+     "10": 0.774878,
+     "395": 1.000016
+    },
+    "surrogate_R_curve_linear": {
+     "1": -0.055942,
+     "2": -0.021945,
+     "10": 0.28174,
+     "395": 0.999954
+    },
+    "surrogate_margin_R": 0.029455,
+    "surrogate_vs_trained_mean_abs_dR_rbf": 0.592237,
+    "surrogate_vs_trained_per_rung_abs_dR_rbf": [
+     1.011216,
+     0.250452,
+     0.515042
+    ],
+    "surrogate_vs_trained_mean_abs_dR_linear": 0.142973,
+    "seal_fold_population_histogram": {
+     "applicable": true,
+     "counts": {
+      "2": 18,
+      "10": 46
+     },
+     "modal_knee": 10,
+     "modal_frequency": 0.71875,
+     "c_pred_frequency": 0.71875
+    },
+    "seal_surrogate_draw_unanimous": false,
+    "structural_nulls": {
+     "design_rank": {
+      "saturation_cap": 395,
+      "max_rank": 51,
+      "by_cap": {
+       "1": 2,
+       "2": 4,
+       "10": 19,
+       "395": 51
+      },
+      "reading": "if this saturates far BELOW the knee, the knee is not a condition-space-rank story"
+     },
+     "nnc_field_oracle": {
+      "min": 0.06764304709730916,
+      "max": 0.07644532791303314,
+      "by_cap": {
+       "1": 0.07644532791303314,
+       "2": 0.0694998777983082,
+       "10": 0.07146302804042119,
+       "395": 0.06764304709730916
+      },
+      "reading": "if it never goes usefully below 1.0, the knee is not a coverage-radius story"
+     }
+    },
+    "reproduction_control": null,
+    "stratified_readout_reported_only": {
+     "hard_forward_sensitive": {
+      "R_foldmean": {
+       "1": 0.197808,
+       "2": 0.162292,
+       "10": 0.337387,
+       "395": 1.0
+      },
+      "steps": [
+       -0.035516,
+       0.175095,
+       0.662613
+      ],
+      "knee": 395,
+      "margin_R": 0.487518
+     },
+     "easy_bulk": {
+      "R_foldmean": {
+       "1": 0.086192,
+       "2": 0.200328,
+       "10": 0.182647,
+       "395": 1.0
+      },
+      "steps": [
+       0.114136,
+       -0.017681,
+       0.817353
+      ],
+      "knee": 395,
+      "margin_R": 0.703217
+     },
+     "n_hard": 27,
+     "nearest_train_field_rel_l2_hard_over_easy": 4.502,
+     "source": "splits.test_hf.rel_l2_per_sample subset means (gate_report.forward_sensitive_stratification), model-free top-27% mask; REPORTED-ONLY, never gating"
+    },
+    "floors": {
+     "floor_arms_foldmean_nrmse": {
+      "ref_nn_condition_n5": 0.093826,
+      "ref_train_mean_n5": 0.076355,
+      "ref_zero": 1.0
+     },
+     "best_floor": 0.076355,
+     "best_floor_arm": "ref_train_mean_n5",
+     "full_pool_floor_arms_reported_only": {
+      "ref_nn_condition_full": 0.067797,
+      "ref_train_mean_full": 0.064562
+     },
+     "arm_foldmean_nrmse": {
+      "A0_nolf": 0.077562,
+      "A3c_lf_uncov_cap@c1": 0.070683,
+      "A3c_lf_uncov_cap@c2": 0.068307,
+      "A3c_lf_uncov_cap@c10": 0.064687,
+      "A1_lf_all": 0.028259
+     },
+     "first_rung_beating_all_floors": 1,
+     "note": null
+    },
+    "mean_removed_readout_reported_only": {
+     "knee_on_mean_removed_nrmse": {
+      "R_foldmean": {
+       "1": 0.206133,
+       "2": 0.401002,
+       "10": 0.242514,
+       "395": 1.0
+      },
+      "steps": [
+       0.194869,
+       -0.158488,
+       0.757486
+      ],
+      "knee": 395,
+      "margin_R": 0.562617
+     },
+     "note": "carded level-domination check (gate_report.mean_removed); reported-only"
+    }
+   },
+   "sharp__phase_field_crystal_2d": {
+    "cell_role": "predictive (zero anchors); CONDITIONAL \u2014 adjudicated only if a certified pfc tau_rel exists at analysis time (none exists today)",
+    "registered_ladder": [
+     20,
+     80,
+     320,
+     395
+    ],
+    "c_pred_REGISTERED": 320,
+    "c_hat_dense": 320,
+    "c_pred_linear_specificity_control": 80,
+    "trained_R_foldmean": {
+     "20": 0.548096,
+     "80": 0.701055,
+     "320": 0.980329,
+     "395": 1.0
+    },
+    "trained_steps": [
+     0.152959,
+     0.279274,
+     0.019671
+    ],
+    "K_trained_seed0": 320,
+    "knee_match_seed0": true,
+    "M_R": 0.126314,
+    "E_ds": 0.215849,
+    "nrmse_film_mean": 0.9527568345233846,
+    "M_film": 0.028617,
+    "tau_rel_film": null,
+    "tau_rel_certified": false,
+    "M_film_over_tau_rel_film": null,
+    "margin_exceeds_tau_seed0": null,
+    "per_fold_seed0": {
+     "0": {
+      "knee": 320,
+      "margin_R": 0.046993,
+      "nRMSE_A0": 1.17635006,
+      "nRMSE_A1": 0.956403,
+      "nRMSE_by_cap": {
+       "20": 1.06012041,
+       "80": 1.0001976,
+       "320": 0.92993883
+      },
+      "R": {
+       "20": 0.528444,
+       "80": 0.800886,
+       "320": 1.120321,
+       "395": 1.0
+      },
+      "steps": [
+       0.272442,
+       0.319435,
+       -0.120321
+      ]
+     },
+     "1": {
+      "knee": 320,
+      "margin_R": 0.31085,
+      "nRMSE_A0": 1.17445108,
+      "nRMSE_A1": 0.93415374,
+      "nRMSE_by_cap": {
+       "20": 1.05790116,
+       "80": 1.04372094,
+       "320": 0.95158913
+      },
+      "R": {
+       "20": 0.485024,
+       "80": 0.544035,
+       "320": 0.927442,
+       "395": 1.0
+      },
+      "steps": [
+       0.059011,
+       0.383408,
+       0.072558
+      ]
+     },
+     "2": {
+      "knee": 320,
+      "margin_R": 0.007554,
+      "nRMSE_A0": 1.17809023,
+      "nRMSE_A1": 0.99078879,
+      "nRMSE_by_cap": {
+       "20": 1.05993677,
+       "80": 1.03606988,
+       "320": 1.01078819
+      },
+      "R": {
+       "20": 0.63082,
+       "80": 0.758245,
+       "320": 0.893223,
+       "395": 1.0
+      },
+      "steps": [
+       0.127425,
+       0.134979,
+       0.106777
+      ]
+     }
+    },
+    "fold_knees_within_seed0": [
+     320,
+     320,
+     320
+    ],
+    "folds_unanimous_within_seed0": true,
+    "jackknife_leave_one_fold_out_knees_seed0": [
+     320,
+     320,
+     320
+    ],
+    "adjudicable": null,
+    "adjudicability_note": "PENDING: the pre-declared gate is (a) M_film > tau_rel_film with a certified tau_rel AND (b) per-seed knee unanimous over seeds {0,1,2}. Only seed 0 exists, so (b) is undecidable this pass. (a) is measured above.",
+    "surrogate_R_curve_rbf": {
+     "20": -0.047496,
+     "80": 0.12427,
+     "320": 0.915388,
+     "395": 0.991898
+    },
+    "surrogate_R_curve_linear": {
+     "20": -9.591399,
+     "80": 0.504209,
+     "320": 0.968364,
+     "395": 0.998117
+    },
+    "surrogate_margin_R": 0.619353,
+    "surrogate_vs_trained_mean_abs_dR_rbf": 0.412439,
+    "surrogate_vs_trained_per_rung_abs_dR_rbf": [
+     0.595591,
+     0.576785,
+     0.06494
+    ],
+    "surrogate_vs_trained_mean_abs_dR_linear": 3.449435,
+    "seal_fold_population_histogram": {
+     "applicable": true,
+     "counts": {
+      "80": 1,
+      "320": 63
+     },
+     "modal_knee": 320,
+     "modal_frequency": 0.984375,
+     "c_pred_frequency": 0.984375
+    },
+    "seal_surrogate_draw_unanimous": true,
+    "structural_nulls": {
+     "design_rank": {
+      "saturation_cap": 20,
+      "max_rank": 19,
+      "by_cap": {
+       "20": 19,
+       "80": 19,
+       "320": 19,
+       "395": 19
+      },
+      "reading": "if this saturates far BELOW the knee, the knee is not a condition-space-rank story"
+     },
+     "nnc_field_oracle": {
+      "min": 1.1756781550422437,
+      "max": 1.2157431933693295,
+      "by_cap": {
+       "20": 1.2157431933693295,
+       "80": 1.194248911914544,
+       "320": 1.1756781550422437,
+       "395": 1.1871367024020871
+      },
+      "reading": "if it never goes usefully below 1.0, the knee is not a coverage-radius story"
+     }
+    },
+    "reproduction_control": null,
+    "stratified_readout_reported_only": {
+     "hard_forward_sensitive": {
+      "R_foldmean": {
+       "20": 0.590745,
+       "80": 0.719385,
+       "320": 0.939314,
+       "395": 1.0
+      },
+      "steps": [
+       0.12864,
+       0.219928,
+       0.060686
+      ],
+      "knee": 320,
+      "margin_R": 0.091288
+     },
+     "easy_bulk": {
+      "R_foldmean": {
+       "20": 0.529151,
+       "80": 0.692894,
+       "320": 0.988169,
+       "395": 1.0
+      },
+      "steps": [
+       0.163743,
+       0.295275,
+       0.011831
+      ],
+      "knee": 320,
+      "margin_R": 0.131533
+     },
+     "n_hard": 27,
+     "nearest_train_field_rel_l2_hard_over_easy": 3.1103,
+     "source": "splits.test_hf.rel_l2_per_sample subset means (gate_report.forward_sensitive_stratification), model-free top-27% mask; REPORTED-ONLY, never gating"
+    },
+    "floors": {
+     "floor_arms_foldmean_nrmse": {
+      "ref_nn_condition_n5": 1.235134,
+      "ref_train_mean_n5": 0.99681,
+      "ref_zero": 1.0
+     },
+     "best_floor": 0.99681,
+     "best_floor_arm": "ref_train_mean_n5",
+     "full_pool_floor_arms_reported_only": {
+      "ref_nn_condition_full": 1.187748,
+      "ref_train_mean_full": 0.877766
+     },
+     "arm_foldmean_nrmse": {
+      "A0_nolf": 1.176297,
+      "A3c_lf_uncov_cap@c20": 1.059319,
+      "A3c_lf_uncov_cap@c80": 1.026663,
+      "A3c_lf_uncov_cap@c320": 0.964105,
+      "A1_lf_all": 0.960449
+     },
+     "first_rung_beating_all_floors": 320,
+     "note": null
+    }
+   },
+   "ifc_heat": {
+    "cell_role": "reproduction control (B2 measured knee cap 5); pre-declared UNRESOLVED at tau_rel_film 0.335905",
+    "registered_ladder": [
+     1,
+     2,
+     10,
+     95
+    ],
+    "c_pred_REGISTERED": 10,
+    "c_hat_dense": 10,
+    "c_pred_linear_specificity_control": 2,
+    "trained_R_foldmean": {
+     "1": 0.291519,
+     "2": 0.406139,
+     "10": 0.894258,
+     "95": 1.0
+    },
+    "trained_steps": [
+     0.11462,
+     0.488118,
+     0.105742
+    ],
+    "K_trained_seed0": 10,
+    "knee_match_seed0": true,
+    "M_R": 0.373498,
+    "E_ds": 0.055654,
+    "nrmse_film_mean": 0.036133574250864144,
+    "M_film": 0.575271,
+    "tau_rel_film": 0.33590501702088815,
+    "tau_rel_certified": true,
+    "M_film_over_tau_rel_film": 1.7126,
+    "margin_exceeds_tau_seed0": true,
+    "per_fold_seed0": {
+     "native": {
+      "knee": 10,
+      "margin_R": 0.373498,
+      "nRMSE_A0": 0.06051825,
+      "nRMSE_A1": 0.0048644,
+      "nRMSE_by_cap": {
+       "1": 0.0442941,
+       "2": 0.03791503,
+       "10": 0.01074937
+      },
+      "R": {
+       "1": 0.291519,
+       "2": 0.406139,
+       "10": 0.894258,
+       "95": 1.0
+      },
+      "steps": [
+       0.11462,
+       0.488118,
+       0.105742
+      ]
+     }
+    },
+    "fold_knees_within_seed0": [
+     10
+    ],
+    "folds_unanimous_within_seed0": true,
+    "jackknife_leave_one_fold_out_knees_seed0": [],
+    "adjudicable": null,
+    "adjudicability_note": "PENDING: the pre-declared gate is (a) M_film > tau_rel_film with a certified tau_rel AND (b) per-seed knee unanimous over seeds {0,1,2}. Only seed 0 exists, so (b) is undecidable this pass. (a) is measured above.",
+    "surrogate_R_curve_rbf": {
+     "1": 0.23123,
+     "2": 0.083051,
+     "10": 0.824465,
+     "95": 0.99386
+    },
+    "surrogate_R_curve_linear": {
+     "1": -7.367384,
+     "2": 0.534087,
+     "10": 1.450943,
+     "95": 0.856135
+    },
+    "surrogate_margin_R": 0.57202,
+    "surrogate_vs_trained_mean_abs_dR_rbf": 0.151057,
+    "surrogate_vs_trained_per_rung_abs_dR_rbf": [
+     0.060289,
+     0.323089,
+     0.069792
+    ],
+    "surrogate_vs_trained_mean_abs_dR_linear": 2.781179,
+    "seal_fold_population_histogram": {
+     "applicable": false,
+     "reason": "this cell's HF train split is native N_hf = 5 (one fold); the C(N_train, 5) fold population is a single point, so a 64-draw histogram is degenerate"
+    },
+    "seal_surrogate_draw_unanimous": true,
+    "structural_nulls": {
+     "design_rank": {
+      "saturation_cap": 2,
+      "max_rank": 4,
+      "by_cap": {
+       "1": 3,
+       "2": 4,
+       "10": 4,
+       "95": 4
+      },
+      "reading": "if this saturates far BELOW the knee, the knee is not a condition-space-rank story"
+     },
+     "nnc_field_oracle": {
+      "min": 0.06488796872355494,
+      "max": 0.09508603090958484,
+      "by_cap": {
+       "1": 0.09508603090958484,
+       "2": 0.09171831852916301,
+       "10": 0.07968955628219546,
+       "95": 0.06488796872355494
+      },
+      "reading": "if it never goes usefully below 1.0, the knee is not a coverage-radius story"
+     }
+    },
+    "reproduction_control": {
+     "b2_measured_knee_cap": 5,
+     "source": "card recipe.env._cell_roles",
+     "cap_in_dense_ladder": true,
+     "cap_in_registered_ladder": false,
+     "note": "STATED, NOT ADJUSTED. The dense ladder is the card's own verbatim {5,10,20,40,80,160,320,FULL} and the registered ladder is the card's own mechanical rule applied to c_hat; neither was moved to make a control cap reachable."
+    },
+    "stratified_readout_reported_only": {
+     "hard_forward_sensitive": {
+      "R_foldmean": {
+       "1": 0.268209,
+       "2": 0.371838,
+       "10": 0.890174,
+       "95": 1.0
+      },
+      "steps": [
+       0.103629,
+       0.518336,
+       0.109826
+      ],
+      "knee": 10,
+      "margin_R": 0.408511
+     },
+     "easy_bulk": {
+      "R_foldmean": {
+       "1": 0.308929,
+       "2": 0.431759,
+       "10": 0.897307,
+       "95": 1.0
+      },
+      "steps": [
+       0.12283,
+       0.465549,
+       0.102693
+      ],
+      "knee": 10,
+      "margin_R": 0.342719
+     },
+     "n_hard": 35,
+     "nearest_train_field_rel_l2_hard_over_easy": 2.0275,
+     "source": "splits.test_hf.rel_l2_per_sample subset means (gate_report.forward_sensitive_stratification), model-free top-27% mask; REPORTED-ONLY, never gating"
+    },
+    "floors": {
+     "floor_arms_foldmean_nrmse": {
+      "ref_nn_condition_n5": 0.103164,
+      "ref_train_mean_n5": 0.130729,
+      "ref_zero": 1.0,
+      "ref_affine_on_hf_train": 0.070918
+     },
+     "best_floor": 0.070918,
+     "best_floor_arm": "ref_affine_on_hf_train",
+     "full_pool_floor_arms_reported_only": {
+      "ref_nn_condition_full": 0.103164,
+      "ref_train_mean_full": 0.130729
+     },
+     "arm_foldmean_nrmse": {
+      "A0_nolf": 0.060518,
+      "A3c_lf_uncov_cap@c1": 0.044294,
+      "A3c_lf_uncov_cap@c2": 0.037915,
+      "A3c_lf_uncov_cap@c10": 0.010749,
+      "A1_lf_all": 0.004864
+     },
+     "first_rung_beating_all_floors": 0,
+     "note": "cap 0 = the A0_nolf arm already beats every floor"
+    },
+    "mean_removed_readout_reported_only": {
+     "knee_on_mean_removed_nrmse": {
+      "R_foldmean": {
+       "1": 0.404189,
+       "2": 0.626118,
+       "10": 0.923198,
+       "95": 1.0
+      },
+      "steps": [
+       0.221929,
+       0.29708,
+       0.076802
+      ],
+      "knee": 10,
+      "margin_R": 0.075152
+     },
+     "note": "carded level-domination check (gate_report.mean_removed); reported-only"
+    }
+   }
+  },
+  "guard_flags": [],
+  "guard_cell": {
+   "dataset": "heat_local",
+   "arm": "A1_lf_all",
+   "epochs": 2,
+   "tier": "contract",
+   "nRMSE": 0.04529851749829985,
+   "skill_copylf": 18.862423828662592,
+   "reference_type": "copylf",
+   "copylf_reference_test_nrmse": 0.00240152155999517,
+   "cross_card_reproduction": {
+    "b2_seed0_same_leg_nRMSE": 0.04529882970327091,
+    "rel_diff": 6.9e-06,
+    "reading": "reproduces the B2 seed-0 guard leg to 5 significant figures \u2014 no regression."
+   },
+   "guard_set_run_2d": "NOT triggered: \u00a72d runs the guard set only when the card claims a 3-seed panel win beyond the CI. This card claims no panel delta and only seed 0 exists. The card's own built-in guard leg is reported above; fluid and sharp__sod_1d were not run.",
+   "regression_gt_2x_vs_recorded_guard_reference": false
+  },
+  "blocking_preflights_seed0": {
+   "prereg_seal_ordering": "PASS \u2014 seal_precedes_leg true on all 66 legs (lead 14450 s on the first leg).",
+   "scaler_arm_invariance": {
+    "invariance_assert_enforced_all_legs": true,
+    "arm_dependent_all_legs": false
+   },
+   "pfc_lf_rung_set_assert": {
+    "applicable_legs": "the 15 pfc legs",
+    "result": "expected [1], got [1], match true (ADR r3-0005 spectral rung-1 scored cell)"
+   },
+   "data_binding_assert": {
+    "performed_all_66_legs": true,
+    "copylf_def_hash": "9794cc89f1647861a6188803361bdfbb571991c91f206685824a80a900ba09a7"
+   },
+   "ckpt_data_binding": {
+    "enabled_all_legs": true,
+    "written_at_every_save_all_legs": true
+   },
+   "floor_seam_1e-9": "PASS \u2014 every leg's floor_seam_check reports abs_diff 0.0 against the frozen floors.json (certified 2026-08-04T05:12:04Z).",
+   "lf_lift_verification": {
+    "max_abs_diff_over_all_legs": [
+     0.0
+    ],
+    "tol": 1e-09,
+    "note": "0.0 on every leg incl. pfc after the spectral-lift re-vendoring."
+   },
+   "stale_checkpoint_audit": {
+    "pre_run": "0 legs / 0 stale",
+    "post_run": "65 legs / 0 stale",
+    "files": [
+     "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round3/r3s3_lf_value/B3/preflight/stale_checkpoint_audit_s0_20260811T085344Z.json",
+     "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round3/r3s3_lf_value/B3/preflight/stale_checkpoint_audit_post_s0.json"
+    ]
+   },
+   "resumed_from_step_all_legs": [
+    0
+   ],
+   "datasets_flag": "explicit cell list used; --datasets panel never invoked (gate_report.reporting_discipline)."
+  },
+  "anomalies": [
+   "NONE material. Job 261111 COMPLETED 0:0, .err empty, zero NaN/Traceback/error lines in the 231 KB stdout, no preemption, no resume (resumed_from_step = 0 on all 66 legs), 0/65 stale checkpoints post-run.",
+   "MISMATCH (documentation, not data): card part 4 quotes the r2s3 stream anchor as 11.1689 copy-LF units; state/anchors/launch_anchors.json records 18.7197 for r2s3_lf_train_signal-B3 on the CURRENT 5-ds panel. 11.1689 is the pre-ADR-r3-0005/0007 composition. The cratered verdict is unchanged under either value.",
+   "PROVENANCE (expected, pre-flagged): scripts/phase_p_prereg.py in the worktree hashes to db893bc5..., NOT the seal's 62aba4e6... \u2014 the post-seal comment-only edit (8aa09f3). Resolved via `git show 5db0aeb:scripts/phase_p_prereg.py`, which reproduces 62aba4e6... exactly.",
+   "STRUCTURAL (pre-declared in the seal, not an error): ifc_heat's reproduction-control cap 5 is not in the registered ladder [1, 2, 10, 95], so B2's measured cap 5 is unreachable as a step-max knee on this card.",
+   "READ-AGAINST caveat (from the seal, not this run): ch's 64-draw fold-population histogram is NOT stable (modal 20 at 65.6%, c_pred=80 at 34.4%); the ch control HIT at seed 0 must be read with that attached.",
+   "REPORTED-ONLY: sharp__fisher_kpp_2d is severely level-dominated (target_level_energy_fraction 0.9977; mean-removed nRMSE is 18-32x the raw nRMSE on every leg). Its raw-nRMSE knee (395) and its mean-removed knee (395) agree, so the miss is not a level artefact.",
+   "The A0_nolf control is worse than the zero floor on ch (all 3 draws) and on 2/3 ac draws and all 3 pfc draws \u2014 condition-only training at N_hf=5 does not beat zero on those cells; the LF arms do."
+  ],
+  "wall_clock_per_seed_min": [
+   128.92
+  ],
+  "timing_ledger": {
+   "job_id": 261111,
+   "state": "COMPLETED 0:0",
+   "elapsed": "02:08:55",
+   "elapsed_min": 128.92,
+   "start_utc": "2026-08-11T08:53:43Z (SLURM local 2026-08-11T01:53:43)",
+   "end_utc": "2026-08-11T11:02:38Z (SLURM local 2026-08-11T04:02:38)",
+   "node": "hpc-sm-01-11",
+   "gpu": "NVIDIA H200",
+   "sum_train_seconds_over_66_legs": 7233.7,
+   "per_leg_train_seconds_range": [
+    2.9,
+    135.5
+   ],
+   "projection_for_seeds_1_2": "~2h10m each; the two seeds are independent jobs (scripts/submit_seeds_2_3.sh)."
+  },
+  "seeds_1_2_gate": {
+   "recommendation": "SUBMIT seeds 1 and 2",
+   "why": "(1) not cratered on any anchor reading; (2) the job is clean end-to-end \u2014 66/66 legs, every blocking pre-flight green, no resume, no stale checkpoint; (3) the card's deliverable is an adjudication whose gate (per-seed knee unanimity over {0,1,2}) is ONLY closable with seeds 1 and 2 \u2014 without them every cell publishes as non-adjudicable/INCONCLUSIVE and the sealed prediction is never tested; (4) the seed-0 margins are large (6.7x and 19.3x tau on the two always-certified predictive cells), so the two extra seeds decide the clause rather than merely narrowing a band.",
+   "blockers": "none identified by this subagent",
+   "script": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/worktrees/r3s3_lf_value/B3/scripts/submit_seeds_2_3.sh"
+  },
+  "artifacts": {
+   "eval_result_jsons": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round3/r3s3_lf_value/B3/eval/result_*_s0.json (66)",
+   "rich_leg_jsons": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round3/r3s3_lf_value/B3/training/<tag>/r3s3_knee_prereg/<ds>_e200_s0.json (65) + training_guard_contract_tier_excluded/... (1)",
+   "slurm_log": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round3/r3s3_lf_value/B3/slurm/r3-r3s3_lf_value-B3-s0_261111.out",
+   "preflight": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round3/r3s3_lf_value/B3/preflight/",
+   "seal": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/state/r3s3_lf_value/prereg_knees_B3.json",
+   "film_denominator": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/state/anchors/film_denominator.json",
+   "noise_floor": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/state/anchors_repaired/noise_floor.json",
+   "floors": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/state/anchors_repaired/floors.json",
+   "anchors": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/state/anchors/launch_anchors.json"
+  }
+ },
  "6_analysis": null,
  "7_gap_and_future": null,
  "reanalysis_progress": null,
- "orchestrator_note_analyzer_driver_provenance": "Reviewer micro-review item A: the phase-P driver was comment-edited AFTER sealing (rounding-note correction, 8aa09f3); the seal's _driver.sha256 62aba4e6 matches `git show 5db0aeb:scripts/phase_p_prereg.py`, NOT the working tree (db893bc5, AST-identical). The analyzer must resolve driver provenance via the pinned blob, not by hashing the tree."
+ "orchestrator_note_analyzer_driver_provenance": "Reviewer micro-review item A: the phase-P driver was comment-edited AFTER sealing (rounding-note correction, 8aa09f3); the seal's _driver.sha256 62aba4e6 matches `git show 5db0aeb:scripts/phase_p_prereg.py`, NOT the working tree (db893bc5, AST-identical). The analyzer must resolve driver provenance via the pinned blob, not by hashing the tree.",
+ "orchestrator_adjudication_part4_anchor_era": "Analyzer anomaly adjudicated: part 4's quoted r2s3 stream anchor 11.1689 is the pre-ADR-r3-0005/0007 6-ds-era value (card drafted from B2-era brainstorm material); the current 5-ds certified anchor is 18.7197 (launch_anchors.json). Locked part 4 is NOT rewritten; comparisons adjudicate against the CURRENT certified anchor, and the analyzer confirmed the cratered verdict is unchanged under either value."
 }
