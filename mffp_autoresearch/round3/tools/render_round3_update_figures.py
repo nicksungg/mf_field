@@ -180,7 +180,10 @@ def load_film():
 
 def fig_performance(cards, best_floor, floors_ds, r2_anchors, film, scored, report_only):
     import numpy as np
-    all_ds = scored + [ds for ds in report_only if ds in film["datasets"]]
+    # Panel B shows the SCORED panel only; ifc_poisson (report-only) is dropped
+    # from the figure per operator directive 2026-08-11 — its values stay in the
+    # state records (state/anchors/), and the demotion is explained in the suptitle.
+    all_ds = list(scored)
     c_ds = {ds: film["datasets"][ds]["c_ds"] for ds in all_ds + REGISTERED_PANEL}
     # Conversion constants live per panel era:
     #   gc_reg — the registered batch-1/2 panel (card skills were certified there);
@@ -194,85 +197,72 @@ def fig_performance(cards, best_floor, floors_ds, r2_anchors, film, scored, repo
                 for ds in scored]
         film_seed_panels.append(float(np.exp(np.mean(np.log(vals)))))
 
-    fig = plt.figure(figsize=(13.5, 7.2), constrained_layout=True)
+    fig = plt.figure(figsize=(13.5, 7.8), constrained_layout=True)
     gs = GridSpec(1, 2, figure=fig, width_ratios=[1.15, 1.0])
     best_anchor = min(r2_anchors.items(), key=lambda kv: kv[1]["mean"])
     best_anchor_ratio = best_anchor[1]["mean"] * gc_cur
     fig.suptitle(
-        "Round 3 — every certified model vs the learned baseline: error relative to mf_fno_transfer_film (ADR r3-0006; lower = better, 1.0 = the baseline)\n"
-        "Scored panel per ADR r3-0007: allen_cahn, fisher_kpp, cahn_hilliard, pfc, ifc_heat (ifc_poisson report-only). Baselines certified at 3 fresh seeds, stale-gate clean.\n"
-        "† = film-unit reading on the card's registered ADR r3-0004 panel (pre-pfc-restore); unmarked rows are on the current scored panel.\n"
+        "Round 3 leaderboard — certified models ranked best-to-worst by error vs the mf_fno_transfer_film baseline (ADR r3-0006 film units; lower = better, 1.0 = baseline)\n"
+        "Scored panel per ADR r3-0007: allen_cahn, fisher_kpp, cahn_hilliard, pfc, ifc_heat. Baselines certified at 3 fresh seeds, stale-gate clean.\n"
+        "ifc_poisson is demoted to report-only (ADR r3-0007): its condition→field map is exactly linear — a closed-form task; no learned model ever beat copy-LF there.\n"
+        "Its values remain in the state records, not in this figure — panel B shows the 5 scored datasets only.\n"
+        "† (every bar) = film-unit reading on the cards' registered ADR r3-0004 panel (pre-pfc-restore); the baselines and the floor are on the current scored panel.\n"
         "Batch-3 cards (r3s2-B3 emulator ceiling, r3s3-B3 sealed knee predictions) are in flight — no bars yet; final leaderboard at round close.\n"
         f"Round-2 reference models not shown as bars: the best carried-forward family (r2s3) sits at {best_anchor_ratio:.2f}x film; the round-3 best (0.72x †) has not yet beaten it.",
         fontsize=9.5, x=0.02, ha="left")
 
-    # Panel A: grouped bars — baselines | round-2 anchors | round-3 cards — in film units
+    # Panel A: the ROUND-3 LEADERBOARD — every certified card ranked best→worst
+    # in film units; the learned baselines become reference lines.  This is a
+    # ranking of MODELS, not best-per-stream: both r3s2 entries (B1 and B2) stay.
     ax = fig.add_subplot(gs[0, 0])
-    UNET_C, ANCHOR_C = "#7FA8E8", "#9E86C8"
-    groups = []  # (header, [(label, val, lo, hi, color)])
-    base_rows = [("mf_fno_transfer_film (baseline)", 1.0,
-                  1.0 - min(film_seed_panels), max(film_seed_panels) - 1.0, BLUE)]
-    unet_val = None
-    unet_p = ROOT / "state" / "anchors" / "unet_baseline.json"
-    if unet_p.exists():
-        u = json.loads(unet_p.read_text())
-        useed = []
-        for si in range(3):
-            r = [u["datasets"][ds]["nrmse_per_seed"][si] / film["datasets"][ds]["nrmse_film_mean"] for ds in scored]
-            useed.append(float(np.exp(np.mean(np.log(r)))))
-        unet_val = u.get("_panel5_adr0007_ratio_to_film") or u["_panel_geomean_ratio_to_film"]
-        base_rows.append(("convnext U-Net (certified baseline)", unet_val,
-                          unet_val - min(useed), max(useed) - unet_val, UNET_C))
-    groups.append(("learned baselines (current panel)", base_rows))
-    # Round-2 anchor families dropped from the bars (operator decision 2026-08-11,
-    # option B): the carry-forward comparison lives in one suptitle sentence.
-    card_rows = []
+    UNET_C = "#7FA8E8"
+    MISS_C = "#C7BCE3"  # certified but does not beat the film baseline
+    rows = []  # (label, val, lo, hi)
     b2 = load_r3s2_b2()
     if b2 is not None:
-        card_rows.append(("r3s2 IC-stack (B2 repair; round best) †", b2["panel"] * gc_reg,
-                          (b2["panel"] - b2["ci"][0]) * gc_reg, (b2["ci"][1] - b2["panel"]) * gc_reg, ACCENT))
+        rows.append(("r3s2 IC-stack (B2 repair)", b2["panel"] * gc_reg,
+                     (b2["panel"] - b2["ci"][0]) * gc_reg, (b2["ci"][1] - b2["panel"]) * gc_reg))
     for cid, meta in CARDS.items():
         d = cards[cid]
         lo, hi = (((d["panel"] - d["ci"][0]) * gc_reg, (d["ci"][1] - d["panel"]) * gc_reg)
                   if d["ci"] else (0, 0))
-        card_rows.append((meta["label"] + " †", d["panel"] * gc_reg, lo, hi, ACCENT))
-    card_rows.sort(key=lambda r: r[1])
-    groups.append(("round-3 cards (certified 3-seed panel values) †", card_rows))
-
-    ys, labels, gap = [], [], 1.0
-    ycur = 0.0
-    header_positions = []
-    for header, rows in groups:
-        header_positions.append((ycur + 0.62, header))
-        for (label, v, lo, hi, color) in rows:
-            ys.append(ycur); labels.append(label)
-            ax.barh(ycur, v, color=color, alpha=0.85, height=0.55,
-                    xerr=[[lo], [hi]], error_kw=dict(ecolor=INK, capsize=3, lw=1))
-            if not label.startswith("convnext"):  # U-Net gets the dead-heat annotation instead
-                ax.annotate(f"{v:.2f}", (v + (hi or 0), ycur), textcoords="offset points",
-                            xytext=(10, 0), fontsize=7.6, color=INK, va="center", ha="left")
-            ycur -= 1.0
-        ycur -= gap
-    ax.set_yticks(ys, labels)
-    ax.set_ylim(ycur + gap + 0.4, 0.95)
-    for hy, header in header_positions:
-        ax.annotate(header, (0.01, hy), xycoords=("axes fraction", "data"),
-                    fontsize=7.6, color=MUTED, style="italic", ha="left", va="center")
-    ax.axvline(1.0, color=BLUE, ls="-", lw=1.2)
+        rows.append((meta["label"], d["panel"] * gc_reg, lo, hi))
+    rows.sort(key=lambda r: r[1])
+    labels = []
+    for rank, (label, v, lo, hi) in enumerate(rows, start=1):
+        y = -(rank - 1)
+        beats = v < 1.0
+        ax.barh(y, v, color=(ACCENT if beats else MISS_C), alpha=0.9, height=0.55,
+                xerr=[[lo], [hi]], error_kw=dict(ecolor=INK, capsize=3, lw=1), zorder=2)
+        ax.annotate(f"{v:.2f} — beats film" if beats else f"{v:.2f}",
+                    (v + (hi or 0), y), textcoords="offset points", xytext=(8, 0),
+                    fontsize=7.8, color=(ACCENT if beats else INK),
+                    fontweight="bold" if beats else "normal", va="center", ha="left", zorder=4)
+        labels.append(f"{rank}.  {label} †")
+    ax.set_yticks([-i for i in range(len(rows))], labels)
+    ax.set_ylim(-(len(rows) - 1) - 0.8, 1.55)
+    # learned baselines as reference lines (film = 1.0 solid; U-Net dotted);
+    # shaded band = film's own 3-seed panel spread
+    ax.axvspan(min(film_seed_panels), max(film_seed_panels), color=BLUE, alpha=0.08, zorder=0)
+    ax.axvline(1.0, color=BLUE, ls="-", lw=1.4, zorder=1)
+    unet_val = None
+    unet_p = ROOT / "state" / "anchors" / "unet_baseline.json"
+    if unet_p.exists():
+        u = json.loads(unet_p.read_text())
+        unet_val = u.get("_panel5_adr0007_ratio_to_film") or u["_panel_geomean_ratio_to_film"]
+        ax.axvline(unet_val, color=UNET_C, ls=":", lw=1.6, zorder=1)
+    note = "reference (current panel): mf_fno_transfer_film = 1.00 (solid; band = its 3-seed spread)"
     if unet_val is not None:
-        uy = ys[1]
-        uhi = groups[0][1][1][3]
-        ax.annotate(f"{unet_val:.2f} — dead heat\n(within seed noise)",
-                    (unet_val + uhi, uy), textcoords="offset points", xytext=(10, 0),
-                    fontsize=7.6, color=BLUE, va="center", ha="left")
+        note += f"\nconvnext U-Net = {unet_val:.2f} (dotted) — dead heat with film, within seed noise"
+    ax.annotate(note, (1.03, 1.05), fontsize=7.4, color=BLUE, ha="left", va="center", zorder=4)
     floor_film = best_floor * gc_cur
-    ax.axvline(floor_film, color=FLOOR, ls="--", lw=1.4)
-    all_vals = [r[1] for _, rows in groups for r in rows]
+    ax.axvline(floor_film, color=FLOOR, ls="--", lw=1.4, zorder=1)
+    all_vals = [r[1] + r[3] for r in rows]
     ax.set_xlim(0, max(floor_film * 1.42, max(all_vals) * 1.12))
-    ax.text(floor_film + 0.06, ys[2] - 0.35, f"training-free floor {floor_film:.2f}\n(no model: best of NN / mean / zero;\nADR r3-0007 panel)",
-            color=FLOOR, fontsize=8, va="top", ha="left")
+    ax.text(floor_film + 0.04, -1.5, f"training-free floor {floor_film:.2f}\n(no model: best of NN / mean / zero;\nADR r3-0007 panel)",
+            color=FLOOR, fontsize=7.6, va="center", ha="left")
     ax.set_xlabel("panel error ÷ film baseline, 3-seed mean, 95% CI (lower = better)")
-    ax.set_title("A — all certified round-3 models and anchors vs the learned baseline", loc="left")
+    ax.set_title("A — round-3 leaderboard: certified 3-seed models, ranked (purple = beats the film baseline)", loc="left")
 
     # Panel B: per-dataset best model vs the baseline (1.0) and the floor, in film units
     ax2 = fig.add_subplot(gs[0, 1])
@@ -282,36 +272,30 @@ def fig_performance(cards, best_floor, floors_ds, r2_anchors, film, scored, repo
         per_ds_sources["r3s2-B2"] = b2["per_ds"]
         labels_by_src["r3s2-B2"] = "r3s2-B2"
     rows = []
-    for ds in all_ds:
+    for ds in all_ds:  # scored datasets only (ifc_poisson removed — see suptitle)
         best_src, best_v = None, None
         for src, pds in per_ds_sources.items():
             v = pds.get(ds)
             if v is not None and (best_v is None or v < best_v):
                 best_src, best_v = src, v
-        rows.append((ds, floors_ds.get(ds), best_v, best_src, ds in report_only))
+        rows.append((ds, floors_ds.get(ds), best_v, best_src))
     ypos = list(range(len(rows)))
-    RO_GREY = "#9AA0AE"
-    for i, (ds, fl, bv, bc, ro) in enumerate(rows):
+    for i, (ds, fl, bv, bc) in enumerate(rows):
         c = c_ds[ds]
-        floor_c = RO_GREY if ro else FLOOR
-        model_c = RO_GREY if ro else ACCENT
-        if ro:
-            ax2.axhspan(i - 0.42, i + 0.42, facecolor="#F0F0F3", zorder=0, hatch="///",
-                        edgecolor="#DDDDE4", lw=0.0)
         if fl and bv:
             ax2.plot([bv * c, fl * c], [i, i], color="#E5E2EE", lw=2, zorder=1)
         if fl:
-            ax2.plot(fl * c, i, "s", color=floor_c, ms=7, zorder=3)
+            ax2.plot(fl * c, i, "s", color=FLOOR, ms=7, zorder=3)
         if bv:
-            ax2.plot(bv * c, i, "o", color=model_c, ms=8, zorder=3)
+            ax2.plot(bv * c, i, "o", color=ACCENT, ms=8, zorder=3)
             ax2.annotate(f"{bv * c:.2f}  ({labels_by_src[bc]})", (bv * c, i),
                          textcoords="offset points", xytext=(0, 9), fontsize=8,
-                         color=RO_GREY if ro else INK, ha="center")
+                         color=INK, ha="center")
         elif fl:
             ax2.annotate("no round-3 model cell\n(pfc re-scored under ADR r3-0005,\nafter batch-1/2 registration)",
-                         (fl * c, i), textcoords="offset points", xytext=(10, 0), fontsize=7.2,
-                         color=MUTED, ha="left", va="center")
-    ax2.set_yticks(ypos, [DS_SHORT[r[0]] + ("  (report-only)" if r[4] else "") for r in rows])
+                         (fl * c, i), textcoords="offset points", xytext=(-10, 0), fontsize=7.2,
+                         color=MUTED, ha="right", va="center")
+    ax2.set_yticks(ypos, [DS_SHORT[r[0]] for r in rows])
     ax2.set_xscale("log")
     from matplotlib.ticker import NullFormatter, FixedLocator, ScalarFormatter
     ax2.xaxis.set_minor_formatter(NullFormatter())
@@ -320,7 +304,7 @@ def fig_performance(cards, best_floor, floors_ds, r2_anchors, film, scored, repo
     ax2.xaxis.set_major_formatter(fmt)
     ax2.set_xlabel("per-dataset error ÷ baseline (log; 1.0 = baseline)")
     ax2.axvline(1.0, color=BLUE, lw=1.2, ls="-")
-    ax2.set_title("B — best round-3 model vs baseline and floor", loc="left")
+    ax2.set_title("B — best model vs baseline/floor (scored panel)", loc="left")
     ax2.invert_yaxis()
 
     out = FIGDIR / "r3_performance_vs_baselines.png"
@@ -416,7 +400,7 @@ def _flow_panel(ax, title, boxes, kinds):
     ax.set_xlim(0, 1); ax.set_ylim(0, 1)
     ax.set_title(title, loc="left", fontsize=9.0, fontweight="bold", pad=5)
     n = len(boxes)
-    weights = [1.0 if k == "io" else 1.9 for k in kinds]
+    weights = [{"io": 1.0, "note": 1.35, "core": 1.9}[k] for k in kinds]
     total_w = sum(weights)
     avail = 0.97
     gap = 0.035
@@ -440,8 +424,8 @@ def _flow_panel(ax, title, boxes, kinds):
 
 def fig_model_detail(fname, suptitle, left_title, left_boxes, left_kinds,
                      right_title, right_boxes, right_kinds, findings):
-    fig = plt.figure(figsize=(12.5, 8.6), constrained_layout=True)
-    gs = GridSpec(2, 2, figure=fig, height_ratios=[1, 0.22])
+    fig = plt.figure(figsize=(12.5, 9.2), constrained_layout=True)
+    gs = GridSpec(2, 2, figure=fig, height_ratios=[1, 0.20])
     fig.suptitle(suptitle, fontsize=10.2, x=0.02, ha="left")
     _flow_panel(fig.add_subplot(gs[0, 0]), left_title, left_boxes, left_kinds)
     _flow_panel(fig.add_subplot(gs[0, 1]), right_title, right_boxes, right_kinds)
@@ -457,33 +441,39 @@ def fig_model_detail(fname, suptitle, left_title, left_boxes, left_kinds,
 
 
 def fig_top_models():
+    # "The architectures that beat the learned baseline": one figure per
+    # beat-film architecture.  The two r3s2 IC-stack variants (B1 0.92×, B2
+    # 0.72×) share one structure, so figure 1 shows ONE diagram plus an
+    # explicit B2-repair-delta callout; figure 2 is r3s3's A1 arm (0.79×).
     p3 = fig_model_detail(
         "r3_model_detail_ic_stack.png",
-        "Model detail 1 — the initial-condition stack (r3s2; repaired batch-2 version = best model of the round, 0.72× the film-transfer baseline)\n"
-        "Two learned stages: a neural generator invents the coarse field the solver would have produced, then a frozen corrector upgrades it.",
-        "How it predicts (test time — condition only, no solver)",
-        ["condition vector  (2–50 numbers: PDE coefficients, boundary/forcing\nparameters, and — new in round 3 — the initial-condition coefficients)",
-         "STAGE 1 · pseudo-coarse generator\nFiLM-conditioned Fourier neural operator: 4 spectral blocks, width 64,\n12 Fourier modes; the condition enters every block as a learned\naffine modulation (FiLM), so one network serves all conditions.\nOutput: a synthetic coarse-grid field (32²/64² sharp, 8–32² ifc)",
+        "Beats the learned baseline (1 of 2) — r3s2 initial-condition stack · B1 = 0.92× film · B2 (LSI repair) = 0.72× film — the round's best model\n"
+        "One architecture, two batches: batch 2 changes ONLY the corrector's spectral least-squares-inversion (LSI) filter; everything else is identical.\n"
+        "Verdicts: IC channel CONFIRMED (the entire measurable effect) · corrector value FALSIFIED · B2's stack beats the matched-budget direct route at panel level.",
+        "Shared architecture, B1 and B2 — how it predicts (test time: condition only, no solver)",
+        ["condition vector  (2–50 numbers: PDE coefficients, boundary/forcing\nparameters, and — new in round 3 — the initial-condition coefficients ic_c*)",
+         "FRONT END · exact analytic IC synthesis (zero learned parameters)\nthe ic_c* coefficients are expanded as their trigonometric sum on the\ncoarse grid — the model is handed the true initial condition as a field;\nthe remaining condition dims enter as FiLM modulation",
+         "STAGE 1 · pseudo-coarse generator\nFiLM-conditioned Fourier neural operator: 4 spectral blocks, width 64,\n12 Fourier modes — synthesizes the coarse field the solver would have\nproduced (32²/64² sharp, 8–32² ifc)",
          "registered lift  (the benchmark's certified per-dataset interpolation\nconvention raises the coarse field onto the fine grid)",
-         "STAGE 2 · frozen corrector\nlocal CNN with a pixel-wise gate (7×7 kernels, depth 4, width 32),\ntrained in an earlier round on REAL coarse→fine pairs and frozen;\nbatch 2 adds the repaired spectral (LSI) filter: cross-validated ridge\n+ hard band-limit at the coarse grid's Nyquist frequency",
+         "STAGE 2 · frozen corrector — trained on REAL coarse→fine pairs in an\nearlier round, then frozen: closed-form spectral LSI filter T(k), then a\nlocal CNN with a pixel-wise gate (7×7 kernels, depth 4, width 32)\n← the LSI filter is the part batch 2 repairs",
          "fine-grid field  (128² sharp / 64² ifc)"],
-        ["io", "core", "io", "core", "io"],
-        "How it is trained",
-        ["training data: ~400 (condition → coarse field) pairs per sharp dataset\n+ only 5 fine-grid fields on the ifc datasets",
-         "STAGE 1 trains condition → real coarse field (supervised on the\ncheap solves; relative-L2 loss; the fine fields never enter stage 1)",
-         "STAGE 2 stays frozen (its weights come from coarse→fine supervision\nin an earlier round); only its input distribution changes —\nwhich is exactly the covariate shift the mechanism stage identified",
+        ["io", "core", "core", "io", "core", "io"],
+        "The B2 repair delta — and how the stack is trained",
+        ["B2 REPAIR DELTA (the only change vs B1) — regularise the least-squares\ninversion: B1 fits the corrector's spectral filter T(k) by plain LSI from\nas few as 3 samples; one seed fitted a 66× amplification and cratered\nifc_poisson.  B2 zeroes T(k) above the coarse grid's Nyquist\n(k_cut = k_Nyq_HF · N_LF/N_HF) and ridges the inversion with a\nLOOCV-selected coefficient, chosen on the fit fold only.",
+         "repair effect: stream best 12.96 → 10.09 (0.92× → 0.72× film).  A\nreplication arm reproduced B1's blow-up digit-for-digit (66.219…),\nproving the band-limit removed it — not re-implementation drift.",
+         "how it is trained: STAGE 1 learns condition → real coarse field (~400\ncheap coarse solves per sharp dataset, only 5 fine fields on ifc;\nrel-L2 loss; the fine fields never enter stage 1).  STAGE 2 stays frozen;\nB2 holds every arm at the same total optimizer budget (300 epochs)",
          "at test the real solver is gone: the stack must generate its own\ncoarse field — the benchmark's deployment premise"],
-        ["io", "core", "core", "note"],
+        ["core", "note", "core", "note"],
         "What the round established:  the initial-condition information is the entire measurable effect, and it acts in STAGE 1 (63.7% / 85.4% of generator error removed on\n"
-        "allen_cahn / fisher_kpp; a fake IC does worse than none).  The corrector stage adds nothing resolvable — round 2's null replicates (0.0056 vs 0.0061).  Batch 2's repair\n"
-        "removed the one failure mode (a 66× spectral amplification fitted from 3 samples) — proven by a replication arm that reproduced the defect digit-for-digit — improving the\n"
-        "stream best from 12.96 to 10.09 (0.72× film-transfer).  Its remaining weakness: both ifc cells still lose to a 6-parameter affine fit (floors now quoted with their\n"
-        "leave-one-out fold range per ADR r3-0007).")
+        "allen_cahn / fisher_kpp; a fake IC does worse than none).  The corrector stage adds nothing resolvable — round 2's null replicates (0.0056 vs 0.0061).  B2's repair\n"
+        "removed the one failure mode (the 66× spectral amplification fitted from 3 samples), lifting the stream best from 12.96 (0.92× film) to 10.09 (0.72× film) — the\n"
+        "round's best model.  Remaining weakness: both ifc cells still lose to a 6-parameter affine fit (floors now quoted with their leave-one-out fold range per ADR r3-0007).")
 
     p4 = fig_model_detail(
         "r3_model_detail_lf_channels.png",
-        "Model detail 2 — the LF-trained multi-resolution FNO (r3s3's A1 arm, 0.79× the film-transfer baseline)\n"
-        "One network, one loss trick: it learns from cheap coarse solves at hundreds of conditions while seeing only 5–400 expensive fine fields.",
+        "Beats the learned baseline (2 of 2) — r3s3 LF-value contrast: LF-trained multi-resolution FNO (arm A1, B1) · 0.79× film · panel 11.08 [10.84, 11.25]\n"
+        "One network, one loss trick: it learns from cheap coarse solves at hundreds of conditions while seeing only 5–400 expensive fine fields.\n"
+        "Verdict: CONFIRMED — coarse data helps by covering new parameter points (supply), not by regularizing; the pre-repair vs-baseline headline was retracted.",
         "How it predicts (test time — condition only, no solver)",
         ["condition vector",
          "multi-resolution Fourier neural operator\n4 spectral blocks, width 64; Fourier modes pinned to the coarsest\nrung's Nyquist (cap 12) so every resolution shares one spectral\nbasis; per-rung output heads share the backbone",

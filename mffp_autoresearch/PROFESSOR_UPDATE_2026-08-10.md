@@ -60,8 +60,8 @@ Companion decision page for §5.1: [ADR r3-0005 decision memo](https://claude.ai
   The other bounds what the synthetic-coarse-field detour could ever buy, via a 5-rung ladder.
   Its oracle rung can never be deployed, because the test-time LF field physically does not exist.
   Round close is expected 2026-08-12/13, with a final leaderboard of all round-3 models against both learned baselines.
-- **Four figures summarize performance, the four experiment lines, and the top two models.**
-  They are `round3/docs/figures/r3_performance_vs_baselines.png` (performance), `r3_architectures_overview.png` (the four experiment lines), `r3_model_detail_ic_stack.png` (the initial-condition stack), and `r3_model_detail_lf_channels.png` (the LF-trained multi-resolution FNO).
+- **Four figures summarize the round: the leaderboard, the four experiment lines, and the models that beat the baseline.**
+  They are `round3/docs/figures/r3_performance_vs_baselines.png` (the round-3 leaderboard — every certified model ranked against the film baseline, plus per-dataset bests on the 5 scored datasets), `r3_architectures_overview.png` (the four experiment lines), and `r3_model_detail_ic_stack.png` + `r3_model_detail_lf_channels.png` (the architectures that beat the learned baseline: the r3s2 initial-condition stack — one shared diagram for B1 and B2 with the batch-2 repair delta called out — and the r3s3 LF-trained multi-resolution FNO).
   All are regenerated from the experiment records by `round3/tools/render_round3_update_figures.py`, reflect the ADR r3-0007 panel, and are embedded in the rendered page.
 
 ## 1. What round 3 asked, and how it ran
@@ -152,12 +152,14 @@ Their fields are nevertheless 3.29× farther away.
 LF training data specifically repairs this group.
 It repairs 92 of the no-LF variant’s worse-than-zero rows and accounts for 97% of that comparison’s gain.
 
-### 2.1 The top two models, in detail
+### 2.1 The models that beat the baseline, in detail
 
-Both winners share the deployment premise (condition in, fine field out, no solver at test), and both owe their standing to mechanism work rather than architecture novelty.
+Three certified models beat the learned baseline: the repaired batch-2 initial-condition stack (r3s2-B2, 0.72× film), the LF-trained multi-resolution FNO (r3s3-B1, 0.79×), and the original batch-1 initial-condition stack (r3s2-B1, 0.92×).
+All share the deployment premise (condition in, fine field out, no solver at test), and all owe their standing to mechanism work rather than architecture novelty.
+The two IC-stack entries are one architecture — batch 2 changes only the corrector's spectral filter — so the diagrams show two architectures, with the batch-2 repair delta called out on the shared IC-stack diagram.
 Detailed diagrams: `round3/docs/figures/r3_model_detail_ic_stack.png` and `r3_model_detail_lf_channels.png` (Figs. 3-4 in the rendered page).
 
-**The initial-condition stack (r3s2; the round's best model after the batch-2 repair, 0.72× the film-transfer baseline).**
+**The initial-condition stack (r3s2; B1 at 0.92× the film-transfer baseline, and — after the batch-2 repair — 0.72×, the round's best model).**
 Stage 1 is a FiLM-conditioned Fourier neural operator (4 spectral blocks, width 64, 12 Fourier modes) that synthesizes the coarse field the solver would have produced, directly from the condition vector.
 The condition enters every block as a learned affine modulation, so one network serves all conditions.
 The certified per-dataset interpolation convention lifts the synthetic coarse field to the fine grid.
@@ -263,7 +265,7 @@ Established: recovery tracks condition-response alignment at r = 0.985; the pre-
 ## 6. Batch-2 close (updated 2026-08-11; supersedes the 2026-08-10 midpoint note)
 
 All 8 round-3 experiment cards (batches 1–2, all four streams) are complete; every batch-2 card ran at 3 seeds through the full pipeline.
-In the new film units, the round's standing after batch 2: r3s2-B2 at 0.72, r3s3-B1 at 0.79, r3s2-B1 at 0.92, r3s4-B1 at 1.40, and r3s1-B1 at 1.77 (Fig. 1).
+In the new film units, the round's standing after batch 2: r3s2-B2 at 0.72, r3s3-B1 at 0.79, r3s2-B1 at 0.92, r3s4-B1 at 1.40, r3s1-B1 at 1.77, and r3s1-B2 at 1.78 (the round-3 leaderboard, Fig. 1).
 
 - **Factorised head (r3s1-B2) — complete; falsified its novelty claim; the stream recommends its own consolidation.**
   The pre-registered, statistically calibrated shape-selection rule was compared head-to-head with the plain bug fix — simply raising the cap on how many principal shapes the first stage may keep — and the plain fix wins.
@@ -309,6 +311,7 @@ In the new film units, the round's standing after batch 2: r3s2-B2 at 0.72, r3s3
   No learned model in three rounds ever beat the copy-the-coarse-solve reference there.
   A scored cell that rewards memorizing a linear map tests nothing this benchmark is about.
   It stays report-only: every model still runs it and reports it; it just no longer moves the headline score.
+  Its cells live in the state records and no longer appear in the figures — Fig. 1's per-dataset panel shows the 5 scored datasets only.
 - **`ifc_heat` is retained because the baseline's win there is real structure.**
   The concern was that its fields are 88.5% level-dominated, so plain rel-L2 mostly measures a constant offset.
   A dedicated mean-removed check settled it: the film baseline's advantage over the best training-free floor *grows* from 2.60× to 2.79× after removing each field's mean — the opposite of an offset signature — and film's error sits below even the oracle affine residual (0.0272 vs 0.0377).
