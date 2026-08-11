@@ -22,4 +22,7 @@ Alongside it she adopted the G5 fit-set re-pricing ("adopt") and asked for a ful
 4. Statistics registered on ENERGY-weighted or held-out-loss quantities, never an unweighted mode mean; calibrate every subset bar on the subset it is read against (`tools/transfer_gain_anatomy.py`, `tools/subset_geomean_unit_audit.py` are the pre-registration checks).
 5. Claims priced against an `nn_condition` best floor carry that arm's fit-set noise band (G5 adoption) beside tau_rel; affine reproductions adjudicate against the pinned per-arm band, not the dataset-level table.
 
-Expected close: ~Aug 12–13 (2-slot batch).
+**REGISTRATION HOLD (2026-08-10, operator-triggered):** ADR r3-0007 (ifc panel composition, `docs/adr/0007-ifc-panel-composition-PROPOSED.md`) is PROPOSED — the operator questions whether ifc_poisson/ifc_heat stay scored.
+Websearch + brainstorm proceed, but NO batch-3 card registers clauses until the ADR is decided (clauses bind to the panel; composition churn after registration is unit churn).
+
+Expected close: ~Aug 12–13 (2-slot batch; the hold costs nothing while websearch/brainstorm run).
