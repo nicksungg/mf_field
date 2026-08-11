@@ -27,6 +27,9 @@ Open check before that win is fully trusted: the mean-removed skill (is the win 
 
 **Robustness of decisions already made:** the ADR r3-0006 denominator choice does NOT depend on this ADR — film remains the best certified baseline on either panel (U-Net panel ratio 1.0285 on 6 datasets, 1.0092 on sharp-4; film best in both).
 
+**Independent corroboration (added 2026-08-10, r3s3-B3 brainstorm):** designing the batch-3 knee card, the brainstormer pre-declared both ifc cells NON-ADJUDICABLE on pure arithmetic — clearing their certified film-unit noise floors (tau_rel 0.3359 / 0.5627) would require effect ratios of 0.4–0.8 against physical effects of order 0.025–0.03 nRMSE.
+Independent of this ADR's structural arguments, the ifc cells cannot host a registerable claim for that card class at current noise levels.
+
 ## Panel arithmetic under each option (computed from certified anchors, no new jobs)
 
 | quantity (copy-LF units) | 6-ds panel (today) | sharp-4 panel | 5-ds (drop poisson only) |
