@@ -81,3 +81,37 @@ i.e. the flag is inverted on both cell shapes. And `build_notes[9]`'s claim that
 `heat_local` (1024 rows) and `sharp__sod_1d` (400 rows) take the sharp
 320/80 protocol and are marked `registered_unit_eligible=True` — harmless, since
 registration leg (i) excludes them anyway, but the note is wrong.
+
+---
+
+# MICRO-REVIEW — discharge commit `c763246e` (2026-08-11T06:20Z)
+
+**Scope**: the F1/F2/F3 discharge authored by a different builder (author ≠ reviewer), gating the release of held job **261188**.
+**Verdict: PASS on all three items — RELEASE.**
+
+| item | verdict | basis |
+|---|---|---|
+| F1 (D2 held-out purity) | **PASS** | `restrict_folds_to_rows` intersects the SELECTION side with the leg's `val_rows`; applied to the criterion **and** the real-LF comparand on the *same* restricted folds (`smoke_eval.py:1170-1186`), so the pair stays attributable; the tripwire is extended to `emu_fit` and **raises** (`d2_select.py:166-183`); an emptied leg is a hard `R3S2ContractError`. Independently reproduced over 6 panel + 3 guard cells × 3 seeds: **0 empty-leg aborts, 0 emulator leaks**, worst-case surviving rows **7** (fisher_kpp s0) and **7** (fluid) — their claim exactly. |
+| F2 (dead knob + un-iterated LOO legs) | **PASS** | `floor_arms.py` byte-identical to `e606a4f1` (sha `869ff2ba…`), as are the other 11 vendored modules. `attach_band_to_beat_table` writes **inside** each per-arm dict, so `ladder.registration`'s `for v in tbl.values()` iterates the identical entries and `model_beats_floor` still reads the certified full-fit floor — the predicate is provably unchanged. Numerically verified: in-job ifc_heat affine C(5,4) range on test min 0.057439 / median 0.068843 / max 0.369609 / sd 0.132721 nRMSE ⇒ LOO mean **skill 1.8469** crossing 1.0 from single-fit 0.9584 — program.md §2's own quoted numbers, reproduced. |
+| F3 (`_preflight` archive) | **PASS, one scoped exception** | 18 files + `INDEX.json`, worktree **and** outputs tree, every recipe line covered with command/provenance/headline. The `--enumerate-folds` OOM on the sharp cells is a **shared round-tools defect** (`transfer_gain_anatomy.py` materialises `list(combinations(400,320))` before applying `--max-folds`), correctly out of a card builder's scope, and **not load-bearing**: the §2 mandate is about ifc numbers, the ifc half ran *with* enumeration, and the mandate is additionally satisfied in-job by `floor_matched_n.disclosure_legs`. Genuinely missing: only the enumerated-fold *spread* of the band statistic on the four sharp cells. Route the lazy-enumeration fix to r3s4/maintainer. |
+
+## The critical adjudication — their argument is sound, and my classification was wrong
+
+I concede the correction. **F1 is not report-side**: `sel → final_transfer → T_leg → dc_predict` feeds `R1_predicted` *and* `R2_oracle`, so C1/C2/C3 and the panel prediction all depend on the selection. Verified against the artifacts rather than the assertion: helmholtz **C2 min 0.9715824791 → 0.9430030170**, **C3 max gap 0.0595826 → 0.0631306** (one leg's ridge 0.1 → 0.0, C3 verdict unchanged); ifc_heat **bit-identical** on every clause and every selected ridge; **both panel test nRMSEs unchanged to the last digit**. My F1 minimal fix (record the overlap, qualify the prose) was therefore too weak — it would have left a knob-name/semantics contradiction inside the quantities the clauses register.
+
+Releasing is sound on four independent grounds:
+
+1. `squeue`/`sacct` confirm 261188 is `PENDING/JobHeldUser`, `Start Unknown`, `Elapsed 00:00:00` — **nothing has executed**.
+2. `5_actual_result` is null and `logs` is `{}` — **no registered number exists to disturb**. This is a pre-registration configuration change, not a post-hoc edit of a measurement.
+3. All **17 locked fields are sha256-identical** to drafting commit `21264b4` — the hypothesis, thresholds, falsifier and all 74 env knobs are exactly as pre-registered; `recipe.base_commit` is still `23018cc5` (untouched).
+4. The fix moves the implementation **toward** the card's declared semantics. The un-repaired tree contradicted its own knob name; running it would have produced C1/C2/C3 whose D2 attribution was invalid. The higher-risk action is releasing the *old* tree, not the new one.
+
+**The committed tree `c763246e` is the artifact I am willing to have run as this card's reviewed configuration.** `git status` is clean, so the runnable bytes and the reviewed commit are the same.
+
+## Residual to disclose (none blocking)
+
+- The honest selection population is much thinner: sharp **7–20 rows/leg** (was 64, of which 51 were in-sample), ifc **2 rows × 2 folds/leg** (one LOO fold dropped). The D2 selector is correspondingly noisier — and the thinning is most severe exactly on the two ifc cells, which are REPORT-ONLY under every ADR r3-0007 option.
+- `sel_rows` now coincide with the `val_a`/`val_b` rows the two closed-form alphas are fitted on — a second-order in-sample effect on the **alphas only**. H and test remain disjoint from T, so no evaluation row is touched.
+- **Do not apply the cosmetic `ladder.py:235` duplicated-comment fix now.** It is still in the committed tree and the claimed uncommitted fix is *not* applied (status clean). Any post-review edit to a family `.py` changes `score_panel`'s `code_hash` and makes the running artifact differ from the reviewed commit. Fold it into a later rebuild.
+- Label-inversion fix verified: `leg_key_counts` gives `shared=True` for all 5 sharp legs and `False` for every ifc leg — correct on both shapes, and the field still has no consumer.
+- `build_notes` 12 → 18, including note 17 which corrects note 7's "exactly out-of-sample" overstatement **on the record**. Correct discipline; no note was rewritten in place.
