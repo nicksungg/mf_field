@@ -1,0 +1,47 @@
+
+===== sharp__cahn_hilliard =====
+  rungs=[1, 2] n_train_hf=400 n_test=100 cond_dim=19 FULL=395 caps=[5, 10, 20, 40, 80, 160, 320, 395] draws=[0, 1, 2]
+  DENSE c_hat (rbf step-max) = 80   linear = 20
+  LADDER [5, 20, 80, 395]  (c_hat < FULL)
+  REGISTERED c_pred = 80  (linear control 80)  margin_R = 0.0820
+  HISTOGRAM modal=20 (0.66)  c_pred freq=0.34  counts={'20': 42, '80': 22}
+  CLI cross-check bit_identical=True
+  [sharp__cahn_hilliard] done in 1338.4s
+
+===== sharp__allen_cahn_2d =====
+  rungs=[1, 2] n_train_hf=400 n_test=78 cond_dim=19 FULL=395 caps=[5, 10, 20, 40, 80, 160, 320, 395] draws=[0, 1, 2]
+  DENSE c_hat (rbf step-max) = 20   linear = 20
+  LADDER [1, 5, 20, 395]  (c_hat < FULL)
+  REGISTERED c_pred = 20  (linear control 20)  margin_R = 0.0787
+  HISTOGRAM modal=20 (0.75)  c_pred freq=0.75  counts={'5': 9, '20': 48, '395': 7}
+  CLI cross-check bit_identical=True
+  [sharp__allen_cahn_2d] done in 738.9s
+
+===== sharp__fisher_kpp_2d =====
+  rungs=[1, 2] n_train_hf=400 n_test=100 cond_dim=50 FULL=395 caps=[5, 10, 20, 40, 80, 160, 320, 395] draws=[0, 1, 2]
+  DENSE c_hat (rbf step-max) = 10   linear = 40
+  LADDER [1, 2, 10, 395]  (c_hat < FULL)
+  REGISTERED c_pred = 10  (linear control 395)  margin_R = 0.0295
+  HISTOGRAM modal=10 (0.72)  c_pred freq=0.72  counts={'2': 18, '10': 46}
+  CLI cross-check bit_identical=True
+  [sharp__fisher_kpp_2d] done in 839.9s
+
+===== sharp__phase_field_crystal_2d =====
+  rungs=[1] n_train_hf=400 n_test=100 cond_dim=18 FULL=395 caps=[5, 10, 20, 40, 80, 160, 320, 395] draws=[0, 1, 2]
+  DENSE c_hat (rbf step-max) = 320   linear = 40
+  LADDER [20, 80, 320, 395]  (c_hat < FULL)
+  REGISTERED c_pred = 320  (linear control 80)  margin_R = 0.6194
+  HISTOGRAM modal=320 (0.98)  c_pred freq=0.98  counts={'80': 1, '320': 63}
+  [sharp__phase_field_crystal_2d] done in 234.4s
+
+===== ifc_heat =====
+  rungs=[8, 16, 32] n_train_hf=5 n_test=128 cond_dim=3 FULL=95 caps=[5, 10, 20, 40, 80, 95] draws=['native']
+  DENSE c_hat (rbf step-max) = 10   linear = 10
+  LADDER [1, 2, 10, 95]  (c_hat < FULL)
+  REGISTERED c_pred = 10  (linear control 2)  margin_R = 0.5720
+  CLI cross-check bit_identical=True
+  [ifc_heat] done in 8.9s
+
+[SEALED] /resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/state/r3s3_lf_value/prereg_knees_B3.json
+[R3S3B3_PREREG_SHA256] e98f6dc78ab18d80d75f4ef1f819525682d0d01c61e11081939dee30fcea3e2c
+[predictions] sharp__cahn_hilliard:c_pred=80(ladder=[5, 20, 80, 395])  sharp__allen_cahn_2d:c_pred=20(ladder=[1, 5, 20, 395])  sharp__fisher_kpp_2d:c_pred=10(ladder=[1, 2, 10, 395])  sharp__phase_field_crystal_2d:c_pred=320(ladder=[20, 80, 320, 395])  ifc_heat:c_pred=10(ladder=[1, 2, 10, 95])

@@ -1,0 +1,2018 @@
+{
+  "model": "r3s3_knee_prereg",
+  "dataset": "sharp__phase_field_crystal_2d",
+  "splits": {
+    "test_hf": {
+      "nRMSE": 0.9294036436012825,
+      "rel_l2_mean": 0.9245641296469812,
+      "rel_l2_ci95_lo": 0.9071856820193493,
+      "rel_l2_ci95_hi": 0.9421637487957676,
+      "rel_l2_std": 0.09046881060147834,
+      "rel_l2_per_sample": [
+        0.9698439152884838,
+        0.9336971976332105,
+        0.892637369908042,
+        0.9758864231169899,
+        0.7043562023746945,
+        0.9552229036549992,
+        0.8800268803075697,
+        1.0221451641382273,
+        0.9343529024087639,
+        1.2051960652862843,
+        0.8881283945961279,
+        0.9300792476709745,
+        0.8919021801842679,
+        0.9788901769302686,
+        0.8615853648845021,
+        0.9025697558889015,
+        0.856091433078941,
+        1.0143071891289608,
+        0.9170163589064672,
+        0.8778052690227817,
+        0.9134760397288338,
+        1.083846386244247,
+        0.9253186894677123,
+        0.8903364973935176,
+        0.8328284731176839,
+        1.0895321018237254,
+        0.850001594999118,
+        1.1365276770554409,
+        0.8816327654040044,
+        0.9154981429979476,
+        0.8825957758378704,
+        0.863365240087399,
+        0.9280212942877873,
+        1.048843123327953,
+        0.8478375866129182,
+        0.9120956807695483,
+        0.8123087576936668,
+        0.878589068214372,
+        1.008448523674594,
+        0.8546225737149598,
+        0.8668975358980346,
+        0.8460540735278818,
+        0.9259339179782691,
+        0.8566456005837979,
+        0.9695287943220049,
+        0.980182166737032,
+        0.8663970838681236,
+        0.9712770253979671,
+        0.9421322593460939,
+        1.2530447679371508,
+        0.9909286512322318,
+        0.9226385108902873,
+        0.9450691565865905,
+        0.8301257736362815,
+        0.883425276059505,
+        0.7497396308782023,
+        0.8914950905727042,
+        0.9715455392192495,
+        0.9617774268515819,
+        0.9676433763661552,
+        0.999013174750101,
+        1.0305901111478852,
+        1.0057899191345812,
+        0.8920792186965247,
+        0.91474020664322,
+        0.8538621845011934,
+        0.8282273223804518,
+        0.8352407400966506,
+        0.7932081781556811,
+        0.9686514573077671,
+        0.8897139973333267,
+        0.8828353301177612,
+        0.9407501495469562,
+        0.9114378383531178,
+        0.8420656436517955,
+        0.7701674453201096,
+        0.9475724708100149,
+        0.8530656534668126,
+        0.8651877632913475,
+        0.8951166393701219,
+        0.9089672650924313,
+        1.0354224183570309,
+        0.8056779721826073,
+        0.9770572407908786,
+        0.971929442973958,
+        0.8173911889372995,
+        1.1430614960494125,
+        0.9147296499693388,
+        1.0207996475764425,
+        0.9590241422492031,
+        1.130224063286531,
+        0.8516419736773189,
+        0.8501369331435605,
+        0.92633547288928,
+        0.8809980794688006,
+        0.9629537360055491,
+        1.018428622260051,
+        0.8814367722689243,
+        0.8973489923879805,
+        0.8435843663041926
+      ],
+      "n_samples": 100
+    },
+    "ref_zero": {
+      "nRMSE": 1.0,
+      "rel_l2_mean": 1.0,
+      "rel_l2_std": 0.0,
+      "n_samples": 100
+    },
+    "ref_nn_condition_n5": {
+      "nRMSE": 1.237037144533886,
+      "rel_l2_mean": 1.2243618923804873,
+      "rel_l2_std": 0.17081178439180136,
+      "n_samples": 100,
+      "nn_index_hist_top5": {
+        "2": 34,
+        "3": 21,
+        "4": 20,
+        "0": 15,
+        "1": 10
+      },
+      "n_train_rows": 5
+    },
+    "ref_train_mean_n5": {
+      "nRMSE": 0.9579228498388803,
+      "rel_l2_mean": 0.9506837601753102,
+      "rel_l2_std": 0.1026863345856652,
+      "n_samples": 100,
+      "n_train_rows": 5
+    },
+    "ref_nn_condition_full": {
+      "nRMSE": 1.2027927571356125,
+      "rel_l2_mean": 1.187748002107592,
+      "rel_l2_std": 0.19369311558799035,
+      "n_samples": 100,
+      "nn_index_hist_top5": {
+        "372": 3,
+        "373": 3,
+        "263": 3,
+        "313": 3,
+        "371": 2
+      },
+      "n_train_rows": 400
+    },
+    "ref_train_mean_full": {
+      "nRMSE": 0.8786576933068657,
+      "rel_l2_mean": 0.877766362761513,
+      "rel_l2_std": 0.02093361496601864,
+      "n_samples": 100,
+      "n_train_rows": 400
+    },
+    "ref_affine_on_hf_train": {
+      "nRMSE": 1.1234682659820587,
+      "rel_l2_mean": 1.1084313017365615,
+      "rel_l2_std": 0.18675862662918158,
+      "n_samples": 100,
+      "definition": "min-norm least-squares affine map condition->field fit on the HF train rows (tools/make_round3_anchors.py::affine_fit, np.linalg.lstsq rcond=None); program.md (round 3) \u00a72 MANDATORY reported arm next to every ifc number \u2014 an ifc claim that does not beat it has learned nothing beyond linearity"
+    }
+  },
+  "n_params": 4782017,
+  "train_seconds": 337.6397976875305,
+  "eval_seconds": 94.651287317276,
+  "latency_ms_per_sample": null,
+  "peak_mem_mb": null,
+  "work_grid": [
+    128,
+    128
+  ],
+  "eval_protocol": "full_field_on_working_grid",
+  "knee_prereg": {
+    "card": "r3s3_lf_value-B3",
+    "arm": "A3c_lf_uncov_cap",
+    "arm_spec": {
+      "n_hf_allowed": [
+        5
+      ],
+      "cond_set": "uncovered",
+      "cap_allowed": [
+        20,
+        80,
+        320
+      ],
+      "n_hf_this_leg": 5,
+      "cap_this_leg": 20
+    },
+    "prereg": {
+      "prereg_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/state/r3s3_lf_value/prereg_knees_B3.json",
+      "payload_sha256": "e98f6dc78ab18d80d75f4ef1f819525682d0d01c61e11081939dee30fcea3e2c",
+      "sealed_utc": "2026-08-11T04:59:09Z",
+      "instrument": {
+        "path": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/tools/coverage_knee_surrogate.py",
+        "sha256": "657494247911a979be02f79f5f4fc844bab31d16c932417d23682cdfc40ad222",
+        "imported_read_only": true
+      },
+      "driver": {
+        "path": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/worktrees/r3s3_lf_value/B3/scripts/phase_p_prereg.py",
+        "sha256": "62aba4e6017bf2bb6a49c792f2cb979fe3971a8dd86289df325e34755cb1902a"
+      },
+      "view": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round2/stripped_data",
+      "dataset": "sharp__phase_field_crystal_2d",
+      "cell_role": "predictive (zero anchors); CONDITIONAL \u2014 adjudicated only if a certified pfc tau_rel exists at analysis time (none exists today)",
+      "ladder": [
+        20,
+        80,
+        320,
+        395
+      ],
+      "ladder_branch": "c_hat < FULL",
+      "c_hat_dense": 320,
+      "c_pred_REGISTERED": 320,
+      "c_pred_linear_specificity_control": 80,
+      "c_pred_diverges_from_c_hat": false,
+      "margin_R_surrogate": 0.6193525359638791,
+      "R_surr_curve_on_ladder": {
+        "20": {
+          "rbf": -0.0474955415919179,
+          "linear": -9.591398597991143
+        },
+        "80": {
+          "rbf": 0.12427013254146942,
+          "linear": 0.5042090117562988
+        },
+        "320": {
+          "rbf": 0.9153883426387358,
+          "linear": 0.9683644383069442
+        },
+        "395": {
+          "rbf": 0.9918976478145698,
+          "linear": 0.9981173680687494
+        }
+      },
+      "structural_nulls": {
+        "design_rank": {
+          "saturation_cap": 20,
+          "max_rank": 19,
+          "by_cap": {
+            "20": 19,
+            "80": 19,
+            "320": 19,
+            "395": 19
+          },
+          "reading": "if this saturates far BELOW the knee, the knee is not a condition-space-rank story"
+        },
+        "nnc_field_oracle": {
+          "min": 1.1756781550422437,
+          "max": 1.2157431933693295,
+          "by_cap": {
+            "20": 1.2157431933693295,
+            "80": 1.194248911914544,
+            "320": 1.1756781550422437,
+            "395": 1.1871367024020871
+          },
+          "reading": "if it never goes usefully below 1.0, the knee is not a coverage-radius story"
+        }
+      },
+      "fold_population_histogram_summary": {
+        "applicable": true,
+        "n_draws": 64,
+        "counts": {
+          "80": 1,
+          "320": 63
+        },
+        "modal_knee": 320,
+        "modal_frequency": 0.984375,
+        "c_pred_frequency": 0.984375,
+        "reason": null
+      },
+      "reproduction_control": null,
+      "film_units": {
+        "nrmse_film_mean": 0.9527568345233846,
+        "c_ds": 0.01297118127061029,
+        "tau_rel": null,
+        "tau_rel_film": null,
+        "tau_rel_certified": false,
+        "note": "NO certified tau_rel for this cell \u2014 the card registers it CONDITIONALLY and it is adjudicated only if one is certified at analysis time"
+      },
+      "lf_rungs_trained_at_seal_time": [
+        1
+      ],
+      "role": "PRE-REGISTERED PREDICTION. The trained step-max knee K is computed ANALYSIS-SIDE from the five legs of this cell; this family emits no cross-arm quantity and never compares K to c_pred in-process.",
+      "ordering": {
+        "sealed_utc": "2026-08-11T04:59:09Z",
+        "leg_start_utc": "2026-08-11T05:19:11Z",
+        "seal_precedes_leg": true,
+        "lead_seconds": 1202
+      },
+      "assert_enforced": true,
+      "card_cells": [
+        "sharp__cahn_hilliard",
+        "sharp__allen_cahn_2d",
+        "sharp__fisher_kpp_2d",
+        "sharp__phase_field_crystal_2d",
+        "ifc_heat"
+      ],
+      "is_card_cell": true
+    },
+    "sealed_ladder": [
+      20,
+      80,
+      320,
+      395
+    ],
+    "ladder_source": "R3S3B3_PREREG_JSON (sealed phase-P pre-registration)",
+    "rung_of_this_leg": "r1",
+    "primary_arm": "A1_lf_all",
+    "scored_contrast_arms": [
+      "A0_nolf",
+      "A1_lf_all",
+      "A3c_lf_uncov_cap"
+    ],
+    "budget_varied_arms": [],
+    "arms_available": [
+      "A0_nolf",
+      "A1_lf_all",
+      "A3c_lf_uncov_cap"
+    ],
+    "arm_role": "matched control arm of the scored contrast",
+    "registered_statistic": {
+      "R": "R(c) = (nRMSE(A0_nolf) - nRMSE(arm@c)) / (nRMSE(A0_nolf) - nRMSE(A1_lf_all)) per fold (HF draw x training seed), fold-mean; REFERENCE-FREE",
+      "steps": "s_i = R(r_{i+1}) - R(r_i) for i = 1..3",
+      "knee": "K = r_{argmax(s)+1} in {r2, r3, FULL} \u2014 threshold-free in R by construction; NO absolute R threshold anywhere",
+      "margin": "M_R = max(s) - second-max(s); M_film = M_R * E_ds / nrmse_film_mean(ds), E_ds = fold-mean (nRMSE(A0) - nRMSE(A1))",
+      "adjudicability": "ADJUDICABLE iff M_film > tau_rel_film(ds) with a CERTIFIED tau_rel AND the per-seed knee is unanimous over seeds {0,1,2}; the 9-fold leave-one-out jackknife modal knee is reported, not gating",
+      "primary_claim": "the pre-declared c_pred equals the trained step-max knee K on each predictive cell; chance match 1/3 per cell",
+      "note": "ALL of it is ANALYSIS-SIDE. This family computes no cross-arm quantity and never compares K with c_pred in-process."
+    },
+    "dataset": "sharp__phase_field_crystal_2d",
+    "seed": 0,
+    "epochs": 2,
+    "steps": 50,
+    "steps_per_epoch": 25,
+    "budget_equality": "EVERY arm of this card is step-matched at N_hf = 5: identical optimizer steps and identical HF-row exposure; the LF arms' extra rung forward IS the treatment. No budget-varied arm exists here (B2's A5 is not run).",
+    "seed_semantics": "R3S3B3_SPLIT_SEED is an HF-SUBSET DRAW, not a training seed. The training seed is --seed, and this card runs seeds {0,1,2} as three SLURM jobs. Draws must never be bootstrapped as a seed CI.",
+    "hf_draw_nesting": {
+      "applicable": true,
+      "split_seed": "0",
+      "rule": "np.sort(np.random.default_rng(split_seed).permutation(n_train)[:N_HF]) \u2014 card recipe.env._hf_subset_draws",
+      "k_prefix_rows": {
+        "5": [
+          55,
+          88,
+          133,
+          202,
+          293
+        ]
+      },
+      "nested": true,
+      "this_leg_matches_rule": true,
+      "reproduction_seam": "identical to B1/B2/r2s3-B3; d0 = 55, 88, 133, 202, 293 on every 400-row dataset"
+    },
+    "split": {
+      "mode": "subsample_5_of_400_by_split_seed",
+      "split_seed": "0",
+      "n_hf": 5,
+      "n_train_all": 400,
+      "hf_rows_are_native_full": false,
+      "selected_train_rows": [
+        55,
+        88,
+        133,
+        202,
+        293
+      ],
+      "note": "the N_hf rows are SELECTED from the existing train split; no HF sample is added and no file is regenerated (program.md \u00a75.11)"
+    },
+    "lf_selector": {
+      "lf_cond_set": "uncovered",
+      "lf_cond_cap": 20,
+      "membership": "exact condition-row match, key = tuple(np.round(row, 12)) (tools/affine_ladder_voi.py A7 convention)",
+      "cap_rule": "per rung, np.sort(default_rng([split_seed, fid]).permutation(n_candidates)[:cap]) \u2014 see coverage.cap_draw for the TBD this resolves and why the draw is per rung"
+    },
+    "scalers": {
+      "rule": "per_rung_max_fullpool",
+      "s_hf": 0.8845046758651733,
+      "per_rung": {
+        "1": 0.8777537941932678
+      },
+      "arm_dependent": false,
+      "invariance_assert_enforced": true,
+      "definition": "max|y| over ALL rows of the rung in the stripped TRAIN view (HF rung: all HF train rows, NOT the N_hf draw)",
+      "probes": [
+        {
+          "fid": 3,
+          "probe": "all_rows",
+          "n_rows_in_probe": 400,
+          "scaler": 0.8845046758651733,
+          "bit_identical_to_leg": true
+        },
+        {
+          "fid": 3,
+          "probe": "covered_rows",
+          "n_rows_in_probe": 5,
+          "scaler": 0.8845046758651733,
+          "bit_identical_to_leg": true
+        },
+        {
+          "fid": 3,
+          "probe": "uncovered_rows",
+          "n_rows_in_probe": 395,
+          "scaler": 0.8845046758651733,
+          "bit_identical_to_leg": true
+        },
+        {
+          "fid": 3,
+          "probe": "uncovered_cap_20",
+          "n_rows_in_probe": 20,
+          "scaler": 0.8845046758651733,
+          "bit_identical_to_leg": true
+        },
+        {
+          "fid": 3,
+          "probe": "uncovered_cap_80",
+          "n_rows_in_probe": 80,
+          "scaler": 0.8845046758651733,
+          "bit_identical_to_leg": true
+        },
+        {
+          "fid": 3,
+          "probe": "uncovered_cap_320",
+          "n_rows_in_probe": 320,
+          "scaler": 0.8845046758651733,
+          "bit_identical_to_leg": true
+        },
+        {
+          "fid": 3,
+          "probe": "uncovered_cap_395",
+          "n_rows_in_probe": 395,
+          "scaler": 0.8845046758651733,
+          "bit_identical_to_leg": true
+        },
+        {
+          "fid": 1,
+          "probe": "all_rows",
+          "n_rows_in_probe": 400,
+          "scaler": 0.8777537941932678,
+          "bit_identical_to_leg": true
+        },
+        {
+          "fid": 1,
+          "probe": "covered_rows",
+          "n_rows_in_probe": 5,
+          "scaler": 0.8777537941932678,
+          "bit_identical_to_leg": true
+        },
+        {
+          "fid": 1,
+          "probe": "uncovered_rows",
+          "n_rows_in_probe": 395,
+          "scaler": 0.8777537941932678,
+          "bit_identical_to_leg": true
+        },
+        {
+          "fid": 1,
+          "probe": "uncovered_cap_20",
+          "n_rows_in_probe": 20,
+          "scaler": 0.8777537941932678,
+          "bit_identical_to_leg": true
+        },
+        {
+          "fid": 1,
+          "probe": "uncovered_cap_80",
+          "n_rows_in_probe": 80,
+          "scaler": 0.8777537941932678,
+          "bit_identical_to_leg": true
+        },
+        {
+          "fid": 1,
+          "probe": "uncovered_cap_320",
+          "n_rows_in_probe": 320,
+          "scaler": 0.8777537941932678,
+          "bit_identical_to_leg": true
+        },
+        {
+          "fid": 1,
+          "probe": "uncovered_cap_395",
+          "n_rows_in_probe": 395,
+          "scaler": 0.8777537941932678,
+          "bit_identical_to_leg": true
+        },
+        {
+          "fid": 1,
+          "probe": "arm_kept_rows",
+          "n_rows_in_probe": 20,
+          "scaler": 0.8777537941932678,
+          "bit_identical_to_leg": true
+        }
+      ],
+      "n_probes": 15,
+      "all_bit_identical": true,
+      "cross_leg_verification": "s_rung / s_hf / s_rung_over_s_hf are recorded on every leg; equality across the whole grid is verified analysis-side from those records",
+      "cap_probes_from_sealed_ladder": [
+        20,
+        80,
+        320,
+        395
+      ],
+      "s_rung": {
+        "1": 0.8777537941932678
+      },
+      "s_rung_over_s_hf": {
+        "1": 0.992367613359079
+      },
+      "arm_rows_max_over_fullpool": {
+        "1": 0.9633469858107266
+      },
+      "hf_arm_rows_max_over_fullpool": 0.9443664170944543
+    },
+    "modes": {
+      "policy": "pinned_min_rung_nyquist",
+      "modes_cap": 12,
+      "alpha": 12,
+      "min_rung_nyquist": 16,
+      "per_rung": {
+        "1": {
+          "grid": [
+            32,
+            32
+          ],
+          "nyquist": 16
+        },
+        "3": {
+          "grid": [
+            128,
+            128
+          ],
+          "nyquist": 64
+        }
+      },
+      "active_modes_by_grid": {
+        "1": [
+          12,
+          12,
+          12
+        ],
+        "3": [
+          12,
+          12,
+          12
+        ]
+      }
+    },
+    "lf_pool": [
+      {
+        "fid": 1,
+        "n_rows": 400,
+        "n_kept": 20,
+        "n_rows_kept": 20,
+        "n_distinct_conditions": 20,
+        "grid": [
+          32,
+          32
+        ],
+        "scaler": 0.8777537941932678,
+        "lf_cond_set": "uncovered",
+        "lf_cond_cap": 20,
+        "cond_rows_also_in_hf_train": 5,
+        "cond_rows_uncovered_by_hf_train": 395,
+        "n_candidates_before_cap": 395,
+        "selected_row_indices": [
+          8,
+          18,
+          50,
+          71,
+          102,
+          128,
+          135,
+          138,
+          160,
+          200,
+          242,
+          243,
+          249,
+          278,
+          283,
+          301,
+          311,
+          332,
+          354,
+          390
+        ],
+        "cap_selected_candidate_positions": [
+          8,
+          18,
+          50,
+          70,
+          100,
+          126,
+          132,
+          135,
+          157,
+          197,
+          238,
+          239,
+          245,
+          274,
+          279,
+          296,
+          306,
+          327,
+          349,
+          385
+        ],
+        "kept_rows_covered_by_hf_train": 0
+      }
+    ],
+    "lf_row_manifest": {
+      "n_rows": 20,
+      "n_distinct_conditions": 20,
+      "n_distinct_conditions_per_rung": {
+        "1": 20
+      },
+      "axis_note": "the causal axis of the ladder is n_distinct_conditions (union over rungs of the kept condition keys), NOT n_rows; card recipe.env._cap_semantics",
+      "definition": "condition key = tuple(np.round(row, 12)), the round's registered convention (tools/affine_ladder_voi.py A7)"
+    },
+    "lf_row_manifest_enabled": true,
+    "lf_lift_verification": {
+      "verified_against": "eval/panel_data.py::copylf_prediction (TRAIN split, read-only)",
+      "max_abs_diff": 0.0,
+      "tol": 1e-09,
+      "convention": "spectral_zeropad_rung1",
+      "copylf_def_hash": "9794cc89f1647861a6188803361bdfbb571991c91f206685824a80a900ba09a7",
+      "eval_dir": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round2/eval"
+    },
+    "lf_convention": "spectral_zeropad_rung1",
+    "cond_standardization": {
+      "source": "the N_hf HF train rows (identical in every arm at a given dataset/split_seed/N_hf)",
+      "mu": [
+        -0.34648112654685975,
+        -0.2160130798816681,
+        0.2569777727127075,
+        -0.2649700105190277,
+        -0.3894386887550354,
+        0.4448602765798569,
+        0.19823673963546753,
+        -0.15546531826257706,
+        -0.047786960005760194,
+        -0.09336845278739929,
+        0.5157986164093018,
+        -0.06311077922582627,
+        0.1256729133427143,
+        0.19836864173412322,
+        0.45249718725681304,
+        0.11327341794967652,
+        -0.018526707589626313,
+        0.059131750464439393
+      ],
+      "sd": [
+        0.021848194937510553,
+        0.007616277672108045,
+        0.30348847609468127,
+        0.6392247770246678,
+        0.4638454554046279,
+        0.34094820411121163,
+        0.5422936913736996,
+        0.2777432293880706,
+        0.5068538795013873,
+        0.5940357039607053,
+        0.43986573846736426,
+        0.2551841957461923,
+        0.5930972444212785,
+        0.5576404628488786,
+        0.4513882707130763,
+        0.6347550897529779,
+        0.2810230105318909,
+        0.44427908471279337
+      ]
+    },
+    "gate_report": {
+      "reported_never_a_switch": true,
+      "data_binding_assert": {
+        "performed": false,
+        "reason": "R3S3B3_DATA_BINDING_ASSERT=0"
+      },
+      "ckpt_data_binding": {
+        "enabled": true,
+        "vendored_from": "da855da:models_r3/_common/ckpt_binding.py (byte-for-byte)",
+        "tool": "ckpt_data_binding/1.0",
+        "arm_role": "lf_at_train",
+        "roles_read": [
+          "test_cond",
+          "test_hf",
+          "train_cond",
+          "train_hf",
+          "train_lf"
+        ],
+        "roles": {
+          "train_cond": "754c69c2282515226a7ad9f0d8f753f1fe530c68a7ac544856c9a37405c18d61",
+          "train_hf": "313af4a3f28621235922e0dfc7cbc304134bf3744084913da05fb2ecb706f485",
+          "train_lf": "a006688e909e89313602a5212ecb42df7c86cc50ffe09c0aacb8cf13cfd8f296",
+          "test_cond": "368c3696a3b0f329c62d7356b92268087f77474aea2b614008c7381ab23289b4",
+          "test_hf": "8752fbba2545eb63990cf5489cbfe37d71f6b1a0e569a245175a7d52396656a9",
+          "test_lf": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "role_n_units": {
+          "train_cond": 1,
+          "train_hf": 1,
+          "train_lf": 2,
+          "test_cond": 1,
+          "test_hf": 1,
+          "test_lf": 0
+        },
+        "union_sha256": "2f63a23fe3f132ac94ffe711e9c758c618a89b04aaca2f7b79262062a091163c",
+        "layout": "npz_l",
+        "recorded_utc": "2026-08-11T05:19:20+00:00",
+        "seconds_to_record": 1.6,
+        "written_at_every_save": true,
+        "computed_once_per_leg": "the block is a pure function of (dataset_dir, dataset_name, roles_read); recomputing it at each save would re-hash the whole dataset ~20x per leg",
+        "test_lf_note": "test_lf is read by NEITHER arm (stripped test view, program.md \u00a75 immutable #9): it carries the copy-LF denominator only, which is why a test_lf change is REREFERENCE and never RETRAIN"
+      },
+      "pfc_lf_rung_set_assert": {
+        "applicable": true,
+        "expected": [
+          1
+        ],
+        "got": [
+          1
+        ],
+        "match": true,
+        "adr": "r3-0005 (pfc spectral rung-1 scored cell)"
+      },
+      "design_coverage": {
+        "reported_only": true,
+        "design": "[Z_hf, 1] (per-dim standardized by the N_hf HF train rows)",
+        "singular_values": [
+          6.192306496049607,
+          4.708574291183174,
+          4.373926261996204,
+          3.217675785098719,
+          2.2360679774997907
+        ],
+        "numerical_rank": 5,
+        "m_null_dim": 14,
+        "n_cond_space_directions": 14,
+        "n_dropped_zero_cond_part": 0,
+        "rank_tol": 1e-10,
+        "raw_design": {
+          "singular_values": [
+            3.40971793321395,
+            2.785496580679664,
+            2.218408588804665,
+            1.912249191170993,
+            1.2225993531094619
+          ],
+          "numerical_rank": 5,
+          "m_null_dim": 14,
+          "note": "[X_hf, 1] in RAW condition units \u2014 the coordinate system of tools/affine_ladder_voi.py"
+        },
+        "null_directions_augmented_raw": [
+          [
+            0.18384812605200068,
+            0.38517273828124304,
+            0.1806600624206921,
+            -0.23216122954834978,
+            -0.049413654811376106,
+            0.7950650264316305,
+            -0.07681788440233675,
+            0.020990876105368907,
+            -0.023505904254221995,
+            0.12049760591280934,
+            -0.12208998607027613,
+            -0.008831024892206725,
+            -0.001697666329200494,
+            0.02426092492482515,
+            -0.06366550847919188,
+            -0.11133719954619223,
+            -0.009803160475093654,
+            0.015873109389682553,
+            -0.20723964497385752
+          ],
+          [
+            0.3098091917505444,
+            0.051967803207923914,
+            -0.28866713858103976,
+            -0.2513312038623658,
+            0.052056177680264916,
+            -0.030182835445766804,
+            0.7565993531035274,
+            -0.09375759914574057,
+            -0.23175407152782024,
+            0.12931489519491285,
+            -0.1193972363730383,
+            0.1048681964259318,
+            0.07814954637409376,
+            -0.0029585704642288643,
+            0.08644805042672425,
+            0.20167441451072216,
+            0.06288595578192782,
+            -0.1267353814157422,
+            0.0019578229841752536
+          ],
+          [
+            -0.04121727219728298,
+            -0.1562133114117341,
+            -0.051421447943062824,
+            -0.3910616948649471,
+            0.2666658404566918,
+            0.029910676576445368,
+            -0.13253465734335365,
+            0.7799978660471147,
+            -0.19984048728221895,
+            -0.08776344218951908,
+            0.07548314633931555,
+            0.13212059853569344,
+            -0.025056543903738997,
+            -0.11346774164419289,
+            -0.06121719401063867,
+            0.147706802569073,
+            0.04494333993974172,
+            -0.019737280559504786,
+            0.089935702324771
+          ],
+          [
+            0.092545582605626,
+            -0.0008357496546361505,
+            -0.3736471472241028,
+            -0.37608422070046554,
+            0.0976166732707282,
+            0.013976029563509464,
+            -0.23562228915264538,
+            -0.15895365395526292,
+            0.7162525400987761,
+            0.03482779407771632,
+            -0.05953763928171436,
+            0.1241029767452252,
+            -0.008719853431687102,
+            0.04271592753712028,
+            0.06460342091658929,
+            0.2009910520094684,
+            0.09831899815724408,
+            -0.1369764678014309,
+            0.1086130205467397
+          ],
+          [
+            -0.4411899142249675,
+            -0.02453246757951163,
+            -0.06075366184838753,
+            0.006624637630976942,
+            0.38118434264237966,
+            0.07275775009215109,
+            0.06008818229286733,
+            -0.1367346200553743,
+            -0.06702943649872758,
+            0.6627685926273221,
+            0.10631212363677092,
+            0.05285193567869454,
+            -0.3191214046587572,
+            0.05727639888098185,
+            -0.21408888450049463,
+            -0.05795179473644392,
+            0.09390568089268965,
+            -0.010275483358701572,
+            0.08382396693024179
+          ],
+          [
+            0.27664395270716763,
+            0.3404667521161561,
+            -0.22735656498646503,
+            0.10695886467158734,
+            -0.087991101571653,
+            -0.1002094759550249,
+            -0.1204746360804127,
+            0.09381185734281071,
+            -0.06593764756503004,
+            0.13848746140863233,
+            0.786806149233555,
+            -0.011506727502540556,
+            -0.01690271846501493,
+            0.1493971023674237,
+            0.05266255531141413,
+            0.00207432911531922,
+            0.05455599975034798,
+            -0.11788181367851572,
+            -0.13543241069699008
+          ],
+          [
+            -0.09586417670525821,
+            0.08317648914400133,
+            0.12365282898769801,
+            0.15429929168164375,
+            -0.20844102725147068,
+            -0.024522821237398653,
+            0.1288669008854321,
+            0.12900956205216887,
+            0.15679709797992006,
+            0.032165192672081566,
+            0.0036264137800373843,
+            0.8997130918663495,
+            0.005179909447945358,
+            0.06857118279478405,
+            0.022261387451919367,
+            -0.14532555903323496,
+            -0.04627202994096282,
+            0.055504232515692,
+            -0.028491878840000488
+          ],
+          [
+            -0.4324381036028307,
+            0.3584503706570741,
+            -0.20572506873130944,
+            -0.08183101411869828,
+            0.1906367052565318,
+            -0.04603127498315497,
+            0.008180847496251939,
+            -0.055094535266576046,
+            -0.10271439058782562,
+            -0.24458866623464418,
+            -0.037669475713269715,
+            0.005705438188603583,
+            0.6018560922110754,
+            0.26876374136295433,
+            -0.18359730070411825,
+            -0.1668112060402405,
+            0.14083065316478321,
+            -0.07763934351370251,
+            0.015580066468301805
+          ],
+          [
+            0.3050250209062325,
+            -0.3424049350149477,
+            0.33351055456877815,
+            -0.01289260183412317,
+            0.39680562412832876,
+            0.03129330426685093,
+            -0.052998228602571175,
+            -0.15402976771563873,
+            -0.023509911562279717,
+            -0.039958476337307605,
+            0.09933367920762551,
+            0.11999297644234344,
+            0.15549118764062414,
+            0.6138655669146159,
+            -0.10976401384985914,
+            0.17882999225737975,
+            -0.06942455299273634,
+            0.08748599140929535,
+            -0.09710780766493061
+          ],
+          [
+            -0.1173296203212633,
+            0.24977842518719862,
+            0.156590999428952,
+            -0.1161945034737934,
+            0.42132409208136995,
+            -0.10413262219283739,
+            -0.03093961134405958,
+            -0.1260772955436651,
+            -0.08377554644456937,
+            -0.2085859702727522,
+            -0.011155304054076068,
+            0.06899941471346782,
+            -0.2591520562041425,
+            -0.014693390498406756,
+            0.7212349709361956,
+            -0.09830100647406768,
+            0.06618657487826415,
+            0.010304593563270356,
+            -0.15328061031625426
+          ],
+          [
+            -0.27191081144819385,
+            0.3890517817983398,
+            0.325462475762319,
+            -0.04103674397459402,
+            -0.15615360632889444,
+            -0.16065861959240937,
+            0.16363269946489759,
+            0.11211868056273841,
+            0.1708049794373063,
+            -0.03922459521421443,
+            -0.007846121314119449,
+            -0.12270858343385907,
+            -0.15461670693849575,
+            0.136674296505695,
+            -0.13167387341721978,
+            0.6636371717443179,
+            -0.03320277730393527,
+            0.1055326662694422,
+            -0.1383548136759895
+          ],
+          [
+            0.08110348512088204,
+            -0.09793853844213825,
+            0.2598336013573986,
+            0.05126153066424651,
+            -0.04183895516839394,
+            -0.013340968754378403,
+            0.06843378824139881,
+            0.032884653336090613,
+            0.11079170301392584,
+            0.045006613969522574,
+            0.050197514689265435,
+            -0.027761958347808133,
+            0.11313560247614185,
+            -0.12751252452735193,
+            -0.0037955779272089603,
+            -0.027512020267266714,
+            0.9205204367725709,
+            0.09015913663465235,
+            -0.05557045005240986
+          ],
+          [
+            0.05511644075481466,
+            0.06930784243646278,
+            -0.3871728213755599,
+            0.05676841343912104,
+            -0.0381134609397994,
+            0.038425511579652245,
+            -0.10252131221964852,
+            0.012152941515701047,
+            -0.1180754858728367,
+            0.031857116014165895,
+            -0.10010293442126494,
+            0.022548390855716863,
+            -0.04380364340592521,
+            0.14552201101466083,
+            0.08930559033985738,
+            0.0917257214368437,
+            0.0812494437287711,
+            0.8657914036757977,
+            0.06541577457282559
+          ],
+          [
+            0.3837422100069396,
+            0.45372643884931946,
+            0.20418653404397377,
+            0.11591445365271681,
+            0.22431425917117212,
+            -0.21644756053516007,
+            -0.09150348207677314,
+            0.04051558902499931,
+            -0.010145039878840694,
+            0.053076703187949235,
+            -0.19767632467784774,
+            0.019365058946291105,
+            -0.07004646093540705,
+            -0.03080604280766661,
+            -0.17517553443692951,
+            -0.08884161107165636,
+            0.013304894954293387,
+            -0.01542007851983361,
+            0.6303526706084922
+          ]
+        ],
+        "null_directions_cond_space_standardized": [
+          [
+            0.06066114364210475,
+            -0.20955224381989063,
+            0.28428862509159114,
+            -0.3431687659336071,
+            -0.21993342873365868,
+            0.8188408508997209,
+            -0.06764487784206157,
+            -0.04641904509883987,
+            -0.06595316320762967,
+            0.11069020247192239,
+            -0.0352932633957095,
+            -0.015031022151051352,
+            0.039714768946777244,
+            0.054393644894522045,
+            0.052971042710380854,
+            -0.04752855111971942,
+            -0.01657175348763965,
+            0.01650797726925994
+          ],
+          [
+            0.34365469495195683,
+            -0.05885671735719078,
+            -0.11901914120173988,
+            -0.19535347664529243,
+            -0.028647214079734456,
+            -0.0466651297128076,
+            0.8610895864001696,
+            -0.07287638145753804,
+            -0.1390153993015457,
+            0.08182299623754818,
+            -0.10218936109767278,
+            0.1029863383756341,
+            0.03601662261491646,
+            0.02881837668189955,
+            0.07346131123956531,
+            0.08322484630114337,
+            0.07513489650653966,
+            -0.09570390477864509
+          ],
+          [
+            0.05533860256605945,
+            0.2018885403198192,
+            -0.005678541149133987,
+            -0.5375786504315743,
+            0.3172994692962205,
+            -0.029314821502979684,
+            -0.10450515508398836,
+            0.6274715888448177,
+            -0.17513892259913866,
+            -0.1127707719559246,
+            0.05293535550127705,
+            0.2434306058581362,
+            -0.08892993895230637,
+            -0.08705847829834622,
+            -0.16322002453063822,
+            0.06060872454661401,
+            0.0978876838696233,
+            -0.011830668491204795
+          ],
+          [
+            0.2669776509555315,
+            -0.0938120385035802,
+            -0.17514380025530374,
+            -0.3142999100957317,
+            0.03759595334294329,
+            -0.06155055633854739,
+            -0.15692952318636,
+            -0.14141574410066962,
+            0.8193687602312494,
+            0.04135834596200738,
+            -0.10320517302275423,
+            0.14302763908713761,
+            -0.018476767285559092,
+            0.04631878601478305,
+            0.02460749041657345,
+            0.07760364537418438,
+            0.12275266651251938,
+            -0.1107630478968958
+          ],
+          [
+            -0.35424019519173433,
+            0.0521243690422048,
+            -0.18778805669100204,
+            -0.050318144042707985,
+            0.26992823254740506,
+            0.06537480361667766,
+            0.04984480224301763,
+            -0.1159477600452027,
+            -0.006341977396404083,
+            0.8190471948999598,
+            0.0644187178190794,
+            0.058385290408111315,
+            -0.15822157725641703,
+            -0.003449549418578316,
+            -0.1734635656067821,
+            -0.02830018725988863,
+            0.08086576960513626,
+            0.004926569169421217
+          ],
+          [
+            0.24823897355137392,
+            -0.23359641652027482,
+            -0.20147247614774028,
+            0.017392050328194224,
+            -0.15906715857250728,
+            -0.04309668437879535,
+            -0.10129276543060337,
+            0.0906147305967794,
+            -0.08180250730553656,
+            0.11426104458433557,
+            0.852513528356527,
+            -0.0025867406867259805,
+            0.03399928347861904,
+            0.10850037427498119,
+            0.1308918845044566,
+            0.04569249012825372,
+            0.07309952000083014,
+            -0.11515203036473722
+          ],
+          [
+            -0.2138455082909133,
+            -0.15875719537046978,
+            0.20534883032077803,
+            0.2452106176526483,
+            -0.24333337529428403,
+            -0.03645262495992489,
+            0.11013821419767483,
+            0.21600624670546553,
+            0.14746179714280047,
+            0.056668347005011076,
+            0.021110273235116495,
+            0.8041548630427556,
+            0.041771511420524106,
+            0.0502047573385278,
+            0.062005585757287755,
+            -0.10388684675021521,
+            -0.10522643602176104,
+            0.07347579411290621
+          ],
+          [
+            -0.3107424246738549,
+            -0.20377145441337513,
+            -0.22188121316398274,
+            -0.16972400710870306,
+            0.11527030400678213,
+            -0.028672995069638208,
+            -0.013888194537403125,
+            -0.0802080510172848,
+            -0.06864855760046183,
+            -0.10536812351716017,
+            -0.024650510723696076,
+            0.037967870112240794,
+            0.8376732934692245,
+            0.0992101661931849,
+            -0.10943210953363106,
+            -0.044778062629796646,
+            0.13115771221558228,
+            -0.050566274504303795
+          ],
+          [
+            0.04944417918059347,
+            0.40992281348113396,
+            0.12870725576506262,
+            0.057423719287030446,
+            0.2140688572726605,
+            0.10686399735070162,
+            0.05735669743777141,
+            -0.10612458910456128,
+            0.05614253106859051,
+            -0.08143130242625146,
+            0.12897627151736285,
+            0.06594519047133665,
+            0.03558621366284911,
+            0.8268490851359905,
+            -0.08107332947960409,
+            0.04270970106130826,
+            -0.08184009478152142,
+            0.08396802949418507
+          ],
+          [
+            -0.349985927211102,
+            0.055497241597096805,
+            -0.05682710076125428,
+            -0.20483349923062458,
+            0.2522908166827328,
+            0.014528070531035364,
+            0.03445313697882831,
+            -0.1779601858142072,
+            -0.02833266485509229,
+            -0.16977016091051259,
+            0.08294303632285517,
+            0.07702329058703507,
+            -0.1509986715811885,
+            -0.017875700517773995,
+            0.812345617575274,
+            -0.04120185736690505,
+            0.0671127325995861,
+            0.029346582980249496
+          ],
+          [
+            -0.2881967893517999,
+            -0.15617674521826444,
+            0.19298430507440012,
+            -0.07324056532577149,
+            -0.10672903495794388,
+            -0.0817427406382257,
+            0.05979799814994244,
+            0.030943583238623694,
+            0.05187724304008375,
+            -0.009203948271239567,
+            0.03826250906521913,
+            -0.08937744423959676,
+            -0.037447534803062975,
+            0.04648386574976538,
+            -0.03503189816072444,
+            0.8973080240286659,
+            -0.03428503508023648,
+            0.06310531418419159
+          ],
+          [
+            -0.03045530633220232,
+            0.2242740485498183,
+            0.35715808360699275,
+            0.1570594529186504,
+            -0.05761429984126712,
+            0.025694481900192093,
+            0.1077262372808117,
+            0.05757323984972494,
+            0.14190636637361995,
+            0.01568480859480468,
+            0.11872334099386471,
+            -0.08587385311820352,
+            0.09705272150170316,
+            -0.11691120215280645,
+            0.005828259087447688,
+            -0.037301091116370186,
+            0.8327667459326976,
+            0.1333363771704334
+          ],
+          [
+            0.19895630204147235,
+            -0.1638150237740438,
+            -0.3168328710063916,
+            0.00880979735018032,
+            -0.02532629762999681,
+            0.002635702869187519,
+            -0.10027647609604705,
+            0.032150241642690244,
+            -0.10017286707407057,
+            0.048620828742597856,
+            -0.13140933806634475,
+            0.0473991870125002,
+            -0.013851026417897495,
+            0.09069096266662081,
+            0.07366351618989163,
+            0.06425413313495666,
+            0.1115193972795308,
+            0.871241125640352
+          ],
+          [
+            0.26037923036212485,
+            -0.5588180946613596,
+            0.4282273076092407,
+            0.11361806730282271,
+            0.5617440920266568,
+            -0.1561862703780303,
+            -0.1194549963793707,
+            -0.08859141010791113,
+            -0.1419706922431433,
+            0.0694167885549441,
+            -0.09299252489303002,
+            0.05048146874672199,
+            -0.03145404068758787,
+            0.10578128248507507,
+            0.027994909817485772,
+            -0.01264101363205923,
+            0.08970595678421929,
+            -0.06502868246454414
+          ]
+        ]
+      },
+      "train_vs_test_gap": {
+        "train_nRMSE_at_hf_train_conditions": 0.4277864450673783,
+        "test_nRMSE": 0.9245641296469812,
+        "gap": 0.4967776845796029
+      },
+      "floor_seam_check": {
+        "floors_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/state/anchors_repaired/floors.json",
+        "tol": 1e-09,
+        "checks": {
+          "nn_condition": {
+            "in_run": 1.187748002107592,
+            "frozen": 1.187748002107592,
+            "abs_diff": 0.0
+          },
+          "train_mean": {
+            "in_run": 0.877766362761513,
+            "frozen": 0.877766362761513,
+            "abs_diff": 0.0
+          },
+          "zero": {
+            "in_run": 1.0,
+            "frozen": 1.0,
+            "abs_diff": 0.0
+          }
+        },
+        "frozen_certified_utc": "2026-08-04T05:12:04Z",
+        "frozen_nrmse_def_hash": "d3d0ade9191c13bacc40702f3eb26ad290e01641cacee22a1d2233b74c035850"
+      },
+      "anchor_affine_seam_check": {
+        "performed": false,
+        "anchors_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/state/anchors/launch_anchors.json",
+        "reason": "no ifc_floors_repaired.sharp__phase_field_crystal_2d.affine_on_hf_train anchor (the anchor file carries this arm for the ifc datasets only)"
+      },
+      "target_scale_audit": {
+        "hf_rung": {
+          "n_samples": 5,
+          "scaler_per_rung_max": 0.8845046758651733,
+          "median_per_sample_max_abs": 0.7787002325057983,
+          "scaler_over_median_per_sample_max": 1.1358731369822561,
+          "median_normalised_target_max": 0.8803800067468462,
+          "per_sample_max_abs_max_over_median": 1.0726804446457716,
+          "per_sample_max_abs_p99_over_median": 1.0703551523366284,
+          "energy_share_top1": 0.21722983994597123,
+          "energy_share_top5pct": 0.21722983994597123,
+          "effective_n_samples_of_mse": 4.989631248577087,
+          "definition": "statistics of tools/target_scale_spread_audit.py applied to THIS family's actual normalised target y / max|y| (per rung), not to a residual target \u2014 this family has none; reported, never a switch"
+        },
+        "lf_rungs": {
+          "1": {
+            "n_samples": 20,
+            "scaler_per_rung_max": 0.8777537941932678,
+            "median_per_sample_max_abs": 0.7719966173171997,
+            "scaler_over_median_per_sample_max": 1.1369917620152141,
+            "median_normalised_target_max": 0.8795138482160956,
+            "per_sample_max_abs_max_over_median": 1.0953175868289835,
+            "per_sample_max_abs_p99_over_median": 1.0942288677059846,
+            "energy_share_top1": 0.05760145173132562,
+            "energy_share_top5pct": 0.05760145173132562,
+            "effective_n_samples_of_mse": 19.85895622749607,
+            "definition": "statistics of tools/target_scale_spread_audit.py applied to THIS family's actual normalised target y / max|y| (per rung), not to a residual target \u2014 this family has none; reported, never a switch"
+          }
+        }
+      },
+      "response_decomposition": {
+        "performed": false,
+        "reason": "R3S3B3_ALIGNMENT_REPORT=0 \u2014 card recipe.base_family: 'the B2 D-D mediator clause is NOT re-run (B2 part 7 item 4)'"
+      },
+      "forward_sensitive_stratification": {
+        "performed": true,
+        "terminology": "FORWARD-SENSITIVE subpopulation: condition-space-indistinguishable (max per-dim standardised gap 0.4476 sigma, nearest-train-neighbour ratio 1.0176) but field-distant (nearest-train-field rel-L2 ratio 3.29). Measured by r3s1_factorised-B1 turn 3 (T3c) on the 27 seed-invariant hard rows of sharp__cahn_hilliard's 100-row test split.",
+        "mode": "rederive_model_free",
+        "dataset_general": true,
+        "split_identity": {
+          "dataset": "sharp__phase_field_crystal_2d",
+          "n_test": 100,
+          "cond_matrix_sha256_round12": "9814e0631d46b4b513723163e14f5fb5671a6ae44e960c21fb20f5b1640d63a1",
+          "gating": false,
+          "convention": "sha256 of np.round(cond_test, 12).tobytes(), C-order float64 \u2014 the round's registered condition-key rounding"
+        },
+        "scored_metric": "per-row rel-L2 of the SCORED test split, the round's one nRMSE definition (round2/eval/nrmse.py), taken from splits.test_hf.rel_l2_per_sample",
+        "masks": {
+          "rederived_model_free": {
+            "definition": "top 27.00% (27 of 100) test rows by min_j ||y_te_i - y_train_j|| / ||y_te_i|| over the FULL HF train split; model-free, dataset-general",
+            "n_hard_rule": "round(topfrac * n_test), clamped to [1, n_test - 1]",
+            "topfrac": 0.27,
+            "n_train_rows_searched": 400,
+            "n_hard": 27,
+            "n_test": 100,
+            "row_indices": [
+              0,
+              3,
+              5,
+              6,
+              12,
+              14,
+              19,
+              23,
+              24,
+              26,
+              30,
+              32,
+              34,
+              35,
+              36,
+              37,
+              42,
+              49,
+              54,
+              56,
+              58,
+              61,
+              70,
+              74,
+              84,
+              87,
+              91
+            ],
+            "nearest_train_field_rel_l2_hard_mean": 0.7579597697596144,
+            "nearest_train_field_rel_l2_easy_mean": 0.24369187866734573,
+            "nearest_train_field_rel_l2_hard_over_easy": 3.1103201875441884,
+            "hard_forward_sensitive": {
+              "n_rows": 27,
+              "rel_l2_mean": 0.9134531467977375,
+              "rel_l2_median": 0.8903364973935176,
+              "rel_l2_std": 0.0850708589210275
+            },
+            "easy_bulk": {
+              "n_rows": 73,
+              "rel_l2_mean": 0.9286736712487562,
+              "rel_l2_median": 0.9170163589064672,
+              "rel_l2_std": 0.09261228409272958
+            },
+            "hard_minus_easy_rel_l2_mean": -0.015220524451018735
+          }
+        },
+        "comparability_note": "MODEL-FREE and identical in every arm, cap, draw and seed of this card's grid, because it is a function of the dataset alone. B2 published a SECOND, MODEL-DEPENDENT ch mask (imported from r3s1_factorised-B1's per-row rel-L2 bimodality) and measured overlap 19/27, jaccard 0.543 against this same re-derivation; this card imports nothing, so the comparison is made analysis-side from B2's published row indices and this leg's `split_identity` digest."
+      },
+      "film_units": {
+        "performed": true,
+        "adr": "r3-0006 (film-transfer denominator); batch-3 scope rule 1",
+        "denominator_family": "mf_fno_transfer_film",
+        "denominator_role": "DENOMINATOR ONLY \u2014 never an arm of this card",
+        "nrmse_film_mean": 0.9527568345233846,
+        "nrmse_film_per_seed": [
+          0.9630121714879519,
+          0.9495618218121238,
+          0.9456965102700781
+        ],
+        "nrmse_film_ci95": [
+          0.9424714019934928,
+          0.9630422670532763
+        ],
+        "c_ds": 0.01297118127061029,
+        "skill_film": 0.9704093386110353,
+        "tau_rel": null,
+        "tau_rel_film": null,
+        "tau_rel_certified": false,
+        "conditional_adjudication": "NO certified tau_rel exists for sharp__phase_field_crystal_2d in /resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/state/anchors_repaired/noise_floor.json. Card `_cell_roles`: this cell is registered CONDITIONALLY and is adjudicated only if a certified tau_rel exists at analysis time; otherwise it is reported with its film-unit margin and an explicit non-adjudication flag. No threshold is invented here.",
+        "skill_film_by_arm": {
+          "ref_affine_on_hf_train": 1.1633937029599508,
+          "ref_nn_condition_full": 1.2466433816785596,
+          "ref_nn_condition_n5": 1.2850727992866857,
+          "ref_train_mean_full": 0.9212910691956511,
+          "ref_train_mean_n5": 0.9978241306984574,
+          "ref_zero": 1.0495857534312507,
+          "test_hf": 0.9704093386110353
+        }
+      },
+      "g5_nn_condition_fitset_band": {
+        "performed": true,
+        "band_tau_rel": null,
+        "reason": "the operator's G5 adoption records no fit-set band for sharp__phase_field_crystal_2d; it is NOT interpolated from the other cells",
+        "source": "experiment_cards/r3s4_audit/batch_2/B2.json :: orchestrator_adjudication_g5_2026_08_10 (operator adoption, Eloise, 2026-08-10); underlying artifact reanalysis_turn_2_repricing.json"
+      },
+      "mean_removed": {
+        "definition": "mean_i ||(p_i - <p_i>) - (y_i - <y_i>)||_2 / ||y_i - <y_i>||_2, <.> = the sample's spatial mean (benchmark_42 dataset-card convention) composed with round2/eval/nrmse.py",
+        "mean_removed_nRMSE": 1.054382327043747,
+        "raw_nRMSE": 0.9245641296469812,
+        "ratio_mean_removed_over_raw": 1.1404101600246304,
+        "n_zero_variance_targets": 0,
+        "target_level_energy_fraction": 0.23189739691781575,
+        "reported_only": true,
+        "carded_scope": "the card names sharp__fisher_kpp_2d and ifc_heat explicitly (level-domination); it is computed on every cell because reporting more costs nothing and reporting less would break the requirement",
+        "carded_cells": [
+          "sharp__fisher_kpp_2d",
+          "ifc_heat"
+        ],
+        "is_carded_cell": false
+      },
+      "floor_tolerances": {
+        "floor_tolerances_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/state/floor_tolerances.json",
+        "dataset_tolerance": 1e-09,
+        "arms_covered": [
+          "nn_condition",
+          "train_mean",
+          "zero"
+        ],
+        "affine_arm_pinned_band": 6.273885588431259e-09,
+        "affine_arm_declaration": "affine_on_hf_train is NOT YET ADJUDICABLE under the installed per-dataset table: its own per-arm band exceeds the recommended tolerance on 8 of 10 datasets. Any card asserting an affine reproduction must adjudicate against the pinned per-arm band below (tools/floor_arm_precision_band.py estimators, D2 config seed 1 B=64), not the dataset-level table. This closes 6 of B2's 7 @full misses as metrology; the surviving genuinely unexplained miss is sharp__allen_cahn_2d:train_mean 5.454e-11 (7.3x OUTSIDE its arm band 7.493e-12, inside the dataset-level 1e-9).",
+        "rule": "F1-class floor reproductions adjudicate against dataset_tolerance for nn_condition / train_mean / zero, and against affine_arm_pinned_band for affine_on_hf_train (install note: the affine arm is NOT adjudicable under the dataset-level table)"
+      }
+    },
+    "loss_curve": [
+      {
+        "step": 1,
+        "hf": 0.2246287316083908,
+        "lf": 0.2241351157426834,
+        "lr": 0.0009990133642141358
+      },
+      {
+        "step": 2,
+        "hf": 0.23188643157482147,
+        "lf": 0.23675251007080078,
+        "lr": 0.000996057350657239
+      },
+      {
+        "step": 3,
+        "hf": 0.20872268080711365,
+        "lf": 0.2114999145269394,
+        "lr": 0.0009911436253643444
+      },
+      {
+        "step": 4,
+        "hf": 0.20710694789886475,
+        "lf": 0.2115299105644226,
+        "lr": 0.0009842915805643156
+      },
+      {
+        "step": 5,
+        "hf": 0.20408761501312256,
+        "lf": 0.20550671219825745,
+        "lr": 0.0009755282581475769
+      },
+      {
+        "step": 6,
+        "hf": 0.20051178336143494,
+        "lf": 0.2060227394104004,
+        "lr": 0.0009648882429441258
+      },
+      {
+        "step": 7,
+        "hf": 0.19654051959514618,
+        "lf": 0.21061094105243683,
+        "lr": 0.0009524135262330099
+      },
+      {
+        "step": 8,
+        "hf": 0.1920444369316101,
+        "lf": 0.2075340300798416,
+        "lr": 0.0009381533400219318
+      },
+      {
+        "step": 9,
+        "hf": 0.18726330995559692,
+        "lf": 0.21947729587554932,
+        "lr": 0.0009221639627510075
+      },
+      {
+        "step": 10,
+        "hf": 0.1831342875957489,
+        "lf": 0.21202361583709717,
+        "lr": 0.0009045084971874736
+      },
+      {
+        "step": 11,
+        "hf": 0.17936980724334717,
+        "lf": 0.21395137906074524,
+        "lr": 0.0008852566213878945
+      },
+      {
+        "step": 12,
+        "hf": 0.17629727721214294,
+        "lf": 0.2114020586013794,
+        "lr": 0.0008644843137107056
+      },
+      {
+        "step": 13,
+        "hf": 0.17406845092773438,
+        "lf": 0.21428804099559784,
+        "lr": 0.0008422735529643443
+      },
+      {
+        "step": 14,
+        "hf": 0.17221461236476898,
+        "lf": 0.2067156285047531,
+        "lr": 0.0008187119948743448
+      },
+      {
+        "step": 15,
+        "hf": 0.1701425015926361,
+        "lf": 0.21034012734889984,
+        "lr": 0.0007938926261462366
+      },
+      {
+        "step": 16,
+        "hf": 0.16784964501857758,
+        "lf": 0.20703653991222382,
+        "lr": 0.0007679133974894982
+      },
+      {
+        "step": 17,
+        "hf": 0.16521862149238586,
+        "lf": 0.20550349354743958,
+        "lr": 0.0007408768370508576
+      },
+      {
+        "step": 18,
+        "hf": 0.1625097692012787,
+        "lf": 0.20522142946720123,
+        "lr": 0.0007128896457825362
+      },
+      {
+        "step": 19,
+        "hf": 0.15955892205238342,
+        "lf": 0.2080848515033722,
+        "lr": 0.0006840622763423389
+      },
+      {
+        "step": 20,
+        "hf": 0.15656593441963196,
+        "lf": 0.2056162804365158,
+        "lr": 0.0006545084971874735
+      },
+      {
+        "step": 21,
+        "hf": 0.1536087989807129,
+        "lf": 0.20704439282417297,
+        "lr": 0.0006243449435824271
+      },
+      {
+        "step": 22,
+        "hf": 0.15055379271507263,
+        "lf": 0.20145151019096375,
+        "lr": 0.0005936906572928622
+      },
+      {
+        "step": 23,
+        "hf": 0.14736683666706085,
+        "lf": 0.213058203458786,
+        "lr": 0.000562666616782152
+      },
+      {
+        "step": 24,
+        "hf": 0.1437322199344635,
+        "lf": 0.2050500512123108,
+        "lr": 0.0005313952597646566
+      },
+      {
+        "step": 25,
+        "hf": 0.13974221050739288,
+        "lf": 0.1984827220439911,
+        "lr": 0.0004999999999999998
+      },
+      {
+        "step": 26,
+        "hf": 0.1353771984577179,
+        "lf": 0.2055845409631729,
+        "lr": 0.00046860474023534314
+      },
+      {
+        "step": 27,
+        "hf": 0.13062945008277893,
+        "lf": 0.19850854575634003,
+        "lr": 0.00043733338321784774
+      },
+      {
+        "step": 28,
+        "hf": 0.1255955994129181,
+        "lf": 0.2005511224269867,
+        "lr": 0.00040630934270713756
+      },
+      {
+        "step": 29,
+        "hf": 0.12041636556386948,
+        "lf": 0.19850176572799683,
+        "lr": 0.00037565505641757246
+      },
+      {
+        "step": 30,
+        "hf": 0.11513855308294296,
+        "lf": 0.19501233100891113,
+        "lr": 0.00034549150281252633
+      },
+      {
+        "step": 31,
+        "hf": 0.10972326993942261,
+        "lf": 0.1964561641216278,
+        "lr": 0.00031593772365766105
+      },
+      {
+        "step": 32,
+        "hf": 0.10420869290828705,
+        "lf": 0.20180761814117432,
+        "lr": 0.00028711035421746355
+      },
+      {
+        "step": 33,
+        "hf": 0.09845216572284698,
+        "lf": 0.1891895830631256,
+        "lr": 0.0002591231629491422
+      },
+      {
+        "step": 34,
+        "hf": 0.09297884255647659,
+        "lf": 0.20063647627830505,
+        "lr": 0.00023208660251050145
+      },
+      {
+        "step": 35,
+        "hf": 0.08785424381494522,
+        "lf": 0.19517195224761963,
+        "lr": 0.00020610737385376337
+      },
+      {
+        "step": 36,
+        "hf": 0.08307425677776337,
+        "lf": 0.19064447283744812,
+        "lr": 0.00018128800512565502
+      },
+      {
+        "step": 37,
+        "hf": 0.07878440618515015,
+        "lf": 0.2032770812511444,
+        "lr": 0.00015772644703565555
+      },
+      {
+        "step": 38,
+        "hf": 0.07491068542003632,
+        "lf": 0.2023131400346756,
+        "lr": 0.00013551568628929425
+      },
+      {
+        "step": 39,
+        "hf": 0.07144445925951004,
+        "lf": 0.19720017910003662,
+        "lr": 0.00011474337861210535
+      },
+      {
+        "step": 40,
+        "hf": 0.06840858608484268,
+        "lf": 0.19503135979175568,
+        "lr": 9.549150281252626e-05
+      },
+      {
+        "step": 41,
+        "hf": 0.06575912237167358,
+        "lf": 0.19500192999839783,
+        "lr": 7.783603724899252e-05
+      },
+      {
+        "step": 42,
+        "hf": 0.06354696303606033,
+        "lf": 0.20450332760810852,
+        "lr": 6.184665997806817e-05
+      },
+      {
+        "step": 43,
+        "hf": 0.06171752139925957,
+        "lf": 0.19313251972198486,
+        "lr": 4.7586473766990294e-05
+      },
+      {
+        "step": 44,
+        "hf": 0.06027024984359741,
+        "lf": 0.1904584765434265,
+        "lr": 3.5111757055874305e-05
+      },
+      {
+        "step": 45,
+        "hf": 0.05912620946764946,
+        "lf": 0.18811818957328796,
+        "lr": 2.4471741852423218e-05
+      },
+      {
+        "step": 46,
+        "hf": 0.05827806517481804,
+        "lf": 0.19156642258167267,
+        "lr": 1.5708419435684507e-05
+      },
+      {
+        "step": 47,
+        "hf": 0.057684898376464844,
+        "lf": 0.20088455080986023,
+        "lr": 8.856374635655634e-06
+      },
+      {
+        "step": 48,
+        "hf": 0.05730175971984863,
+        "lf": 0.19181600213050842,
+        "lr": 3.942649342761115e-06
+      },
+      {
+        "step": 49,
+        "hf": 0.057080596685409546,
+        "lf": 0.1858496069908142,
+        "lr": 9.866357858642198e-07
+      },
+      {
+        "step": 50,
+        "hf": 0.05698036029934883,
+        "lf": 0.18719834089279175,
+        "lr": 0.0
+      }
+    ],
+    "resumed_from_step": 0,
+    "min_claimable_effect": {
+      "mode": "certified_r3",
+      "r3_certified": {
+        "available": false,
+        "path": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/state/anchors_repaired/noise_floor.json",
+        "reason": "no 'sharp__phase_field_crystal_2d' entry in /resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/state/anchors_repaired/noise_floor.json"
+      },
+      "available": false,
+      "source_file_is_provisional": null,
+      "note": "round-3 CERTIFIED noise floor only; no round-2 file is consulted under this mode (card r3s3_lf_value-B2 recipe.env has no R3S3B3_NOISE_FLOOR_R2_JSON key)",
+      "reason": "'sharp__phase_field_crystal_2d' has no min_claimable_effect entry in /resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/state/anchors_repaired/noise_floor.json; no threshold is manufactured here"
+    },
+    "reporting_discipline": {
+      "reference_free": false,
+      "reference_free_datasets": [
+        "sharp__cahn_hilliard"
+      ],
+      "reference_free_source": "FROZEN constant \u2014 the card's recipe.env has no R3S3B3_REFERENCE_FREE_DATASETS key; the value is the card's own _reporting_discipline sentence",
+      "primary_units": "FILM (ADR r3-0006, batch-3 scope rule 1): skill_film = nRMSE / nrmse_film_mean(ds). Copy-LF is NOT a target on this card and is kept only as the identity check skill_film = skill_copylf * c_ds.",
+      "rule": "reference-bearing: skill against the eval layer's copy-LF / paper-bar denominator is quotable for this dataset, but the card's registered unit is still film",
+      "ifc_affine_floor_rule": null,
+      "pfc_caveat": "WEAK FIDELITY GAP denominator caveat, and NO CERTIFIED tau_rel exists for this cell (state/anchors_repaired/noise_floor.json has no pfc entry). The card registers pfc CONDITIONALLY: adjudicated only if a certified pfc tau_rel exists at analysis time; otherwise reported with its film-unit margin and an explicit non-adjudication flag. This family invents no pfc threshold.",
+      "datasets_of_this_card": "sharp__cahn_hilliard,sharp__allen_cahn_2d,sharp__fisher_kpp_2d,sharp__phase_field_crystal_2d,ifc_heat (explicit list from R3S3B3_CELLS; --datasets panel is NEVER used \u2014 it resolves the ROUND-2 panel)",
+      "dropped": {
+        "ifc_poisson": "REPORT-ONLY under ADR r3-0007 option C (ratified 2026-08-10): its condition->HF map is exactly affine (oracle residual 5.4e-16). This card runs no ifc_poisson leg and its predictive-cell clause is deleted per the card's _ifc_clause_status."
+      }
+    },
+    "stale_checkpoint_guard": {
+      "enabled": true,
+      "where": "scripts/01_train_eval.sh runs tools/stale_checkpoint_audit.py --fail-on-stale over THIS card's own outputs before any scoring (a family process cannot audit result files that do not exist yet); this flag records that the leg was configured under it",
+      "resumed_from_step": 0,
+      "steps_target": 50
+    },
+    "declared_baseline_is_the_denominator": {
+      "family": "mf_fno_transfer_film",
+      "role": "ADR r3-0006 / batch-3 scope rule 1: mf_fno_transfer_film is the certified DENOMINATOR of this card's success clauses (state/anchors/film_denominator.json). It is program.md \u00a712.3's mandatory declared baseline too, and the card's recipe.base_family is explicit that it is 'the ADR r3-0006 DENOMINATOR, never an arm here'. No leg of this card trains it.",
+      "source": "state/anchors/film_denominator.json (3 seeds, 200 epochs, jobs 171858-60; pfc cell added 2026-08-10 under ADR r3-0005)",
+      "caveat": "the denominator file's own note: the factory family emits no step metadata, so zero_work_resume_scan reads UNDERIVABLE on it; the clean ckpt-mtime stale audit is the witness"
+    },
+    "resolved_recipe": {
+      "phase": "C",
+      "prereg_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/state/r3s3_lf_value/prereg_knees_B3.json",
+      "prereg_sha256": "e98f6dc78ab18d80d75f4ef1f819525682d0d01c61e11081939dee30fcea3e2c",
+      "prereg_assert": "1",
+      "ladder_from_prereg": "1",
+      "cells": [
+        "sharp__cahn_hilliard",
+        "sharp__allen_cahn_2d",
+        "sharp__fisher_kpp_2d",
+        "sharp__phase_field_crystal_2d",
+        "ifc_heat"
+      ],
+      "arm": "A3c_lf_uncov_cap",
+      "split_seed": "0",
+      "n_hf": 5,
+      "lf_cond_set": "uncovered",
+      "lf_cond_cap": 20,
+      "scaler_invariance_assert": "1",
+      "stale_ckpt_assert": "1",
+      "alignment_report": "0",
+      "stratify_rows": "1",
+      "hard_mask_mode": "rederive_model_free",
+      "hard_mask_topfrac": 0.27,
+      "mean_removed_report": "1",
+      "film_units": "1",
+      "film_denom_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/state/anchors/film_denominator.json",
+      "floor_tolerances_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/state/floor_tolerances.json",
+      "g5_fitset_band": "1",
+      "ckpt_binding": "1",
+      "width": 64,
+      "blocks": 4,
+      "modes_cap": 12,
+      "mode_policy": "pinned_min_rung_nyquist",
+      "scaler": "per_rung_max_fullpool",
+      "steps_per_epoch": 25,
+      "hf_batch": 5,
+      "lf_batch": 16,
+      "lr": 0.001,
+      "wd": 1e-05,
+      "sched": "cosine",
+      "clip": 1.0,
+      "lambda_lf": 1.0,
+      "lf_lift": "match_copylf_convention",
+      "ref_arms": [
+        "nn_condition_n5",
+        "train_mean_n5",
+        "zero",
+        "affine_on_hf_train",
+        "nn_condition_full",
+        "train_mean_full"
+      ],
+      "floors_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/state/anchors_repaired/floors.json",
+      "floor_tol": 1e-09,
+      "noise_floor_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/state/anchors_repaired/noise_floor.json",
+      "mce_mode": "certified_r3",
+      "anchors_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/state/anchors/launch_anchors.json",
+      "data_binding_assert": "0",
+      "target_scale_audit": "1",
+      "lf_row_manifest": "1",
+      "dump_test_preds": "1",
+      "ckpt_every_steps": 250,
+      "guard_nsub": "off",
+      "_sealed_ladder": [
+        20,
+        80,
+        320,
+        395
+      ],
+      "_rank_tol_frozen": 1e-10
+    },
+    "recipe_env": {
+      "R3S3B3_ALIGNMENT_REPORT": "0",
+      "R3S3B3_ANCHORS_JSON": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/state/anchors/launch_anchors.json",
+      "R3S3B3_ARM": "A3c_lf_uncov_cap",
+      "R3S3B3_BLOCKS": "4",
+      "R3S3B3_CELLS": "sharp__cahn_hilliard,sharp__allen_cahn_2d,sharp__fisher_kpp_2d,sharp__phase_field_crystal_2d,ifc_heat",
+      "R3S3B3_CKPT_BINDING": "1",
+      "R3S3B3_CKPT_EVERY_STEPS": "250",
+      "R3S3B3_CLIP": "1.0",
+      "R3S3B3_DATA_BINDING_ASSERT": "0",
+      "R3S3B3_DUMP_TEST_PREDS": "1",
+      "R3S3B3_FILM_DENOM_JSON": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/state/anchors/film_denominator.json",
+      "R3S3B3_FILM_UNITS": "1",
+      "R3S3B3_FLOORS_JSON": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/state/anchors_repaired/floors.json",
+      "R3S3B3_FLOOR_TOL": "1e-9",
+      "R3S3B3_FLOOR_TOLERANCES_JSON": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/state/floor_tolerances.json",
+      "R3S3B3_G5_FITSET_BAND": "1",
+      "R3S3B3_GUARD_NSUB": "off",
+      "R3S3B3_HARD_MASK_MODE": "rederive_model_free",
+      "R3S3B3_HARD_MASK_TOPFRAC": "0.27",
+      "R3S3B3_HF_BATCH": "5",
+      "R3S3B3_LADDER_FROM_PREREG": "1",
+      "R3S3B3_LAMBDA_LF": "1.0",
+      "R3S3B3_LF_BATCH": "16",
+      "R3S3B3_LF_COND_CAP": "20",
+      "R3S3B3_LF_COND_SET": "uncovered",
+      "R3S3B3_LF_LIFT": "match_copylf_convention",
+      "R3S3B3_LF_ROW_MANIFEST": "1",
+      "R3S3B3_LR": "1e-3",
+      "R3S3B3_MCE_MODE": "certified_r3",
+      "R3S3B3_MEAN_REMOVED_REPORT": "1",
+      "R3S3B3_MODES_CAP": "12",
+      "R3S3B3_MODE_POLICY": "pinned_min_rung_nyquist",
+      "R3S3B3_NOISE_FLOOR_JSON": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/state/anchors_repaired/noise_floor.json",
+      "R3S3B3_N_HF": "5",
+      "R3S3B3_PHASE": "C",
+      "R3S3B3_PREREG_ASSERT": "1",
+      "R3S3B3_PREREG_JSON": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/state/r3s3_lf_value/prereg_knees_B3.json",
+      "R3S3B3_PREREG_SHA256": "e98f6dc78ab18d80d75f4ef1f819525682d0d01c61e11081939dee30fcea3e2c",
+      "R3S3B3_REF_ARMS": "nn_condition_n5,train_mean_n5,zero,affine_on_hf_train,nn_condition_full,train_mean_full",
+      "R3S3B3_SCALER": "per_rung_max_fullpool",
+      "R3S3B3_SCALER_INVARIANCE_ASSERT": "1",
+      "R3S3B3_SCHED": "cosine",
+      "R3S3B3_SPLIT_SEED": "0",
+      "R3S3B3_STALE_CKPT_ASSERT": "1",
+      "R3S3B3_STEPS_PER_EPOCH": "25",
+      "R3S3B3_STRATIFY_ROWS": "1",
+      "R3S3B3_TARGET_SCALE_AUDIT": "1",
+      "R3S3B3_WD": "1e-5",
+      "R3S3B3_WIDTH": "64"
+    }
+  },
+  "device": "cpu",
+  "hf_fidelity": 3,
+  "hf_grid": [
+    128,
+    128
+  ],
+  "n_train_hf": 5,
+  "test_input": "condition_vector_only",
+  "lf_read_at_train": true,
+  "lf_read_at_test": false,
+  "field_input_at_test": false,
+  "mf_mechanism": "train-only LF rung supervision partitioned by condition coverage of the HF draw, row-count-laddered by R3S3B3_LF_COND_CAP; no penalty, no LF at test",
+  "scored_arm": "A3c_lf_uncov_cap"
+}

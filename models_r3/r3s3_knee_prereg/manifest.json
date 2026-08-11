@@ -1,0 +1,9 @@
+{
+  "name": "r3s3_knee_prereg",
+  "description": "Pre-registered knee of the coverage ladder (card r3s3_lf_value-B3): the training-free surrogate's step-max knee cap, SEALED before any leg ran, then confirmed by a minimal ratio-4 ladder and adjudicated in ADR r3-0006 film units. Vendored byte-for-byte from models_r3/r3s3_row_efficiency @ eedcc655 (modulo the mechanical R3S3B2_ -> R3S3B3_ rename) with exactly four changes: (1) the cap ladder is READ from the sealed phase-P pre-registration (R3S3B3_PREREG_JSON, digest-pinned by R3S3B3_PREREG_SHA256, with a _sealed_utc-precedes-leg-start assert) instead of a hardcoded dict, and there is no in-file fallback; (2) the ch-only imported hard mask becomes a dataset-general MODEL-FREE re-derivation (top R3S3B3_HARD_MASK_TOPFRAC of test rows by nearest-train-HF-field rel-L2), with a stratified readout on every cell; (3) the models_r3/_common/ckpt_binding.py save hook (vendored byte-for-byte from da855da) writes data_binding into last.pt at every save, roles_read = cond_only for A0_nolf and lf_at_train for the LF arms (batch-3 contract requirement); (4) film-unit reporting through state/anchors/film_denominator.json (skill_film, tau_rel_film) plus the G5 nn_condition fit-set band, the pinned floor tolerances / per-arm affine band, and the mean-removed metric. Three arms only: A0_nolf, A1_lf_all (= rung r4 = FULL) and A3c_lf_uncov_cap at the sealed r1/r2/r3. Condition-only at test on the stripped view; no LF tensor exists on any test path.",
+  "supports": [
+    "ifc_raw",
+    "npz"
+  ],
+  "frozen": false
+}

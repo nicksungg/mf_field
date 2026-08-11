@@ -1,0 +1,688 @@
+{
+ "dataset": "ifc_heat",
+ "cell_role": "reproduction control (B2 measured knee cap 5); pre-declared UNRESOLVED at tau_rel_film 0.335905",
+ "view": "stripped",
+ "lf_rungs_trained": [
+  8,
+  16,
+  32
+ ],
+ "hf_fid": 64,
+ "grid_shape_by_fid": {
+  "8": [
+   8,
+   8
+  ],
+  "16": [
+   16,
+   16
+  ],
+  "32": [
+   32,
+   32
+  ],
+  "64": [
+   64,
+   64
+  ]
+ },
+ "n_train_hf": 5,
+ "n_test": 128,
+ "cond_dim": 3,
+ "draws": [
+  "native"
+ ],
+ "uncovered_per_rung_by_draw": {
+  "native": {
+   "8": 95,
+   "16": 45,
+   "32": 15
+  }
+ },
+ "FULL": 95,
+ "dense": {
+  "caps": [
+   5,
+   10,
+   20,
+   40,
+   80,
+   95
+  ],
+  "draws": [
+   "native"
+  ],
+  "a0": {
+   "native": {
+    "rbf": 0.29260195433128533,
+    "linear": 0.0707083666649749
+   }
+  },
+  "a1": {
+   "rbf": 0.05656942577149844,
+   "linear": 0.059616002708220844
+  },
+  "per_cap": {
+   "5": {
+    "cap": 5.0,
+    "n_distinct": 15.0,
+    "design_rank": 4.0,
+    "d_med": 0.9161238614495409,
+    "nnc": 0.09534826823269259,
+    "nrmse_rbf": 0.1551743059873686,
+    "R_rbf": 0.5822402919735972,
+    "nrmse_linear": 0.0648125747403739,
+    "R_linear": 0.5315180738377323
+   },
+   "10": {
+    "cap": 10.0,
+    "n_distinct": 26.0,
+    "design_rank": 4.0,
+    "d_med": 0.7469708887000368,
+    "nnc": 0.07968955628219546,
+    "nrmse_rbf": 0.0980012897607773,
+    "R_rbf": 0.8244654487155392,
+    "nrmse_linear": 0.054613977389762175,
+    "R_linear": 1.450943129702571
+   },
+   "20": {
+    "cap": 20.0,
+    "n_distinct": 41.0,
+    "design_rank": 4.0,
+    "d_med": 0.6105912291770852,
+    "nnc": 0.06707398684437826,
+    "nrmse_rbf": 0.0694164159468295,
+    "R_rbf": 0.9455711030436343,
+    "nrmse_linear": 0.05166780199063945,
+    "R_linear": 1.7165470542229901
+   },
+   "40": {
+    "cap": 40.0,
+    "n_distinct": 64.0,
+    "design_rank": 4.0,
+    "d_med": 0.512299315338763,
+    "nnc": 0.06764602178102193,
+    "nrmse_rbf": 0.05874000505336155,
+    "R_rbf": 0.9908038976868677,
+    "nrmse_linear": 0.056018459487902066,
+    "R_linear": 1.324326107071907
+   },
+   "80": {
+    "cap": 80.0,
+    "n_distinct": 90.0,
+    "design_rank": 4.0,
+    "d_med": 0.4589461693071837,
+    "nnc": 0.06365443247200683,
+    "nrmse_rbf": 0.05854967972951197,
+    "R_rbf": 0.9916102497816865,
+    "nrmse_linear": 0.060054557154599744,
+    "R_linear": 0.9604633919254094
+   },
+   "95": {
+    "cap": 95.0,
+    "n_distinct": 95.0,
+    "design_rank": 4.0,
+    "d_med": 0.45476091683857534,
+    "nnc": 0.06488796872355494,
+    "nrmse_rbf": 0.058018601858802435,
+    "R_rbf": 0.9938602696156055,
+    "nrmse_linear": 0.06121180944446974,
+    "R_linear": 0.8561346578177127
+   }
+  },
+  "cells": [
+   {
+    "cap": 5,
+    "draw": "native",
+    "n_distinct": 15,
+    "design_rank": 4,
+    "d_med": 0.9161238614495409,
+    "nnc": 0.09534826823269259,
+    "nrmse_rbf": 0.1551743059873686,
+    "R_rbf": 0.5822402919735972,
+    "nrmse_linear": 0.0648125747403739,
+    "R_linear": 0.5315180738377323
+   },
+   {
+    "cap": 10,
+    "draw": "native",
+    "n_distinct": 26,
+    "design_rank": 4,
+    "d_med": 0.7469708887000368,
+    "nnc": 0.07968955628219546,
+    "nrmse_rbf": 0.0980012897607773,
+    "R_rbf": 0.8244654487155392,
+    "nrmse_linear": 0.054613977389762175,
+    "R_linear": 1.450943129702571
+   },
+   {
+    "cap": 20,
+    "draw": "native",
+    "n_distinct": 41,
+    "design_rank": 4,
+    "d_med": 0.6105912291770852,
+    "nnc": 0.06707398684437826,
+    "nrmse_rbf": 0.0694164159468295,
+    "R_rbf": 0.9455711030436343,
+    "nrmse_linear": 0.05166780199063945,
+    "R_linear": 1.7165470542229901
+   },
+   {
+    "cap": 40,
+    "draw": "native",
+    "n_distinct": 64,
+    "design_rank": 4,
+    "d_med": 0.512299315338763,
+    "nnc": 0.06764602178102193,
+    "nrmse_rbf": 0.05874000505336155,
+    "R_rbf": 0.9908038976868677,
+    "nrmse_linear": 0.056018459487902066,
+    "R_linear": 1.324326107071907
+   },
+   {
+    "cap": 80,
+    "draw": "native",
+    "n_distinct": 90,
+    "design_rank": 4,
+    "d_med": 0.4589461693071837,
+    "nnc": 0.06365443247200683,
+    "nrmse_rbf": 0.05854967972951197,
+    "R_rbf": 0.9916102497816865,
+    "nrmse_linear": 0.060054557154599744,
+    "R_linear": 0.9604633919254094
+   },
+   {
+    "cap": 95,
+    "draw": "native",
+    "n_distinct": 95,
+    "design_rank": 4,
+    "d_med": 0.45476091683857534,
+    "nnc": 0.06488796872355494,
+    "nrmse_rbf": 0.058018601858802435,
+    "R_rbf": 0.9938602696156055,
+    "nrmse_linear": 0.06121180944446974,
+    "R_linear": 0.8561346578177127
+   }
+  ],
+  "verdict": {
+   "rbf": {
+    "knee_by_stepmax": 10,
+    "steps": [
+     0.242225156741942,
+     0.12110565432809517,
+     0.045232794643233376,
+     0.0008063520948188296,
+     0.002250019833918926
+    ],
+    "R_at_knee": 0.8244654487155392,
+    "step_into_knee": 0.242225156741942,
+    "margin_R": 0.12111950241384684
+   },
+   "linear": {
+    "knee_by_stepmax": 10,
+    "steps": [
+     0.9194250558648387,
+     0.26560392452041914,
+     -0.39222094715108313,
+     -0.3638627151464976,
+     -0.10432873410769672
+    ],
+    "R_at_knee": 1.450943129702571,
+    "step_into_knee": 0.9194250558648387,
+    "margin_R": 0.6538211313444195
+   }
+  },
+  "per_draw_verdict": {
+   "native": {
+    "rbf": {
+     "knee_by_stepmax": 10,
+     "steps": [
+      0.242225156741942,
+      0.12110565432809517,
+      0.045232794643233376,
+      0.0008063520948188296,
+      0.002250019833918926
+     ],
+     "R_at_knee": 0.8244654487155392,
+     "step_into_knee": 0.242225156741942,
+     "margin_R": 0.12111950241384684
+    },
+    "linear": {
+     "knee_by_stepmax": 10,
+     "steps": [
+      0.9194250558648387,
+      0.26560392452041914,
+      -0.39222094715108313,
+      -0.3638627151464976,
+      -0.10432873410769672
+     ],
+     "R_at_knee": 1.450943129702571,
+     "step_into_knee": 0.9194250558648387,
+     "margin_R": 0.6538211313444195
+    }
+   }
+  },
+  "null_design_rank": {
+   "saturation_cap": 5,
+   "max_rank": 4,
+   "by_cap": {
+    "5": 4,
+    "10": 4,
+    "20": 4,
+    "40": 4,
+    "80": 4,
+    "95": 4
+   },
+   "reading": "if this saturates far BELOW the knee, the knee is not a condition-space-rank story"
+  },
+  "null_nnc_field_oracle": {
+   "min": 0.06365443247200683,
+   "max": 0.09534826823269259,
+   "by_cap": {
+    "5": 0.09534826823269259,
+    "10": 0.07968955628219546,
+    "20": 0.06707398684437826,
+    "40": 0.06764602178102193,
+    "80": 0.06365443247200683,
+    "95": 0.06488796872355494
+   },
+   "reading": "if it never goes usefully below 1.0, the knee is not a coverage-radius story"
+  }
+ },
+ "c_hat": 10,
+ "ladder": {
+  "r1": 1,
+  "r2": 2,
+  "r3": 10,
+  "r4": 95,
+  "rungs": [
+   1,
+   2,
+   10,
+   95
+  ],
+  "branch": "c_hat < FULL",
+  "trace": [
+   "branch=c_hat < FULL raw r1,r2,r3,r4 = 1,2,10,95"
+  ],
+  "rule_registered_prediction_if_c_hat_eq_full": null,
+  "rounding": "python builtin round() (round-half-to-even)"
+ },
+ "registered": {
+  "caps": [
+   1,
+   2,
+   10,
+   95
+  ],
+  "draws": [
+   "native"
+  ],
+  "a0": {
+   "native": {
+    "rbf": 0.29260195433128533,
+    "linear": 0.0707083666649749
+   }
+  },
+  "a1": {
+   "rbf": 0.05656942577149844,
+   "linear": 0.059616002708220844
+  },
+  "per_cap": {
+   "1": {
+    "cap": 1.0,
+    "n_distinct": 3.0,
+    "design_rank": 3.0,
+    "d_med": 1.405911810212281,
+    "nnc": 0.09508603090958484,
+    "nrmse_rbf": 0.23802425798355903,
+    "R_rbf": 0.23122955416673344,
+    "nrmse_linear": 0.15243007551652554,
+    "R_linear": -7.367384370920401
+   },
+   "2": {
+    "cap": 2.0,
+    "n_distinct": 6.0,
+    "design_rank": 4.0,
+    "d_med": 1.1351653503539225,
+    "nnc": 0.09171831852916301,
+    "nrmse_rbf": 0.27299932234308233,
+    "R_rbf": 0.08305055285308977,
+    "nrmse_linear": 0.0647840785623682,
+    "R_linear": 0.5340870643718326
+   },
+   "10": {
+    "cap": 10.0,
+    "n_distinct": 26.0,
+    "design_rank": 4.0,
+    "d_med": 0.7469708887000368,
+    "nnc": 0.07968955628219546,
+    "nrmse_rbf": 0.0980012897607773,
+    "R_rbf": 0.8244654487155392,
+    "nrmse_linear": 0.054613977389762175,
+    "R_linear": 1.450943129702571
+   },
+   "95": {
+    "cap": 95.0,
+    "n_distinct": 95.0,
+    "design_rank": 4.0,
+    "d_med": 0.45476091683857534,
+    "nnc": 0.06488796872355494,
+    "nrmse_rbf": 0.058018601858802435,
+    "R_rbf": 0.9938602696156055,
+    "nrmse_linear": 0.06121180944446974,
+    "R_linear": 0.8561346578177127
+   }
+  },
+  "cells": [
+   {
+    "cap": 1,
+    "draw": "native",
+    "n_distinct": 3,
+    "design_rank": 3,
+    "d_med": 1.405911810212281,
+    "nnc": 0.09508603090958484,
+    "nrmse_rbf": 0.23802425798355903,
+    "R_rbf": 0.23122955416673344,
+    "nrmse_linear": 0.15243007551652554,
+    "R_linear": -7.367384370920401
+   },
+   {
+    "cap": 2,
+    "draw": "native",
+    "n_distinct": 6,
+    "design_rank": 4,
+    "d_med": 1.1351653503539225,
+    "nnc": 0.09171831852916301,
+    "nrmse_rbf": 0.27299932234308233,
+    "R_rbf": 0.08305055285308977,
+    "nrmse_linear": 0.0647840785623682,
+    "R_linear": 0.5340870643718326
+   },
+   {
+    "cap": 10,
+    "draw": "native",
+    "n_distinct": 26,
+    "design_rank": 4,
+    "d_med": 0.7469708887000368,
+    "nnc": 0.07968955628219546,
+    "nrmse_rbf": 0.0980012897607773,
+    "R_rbf": 0.8244654487155392,
+    "nrmse_linear": 0.054613977389762175,
+    "R_linear": 1.450943129702571
+   },
+   {
+    "cap": 95,
+    "draw": "native",
+    "n_distinct": 95,
+    "design_rank": 4,
+    "d_med": 0.45476091683857534,
+    "nnc": 0.06488796872355494,
+    "nrmse_rbf": 0.058018601858802435,
+    "R_rbf": 0.9938602696156055,
+    "nrmse_linear": 0.06121180944446974,
+    "R_linear": 0.8561346578177127
+   }
+  ],
+  "verdict": {
+   "rbf": {
+    "knee_by_stepmax": 10,
+    "steps": [
+     -0.14817900131364367,
+     0.7414148958624494,
+     0.1693948209000663
+    ],
+    "R_at_knee": 0.8244654487155392,
+    "step_into_knee": 0.7414148958624494,
+    "margin_R": 0.572020074962383
+   },
+   "linear": {
+    "knee_by_stepmax": 2,
+    "steps": [
+     7.901471435292234,
+     0.9168560653307384,
+     -0.5948084718848583
+    ],
+    "R_at_knee": 0.5340870643718326,
+    "step_into_knee": 7.901471435292234,
+    "margin_R": 6.984615369961496
+   }
+  },
+  "per_draw_verdict": {
+   "native": {
+    "rbf": {
+     "knee_by_stepmax": 10,
+     "steps": [
+      -0.14817900131364367,
+      0.7414148958624494,
+      0.1693948209000663
+     ],
+     "R_at_knee": 0.8244654487155392,
+     "step_into_knee": 0.7414148958624494,
+     "margin_R": 0.572020074962383
+    },
+    "linear": {
+     "knee_by_stepmax": 2,
+     "steps": [
+      7.901471435292234,
+      0.9168560653307384,
+      -0.5948084718848583
+     ],
+     "R_at_knee": 0.5340870643718326,
+     "step_into_knee": 7.901471435292234,
+     "margin_R": 6.984615369961496
+    }
+   }
+  },
+  "null_design_rank": {
+   "saturation_cap": 2,
+   "max_rank": 4,
+   "by_cap": {
+    "1": 3,
+    "2": 4,
+    "10": 4,
+    "95": 4
+   },
+   "reading": "if this saturates far BELOW the knee, the knee is not a condition-space-rank story"
+  },
+  "null_nnc_field_oracle": {
+   "min": 0.06488796872355494,
+   "max": 0.09508603090958484,
+   "by_cap": {
+    "1": 0.09508603090958484,
+    "2": 0.09171831852916301,
+    "10": 0.07968955628219546,
+    "95": 0.06488796872355494
+   },
+   "reading": "if it never goes usefully below 1.0, the knee is not a coverage-radius story"
+  }
+ },
+ "c_pred": 10,
+ "c_pred_linear_specificity_control": 2,
+ "c_pred_diverges_from_c_hat": false,
+ "R_surr_curve_on_ladder": {
+  "1": {
+   "rbf": 0.23122955416673344,
+   "linear": -7.367384370920401
+  },
+  "2": {
+   "rbf": 0.08305055285308977,
+   "linear": 0.5340870643718326
+  },
+  "10": {
+   "rbf": 0.8244654487155392,
+   "linear": 1.450943129702571
+  },
+  "95": {
+   "rbf": 0.9938602696156055,
+   "linear": 0.8561346578177127
+  }
+ },
+ "margin_R_surrogate": 0.572020074962383,
+ "structural_nulls": {
+  "design_rank": {
+   "saturation_cap": 2,
+   "max_rank": 4,
+   "by_cap": {
+    "1": 3,
+    "2": 4,
+    "10": 4,
+    "95": 4
+   },
+   "reading": "if this saturates far BELOW the knee, the knee is not a condition-space-rank story"
+  },
+  "nnc_field_oracle": {
+   "min": 0.06488796872355494,
+   "max": 0.09508603090958484,
+   "by_cap": {
+    "1": 0.09508603090958484,
+    "2": 0.09171831852916301,
+    "10": 0.07968955628219546,
+    "95": 0.06488796872355494
+   },
+   "reading": "if it never goes usefully below 1.0, the knee is not a coverage-radius story"
+  }
+ },
+ "per_draw_knee_on_registered_ladder": {
+  "native": {
+   "rbf": 10,
+   "linear": 2
+  }
+ },
+ "surrogate_draw_unanimous": true,
+ "reproduction_control": {
+  "b2_measured_knee_cap": 5,
+  "source": "card recipe.env._cell_roles",
+  "cap_in_dense_ladder": true,
+  "cap_in_registered_ladder": false,
+  "note": "STATED, NOT ADJUSTED. The dense ladder is the card's own verbatim {5,10,20,40,80,160,320,FULL} and the registered ladder is the card's own mechanical rule applied to c_hat; neither was moved to make a control cap reachable."
+ },
+ "fold_population_histogram": {
+  "applicable": false,
+  "reason": "this cell's HF train split is native N_hf = 5 (one fold); the C(N_train, 5) fold population is a single point, so a 64-draw histogram is degenerate"
+ },
+ "stratification_mask": {
+  "applied": false,
+  "reason": "no model-free mask artifact exists for this cell before any leg runs; the family re-derives it per leg in phase C (R3S3B3_HARD_MASK_MODE=rederive_model_free), so the stratified readout is reported on every cell there"
+ },
+ "cli_crosscheck": {
+  "performed": true,
+  "ok": true,
+  "cmd": "/resnick/groups/Hippo/ezeng/mf_field/.venv/bin/python /resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/tools/coverage_knee_surrogate.py --dataset ifc_heat --caps 5,10,20,40,80,95 --n-hf 5 --draws native --kernel both --lam 0.001 --out scratchpad/phaseP/ifc_heat_dense_cli.json",
+  "seconds": 7.7,
+  "out": "scratchpad/phaseP/ifc_heat_dense_cli.json",
+  "verdict": {
+   "rbf": {
+    "knee_by_stepmax": 10,
+    "steps": [
+     0.242225156741942,
+     0.12110565432809517,
+     0.045232794643233376,
+     0.0008063520948188296,
+     0.002250019833918926
+    ],
+    "R_at_knee": 0.8244654487155392,
+    "step_into_knee": 0.242225156741942
+   },
+   "linear": {
+    "knee_by_stepmax": 10,
+    "steps": [
+     0.9194250558648387,
+     0.26560392452041914,
+     -0.39222094715108313,
+     -0.3638627151464976,
+     -0.10432873410769672
+    ],
+    "R_at_knee": 1.450943129702571,
+    "step_into_knee": 0.9194250558648387
+   }
+  },
+  "per_cap": {
+   "5": {
+    "cap": 5.0,
+    "n_distinct": 15.0,
+    "design_rank": 4.0,
+    "d_med": 0.9161238614495409,
+    "nnc": 0.09534826823269259,
+    "nrmse_rbf": 0.1551743059873686,
+    "R_rbf": 0.5822402919735972,
+    "nrmse_linear": 0.0648125747403739,
+    "R_linear": 0.5315180738377323
+   },
+   "10": {
+    "cap": 10.0,
+    "n_distinct": 26.0,
+    "design_rank": 4.0,
+    "d_med": 0.7469708887000368,
+    "nnc": 0.07968955628219546,
+    "nrmse_rbf": 0.0980012897607773,
+    "R_rbf": 0.8244654487155392,
+    "nrmse_linear": 0.054613977389762175,
+    "R_linear": 1.450943129702571
+   },
+   "20": {
+    "cap": 20.0,
+    "n_distinct": 41.0,
+    "design_rank": 4.0,
+    "d_med": 0.6105912291770852,
+    "nnc": 0.06707398684437826,
+    "nrmse_rbf": 0.0694164159468295,
+    "R_rbf": 0.9455711030436343,
+    "nrmse_linear": 0.05166780199063945,
+    "R_linear": 1.7165470542229901
+   },
+   "40": {
+    "cap": 40.0,
+    "n_distinct": 64.0,
+    "design_rank": 4.0,
+    "d_med": 0.512299315338763,
+    "nnc": 0.06764602178102193,
+    "nrmse_rbf": 0.05874000505336155,
+    "R_rbf": 0.9908038976868677,
+    "nrmse_linear": 0.056018459487902066,
+    "R_linear": 1.324326107071907
+   },
+   "80": {
+    "cap": 80.0,
+    "n_distinct": 90.0,
+    "design_rank": 4.0,
+    "d_med": 0.4589461693071837,
+    "nnc": 0.06365443247200683,
+    "nrmse_rbf": 0.05854967972951197,
+    "R_rbf": 0.9916102497816865,
+    "nrmse_linear": 0.060054557154599744,
+    "R_linear": 0.9604633919254094
+   },
+   "95": {
+    "cap": 95.0,
+    "n_distinct": 95.0,
+    "design_rank": 4.0,
+    "d_med": 0.45476091683857534,
+    "nnc": 0.06488796872355494,
+    "nrmse_rbf": 0.058018601858802435,
+    "R_rbf": 0.9938602696156055,
+    "nrmse_linear": 0.06121180944446974,
+    "R_linear": 0.8561346578177127
+   }
+  },
+  "bit_identical": true,
+  "diffs": {},
+  "cli_knee": {
+   "rbf": 10,
+   "linear": 10
+  },
+  "driver_knee": {
+   "rbf": 10,
+   "linear": 10
+  }
+ },
+ "film_units": {
+  "nrmse_film_mean": 0.036133574250864144,
+  "c_ds": 2.0479568250359366,
+  "tau_rel": 0.1640195793751628,
+  "tau_rel_film": 0.33590501702088815,
+  "tau_rel_certified": true,
+  "note": "tau_rel_film = tau_rel * c_ds (card `_adjudicability`)"
+ },
+ "seconds": 8.9
+}
