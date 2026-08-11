@@ -232,7 +232,6 @@ def clauses(legs: list, film: dict, tau: dict, floors_beat: dict,
                   f"{tol_logratio} (~3x the largest registered tau_phi). A cell failing "
                   "C3 ships its ceiling REPORT-ONLY.")
 
-    # C4 -- floor arms, mandatory
     # C4 -- floor arms. `by_rung` carries, per arm, the certified full-fit margin
     # (unchanged, and what `registration` reads) PLUS the G5 band that
     # `R3S2B3_G5_BAND_DISCLOSURE` names: the arm's own fit-set noise at the

@@ -172,8 +172,18 @@ def matched_n_band(plan: dict, dataset: str, matched_n_knob: str,
     systematic correction spelled out.
     """
     want = _requested(matched_n_knob)
-    shape = ("ifc" if str(plan.get("protocol", "")).startswith("enumerate_C")
-             else ("sharp" if plan.get("T") is not None else None))
+    # The cell shape is the CARD KNOB the HOT plan was built from (`hot_split.plan`
+    # stamps it), not "does a T array exist". `hot_split`'s proportional fallback --
+    # the branch a cell matching NEITHER card protocol takes -- also returns a T
+    # (fluid: |T| = 205 at n_train_hf = 256), and reading that as the sharp shape
+    # made a guard cell demand the `sharp:320` obligation the recipe never gave it
+    # (job 261188). `R3S2B3_FLOOR_MATCHED_N` names exactly the two shapes
+    # `R3S2B3_HOT_SPLIT_SHARP` / `R3S2B3_HOT_SPLIT_IFC` name; anything else falls to
+    # the `spec is None` branch below, which is where the guard/fallback cells
+    # already belonged. The |T| mismatch check stays armed for the sharp shape.
+    plan_knob = str(plan.get("knob", ""))
+    shape = ("ifc" if plan_knob == "R3S2B3_HOT_SPLIT_IFC"
+             else ("sharp" if plan_knob == "R3S2B3_HOT_SPLIT_SHARP" else None))
     spec = want.get(shape) if shape else None
     film_c = None
     if isinstance(film, dict):
@@ -199,7 +209,8 @@ def matched_n_band(plan: dict, dataset: str, matched_n_knob: str,
     }
     if spec is None:
         out["applicable"] = False
-        out["reason"] = (f"{dataset}: cell shape {shape!r} is not named in "
+        out["reason"] = (f"{dataset}: HOT protocol {plan.get('protocol')!r} (knob "
+                         f"{plan_knob!r}) is neither shape named in "
                          f"R3S2B3_FLOOR_MATCHED_N={matched_n_knob!r} (the guard/"
                          "fallback cells carry no matched-n obligation)")
         return out

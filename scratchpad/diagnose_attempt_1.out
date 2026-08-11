@@ -1,0 +1,15 @@
+R3S2B3_FLOOR_MATCHED_N='sharp:320,ifc:C5_4_loo' parses to {'sharp': '320', 'ifc': 'C5_4_loo'}
+
+dataset                          n_tr_hf protocol                      |T|  elig  shipped  fixed  outcome
+---------------------------------------------------------------------------------------------------------
+sharp__phase_field_crystal_2d        400 seeded_perm_fit320_heldout80  320  True    sharp  sharp  ok today (spec=320) -> fixed: spec=320
+sharp__allen_cahn_2d                 400 seeded_perm_fit320_heldout80  320  True    sharp  sharp  ok today (spec=320) -> fixed: spec=320
+sharp__fisher_kpp_2d                 400 seeded_perm_fit320_heldout80  320  True    sharp  sharp  ok today (spec=320) -> fixed: spec=320
+sharp__cahn_hilliard                 400 seeded_perm_fit320_heldout80  320  True    sharp  sharp  ok today (spec=320) -> fixed: spec=320
+ifc_poisson                            5 enumerate_C5_3                  -  True      ifc    ifc  ok today (spec=C5_4_loo) -> fixed: spec=C5_4_loo
+ifc_heat                               5 enumerate_C5_3                  -  True      ifc    ifc  ok today (spec=C5_4_loo) -> fixed: spec=C5_4_loo
+heat_local                          1024 seeded_perm_fit320_heldout80  320  True    sharp  sharp  ok today (spec=320) -> fixed: spec=320
+fluid                                256 proportional_fallback_80_20   205 False    sharp   None  RAISES today (declares 320, |T|=205) -> fixed: applicable=False, no matched-n obligation
+sharp__sod_1d                        400 seeded_perm_fit320_heldout80  320  True    sharp  sharp  ok today (spec=320) -> fixed: spec=320
+
+refusal still armed for the sharp shape: synthetic_sharp_wrong_T: R3S2B3_FLOOR_MATCHED_N declares sharp:320 but the HOT plan's |T| is 205 -- refusing to report a mismatched floor
