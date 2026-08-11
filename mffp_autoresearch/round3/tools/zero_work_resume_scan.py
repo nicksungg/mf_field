@@ -48,6 +48,9 @@ Usage
       [--verify-binding] [--out scan.json] [--fail-on-zero-work]
 
 Exit code 1 only with --fail-on-zero-work and at least one zero-work leg.
+UNDERIVABLE coverage is a GATE, not a counter (handoff 3b item 1): any
+UNDERIVABLE leg fails the run loudly with an AssertionError after the census
+and --out JSON are written.
 """
 from __future__ import annotations
 
@@ -99,6 +102,32 @@ def declared_steps(d, epochs_from_name):
         return int(epochs) * max(1, math.ceil(int(n) / int(b))), \
             f"epochs x ceil(n_fit/{b})"
     return None, "UNDERIVABLE"
+
+
+def ckpt_declared_steps(ck_path):
+    """Fourth `declared_steps` branch (handoff 3b item 2, READ side only).
+
+    The WRITE side -- the `models_r3/_common/ckpt_binding.py` save hook
+    stamping `steps` / `resumed_from_step` / `executed_steps` into `last.pt`
+    at every save -- is a separate contract item. This branch activates only
+    once those fields are present in the checkpoint; until then it returns
+    (None, 0) and the leg's status falls through unchanged.
+    """
+    try:
+        import torch
+        d = torch.load(ck_path, map_location="cpu", weights_only=False)
+    except Exception:                                             # noqa: BLE001
+        return None, 0
+    if not isinstance(d, dict):
+        return None, 0
+    resumed = int(find(d, "resumed_from_step") or 0)
+    s = find(d, "steps")
+    if s is not None:
+        return int(s), resumed
+    e = find(d, "executed_steps")
+    if e is not None:
+        return int(e) + resumed, resumed
+    return None, 0
 
 
 def ckpt_binding(ck_path):
@@ -155,9 +184,18 @@ def main(argv=None) -> int:
         m = EPOCH_RE.search(f.name)
         steps, how = declared_steps(d, int(m.group(1)) if m else None)
         resumed = find(d, "resumed_from_step") or 0
-        executed = (steps - resumed) if steps is not None else None
         ck = f.parent / f"{args.ckpt_prefix}{f.stem}" / "last.pt"
         ck_exists = ck.exists()
+        if steps is None and ck_exists:
+            # Fourth declared_steps branch (handoff 3b item 2, read side):
+            # only fires for legs whose result JSON exposes no step/epoch
+            # metadata (0 such legs today), and only derives anything once the
+            # ckpt_binding save hook (separate contract item) writes the
+            # steps / resumed_from_step / executed_steps fields into last.pt.
+            cs, cr = ckpt_declared_steps(ck)
+            if cs is not None:
+                steps, how, resumed = cs, "ckpt binding-hook fields", cr
+        executed = (steps - resumed) if steps is not None else None
         dmt = (os.path.getmtime(ck) - os.path.getmtime(f)) if ck_exists else None
         if executed is None:
             status = "UNDERIVABLE"
@@ -171,6 +209,9 @@ def main(argv=None) -> int:
             status = "WORK_DONE"
         rec = {"leg": s.replace(str(Path(args.root)) + "/", ""),
                "model": d.get("model"), "dataset": d.get("dataset"),
+               # Grouping key BESIDE the raw field, never replacing it, so no
+               # existing consumer of legs[].model changes (handoff 3a fix 2).
+               "model_group": d.get("model") or d.get("family") or f.parent.parent.name,
                "status": status, "declared_steps": steps, "steps_source": how,
                "resumed_from_step": resumed, "executed_steps": executed,
                "train_seconds": find(d, "train_seconds"),
@@ -200,9 +241,11 @@ def main(argv=None) -> int:
     if zw or nr:
         by = defaultdict(list)
         for r in zw + nr:
-            by[(r["status"], r["model"], r["dataset"])].append(r)
+            by[(r["status"], r["model_group"], r["dataset"])].append(r)
         print(f"{'status':20s}{'model':26s}{'dataset':32s}{'n':>4s}  ckpt_mtime range")
-        for k in sorted(by):
+        # Total-order sort key: dataset (and, pre-model_group, model) can be
+        # None, and str < None has no order (handoff 3a fix 1).
+        for k in sorted(by, key=lambda t: tuple("" if x is None else str(x) for x in t)):
             v = by[k]
             mts = sorted(x["ckpt_mtime"] or "-" for x in v)
             print(f"{k[0]:20s}{str(k[1])[:26]:26s}{str(k[2])[:32]:32s}{len(v):>4d}  "
@@ -223,10 +266,10 @@ def main(argv=None) -> int:
             for r in mism:
                 print(f"     {r['leg']}")
 
+    fams = defaultdict(int)
+    for r in ud:
+        fams[r["model_group"]] += 1
     if ud:
-        fams = defaultdict(int)
-        for r in ud:
-            fams[r["model"]] += 1
         print(f"\n  UNDERIVABLE by family (these families expose no step/epoch metadata, "
               f"so this instrument cannot see them): {dict(fams)}")
 
@@ -236,6 +279,21 @@ def main(argv=None) -> int:
                    "n_zero_work": len(zw), "n_ckpt_not_rewritten": len(nr),
                    "n_underivable": len(ud), "legs": rows}, open(args.out, "w"), indent=1)
         print(f"\nwrote {args.out}")
+
+    # GATE (handoff 3b item 1): UNDERIVABLE blind-spot coverage is a gate, not
+    # a printed counter. A downstream consumer reading only n_zero_work would
+    # silently treat an UNDERIVABLE leg as clean, so the scan itself fails
+    # loudly (after the census and --out JSON are written, for forensics).
+    # The gate does not depend on the ckpt_binding hook fields: it fires on the
+    # scan's own census. Once that (separate) contract item writes steps /
+    # resumed_from_step / executed_steps into last.pt, ckpt_declared_steps()
+    # derives steps from the checkpoint for hook-instrumented legs, which then
+    # pass this gate automatically -- the gate itself needs no change.
+    n_underivable = len(ud)
+    assert n_underivable == 0, (
+        f"UNDERIVABLE gate: {n_underivable} training leg(s) expose no "
+        f"step/epoch metadata (instrument blind spot); by family: {dict(fams)}")
+
     return 1 if (args.fail_on_zero_work and zw) else 0
 
 
