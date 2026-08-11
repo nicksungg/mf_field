@@ -264,7 +264,13 @@
   "cond_dim": 18,
   "n_test": 100,
   "n_train_hf": 400,
-  "_adr_r3_0005": "reference 0.0182574091 -> 0.0123583816 (spectral rung-1 cell); floors recomputed 2026-08-10; pre-ADR entry archived in floors_pre_adr0005_2026-08-10.json"
+  "_adr_r3_0005": "reference 0.0182574091 -> 0.0123583816 (spectral rung-1 cell); floors recomputed 2026-08-10; pre-ADR entry archived in floors_pre_adr0005_2026-08-10.json",
+  "reference": {
+   "convention": "spectral_zeropad_rung1",
+   "reference_type": "copylf",
+   "test_nrmse": 0.012358381607415673
+  },
+  "_repair_2026_08_10": "`reference` sub-dict restored (new-convention values from copylf_baselines.json): recompute_pfc_reference_floors.py's carry-over loop skipped ALL dict-valued fields and silently dropped it; defect found by the pfc noise-floor certification agent, repaired same day. Floor arms untouched."
  },
  "sharp__sod_1d": {
   "cond_dim": 3,

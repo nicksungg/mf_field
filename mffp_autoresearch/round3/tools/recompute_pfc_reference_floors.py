@@ -103,8 +103,13 @@ def main():
     for arm, v in arms_nrmse.items():
         new_entry[arm] = {"nrmse": v, "skill": v / ref}
     for k, v in old_entry.items():
-        if k not in new_entry and not isinstance(v, dict):
+        # Carry over metadata INCLUDING dict-valued fields other than the floor
+        # arms (the 2026-08-10 run dropped `reference` by skipping all dicts —
+        # repaired in floors.json same day; this now preserves the class).
+        if k not in new_entry and k not in arms_nrmse:
             new_entry[k] = v
+    new_entry["reference"] = {"convention": "spectral_zeropad_rung1",
+                              "reference_type": "copylf", "test_nrmse": ref}
     new_entry["_adr_r3_0005"] = (f"reference {old_ref:.9g} -> {ref:.9g} (spectral rung-1 cell); "
                                  f"floors recomputed {STAMP}; pre-ADR entry archived in {farch.name}")
     f[NAME] = new_entry
