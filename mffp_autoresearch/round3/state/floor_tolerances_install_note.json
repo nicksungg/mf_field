@@ -1,0 +1,21 @@
+{
+ "_installed_utc": "2026-08-10",
+ "_operator_decision": "batch-3 scope 'do stream rec' (Eloise 2026-08-10): r3s4_audit consolidation package item (1) executed",
+ "_source": "r3s4_audit-B2 D2 full-config table (B=64, dither seed 1), verbatim copy at state/floor_tolerances.json; sha-stamped _nrmse_def_hash inside",
+ "_scope": "The installed table adjudicates F1-class (exact floor-reproduction) claims for the three arms D2 measured: nn_condition, train_mean, zero. 7 of 10 datasets move off the 1e-9 floor; r3s4-B1's F1 fire (ifc_heat nn_condition 1.1056e-09) sits 7.89x inside the new ifc_heat tolerance and its adjudication is now STRUCTURAL, not metrology-limited.",
+ "_affine_arm_declaration": "affine_on_hf_train is NOT YET ADJUDICABLE under the installed per-dataset table: its own per-arm band exceeds the recommended tolerance on 8 of 10 datasets. Any card asserting an affine reproduction must adjudicate against the pinned per-arm band below (tools/floor_arm_precision_band.py estimators, D2 config seed 1 B=64), not the dataset-level table. This closes 6 of B2's 7 @full misses as metrology; the surviving genuinely unexplained miss is sharp__allen_cahn_2d:train_mean 5.454e-11 (7.3x OUTSIDE its arm band 7.493e-12, inside the dataset-level 1e-9).",
+ "_affine_arm_band_pinned": {
+  "ext__helmholtz_2d": 3.154653378460609e-07,
+  "fluid": 1.049130946472319e-08,
+  "heat_local": 6.109379927519929e-08,
+  "ifc_heat": 3.377325686403397e-07,
+  "ifc_poisson": 5.654206933113725e-07,
+  "sharp__allen_cahn_2d": 1.4765947567952321e-08,
+  "sharp__cahn_hilliard": 1.4144228700132922e-08,
+  "sharp__fisher_kpp_2d": 5.456671206614508e-08,
+  "sharp__phase_field_crystal_2d": 6.273885588431259e-09,
+  "sharp__sod_1d": 0.011733603082605005
+ },
+ "_affine_band_source": "worktrees/r3s4_audit/B2/scratchpad/reanalysis_turn_2_affine_band.json",
+ "_affine_band_estimator": "E2_ulp_band_max (matches the D2 tolerance definition: max ULP band, dither seed 1, B=64)"
+}
