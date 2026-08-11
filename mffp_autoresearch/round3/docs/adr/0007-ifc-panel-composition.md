@@ -1,8 +1,9 @@
-# ADR r3-0007 (PROPOSED): scored-panel status of the two ifc datasets
+# ADR r3-0007 (RATIFIED): scored-panel status of the two ifc datasets
 
-**Status: PROPOSED — operator decision required.**
-Raised by the operator 2026-08-10 ("not sure if we should keep those two datasets") after the batch-2 audit evidence; drafted by the orchestrator the same day.
-**Batch-3 card registration is ON HOLD until this ADR is decided** (cards register clauses against the panel; a post-registration composition change would churn units mid-batch).
+**Status: RATIFIED 2026-08-10 — operator (Eloise) chose OPTION C** ("c"): `ifc_poisson` demoted to report-only, `ifc_heat` retained as a scored cell with its disclosures.
+Raised by the operator 2026-08-10 ("not sure if we should keep those two datasets") after the batch-2 audit evidence; drafted, emailed, and decided the same day.
+Execution (same day): scored panel = pfc, allen_cahn_2d, fisher_kpp_2d, cahn_hilliard, ifc_heat; ifc_poisson artifacts remain audited and reported; the option-C mean-removed check on film's ifc_heat win runs as a follow-up with an operator alert if offset-dominated (option B then becomes the live fallback).
+The batch-3 registration hold lifts with this ratification.
 
 ## Question
 

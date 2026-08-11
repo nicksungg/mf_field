@@ -1,16 +1,18 @@
 {
-  "_adr": "round3/docs/adr/0001-launch-panel-composition.md (D6; panel per D4 as amended by A1)",
+  "_adr": "round3/docs/adr/0001-launch-panel-composition.md (D6; panel per D4 as amended by A1, r3-0005 pfc restore, r3-0007 ifc_poisson report-only)",
   "_panel": [
     "sharp__phase_field_crystal_2d",
     "sharp__allen_cahn_2d",
     "sharp__fisher_kpp_2d",
     "sharp__cahn_hilliard",
-    "ifc_poisson",
     "ifc_heat"
+  ],
+  "_report_only": [
+    "ifc_poisson"
   ],
   "_note": "Round-3 launch anchors over the ADR D4+A1 panel (helmholtz excluded, report-only; ifc_poisson and ifc_heat on repaired nested ladders). Shipped-row ifc entries quarantined; PENDING_IFC_RESCORE cards certify automatically when the repaired-ifc re-score lands and this script is re-run.",
   "best_floor": {
-    "value": 38.8368,
+    "value": 53.2146,
     "per_dataset": {
       "sharp__phase_field_crystal_2d": {
         "arm": "train_mean",
@@ -27,10 +29,6 @@
       "sharp__cahn_hilliard": {
         "arm": "nn_condition",
         "skill": 23.180342227117514
-      },
-      "ifc_poisson": {
-        "arm": "nn_condition",
-        "skill": 8.040896838361228
       },
       "ifc_heat": {
         "arm": "nn_condition",
@@ -126,22 +124,24 @@
       ],
       "status": "CERTIFIED",
       "seed_geomeans": [
-        28.5052,
-        28.5426,
-        28.5783
+        37.784,
+        37.8436,
+        37.9004
       ],
-      "mean": 28.542,
+      "mean": 37.8427,
       "ci95": [
-        28.5006,
-        28.5834
+        37.7768,
+        37.9085
       ],
       "per_dataset_mean_skill": {
         "sharp__phase_field_crystal_2d": 71.1691,
         "sharp__allen_cahn_2d": 298.4973,
         "sharp__fisher_kpp_2d": 265.7409,
         "sharp__cahn_hilliard": 13.0216,
-        "ifc_poisson": 6.9663,
         "ifc_heat": 1.0561
+      },
+      "report_only_per_dataset_mean_skill": {
+        "ifc_poisson": 6.9663
       }
     },
     "r2s1_direct-B3": {
@@ -152,22 +152,24 @@
       ],
       "status": "CERTIFIED",
       "seed_geomeans": [
-        30.2288,
-        30.0762,
-        30.036
+        39.1929,
+        38.9555,
+        38.8932
       ],
-      "mean": 30.1137,
+      "mean": 39.0139,
       "ci95": [
-        29.9986,
-        30.2288
+        38.8349,
+        39.1928
       ],
       "per_dataset_mean_skill": {
         "sharp__phase_field_crystal_2d": 69.0035,
         "sharp__allen_cahn_2d": 279.1165,
         "sharp__fisher_kpp_2d": 374.8381,
         "sharp__cahn_hilliard": 12.565,
-        "ifc_poisson": 8.2507,
         "ifc_heat": 0.9964
+      },
+      "report_only_per_dataset_mean_skill": {
+        "ifc_poisson": 8.2507
       }
     },
     "r2s2_stacked-B1": {
@@ -178,22 +180,24 @@
       ],
       "status": "CERTIFIED",
       "seed_geomeans": [
-        77.0285,
-        72.5864,
-        120.8344
+        140.2267,
+        135.3973,
+        141.3418
       ],
-      "mean": 90.1498,
+      "mean": 138.9886,
       "ci95": [
-        59.974,
-        120.3255
+        135.413,
+        142.5642
       ],
       "per_dataset_mean_skill": {
         "sharp__phase_field_crystal_2d": 63775.1852,
         "sharp__allen_cahn_2d": 231.7681,
         "sharp__fisher_kpp_2d": 201.7014,
         "sharp__cahn_hilliard": 11.0948,
-        "ifc_poisson": 20.7493,
         "ifc_heat": 1.5737
+      },
+      "report_only_per_dataset_mean_skill": {
+        "ifc_poisson": 20.7493
       }
     },
     "r2s3_lf_train_signal-B3": {
@@ -207,22 +211,24 @@
       ],
       "status": "CERTIFIED",
       "seed_geomeans": [
-        15.2065,
-        15.4273,
-        15.5657
+        18.157,
+        19.1146,
+        18.8874
       ],
-      "mean": 15.3998,
+      "mean": 18.7197,
       "ci95": [
-        15.1948,
-        15.6048
+        18.1534,
+        19.2859
       ],
       "per_dataset_mean_skill": {
         "sharp__phase_field_crystal_2d": 76.7478,
         "sharp__allen_cahn_2d": 186.7596,
         "sharp__fisher_kpp_2d": 172.2459,
         "sharp__cahn_hilliard": 12.8723,
-        "ifc_poisson": 5.8222,
         "ifc_heat": 0.0725
+      },
+      "report_only_per_dataset_mean_skill": {
+        "ifc_poisson": 5.8222
       }
     }
   },

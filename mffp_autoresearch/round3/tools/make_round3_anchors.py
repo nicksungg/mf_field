@@ -45,9 +45,16 @@ PANEL = [
     "sharp__allen_cahn_2d",
     "sharp__fisher_kpp_2d",
     "sharp__cahn_hilliard",
-    "ifc_poisson",
-    "ifc_heat",  # ADR r3-0001 Amendment A1 (2026-08-05)
+    # ifc_poisson demoted to report-only under ADR r3-0007 (option C, operator
+    # 2026-08-10): the condition->HF map is EXACTLY affine (oracle residual
+    # 5.4e-16) — a closed-form task no learned model has beaten copy-LF on.
+    "ifc_heat",  # ADR r3-0001 Amendment A1 (2026-08-05); retained by ADR r3-0007
 ]
+# Report-only cells stay AUDITED (binding + stale gates) and their values are
+# carried in reports, but never enter scored aggregates — the pfc treatment
+# under ADR r3-0004, now applied to ifc_poisson by ADR r3-0007.
+REPORT_ONLY = ["ifc_poisson"]
+AUDIT_PANEL = PANEL + REPORT_ONLY
 # historical validation-seam composition — EXPLICIT list (never slice PANEL:
 # ADR r3-0005 restored pfc to PANEL[0], which would double-count it here)
 SHARP4 = ["sharp__phase_field_crystal_2d", "sharp__allen_cahn_2d",
@@ -320,7 +327,7 @@ def binding_gate():
     n_clean = n_fail = n_no_binding = n_no_ckpt = 0
     clean_paths, failures = [], []
     for card, root in AUDIT_ROOTS.items():
-        for ds in PANEL:
+        for ds in AUDIT_PANEL:
             for f in sorted(root.rglob(f"{ds}_e*_s*.json")):
                 s = str(f)
                 if any(x in s for x in excludes):
@@ -410,7 +417,7 @@ def stale_gate(exempt_paths=()):
         tf.close()
         exempt_args = ["--exempt-legs", tf.name]
     for card, root in AUDIT_ROOTS.items():
-        for ds in PANEL:
+        for ds in AUDIT_PANEL:
             r = subprocess.run(
                 [sys.executable, str(audit), "--root", str(root),
                  "--pattern", f"{ds}_e*_s*.json", "--fail-on-stale", *exempt_args],
@@ -463,7 +470,9 @@ def main():
                 if not np.allclose(sorted(mine), sorted(cert_seed), atol=5e-3):
                     raise SystemExit(f"{card}/{ds}: A1 per-seed skills fail certified reproduction: {mine} vs {cert_seed}")
         live = load_card_skills(card, mode, family, floors_repaired, include_void_ifc=False)
-        have_ifc = all((ds, s) in live for ds in IFC for s in SEEDS)
+        # ADR r3-0007: only SCORED ifc cells gate certification; report-only
+        # ifc_poisson values are carried separately below when present.
+        have_ifc = all((ds, s) in live for ds in IFC if ds in PANEL for s in SEEDS)
         entry = {"validated_against_certified_6ds": [round(v, 4) for v in val]}
         if have_ifc:
             sg = [geomean([live[(ds, s)] for ds in PANEL]) for s in SEEDS]
@@ -479,11 +488,16 @@ def main():
         entry["per_dataset_mean_skill"] = {
             ds: round(float(np.mean([live[(ds, s)] for s in SEEDS])), 4)
             for ds in (PANEL if have_ifc else SHARP4)}
+        ro = {ds: round(float(np.mean([live[(ds, s)] for s in SEEDS])), 4)
+              for ds in REPORT_ONLY if all((ds, s) in live for s in SEEDS)}
+        if ro:
+            entry["report_only_per_dataset_mean_skill"] = ro
         cards_out[card] = entry
 
     out = {
-        "_adr": "round3/docs/adr/0001-launch-panel-composition.md (D6; panel per D4 as amended by A1)",
+        "_adr": "round3/docs/adr/0001-launch-panel-composition.md (D6; panel per D4 as amended by A1, r3-0005 pfc restore, r3-0007 ifc_poisson report-only)",
         "_panel": PANEL,
+        "_report_only": REPORT_ONLY,
         "_note": ("Round-3 launch anchors over the ADR D4+A1 panel (helmholtz excluded, report-only; "
                   "ifc_poisson and ifc_heat on repaired nested ladders). Shipped-row ifc entries quarantined; "
                   "PENDING_IFC_RESCORE cards certify automatically when the repaired-ifc re-score lands "
