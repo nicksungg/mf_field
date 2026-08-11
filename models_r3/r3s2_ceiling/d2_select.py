@@ -19,10 +19,21 @@ sub-component, role (a) -- but its two hyperparameters
                                         1e-6, 1e-4, 1e-2, 1e-1}
     band   in  `S6_LSI_BANDLIMIT_GRID` = {on, off}
 
-are chosen by an EXACTLY out-of-sample criterion evaluated on the emulator's own
-held-out pseudo-LF output (`R3S2B3_CORRECTOR_SELECT_ON = emulator_heldout_output`).
+are chosen by an out-of-sample criterion evaluated on the emulator's own held-out
+pseudo-LF output (`R3S2B3_CORRECTOR_SELECT_ON = emulator_heldout_output`).
 The identical selection driven by real LF is computed as the PAIRED comparand
 (`R3S2B3_CORRECTOR_SELECT_COMPARAND = real_lf`), so the repair is attributable.
+
+F1 REPAIR (code review of build 89c9fb3d; operator decision 2026-08-11). Fold
+construction alone makes the criterion out of sample for the TRANSFER fit only.
+The emulator's fit slice is `range(N_lf) \\ (heldout u val_rows)`, so before this
+repair ~80 % of each sharp selection fold and 1 of every 3 ifc folds carried
+IN-SAMPLE pseudo-LF. `restrict_folds_to_rows` now intersects every fold's
+selection side with the leg's `val_rows` -- rows the emulator is forbidden to fit
+-- and `select` refuses (does not warn) if any selection row is still inside the
+emulator's fit slice. The per-fold FIT side, the grids and the two grids' order
+are untouched, so nothing about the declared criterion is invented; the
+population simply shrinks to the part that was ever entitled to the name.
 
 GRID PROVENANCE (card part 3, verbatim -- both ends justified, clause-hygiene
 rule 3 "any pre-registered repair grid must justify its FLOOR, not only its
@@ -62,8 +73,55 @@ def _fit_T(LF_fit, R_fit, grid, ridge, k_cut_or_none):
     return lsilib._solve(num, den, float(ridge), mask)
 
 
+def restrict_folds_to_rows(sel_folds, keep_rows):
+    """Shrink every fold's SELECTION side to `keep_rows`; drop folds left empty.
+
+    THE F1 REPAIR (code review of build 89c9fb3d, finding F1; operator decision
+    2026-08-11 "VAL_ROWS RESTRICTION"). `hot_split.plan` cuts the selection folds
+    out of the leg's own fit set, which makes them out of sample for the TRANSFER
+    fit but says nothing about the EMULATOR: `smoke_eval.build_neural` fits the
+    emulator on `range(N_lf) \\ (heldout u val_rows)`, so a selection row that is
+    neither held out nor a val row is an emulator TRAINING row, and the criterion
+    the card calls `emulator_heldout_output` reads in-sample pseudo-LF there
+    (measured: ~51 of each 64-row sharp fold, 2 of every 3 ifc folds).
+
+    `keep_rows` is the leg's `val_rows`, which the emulator is already forbidden
+    from fitting, so the intersection is exactly the part of the declared fold
+    population that is genuinely the emulator's held-out output. Only the
+    SELECTION side shrinks -- the fit side, the fold identities and the grids are
+    untouched, so the criterion stays the card's and nothing is invented.
+
+    The alternative repair (retrain the emulator per selection fold) was
+    explicitly NOT taken: it would change the compute budget the run was sized
+    against.
+    """
+    keep = set(int(v) for v in np.asarray(keep_rows, dtype=np.int64).tolist())
+    out, dropped = [], []
+    for fit_rows, sel_rows in sel_folds:
+        sel = np.asarray(sel_rows, dtype=np.int64)
+        kept = np.asarray([int(r) for r in sel.tolist() if int(r) in keep],
+                          dtype=np.int64)
+        if len(kept):
+            out.append((np.asarray(fit_rows, dtype=np.int64), np.sort(kept)))
+        else:
+            dropped.append([int(r) for r in sel.tolist()])
+    record = {
+        "restriction": "sel_rows_intersect_val_rows",
+        "reason": ("F1 repair: val_rows are excluded from the emulator's fit slice "
+                   "(smoke_eval.build_neural), so restricting the selection side to "
+                   "them makes R3S2B3_CORRECTOR_SELECT_ON=emulator_heldout_output "
+                   "literally true"),
+        "n_folds_before": len(sel_folds), "n_folds_after": len(out),
+        "n_sel_rows_before": int(sum(len(np.asarray(s)) for _, s in sel_folds)),
+        "n_sel_rows_after": int(sum(len(s) for _, s in out)),
+        "n_folds_dropped_empty": len(dropped),
+    }
+    return out, record
+
+
 def select(LF_real, LF_pseudo, Y, grid, sel_folds, ridge_grid, k_cut,
-           bandlimit_grid=("on", "off"), select_on="emulator_heldout_output"):
+           bandlimit_grid=("on", "off"), select_on="emulator_heldout_output",
+           emu_fit_rows=None):
     """Joint (ridge x band-limit) selection over `sel_folds`.
 
     `sel_folds` : [(fit_rows, sel_rows), ...] INSIDE the leg's fit set. The pairs
@@ -71,6 +129,11 @@ def select(LF_real, LF_pseudo, Y, grid, sel_folds, ridge_grid, k_cut,
                   makes the criterion exactly out of sample.
     `select_on` : 'emulator_heldout_output' -> the criterion reads `LF_pseudo`
                   on `sel_rows`; 'real_lf' -> it reads `LF_real` (the comparand).
+    `emu_fit_rows` : the EMULATOR's own fit slice. When given (and the criterion
+                  reads the emulator's output), the leakage tripwire is extended
+                  to it: a selection row that the emulator trained on is a
+                  violation, not a footnote (F1). Pass `None` only for the
+                  `real_lf` comparand, whose input never came from the emulator.
 
     Returns the selection record; the caller fits the FINAL T on the leg's whole
     fit set at the selected pair.
@@ -97,6 +160,9 @@ def select(LF_real, LF_pseudo, Y, grid, sel_folds, ridge_grid, k_cut,
     # is then a closed-form sweep. This is a pure speed factoring: `_solve` is
     # `fit_transfer`'s own arithmetic, so the selected pair is identical to the
     # one a naive refit-per-combination loop would pick.
+    emu_fit = (None if emu_fit_rows is None
+               else set(int(v) for v in np.asarray(emu_fit_rows,
+                                                   dtype=np.int64).tolist()))
     prep, n_sel_total = [], 0
     for fit_rows, sel_rows in sel_folds:
         fit_rows = np.asarray(fit_rows, dtype=np.int64)
@@ -105,6 +171,17 @@ def select(LF_real, LF_pseudo, Y, grid, sel_folds, ridge_grid, k_cut,
             raise D2SelectError(
                 "S6_LEAKAGE_TRIPWIRE: a selection fold overlaps its own fit rows "
                 f"({sorted(set(fit_rows.tolist()) & set(sel_rows.tolist()))})")
+        # F1: the SAME tripwire, extended from the transfer fit to the EMULATOR
+        # fit. Without this the criterion can be named `emulator_heldout_output`
+        # while reading rows the emulator trained on.
+        if emu_fit is not None and select_on == "emulator_heldout_output":
+            leaked = sorted(set(int(v) for v in sel_rows.tolist()) & emu_fit)
+            if leaked:
+                raise D2SelectError(
+                    "S6_LEAKAGE_TRIPWIRE (emulator): selection rows "
+                    f"{leaked} are inside the emulator's own fit slice, so "
+                    "R3S2B3_CORRECTOR_SELECT_ON=emulator_heldout_output would be "
+                    "reading IN-SAMPLE pseudo-LF (code-review finding F1)")
         fl, fr = lsilib._accumulators(LF_real[fit_rows],
                                       Y[fit_rows] - LF_real[fit_rows], grid)
         LF_s = np.asarray(LF_sel_source[sel_rows], dtype=np.float64)
@@ -139,9 +216,15 @@ def select(LF_real, LF_pseudo, Y, grid, sel_folds, ridge_grid, k_cut,
         "selected_k_cut": (float(k_cut) if best["bandlimit"] == "on" else None),
         "selected_oos_sse": best["oos_sse"],
         "select_on": select_on,
-        "criterion": ("exactly out-of-sample SSE of LF_sel + T*LF_sel vs HF on the "
-                      "selection rows; T is always FITTED on REAL LF (role (a) frozen "
-                      "sub-component) -- only the two hyperparameters are selected here"),
+        "criterion": ("out-of-sample SSE of LF_sel + T*LF_sel vs HF on the selection "
+                      "rows; T is always FITTED on REAL LF (role (a) frozen "
+                      "sub-component) -- only the two hyperparameters are selected here. "
+                      "Out of sample for the TRANSFER fit by fold construction, and "
+                      "(when `emu_fit_rows` is supplied) for the EMULATOR by the "
+                      "enforced tripwire below -- the F1 repair"),
+        "emulator_disjointness_enforced": bool(
+            emu_fit is not None and select_on == "emulator_heldout_output"),
+        "n_sel_rows": int(n_sel_total),
         "n_sel_folds": len(sel_folds),
         "ridge_grid": [float(v) for v in ridges],
         "bandlimit_grid": bands,

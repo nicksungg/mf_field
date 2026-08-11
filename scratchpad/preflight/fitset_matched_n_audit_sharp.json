@@ -1,0 +1,295 @@
+{
+  "_nrmse_def_hash": "d3d0ade9191c13bacc40702f3eb26ad290e01641cacee22a1d2233b74c035850",
+  "_report_only": "never writes state/; re-freezes nothing",
+  "_tool": "fitset_matched_n_audit",
+  "_utc": "2026-08-11T06:07:06Z",
+  "arms": [
+    "nn_condition",
+    "train_mean",
+    "affine_on_hf_train"
+  ],
+  "cells": {
+    "sharp__allen_cahn_2d": {
+      "certified_tau_rel": 18.61975759925883,
+      "gating_arm": "nn_condition",
+      "mode": "random_subsets",
+      "n_fit": 320,
+      "n_test": 78,
+      "n_train": 400,
+      "per_arm": {
+        "affine_on_hf_train": {
+          "abs_shift_over_tau_p50": 0.08568199465319438,
+          "abs_shift_over_tau_p95": 0.1838303569151954,
+          "frac_folds_breaching_tau": 0.0,
+          "n_draws": 50,
+          "selection_noise_sd_over_tau": 0.06112973264406923,
+          "skill_matched_mean": 277.2281398934836,
+          "skill_matched_p2.5": 275.48258117180785,
+          "skill_matched_p97.5": 279.6613458583953,
+          "skill_matched_sd": 1.1382208039400685,
+          "systematic_correction": 1.5393689590634312,
+          "systematic_correction_over_tau": 0.08267395270090448,
+          "systematic_correction_se": 0.16096872979072524,
+          "systematic_correction_se_over_tau": 0.008645049696948402
+        },
+        "nn_condition": {
+          "abs_shift_over_tau_p50": 0.5650421202239919,
+          "abs_shift_over_tau_p95": 1.6514242982065326,
+          "frac_folds_breaching_tau": 0.2375,
+          "n_draws": 2000,
+          "selection_noise_sd_over_tau": 0.7364776435136768,
+          "skill_matched_mean": 483.46706878148194,
+          "skill_matched_p2.5": 458.08382065160725,
+          "skill_matched_p97.5": 510.4428442276268,
+          "skill_matched_sd": 13.71303519949802,
+          "systematic_correction": 7.610247238394899,
+          "systematic_correction_over_tau": 0.40871892116886793,
+          "systematic_correction_se": 0.3066327888392496,
+          "systematic_correction_se_over_tau": 0.016468140748054385
+        },
+        "train_mean": {
+          "abs_shift_over_tau_p50": 0.016361926929105923,
+          "abs_shift_over_tau_p95": 0.05408499036873023,
+          "frac_folds_breaching_tau": 0.0,
+          "n_draws": 2000,
+          "selection_noise_sd_over_tau": 0.025683321248640763,
+          "skill_matched_mean": 486.5332236983416,
+          "skill_matched_p2.5": 485.7890430776836,
+          "skill_matched_p97.5": 487.63224973765676,
+          "skill_matched_sd": 0.4782172159935846,
+          "systematic_correction": 0.11840780070698179,
+          "systematic_correction_over_tau": 0.006359255756997345,
+          "systematic_correction_se": 0.010693262029723547,
+          "systematic_correction_se_over_tau": 0.0005742965219992552
+        }
+      },
+      "reference_nrmse": 0.0020593576160366327,
+      "reselection_anatomy_first_n_fit": {
+        "frac_rows_changing": 0.1794871794871795,
+        "n_rows_changing_neighbour": 14,
+        "n_rows_for_50pct_of_shift": 1,
+        "reading": "a |share| > 1 or a tiny row count means the net shift is the RESIDUAL of a cancelling sum, not an n-scaling law",
+        "skill_shift": 2.678024107162007,
+        "skill_shift_over_tau": 0.1438270124026001,
+        "top1_row_share_of_shift": 2.690261653359392
+      },
+      "skill_at_full_fit": {
+        "affine_on_hf_train": 275.6887709344202,
+        "nn_condition": 475.85682154308705,
+        "train_mean": 486.4148158976346
+      }
+    },
+    "sharp__cahn_hilliard": {
+      "certified_tau_rel": 0.36124864423263325,
+      "gating_arm": "nn_condition",
+      "mode": "random_subsets",
+      "n_fit": 320,
+      "n_test": 100,
+      "n_train": 400,
+      "per_arm": {
+        "affine_on_hf_train": {
+          "abs_shift_over_tau_p50": 0.476562902579261,
+          "abs_shift_over_tau_p95": 0.7807479126985836,
+          "frac_folds_breaching_tau": 0.0,
+          "n_draws": 50,
+          "selection_noise_sd_over_tau": 0.23602993635498784,
+          "skill_matched_mean": 13.031844361400603,
+          "skill_matched_p2.5": 12.872324212308097,
+          "skill_matched_p97.5": 13.172455387252723,
+          "skill_matched_sd": 0.08526549450655407,
+          "systematic_correction": 0.16076091195633452,
+          "systematic_correction_over_tau": 0.44501457520435517,
+          "systematic_correction_se": 0.01205836187336174,
+          "systematic_correction_se_over_tau": 0.03337967371192822
+        },
+        "nn_condition": {
+          "abs_shift_over_tau_p50": 1.3036214521247473,
+          "abs_shift_over_tau_p95": 3.9606777575218426,
+          "frac_folds_breaching_tau": 0.6055,
+          "n_draws": 2000,
+          "selection_noise_sd_over_tau": 1.8452242516672634,
+          "skill_matched_mean": 23.462553686316593,
+          "skill_matched_p2.5": 22.185626327430263,
+          "skill_matched_p97.5": 24.797703892068064,
+          "skill_matched_sd": 0.6665847592199742,
+          "systematic_correction": 0.2822114591990803,
+          "systematic_correction_over_tau": 0.7812111234314961,
+          "systematic_correction_se": 0.014905288343811919,
+          "systematic_correction_se_over_tau": 0.04126046860459181
+        },
+        "train_mean": {
+          "abs_shift_over_tau_p50": 0.05550188460341396,
+          "abs_shift_over_tau_p95": 0.167695694723072,
+          "frac_folds_breaching_tau": 0.0,
+          "n_draws": 2000,
+          "selection_noise_sd_over_tau": 0.08294421108183712,
+          "skill_matched_mean": 23.974560198371975,
+          "skill_matched_p2.5": 23.920859696326175,
+          "skill_matched_p97.5": 24.037521122544632,
+          "skill_matched_sd": 0.029963483800259014,
+          "systematic_correction": 0.005505713097515077,
+          "systematic_correction_over_tau": 0.015240785496123727,
+          "systematic_correction_se": 0.0006700038662009289,
+          "systematic_correction_se_over_tau": 0.0018546889431907917
+        }
+      },
+      "reference_nrmse": 0.041802962686225575,
+      "reselection_anatomy_first_n_fit": {
+        "frac_rows_changing": 0.17,
+        "n_rows_changing_neighbour": 17,
+        "n_rows_for_50pct_of_shift": 4,
+        "reading": "a |share| > 1 or a tiny row count means the net shift is the RESIDUAL of a cancelling sum, not an n-scaling law",
+        "skill_shift": 0.698403537739149,
+        "skill_shift_over_tau": 1.9333042459514342,
+        "top1_row_share_of_shift": 0.4307399693326305
+      },
+      "skill_at_full_fit": {
+        "affine_on_hf_train": 12.871083449444269,
+        "nn_condition": 23.180342227117514,
+        "train_mean": 23.96905448527446
+      }
+    },
+    "sharp__fisher_kpp_2d": {
+      "certified_tau_rel": 10.312814173562199,
+      "gating_arm": "train_mean",
+      "mode": "random_subsets",
+      "n_fit": 320,
+      "n_test": 100,
+      "n_train": 400,
+      "per_arm": {
+        "affine_on_hf_train": {
+          "abs_shift_over_tau_p50": 0.628184082809018,
+          "abs_shift_over_tau_p95": 0.8732818823467275,
+          "frac_folds_breaching_tau": 0.02,
+          "n_draws": 50,
+          "selection_noise_sd_over_tau": 0.23765089574018441,
+          "skill_matched_mean": 272.45381086709045,
+          "skill_matched_p2.5": 267.15024741685534,
+          "skill_matched_p97.5": 276.0254939582368,
+          "skill_matched_sd": 2.4508495259491263,
+          "systematic_correction": 5.972389414784738,
+          "systematic_correction_over_tau": 0.5791231485674861,
+          "systematic_correction_se": 0.3466024638932925,
+          "systematic_correction_se_over_tau": 0.03360891198658832
+        },
+        "nn_condition": {
+          "abs_shift_over_tau_p50": 1.1593079962044797,
+          "abs_shift_over_tau_p95": 3.4607770032604646,
+          "frac_folds_breaching_tau": 0.561,
+          "n_draws": 2000,
+          "selection_noise_sd_over_tau": 1.5853045520332145,
+          "skill_matched_mean": 418.26660959077196,
+          "skill_matched_p2.5": 387.6760811360316,
+          "skill_matched_p97.5": 451.15796877974697,
+          "skill_matched_sd": 16.348951253620807,
+          "systematic_correction": 7.9848582081829695,
+          "systematic_correction_over_tau": 0.7742656925451883,
+          "systematic_correction_se": 0.3655736636392653,
+          "systematic_correction_se_over_tau": 0.035448487433861205
+        },
+        "train_mean": {
+          "abs_shift_over_tau_p50": 0.19917931605527014,
+          "abs_shift_over_tau_p95": 0.566341416833976,
+          "frac_folds_breaching_tau": 0.0005,
+          "n_draws": 2000,
+          "selection_noise_sd_over_tau": 0.2897788972618526,
+          "skill_matched_mean": 390.85203044436554,
+          "skill_matched_p2.5": 385.0714267820771,
+          "skill_matched_p97.5": 396.7440074438028,
+          "skill_matched_sd": 2.9884359188812573,
+          "systematic_correction": 0.15054596464717143,
+          "systematic_correction_over_tau": 0.014597951840643962,
+          "systematic_correction_se": 0.06682345861020539,
+          "systematic_correction_se_over_tau": 0.0064796531272243
+        }
+      },
+      "reference_nrmse": 0.00016524586579046429,
+      "reselection_anatomy_first_n_fit": {
+        "frac_rows_changing": 0.18,
+        "n_rows_changing_neighbour": 18,
+        "n_rows_for_50pct_of_shift": 1,
+        "reading": "a |share| > 1 or a tiny row count means the net shift is the RESIDUAL of a cancelling sum, not an n-scaling law",
+        "skill_shift": 0.7489552895801274,
+        "skill_shift_over_tau": 0.0726237549688561,
+        "top1_row_share_of_shift": 7.777940481499337
+      },
+      "skill_at_full_fit": {
+        "affine_on_hf_train": 266.4814214523057,
+        "nn_condition": 410.28175138258905,
+        "train_mean": 390.7014844797183
+      }
+    },
+    "sharp__phase_field_crystal_2d": {
+      "certified_tau_rel": null,
+      "gating_arm": "train_mean",
+      "mode": "random_subsets",
+      "n_fit": 320,
+      "n_test": 100,
+      "n_train": 400,
+      "per_arm": {
+        "affine_on_hf_train": {
+          "abs_shift_over_tau_p50": null,
+          "abs_shift_over_tau_p95": null,
+          "frac_folds_breaching_tau": null,
+          "n_draws": 50,
+          "selection_noise_sd_over_tau": null,
+          "skill_matched_mean": 73.76225380072553,
+          "skill_matched_p2.5": 73.22454294490272,
+          "skill_matched_p97.5": 74.28481788747753,
+          "skill_matched_sd": 0.293841278589435,
+          "systematic_correction": 0.4297695460516664,
+          "systematic_correction_over_tau": null,
+          "systematic_correction_se": 0.04155543213662299,
+          "systematic_correction_se_over_tau": null
+        },
+        "nn_condition": {
+          "abs_shift_over_tau_p50": null,
+          "abs_shift_over_tau_p95": null,
+          "frac_folds_breaching_tau": null,
+          "n_draws": 2000,
+          "selection_noise_sd_over_tau": null,
+          "skill_matched_mean": 96.10023828921138,
+          "skill_matched_p2.5": 94.04510755996115,
+          "skill_matched_p97.5": 98.13986368401311,
+          "skill_matched_sd": 1.0343960986335263,
+          "systematic_correction": -0.008462658725124705,
+          "systematic_correction_over_tau": null,
+          "systematic_correction_se": 0.02312979992205142,
+          "systematic_correction_se_over_tau": null
+        },
+        "train_mean": {
+          "abs_shift_over_tau_p50": null,
+          "abs_shift_over_tau_p95": null,
+          "frac_folds_breaching_tau": null,
+          "n_draws": 2000,
+          "selection_noise_sd_over_tau": null,
+          "skill_matched_mean": 71.04747087679903,
+          "skill_matched_p2.5": 70.9598387097504,
+          "skill_matched_p97.5": 71.14540463347869,
+          "skill_matched_sd": 0.04663065707899399,
+          "systematic_correction": 0.021474864925797137,
+          "systematic_correction_over_tau": null,
+          "systematic_correction_se": 0.0010426931906411235,
+          "systematic_correction_se_over_tau": null
+        }
+      },
+      "reference_nrmse": 0.012358381607415673,
+      "reselection_anatomy_first_n_fit": {
+        "frac_rows_changing": 0.27,
+        "n_rows_changing_neighbour": 27,
+        "n_rows_for_50pct_of_shift": 11,
+        "reading": "a |share| > 1 or a tiny row count means the net shift is the RESIDUAL of a cancelling sum, not an n-scaling law",
+        "skill_shift": 0.13307120364285896,
+        "skill_shift_over_tau": null,
+        "top1_row_share_of_shift": -4.668753524458983
+      },
+      "skill_at_full_fit": {
+        "affine_on_hf_train": 73.33248425467387,
+        "nn_condition": 96.10870094793651,
+        "train_mean": 71.02599601187322
+      }
+    }
+  },
+  "n_scored": 320,
+  "seed": 20260810
+}

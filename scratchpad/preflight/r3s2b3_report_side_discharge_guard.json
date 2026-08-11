@@ -1,0 +1,525 @@
+{
+ "F2b_g5_band_disclosure": {
+  "cells": {},
+  "knob": "R3S2B3_G5_BAND_DISCLOSURE",
+  "usage": "quote `sd_nrmse` beside every `floor_arms.beat_table` `model_minus_floor_nrmse` margin priced against that arm, and `sd_skill_film` beside every film-skill margin; a margin inside the band is not a difference",
+  "wired_to": "ladder.clauses -> C4_floor_arms.g5_band_disclosure, which ships as prose in the family; these are the numbers that sentence names"
+ },
+ "F2c_subset_rescale_factors": {
+  "c_ds": {
+   "ifc_heat": 2.0479568250359366,
+   "ifc_poisson": 0.8143528720686647,
+   "sharp__allen_cahn_2d": 0.004087241490049414,
+   "sharp__cahn_hilliard": 0.06016978782388852,
+   "sharp__fisher_kpp_2d": 0.004410632107094503,
+   "sharp__phase_field_crystal_2d": 0.01297118127061029
+  },
+  "geomean_c_panel": 0.05350615727198774,
+  "panel": [
+   "sharp__phase_field_crystal_2d",
+   "sharp__allen_cahn_2d",
+   "sharp__fisher_kpp_2d",
+   "sharp__cahn_hilliard",
+   "ifc_poisson",
+   "ifc_heat"
+  ],
+  "reading": "a copy-LF-unit subset delta read against a panel-calibrated bar is rescaled by `rescale_vs_panel` when re-expressed in ADR r3-0006 film units; |rescale - 1| is the size of the unit trap for that subset. Per-CELL verdicts are exactly unit-invariant and need no correction.",
+  "subsets": {}
+ },
+ "_args": {
+  "arms": "nn_condition,train_mean,zero,affine_on_hf_train",
+  "datasets": "heat_local,fluid,sharp__sod_1d",
+  "film_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/state/anchors/film_denominator.json",
+  "fitset_json": [],
+  "out": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round3/r3s2_field_reach/B3/eval/preflight/r3s2b3_report_side_discharge_guard.json",
+  "panel": "sharp__phase_field_crystal_2d,sharp__allen_cahn_2d,sharp__fisher_kpp_2d,sharp__cahn_hilliard,ifc_poisson,ifc_heat",
+  "seeds": "0",
+  "stripped_root": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round2/stripped_data",
+  "subset": []
+ },
+ "_card": "r3s2_field_reach-B3",
+ "_discharges": [
+  "F1 (D2 selection input overlap)",
+  "F2 (G5 band consumer + C(5,4) disclosure legs)"
+ ],
+ "_eval_dir": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round2/eval",
+ "_nrmse_def_hash": "d3d0ade9191c13bacc40702f3eb26ad290e01641cacee22a1d2233b74c035850",
+ "_report_only": "reads state/ and the stripped view; writes only --out. NOTHING under models_r3/ is read-write or modified \u2014 SLURM job 261188 runs the family bytes untouched.",
+ "_stripped_root": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round2/stripped_data",
+ "_tool": "r3s2b3_report_side_discharge.py",
+ "_utc": "2026-08-11T06:37:38Z",
+ "cells": {
+  "fluid": {
+   "F1_d2_selection_emulator_overlap": {
+    "0": {
+     "cell_total": {
+      "frac_out_of_sample": 0.17073170731707318,
+      "n_sel_rows": 41,
+      "n_sel_rows_emulator_heldout": 7,
+      "n_sel_rows_in_emu_fit": 34
+     },
+     "legs": [
+      {
+       "frac_out_of_sample": 0.17073170731707318,
+       "leg_id": "fallback_0",
+       "n_emu_fit_rows": 165,
+       "n_fit_rows": 205,
+       "n_heldout": 51,
+       "n_sel_rows_in_emu_fit_total": 34,
+       "n_sel_rows_total": 41,
+       "n_train_rows": 205,
+       "n_val_rows": 40,
+       "post_repair": {
+        "leg_would_abort": false,
+        "n_folds_surviving": 1,
+        "n_sel_rows": 7,
+        "n_sel_rows_in_emu_fit": 0
+       },
+       "sel_folds": [
+        {
+         "fold": 0,
+         "frac_out_of_sample": 0.17073170731707318,
+         "n_sel_rows": 41,
+         "n_sel_rows_emulator_heldout": 7,
+         "n_sel_rows_in_emu_fit": 34,
+         "post_repair_fit_disjoint": true,
+         "post_repair_fold_survives": true,
+         "post_repair_in_emu_fit": 0,
+         "post_repair_n_sel_rows": 7,
+         "tripwire_emulator_fit_disjoint": false,
+         "tripwire_transfer_fit_disjoint": true
+        }
+       ]
+      }
+     ],
+     "n_legs": 1,
+     "n_lf": 256,
+     "n_train_hf": 256,
+     "post_repair_summary": {
+      "any_leg_would_abort": false,
+      "emulator_fit_disjoint_all_legs": true,
+      "min_folds_surviving_over_legs": 1,
+      "min_sel_rows_over_legs": 7,
+      "note": "`any_leg_would_abort` True on ANY (cell, seed) means the run raises R3S2ContractError rather than falling back \u2014 this is the pre-release check that the F1 repair cannot kill the job."
+     },
+     "protocol": "proportional_fallback_80_20",
+     "split_key": 4008298046,
+     "tripwire_emulator_fit_disjoint_all_legs": false,
+     "tripwire_transfer_fit_disjoint_all_legs": true
+    }
+   },
+   "F2a_floor_matched_disclosure_legs": {
+    "0": {
+     "applicable": false,
+     "reason": "fluid: hot_split.plan builds no disclosure legs under protocol proportional_fallback_80_20 (R3S2B3_IFC_LOO_DISCLOSURE is scoped to the enumerate_C5_3 cells)"
+    }
+   },
+   "hf_fid": 2,
+   "lf_rung": 1,
+   "lf_rung_source": "panel_data: max(lf_fids)",
+   "n_lf": 256,
+   "n_test": 256,
+   "n_train_hf": 256
+  },
+  "heat_local": {
+   "F1_d2_selection_emulator_overlap": {
+    "0": {
+     "cell_total": {
+      "frac_out_of_sample": 0.2,
+      "n_sel_rows": 320,
+      "n_sel_rows_emulator_heldout": 64,
+      "n_sel_rows_in_emu_fit": 256
+     },
+     "legs": [
+      {
+       "frac_out_of_sample": 0.21875,
+       "leg_id": "kfold5_0",
+       "n_emu_fit_rows": 880,
+       "n_fit_rows": 256,
+       "n_heldout": 80,
+       "n_sel_rows_in_emu_fit_total": 50,
+       "n_sel_rows_total": 64,
+       "n_train_rows": 320,
+       "n_val_rows": 64,
+       "post_repair": {
+        "leg_would_abort": false,
+        "n_folds_surviving": 1,
+        "n_sel_rows": 14,
+        "n_sel_rows_in_emu_fit": 0
+       },
+       "sel_folds": [
+        {
+         "fold": 0,
+         "frac_out_of_sample": 0.21875,
+         "n_sel_rows": 64,
+         "n_sel_rows_emulator_heldout": 14,
+         "n_sel_rows_in_emu_fit": 50,
+         "post_repair_fit_disjoint": true,
+         "post_repair_fold_survives": true,
+         "post_repair_in_emu_fit": 0,
+         "post_repair_n_sel_rows": 14,
+         "tripwire_emulator_fit_disjoint": false,
+         "tripwire_transfer_fit_disjoint": true
+        }
+       ]
+      },
+      {
+       "frac_out_of_sample": 0.171875,
+       "leg_id": "kfold5_1",
+       "n_emu_fit_rows": 880,
+       "n_fit_rows": 256,
+       "n_heldout": 80,
+       "n_sel_rows_in_emu_fit_total": 53,
+       "n_sel_rows_total": 64,
+       "n_train_rows": 320,
+       "n_val_rows": 64,
+       "post_repair": {
+        "leg_would_abort": false,
+        "n_folds_surviving": 1,
+        "n_sel_rows": 11,
+        "n_sel_rows_in_emu_fit": 0
+       },
+       "sel_folds": [
+        {
+         "fold": 0,
+         "frac_out_of_sample": 0.171875,
+         "n_sel_rows": 64,
+         "n_sel_rows_emulator_heldout": 11,
+         "n_sel_rows_in_emu_fit": 53,
+         "post_repair_fit_disjoint": true,
+         "post_repair_fold_survives": true,
+         "post_repair_in_emu_fit": 0,
+         "post_repair_n_sel_rows": 11,
+         "tripwire_emulator_fit_disjoint": false,
+         "tripwire_transfer_fit_disjoint": true
+        }
+       ]
+      },
+      {
+       "frac_out_of_sample": 0.203125,
+       "leg_id": "kfold5_2",
+       "n_emu_fit_rows": 880,
+       "n_fit_rows": 256,
+       "n_heldout": 80,
+       "n_sel_rows_in_emu_fit_total": 51,
+       "n_sel_rows_total": 64,
+       "n_train_rows": 320,
+       "n_val_rows": 64,
+       "post_repair": {
+        "leg_would_abort": false,
+        "n_folds_surviving": 1,
+        "n_sel_rows": 13,
+        "n_sel_rows_in_emu_fit": 0
+       },
+       "sel_folds": [
+        {
+         "fold": 0,
+         "frac_out_of_sample": 0.203125,
+         "n_sel_rows": 64,
+         "n_sel_rows_emulator_heldout": 13,
+         "n_sel_rows_in_emu_fit": 51,
+         "post_repair_fit_disjoint": true,
+         "post_repair_fold_survives": true,
+         "post_repair_in_emu_fit": 0,
+         "post_repair_n_sel_rows": 13,
+         "tripwire_emulator_fit_disjoint": false,
+         "tripwire_transfer_fit_disjoint": true
+        }
+       ]
+      },
+      {
+       "frac_out_of_sample": 0.203125,
+       "leg_id": "kfold5_3",
+       "n_emu_fit_rows": 880,
+       "n_fit_rows": 256,
+       "n_heldout": 80,
+       "n_sel_rows_in_emu_fit_total": 51,
+       "n_sel_rows_total": 64,
+       "n_train_rows": 320,
+       "n_val_rows": 64,
+       "post_repair": {
+        "leg_would_abort": false,
+        "n_folds_surviving": 1,
+        "n_sel_rows": 13,
+        "n_sel_rows_in_emu_fit": 0
+       },
+       "sel_folds": [
+        {
+         "fold": 0,
+         "frac_out_of_sample": 0.203125,
+         "n_sel_rows": 64,
+         "n_sel_rows_emulator_heldout": 13,
+         "n_sel_rows_in_emu_fit": 51,
+         "post_repair_fit_disjoint": true,
+         "post_repair_fold_survives": true,
+         "post_repair_in_emu_fit": 0,
+         "post_repair_n_sel_rows": 13,
+         "tripwire_emulator_fit_disjoint": false,
+         "tripwire_transfer_fit_disjoint": true
+        }
+       ]
+      },
+      {
+       "frac_out_of_sample": 0.203125,
+       "leg_id": "kfold5_4",
+       "n_emu_fit_rows": 880,
+       "n_fit_rows": 256,
+       "n_heldout": 80,
+       "n_sel_rows_in_emu_fit_total": 51,
+       "n_sel_rows_total": 64,
+       "n_train_rows": 320,
+       "n_val_rows": 64,
+       "post_repair": {
+        "leg_would_abort": false,
+        "n_folds_surviving": 1,
+        "n_sel_rows": 13,
+        "n_sel_rows_in_emu_fit": 0
+       },
+       "sel_folds": [
+        {
+         "fold": 0,
+         "frac_out_of_sample": 0.203125,
+         "n_sel_rows": 64,
+         "n_sel_rows_emulator_heldout": 13,
+         "n_sel_rows_in_emu_fit": 51,
+         "post_repair_fit_disjoint": true,
+         "post_repair_fold_survives": true,
+         "post_repair_in_emu_fit": 0,
+         "post_repair_n_sel_rows": 13,
+         "tripwire_emulator_fit_disjoint": false,
+         "tripwire_transfer_fit_disjoint": true
+        }
+       ]
+      }
+     ],
+     "n_legs": 5,
+     "n_lf": 1024,
+     "n_train_hf": 1024,
+     "post_repair_summary": {
+      "any_leg_would_abort": false,
+      "emulator_fit_disjoint_all_legs": true,
+      "min_folds_surviving_over_legs": 1,
+      "min_sel_rows_over_legs": 11,
+      "note": "`any_leg_would_abort` True on ANY (cell, seed) means the run raises R3S2ContractError rather than falling back \u2014 this is the pre-release check that the F1 repair cannot kill the job."
+     },
+     "protocol": "seeded_perm_fit320_heldout80",
+     "split_key": 3925226401,
+     "tripwire_emulator_fit_disjoint_all_legs": false,
+     "tripwire_transfer_fit_disjoint_all_legs": true
+    }
+   },
+   "F2a_floor_matched_disclosure_legs": {
+    "0": {
+     "applicable": false,
+     "reason": "heat_local: hot_split.plan builds no disclosure legs under protocol seeded_perm_fit320_heldout80 (R3S2B3_IFC_LOO_DISCLOSURE is scoped to the enumerate_C5_3 cells)"
+    }
+   },
+   "hf_fid": 5,
+   "lf_rung": 4,
+   "lf_rung_source": "panel_data: max(lf_fids)",
+   "n_lf": 1024,
+   "n_test": 512,
+   "n_train_hf": 1024
+  },
+  "sharp__sod_1d": {
+   "F1_d2_selection_emulator_overlap": {
+    "0": {
+     "cell_total": {
+      "frac_out_of_sample": 0.2,
+      "n_sel_rows": 320,
+      "n_sel_rows_emulator_heldout": 64,
+      "n_sel_rows_in_emu_fit": 256
+     },
+     "legs": [
+      {
+       "frac_out_of_sample": 0.140625,
+       "leg_id": "kfold5_0",
+       "n_emu_fit_rows": 256,
+       "n_fit_rows": 256,
+       "n_heldout": 80,
+       "n_sel_rows_in_emu_fit_total": 55,
+       "n_sel_rows_total": 64,
+       "n_train_rows": 320,
+       "n_val_rows": 64,
+       "post_repair": {
+        "leg_would_abort": false,
+        "n_folds_surviving": 1,
+        "n_sel_rows": 9,
+        "n_sel_rows_in_emu_fit": 0
+       },
+       "sel_folds": [
+        {
+         "fold": 0,
+         "frac_out_of_sample": 0.140625,
+         "n_sel_rows": 64,
+         "n_sel_rows_emulator_heldout": 9,
+         "n_sel_rows_in_emu_fit": 55,
+         "post_repair_fit_disjoint": true,
+         "post_repair_fold_survives": true,
+         "post_repair_in_emu_fit": 0,
+         "post_repair_n_sel_rows": 9,
+         "tripwire_emulator_fit_disjoint": false,
+         "tripwire_transfer_fit_disjoint": true
+        }
+       ]
+      },
+      {
+       "frac_out_of_sample": 0.25,
+       "leg_id": "kfold5_1",
+       "n_emu_fit_rows": 256,
+       "n_fit_rows": 256,
+       "n_heldout": 80,
+       "n_sel_rows_in_emu_fit_total": 48,
+       "n_sel_rows_total": 64,
+       "n_train_rows": 320,
+       "n_val_rows": 64,
+       "post_repair": {
+        "leg_would_abort": false,
+        "n_folds_surviving": 1,
+        "n_sel_rows": 16,
+        "n_sel_rows_in_emu_fit": 0
+       },
+       "sel_folds": [
+        {
+         "fold": 0,
+         "frac_out_of_sample": 0.25,
+         "n_sel_rows": 64,
+         "n_sel_rows_emulator_heldout": 16,
+         "n_sel_rows_in_emu_fit": 48,
+         "post_repair_fit_disjoint": true,
+         "post_repair_fold_survives": true,
+         "post_repair_in_emu_fit": 0,
+         "post_repair_n_sel_rows": 16,
+         "tripwire_emulator_fit_disjoint": false,
+         "tripwire_transfer_fit_disjoint": true
+        }
+       ]
+      },
+      {
+       "frac_out_of_sample": 0.21875,
+       "leg_id": "kfold5_2",
+       "n_emu_fit_rows": 256,
+       "n_fit_rows": 256,
+       "n_heldout": 80,
+       "n_sel_rows_in_emu_fit_total": 50,
+       "n_sel_rows_total": 64,
+       "n_train_rows": 320,
+       "n_val_rows": 64,
+       "post_repair": {
+        "leg_would_abort": false,
+        "n_folds_surviving": 1,
+        "n_sel_rows": 14,
+        "n_sel_rows_in_emu_fit": 0
+       },
+       "sel_folds": [
+        {
+         "fold": 0,
+         "frac_out_of_sample": 0.21875,
+         "n_sel_rows": 64,
+         "n_sel_rows_emulator_heldout": 14,
+         "n_sel_rows_in_emu_fit": 50,
+         "post_repair_fit_disjoint": true,
+         "post_repair_fold_survives": true,
+         "post_repair_in_emu_fit": 0,
+         "post_repair_n_sel_rows": 14,
+         "tripwire_emulator_fit_disjoint": false,
+         "tripwire_transfer_fit_disjoint": true
+        }
+       ]
+      },
+      {
+       "frac_out_of_sample": 0.140625,
+       "leg_id": "kfold5_3",
+       "n_emu_fit_rows": 256,
+       "n_fit_rows": 256,
+       "n_heldout": 80,
+       "n_sel_rows_in_emu_fit_total": 55,
+       "n_sel_rows_total": 64,
+       "n_train_rows": 320,
+       "n_val_rows": 64,
+       "post_repair": {
+        "leg_would_abort": false,
+        "n_folds_surviving": 1,
+        "n_sel_rows": 9,
+        "n_sel_rows_in_emu_fit": 0
+       },
+       "sel_folds": [
+        {
+         "fold": 0,
+         "frac_out_of_sample": 0.140625,
+         "n_sel_rows": 64,
+         "n_sel_rows_emulator_heldout": 9,
+         "n_sel_rows_in_emu_fit": 55,
+         "post_repair_fit_disjoint": true,
+         "post_repair_fold_survives": true,
+         "post_repair_in_emu_fit": 0,
+         "post_repair_n_sel_rows": 9,
+         "tripwire_emulator_fit_disjoint": false,
+         "tripwire_transfer_fit_disjoint": true
+        }
+       ]
+      },
+      {
+       "frac_out_of_sample": 0.25,
+       "leg_id": "kfold5_4",
+       "n_emu_fit_rows": 256,
+       "n_fit_rows": 256,
+       "n_heldout": 80,
+       "n_sel_rows_in_emu_fit_total": 48,
+       "n_sel_rows_total": 64,
+       "n_train_rows": 320,
+       "n_val_rows": 64,
+       "post_repair": {
+        "leg_would_abort": false,
+        "n_folds_surviving": 1,
+        "n_sel_rows": 16,
+        "n_sel_rows_in_emu_fit": 0
+       },
+       "sel_folds": [
+        {
+         "fold": 0,
+         "frac_out_of_sample": 0.25,
+         "n_sel_rows": 64,
+         "n_sel_rows_emulator_heldout": 16,
+         "n_sel_rows_in_emu_fit": 48,
+         "post_repair_fit_disjoint": true,
+         "post_repair_fold_survives": true,
+         "post_repair_in_emu_fit": 0,
+         "post_repair_n_sel_rows": 16,
+         "tripwire_emulator_fit_disjoint": false,
+         "tripwire_transfer_fit_disjoint": true
+        }
+       ]
+      }
+     ],
+     "n_legs": 5,
+     "n_lf": 400,
+     "n_train_hf": 400,
+     "post_repair_summary": {
+      "any_leg_would_abort": false,
+      "emulator_fit_disjoint_all_legs": true,
+      "min_folds_surviving_over_legs": 1,
+      "min_sel_rows_over_legs": 9,
+      "note": "`any_leg_would_abort` True on ANY (cell, seed) means the run raises R3S2ContractError rather than falling back \u2014 this is the pre-release check that the F1 repair cannot kill the job."
+     },
+     "protocol": "seeded_perm_fit320_heldout80",
+     "split_key": 1741356640,
+     "tripwire_emulator_fit_disjoint_all_legs": false,
+     "tripwire_transfer_fit_disjoint_all_legs": true
+    }
+   },
+   "F2a_floor_matched_disclosure_legs": {
+    "0": {
+     "applicable": false,
+     "reason": "sharp__sod_1d: hot_split.plan builds no disclosure legs under protocol seeded_perm_fit320_heldout80 (R3S2B3_IFC_LOO_DISCLOSURE is scoped to the enumerate_C5_3 cells)"
+    }
+   },
+   "hf_fid": 3,
+   "lf_rung": 2,
+   "lf_rung_source": "panel_data: max(lf_fids)",
+   "n_lf": 400,
+   "n_test": 100,
+   "n_train_hf": 400
+  }
+ }
+}

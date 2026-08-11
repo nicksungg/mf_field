@@ -1,0 +1,164 @@
+{
+ "_tool": "subset_geomean_unit_audit.py",
+ "_args": {
+  "skills_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round3/r3s2_field_reach/B3/eval/preflight/subset_geomean_input_certified_floor_arms.json",
+  "diag_root": null,
+  "diag_pattern": "diag_{ds}_e200_s{seed}.json",
+  "nrmse_key": "arms.{arm}.nrmse",
+  "arms": "nn_condition,train_mean",
+  "refs": null,
+  "refs_json": null,
+  "seeds": "0,1,2",
+  "panel": "sharp__phase_field_crystal_2d,sharp__allen_cahn_2d,sharp__fisher_kpp_2d,sharp__cahn_hilliard,ifc_heat",
+  "subset": [
+   "panel6=sharp__phase_field_crystal_2d,sharp__allen_cahn_2d,sharp__fisher_kpp_2d,sharp__cahn_hilliard,ifc_heat,ifc_poisson",
+   "sharp4=sharp__phase_field_crystal_2d,sharp__allen_cahn_2d,sharp__fisher_kpp_2d,sharp__cahn_hilliard",
+   "ifc2=ifc_heat,ifc_poisson",
+   "registered_candidate_no_pfc=sharp__allen_cahn_2d,sharp__fisher_kpp_2d,sharp__cahn_hilliard,ifc_heat"
+  ],
+  "bar": 0.5083,
+  "denominator_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/state/anchors/film_denominator.json",
+  "tau": null,
+  "unit_tol": 0.01,
+  "out": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round3/r3s2_field_reach/B3/eval/preflight/subset_geomean_unit_audit_certified_floor_arms.json"
+ },
+ "arm": "nn_condition",
+ "ref": "train_mean",
+ "bar": 0.5083,
+ "log_space": {
+  "panel_log_delta_per_cell": 0.011824416646504753,
+  "per_cell_log_delta": {
+   "sharp__phase_field_crystal_2d": 0.3024339013986008,
+   "sharp__allen_cahn_2d": -0.02194477665249687,
+   "sharp__fisher_kpp_2d": 0.04890032058733279,
+   "sharp__cahn_hilliard": -0.03345900021522298,
+   "ifc_heat": -0.23680836188569
+  },
+  "per_cell_share_of_panel_delta": {
+   "sharp__phase_field_crystal_2d": 5.115413477721101,
+   "sharp__allen_cahn_2d": -0.3711773241512705,
+   "sharp__fisher_kpp_2d": 0.8271075360286381,
+   "sharp__cahn_hilliard": -0.5659306706705622,
+   "ifc_heat": -4.005413018927906
+  },
+  "_note": "log(arm/ref) is additive over the geomean, so these shares are exact and scale-free; they are the only cross-subset-comparable form of the delta."
+ },
+ "subsets": {
+  "panel": {
+   "cells": [
+    "sharp__phase_field_crystal_2d",
+    "sharp__allen_cahn_2d",
+    "sharp__fisher_kpp_2d",
+    "sharp__cahn_hilliard",
+    "ifc_heat"
+   ],
+   "arm_geomean": 57.088303789659555,
+   "ref_geomean": 56.41724316897453,
+   "delta": 0.6710606206850258,
+   "delta_over_bar": 1.3202058246803579,
+   "log_delta_per_cell": 0.011824416646504753,
+   "geomean_c_subset": 0.03104001965728167,
+   "geomean_c_panel": 0.03104001965728167,
+   "rescale_vs_panel": 1.0,
+   "delta_alt_units": 0.020829734857290838,
+   "bar_alt_units": 0.015777641991796272,
+   "delta_over_bar_alt_units": 1.3202058246803576,
+   "unit_verdict": "UNIT_INVARIANT",
+   "unit_relative_change": 1.681893843929917e-16,
+   "crosses_bar_between_unit_systems": false,
+   "bar_calibration_verdict": "OK"
+  },
+  "panel6": {
+   "cells": [
+    "sharp__phase_field_crystal_2d",
+    "sharp__allen_cahn_2d",
+    "sharp__fisher_kpp_2d",
+    "sharp__cahn_hilliard",
+    "ifc_heat",
+    "ifc_poisson"
+   ],
+   "arm_geomean": 41.17876946586844,
+   "ref_geomean": 41.551195162667966,
+   "delta": -0.37242569679952453,
+   "delta_over_bar": 0.7326887601800601,
+   "log_delta_per_cell": -0.009003466018109673,
+   "geomean_c_subset": 0.05350615727198774,
+   "geomean_c_panel": 0.03104001965728167,
+   "rescale_vs_panel": 1.7237797482977995,
+   "delta_alt_units": -0.019927067905084982,
+   "bar_alt_units": 0.015777641991796272,
+   "delta_over_bar_alt_units": 1.2629940466038108,
+   "unit_verdict": "UNIT_DEPENDENT",
+   "unit_relative_change": 0.7237797482977995,
+   "crosses_bar_between_unit_systems": true,
+   "bar_calibration_verdict": "SUBSET_BAR_MISMATCH"
+  },
+  "sharp4": {
+   "cells": [
+    "sharp__phase_field_crystal_2d",
+    "sharp__allen_cahn_2d",
+    "sharp__fisher_kpp_2d",
+    "sharp__cahn_hilliard"
+   ],
+   "arm_geomean": 144.41432101653538,
+   "ref_geomean": 134.11582419566372,
+   "delta": 10.298496820871662,
+   "delta_over_bar": 20.260666576572227,
+   "log_delta_per_cell": 0.07398261127955344,
+   "geomean_c_subset": 0.010891113534452133,
+   "geomean_c_panel": 0.03104001965728167,
+   "rescale_vs_panel": 0.350873280838828,
+   "delta_alt_units": 0.11216209811030763,
+   "bar_alt_units": 0.015777641991796272,
+   "delta_over_bar_alt_units": 7.1089265537034825,
+   "unit_verdict": "UNIT_DEPENDENT",
+   "unit_relative_change": 0.6491267191611719,
+   "crosses_bar_between_unit_systems": false,
+   "bar_calibration_verdict": "SUBSET_BAR_MISMATCH"
+  },
+  "ifc2": {
+   "cells": [
+    "ifc_heat",
+    "ifc_poisson"
+   ],
+   "arm_geomean": 3.348108845930206,
+   "ref_geomean": 3.988324761424376,
+   "delta": -0.6402159154941698,
+   "delta_over_bar": 1.2595237369548884,
+   "log_delta_per_cell": -0.1749756206134359,
+   "geomean_c_subset": 1.291417640556547,
+   "geomean_c_panel": 0.03104001965728167,
+   "rescale_vs_panel": 41.604923412269606,
+   "delta_alt_units": -0.8267861270342304,
+   "bar_alt_units": 0.015777641991796272,
+   "delta_over_bar_alt_units": 52.40238861194374,
+   "unit_verdict": "UNIT_DEPENDENT",
+   "unit_relative_change": 40.604923412269606,
+   "crosses_bar_between_unit_systems": false,
+   "bar_calibration_verdict": "SUBSET_BAR_MISMATCH"
+  },
+  "registered_candidate_no_pfc": {
+   "cells": [
+    "sharp__allen_cahn_2d",
+    "sharp__fisher_kpp_2d",
+    "sharp__cahn_hilliard",
+    "ifc_heat"
+   ],
+   "arm_geomean": 50.11794411105299,
+   "ref_geomean": 53.26114425065041,
+   "delta": -3.1432001395974183,
+   "delta_over_bar": 6.183750028718116,
+   "log_delta_per_cell": -0.060827954541519264,
+   "geomean_c_subset": 0.038606248550723636,
+   "geomean_c_panel": 0.03104001965728167,
+   "rescale_vs_panel": 1.2437572197756972,
+   "delta_alt_units": -0.12134716583396717,
+   "bar_alt_units": 0.015777641991796272,
+   "delta_over_bar_alt_units": 7.691083743506332,
+   "unit_verdict": "UNIT_DEPENDENT",
+   "unit_relative_change": 0.2437572197756973,
+   "crosses_bar_between_unit_systems": false,
+   "bar_calibration_verdict": "SUBSET_BAR_MISMATCH"
+  }
+ }
+}

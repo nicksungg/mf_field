@@ -114,8 +114,8 @@
     }
   },
   "n_params": 9620068,
-  "train_seconds": 1275.1222851276398,
-  "eval_seconds": 0.17795205116271973,
+  "train_seconds": 363.21079659461975,
+  "eval_seconds": 0.14267349243164062,
   "latency_ms_per_sample": null,
   "peak_mem_mb": null,
   "work_grid": [
@@ -141,10 +141,10 @@
         21.745038890829836,
         21.745038890829836,
         21.745038890829836,
-        18.186075933819325,
+        13.443286892852655,
         21.745038890829836
       ],
-      "mean": 21.033246299427734
+      "mean": 20.0846884912344
     },
     "R1b_degraded": {
       "legs": [
@@ -161,10 +161,10 @@
         0.13284148725102923,
         0.13284148725102923,
         0.13284148725102923,
-        0.2441782100286642,
+        0.489747903916816,
         0.13284148725102923
       ],
-      "mean": 0.15510883180655624
+      "mean": 0.20422277058418659
     },
     "R2b_copylf": {
       "legs": [
@@ -179,45 +179,45 @@
   },
   "mean_test_nrmse_by_deployable_rung": {
     "R0_absent": 8.788920392563355,
-    "R1_predicted": 20.288618021496593,
+    "R1_predicted": 19.36532330594009,
     "R1b_degraded": 20.979326915002147
   },
   "statistics": {
     "phi_ceil": {
       "n": 5,
-      "min": 0.9715824791159181,
+      "min": 0.9430030169937864,
       "max": 0.9845398746358839,
-      "mean": 0.9819483955318906
+      "mean": 0.9762325031074643
     },
     "phi_real": {
       "n": 5,
       "min": -1.5306930406803656,
-      "max": -1.1165000455533742,
-      "mean": -1.4478544416549675
+      "max": -0.564533076000099,
+      "mean": -1.3374610477443123
     },
     "rho": {
       "n": 5,
       "min": -1.5547293513596567,
-      "max": -1.1491562163300046,
-      "mean": -1.4736147243537263
+      "max": -0.598654580978736,
+      "mean": -1.3635143972834727
     },
     "E_est": {
       "n": 5,
       "min": 0.13284148725102923,
-      "max": 0.2441782100286642,
-      "mean": 0.15510883180655624
+      "max": 0.489747903916816,
+      "mean": 0.20422277058418659
     },
     "E_hall": {
       "n": 5,
-      "min": 17.94189772379066,
+      "min": 12.953538988935838,
       "max": 21.612197403578808,
-      "mean": 20.87813746762118
+      "mean": 19.880465720650214
     },
     "E_hall_fraction": {
       "n": 5,
-      "min": 0.9865733426541685,
+      "min": 0.9635693333170477,
       "max": 0.9938909519583775,
-      "mean": 0.9924274300975358
+      "mean": 0.9878266282301116
     }
   },
   "clauses": {
@@ -239,7 +239,7 @@
     },
     "C2_ceiling_existence": {
       "statistic": "max/min over legs of phi_ceil vs tau_phi",
-      "min_over_legs": 0.9715824791159181,
+      "min_over_legs": 0.9430030169937864,
       "max_over_legs": 0.9845398746358839,
       "n_legs_with_value": 5,
       "tau_phi": null,
@@ -248,7 +248,7 @@
         0.9845398746358839,
         0.9845398746358839,
         0.9845398746358839,
-        0.9715824791159181,
+        0.9430030169937864,
         0.9845398746358839
       ],
       "rule": "DROP if max phi_ceil < tau_phi; KEEP-CANDIDATE if min phi_ceil > tau_phi; else INDETERMINATE (card C2 / prior-art D3)"
@@ -276,7 +276,7 @@
         {
           "leg_id": "kfold5_3",
           "rank_agrees": true,
-          "abs_log_ratio_gap": 0.05958260499556932,
+          "abs_log_ratio_gap": 0.06313063846974618,
           "within_tolerance": true
         },
         {
@@ -287,7 +287,7 @@
         }
       ],
       "all_ranks_agree": true,
-      "max_abs_log_ratio_gap": 0.05958260499556932,
+      "max_abs_log_ratio_gap": 0.06313063846974618,
       "passes": true,
       "knob": "1",
       "note": "a cell failing C3 ships its ceiling REPORT-ONLY: the failure voids the INSTRUMENT (does the held-out-train ceiling transfer to test?) and not the hypothesis, and is reported as such (card `expected_falsification` secondary falsifier).",
@@ -301,55 +301,287 @@
           "nn_condition": {
             "floor_nrmse": 1.3113524474983616,
             "model_minus_floor_nrmse": 7.477567945064994,
-            "model_beats_floor": false
+            "model_beats_floor": false,
+            "g5_band": {
+              "matched_n": {
+                "n": 1,
+                "min": 1.610042439405905,
+                "max": 1.610042439405905,
+                "median": 1.610042439405905,
+                "mean": 1.610042439405905,
+                "sd": 0.0
+              },
+              "certified_full_fit_nrmse": 1.3113524474983616,
+              "certified_full_fit_source": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/state/anchors_repaired/floors.json",
+              "sd_nrmse": null,
+              "systematic_correction_nrmse": 0.2986899919075434,
+              "matched_beats_full_fit": false,
+              "_single_draw_note": "one matched fit set exists at this shape (it IS T), so `sd_nrmse` is undefined within a seed; the band is the across-seed spread of this value and is assembled by the analyzer from the three seed files."
+            }
           },
           "train_mean": {
             "floor_nrmse": 4.369072694559929,
             "model_minus_floor_nrmse": 4.4198476980034265,
-            "model_beats_floor": false
+            "model_beats_floor": false,
+            "g5_band": {
+              "matched_n": {
+                "n": 1,
+                "min": 5.425803194281165,
+                "max": 5.425803194281165,
+                "median": 5.425803194281165,
+                "mean": 5.425803194281165,
+                "sd": 0.0
+              },
+              "certified_full_fit_nrmse": 4.369072694559929,
+              "certified_full_fit_source": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/state/anchors_repaired/floors.json",
+              "sd_nrmse": null,
+              "systematic_correction_nrmse": 1.056730499721236,
+              "matched_beats_full_fit": false,
+              "_single_draw_note": "one matched fit set exists at this shape (it IS T), so `sd_nrmse` is undefined within a seed; the band is the across-seed spread of this value and is assembled by the analyzer from the three seed files."
+            }
           },
           "zero": {
             "floor_nrmse": 1.0,
             "model_minus_floor_nrmse": 7.788920392563355,
-            "model_beats_floor": false
+            "model_beats_floor": false,
+            "g5_band": {
+              "matched_n": {
+                "n": 1,
+                "min": 1.0,
+                "max": 1.0,
+                "median": 1.0,
+                "mean": 1.0,
+                "sd": 0.0
+              },
+              "certified_full_fit_nrmse": 1.0,
+              "certified_full_fit_source": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/state/anchors_repaired/floors.json",
+              "sd_nrmse": null,
+              "systematic_correction_nrmse": 0.0,
+              "matched_beats_full_fit": false,
+              "_single_draw_note": "one matched fit set exists at this shape (it IS T), so `sd_nrmse` is undefined within a seed; the band is the across-seed spread of this value and is assembled by the analyzer from the three seed files."
+            }
           }
         },
         "R1_predicted": {
           "nn_condition": {
             "floor_nrmse": 1.3113524474983616,
-            "model_minus_floor_nrmse": 18.97726557399823,
-            "model_beats_floor": false
+            "model_minus_floor_nrmse": 18.05397085844173,
+            "model_beats_floor": false,
+            "g5_band": {
+              "matched_n": {
+                "n": 1,
+                "min": 1.610042439405905,
+                "max": 1.610042439405905,
+                "median": 1.610042439405905,
+                "mean": 1.610042439405905,
+                "sd": 0.0
+              },
+              "certified_full_fit_nrmse": 1.3113524474983616,
+              "certified_full_fit_source": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/state/anchors_repaired/floors.json",
+              "sd_nrmse": null,
+              "systematic_correction_nrmse": 0.2986899919075434,
+              "matched_beats_full_fit": false,
+              "_single_draw_note": "one matched fit set exists at this shape (it IS T), so `sd_nrmse` is undefined within a seed; the band is the across-seed spread of this value and is assembled by the analyzer from the three seed files."
+            }
           },
           "train_mean": {
             "floor_nrmse": 4.369072694559929,
-            "model_minus_floor_nrmse": 15.919545326936664,
-            "model_beats_floor": false
+            "model_minus_floor_nrmse": 14.996250611380162,
+            "model_beats_floor": false,
+            "g5_band": {
+              "matched_n": {
+                "n": 1,
+                "min": 5.425803194281165,
+                "max": 5.425803194281165,
+                "median": 5.425803194281165,
+                "mean": 5.425803194281165,
+                "sd": 0.0
+              },
+              "certified_full_fit_nrmse": 4.369072694559929,
+              "certified_full_fit_source": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/state/anchors_repaired/floors.json",
+              "sd_nrmse": null,
+              "systematic_correction_nrmse": 1.056730499721236,
+              "matched_beats_full_fit": false,
+              "_single_draw_note": "one matched fit set exists at this shape (it IS T), so `sd_nrmse` is undefined within a seed; the band is the across-seed spread of this value and is assembled by the analyzer from the three seed files."
+            }
           },
           "zero": {
             "floor_nrmse": 1.0,
-            "model_minus_floor_nrmse": 19.288618021496593,
-            "model_beats_floor": false
+            "model_minus_floor_nrmse": 18.36532330594009,
+            "model_beats_floor": false,
+            "g5_band": {
+              "matched_n": {
+                "n": 1,
+                "min": 1.0,
+                "max": 1.0,
+                "median": 1.0,
+                "mean": 1.0,
+                "sd": 0.0
+              },
+              "certified_full_fit_nrmse": 1.0,
+              "certified_full_fit_source": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/state/anchors_repaired/floors.json",
+              "sd_nrmse": null,
+              "systematic_correction_nrmse": 0.0,
+              "matched_beats_full_fit": false,
+              "_single_draw_note": "one matched fit set exists at this shape (it IS T), so `sd_nrmse` is undefined within a seed; the band is the across-seed spread of this value and is assembled by the analyzer from the three seed files."
+            }
           }
         },
         "R1b_degraded": {
           "nn_condition": {
             "floor_nrmse": 1.3113524474983616,
             "model_minus_floor_nrmse": 19.667974467503786,
-            "model_beats_floor": false
+            "model_beats_floor": false,
+            "g5_band": {
+              "matched_n": {
+                "n": 1,
+                "min": 1.610042439405905,
+                "max": 1.610042439405905,
+                "median": 1.610042439405905,
+                "mean": 1.610042439405905,
+                "sd": 0.0
+              },
+              "certified_full_fit_nrmse": 1.3113524474983616,
+              "certified_full_fit_source": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/state/anchors_repaired/floors.json",
+              "sd_nrmse": null,
+              "systematic_correction_nrmse": 0.2986899919075434,
+              "matched_beats_full_fit": false,
+              "_single_draw_note": "one matched fit set exists at this shape (it IS T), so `sd_nrmse` is undefined within a seed; the band is the across-seed spread of this value and is assembled by the analyzer from the three seed files."
+            }
           },
           "train_mean": {
             "floor_nrmse": 4.369072694559929,
             "model_minus_floor_nrmse": 16.61025422044222,
-            "model_beats_floor": false
+            "model_beats_floor": false,
+            "g5_band": {
+              "matched_n": {
+                "n": 1,
+                "min": 5.425803194281165,
+                "max": 5.425803194281165,
+                "median": 5.425803194281165,
+                "mean": 5.425803194281165,
+                "sd": 0.0
+              },
+              "certified_full_fit_nrmse": 4.369072694559929,
+              "certified_full_fit_source": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/state/anchors_repaired/floors.json",
+              "sd_nrmse": null,
+              "systematic_correction_nrmse": 1.056730499721236,
+              "matched_beats_full_fit": false,
+              "_single_draw_note": "one matched fit set exists at this shape (it IS T), so `sd_nrmse` is undefined within a seed; the band is the across-seed spread of this value and is assembled by the analyzer from the three seed files."
+            }
           },
           "zero": {
             "floor_nrmse": 1.0,
             "model_minus_floor_nrmse": 19.979326915002147,
-            "model_beats_floor": false
+            "model_beats_floor": false,
+            "g5_band": {
+              "matched_n": {
+                "n": 1,
+                "min": 1.0,
+                "max": 1.0,
+                "median": 1.0,
+                "mean": 1.0,
+                "sd": 0.0
+              },
+              "certified_full_fit_nrmse": 1.0,
+              "certified_full_fit_source": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/state/anchors_repaired/floors.json",
+              "sd_nrmse": null,
+              "systematic_correction_nrmse": 0.0,
+              "matched_beats_full_fit": false,
+              "_single_draw_note": "one matched fit set exists at this shape (it IS T), so `sd_nrmse` is undefined within a seed; the band is the across-seed spread of this value and is assembled by the analyzer from the three seed files."
+            }
           }
         }
       },
-      "g5_band_disclosure": "every nn_condition-priced margin carries the arm's fit-set noise band (G5 adoption, batch-3 clause rule 5)",
+      "g5_band_disclosure": {
+        "knob": "R3S2B3_G5_BAND_DISCLOSURE",
+        "matched_n_knob": "sharp:320,ifc:C5_4_loo",
+        "dataset": "ext__helmholtz_2d",
+        "cell_shape": "sharp",
+        "matched_n_spec": "320",
+        "band_definition": "the arm's own fit-set noise at the MATCHED fit-set size: for the ifc shape the exact sd over the enumerated C(5,4) fold population, for the sharp shape the single matched fit set T (|T| = 320) whose across-seed band the analyzer assembles. `systematic_correction_nrmse` = matched mean - certified full-fit value, i.e. the part of the seam that is a BIAS rather than noise.",
+        "usage": "quote `band.sd_nrmse` beside every `C4.by_rung[*][arm].model_minus_floor_nrmse` priced against that arm: a margin inside the band is not a difference. `model_beats_floor` is deliberately left reading the CERTIFIED full-fit floor -- the registration predicate is not re-defined by this disclosure.",
+        "arms": {
+          "nn_condition": {
+            "matched_n": {
+              "n": 1,
+              "min": 1.610042439405905,
+              "max": 1.610042439405905,
+              "median": 1.610042439405905,
+              "mean": 1.610042439405905,
+              "sd": 0.0
+            },
+            "certified_full_fit_nrmse": 1.3113524474983616,
+            "certified_full_fit_source": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/state/anchors_repaired/floors.json",
+            "sd_nrmse": null,
+            "systematic_correction_nrmse": 0.2986899919075434,
+            "matched_beats_full_fit": false,
+            "_single_draw_note": "one matched fit set exists at this shape (it IS T), so `sd_nrmse` is undefined within a seed; the band is the across-seed spread of this value and is assembled by the analyzer from the three seed files."
+          },
+          "train_mean": {
+            "matched_n": {
+              "n": 1,
+              "min": 5.425803194281165,
+              "max": 5.425803194281165,
+              "median": 5.425803194281165,
+              "mean": 5.425803194281165,
+              "sd": 0.0
+            },
+            "certified_full_fit_nrmse": 4.369072694559929,
+            "certified_full_fit_source": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/state/anchors_repaired/floors.json",
+            "sd_nrmse": null,
+            "systematic_correction_nrmse": 1.056730499721236,
+            "matched_beats_full_fit": false,
+            "_single_draw_note": "one matched fit set exists at this shape (it IS T), so `sd_nrmse` is undefined within a seed; the band is the across-seed spread of this value and is assembled by the analyzer from the three seed files."
+          },
+          "zero": {
+            "matched_n": {
+              "n": 1,
+              "min": 1.0,
+              "max": 1.0,
+              "median": 1.0,
+              "mean": 1.0,
+              "sd": 0.0
+            },
+            "certified_full_fit_nrmse": 1.0,
+            "certified_full_fit_source": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/state/anchors_repaired/floors.json",
+            "sd_nrmse": null,
+            "systematic_correction_nrmse": 0.0,
+            "matched_beats_full_fit": false,
+            "_single_draw_note": "one matched fit set exists at this shape (it IS T), so `sd_nrmse` is undefined within a seed; the band is the across-seed spread of this value and is assembled by the analyzer from the three seed files."
+          },
+          "affine_on_hf_train": {
+            "matched_n": {
+              "n": 1,
+              "min": 10.991263724335667,
+              "max": 10.991263724335667,
+              "median": 10.991263724335667,
+              "mean": 10.991263724335667,
+              "sd": 0.0
+            },
+            "certified_full_fit_nrmse": null,
+            "certified_full_fit_source": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/state/anchors_repaired/floors.json",
+            "sd_nrmse": null,
+            "systematic_correction_nrmse": null,
+            "matched_beats_full_fit": null,
+            "_single_draw_note": "one matched fit set exists at this shape (it IS T), so `sd_nrmse` is undefined within a seed; the band is the across-seed spread of this value and is assembled by the analyzer from the three seed files."
+          }
+        },
+        "applicable": true,
+        "population": "the HOT plan's T (|T| = 320), one matched fit set",
+        "n_matched_fit_sets": 1,
+        "matched_fit_rows_head": [
+          0,
+          1,
+          4,
+          6,
+          7,
+          8,
+          9,
+          10
+        ]
+      },
+      "g5_band_reading": "every margin in `by_rung` carries `g5_band.sd_nrmse` and, where it can be formed, `margin_over_g5_band_sd`; a margin inside the band is not a difference (G5 adoption, batch-3 clause rule 5). `model_beats_floor` still reads the CERTIFIED full-fit floor -- the band informs the margin, it does not move the gate.",
       "matched_n_knob": "R3S2B3_FLOOR_MATCHED_N"
     }
   },
@@ -379,7 +611,7 @@
   "falsifier": {
     "rho_min_over_legs": -1.5547293513596567,
     "n_legs_with_rho": 5,
-    "phi_ceil_min_over_legs": 0.9715824791159181,
+    "phi_ceil_min_over_legs": 0.9430030169937864,
     "tau_phi": null,
     "cell_falsifies": false,
     "rule": "card `expected_falsification`: fires on >= 2 REGISTERED cells with min-over-legs rho > 0.5 while phi_ceil > tau_phi. This is the PER-CELL leg; the >= 2 count is panel-side."
@@ -407,7 +639,7 @@
       {
         "leg_id": "kfold5_3",
         "rank_agrees": true,
-        "abs_log_ratio_gap": 0.05958260499556932,
+        "abs_log_ratio_gap": 0.06313063846974618,
         "within_tolerance": true
       },
       {
@@ -418,7 +650,7 @@
       }
     ],
     "all_ranks_agree": true,
-    "max_abs_log_ratio_gap": 0.05958260499556932,
+    "max_abs_log_ratio_gap": 0.06313063846974618,
     "passes": true,
     "knob": "1",
     "note": "a cell failing C3 ships its ceiling REPORT-ONLY: the failure voids the INSTRUMENT (does the held-out-train ceiling transfer to test?) and not the hypothesis, and is reported as such (card `expected_falsification` secondary falsifier)."
@@ -890,9 +1122,11 @@
         "selected_ridge": 0.1,
         "selected_bandlimit": "off",
         "selected_k_cut": null,
-        "selected_oos_sse": 24052.8513960367,
+        "selected_oos_sse": 4055.4656701034573,
         "select_on": "emulator_heldout_output",
-        "criterion": "exactly out-of-sample SSE of LF_sel + T*LF_sel vs HF on the selection rows; T is always FITTED on REAL LF (role (a) frozen sub-component) -- only the two hyperparameters are selected here",
+        "criterion": "out-of-sample SSE of LF_sel + T*LF_sel vs HF on the selection rows; T is always FITTED on REAL LF (role (a) frozen sub-component) -- only the two hyperparameters are selected here. Out of sample for the TRANSFER fit by fold construction, and (when `emu_fit_rows` is supplied) for the EMULATOR by the enforced tripwire below -- the F1 repair",
+        "emulator_disjointness_enforced": true,
+        "n_sel_rows": 10,
         "n_sel_folds": 1,
         "ridge_grid": [
           0.0,
@@ -912,137 +1146,150 @@
         ],
         "grid_floor_provenance": "B2 F2: the ridge actually needed is 5.264e-10-5.707e-10, so the grid floor sits a decade below at 1e-10",
         "grid_ceiling_provenance": "B2 F1: loo_sse(0.1)/loo_sse(0) = 122-160 on ifc_poisson",
-        "declared_role": "INSTRUMENT REPAIR ONLY (prior-art D2 `preempted (cite)`): 'usable ONLY as an instrument repair... Presenting it as the idea is a rebadge'. Nothing is claimed for it; the paired real-LF-selected comparand makes it attributable."
+        "declared_role": "INSTRUMENT REPAIR ONLY (prior-art D2 `preempted (cite)`): 'usable ONLY as an instrument repair... Presenting it as the idea is a rebadge'. Nothing is claimed for it; the paired real-LF-selected comparand makes it attributable.",
+        "fold_restriction": {
+          "restriction": "sel_rows_intersect_val_rows",
+          "reason": "F1 repair: val_rows are excluded from the emulator's fit slice (smoke_eval.build_neural), so restricting the selection side to them makes R3S2B3_CORRECTOR_SELECT_ON=emulator_heldout_output literally true",
+          "n_folds_before": 1,
+          "n_folds_after": 1,
+          "n_sel_rows_before": 64,
+          "n_sel_rows_after": 10,
+          "n_folds_dropped_empty": 0
+        },
+        "n_sel_rows_in_emu_fit": 0,
+        "n_sel_rows_declared_before_repair": 64
       },
       "d2_selection_table": [
         {
           "ridge": 0.0,
           "bandlimit": "on",
-          "oos_sse": 29064.03246163691,
-          "n_sel_rows": 64
+          "oos_sse": 4915.1309157001115,
+          "n_sel_rows": 10
         },
         {
           "ridge": 1e-10,
           "bandlimit": "on",
-          "oos_sse": 29064.023741090732,
-          "n_sel_rows": 64
+          "oos_sse": 4915.12917509131,
+          "n_sel_rows": 10
         },
         {
           "ridge": 3.162e-10,
           "bandlimit": "on",
-          "oos_sse": 29064.011241735105,
-          "n_sel_rows": 64
+          "oos_sse": 4915.126697998039,
+          "n_sel_rows": 10
         },
         {
           "ridge": 1e-09,
           "bandlimit": "on",
-          "oos_sse": 29063.97881912763,
-          "n_sel_rows": 64
+          "oos_sse": 4915.1202705235455,
+          "n_sel_rows": 10
         },
         {
           "ridge": 1e-08,
           "bandlimit": "on",
-          "oos_sse": 29063.624817055654,
-          "n_sel_rows": 64
+          "oos_sse": 4915.050017558107,
+          "n_sel_rows": 10
         },
         {
           "ridge": 1e-07,
           "bandlimit": "on",
-          "oos_sse": 29060.492281236533,
-          "n_sel_rows": 64
+          "oos_sse": 4914.428443111157,
+          "n_sel_rows": 10
         },
         {
           "ridge": 1e-06,
           "bandlimit": "on",
-          "oos_sse": 29039.13944897677,
-          "n_sel_rows": 64
+          "oos_sse": 4910.209018323081,
+          "n_sel_rows": 10
         },
         {
           "ridge": 0.0001,
           "bandlimit": "on",
-          "oos_sse": 28952.311887957403,
-          "n_sel_rows": 64
+          "oos_sse": 4893.42350661707,
+          "n_sel_rows": 10
         },
         {
           "ridge": 0.01,
           "bandlimit": "on",
-          "oos_sse": 28306.15096581899,
-          "n_sel_rows": 64
+          "oos_sse": 4780.584361119264,
+          "n_sel_rows": 10
         },
         {
           "ridge": 0.1,
           "bandlimit": "on",
-          "oos_sse": 24052.852153825,
-          "n_sel_rows": 64
+          "oos_sse": 4055.4658171561978,
+          "n_sel_rows": 10
         },
         {
           "ridge": 0.0,
           "bandlimit": "off",
-          "oos_sse": 29061.31946880478,
-          "n_sel_rows": 64
+          "oos_sse": 4914.58526567039,
+          "n_sel_rows": 10
         },
         {
           "ridge": 1e-10,
           "bandlimit": "off",
-          "oos_sse": 29061.315856950263,
-          "n_sel_rows": 64
+          "oos_sse": 4914.584535203424,
+          "n_sel_rows": 10
         },
         {
           "ridge": 3.162e-10,
           "bandlimit": "off",
-          "oos_sse": 29061.30603859332,
-          "n_sel_rows": 64
+          "oos_sse": 4914.582589975566,
+          "n_sel_rows": 10
         },
         {
           "ridge": 1e-09,
           "bandlimit": "off",
-          "oos_sse": 29061.277072092213,
-          "n_sel_rows": 64
+          "oos_sse": 4914.576845985521,
+          "n_sel_rows": 10
         },
         {
           "ridge": 1e-08,
           "bandlimit": "off",
-          "oos_sse": 29060.9305247483,
-          "n_sel_rows": 64
+          "oos_sse": 4914.508065088422,
+          "n_sel_rows": 10
         },
         {
           "ridge": 1e-07,
           "bandlimit": "off",
-          "oos_sse": 29057.7859618558,
-          "n_sel_rows": 64
+          "oos_sse": 4913.8846841824725,
+          "n_sel_rows": 10
         },
         {
           "ridge": 1e-06,
           "bandlimit": "off",
-          "oos_sse": 29036.3927948968,
-          "n_sel_rows": 64
+          "oos_sse": 4909.663099954806,
+          "n_sel_rows": 10
         },
         {
           "ridge": 0.0001,
           "bandlimit": "off",
-          "oos_sse": 28951.6664326129,
-          "n_sel_rows": 64
+          "oos_sse": 4893.298225878064,
+          "n_sel_rows": 10
         },
         {
           "ridge": 0.01,
           "bandlimit": "off",
-          "oos_sse": 28306.143399531255,
-          "n_sel_rows": 64
+          "oos_sse": 4780.582892839962,
+          "n_sel_rows": 10
         },
         {
           "ridge": 0.1,
           "bandlimit": "off",
-          "oos_sse": 24052.8513960367,
-          "n_sel_rows": 64
+          "oos_sse": 4055.4656701034573,
+          "n_sel_rows": 10
         }
       ],
       "d2_comparand_real_lf": {
         "selected_ridge": 0.1,
         "selected_bandlimit": "off",
         "selected_k_cut": null,
-        "selected_oos_sse": 34663.86230246326,
+        "selected_oos_sse": 34479.37766140567,
         "select_on": "real_lf",
-        "criterion": "exactly out-of-sample SSE of LF_sel + T*LF_sel vs HF on the selection rows; T is always FITTED on REAL LF (role (a) frozen sub-component) -- only the two hyperparameters are selected here",
+        "criterion": "out-of-sample SSE of LF_sel + T*LF_sel vs HF on the selection rows; T is always FITTED on REAL LF (role (a) frozen sub-component) -- only the two hyperparameters are selected here. Out of sample for the TRANSFER fit by fold construction, and (when `emu_fit_rows` is supplied) for the EMULATOR by the enforced tripwire below -- the F1 repair",
+        "emulator_disjointness_enforced": false,
+        "n_sel_rows": 10,
         "n_sel_folds": 1,
         "ridge_grid": [
           0.0,
@@ -1065,7 +1312,7 @@
         "declared_role": "INSTRUMENT REPAIR ONLY (prior-art D2 `preempted (cite)`): 'usable ONLY as an instrument repair... Presenting it as the idea is a rebadge'. Nothing is claimed for it; the paired real-LF-selected comparand makes it attributable."
       },
       "d2_repair_moved_selection": false,
-      "neural_stages_shared_with_other_legs": false,
+      "neural_stages_shared_with_other_legs": true,
       "emulator_heldout_nrmse": 18.879821084450843,
       "band_err_energy": {
         "R0_absent": [
@@ -1484,9 +1731,11 @@
         "selected_ridge": 0.1,
         "selected_bandlimit": "off",
         "selected_k_cut": null,
-        "selected_oos_sse": 32182.967388206293,
+        "selected_oos_sse": 8779.351010638882,
         "select_on": "emulator_heldout_output",
-        "criterion": "exactly out-of-sample SSE of LF_sel + T*LF_sel vs HF on the selection rows; T is always FITTED on REAL LF (role (a) frozen sub-component) -- only the two hyperparameters are selected here",
+        "criterion": "out-of-sample SSE of LF_sel + T*LF_sel vs HF on the selection rows; T is always FITTED on REAL LF (role (a) frozen sub-component) -- only the two hyperparameters are selected here. Out of sample for the TRANSFER fit by fold construction, and (when `emu_fit_rows` is supplied) for the EMULATOR by the enforced tripwire below -- the F1 repair",
+        "emulator_disjointness_enforced": true,
+        "n_sel_rows": 18,
         "n_sel_folds": 1,
         "ridge_grid": [
           0.0,
@@ -1506,137 +1755,150 @@
         ],
         "grid_floor_provenance": "B2 F2: the ridge actually needed is 5.264e-10-5.707e-10, so the grid floor sits a decade below at 1e-10",
         "grid_ceiling_provenance": "B2 F1: loo_sse(0.1)/loo_sse(0) = 122-160 on ifc_poisson",
-        "declared_role": "INSTRUMENT REPAIR ONLY (prior-art D2 `preempted (cite)`): 'usable ONLY as an instrument repair... Presenting it as the idea is a rebadge'. Nothing is claimed for it; the paired real-LF-selected comparand makes it attributable."
+        "declared_role": "INSTRUMENT REPAIR ONLY (prior-art D2 `preempted (cite)`): 'usable ONLY as an instrument repair... Presenting it as the idea is a rebadge'. Nothing is claimed for it; the paired real-LF-selected comparand makes it attributable.",
+        "fold_restriction": {
+          "restriction": "sel_rows_intersect_val_rows",
+          "reason": "F1 repair: val_rows are excluded from the emulator's fit slice (smoke_eval.build_neural), so restricting the selection side to them makes R3S2B3_CORRECTOR_SELECT_ON=emulator_heldout_output literally true",
+          "n_folds_before": 1,
+          "n_folds_after": 1,
+          "n_sel_rows_before": 64,
+          "n_sel_rows_after": 18,
+          "n_folds_dropped_empty": 0
+        },
+        "n_sel_rows_in_emu_fit": 0,
+        "n_sel_rows_declared_before_repair": 64
       },
       "d2_selection_table": [
         {
           "ridge": 0.0,
           "bandlimit": "on",
-          "oos_sse": 38677.781961126224,
-          "n_sel_rows": 64
+          "oos_sse": 10601.631601495963,
+          "n_sel_rows": 18
         },
         {
           "ridge": 1e-10,
           "bandlimit": "on",
-          "oos_sse": 38677.77800372492,
-          "n_sel_rows": 64
+          "oos_sse": 10601.63041994597,
+          "n_sel_rows": 18
         },
         {
           "ridge": 3.162e-10,
           "bandlimit": "on",
-          "oos_sse": 38677.7709543946,
-          "n_sel_rows": 64
+          "oos_sse": 10601.6283373025,
+          "n_sel_rows": 18
         },
         {
           "ridge": 1e-09,
           "bandlimit": "on",
-          "oos_sse": 38677.750046775465,
-          "n_sel_rows": 64
+          "oos_sse": 10601.62216232143,
+          "n_sel_rows": 18
         },
         {
           "ridge": 1e-08,
           "bandlimit": "on",
-          "oos_sse": 38677.51375716059,
-          "n_sel_rows": 64
+          "oos_sse": 10601.552180288767,
+          "n_sel_rows": 18
         },
         {
           "ridge": 1e-07,
           "bandlimit": "on",
-          "oos_sse": 38675.91237018627,
-          "n_sel_rows": 64
+          "oos_sse": 10601.075567127975,
+          "n_sel_rows": 18
         },
         {
           "ridge": 1e-06,
           "bandlimit": "on",
-          "oos_sse": 38667.7482751542,
-          "n_sel_rows": 64
+          "oos_sse": 10598.634248803253,
+          "n_sel_rows": 18
         },
         {
           "ridge": 0.0001,
           "bandlimit": "on",
-          "oos_sse": 38378.585408985644,
-          "n_sel_rows": 64
+          "oos_sse": 10512.030310519916,
+          "n_sel_rows": 18
         },
         {
           "ridge": 0.01,
           "bandlimit": "on",
-          "oos_sse": 37046.47236686499,
-          "n_sel_rows": 64
+          "oos_sse": 10129.877846486888,
+          "n_sel_rows": 18
         },
         {
           "ridge": 0.1,
           "bandlimit": "on",
-          "oos_sse": 32182.97342719215,
-          "n_sel_rows": 64
+          "oos_sse": 8779.35279860978,
+          "n_sel_rows": 18
         },
         {
           "ridge": 0.0,
           "bandlimit": "off",
-          "oos_sse": 38672.34400889119,
-          "n_sel_rows": 64
+          "oos_sse": 10599.998312429769,
+          "n_sel_rows": 18
         },
         {
           "ridge": 1e-10,
           "bandlimit": "off",
-          "oos_sse": 38672.34364401792,
-          "n_sel_rows": 64
+          "oos_sse": 10599.998219525234,
+          "n_sel_rows": 18
         },
         {
           "ridge": 3.162e-10,
           "bandlimit": "off",
-          "oos_sse": 38672.338837973606,
-          "n_sel_rows": 64
+          "oos_sse": 10599.996817662082,
+          "n_sel_rows": 18
         },
         {
           "ridge": 1e-09,
           "bandlimit": "off",
-          "oos_sse": 38672.32090271066,
-          "n_sel_rows": 64
+          "oos_sse": 10599.991542606851,
+          "n_sel_rows": 18
         },
         {
           "ridge": 1e-08,
           "bandlimit": "off",
-          "oos_sse": 38672.09309597781,
-          "n_sel_rows": 64
+          "oos_sse": 10599.924104549049,
+          "n_sel_rows": 18
         },
         {
           "ridge": 1e-07,
           "bandlimit": "off",
-          "oos_sse": 38670.51273597374,
-          "n_sel_rows": 64
+          "oos_sse": 10599.453794412744,
+          "n_sel_rows": 18
         },
         {
           "ridge": 1e-06,
           "bandlimit": "off",
-          "oos_sse": 38662.40122819514,
-          "n_sel_rows": 64
+          "oos_sse": 10597.028638551225,
+          "n_sel_rows": 18
         },
         {
           "ridge": 0.0001,
           "bandlimit": "off",
-          "oos_sse": 38375.813479704855,
-          "n_sel_rows": 64
+          "oos_sse": 10511.2050015526,
+          "n_sel_rows": 18
         },
         {
           "ridge": 0.01,
           "bandlimit": "off",
-          "oos_sse": 37046.412629587474,
-          "n_sel_rows": 64
+          "oos_sse": 10129.860158439562,
+          "n_sel_rows": 18
         },
         {
           "ridge": 0.1,
           "bandlimit": "off",
-          "oos_sse": 32182.967388206293,
-          "n_sel_rows": 64
+          "oos_sse": 8779.351010638882,
+          "n_sel_rows": 18
         }
       ],
       "d2_comparand_real_lf": {
         "selected_ridge": 0.1,
         "selected_bandlimit": "off",
         "selected_k_cut": null,
-        "selected_oos_sse": 13677.99023012112,
+        "selected_oos_sse": 79.50334237211592,
         "select_on": "real_lf",
-        "criterion": "exactly out-of-sample SSE of LF_sel + T*LF_sel vs HF on the selection rows; T is always FITTED on REAL LF (role (a) frozen sub-component) -- only the two hyperparameters are selected here",
+        "criterion": "out-of-sample SSE of LF_sel + T*LF_sel vs HF on the selection rows; T is always FITTED on REAL LF (role (a) frozen sub-component) -- only the two hyperparameters are selected here. Out of sample for the TRANSFER fit by fold construction, and (when `emu_fit_rows` is supplied) for the EMULATOR by the enforced tripwire below -- the F1 repair",
+        "emulator_disjointness_enforced": false,
+        "n_sel_rows": 18,
         "n_sel_folds": 1,
         "ridge_grid": [
           0.0,
@@ -2078,9 +2340,11 @@
         "selected_ridge": 0.1,
         "selected_bandlimit": "off",
         "selected_k_cut": null,
-        "selected_oos_sse": 22792.303682114267,
+        "selected_oos_sse": 4218.899711652267,
         "select_on": "emulator_heldout_output",
-        "criterion": "exactly out-of-sample SSE of LF_sel + T*LF_sel vs HF on the selection rows; T is always FITTED on REAL LF (role (a) frozen sub-component) -- only the two hyperparameters are selected here",
+        "criterion": "out-of-sample SSE of LF_sel + T*LF_sel vs HF on the selection rows; T is always FITTED on REAL LF (role (a) frozen sub-component) -- only the two hyperparameters are selected here. Out of sample for the TRANSFER fit by fold construction, and (when `emu_fit_rows` is supplied) for the EMULATOR by the enforced tripwire below -- the F1 repair",
+        "emulator_disjointness_enforced": true,
+        "n_sel_rows": 12,
         "n_sel_folds": 1,
         "ridge_grid": [
           0.0,
@@ -2100,137 +2364,150 @@
         ],
         "grid_floor_provenance": "B2 F2: the ridge actually needed is 5.264e-10-5.707e-10, so the grid floor sits a decade below at 1e-10",
         "grid_ceiling_provenance": "B2 F1: loo_sse(0.1)/loo_sse(0) = 122-160 on ifc_poisson",
-        "declared_role": "INSTRUMENT REPAIR ONLY (prior-art D2 `preempted (cite)`): 'usable ONLY as an instrument repair... Presenting it as the idea is a rebadge'. Nothing is claimed for it; the paired real-LF-selected comparand makes it attributable."
+        "declared_role": "INSTRUMENT REPAIR ONLY (prior-art D2 `preempted (cite)`): 'usable ONLY as an instrument repair... Presenting it as the idea is a rebadge'. Nothing is claimed for it; the paired real-LF-selected comparand makes it attributable.",
+        "fold_restriction": {
+          "restriction": "sel_rows_intersect_val_rows",
+          "reason": "F1 repair: val_rows are excluded from the emulator's fit slice (smoke_eval.build_neural), so restricting the selection side to them makes R3S2B3_CORRECTOR_SELECT_ON=emulator_heldout_output literally true",
+          "n_folds_before": 1,
+          "n_folds_after": 1,
+          "n_sel_rows_before": 64,
+          "n_sel_rows_after": 12,
+          "n_folds_dropped_empty": 0
+        },
+        "n_sel_rows_in_emu_fit": 0,
+        "n_sel_rows_declared_before_repair": 64
       },
       "d2_selection_table": [
         {
           "ridge": 0.0,
           "bandlimit": "on",
-          "oos_sse": 26515.501676079894,
-          "n_sel_rows": 64
+          "oos_sse": 4910.380337373267,
+          "n_sel_rows": 12
         },
         {
           "ridge": 1e-10,
           "bandlimit": "on",
-          "oos_sse": 26515.501160737367,
-          "n_sel_rows": 64
+          "oos_sse": 4910.380249437165,
+          "n_sel_rows": 12
         },
         {
           "ridge": 3.162e-10,
           "bandlimit": "on",
-          "oos_sse": 26515.500889606123,
-          "n_sel_rows": 64
+          "oos_sse": 4910.3802023928,
+          "n_sel_rows": 12
         },
         {
           "ridge": 1e-09,
           "bandlimit": "on",
-          "oos_sse": 26515.500365243937,
-          "n_sel_rows": 64
+          "oos_sse": 4910.380110832349,
+          "n_sel_rows": 12
         },
         {
           "ridge": 1e-08,
           "bandlimit": "on",
-          "oos_sse": 26515.49501336726,
-          "n_sel_rows": 64
+          "oos_sse": 4910.3791781715945,
+          "n_sel_rows": 12
         },
         {
           "ridge": 1e-07,
           "bandlimit": "on",
-          "oos_sse": 26515.440532904904,
-          "n_sel_rows": 64
+          "oos_sse": 4910.369707429697,
+          "n_sel_rows": 12
         },
         {
           "ridge": 1e-06,
           "bandlimit": "on",
-          "oos_sse": 26514.937322348087,
-          "n_sel_rows": 64
+          "oos_sse": 4910.282229552853,
+          "n_sel_rows": 12
         },
         {
           "ridge": 0.0001,
           "bandlimit": "on",
-          "oos_sse": 26506.572240789723,
-          "n_sel_rows": 64
+          "oos_sse": 4908.779007771416,
+          "n_sel_rows": 12
         },
         {
           "ridge": 0.01,
           "bandlimit": "on",
-          "oos_sse": 26090.07128120755,
-          "n_sel_rows": 64
+          "oos_sse": 4831.419710235613,
+          "n_sel_rows": 12
         },
         {
           "ridge": 0.1,
           "bandlimit": "on",
-          "oos_sse": 22792.308901078526,
-          "n_sel_rows": 64
+          "oos_sse": 4218.900629278382,
+          "n_sel_rows": 12
         },
         {
           "ridge": 0.0,
           "bandlimit": "off",
-          "oos_sse": 26510.15347425745,
-          "n_sel_rows": 64
+          "oos_sse": 4909.448490579459,
+          "n_sel_rows": 12
         },
         {
           "ridge": 1e-10,
           "bandlimit": "off",
-          "oos_sse": 26510.156880141047,
-          "n_sel_rows": 64
+          "oos_sse": 4909.449084983584,
+          "n_sel_rows": 12
         },
         {
           "ridge": 3.162e-10,
           "bandlimit": "off",
-          "oos_sse": 26510.158993509147,
-          "n_sel_rows": 64
+          "oos_sse": 4909.4494517507765,
+          "n_sel_rows": 12
         },
         {
           "ridge": 1e-09,
           "bandlimit": "off",
-          "oos_sse": 26510.16149273425,
-          "n_sel_rows": 64
+          "oos_sse": 4909.449884447988,
+          "n_sel_rows": 12
         },
         {
           "ridge": 1e-08,
           "bandlimit": "off",
-          "oos_sse": 26510.1647633038,
-          "n_sel_rows": 64
+          "oos_sse": 4909.450447069936,
+          "n_sel_rows": 12
         },
         {
           "ridge": 1e-07,
           "bandlimit": "off",
-          "oos_sse": 26510.13156343264,
-          "n_sel_rows": 64
+          "oos_sse": 4909.444666472664,
+          "n_sel_rows": 12
         },
         {
           "ridge": 1e-06,
           "bandlimit": "off",
-          "oos_sse": 26509.689354350263,
-          "n_sel_rows": 64
+          "oos_sse": 4909.3677799628085,
+          "n_sel_rows": 12
         },
         {
           "ridge": 0.0001,
           "bandlimit": "off",
-          "oos_sse": 26504.02308390257,
-          "n_sel_rows": 64
+          "oos_sse": 4908.332383154692,
+          "n_sel_rows": 12
         },
         {
           "ridge": 0.01,
           "bandlimit": "off",
-          "oos_sse": 26090.019588644027,
-          "n_sel_rows": 64
+          "oos_sse": 4831.410621861565,
+          "n_sel_rows": 12
         },
         {
           "ridge": 0.1,
           "bandlimit": "off",
-          "oos_sse": 22792.303682114267,
-          "n_sel_rows": 64
+          "oos_sse": 4218.899711652267,
+          "n_sel_rows": 12
         }
       ],
       "d2_comparand_real_lf": {
         "selected_ridge": 0.1,
         "selected_bandlimit": "off",
         "selected_k_cut": null,
-        "selected_oos_sse": 78.38022927396779,
+        "selected_oos_sse": 5.801139798334878,
         "select_on": "real_lf",
-        "criterion": "exactly out-of-sample SSE of LF_sel + T*LF_sel vs HF on the selection rows; T is always FITTED on REAL LF (role (a) frozen sub-component) -- only the two hyperparameters are selected here",
+        "criterion": "out-of-sample SSE of LF_sel + T*LF_sel vs HF on the selection rows; T is always FITTED on REAL LF (role (a) frozen sub-component) -- only the two hyperparameters are selected here. Out of sample for the TRANSFER fit by fold construction, and (when `emu_fit_rows` is supplied) for the EMULATOR by the enforced tripwire below -- the F1 repair",
+        "emulator_disjointness_enforced": false,
+        "n_sel_rows": 12,
         "n_sel_folds": 1,
         "ridge_grid": [
           0.0,
@@ -2646,35 +2923,37 @@
       ],
       "nrmse": {
         "R0_absent": 8.59252328958228,
-        "R1_predicted": 18.186075933819325,
+        "R1_predicted": 13.443286892852655,
         "R1b_degraded": 21.745038890829836,
-        "R2_oracle": 0.2441782100286642,
+        "R2_oracle": 0.489747903916816,
         "R2b_copylf": 0.13284148725102923
       },
       "nrmse_test": {
         "R0_absent": 8.788920392563355,
-        "R1_predicted": 17.52578244747437,
+        "R1_predicted": 12.90930886969187,
         "R1b_degraded": 20.979326915002147
       },
       "stats": {
-        "phi_ceil": 0.9715824791159181,
-        "phi_real": -1.1165000455533742,
-        "rho": -1.1491562163300046,
-        "E_est": 0.2441782100286642,
-        "E_hall": 17.94189772379066,
-        "E_hall_fraction": 0.9865733426541685
+        "phi_ceil": 0.9430030169937864,
+        "phi_real": -0.564533076000099,
+        "rho": -0.598654580978736,
+        "E_est": 0.489747903916816,
+        "E_hall": 12.953538988935838,
+        "E_hall_fraction": 0.9635693333170477
       },
-      "alpha_lsi": 0.2986490107894041,
-      "alpha_lsi_ls": 1.1945960431576164,
+      "alpha_lsi": 0.5,
+      "alpha_lsi_ls": 1.0396080250228508,
       "alpha_nn": 0.0,
-      "alpha_nn_ls": 1.5,
+      "alpha_nn_ls": 0.0,
       "d2_selection": {
-        "selected_ridge": 0.1,
+        "selected_ridge": 0.0,
         "selected_bandlimit": "off",
         "selected_k_cut": null,
-        "selected_oos_sse": 127736.21516885025,
+        "selected_oos_sse": 15.328298119945723,
         "select_on": "emulator_heldout_output",
-        "criterion": "exactly out-of-sample SSE of LF_sel + T*LF_sel vs HF on the selection rows; T is always FITTED on REAL LF (role (a) frozen sub-component) -- only the two hyperparameters are selected here",
+        "criterion": "out-of-sample SSE of LF_sel + T*LF_sel vs HF on the selection rows; T is always FITTED on REAL LF (role (a) frozen sub-component) -- only the two hyperparameters are selected here. Out of sample for the TRANSFER fit by fold construction, and (when `emu_fit_rows` is supplied) for the EMULATOR by the enforced tripwire below -- the F1 repair",
+        "emulator_disjointness_enforced": true,
+        "n_sel_rows": 10,
         "n_sel_folds": 1,
         "ridge_grid": [
           0.0,
@@ -2694,137 +2973,150 @@
         ],
         "grid_floor_provenance": "B2 F2: the ridge actually needed is 5.264e-10-5.707e-10, so the grid floor sits a decade below at 1e-10",
         "grid_ceiling_provenance": "B2 F1: loo_sse(0.1)/loo_sse(0) = 122-160 on ifc_poisson",
-        "declared_role": "INSTRUMENT REPAIR ONLY (prior-art D2 `preempted (cite)`): 'usable ONLY as an instrument repair... Presenting it as the idea is a rebadge'. Nothing is claimed for it; the paired real-LF-selected comparand makes it attributable."
+        "declared_role": "INSTRUMENT REPAIR ONLY (prior-art D2 `preempted (cite)`): 'usable ONLY as an instrument repair... Presenting it as the idea is a rebadge'. Nothing is claimed for it; the paired real-LF-selected comparand makes it attributable.",
+        "fold_restriction": {
+          "restriction": "sel_rows_intersect_val_rows",
+          "reason": "F1 repair: val_rows are excluded from the emulator's fit slice (smoke_eval.build_neural), so restricting the selection side to them makes R3S2B3_CORRECTOR_SELECT_ON=emulator_heldout_output literally true",
+          "n_folds_before": 1,
+          "n_folds_after": 1,
+          "n_sel_rows_before": 64,
+          "n_sel_rows_after": 10,
+          "n_folds_dropped_empty": 0
+        },
+        "n_sel_rows_in_emu_fit": 0,
+        "n_sel_rows_declared_before_repair": 64
       },
       "d2_selection_table": [
         {
           "ridge": 0.0,
           "bandlimit": "on",
-          "oos_sse": 128060.12058164543,
-          "n_sel_rows": 64
+          "oos_sse": 16.112101454525522,
+          "n_sel_rows": 10
         },
         {
           "ridge": 1e-10,
           "bandlimit": "on",
-          "oos_sse": 128060.12077040435,
-          "n_sel_rows": 64
+          "oos_sse": 16.11211587591425,
+          "n_sel_rows": 10
         },
         {
           "ridge": 3.162e-10,
           "bandlimit": "on",
-          "oos_sse": 128060.12102910929,
-          "n_sel_rows": 64
+          "oos_sse": 16.112137366680546,
+          "n_sel_rows": 10
         },
         {
           "ridge": 1e-09,
           "bandlimit": "on",
-          "oos_sse": 128060.1215569617,
-          "n_sel_rows": 64
+          "oos_sse": 16.112183201317123,
+          "n_sel_rows": 10
         },
         {
           "ridge": 1e-08,
           "bandlimit": "on",
-          "oos_sse": 128060.12498864623,
-          "n_sel_rows": 64
+          "oos_sse": 16.11252716333088,
+          "n_sel_rows": 10
         },
         {
           "ridge": 1e-07,
           "bandlimit": "on",
-          "oos_sse": 128060.13926334036,
-          "n_sel_rows": 64
+          "oos_sse": 16.114325291785008,
+          "n_sel_rows": 10
         },
         {
           "ridge": 1e-06,
           "bandlimit": "on",
-          "oos_sse": 128060.18128764976,
-          "n_sel_rows": 64
+          "oos_sse": 16.12240136620609,
+          "n_sel_rows": 10
         },
         {
           "ridge": 0.0001,
           "bandlimit": "on",
-          "oos_sse": 128062.6327493845,
-          "n_sel_rows": 64
+          "oos_sse": 16.720212724189807,
+          "n_sel_rows": 10
         },
         {
           "ridge": 0.01,
           "bandlimit": "on",
-          "oos_sse": 128019.24028923652,
-          "n_sel_rows": 64
+          "oos_sse": 22.136117793415515,
+          "n_sel_rows": 10
         },
         {
           "ridge": 0.1,
           "bandlimit": "on",
-          "oos_sse": 127736.22207860767,
-          "n_sel_rows": 64
+          "oos_sse": 45.91937156248446,
+          "n_sel_rows": 10
         },
         {
           "ridge": 0.0,
           "bandlimit": "off",
-          "oos_sse": 128054.45333614656,
-          "n_sel_rows": 64
+          "oos_sse": 15.328298119945723,
+          "n_sel_rows": 10
         },
         {
           "ridge": 1e-10,
           "bandlimit": "off",
-          "oos_sse": 128054.45718364776,
-          "n_sel_rows": 64
+          "oos_sse": 15.328821447647453,
+          "n_sel_rows": 10
         },
         {
           "ridge": 3.162e-10,
           "bandlimit": "off",
-          "oos_sse": 128054.45986799673,
-          "n_sel_rows": 64
+          "oos_sse": 15.329179421441069,
+          "n_sel_rows": 10
         },
         {
           "ridge": 1e-09,
           "bandlimit": "off",
-          "oos_sse": 128054.46359794121,
-          "n_sel_rows": 64
+          "oos_sse": 15.329669451929643,
+          "n_sel_rows": 10
         },
         {
           "ridge": 1e-08,
           "bandlimit": "off",
-          "oos_sse": 128054.47561186389,
-          "n_sel_rows": 64
+          "oos_sse": 15.331230265136735,
+          "n_sel_rows": 10
         },
         {
           "ridge": 1e-07,
           "bandlimit": "off",
-          "oos_sse": 128054.51120184734,
-          "n_sel_rows": 64
+          "oos_sse": 15.336036320029919,
+          "n_sel_rows": 10
         },
         {
           "ridge": 1e-06,
           "bandlimit": "off",
-          "oos_sse": 128054.62142190163,
-          "n_sel_rows": 64
+          "oos_sse": 15.352994925040583,
+          "n_sel_rows": 10
         },
         {
           "ridge": 0.0001,
           "bandlimit": "off",
-          "oos_sse": 128059.68239173392,
-          "n_sel_rows": 64
+          "oos_sse": 16.30485301942622,
+          "n_sel_rows": 10
         },
         {
           "ridge": 0.01,
           "bandlimit": "off",
-          "oos_sse": 128019.17205356623,
-          "n_sel_rows": 64
+          "oos_sse": 22.126382644590315,
+          "n_sel_rows": 10
         },
         {
           "ridge": 0.1,
           "bandlimit": "off",
-          "oos_sse": 127736.21516885025,
-          "n_sel_rows": 64
+          "oos_sse": 45.91838552236784,
+          "n_sel_rows": 10
         }
       ],
       "d2_comparand_real_lf": {
         "selected_ridge": 0.1,
         "selected_bandlimit": "off",
         "selected_k_cut": null,
-        "selected_oos_sse": 115115.20124489216,
+        "selected_oos_sse": 1.9335857954674027,
         "select_on": "real_lf",
-        "criterion": "exactly out-of-sample SSE of LF_sel + T*LF_sel vs HF on the selection rows; T is always FITTED on REAL LF (role (a) frozen sub-component) -- only the two hyperparameters are selected here",
+        "criterion": "out-of-sample SSE of LF_sel + T*LF_sel vs HF on the selection rows; T is always FITTED on REAL LF (role (a) frozen sub-component) -- only the two hyperparameters are selected here. Out of sample for the TRANSFER fit by fold construction, and (when `emu_fit_rows` is supplied) for the EMULATOR by the enforced tripwire below -- the F1 repair",
+        "emulator_disjointness_enforced": false,
+        "n_sel_rows": 10,
         "n_sel_folds": 1,
         "ridge_grid": [
           0.0,
@@ -2846,7 +3138,7 @@
         "grid_ceiling_provenance": "B2 F1: loo_sse(0.1)/loo_sse(0) = 122-160 on ifc_poisson",
         "declared_role": "INSTRUMENT REPAIR ONLY (prior-art D2 `preempted (cite)`): 'usable ONLY as an instrument repair... Presenting it as the idea is a rebadge'. Nothing is claimed for it; the paired real-LF-selected comparand makes it attributable."
       },
-      "d2_repair_moved_selection": false,
+      "d2_repair_moved_selection": true,
       "neural_stages_shared_with_other_legs": true,
       "emulator_heldout_nrmse": 18.879821084450843,
       "band_err_energy": {
@@ -2857,10 +3149,10 @@
           672.1421218354192
         ],
         "R1_predicted": [
-          9395279.93295239,
-          77851.57439741504,
-          30723.584741363687,
-          19987.008034399616
+          5196659.678597487,
+          18900.703795014015,
+          7458.048622204103,
+          4874.107033223762
         ],
         "R1b_degraded": [
           13461015.132243678,
@@ -2869,10 +3161,10 @@
           19990.04679719073
         ],
         "R2_oracle": [
-          8341.655713605996,
-          110.470696164475,
-          173.81564560194636,
-          92.5516782936476
+          30406.566480226782,
+          54.42538800896503,
+          38.90132479091747,
+          17.34133555058498
         ],
         "R2b_copylf": [
           7662.693783427344,
@@ -3266,9 +3558,11 @@
         "selected_ridge": 0.1,
         "selected_bandlimit": "off",
         "selected_k_cut": null,
-        "selected_oos_sse": 23210.486051197255,
+        "selected_oos_sse": 5069.863732699989,
         "select_on": "emulator_heldout_output",
-        "criterion": "exactly out-of-sample SSE of LF_sel + T*LF_sel vs HF on the selection rows; T is always FITTED on REAL LF (role (a) frozen sub-component) -- only the two hyperparameters are selected here",
+        "criterion": "out-of-sample SSE of LF_sel + T*LF_sel vs HF on the selection rows; T is always FITTED on REAL LF (role (a) frozen sub-component) -- only the two hyperparameters are selected here. Out of sample for the TRANSFER fit by fold construction, and (when `emu_fit_rows` is supplied) for the EMULATOR by the enforced tripwire below -- the F1 repair",
+        "emulator_disjointness_enforced": true,
+        "n_sel_rows": 14,
         "n_sel_folds": 1,
         "ridge_grid": [
           0.0,
@@ -3288,137 +3582,150 @@
         ],
         "grid_floor_provenance": "B2 F2: the ridge actually needed is 5.264e-10-5.707e-10, so the grid floor sits a decade below at 1e-10",
         "grid_ceiling_provenance": "B2 F1: loo_sse(0.1)/loo_sse(0) = 122-160 on ifc_poisson",
-        "declared_role": "INSTRUMENT REPAIR ONLY (prior-art D2 `preempted (cite)`): 'usable ONLY as an instrument repair... Presenting it as the idea is a rebadge'. Nothing is claimed for it; the paired real-LF-selected comparand makes it attributable."
+        "declared_role": "INSTRUMENT REPAIR ONLY (prior-art D2 `preempted (cite)`): 'usable ONLY as an instrument repair... Presenting it as the idea is a rebadge'. Nothing is claimed for it; the paired real-LF-selected comparand makes it attributable.",
+        "fold_restriction": {
+          "restriction": "sel_rows_intersect_val_rows",
+          "reason": "F1 repair: val_rows are excluded from the emulator's fit slice (smoke_eval.build_neural), so restricting the selection side to them makes R3S2B3_CORRECTOR_SELECT_ON=emulator_heldout_output literally true",
+          "n_folds_before": 1,
+          "n_folds_after": 1,
+          "n_sel_rows_before": 64,
+          "n_sel_rows_after": 14,
+          "n_folds_dropped_empty": 0
+        },
+        "n_sel_rows_in_emu_fit": 0,
+        "n_sel_rows_declared_before_repair": 64
       },
       "d2_selection_table": [
         {
           "ridge": 0.0,
           "bandlimit": "on",
-          "oos_sse": 27031.731630520477,
-          "n_sel_rows": 64
+          "oos_sse": 5904.872358093242,
+          "n_sel_rows": 14
         },
         {
           "ridge": 1e-10,
           "bandlimit": "on",
-          "oos_sse": 27031.728069694218,
-          "n_sel_rows": 64
+          "oos_sse": 5904.871604740377,
+          "n_sel_rows": 14
         },
         {
           "ridge": 3.162e-10,
           "bandlimit": "on",
-          "oos_sse": 27031.725321018585,
-          "n_sel_rows": 64
+          "oos_sse": 5904.871013082624,
+          "n_sel_rows": 14
         },
         {
           "ridge": 1e-09,
           "bandlimit": "on",
-          "oos_sse": 27031.717624077053,
-          "n_sel_rows": 64
+          "oos_sse": 5904.86935383475,
+          "n_sel_rows": 14
         },
         {
           "ridge": 1e-08,
           "bandlimit": "on",
-          "oos_sse": 27031.62109651578,
-          "n_sel_rows": 64
+          "oos_sse": 5904.848550164665,
+          "n_sel_rows": 14
         },
         {
           "ridge": 1e-07,
           "bandlimit": "on",
-          "oos_sse": 27030.718535252054,
-          "n_sel_rows": 64
+          "oos_sse": 5904.654051556574,
+          "n_sel_rows": 14
         },
         {
           "ridge": 1e-06,
           "bandlimit": "on",
-          "oos_sse": 27025.333380401273,
-          "n_sel_rows": 64
+          "oos_sse": 5903.493065789208,
+          "n_sel_rows": 14
         },
         {
           "ridge": 0.0001,
           "bandlimit": "on",
-          "oos_sse": 27010.448135355877,
-          "n_sel_rows": 64
+          "oos_sse": 5900.259535986483,
+          "n_sel_rows": 14
         },
         {
           "ridge": 0.01,
           "bandlimit": "on",
-          "oos_sse": 26583.799162322677,
-          "n_sel_rows": 64
+          "oos_sse": 5807.031758358014,
+          "n_sel_rows": 14
         },
         {
           "ridge": 0.1,
           "bandlimit": "on",
-          "oos_sse": 23210.491323626007,
-          "n_sel_rows": 64
+          "oos_sse": 5069.864865764676,
+          "n_sel_rows": 14
         },
         {
           "ridge": 0.0,
           "bandlimit": "off",
-          "oos_sse": 27026.27879215485,
-          "n_sel_rows": 64
+          "oos_sse": 5903.7043202167715,
+          "n_sel_rows": 14
         },
         {
           "ridge": 1e-10,
           "bandlimit": "off",
-          "oos_sse": 27026.278878168734,
-          "n_sel_rows": 64
+          "oos_sse": 5903.704347441299,
+          "n_sel_rows": 14
         },
         {
           "ridge": 3.162e-10,
           "bandlimit": "off",
-          "oos_sse": 27026.278452379465,
-          "n_sel_rows": 64
+          "oos_sse": 5903.704251532986,
+          "n_sel_rows": 14
         },
         {
           "ridge": 1e-09,
           "bandlimit": "off",
-          "oos_sse": 27026.27351035164,
-          "n_sel_rows": 64
+          "oos_sse": 5903.703180739526,
+          "n_sel_rows": 14
         },
         {
           "ridge": 1e-08,
           "bandlimit": "off",
-          "oos_sse": 27026.185573834424,
-          "n_sel_rows": 64
+          "oos_sse": 5903.6842165080525,
+          "n_sel_rows": 14
         },
         {
           "ridge": 1e-07,
           "bandlimit": "off",
-          "oos_sse": 27025.30114243432,
-          "n_sel_rows": 64
+          "oos_sse": 5903.493591135475,
+          "n_sel_rows": 14
         },
         {
           "ridge": 1e-06,
           "bandlimit": "off",
-          "oos_sse": 27019.96924411348,
-          "n_sel_rows": 64
+          "oos_sse": 5902.343878841096,
+          "n_sel_rows": 14
         },
         {
           "ridge": 0.0001,
           "bandlimit": "off",
-          "oos_sse": 27007.86499158622,
-          "n_sel_rows": 64
+          "oos_sse": 5899.7049498815395,
+          "n_sel_rows": 14
         },
         {
           "ridge": 0.01,
           "bandlimit": "off",
-          "oos_sse": 26583.746935791747,
-          "n_sel_rows": 64
+          "oos_sse": 5807.020534836618,
+          "n_sel_rows": 14
         },
         {
           "ridge": 0.1,
           "bandlimit": "off",
-          "oos_sse": 23210.486051197255,
-          "n_sel_rows": 64
+          "oos_sse": 5069.863732699989,
+          "n_sel_rows": 14
         }
       ],
       "d2_comparand_real_lf": {
         "selected_ridge": 1e-06,
         "selected_bandlimit": "off",
         "selected_k_cut": null,
-        "selected_oos_sse": 777.3020322854524,
+        "selected_oos_sse": 188.93021278445588,
         "select_on": "real_lf",
-        "criterion": "exactly out-of-sample SSE of LF_sel + T*LF_sel vs HF on the selection rows; T is always FITTED on REAL LF (role (a) frozen sub-component) -- only the two hyperparameters are selected here",
+        "criterion": "out-of-sample SSE of LF_sel + T*LF_sel vs HF on the selection rows; T is always FITTED on REAL LF (role (a) frozen sub-component) -- only the two hyperparameters are selected here. Out of sample for the TRANSFER fit by fold construction, and (when `emu_fit_rows` is supplied) for the EMULATOR by the enforced tripwire below -- the F1 repair",
+        "emulator_disjointness_enforced": false,
+        "n_sel_rows": 14,
         "n_sel_folds": 1,
         "ridge_grid": [
           0.0,
@@ -3492,10 +3799,10 @@
   "floor_arms": {
     "_source": {
       "floors_file": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/state/anchors_repaired/floors.json",
-      "floors_sha256": "2868e47b4d12380c7d60ef17c93b4bb28413c28b854289475fac4d0d5947fff5",
+      "floors_sha256": "049dfb680f96f69dc55cca1fe462443094c721d0a922b98628eb33de226e5d3c",
       "certified_utc": "2026-08-04T05:12:04Z",
       "nrmse_def_hash": "d3d0ade9191c13bacc40702f3eb26ad290e01641cacee22a1d2233b74c035850",
-      "copylf_def_hash": "9753ff24e856f595748492dec6cb6c215d748f97e8ec4a679b651f8846da907a",
+      "copylf_def_hash": "9794cc89f1647861a6188803361bdfbb571991c91f206685824a80a900ba09a7",
       "split": "test",
       "anchors_file": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/state/anchors/launch_anchors.json",
       "anchors_sha256": "e2bd187d737689e62fe5ca15f952e7e7e580e984920a038e744c0b43b89ae6a8"
@@ -3541,53 +3848,289 @@
       "nn_condition": {
         "floor_nrmse": 1.3113524474983616,
         "model_minus_floor_nrmse": 7.477567945064994,
-        "model_beats_floor": false
+        "model_beats_floor": false,
+        "g5_band": {
+          "matched_n": {
+            "n": 1,
+            "min": 1.610042439405905,
+            "max": 1.610042439405905,
+            "median": 1.610042439405905,
+            "mean": 1.610042439405905,
+            "sd": 0.0
+          },
+          "certified_full_fit_nrmse": 1.3113524474983616,
+          "certified_full_fit_source": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/state/anchors_repaired/floors.json",
+          "sd_nrmse": null,
+          "systematic_correction_nrmse": 0.2986899919075434,
+          "matched_beats_full_fit": false,
+          "_single_draw_note": "one matched fit set exists at this shape (it IS T), so `sd_nrmse` is undefined within a seed; the band is the across-seed spread of this value and is assembled by the analyzer from the three seed files."
+        }
       },
       "train_mean": {
         "floor_nrmse": 4.369072694559929,
         "model_minus_floor_nrmse": 4.4198476980034265,
-        "model_beats_floor": false
+        "model_beats_floor": false,
+        "g5_band": {
+          "matched_n": {
+            "n": 1,
+            "min": 5.425803194281165,
+            "max": 5.425803194281165,
+            "median": 5.425803194281165,
+            "mean": 5.425803194281165,
+            "sd": 0.0
+          },
+          "certified_full_fit_nrmse": 4.369072694559929,
+          "certified_full_fit_source": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/state/anchors_repaired/floors.json",
+          "sd_nrmse": null,
+          "systematic_correction_nrmse": 1.056730499721236,
+          "matched_beats_full_fit": false,
+          "_single_draw_note": "one matched fit set exists at this shape (it IS T), so `sd_nrmse` is undefined within a seed; the band is the across-seed spread of this value and is assembled by the analyzer from the three seed files."
+        }
       },
       "zero": {
         "floor_nrmse": 1.0,
         "model_minus_floor_nrmse": 7.788920392563355,
-        "model_beats_floor": false
+        "model_beats_floor": false,
+        "g5_band": {
+          "matched_n": {
+            "n": 1,
+            "min": 1.0,
+            "max": 1.0,
+            "median": 1.0,
+            "mean": 1.0,
+            "sd": 0.0
+          },
+          "certified_full_fit_nrmse": 1.0,
+          "certified_full_fit_source": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/state/anchors_repaired/floors.json",
+          "sd_nrmse": null,
+          "systematic_correction_nrmse": 0.0,
+          "matched_beats_full_fit": false,
+          "_single_draw_note": "one matched fit set exists at this shape (it IS T), so `sd_nrmse` is undefined within a seed; the band is the across-seed spread of this value and is assembled by the analyzer from the three seed files."
+        }
       }
     },
     "R1_predicted": {
       "nn_condition": {
         "floor_nrmse": 1.3113524474983616,
-        "model_minus_floor_nrmse": 18.97726557399823,
-        "model_beats_floor": false
+        "model_minus_floor_nrmse": 18.05397085844173,
+        "model_beats_floor": false,
+        "g5_band": {
+          "matched_n": {
+            "n": 1,
+            "min": 1.610042439405905,
+            "max": 1.610042439405905,
+            "median": 1.610042439405905,
+            "mean": 1.610042439405905,
+            "sd": 0.0
+          },
+          "certified_full_fit_nrmse": 1.3113524474983616,
+          "certified_full_fit_source": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/state/anchors_repaired/floors.json",
+          "sd_nrmse": null,
+          "systematic_correction_nrmse": 0.2986899919075434,
+          "matched_beats_full_fit": false,
+          "_single_draw_note": "one matched fit set exists at this shape (it IS T), so `sd_nrmse` is undefined within a seed; the band is the across-seed spread of this value and is assembled by the analyzer from the three seed files."
+        }
       },
       "train_mean": {
         "floor_nrmse": 4.369072694559929,
-        "model_minus_floor_nrmse": 15.919545326936664,
-        "model_beats_floor": false
+        "model_minus_floor_nrmse": 14.996250611380162,
+        "model_beats_floor": false,
+        "g5_band": {
+          "matched_n": {
+            "n": 1,
+            "min": 5.425803194281165,
+            "max": 5.425803194281165,
+            "median": 5.425803194281165,
+            "mean": 5.425803194281165,
+            "sd": 0.0
+          },
+          "certified_full_fit_nrmse": 4.369072694559929,
+          "certified_full_fit_source": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/state/anchors_repaired/floors.json",
+          "sd_nrmse": null,
+          "systematic_correction_nrmse": 1.056730499721236,
+          "matched_beats_full_fit": false,
+          "_single_draw_note": "one matched fit set exists at this shape (it IS T), so `sd_nrmse` is undefined within a seed; the band is the across-seed spread of this value and is assembled by the analyzer from the three seed files."
+        }
       },
       "zero": {
         "floor_nrmse": 1.0,
-        "model_minus_floor_nrmse": 19.288618021496593,
-        "model_beats_floor": false
+        "model_minus_floor_nrmse": 18.36532330594009,
+        "model_beats_floor": false,
+        "g5_band": {
+          "matched_n": {
+            "n": 1,
+            "min": 1.0,
+            "max": 1.0,
+            "median": 1.0,
+            "mean": 1.0,
+            "sd": 0.0
+          },
+          "certified_full_fit_nrmse": 1.0,
+          "certified_full_fit_source": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/state/anchors_repaired/floors.json",
+          "sd_nrmse": null,
+          "systematic_correction_nrmse": 0.0,
+          "matched_beats_full_fit": false,
+          "_single_draw_note": "one matched fit set exists at this shape (it IS T), so `sd_nrmse` is undefined within a seed; the band is the across-seed spread of this value and is assembled by the analyzer from the three seed files."
+        }
       }
     },
     "R1b_degraded": {
       "nn_condition": {
         "floor_nrmse": 1.3113524474983616,
         "model_minus_floor_nrmse": 19.667974467503786,
-        "model_beats_floor": false
+        "model_beats_floor": false,
+        "g5_band": {
+          "matched_n": {
+            "n": 1,
+            "min": 1.610042439405905,
+            "max": 1.610042439405905,
+            "median": 1.610042439405905,
+            "mean": 1.610042439405905,
+            "sd": 0.0
+          },
+          "certified_full_fit_nrmse": 1.3113524474983616,
+          "certified_full_fit_source": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/state/anchors_repaired/floors.json",
+          "sd_nrmse": null,
+          "systematic_correction_nrmse": 0.2986899919075434,
+          "matched_beats_full_fit": false,
+          "_single_draw_note": "one matched fit set exists at this shape (it IS T), so `sd_nrmse` is undefined within a seed; the band is the across-seed spread of this value and is assembled by the analyzer from the three seed files."
+        }
       },
       "train_mean": {
         "floor_nrmse": 4.369072694559929,
         "model_minus_floor_nrmse": 16.61025422044222,
-        "model_beats_floor": false
+        "model_beats_floor": false,
+        "g5_band": {
+          "matched_n": {
+            "n": 1,
+            "min": 5.425803194281165,
+            "max": 5.425803194281165,
+            "median": 5.425803194281165,
+            "mean": 5.425803194281165,
+            "sd": 0.0
+          },
+          "certified_full_fit_nrmse": 4.369072694559929,
+          "certified_full_fit_source": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/state/anchors_repaired/floors.json",
+          "sd_nrmse": null,
+          "systematic_correction_nrmse": 1.056730499721236,
+          "matched_beats_full_fit": false,
+          "_single_draw_note": "one matched fit set exists at this shape (it IS T), so `sd_nrmse` is undefined within a seed; the band is the across-seed spread of this value and is assembled by the analyzer from the three seed files."
+        }
       },
       "zero": {
         "floor_nrmse": 1.0,
         "model_minus_floor_nrmse": 19.979326915002147,
-        "model_beats_floor": false
+        "model_beats_floor": false,
+        "g5_band": {
+          "matched_n": {
+            "n": 1,
+            "min": 1.0,
+            "max": 1.0,
+            "median": 1.0,
+            "mean": 1.0,
+            "sd": 0.0
+          },
+          "certified_full_fit_nrmse": 1.0,
+          "certified_full_fit_source": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/state/anchors_repaired/floors.json",
+          "sd_nrmse": null,
+          "systematic_correction_nrmse": 0.0,
+          "matched_beats_full_fit": false,
+          "_single_draw_note": "one matched fit set exists at this shape (it IS T), so `sd_nrmse` is undefined within a seed; the band is the across-seed spread of this value and is assembled by the analyzer from the three seed files."
+        }
       }
     }
+  },
+  "floor_matched_disclosure_legs": {
+    "applicable": false,
+    "reason": "protocol seeded_perm_fit320_heldout80 declares no disclosure legs (R3S2B3_IFC_LOO_DISCLOSURE is scoped to the enumerate_C5_3 cells)"
+  },
+  "floor_matched_n_g5_band": {
+    "knob": "R3S2B3_G5_BAND_DISCLOSURE",
+    "matched_n_knob": "sharp:320,ifc:C5_4_loo",
+    "dataset": "ext__helmholtz_2d",
+    "cell_shape": "sharp",
+    "matched_n_spec": "320",
+    "band_definition": "the arm's own fit-set noise at the MATCHED fit-set size: for the ifc shape the exact sd over the enumerated C(5,4) fold population, for the sharp shape the single matched fit set T (|T| = 320) whose across-seed band the analyzer assembles. `systematic_correction_nrmse` = matched mean - certified full-fit value, i.e. the part of the seam that is a BIAS rather than noise.",
+    "usage": "quote `band.sd_nrmse` beside every `C4.by_rung[*][arm].model_minus_floor_nrmse` priced against that arm: a margin inside the band is not a difference. `model_beats_floor` is deliberately left reading the CERTIFIED full-fit floor -- the registration predicate is not re-defined by this disclosure.",
+    "arms": {
+      "nn_condition": {
+        "matched_n": {
+          "n": 1,
+          "min": 1.610042439405905,
+          "max": 1.610042439405905,
+          "median": 1.610042439405905,
+          "mean": 1.610042439405905,
+          "sd": 0.0
+        },
+        "certified_full_fit_nrmse": 1.3113524474983616,
+        "certified_full_fit_source": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/state/anchors_repaired/floors.json",
+        "sd_nrmse": null,
+        "systematic_correction_nrmse": 0.2986899919075434,
+        "matched_beats_full_fit": false,
+        "_single_draw_note": "one matched fit set exists at this shape (it IS T), so `sd_nrmse` is undefined within a seed; the band is the across-seed spread of this value and is assembled by the analyzer from the three seed files."
+      },
+      "train_mean": {
+        "matched_n": {
+          "n": 1,
+          "min": 5.425803194281165,
+          "max": 5.425803194281165,
+          "median": 5.425803194281165,
+          "mean": 5.425803194281165,
+          "sd": 0.0
+        },
+        "certified_full_fit_nrmse": 4.369072694559929,
+        "certified_full_fit_source": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/state/anchors_repaired/floors.json",
+        "sd_nrmse": null,
+        "systematic_correction_nrmse": 1.056730499721236,
+        "matched_beats_full_fit": false,
+        "_single_draw_note": "one matched fit set exists at this shape (it IS T), so `sd_nrmse` is undefined within a seed; the band is the across-seed spread of this value and is assembled by the analyzer from the three seed files."
+      },
+      "zero": {
+        "matched_n": {
+          "n": 1,
+          "min": 1.0,
+          "max": 1.0,
+          "median": 1.0,
+          "mean": 1.0,
+          "sd": 0.0
+        },
+        "certified_full_fit_nrmse": 1.0,
+        "certified_full_fit_source": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/state/anchors_repaired/floors.json",
+        "sd_nrmse": null,
+        "systematic_correction_nrmse": 0.0,
+        "matched_beats_full_fit": false,
+        "_single_draw_note": "one matched fit set exists at this shape (it IS T), so `sd_nrmse` is undefined within a seed; the band is the across-seed spread of this value and is assembled by the analyzer from the three seed files."
+      },
+      "affine_on_hf_train": {
+        "matched_n": {
+          "n": 1,
+          "min": 10.991263724335667,
+          "max": 10.991263724335667,
+          "median": 10.991263724335667,
+          "mean": 10.991263724335667,
+          "sd": 0.0
+        },
+        "certified_full_fit_nrmse": null,
+        "certified_full_fit_source": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/state/anchors_repaired/floors.json",
+        "sd_nrmse": null,
+        "systematic_correction_nrmse": null,
+        "matched_beats_full_fit": null,
+        "_single_draw_note": "one matched fit set exists at this shape (it IS T), so `sd_nrmse` is undefined within a seed; the band is the across-seed spread of this value and is assembled by the analyzer from the three seed files."
+      }
+    },
+    "applicable": true,
+    "population": "the HOT plan's T (|T| = 320), one matched fit set",
+    "n_matched_fit_sets": 1,
+    "matched_fit_rows_head": [
+      0,
+      1,
+      4,
+      6,
+      7,
+      8,
+      9,
+      10
+    ]
   },
   "validity_gates": {
     "V2_no_test_lf_path": {
@@ -3652,8 +4195,14 @@
       "note": "d2_select.select raises if any selection fold overlaps its own fit rows, so the criterion cannot silently become in-sample"
     },
     "V14_ckpt_data_hash_bind": {
-      "found": false,
+      "found": true,
+      "readable": true,
+      "bind_enabled": true,
+      "ckpt_data_sha256": "d6310bf57bb631ebda8d7d792313f6acb92374f7cb6944c8fb48985ec0f469dd",
+      "current_data_sha256": "d6310bf57bb631ebda8d7d792313f6acb92374f7cb6944c8fb48985ec0f469dd",
+      "ckpt_has_data_binding": true,
       "aborted": false,
+      "resumed_stage": "done",
       "data_sha256": "d6310bf57bb631ebda8d7d792313f6acb92374f7cb6944c8fb48985ec0f469dd",
       "knob": "1",
       "pass_": true
@@ -4490,9 +5039,11 @@
           "selected_ridge": 0.1,
           "selected_bandlimit": "off",
           "selected_k_cut": null,
-          "selected_oos_sse": 24052.8513960367,
+          "selected_oos_sse": 4055.4656701034573,
           "select_on": "emulator_heldout_output",
-          "criterion": "exactly out-of-sample SSE of LF_sel + T*LF_sel vs HF on the selection rows; T is always FITTED on REAL LF (role (a) frozen sub-component) -- only the two hyperparameters are selected here",
+          "criterion": "out-of-sample SSE of LF_sel + T*LF_sel vs HF on the selection rows; T is always FITTED on REAL LF (role (a) frozen sub-component) -- only the two hyperparameters are selected here. Out of sample for the TRANSFER fit by fold construction, and (when `emu_fit_rows` is supplied) for the EMULATOR by the enforced tripwire below -- the F1 repair",
+          "emulator_disjointness_enforced": true,
+          "n_sel_rows": 10,
           "n_sel_folds": 1,
           "ridge_grid": [
             0.0,
@@ -4512,137 +5063,150 @@
           ],
           "grid_floor_provenance": "B2 F2: the ridge actually needed is 5.264e-10-5.707e-10, so the grid floor sits a decade below at 1e-10",
           "grid_ceiling_provenance": "B2 F1: loo_sse(0.1)/loo_sse(0) = 122-160 on ifc_poisson",
-          "declared_role": "INSTRUMENT REPAIR ONLY (prior-art D2 `preempted (cite)`): 'usable ONLY as an instrument repair... Presenting it as the idea is a rebadge'. Nothing is claimed for it; the paired real-LF-selected comparand makes it attributable."
+          "declared_role": "INSTRUMENT REPAIR ONLY (prior-art D2 `preempted (cite)`): 'usable ONLY as an instrument repair... Presenting it as the idea is a rebadge'. Nothing is claimed for it; the paired real-LF-selected comparand makes it attributable.",
+          "fold_restriction": {
+            "restriction": "sel_rows_intersect_val_rows",
+            "reason": "F1 repair: val_rows are excluded from the emulator's fit slice (smoke_eval.build_neural), so restricting the selection side to them makes R3S2B3_CORRECTOR_SELECT_ON=emulator_heldout_output literally true",
+            "n_folds_before": 1,
+            "n_folds_after": 1,
+            "n_sel_rows_before": 64,
+            "n_sel_rows_after": 10,
+            "n_folds_dropped_empty": 0
+          },
+          "n_sel_rows_in_emu_fit": 0,
+          "n_sel_rows_declared_before_repair": 64
         },
         "d2_selection_table": [
           {
             "ridge": 0.0,
             "bandlimit": "on",
-            "oos_sse": 29064.03246163691,
-            "n_sel_rows": 64
+            "oos_sse": 4915.1309157001115,
+            "n_sel_rows": 10
           },
           {
             "ridge": 1e-10,
             "bandlimit": "on",
-            "oos_sse": 29064.023741090732,
-            "n_sel_rows": 64
+            "oos_sse": 4915.12917509131,
+            "n_sel_rows": 10
           },
           {
             "ridge": 3.162e-10,
             "bandlimit": "on",
-            "oos_sse": 29064.011241735105,
-            "n_sel_rows": 64
+            "oos_sse": 4915.126697998039,
+            "n_sel_rows": 10
           },
           {
             "ridge": 1e-09,
             "bandlimit": "on",
-            "oos_sse": 29063.97881912763,
-            "n_sel_rows": 64
+            "oos_sse": 4915.1202705235455,
+            "n_sel_rows": 10
           },
           {
             "ridge": 1e-08,
             "bandlimit": "on",
-            "oos_sse": 29063.624817055654,
-            "n_sel_rows": 64
+            "oos_sse": 4915.050017558107,
+            "n_sel_rows": 10
           },
           {
             "ridge": 1e-07,
             "bandlimit": "on",
-            "oos_sse": 29060.492281236533,
-            "n_sel_rows": 64
+            "oos_sse": 4914.428443111157,
+            "n_sel_rows": 10
           },
           {
             "ridge": 1e-06,
             "bandlimit": "on",
-            "oos_sse": 29039.13944897677,
-            "n_sel_rows": 64
+            "oos_sse": 4910.209018323081,
+            "n_sel_rows": 10
           },
           {
             "ridge": 0.0001,
             "bandlimit": "on",
-            "oos_sse": 28952.311887957403,
-            "n_sel_rows": 64
+            "oos_sse": 4893.42350661707,
+            "n_sel_rows": 10
           },
           {
             "ridge": 0.01,
             "bandlimit": "on",
-            "oos_sse": 28306.15096581899,
-            "n_sel_rows": 64
+            "oos_sse": 4780.584361119264,
+            "n_sel_rows": 10
           },
           {
             "ridge": 0.1,
             "bandlimit": "on",
-            "oos_sse": 24052.852153825,
-            "n_sel_rows": 64
+            "oos_sse": 4055.4658171561978,
+            "n_sel_rows": 10
           },
           {
             "ridge": 0.0,
             "bandlimit": "off",
-            "oos_sse": 29061.31946880478,
-            "n_sel_rows": 64
+            "oos_sse": 4914.58526567039,
+            "n_sel_rows": 10
           },
           {
             "ridge": 1e-10,
             "bandlimit": "off",
-            "oos_sse": 29061.315856950263,
-            "n_sel_rows": 64
+            "oos_sse": 4914.584535203424,
+            "n_sel_rows": 10
           },
           {
             "ridge": 3.162e-10,
             "bandlimit": "off",
-            "oos_sse": 29061.30603859332,
-            "n_sel_rows": 64
+            "oos_sse": 4914.582589975566,
+            "n_sel_rows": 10
           },
           {
             "ridge": 1e-09,
             "bandlimit": "off",
-            "oos_sse": 29061.277072092213,
-            "n_sel_rows": 64
+            "oos_sse": 4914.576845985521,
+            "n_sel_rows": 10
           },
           {
             "ridge": 1e-08,
             "bandlimit": "off",
-            "oos_sse": 29060.9305247483,
-            "n_sel_rows": 64
+            "oos_sse": 4914.508065088422,
+            "n_sel_rows": 10
           },
           {
             "ridge": 1e-07,
             "bandlimit": "off",
-            "oos_sse": 29057.7859618558,
-            "n_sel_rows": 64
+            "oos_sse": 4913.8846841824725,
+            "n_sel_rows": 10
           },
           {
             "ridge": 1e-06,
             "bandlimit": "off",
-            "oos_sse": 29036.3927948968,
-            "n_sel_rows": 64
+            "oos_sse": 4909.663099954806,
+            "n_sel_rows": 10
           },
           {
             "ridge": 0.0001,
             "bandlimit": "off",
-            "oos_sse": 28951.6664326129,
-            "n_sel_rows": 64
+            "oos_sse": 4893.298225878064,
+            "n_sel_rows": 10
           },
           {
             "ridge": 0.01,
             "bandlimit": "off",
-            "oos_sse": 28306.143399531255,
-            "n_sel_rows": 64
+            "oos_sse": 4780.582892839962,
+            "n_sel_rows": 10
           },
           {
             "ridge": 0.1,
             "bandlimit": "off",
-            "oos_sse": 24052.8513960367,
-            "n_sel_rows": 64
+            "oos_sse": 4055.4656701034573,
+            "n_sel_rows": 10
           }
         ],
         "d2_comparand_real_lf": {
           "selected_ridge": 0.1,
           "selected_bandlimit": "off",
           "selected_k_cut": null,
-          "selected_oos_sse": 34663.86230246326,
+          "selected_oos_sse": 34479.37766140567,
           "select_on": "real_lf",
-          "criterion": "exactly out-of-sample SSE of LF_sel + T*LF_sel vs HF on the selection rows; T is always FITTED on REAL LF (role (a) frozen sub-component) -- only the two hyperparameters are selected here",
+          "criterion": "out-of-sample SSE of LF_sel + T*LF_sel vs HF on the selection rows; T is always FITTED on REAL LF (role (a) frozen sub-component) -- only the two hyperparameters are selected here. Out of sample for the TRANSFER fit by fold construction, and (when `emu_fit_rows` is supplied) for the EMULATOR by the enforced tripwire below -- the F1 repair",
+          "emulator_disjointness_enforced": false,
+          "n_sel_rows": 10,
           "n_sel_folds": 1,
           "ridge_grid": [
             0.0,
@@ -4665,7 +5229,7 @@
           "declared_role": "INSTRUMENT REPAIR ONLY (prior-art D2 `preempted (cite)`): 'usable ONLY as an instrument repair... Presenting it as the idea is a rebadge'. Nothing is claimed for it; the paired real-LF-selected comparand makes it attributable."
         },
         "d2_repair_moved_selection": false,
-        "neural_stages_shared_with_other_legs": false,
+        "neural_stages_shared_with_other_legs": true,
         "emulator_heldout_nrmse": 18.879821084450843,
         "band_err_energy": {
           "R0_absent": [
@@ -5084,9 +5648,11 @@
           "selected_ridge": 0.1,
           "selected_bandlimit": "off",
           "selected_k_cut": null,
-          "selected_oos_sse": 32182.967388206293,
+          "selected_oos_sse": 8779.351010638882,
           "select_on": "emulator_heldout_output",
-          "criterion": "exactly out-of-sample SSE of LF_sel + T*LF_sel vs HF on the selection rows; T is always FITTED on REAL LF (role (a) frozen sub-component) -- only the two hyperparameters are selected here",
+          "criterion": "out-of-sample SSE of LF_sel + T*LF_sel vs HF on the selection rows; T is always FITTED on REAL LF (role (a) frozen sub-component) -- only the two hyperparameters are selected here. Out of sample for the TRANSFER fit by fold construction, and (when `emu_fit_rows` is supplied) for the EMULATOR by the enforced tripwire below -- the F1 repair",
+          "emulator_disjointness_enforced": true,
+          "n_sel_rows": 18,
           "n_sel_folds": 1,
           "ridge_grid": [
             0.0,
@@ -5106,137 +5672,150 @@
           ],
           "grid_floor_provenance": "B2 F2: the ridge actually needed is 5.264e-10-5.707e-10, so the grid floor sits a decade below at 1e-10",
           "grid_ceiling_provenance": "B2 F1: loo_sse(0.1)/loo_sse(0) = 122-160 on ifc_poisson",
-          "declared_role": "INSTRUMENT REPAIR ONLY (prior-art D2 `preempted (cite)`): 'usable ONLY as an instrument repair... Presenting it as the idea is a rebadge'. Nothing is claimed for it; the paired real-LF-selected comparand makes it attributable."
+          "declared_role": "INSTRUMENT REPAIR ONLY (prior-art D2 `preempted (cite)`): 'usable ONLY as an instrument repair... Presenting it as the idea is a rebadge'. Nothing is claimed for it; the paired real-LF-selected comparand makes it attributable.",
+          "fold_restriction": {
+            "restriction": "sel_rows_intersect_val_rows",
+            "reason": "F1 repair: val_rows are excluded from the emulator's fit slice (smoke_eval.build_neural), so restricting the selection side to them makes R3S2B3_CORRECTOR_SELECT_ON=emulator_heldout_output literally true",
+            "n_folds_before": 1,
+            "n_folds_after": 1,
+            "n_sel_rows_before": 64,
+            "n_sel_rows_after": 18,
+            "n_folds_dropped_empty": 0
+          },
+          "n_sel_rows_in_emu_fit": 0,
+          "n_sel_rows_declared_before_repair": 64
         },
         "d2_selection_table": [
           {
             "ridge": 0.0,
             "bandlimit": "on",
-            "oos_sse": 38677.781961126224,
-            "n_sel_rows": 64
+            "oos_sse": 10601.631601495963,
+            "n_sel_rows": 18
           },
           {
             "ridge": 1e-10,
             "bandlimit": "on",
-            "oos_sse": 38677.77800372492,
-            "n_sel_rows": 64
+            "oos_sse": 10601.63041994597,
+            "n_sel_rows": 18
           },
           {
             "ridge": 3.162e-10,
             "bandlimit": "on",
-            "oos_sse": 38677.7709543946,
-            "n_sel_rows": 64
+            "oos_sse": 10601.6283373025,
+            "n_sel_rows": 18
           },
           {
             "ridge": 1e-09,
             "bandlimit": "on",
-            "oos_sse": 38677.750046775465,
-            "n_sel_rows": 64
+            "oos_sse": 10601.62216232143,
+            "n_sel_rows": 18
           },
           {
             "ridge": 1e-08,
             "bandlimit": "on",
-            "oos_sse": 38677.51375716059,
-            "n_sel_rows": 64
+            "oos_sse": 10601.552180288767,
+            "n_sel_rows": 18
           },
           {
             "ridge": 1e-07,
             "bandlimit": "on",
-            "oos_sse": 38675.91237018627,
-            "n_sel_rows": 64
+            "oos_sse": 10601.075567127975,
+            "n_sel_rows": 18
           },
           {
             "ridge": 1e-06,
             "bandlimit": "on",
-            "oos_sse": 38667.7482751542,
-            "n_sel_rows": 64
+            "oos_sse": 10598.634248803253,
+            "n_sel_rows": 18
           },
           {
             "ridge": 0.0001,
             "bandlimit": "on",
-            "oos_sse": 38378.585408985644,
-            "n_sel_rows": 64
+            "oos_sse": 10512.030310519916,
+            "n_sel_rows": 18
           },
           {
             "ridge": 0.01,
             "bandlimit": "on",
-            "oos_sse": 37046.47236686499,
-            "n_sel_rows": 64
+            "oos_sse": 10129.877846486888,
+            "n_sel_rows": 18
           },
           {
             "ridge": 0.1,
             "bandlimit": "on",
-            "oos_sse": 32182.97342719215,
-            "n_sel_rows": 64
+            "oos_sse": 8779.35279860978,
+            "n_sel_rows": 18
           },
           {
             "ridge": 0.0,
             "bandlimit": "off",
-            "oos_sse": 38672.34400889119,
-            "n_sel_rows": 64
+            "oos_sse": 10599.998312429769,
+            "n_sel_rows": 18
           },
           {
             "ridge": 1e-10,
             "bandlimit": "off",
-            "oos_sse": 38672.34364401792,
-            "n_sel_rows": 64
+            "oos_sse": 10599.998219525234,
+            "n_sel_rows": 18
           },
           {
             "ridge": 3.162e-10,
             "bandlimit": "off",
-            "oos_sse": 38672.338837973606,
-            "n_sel_rows": 64
+            "oos_sse": 10599.996817662082,
+            "n_sel_rows": 18
           },
           {
             "ridge": 1e-09,
             "bandlimit": "off",
-            "oos_sse": 38672.32090271066,
-            "n_sel_rows": 64
+            "oos_sse": 10599.991542606851,
+            "n_sel_rows": 18
           },
           {
             "ridge": 1e-08,
             "bandlimit": "off",
-            "oos_sse": 38672.09309597781,
-            "n_sel_rows": 64
+            "oos_sse": 10599.924104549049,
+            "n_sel_rows": 18
           },
           {
             "ridge": 1e-07,
             "bandlimit": "off",
-            "oos_sse": 38670.51273597374,
-            "n_sel_rows": 64
+            "oos_sse": 10599.453794412744,
+            "n_sel_rows": 18
           },
           {
             "ridge": 1e-06,
             "bandlimit": "off",
-            "oos_sse": 38662.40122819514,
-            "n_sel_rows": 64
+            "oos_sse": 10597.028638551225,
+            "n_sel_rows": 18
           },
           {
             "ridge": 0.0001,
             "bandlimit": "off",
-            "oos_sse": 38375.813479704855,
-            "n_sel_rows": 64
+            "oos_sse": 10511.2050015526,
+            "n_sel_rows": 18
           },
           {
             "ridge": 0.01,
             "bandlimit": "off",
-            "oos_sse": 37046.412629587474,
-            "n_sel_rows": 64
+            "oos_sse": 10129.860158439562,
+            "n_sel_rows": 18
           },
           {
             "ridge": 0.1,
             "bandlimit": "off",
-            "oos_sse": 32182.967388206293,
-            "n_sel_rows": 64
+            "oos_sse": 8779.351010638882,
+            "n_sel_rows": 18
           }
         ],
         "d2_comparand_real_lf": {
           "selected_ridge": 0.1,
           "selected_bandlimit": "off",
           "selected_k_cut": null,
-          "selected_oos_sse": 13677.99023012112,
+          "selected_oos_sse": 79.50334237211592,
           "select_on": "real_lf",
-          "criterion": "exactly out-of-sample SSE of LF_sel + T*LF_sel vs HF on the selection rows; T is always FITTED on REAL LF (role (a) frozen sub-component) -- only the two hyperparameters are selected here",
+          "criterion": "out-of-sample SSE of LF_sel + T*LF_sel vs HF on the selection rows; T is always FITTED on REAL LF (role (a) frozen sub-component) -- only the two hyperparameters are selected here. Out of sample for the TRANSFER fit by fold construction, and (when `emu_fit_rows` is supplied) for the EMULATOR by the enforced tripwire below -- the F1 repair",
+          "emulator_disjointness_enforced": false,
+          "n_sel_rows": 18,
           "n_sel_folds": 1,
           "ridge_grid": [
             0.0,
@@ -5678,9 +6257,11 @@
           "selected_ridge": 0.1,
           "selected_bandlimit": "off",
           "selected_k_cut": null,
-          "selected_oos_sse": 22792.303682114267,
+          "selected_oos_sse": 4218.899711652267,
           "select_on": "emulator_heldout_output",
-          "criterion": "exactly out-of-sample SSE of LF_sel + T*LF_sel vs HF on the selection rows; T is always FITTED on REAL LF (role (a) frozen sub-component) -- only the two hyperparameters are selected here",
+          "criterion": "out-of-sample SSE of LF_sel + T*LF_sel vs HF on the selection rows; T is always FITTED on REAL LF (role (a) frozen sub-component) -- only the two hyperparameters are selected here. Out of sample for the TRANSFER fit by fold construction, and (when `emu_fit_rows` is supplied) for the EMULATOR by the enforced tripwire below -- the F1 repair",
+          "emulator_disjointness_enforced": true,
+          "n_sel_rows": 12,
           "n_sel_folds": 1,
           "ridge_grid": [
             0.0,
@@ -5700,137 +6281,150 @@
           ],
           "grid_floor_provenance": "B2 F2: the ridge actually needed is 5.264e-10-5.707e-10, so the grid floor sits a decade below at 1e-10",
           "grid_ceiling_provenance": "B2 F1: loo_sse(0.1)/loo_sse(0) = 122-160 on ifc_poisson",
-          "declared_role": "INSTRUMENT REPAIR ONLY (prior-art D2 `preempted (cite)`): 'usable ONLY as an instrument repair... Presenting it as the idea is a rebadge'. Nothing is claimed for it; the paired real-LF-selected comparand makes it attributable."
+          "declared_role": "INSTRUMENT REPAIR ONLY (prior-art D2 `preempted (cite)`): 'usable ONLY as an instrument repair... Presenting it as the idea is a rebadge'. Nothing is claimed for it; the paired real-LF-selected comparand makes it attributable.",
+          "fold_restriction": {
+            "restriction": "sel_rows_intersect_val_rows",
+            "reason": "F1 repair: val_rows are excluded from the emulator's fit slice (smoke_eval.build_neural), so restricting the selection side to them makes R3S2B3_CORRECTOR_SELECT_ON=emulator_heldout_output literally true",
+            "n_folds_before": 1,
+            "n_folds_after": 1,
+            "n_sel_rows_before": 64,
+            "n_sel_rows_after": 12,
+            "n_folds_dropped_empty": 0
+          },
+          "n_sel_rows_in_emu_fit": 0,
+          "n_sel_rows_declared_before_repair": 64
         },
         "d2_selection_table": [
           {
             "ridge": 0.0,
             "bandlimit": "on",
-            "oos_sse": 26515.501676079894,
-            "n_sel_rows": 64
+            "oos_sse": 4910.380337373267,
+            "n_sel_rows": 12
           },
           {
             "ridge": 1e-10,
             "bandlimit": "on",
-            "oos_sse": 26515.501160737367,
-            "n_sel_rows": 64
+            "oos_sse": 4910.380249437165,
+            "n_sel_rows": 12
           },
           {
             "ridge": 3.162e-10,
             "bandlimit": "on",
-            "oos_sse": 26515.500889606123,
-            "n_sel_rows": 64
+            "oos_sse": 4910.3802023928,
+            "n_sel_rows": 12
           },
           {
             "ridge": 1e-09,
             "bandlimit": "on",
-            "oos_sse": 26515.500365243937,
-            "n_sel_rows": 64
+            "oos_sse": 4910.380110832349,
+            "n_sel_rows": 12
           },
           {
             "ridge": 1e-08,
             "bandlimit": "on",
-            "oos_sse": 26515.49501336726,
-            "n_sel_rows": 64
+            "oos_sse": 4910.3791781715945,
+            "n_sel_rows": 12
           },
           {
             "ridge": 1e-07,
             "bandlimit": "on",
-            "oos_sse": 26515.440532904904,
-            "n_sel_rows": 64
+            "oos_sse": 4910.369707429697,
+            "n_sel_rows": 12
           },
           {
             "ridge": 1e-06,
             "bandlimit": "on",
-            "oos_sse": 26514.937322348087,
-            "n_sel_rows": 64
+            "oos_sse": 4910.282229552853,
+            "n_sel_rows": 12
           },
           {
             "ridge": 0.0001,
             "bandlimit": "on",
-            "oos_sse": 26506.572240789723,
-            "n_sel_rows": 64
+            "oos_sse": 4908.779007771416,
+            "n_sel_rows": 12
           },
           {
             "ridge": 0.01,
             "bandlimit": "on",
-            "oos_sse": 26090.07128120755,
-            "n_sel_rows": 64
+            "oos_sse": 4831.419710235613,
+            "n_sel_rows": 12
           },
           {
             "ridge": 0.1,
             "bandlimit": "on",
-            "oos_sse": 22792.308901078526,
-            "n_sel_rows": 64
+            "oos_sse": 4218.900629278382,
+            "n_sel_rows": 12
           },
           {
             "ridge": 0.0,
             "bandlimit": "off",
-            "oos_sse": 26510.15347425745,
-            "n_sel_rows": 64
+            "oos_sse": 4909.448490579459,
+            "n_sel_rows": 12
           },
           {
             "ridge": 1e-10,
             "bandlimit": "off",
-            "oos_sse": 26510.156880141047,
-            "n_sel_rows": 64
+            "oos_sse": 4909.449084983584,
+            "n_sel_rows": 12
           },
           {
             "ridge": 3.162e-10,
             "bandlimit": "off",
-            "oos_sse": 26510.158993509147,
-            "n_sel_rows": 64
+            "oos_sse": 4909.4494517507765,
+            "n_sel_rows": 12
           },
           {
             "ridge": 1e-09,
             "bandlimit": "off",
-            "oos_sse": 26510.16149273425,
-            "n_sel_rows": 64
+            "oos_sse": 4909.449884447988,
+            "n_sel_rows": 12
           },
           {
             "ridge": 1e-08,
             "bandlimit": "off",
-            "oos_sse": 26510.1647633038,
-            "n_sel_rows": 64
+            "oos_sse": 4909.450447069936,
+            "n_sel_rows": 12
           },
           {
             "ridge": 1e-07,
             "bandlimit": "off",
-            "oos_sse": 26510.13156343264,
-            "n_sel_rows": 64
+            "oos_sse": 4909.444666472664,
+            "n_sel_rows": 12
           },
           {
             "ridge": 1e-06,
             "bandlimit": "off",
-            "oos_sse": 26509.689354350263,
-            "n_sel_rows": 64
+            "oos_sse": 4909.3677799628085,
+            "n_sel_rows": 12
           },
           {
             "ridge": 0.0001,
             "bandlimit": "off",
-            "oos_sse": 26504.02308390257,
-            "n_sel_rows": 64
+            "oos_sse": 4908.332383154692,
+            "n_sel_rows": 12
           },
           {
             "ridge": 0.01,
             "bandlimit": "off",
-            "oos_sse": 26090.019588644027,
-            "n_sel_rows": 64
+            "oos_sse": 4831.410621861565,
+            "n_sel_rows": 12
           },
           {
             "ridge": 0.1,
             "bandlimit": "off",
-            "oos_sse": 22792.303682114267,
-            "n_sel_rows": 64
+            "oos_sse": 4218.899711652267,
+            "n_sel_rows": 12
           }
         ],
         "d2_comparand_real_lf": {
           "selected_ridge": 0.1,
           "selected_bandlimit": "off",
           "selected_k_cut": null,
-          "selected_oos_sse": 78.38022927396779,
+          "selected_oos_sse": 5.801139798334878,
           "select_on": "real_lf",
-          "criterion": "exactly out-of-sample SSE of LF_sel + T*LF_sel vs HF on the selection rows; T is always FITTED on REAL LF (role (a) frozen sub-component) -- only the two hyperparameters are selected here",
+          "criterion": "out-of-sample SSE of LF_sel + T*LF_sel vs HF on the selection rows; T is always FITTED on REAL LF (role (a) frozen sub-component) -- only the two hyperparameters are selected here. Out of sample for the TRANSFER fit by fold construction, and (when `emu_fit_rows` is supplied) for the EMULATOR by the enforced tripwire below -- the F1 repair",
+          "emulator_disjointness_enforced": false,
+          "n_sel_rows": 12,
           "n_sel_folds": 1,
           "ridge_grid": [
             0.0,
@@ -6246,35 +6840,37 @@
         ],
         "nrmse": {
           "R0_absent": 8.59252328958228,
-          "R1_predicted": 18.186075933819325,
+          "R1_predicted": 13.443286892852655,
           "R1b_degraded": 21.745038890829836,
-          "R2_oracle": 0.2441782100286642,
+          "R2_oracle": 0.489747903916816,
           "R2b_copylf": 0.13284148725102923
         },
         "nrmse_test": {
           "R0_absent": 8.788920392563355,
-          "R1_predicted": 17.52578244747437,
+          "R1_predicted": 12.90930886969187,
           "R1b_degraded": 20.979326915002147
         },
         "stats": {
-          "phi_ceil": 0.9715824791159181,
-          "phi_real": -1.1165000455533742,
-          "rho": -1.1491562163300046,
-          "E_est": 0.2441782100286642,
-          "E_hall": 17.94189772379066,
-          "E_hall_fraction": 0.9865733426541685
+          "phi_ceil": 0.9430030169937864,
+          "phi_real": -0.564533076000099,
+          "rho": -0.598654580978736,
+          "E_est": 0.489747903916816,
+          "E_hall": 12.953538988935838,
+          "E_hall_fraction": 0.9635693333170477
         },
-        "alpha_lsi": 0.2986490107894041,
-        "alpha_lsi_ls": 1.1945960431576164,
+        "alpha_lsi": 0.5,
+        "alpha_lsi_ls": 1.0396080250228508,
         "alpha_nn": 0.0,
-        "alpha_nn_ls": 1.5,
+        "alpha_nn_ls": 0.0,
         "d2_selection": {
-          "selected_ridge": 0.1,
+          "selected_ridge": 0.0,
           "selected_bandlimit": "off",
           "selected_k_cut": null,
-          "selected_oos_sse": 127736.21516885025,
+          "selected_oos_sse": 15.328298119945723,
           "select_on": "emulator_heldout_output",
-          "criterion": "exactly out-of-sample SSE of LF_sel + T*LF_sel vs HF on the selection rows; T is always FITTED on REAL LF (role (a) frozen sub-component) -- only the two hyperparameters are selected here",
+          "criterion": "out-of-sample SSE of LF_sel + T*LF_sel vs HF on the selection rows; T is always FITTED on REAL LF (role (a) frozen sub-component) -- only the two hyperparameters are selected here. Out of sample for the TRANSFER fit by fold construction, and (when `emu_fit_rows` is supplied) for the EMULATOR by the enforced tripwire below -- the F1 repair",
+          "emulator_disjointness_enforced": true,
+          "n_sel_rows": 10,
           "n_sel_folds": 1,
           "ridge_grid": [
             0.0,
@@ -6294,137 +6890,150 @@
           ],
           "grid_floor_provenance": "B2 F2: the ridge actually needed is 5.264e-10-5.707e-10, so the grid floor sits a decade below at 1e-10",
           "grid_ceiling_provenance": "B2 F1: loo_sse(0.1)/loo_sse(0) = 122-160 on ifc_poisson",
-          "declared_role": "INSTRUMENT REPAIR ONLY (prior-art D2 `preempted (cite)`): 'usable ONLY as an instrument repair... Presenting it as the idea is a rebadge'. Nothing is claimed for it; the paired real-LF-selected comparand makes it attributable."
+          "declared_role": "INSTRUMENT REPAIR ONLY (prior-art D2 `preempted (cite)`): 'usable ONLY as an instrument repair... Presenting it as the idea is a rebadge'. Nothing is claimed for it; the paired real-LF-selected comparand makes it attributable.",
+          "fold_restriction": {
+            "restriction": "sel_rows_intersect_val_rows",
+            "reason": "F1 repair: val_rows are excluded from the emulator's fit slice (smoke_eval.build_neural), so restricting the selection side to them makes R3S2B3_CORRECTOR_SELECT_ON=emulator_heldout_output literally true",
+            "n_folds_before": 1,
+            "n_folds_after": 1,
+            "n_sel_rows_before": 64,
+            "n_sel_rows_after": 10,
+            "n_folds_dropped_empty": 0
+          },
+          "n_sel_rows_in_emu_fit": 0,
+          "n_sel_rows_declared_before_repair": 64
         },
         "d2_selection_table": [
           {
             "ridge": 0.0,
             "bandlimit": "on",
-            "oos_sse": 128060.12058164543,
-            "n_sel_rows": 64
+            "oos_sse": 16.112101454525522,
+            "n_sel_rows": 10
           },
           {
             "ridge": 1e-10,
             "bandlimit": "on",
-            "oos_sse": 128060.12077040435,
-            "n_sel_rows": 64
+            "oos_sse": 16.11211587591425,
+            "n_sel_rows": 10
           },
           {
             "ridge": 3.162e-10,
             "bandlimit": "on",
-            "oos_sse": 128060.12102910929,
-            "n_sel_rows": 64
+            "oos_sse": 16.112137366680546,
+            "n_sel_rows": 10
           },
           {
             "ridge": 1e-09,
             "bandlimit": "on",
-            "oos_sse": 128060.1215569617,
-            "n_sel_rows": 64
+            "oos_sse": 16.112183201317123,
+            "n_sel_rows": 10
           },
           {
             "ridge": 1e-08,
             "bandlimit": "on",
-            "oos_sse": 128060.12498864623,
-            "n_sel_rows": 64
+            "oos_sse": 16.11252716333088,
+            "n_sel_rows": 10
           },
           {
             "ridge": 1e-07,
             "bandlimit": "on",
-            "oos_sse": 128060.13926334036,
-            "n_sel_rows": 64
+            "oos_sse": 16.114325291785008,
+            "n_sel_rows": 10
           },
           {
             "ridge": 1e-06,
             "bandlimit": "on",
-            "oos_sse": 128060.18128764976,
-            "n_sel_rows": 64
+            "oos_sse": 16.12240136620609,
+            "n_sel_rows": 10
           },
           {
             "ridge": 0.0001,
             "bandlimit": "on",
-            "oos_sse": 128062.6327493845,
-            "n_sel_rows": 64
+            "oos_sse": 16.720212724189807,
+            "n_sel_rows": 10
           },
           {
             "ridge": 0.01,
             "bandlimit": "on",
-            "oos_sse": 128019.24028923652,
-            "n_sel_rows": 64
+            "oos_sse": 22.136117793415515,
+            "n_sel_rows": 10
           },
           {
             "ridge": 0.1,
             "bandlimit": "on",
-            "oos_sse": 127736.22207860767,
-            "n_sel_rows": 64
+            "oos_sse": 45.91937156248446,
+            "n_sel_rows": 10
           },
           {
             "ridge": 0.0,
             "bandlimit": "off",
-            "oos_sse": 128054.45333614656,
-            "n_sel_rows": 64
+            "oos_sse": 15.328298119945723,
+            "n_sel_rows": 10
           },
           {
             "ridge": 1e-10,
             "bandlimit": "off",
-            "oos_sse": 128054.45718364776,
-            "n_sel_rows": 64
+            "oos_sse": 15.328821447647453,
+            "n_sel_rows": 10
           },
           {
             "ridge": 3.162e-10,
             "bandlimit": "off",
-            "oos_sse": 128054.45986799673,
-            "n_sel_rows": 64
+            "oos_sse": 15.329179421441069,
+            "n_sel_rows": 10
           },
           {
             "ridge": 1e-09,
             "bandlimit": "off",
-            "oos_sse": 128054.46359794121,
-            "n_sel_rows": 64
+            "oos_sse": 15.329669451929643,
+            "n_sel_rows": 10
           },
           {
             "ridge": 1e-08,
             "bandlimit": "off",
-            "oos_sse": 128054.47561186389,
-            "n_sel_rows": 64
+            "oos_sse": 15.331230265136735,
+            "n_sel_rows": 10
           },
           {
             "ridge": 1e-07,
             "bandlimit": "off",
-            "oos_sse": 128054.51120184734,
-            "n_sel_rows": 64
+            "oos_sse": 15.336036320029919,
+            "n_sel_rows": 10
           },
           {
             "ridge": 1e-06,
             "bandlimit": "off",
-            "oos_sse": 128054.62142190163,
-            "n_sel_rows": 64
+            "oos_sse": 15.352994925040583,
+            "n_sel_rows": 10
           },
           {
             "ridge": 0.0001,
             "bandlimit": "off",
-            "oos_sse": 128059.68239173392,
-            "n_sel_rows": 64
+            "oos_sse": 16.30485301942622,
+            "n_sel_rows": 10
           },
           {
             "ridge": 0.01,
             "bandlimit": "off",
-            "oos_sse": 128019.17205356623,
-            "n_sel_rows": 64
+            "oos_sse": 22.126382644590315,
+            "n_sel_rows": 10
           },
           {
             "ridge": 0.1,
             "bandlimit": "off",
-            "oos_sse": 127736.21516885025,
-            "n_sel_rows": 64
+            "oos_sse": 45.91838552236784,
+            "n_sel_rows": 10
           }
         ],
         "d2_comparand_real_lf": {
           "selected_ridge": 0.1,
           "selected_bandlimit": "off",
           "selected_k_cut": null,
-          "selected_oos_sse": 115115.20124489216,
+          "selected_oos_sse": 1.9335857954674027,
           "select_on": "real_lf",
-          "criterion": "exactly out-of-sample SSE of LF_sel + T*LF_sel vs HF on the selection rows; T is always FITTED on REAL LF (role (a) frozen sub-component) -- only the two hyperparameters are selected here",
+          "criterion": "out-of-sample SSE of LF_sel + T*LF_sel vs HF on the selection rows; T is always FITTED on REAL LF (role (a) frozen sub-component) -- only the two hyperparameters are selected here. Out of sample for the TRANSFER fit by fold construction, and (when `emu_fit_rows` is supplied) for the EMULATOR by the enforced tripwire below -- the F1 repair",
+          "emulator_disjointness_enforced": false,
+          "n_sel_rows": 10,
           "n_sel_folds": 1,
           "ridge_grid": [
             0.0,
@@ -6446,7 +7055,7 @@
           "grid_ceiling_provenance": "B2 F1: loo_sse(0.1)/loo_sse(0) = 122-160 on ifc_poisson",
           "declared_role": "INSTRUMENT REPAIR ONLY (prior-art D2 `preempted (cite)`): 'usable ONLY as an instrument repair... Presenting it as the idea is a rebadge'. Nothing is claimed for it; the paired real-LF-selected comparand makes it attributable."
         },
-        "d2_repair_moved_selection": false,
+        "d2_repair_moved_selection": true,
         "neural_stages_shared_with_other_legs": true,
         "emulator_heldout_nrmse": 18.879821084450843,
         "band_err_energy": {
@@ -6457,10 +7066,10 @@
             672.1421218354192
           ],
           "R1_predicted": [
-            9395279.93295239,
-            77851.57439741504,
-            30723.584741363687,
-            19987.008034399616
+            5196659.678597487,
+            18900.703795014015,
+            7458.048622204103,
+            4874.107033223762
           ],
           "R1b_degraded": [
             13461015.132243678,
@@ -6469,10 +7078,10 @@
             19990.04679719073
           ],
           "R2_oracle": [
-            8341.655713605996,
-            110.470696164475,
-            173.81564560194636,
-            92.5516782936476
+            30406.566480226782,
+            54.42538800896503,
+            38.90132479091747,
+            17.34133555058498
           ],
           "R2b_copylf": [
             7662.693783427344,
@@ -6866,9 +7475,11 @@
           "selected_ridge": 0.1,
           "selected_bandlimit": "off",
           "selected_k_cut": null,
-          "selected_oos_sse": 23210.486051197255,
+          "selected_oos_sse": 5069.863732699989,
           "select_on": "emulator_heldout_output",
-          "criterion": "exactly out-of-sample SSE of LF_sel + T*LF_sel vs HF on the selection rows; T is always FITTED on REAL LF (role (a) frozen sub-component) -- only the two hyperparameters are selected here",
+          "criterion": "out-of-sample SSE of LF_sel + T*LF_sel vs HF on the selection rows; T is always FITTED on REAL LF (role (a) frozen sub-component) -- only the two hyperparameters are selected here. Out of sample for the TRANSFER fit by fold construction, and (when `emu_fit_rows` is supplied) for the EMULATOR by the enforced tripwire below -- the F1 repair",
+          "emulator_disjointness_enforced": true,
+          "n_sel_rows": 14,
           "n_sel_folds": 1,
           "ridge_grid": [
             0.0,
@@ -6888,137 +7499,150 @@
           ],
           "grid_floor_provenance": "B2 F2: the ridge actually needed is 5.264e-10-5.707e-10, so the grid floor sits a decade below at 1e-10",
           "grid_ceiling_provenance": "B2 F1: loo_sse(0.1)/loo_sse(0) = 122-160 on ifc_poisson",
-          "declared_role": "INSTRUMENT REPAIR ONLY (prior-art D2 `preempted (cite)`): 'usable ONLY as an instrument repair... Presenting it as the idea is a rebadge'. Nothing is claimed for it; the paired real-LF-selected comparand makes it attributable."
+          "declared_role": "INSTRUMENT REPAIR ONLY (prior-art D2 `preempted (cite)`): 'usable ONLY as an instrument repair... Presenting it as the idea is a rebadge'. Nothing is claimed for it; the paired real-LF-selected comparand makes it attributable.",
+          "fold_restriction": {
+            "restriction": "sel_rows_intersect_val_rows",
+            "reason": "F1 repair: val_rows are excluded from the emulator's fit slice (smoke_eval.build_neural), so restricting the selection side to them makes R3S2B3_CORRECTOR_SELECT_ON=emulator_heldout_output literally true",
+            "n_folds_before": 1,
+            "n_folds_after": 1,
+            "n_sel_rows_before": 64,
+            "n_sel_rows_after": 14,
+            "n_folds_dropped_empty": 0
+          },
+          "n_sel_rows_in_emu_fit": 0,
+          "n_sel_rows_declared_before_repair": 64
         },
         "d2_selection_table": [
           {
             "ridge": 0.0,
             "bandlimit": "on",
-            "oos_sse": 27031.731630520477,
-            "n_sel_rows": 64
+            "oos_sse": 5904.872358093242,
+            "n_sel_rows": 14
           },
           {
             "ridge": 1e-10,
             "bandlimit": "on",
-            "oos_sse": 27031.728069694218,
-            "n_sel_rows": 64
+            "oos_sse": 5904.871604740377,
+            "n_sel_rows": 14
           },
           {
             "ridge": 3.162e-10,
             "bandlimit": "on",
-            "oos_sse": 27031.725321018585,
-            "n_sel_rows": 64
+            "oos_sse": 5904.871013082624,
+            "n_sel_rows": 14
           },
           {
             "ridge": 1e-09,
             "bandlimit": "on",
-            "oos_sse": 27031.717624077053,
-            "n_sel_rows": 64
+            "oos_sse": 5904.86935383475,
+            "n_sel_rows": 14
           },
           {
             "ridge": 1e-08,
             "bandlimit": "on",
-            "oos_sse": 27031.62109651578,
-            "n_sel_rows": 64
+            "oos_sse": 5904.848550164665,
+            "n_sel_rows": 14
           },
           {
             "ridge": 1e-07,
             "bandlimit": "on",
-            "oos_sse": 27030.718535252054,
-            "n_sel_rows": 64
+            "oos_sse": 5904.654051556574,
+            "n_sel_rows": 14
           },
           {
             "ridge": 1e-06,
             "bandlimit": "on",
-            "oos_sse": 27025.333380401273,
-            "n_sel_rows": 64
+            "oos_sse": 5903.493065789208,
+            "n_sel_rows": 14
           },
           {
             "ridge": 0.0001,
             "bandlimit": "on",
-            "oos_sse": 27010.448135355877,
-            "n_sel_rows": 64
+            "oos_sse": 5900.259535986483,
+            "n_sel_rows": 14
           },
           {
             "ridge": 0.01,
             "bandlimit": "on",
-            "oos_sse": 26583.799162322677,
-            "n_sel_rows": 64
+            "oos_sse": 5807.031758358014,
+            "n_sel_rows": 14
           },
           {
             "ridge": 0.1,
             "bandlimit": "on",
-            "oos_sse": 23210.491323626007,
-            "n_sel_rows": 64
+            "oos_sse": 5069.864865764676,
+            "n_sel_rows": 14
           },
           {
             "ridge": 0.0,
             "bandlimit": "off",
-            "oos_sse": 27026.27879215485,
-            "n_sel_rows": 64
+            "oos_sse": 5903.7043202167715,
+            "n_sel_rows": 14
           },
           {
             "ridge": 1e-10,
             "bandlimit": "off",
-            "oos_sse": 27026.278878168734,
-            "n_sel_rows": 64
+            "oos_sse": 5903.704347441299,
+            "n_sel_rows": 14
           },
           {
             "ridge": 3.162e-10,
             "bandlimit": "off",
-            "oos_sse": 27026.278452379465,
-            "n_sel_rows": 64
+            "oos_sse": 5903.704251532986,
+            "n_sel_rows": 14
           },
           {
             "ridge": 1e-09,
             "bandlimit": "off",
-            "oos_sse": 27026.27351035164,
-            "n_sel_rows": 64
+            "oos_sse": 5903.703180739526,
+            "n_sel_rows": 14
           },
           {
             "ridge": 1e-08,
             "bandlimit": "off",
-            "oos_sse": 27026.185573834424,
-            "n_sel_rows": 64
+            "oos_sse": 5903.6842165080525,
+            "n_sel_rows": 14
           },
           {
             "ridge": 1e-07,
             "bandlimit": "off",
-            "oos_sse": 27025.30114243432,
-            "n_sel_rows": 64
+            "oos_sse": 5903.493591135475,
+            "n_sel_rows": 14
           },
           {
             "ridge": 1e-06,
             "bandlimit": "off",
-            "oos_sse": 27019.96924411348,
-            "n_sel_rows": 64
+            "oos_sse": 5902.343878841096,
+            "n_sel_rows": 14
           },
           {
             "ridge": 0.0001,
             "bandlimit": "off",
-            "oos_sse": 27007.86499158622,
-            "n_sel_rows": 64
+            "oos_sse": 5899.7049498815395,
+            "n_sel_rows": 14
           },
           {
             "ridge": 0.01,
             "bandlimit": "off",
-            "oos_sse": 26583.746935791747,
-            "n_sel_rows": 64
+            "oos_sse": 5807.020534836618,
+            "n_sel_rows": 14
           },
           {
             "ridge": 0.1,
             "bandlimit": "off",
-            "oos_sse": 23210.486051197255,
-            "n_sel_rows": 64
+            "oos_sse": 5069.863732699989,
+            "n_sel_rows": 14
           }
         ],
         "d2_comparand_real_lf": {
           "selected_ridge": 1e-06,
           "selected_bandlimit": "off",
           "selected_k_cut": null,
-          "selected_oos_sse": 777.3020322854524,
+          "selected_oos_sse": 188.93021278445588,
           "select_on": "real_lf",
-          "criterion": "exactly out-of-sample SSE of LF_sel + T*LF_sel vs HF on the selection rows; T is always FITTED on REAL LF (role (a) frozen sub-component) -- only the two hyperparameters are selected here",
+          "criterion": "out-of-sample SSE of LF_sel + T*LF_sel vs HF on the selection rows; T is always FITTED on REAL LF (role (a) frozen sub-component) -- only the two hyperparameters are selected here. Out of sample for the TRANSFER fit by fold construction, and (when `emu_fit_rows` is supplied) for the EMULATOR by the enforced tripwire below -- the F1 repair",
+          "emulator_disjointness_enforced": false,
+          "n_sel_rows": 14,
           "n_sel_folds": 1,
           "ridge_grid": [
             0.0,
@@ -7106,10 +7730,10 @@
           21.745038890829836,
           21.745038890829836,
           21.745038890829836,
-          18.186075933819325,
+          13.443286892852655,
           21.745038890829836
         ],
-        "mean": 21.033246299427734
+        "mean": 20.0846884912344
       },
       "R1b_degraded": {
         "legs": [
@@ -7126,10 +7750,10 @@
           0.13284148725102923,
           0.13284148725102923,
           0.13284148725102923,
-          0.2441782100286642,
+          0.489747903916816,
           0.13284148725102923
         ],
-        "mean": 0.15510883180655624
+        "mean": 0.20422277058418659
       },
       "R2b_copylf": {
         "legs": [
@@ -7145,39 +7769,39 @@
     "statistics": {
       "phi_ceil": {
         "n": 5,
-        "min": 0.9715824791159181,
+        "min": 0.9430030169937864,
         "max": 0.9845398746358839,
-        "mean": 0.9819483955318906
+        "mean": 0.9762325031074643
       },
       "phi_real": {
         "n": 5,
         "min": -1.5306930406803656,
-        "max": -1.1165000455533742,
-        "mean": -1.4478544416549675
+        "max": -0.564533076000099,
+        "mean": -1.3374610477443123
       },
       "rho": {
         "n": 5,
         "min": -1.5547293513596567,
-        "max": -1.1491562163300046,
-        "mean": -1.4736147243537263
+        "max": -0.598654580978736,
+        "mean": -1.3635143972834727
       },
       "E_est": {
         "n": 5,
         "min": 0.13284148725102923,
-        "max": 0.2441782100286642,
-        "mean": 0.15510883180655624
+        "max": 0.489747903916816,
+        "mean": 0.20422277058418659
       },
       "E_hall": {
         "n": 5,
-        "min": 17.94189772379066,
+        "min": 12.953538988935838,
         "max": 21.612197403578808,
-        "mean": 20.87813746762118
+        "mean": 19.880465720650214
       },
       "E_hall_fraction": {
         "n": 5,
-        "min": 0.9865733426541685,
+        "min": 0.9635693333170477,
         "max": 0.9938909519583775,
-        "mean": 0.9924274300975358
+        "mean": 0.9878266282301116
       }
     },
     "film_denominator": {
@@ -7218,7 +7842,7 @@
       },
       "C2_ceiling_existence": {
         "statistic": "max/min over legs of phi_ceil vs tau_phi",
-        "min_over_legs": 0.9715824791159181,
+        "min_over_legs": 0.9430030169937864,
         "max_over_legs": 0.9845398746358839,
         "n_legs_with_value": 5,
         "tau_phi": null,
@@ -7227,7 +7851,7 @@
           0.9845398746358839,
           0.9845398746358839,
           0.9845398746358839,
-          0.9715824791159181,
+          0.9430030169937864,
           0.9845398746358839
         ],
         "rule": "DROP if max phi_ceil < tau_phi; KEEP-CANDIDATE if min phi_ceil > tau_phi; else INDETERMINATE (card C2 / prior-art D3)"
@@ -7255,7 +7879,7 @@
           {
             "leg_id": "kfold5_3",
             "rank_agrees": true,
-            "abs_log_ratio_gap": 0.05958260499556932,
+            "abs_log_ratio_gap": 0.06313063846974618,
             "within_tolerance": true
           },
           {
@@ -7266,7 +7890,7 @@
           }
         ],
         "all_ranks_agree": true,
-        "max_abs_log_ratio_gap": 0.05958260499556932,
+        "max_abs_log_ratio_gap": 0.06313063846974618,
         "passes": true,
         "knob": "1",
         "note": "a cell failing C3 ships its ceiling REPORT-ONLY: the failure voids the INSTRUMENT (does the held-out-train ceiling transfer to test?) and not the hypothesis, and is reported as such (card `expected_falsification` secondary falsifier).",
@@ -7280,55 +7904,287 @@
             "nn_condition": {
               "floor_nrmse": 1.3113524474983616,
               "model_minus_floor_nrmse": 7.477567945064994,
-              "model_beats_floor": false
+              "model_beats_floor": false,
+              "g5_band": {
+                "matched_n": {
+                  "n": 1,
+                  "min": 1.610042439405905,
+                  "max": 1.610042439405905,
+                  "median": 1.610042439405905,
+                  "mean": 1.610042439405905,
+                  "sd": 0.0
+                },
+                "certified_full_fit_nrmse": 1.3113524474983616,
+                "certified_full_fit_source": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/state/anchors_repaired/floors.json",
+                "sd_nrmse": null,
+                "systematic_correction_nrmse": 0.2986899919075434,
+                "matched_beats_full_fit": false,
+                "_single_draw_note": "one matched fit set exists at this shape (it IS T), so `sd_nrmse` is undefined within a seed; the band is the across-seed spread of this value and is assembled by the analyzer from the three seed files."
+              }
             },
             "train_mean": {
               "floor_nrmse": 4.369072694559929,
               "model_minus_floor_nrmse": 4.4198476980034265,
-              "model_beats_floor": false
+              "model_beats_floor": false,
+              "g5_band": {
+                "matched_n": {
+                  "n": 1,
+                  "min": 5.425803194281165,
+                  "max": 5.425803194281165,
+                  "median": 5.425803194281165,
+                  "mean": 5.425803194281165,
+                  "sd": 0.0
+                },
+                "certified_full_fit_nrmse": 4.369072694559929,
+                "certified_full_fit_source": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/state/anchors_repaired/floors.json",
+                "sd_nrmse": null,
+                "systematic_correction_nrmse": 1.056730499721236,
+                "matched_beats_full_fit": false,
+                "_single_draw_note": "one matched fit set exists at this shape (it IS T), so `sd_nrmse` is undefined within a seed; the band is the across-seed spread of this value and is assembled by the analyzer from the three seed files."
+              }
             },
             "zero": {
               "floor_nrmse": 1.0,
               "model_minus_floor_nrmse": 7.788920392563355,
-              "model_beats_floor": false
+              "model_beats_floor": false,
+              "g5_band": {
+                "matched_n": {
+                  "n": 1,
+                  "min": 1.0,
+                  "max": 1.0,
+                  "median": 1.0,
+                  "mean": 1.0,
+                  "sd": 0.0
+                },
+                "certified_full_fit_nrmse": 1.0,
+                "certified_full_fit_source": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/state/anchors_repaired/floors.json",
+                "sd_nrmse": null,
+                "systematic_correction_nrmse": 0.0,
+                "matched_beats_full_fit": false,
+                "_single_draw_note": "one matched fit set exists at this shape (it IS T), so `sd_nrmse` is undefined within a seed; the band is the across-seed spread of this value and is assembled by the analyzer from the three seed files."
+              }
             }
           },
           "R1_predicted": {
             "nn_condition": {
               "floor_nrmse": 1.3113524474983616,
-              "model_minus_floor_nrmse": 18.97726557399823,
-              "model_beats_floor": false
+              "model_minus_floor_nrmse": 18.05397085844173,
+              "model_beats_floor": false,
+              "g5_band": {
+                "matched_n": {
+                  "n": 1,
+                  "min": 1.610042439405905,
+                  "max": 1.610042439405905,
+                  "median": 1.610042439405905,
+                  "mean": 1.610042439405905,
+                  "sd": 0.0
+                },
+                "certified_full_fit_nrmse": 1.3113524474983616,
+                "certified_full_fit_source": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/state/anchors_repaired/floors.json",
+                "sd_nrmse": null,
+                "systematic_correction_nrmse": 0.2986899919075434,
+                "matched_beats_full_fit": false,
+                "_single_draw_note": "one matched fit set exists at this shape (it IS T), so `sd_nrmse` is undefined within a seed; the band is the across-seed spread of this value and is assembled by the analyzer from the three seed files."
+              }
             },
             "train_mean": {
               "floor_nrmse": 4.369072694559929,
-              "model_minus_floor_nrmse": 15.919545326936664,
-              "model_beats_floor": false
+              "model_minus_floor_nrmse": 14.996250611380162,
+              "model_beats_floor": false,
+              "g5_band": {
+                "matched_n": {
+                  "n": 1,
+                  "min": 5.425803194281165,
+                  "max": 5.425803194281165,
+                  "median": 5.425803194281165,
+                  "mean": 5.425803194281165,
+                  "sd": 0.0
+                },
+                "certified_full_fit_nrmse": 4.369072694559929,
+                "certified_full_fit_source": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/state/anchors_repaired/floors.json",
+                "sd_nrmse": null,
+                "systematic_correction_nrmse": 1.056730499721236,
+                "matched_beats_full_fit": false,
+                "_single_draw_note": "one matched fit set exists at this shape (it IS T), so `sd_nrmse` is undefined within a seed; the band is the across-seed spread of this value and is assembled by the analyzer from the three seed files."
+              }
             },
             "zero": {
               "floor_nrmse": 1.0,
-              "model_minus_floor_nrmse": 19.288618021496593,
-              "model_beats_floor": false
+              "model_minus_floor_nrmse": 18.36532330594009,
+              "model_beats_floor": false,
+              "g5_band": {
+                "matched_n": {
+                  "n": 1,
+                  "min": 1.0,
+                  "max": 1.0,
+                  "median": 1.0,
+                  "mean": 1.0,
+                  "sd": 0.0
+                },
+                "certified_full_fit_nrmse": 1.0,
+                "certified_full_fit_source": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/state/anchors_repaired/floors.json",
+                "sd_nrmse": null,
+                "systematic_correction_nrmse": 0.0,
+                "matched_beats_full_fit": false,
+                "_single_draw_note": "one matched fit set exists at this shape (it IS T), so `sd_nrmse` is undefined within a seed; the band is the across-seed spread of this value and is assembled by the analyzer from the three seed files."
+              }
             }
           },
           "R1b_degraded": {
             "nn_condition": {
               "floor_nrmse": 1.3113524474983616,
               "model_minus_floor_nrmse": 19.667974467503786,
-              "model_beats_floor": false
+              "model_beats_floor": false,
+              "g5_band": {
+                "matched_n": {
+                  "n": 1,
+                  "min": 1.610042439405905,
+                  "max": 1.610042439405905,
+                  "median": 1.610042439405905,
+                  "mean": 1.610042439405905,
+                  "sd": 0.0
+                },
+                "certified_full_fit_nrmse": 1.3113524474983616,
+                "certified_full_fit_source": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/state/anchors_repaired/floors.json",
+                "sd_nrmse": null,
+                "systematic_correction_nrmse": 0.2986899919075434,
+                "matched_beats_full_fit": false,
+                "_single_draw_note": "one matched fit set exists at this shape (it IS T), so `sd_nrmse` is undefined within a seed; the band is the across-seed spread of this value and is assembled by the analyzer from the three seed files."
+              }
             },
             "train_mean": {
               "floor_nrmse": 4.369072694559929,
               "model_minus_floor_nrmse": 16.61025422044222,
-              "model_beats_floor": false
+              "model_beats_floor": false,
+              "g5_band": {
+                "matched_n": {
+                  "n": 1,
+                  "min": 5.425803194281165,
+                  "max": 5.425803194281165,
+                  "median": 5.425803194281165,
+                  "mean": 5.425803194281165,
+                  "sd": 0.0
+                },
+                "certified_full_fit_nrmse": 4.369072694559929,
+                "certified_full_fit_source": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/state/anchors_repaired/floors.json",
+                "sd_nrmse": null,
+                "systematic_correction_nrmse": 1.056730499721236,
+                "matched_beats_full_fit": false,
+                "_single_draw_note": "one matched fit set exists at this shape (it IS T), so `sd_nrmse` is undefined within a seed; the band is the across-seed spread of this value and is assembled by the analyzer from the three seed files."
+              }
             },
             "zero": {
               "floor_nrmse": 1.0,
               "model_minus_floor_nrmse": 19.979326915002147,
-              "model_beats_floor": false
+              "model_beats_floor": false,
+              "g5_band": {
+                "matched_n": {
+                  "n": 1,
+                  "min": 1.0,
+                  "max": 1.0,
+                  "median": 1.0,
+                  "mean": 1.0,
+                  "sd": 0.0
+                },
+                "certified_full_fit_nrmse": 1.0,
+                "certified_full_fit_source": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/state/anchors_repaired/floors.json",
+                "sd_nrmse": null,
+                "systematic_correction_nrmse": 0.0,
+                "matched_beats_full_fit": false,
+                "_single_draw_note": "one matched fit set exists at this shape (it IS T), so `sd_nrmse` is undefined within a seed; the band is the across-seed spread of this value and is assembled by the analyzer from the three seed files."
+              }
             }
           }
         },
-        "g5_band_disclosure": "every nn_condition-priced margin carries the arm's fit-set noise band (G5 adoption, batch-3 clause rule 5)",
+        "g5_band_disclosure": {
+          "knob": "R3S2B3_G5_BAND_DISCLOSURE",
+          "matched_n_knob": "sharp:320,ifc:C5_4_loo",
+          "dataset": "ext__helmholtz_2d",
+          "cell_shape": "sharp",
+          "matched_n_spec": "320",
+          "band_definition": "the arm's own fit-set noise at the MATCHED fit-set size: for the ifc shape the exact sd over the enumerated C(5,4) fold population, for the sharp shape the single matched fit set T (|T| = 320) whose across-seed band the analyzer assembles. `systematic_correction_nrmse` = matched mean - certified full-fit value, i.e. the part of the seam that is a BIAS rather than noise.",
+          "usage": "quote `band.sd_nrmse` beside every `C4.by_rung[*][arm].model_minus_floor_nrmse` priced against that arm: a margin inside the band is not a difference. `model_beats_floor` is deliberately left reading the CERTIFIED full-fit floor -- the registration predicate is not re-defined by this disclosure.",
+          "arms": {
+            "nn_condition": {
+              "matched_n": {
+                "n": 1,
+                "min": 1.610042439405905,
+                "max": 1.610042439405905,
+                "median": 1.610042439405905,
+                "mean": 1.610042439405905,
+                "sd": 0.0
+              },
+              "certified_full_fit_nrmse": 1.3113524474983616,
+              "certified_full_fit_source": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/state/anchors_repaired/floors.json",
+              "sd_nrmse": null,
+              "systematic_correction_nrmse": 0.2986899919075434,
+              "matched_beats_full_fit": false,
+              "_single_draw_note": "one matched fit set exists at this shape (it IS T), so `sd_nrmse` is undefined within a seed; the band is the across-seed spread of this value and is assembled by the analyzer from the three seed files."
+            },
+            "train_mean": {
+              "matched_n": {
+                "n": 1,
+                "min": 5.425803194281165,
+                "max": 5.425803194281165,
+                "median": 5.425803194281165,
+                "mean": 5.425803194281165,
+                "sd": 0.0
+              },
+              "certified_full_fit_nrmse": 4.369072694559929,
+              "certified_full_fit_source": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/state/anchors_repaired/floors.json",
+              "sd_nrmse": null,
+              "systematic_correction_nrmse": 1.056730499721236,
+              "matched_beats_full_fit": false,
+              "_single_draw_note": "one matched fit set exists at this shape (it IS T), so `sd_nrmse` is undefined within a seed; the band is the across-seed spread of this value and is assembled by the analyzer from the three seed files."
+            },
+            "zero": {
+              "matched_n": {
+                "n": 1,
+                "min": 1.0,
+                "max": 1.0,
+                "median": 1.0,
+                "mean": 1.0,
+                "sd": 0.0
+              },
+              "certified_full_fit_nrmse": 1.0,
+              "certified_full_fit_source": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/state/anchors_repaired/floors.json",
+              "sd_nrmse": null,
+              "systematic_correction_nrmse": 0.0,
+              "matched_beats_full_fit": false,
+              "_single_draw_note": "one matched fit set exists at this shape (it IS T), so `sd_nrmse` is undefined within a seed; the band is the across-seed spread of this value and is assembled by the analyzer from the three seed files."
+            },
+            "affine_on_hf_train": {
+              "matched_n": {
+                "n": 1,
+                "min": 10.991263724335667,
+                "max": 10.991263724335667,
+                "median": 10.991263724335667,
+                "mean": 10.991263724335667,
+                "sd": 0.0
+              },
+              "certified_full_fit_nrmse": null,
+              "certified_full_fit_source": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/state/anchors_repaired/floors.json",
+              "sd_nrmse": null,
+              "systematic_correction_nrmse": null,
+              "matched_beats_full_fit": null,
+              "_single_draw_note": "one matched fit set exists at this shape (it IS T), so `sd_nrmse` is undefined within a seed; the band is the across-seed spread of this value and is assembled by the analyzer from the three seed files."
+            }
+          },
+          "applicable": true,
+          "population": "the HOT plan's T (|T| = 320), one matched fit set",
+          "n_matched_fit_sets": 1,
+          "matched_fit_rows_head": [
+            0,
+            1,
+            4,
+            6,
+            7,
+            8,
+            9,
+            10
+          ]
+        },
+        "g5_band_reading": "every margin in `by_rung` carries `g5_band.sd_nrmse` and, where it can be formed, `margin_over_g5_band_sd`; a margin inside the band is not a difference (G5 adoption, batch-3 clause rule 5). `model_beats_floor` still reads the CERTIFIED full-fit floor -- the band informs the margin, it does not move the gate.",
         "matched_n_knob": "R3S2B3_FLOOR_MATCHED_N"
       }
     },
@@ -7358,7 +8214,7 @@
     "falsifier": {
       "rho_min_over_legs": -1.5547293513596567,
       "n_legs_with_rho": 5,
-      "phi_ceil_min_over_legs": 0.9715824791159181,
+      "phi_ceil_min_over_legs": 0.9430030169937864,
       "tau_phi": null,
       "cell_falsifies": false,
       "rule": "card `expected_falsification`: fires on >= 2 REGISTERED cells with min-over-legs rho > 0.5 while phi_ceil > tau_phi. This is the PER-CELL leg; the >= 2 count is panel-side."
@@ -7386,7 +8242,7 @@
         {
           "leg_id": "kfold5_3",
           "rank_agrees": true,
-          "abs_log_ratio_gap": 0.05958260499556932,
+          "abs_log_ratio_gap": 0.06313063846974618,
           "within_tolerance": true
         },
         {
@@ -7397,7 +8253,7 @@
         }
       ],
       "all_ranks_agree": true,
-      "max_abs_log_ratio_gap": 0.05958260499556932,
+      "max_abs_log_ratio_gap": 0.06313063846974618,
       "passes": true,
       "knob": "1",
       "note": "a cell failing C3 ships its ceiling REPORT-ONLY: the failure voids the INSTRUMENT (does the held-out-train ceiling transfer to test?) and not the hypothesis, and is reported as such (card `expected_falsification` secondary falsifier)."
@@ -7405,10 +8261,10 @@
     "floor_arms": {
       "_source": {
         "floors_file": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/state/anchors_repaired/floors.json",
-        "floors_sha256": "2868e47b4d12380c7d60ef17c93b4bb28413c28b854289475fac4d0d5947fff5",
+        "floors_sha256": "049dfb680f96f69dc55cca1fe462443094c721d0a922b98628eb33de226e5d3c",
         "certified_utc": "2026-08-04T05:12:04Z",
         "nrmse_def_hash": "d3d0ade9191c13bacc40702f3eb26ad290e01641cacee22a1d2233b74c035850",
-        "copylf_def_hash": "9753ff24e856f595748492dec6cb6c215d748f97e8ec4a679b651f8846da907a",
+        "copylf_def_hash": "9794cc89f1647861a6188803361bdfbb571991c91f206685824a80a900ba09a7",
         "split": "test",
         "anchors_file": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/state/anchors/launch_anchors.json",
         "anchors_sha256": "e2bd187d737689e62fe5ca15f952e7e7e580e984920a038e744c0b43b89ae6a8"
@@ -7454,63 +8310,299 @@
         "nn_condition": {
           "floor_nrmse": 1.3113524474983616,
           "model_minus_floor_nrmse": 7.477567945064994,
-          "model_beats_floor": false
+          "model_beats_floor": false,
+          "g5_band": {
+            "matched_n": {
+              "n": 1,
+              "min": 1.610042439405905,
+              "max": 1.610042439405905,
+              "median": 1.610042439405905,
+              "mean": 1.610042439405905,
+              "sd": 0.0
+            },
+            "certified_full_fit_nrmse": 1.3113524474983616,
+            "certified_full_fit_source": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/state/anchors_repaired/floors.json",
+            "sd_nrmse": null,
+            "systematic_correction_nrmse": 0.2986899919075434,
+            "matched_beats_full_fit": false,
+            "_single_draw_note": "one matched fit set exists at this shape (it IS T), so `sd_nrmse` is undefined within a seed; the band is the across-seed spread of this value and is assembled by the analyzer from the three seed files."
+          }
         },
         "train_mean": {
           "floor_nrmse": 4.369072694559929,
           "model_minus_floor_nrmse": 4.4198476980034265,
-          "model_beats_floor": false
+          "model_beats_floor": false,
+          "g5_band": {
+            "matched_n": {
+              "n": 1,
+              "min": 5.425803194281165,
+              "max": 5.425803194281165,
+              "median": 5.425803194281165,
+              "mean": 5.425803194281165,
+              "sd": 0.0
+            },
+            "certified_full_fit_nrmse": 4.369072694559929,
+            "certified_full_fit_source": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/state/anchors_repaired/floors.json",
+            "sd_nrmse": null,
+            "systematic_correction_nrmse": 1.056730499721236,
+            "matched_beats_full_fit": false,
+            "_single_draw_note": "one matched fit set exists at this shape (it IS T), so `sd_nrmse` is undefined within a seed; the band is the across-seed spread of this value and is assembled by the analyzer from the three seed files."
+          }
         },
         "zero": {
           "floor_nrmse": 1.0,
           "model_minus_floor_nrmse": 7.788920392563355,
-          "model_beats_floor": false
+          "model_beats_floor": false,
+          "g5_band": {
+            "matched_n": {
+              "n": 1,
+              "min": 1.0,
+              "max": 1.0,
+              "median": 1.0,
+              "mean": 1.0,
+              "sd": 0.0
+            },
+            "certified_full_fit_nrmse": 1.0,
+            "certified_full_fit_source": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/state/anchors_repaired/floors.json",
+            "sd_nrmse": null,
+            "systematic_correction_nrmse": 0.0,
+            "matched_beats_full_fit": false,
+            "_single_draw_note": "one matched fit set exists at this shape (it IS T), so `sd_nrmse` is undefined within a seed; the band is the across-seed spread of this value and is assembled by the analyzer from the three seed files."
+          }
         }
       },
       "R1_predicted": {
         "nn_condition": {
           "floor_nrmse": 1.3113524474983616,
-          "model_minus_floor_nrmse": 18.97726557399823,
-          "model_beats_floor": false
+          "model_minus_floor_nrmse": 18.05397085844173,
+          "model_beats_floor": false,
+          "g5_band": {
+            "matched_n": {
+              "n": 1,
+              "min": 1.610042439405905,
+              "max": 1.610042439405905,
+              "median": 1.610042439405905,
+              "mean": 1.610042439405905,
+              "sd": 0.0
+            },
+            "certified_full_fit_nrmse": 1.3113524474983616,
+            "certified_full_fit_source": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/state/anchors_repaired/floors.json",
+            "sd_nrmse": null,
+            "systematic_correction_nrmse": 0.2986899919075434,
+            "matched_beats_full_fit": false,
+            "_single_draw_note": "one matched fit set exists at this shape (it IS T), so `sd_nrmse` is undefined within a seed; the band is the across-seed spread of this value and is assembled by the analyzer from the three seed files."
+          }
         },
         "train_mean": {
           "floor_nrmse": 4.369072694559929,
-          "model_minus_floor_nrmse": 15.919545326936664,
-          "model_beats_floor": false
+          "model_minus_floor_nrmse": 14.996250611380162,
+          "model_beats_floor": false,
+          "g5_band": {
+            "matched_n": {
+              "n": 1,
+              "min": 5.425803194281165,
+              "max": 5.425803194281165,
+              "median": 5.425803194281165,
+              "mean": 5.425803194281165,
+              "sd": 0.0
+            },
+            "certified_full_fit_nrmse": 4.369072694559929,
+            "certified_full_fit_source": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/state/anchors_repaired/floors.json",
+            "sd_nrmse": null,
+            "systematic_correction_nrmse": 1.056730499721236,
+            "matched_beats_full_fit": false,
+            "_single_draw_note": "one matched fit set exists at this shape (it IS T), so `sd_nrmse` is undefined within a seed; the band is the across-seed spread of this value and is assembled by the analyzer from the three seed files."
+          }
         },
         "zero": {
           "floor_nrmse": 1.0,
-          "model_minus_floor_nrmse": 19.288618021496593,
-          "model_beats_floor": false
+          "model_minus_floor_nrmse": 18.36532330594009,
+          "model_beats_floor": false,
+          "g5_band": {
+            "matched_n": {
+              "n": 1,
+              "min": 1.0,
+              "max": 1.0,
+              "median": 1.0,
+              "mean": 1.0,
+              "sd": 0.0
+            },
+            "certified_full_fit_nrmse": 1.0,
+            "certified_full_fit_source": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/state/anchors_repaired/floors.json",
+            "sd_nrmse": null,
+            "systematic_correction_nrmse": 0.0,
+            "matched_beats_full_fit": false,
+            "_single_draw_note": "one matched fit set exists at this shape (it IS T), so `sd_nrmse` is undefined within a seed; the band is the across-seed spread of this value and is assembled by the analyzer from the three seed files."
+          }
         }
       },
       "R1b_degraded": {
         "nn_condition": {
           "floor_nrmse": 1.3113524474983616,
           "model_minus_floor_nrmse": 19.667974467503786,
-          "model_beats_floor": false
+          "model_beats_floor": false,
+          "g5_band": {
+            "matched_n": {
+              "n": 1,
+              "min": 1.610042439405905,
+              "max": 1.610042439405905,
+              "median": 1.610042439405905,
+              "mean": 1.610042439405905,
+              "sd": 0.0
+            },
+            "certified_full_fit_nrmse": 1.3113524474983616,
+            "certified_full_fit_source": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/state/anchors_repaired/floors.json",
+            "sd_nrmse": null,
+            "systematic_correction_nrmse": 0.2986899919075434,
+            "matched_beats_full_fit": false,
+            "_single_draw_note": "one matched fit set exists at this shape (it IS T), so `sd_nrmse` is undefined within a seed; the band is the across-seed spread of this value and is assembled by the analyzer from the three seed files."
+          }
         },
         "train_mean": {
           "floor_nrmse": 4.369072694559929,
           "model_minus_floor_nrmse": 16.61025422044222,
-          "model_beats_floor": false
+          "model_beats_floor": false,
+          "g5_band": {
+            "matched_n": {
+              "n": 1,
+              "min": 5.425803194281165,
+              "max": 5.425803194281165,
+              "median": 5.425803194281165,
+              "mean": 5.425803194281165,
+              "sd": 0.0
+            },
+            "certified_full_fit_nrmse": 4.369072694559929,
+            "certified_full_fit_source": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/state/anchors_repaired/floors.json",
+            "sd_nrmse": null,
+            "systematic_correction_nrmse": 1.056730499721236,
+            "matched_beats_full_fit": false,
+            "_single_draw_note": "one matched fit set exists at this shape (it IS T), so `sd_nrmse` is undefined within a seed; the band is the across-seed spread of this value and is assembled by the analyzer from the three seed files."
+          }
         },
         "zero": {
           "floor_nrmse": 1.0,
           "model_minus_floor_nrmse": 19.979326915002147,
-          "model_beats_floor": false
+          "model_beats_floor": false,
+          "g5_band": {
+            "matched_n": {
+              "n": 1,
+              "min": 1.0,
+              "max": 1.0,
+              "median": 1.0,
+              "mean": 1.0,
+              "sd": 0.0
+            },
+            "certified_full_fit_nrmse": 1.0,
+            "certified_full_fit_source": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/state/anchors_repaired/floors.json",
+            "sd_nrmse": null,
+            "systematic_correction_nrmse": 0.0,
+            "matched_beats_full_fit": false,
+            "_single_draw_note": "one matched fit set exists at this shape (it IS T), so `sd_nrmse` is undefined within a seed; the band is the across-seed spread of this value and is assembled by the analyzer from the three seed files."
+          }
         }
       }
     },
+    "floor_matched_disclosure_legs": {
+      "applicable": false,
+      "reason": "protocol seeded_perm_fit320_heldout80 declares no disclosure legs (R3S2B3_IFC_LOO_DISCLOSURE is scoped to the enumerate_C5_3 cells)"
+    },
+    "floor_matched_n_g5_band": {
+      "knob": "R3S2B3_G5_BAND_DISCLOSURE",
+      "matched_n_knob": "sharp:320,ifc:C5_4_loo",
+      "dataset": "ext__helmholtz_2d",
+      "cell_shape": "sharp",
+      "matched_n_spec": "320",
+      "band_definition": "the arm's own fit-set noise at the MATCHED fit-set size: for the ifc shape the exact sd over the enumerated C(5,4) fold population, for the sharp shape the single matched fit set T (|T| = 320) whose across-seed band the analyzer assembles. `systematic_correction_nrmse` = matched mean - certified full-fit value, i.e. the part of the seam that is a BIAS rather than noise.",
+      "usage": "quote `band.sd_nrmse` beside every `C4.by_rung[*][arm].model_minus_floor_nrmse` priced against that arm: a margin inside the band is not a difference. `model_beats_floor` is deliberately left reading the CERTIFIED full-fit floor -- the registration predicate is not re-defined by this disclosure.",
+      "arms": {
+        "nn_condition": {
+          "matched_n": {
+            "n": 1,
+            "min": 1.610042439405905,
+            "max": 1.610042439405905,
+            "median": 1.610042439405905,
+            "mean": 1.610042439405905,
+            "sd": 0.0
+          },
+          "certified_full_fit_nrmse": 1.3113524474983616,
+          "certified_full_fit_source": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/state/anchors_repaired/floors.json",
+          "sd_nrmse": null,
+          "systematic_correction_nrmse": 0.2986899919075434,
+          "matched_beats_full_fit": false,
+          "_single_draw_note": "one matched fit set exists at this shape (it IS T), so `sd_nrmse` is undefined within a seed; the band is the across-seed spread of this value and is assembled by the analyzer from the three seed files."
+        },
+        "train_mean": {
+          "matched_n": {
+            "n": 1,
+            "min": 5.425803194281165,
+            "max": 5.425803194281165,
+            "median": 5.425803194281165,
+            "mean": 5.425803194281165,
+            "sd": 0.0
+          },
+          "certified_full_fit_nrmse": 4.369072694559929,
+          "certified_full_fit_source": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/state/anchors_repaired/floors.json",
+          "sd_nrmse": null,
+          "systematic_correction_nrmse": 1.056730499721236,
+          "matched_beats_full_fit": false,
+          "_single_draw_note": "one matched fit set exists at this shape (it IS T), so `sd_nrmse` is undefined within a seed; the band is the across-seed spread of this value and is assembled by the analyzer from the three seed files."
+        },
+        "zero": {
+          "matched_n": {
+            "n": 1,
+            "min": 1.0,
+            "max": 1.0,
+            "median": 1.0,
+            "mean": 1.0,
+            "sd": 0.0
+          },
+          "certified_full_fit_nrmse": 1.0,
+          "certified_full_fit_source": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/state/anchors_repaired/floors.json",
+          "sd_nrmse": null,
+          "systematic_correction_nrmse": 0.0,
+          "matched_beats_full_fit": false,
+          "_single_draw_note": "one matched fit set exists at this shape (it IS T), so `sd_nrmse` is undefined within a seed; the band is the across-seed spread of this value and is assembled by the analyzer from the three seed files."
+        },
+        "affine_on_hf_train": {
+          "matched_n": {
+            "n": 1,
+            "min": 10.991263724335667,
+            "max": 10.991263724335667,
+            "median": 10.991263724335667,
+            "mean": 10.991263724335667,
+            "sd": 0.0
+          },
+          "certified_full_fit_nrmse": null,
+          "certified_full_fit_source": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/state/anchors_repaired/floors.json",
+          "sd_nrmse": null,
+          "systematic_correction_nrmse": null,
+          "matched_beats_full_fit": null,
+          "_single_draw_note": "one matched fit set exists at this shape (it IS T), so `sd_nrmse` is undefined within a seed; the band is the across-seed spread of this value and is assembled by the analyzer from the three seed files."
+        }
+      },
+      "applicable": true,
+      "population": "the HOT plan's T (|T| = 320), one matched fit set",
+      "n_matched_fit_sets": 1,
+      "matched_fit_rows_head": [
+        0,
+        1,
+        4,
+        6,
+        7,
+        8,
+        9,
+        10
+      ]
+    },
     "mean_test_nrmse_by_deployable_rung": {
       "R0_absent": 8.788920392563355,
-      "R1_predicted": 20.288618021496593,
+      "R1_predicted": 19.36532330594009,
       "R1b_degraded": 20.979326915002147
     },
     "anchor_replication_check": {
       "target_stream_anchor_panel_geomean_skill": "10.0853",
       "tolerance_panel_seed_mce": 0.5083,
-      "R1_test_nrmse_this_cell": 20.288618021496593,
+      "R1_test_nrmse_this_cell": 19.36532330594009,
       "note": "10.0853 is a PANEL GEOMEAN IN SKILL UNITS; this cell publishes the raw R1 test nRMSE the analyzer aggregates. The 320/400 fit-set reduction is disclosed in hot_split_plan."
     },
     "pairing": {
@@ -7634,10 +8726,10 @@
               21.745038890829836,
               21.745038890829836,
               21.745038890829836,
-              18.186075933819325,
+              13.443286892852655,
               21.745038890829836
             ],
-            "mean": 21.033246299427734
+            "mean": 20.0846884912344
           },
           "R1b_degraded": {
             "legs": [
@@ -7654,10 +8746,10 @@
               0.13284148725102923,
               0.13284148725102923,
               0.13284148725102923,
-              0.2441782100286642,
+              0.489747903916816,
               0.13284148725102923
             ],
-            "mean": 0.15510883180655624
+            "mean": 0.20422277058418659
           },
           "R2b_copylf": {
             "legs": [
@@ -7673,39 +8765,39 @@
         "statistics": {
           "phi_ceil": {
             "n": 5,
-            "min": 0.9715824791159181,
+            "min": 0.9430030169937864,
             "max": 0.9845398746358839,
-            "mean": 0.9819483955318906
+            "mean": 0.9762325031074643
           },
           "phi_real": {
             "n": 5,
             "min": -1.5306930406803656,
-            "max": -1.1165000455533742,
-            "mean": -1.4478544416549675
+            "max": -0.564533076000099,
+            "mean": -1.3374610477443123
           },
           "rho": {
             "n": 5,
             "min": -1.5547293513596567,
-            "max": -1.1491562163300046,
-            "mean": -1.4736147243537263
+            "max": -0.598654580978736,
+            "mean": -1.3635143972834727
           },
           "E_est": {
             "n": 5,
             "min": 0.13284148725102923,
-            "max": 0.2441782100286642,
-            "mean": 0.15510883180655624
+            "max": 0.489747903916816,
+            "mean": 0.20422277058418659
           },
           "E_hall": {
             "n": 5,
-            "min": 17.94189772379066,
+            "min": 12.953538988935838,
             "max": 21.612197403578808,
-            "mean": 20.87813746762118
+            "mean": 19.880465720650214
           },
           "E_hall_fraction": {
             "n": 5,
-            "min": 0.9865733426541685,
+            "min": 0.9635693333170477,
             "max": 0.9938909519583775,
-            "mean": 0.9924274300975358
+            "mean": 0.9878266282301116
           }
         },
         "note": "B2's S2 sidecar promoted to the card's PRIMARY measurement, with the two rungs it lacked: a matched-budget no-LF denominator (R0) and a corrector-free degraded rung (R1b)."
@@ -7779,8 +8871,14 @@
         "note": "d2_select.select raises if any selection fold overlaps its own fit rows, so the criterion cannot silently become in-sample"
       },
       "V14_ckpt_data_hash_bind": {
-        "found": false,
+        "found": true,
+        "readable": true,
+        "bind_enabled": true,
+        "ckpt_data_sha256": "d6310bf57bb631ebda8d7d792313f6acb92374f7cb6944c8fb48985ec0f469dd",
+        "current_data_sha256": "d6310bf57bb631ebda8d7d792313f6acb92374f7cb6944c8fb48985ec0f469dd",
+        "ckpt_has_data_binding": true,
         "aborted": false,
+        "resumed_stage": "done",
         "data_sha256": "d6310bf57bb631ebda8d7d792313f6acb92374f7cb6944c8fb48985ec0f469dd",
         "knob": "1",
         "pass_": true

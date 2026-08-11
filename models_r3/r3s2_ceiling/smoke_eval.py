@@ -63,6 +63,7 @@ import os
 import random
 import sys
 import time
+from collections import Counter
 from pathlib import Path
 
 import numpy as np
@@ -118,6 +119,7 @@ import upsample as uplib                                                 # noqa:
 import probes as probelib                                                # noqa: E402
 import ic_synth as icsynth                                               # noqa: E402
 import floor_arms as floorlib                                            # noqa: E402
+import floor_matched_n as fmnlib                                         # noqa: E402
 import direct_head as directlib                                          # noqa: E402
 import hot_split as hotlib                                               # noqa: E402
 import ladder as ladderlib                                               # noqa: E402
@@ -1132,6 +1134,15 @@ def run(args, out_path: Path) -> dict:                      # noqa: C901, PLR091
         LFr_tr[plan["legs"][0]["fit_rows"]],
         (Y_tr - LFr_tr)[plan["legs"][0]["fit_rows"]], grid, ridge=0.0)
 
+    # How many legs share one neural-stage train-row set. The stages are cached
+    # by that key, so a leg's stages are shared iff its key is carried by more
+    # than one leg -- ALL FIVE sharp legs (they share T = 320) and NO ifc leg
+    # (every C(5,3) fold has its own T). The previous expression
+    # (`len(neural_cache) > 1 or not retrain_neural_stages`) reported the exact
+    # opposite on both cell shapes; code-review downstream note, no consumer.
+    leg_key_counts = Counter(tuple(int(v) for v in lg["train_rows"])
+                             for lg in plan["legs"])
+
     legs_out = []
     primary_test_pred = None
     for lg in plan["legs"]:
@@ -1143,19 +1154,39 @@ def run(args, out_path: Path) -> dict:                      # noqa: C901, PLR091
                                              stage, resume_ck)
             persist(stage + "_done", **neural_cache[key]["_states"])
         nn_stage = neural_cache[key]
-        shared = bool(len(neural_cache) > 1 or not lg["retrain_neural_stages"])
+        shared = bool(leg_key_counts[key] > 1)
 
         # --- the D2 selection: on the EMULATOR's held-out output ----------
-        sel = d2lib.select(LFr_tr, nn_stage["LFp_tr"], Y_tr, grid, lg["sel_folds"],
+        # F1 REPAIR (code review of 89c9fb3d; operator decision 2026-08-11
+        # "VAL_ROWS RESTRICTION"). `hot_split`'s folds are out of sample for the
+        # TRANSFER fit only; the emulator's fit slice is
+        # `range(N_lf) \ (heldout u val_rows)`, so an unrestricted fold hands the
+        # criterion IN-SAMPLE pseudo-LF on every row that is neither held out nor
+        # a val row (measured before the repair: 256/320 sharp, 10/30 ifc). The
+        # selection side is therefore intersected with the leg's OWN `val_rows`,
+        # which the emulator is forbidden to fit, and `d2_select.select` then
+        # REFUSES if anything is still inside `emu_fit`. The comparand runs on
+        # the identical restricted folds so the pair stays attributable.
+        sel_folds_used, restrict_rec = d2lib.restrict_folds_to_rows(
+            lg["sel_folds"], nn_stage["val_rows"])
+        if not sel_folds_used:
+            raise R3S2ContractError(
+                f"{name} leg {lg['leg_id']}: the F1 val-rows restriction leaves NO "
+                f"selection fold ({restrict_rec}). Refusing to fall back to the "
+                "unrestricted (emulator-in-sample) folds -- assert, never default.")
+        bandlimit_grid = [s.strip() for s in knobs["S6_LSI_BANDLIMIT_GRID"].split(",")]
+        sel = d2lib.select(LFr_tr, nn_stage["LFp_tr"], Y_tr, grid, sel_folds_used,
                            knobs["S6_LSI_RIDGE_GRID"], kcut_rec["k_cut"],
-                           bandlimit_grid=[s.strip() for s in
-                                           knobs["S6_LSI_BANDLIMIT_GRID"].split(",")],
-                           select_on="emulator_heldout_output")
-        comparand = d2lib.select(LFr_tr, nn_stage["LFp_tr"], Y_tr, grid, lg["sel_folds"],
+                           bandlimit_grid=bandlimit_grid,
+                           select_on="emulator_heldout_output",
+                           emu_fit_rows=nn_stage["emu_fit"])
+        comparand = d2lib.select(LFr_tr, nn_stage["LFp_tr"], Y_tr, grid, sel_folds_used,
                                  knobs["S6_LSI_RIDGE_GRID"], kcut_rec["k_cut"],
-                                 bandlimit_grid=[s.strip() for s in
-                                                 knobs["S6_LSI_BANDLIMIT_GRID"].split(",")],
+                                 bandlimit_grid=bandlimit_grid,
                                  select_on="real_lf")
+        sel["fold_restriction"] = restrict_rec
+        sel["n_sel_rows_in_emu_fit"] = 0
+        sel["n_sel_rows_declared_before_repair"] = restrict_rec["n_sel_rows_before"]
         T_leg = d2lib.final_transfer(LFr_tr, Y_tr, grid, lg["fit_rows"], sel)
         if sel["selected_bandlimit"] == "on":
             lsilib.assert_bandlimited(T_leg, grid, kcut_rec["k_cut"])
@@ -1281,8 +1312,36 @@ def run(args, out_path: Path) -> dict:                      # noqa: C901, PLR091
     floors_beat = {rung: (floorlib.beat_table(v, floors) if v is not None else {})
                    for rung, v in mean_test.items()}
 
+    # F2 -- the two declared-but-inert knobs, computed (all closed form, ZERO GPU):
+    #   `R3S2B3_IFC_LOO_DISCLOSURE = enumerate_C5_4` -> the disclosure legs the
+    #      run loop above does not walk are scored here, giving the ifc
+    #      `affine_on_hf_train` LOO FOLD RANGE that program.md §2 makes mandatory;
+    #   `R3S2B3_G5_BAND_DISCLOSURE = 1`  -> every floor-arm margin in C4 now
+    #      carries that arm's own fit-set band at the `R3S2B3_FLOOR_MATCHED_N`
+    #      size, instead of a prose sentence.
+    # `model_beats_floor` (and therefore the registration predicate) keeps reading
+    # the CERTIFIED full-fit floor: the disclosure informs the margin, it does not
+    # redefine the gate.
+    # The conditions are re-read at float64 from the loader (NOT `X_tr`, which the
+    # trunk keeps at float32): the certified floor table and
+    # `tools/fitset_matched_n_audit.py` both build these arms from float64
+    # conditions, and a matched-n number is only comparable to the full-fit one it
+    # is differenced against if the two share that construction exactly.
+    C_tr64 = np.asarray(train["cond_by_fid"][hf], dtype=np.float64)
+    C_te64 = np.asarray(test["cond_by_fid"][hf], dtype=np.float64)
+    disclosure_block = fmnlib.disclosure_legs(plan, C_tr64, Y_tr, C_te64, Y_te)
+    g5_band = fmnlib.matched_n_band(plan, name, knobs["R3S2B3_FLOOR_MATCHED_N"],
+                                    C_tr64, Y_tr, C_te64, Y_te,
+                                    floors, film, disclosure_block)
+    floors_beat = fmnlib.attach_band_to_beat_table(floors_beat, g5_band)
+    if disclosure_block.get("applicable"):
+        print(f"[disclosure] {name}: {disclosure_block['protocol']} "
+              f"{disclosure_block['n_legs']} legs | affine_on_hf_train on test "
+              f"{disclosure_block['fold_range_on_test_split']['affine_on_hf_train']}",
+              flush=True)
+
     clause_block = ladderlib.clauses(legs_out, film, tau, floors_beat,
-                                     split_transfer, tol)
+                                     split_transfer, tol, g5_band=g5_band)
     reg = ladderlib.registration(name, name in SCORED_PANEL_ADR_R3_0007, floor,
                                  clause_block, floors_beat,
                                  plan["registered_unit_eligible"])
@@ -1399,6 +1458,8 @@ def run(args, out_path: Path) -> dict:                      # noqa: C901, PLR091
         "clauses": clause_block, "registration": reg, "falsifier": fals,
         "split_transfer_licence": split_transfer,
         "floor_arms": floors, "floor_comparison_by_rung": floors_beat,
+        "floor_matched_disclosure_legs": disclosure_block,
+        "floor_matched_n_g5_band": g5_band,
         "mean_test_nrmse_by_deployable_rung": mean_test,
         "anchor_replication_check": {
             "target_stream_anchor_panel_geomean_skill":
@@ -1488,6 +1549,8 @@ def run(args, out_path: Path) -> dict:                      # noqa: C901, PLR091
             "hot_split_plan": hotlib.jsonable(plan),
             "legs": legs_out,
             "floor_arms": floors, "floor_comparison_by_rung": floors_beat,
+            "floor_matched_disclosure_legs": disclosure_block,
+            "floor_matched_n_g5_band": g5_band,
             "validity_gates": gates, "probes": probes,
             "budget": budget, "pairing": pairing,
             "lf_rung": int(lf_rung), "lf_grid": list(lf_grid),

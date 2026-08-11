@@ -1,0 +1,69 @@
+{
+ "_card": "r3s2_field_reach-B3",
+ "_what": "the card's recipe.env._preflight ZERO-GPU suite, run and archived (code-review finding F3), plus the F1/F2 out-of-band witness",
+ "_run_utc": "2026-08-11T06:0x-07:0xZ (see each file's own _utc)",
+ "_outputs_copy": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round3/r3s2_field_reach/B3/eval/preflight/",
+ "_worktree_copy": "scratchpad/preflight/ (this directory; committed as review evidence)",
+ "_no_gpu": "every entry below is dataset-side or state-side: no model, no training, no GPU, no SLURM",
+ "_immutables": "read-only against round2/eval, round2/stripped_data and round3/state; nothing under state/ or eval/ was written",
+ "entries": {
+  "fitset_matched_n_audit_ifc.json": {
+   "command": "round3/tools/fitset_matched_n_audit.py --datasets ifc_heat,ifc_poisson --n-scored 320",
+   "recipe_line": "tools/fitset_matched_n_audit.py --datasets ifc_heat,ifc_poisson --n-scored 320",
+   "supplies": "the ifc affine-floor LEAVE-ONE-OUT fold range that program.md §2's affine-floor rule makes mandatory beside every ifc number, and the G5 fit-set band",
+   "headline": "n_train (5) <= n_scored (320) so the tool runs the exhaustive C(5,4) analogue. ifc_heat affine_on_hf_train: single-fit skill 0.9584 -> LOO mean 1.8469, sd 10.93 tau_rel, 3/5 folds breach tau; nn_condition sd 0.59 tau_rel. ifc_poisson affine: LOO mean 4.2335, sd 1.61 tau_rel, 5/5 folds breach tau. These reproduce program.md §2's own quoted numbers exactly."
+  },
+  "fitset_matched_n_audit_sharp.json": {
+   "command": "round3/tools/fitset_matched_n_audit.py --datasets sharp__phase_field_crystal_2d,sharp__allen_cahn_2d,sharp__fisher_kpp_2d,sharp__cahn_hilliard --n-scored 320",
+   "recipe_line": "extension of the same line to the four sharp cells: the G5 band is owed on EVERY nn_condition-priced margin (ladder C4), not only on the ifc cells, and n_train 400 > 320 makes the matched-n question well posed there",
+   "supplies": "the G5 fit-set band at the card's own matched size |T| = 320",
+   "headline": "mode=random_subsets. ac nn_condition sys +0.409 tau / sd 0.736 tau (breach 0.238); ch nn_condition sys +0.781 tau / sd 1.845 tau (breach 0.606); fk train_mean sys +0.015 tau / sd 0.290 tau; pfc train_mean matched 71.048 vs full 71.026 (no certified tau_rel, so the tau-normalised columns are nan by construction)."
+  },
+  "amplitude_calibration_*.json": {
+   "command": "round3/tools/amplitude_calibration_audit.py --dataset <each of the 6> --tau-rel <cell's certified tau_rel>",
+   "recipe_line": "tools/amplitude_calibration_audit.py --dataset <each> --tau-rel <cell>",
+   "supplies": "whether a cell's score is an amplitude problem, i.e. the floor any norm-blind arm is capped at",
+   "headline": "AMPLITUDE_CRITICAL on fisher_kpp (23.4x tau_rel), ifc_poisson (8.35x), ifc_heat (5.17x), cahn_hilliard (1.92x); amplitude_not_binding on allen_cahn (0.94x). pfc has NO certified tau_rel (no noise_floor.json entry, ADR r3-0005 restored the cell without re-certifying its mce), so it was run without --tau-rel and reports the oracle (2.547 skill) with no verdict."
+  },
+  "target_scale_spread_pfc.json": {
+   "command": "round2/tools/target_scale_spread_audit.py --datasets sharp__phase_field_crystal_2d",
+   "recipe_line": "target-scale spread audit on pfc",
+   "supplies": "the R3S2_TARGET_SCALER_PREFLIGHT=pfc_per_sample_if_outlier_dominated decision",
+   "headline": "verdict OK: norm max/median 1.292, scaler/median-per-sample-max 1.307, top-1 energy share 0.004, effective N 395.6/400 -> NOT outlier-dominated, so the global scaler stands and the per-sample branch does not fire.",
+   "caveat": "this tool calls panel_data.copylf_prediction() WITHOUT dataset_name, so it uses the DEFAULT rung/lift, not ADR r3-0005's pfc spectral rung 1. The family recomputes the same decision in-job under the scored-cell convention (R3S2_EMU_RUNG=scored_cell_lf_from_panel_data) and records it in target_scale; read this file as the standalone cross-check of the VERDICT, not as the rung-1 numbers."
+  },
+  "subset_geomean_unit_audit_certified_floor_arms.json": {
+   "command": "round3/tools/subset_geomean_unit_audit.py --skills-json subset_geomean_input_certified_floor_arms.json --arms nn_condition,train_mean --panel <ADR r3-0007 5 cells> --subset panel6/sharp4/ifc2/registered_candidate_no_pfc --bar 0.5083 --denominator-json state/anchors/film_denominator.json",
+   "recipe_line": "tools/subset_geomean_unit_audit.py on every subset sentence",
+   "input_note": "B3 has no results yet, so the tool is run on the ONE real subset sentence available pre-submission: the CERTIFIED per-cell floor-arm skills from state/anchors_repaired/floors.json (arm nn_condition vs ref train_mean). Those are exactly the arms C4 prices B3's margins against, and the bar 0.5083 is the card's own panel seed_mce.",
+   "headline": "EVERY subset of the ADR r3-0007 panel is UNIT_DEPENDENT: rescale_vs_panel = 1.7238 (panel6), 0.3509 (sharp4), 41.6049 (ifc2), 1.2438 (registered_candidate_no_pfc), and panel6 CROSSES the bar between unit systems (0.73x copy-LF vs 1.26x film). Any B3 sentence about a cell SUBSET must state its unit system and be read against a bar calibrated on the same subset.",
+   "not_run_note": "--tau (the per-cell block) was omitted because pfc has no certified tau_rel; per-cell ratios are unit-invariant by construction and need no audit.",
+   "postflight_obligation": "re-run in mode 2 (--diag-root over the B3 result JSONs) once the job lands, on each subset sentence the analyzer actually writes."
+  },
+  "transfer_gain_anatomy_ifc.json": {
+   "command": "round3/tools/transfer_gain_anatomy.py --datasets ifc_heat,ifc_poisson --ridge-ladder 0,1e-10,3.162e-10,1e-9,1e-8,1e-7,1e-6,1e-4,1e-2,1e-1 --enumerate-folds",
+   "recipe_line": "tools/transfer_gain_anatomy.py --ridge-ladder ... --enumerate-folds --datasets <all 6> (the ifc half, WITH fold enumeration)",
+   "supplies": "the signed / energy-weighted / coherence band columns the family deliberately does not compute, min_ridge_passing_tol per band, and the EXACT C(5,3) fold population spread of the band statistic",
+   "headline": "ifc_poisson: every band is a CANCELLER or DISPERSION_ARTEFACT -- energy-weighted |T| ~ 0.74 with signed aggregate ~ -0.74 and coherence ~0.997, i.e. the operator cancels the upsampler's own content and amplifies nowhere, reproducing the B2 mechanism finding. Band 3's unweighted mean crosses tol on 5 of the 10 enumerated folds while the energy-weighted number never does -- a clause on the unweighted statistic would fire on half the fold population by luck. min ridge passing tol: 1e-9 on band 3, 0 elsewhere."
+  },
+  "transfer_gain_anatomy_sharp4_no_enumerate.json": {
+   "command": "round3/tools/transfer_gain_anatomy.py --datasets <the 4 sharp cells> --ridge-ladder 0,1e-10,3.162e-10,1e-9,1e-8,1e-7,1e-6,1e-4,1e-2,1e-1   [NO --enumerate-folds]",
+   "recipe_line": "same recipe line, sharp half",
+   "partial_discharge": "TRUE -- and this is a TOOL limit, not a choice",
+   "why": "transfer_gain_anatomy.py materialises the whole fold population eagerly (`combos = list(combinations(range(Ntr), n_fit))`) and only then applies --max-folds. At Ntr = 400 / n_fit = 320 that is C(400,320) combinations: the process is OOM-killed on the login node at every --max-folds value (probed at 10 and 25; both MemoryError inside `list(combinations(...))`, and the first six-cell attempt was SIGKILLed with an empty log). --enumerate-folds is therefore computable on the ifc cells ONLY, which matches the flag's own docstring ('at small Ntr the seeds are a bad sampler of a closed-form fit'). The band anatomy and the ridge ladder -- the columns the family does not compute -- ARE reported for all four sharp cells here.",
+   "not_done": "the enumerated-fold SPREAD of the band statistic on the four sharp cells. If it is wanted it needs either a SLURM job with a large-memory allocation or a lazy-enumeration fix to the round tool; neither is in a builder's scope (round3/tools/ is shared round infrastructure, not this card's worktree).",
+   "headline": "cahn_hilliard's top two bands read TRUE_AMPLIFICATION on the energy-weighted column at LF energy shares of 1.4e-16 and 5.6e-32 with coherence at/below chance -- i.e. numerically empty bands; band 2 reads unweighted |T| 3628 vs energy-weighted 0.0074 (DISPERSION_ARTEFACT). Any B3 sentence about band gain must quote the energy-weighted column and the band's LF energy share beside it."
+  },
+  "r3s2b3_report_side_discharge.json": {
+   "command": "tools/r3s2b3_report_side_discharge.py --datasets <all 6> --seeds 0,1,2 --fitset-json <both> --panel <ADR r3-0007 5 cells> --subset ...",
+   "supplies": "the F1 and F2 witness computed OUTSIDE the family: the pre-repair emulator overlap, the post-repair no-abort check for every (cell, seed), the C(5,4) disclosure legs, the G5 band in three unit systems, and the subset rescale factors",
+   "headline_F1_pre_repair": "sharp cells 256/320 selection rows were IN-SAMPLE for the emulator (20.0% genuinely held out); ifc cells 10/30 in-sample (66.7% held out). This is the size of the defect the F1 repair removes.",
+   "headline_F1_post_repair": "for all 6 panel cells x 3 seeds AND the 3 guard cells at seed 0: any_leg_would_abort = False, emulator_fit_disjoint_all_legs = True. Minimum surviving selection rows on a leg: 7 (fisher_kpp seed 0) / 7 (fluid, guard). The repair cannot kill the job.",
+   "headline_F2": "ifc_heat C(5,4) affine_on_hf_train on the test split: min 0.05744 / median 0.06884 / max 0.36961 / sd 0.13272 nRMSE against the certified single-fit 0.07092 -- bit-identical to the in-job floor_matched_n.py block and to fitset_matched_n_audit.py."
+  },
+  "r3s2b3_report_side_discharge_guard.json": {
+   "command": "same tool, --datasets heat_local,fluid,sharp__sod_1d --seeds 0",
+   "supplies": "the same post-repair no-abort check for the guard invocation (seed 0 only), which runs a SEPARATE score_panel.py call in 01_train_eval.sh"
+  }
+ }
+}

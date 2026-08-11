@@ -53,3 +53,37 @@ argparse defaults (ADR 0004 §2), not new numbers.
 ## TBD
 
 None.
+
+---
+
+# Follow-up build — 2026-08-11 (code-review F1/F2/F3 discharge)
+
+**For**: code-reviewer (micro-review before the hold is released), analyzers
+
+## What changed
+
+- **F1** `d2_select.restrict_folds_to_rows` + `smoke_eval.py:1163-1189`: the D2
+  selection folds are intersected with the leg's `val_rows` (operator's
+  VAL_ROWS RESTRICTION; the emulator-retrain variant was NOT taken). Selection
+  rows per leg: sharp 64 → 7-18, ifc 3 → 2. `d2_select.select` now takes
+  `emu_fit_rows` and REFUSES an in-sample selection row.
+- **F2** new `floor_matched_n.py`: the C(5,4) disclosure legs are scored
+  (closed form) and `R3S2B3_G5_BAND_DISCLOSURE` is wired into C4's per-arm
+  margins. `floor_arms.py` is left byte-identical (vendored).
+- Label inversion fixed (`smoke_eval.py:1160`, `Counter` over leg train-rows).
+- **F3** preflight suite run + archived under `scratchpad/preflight/`.
+
+## Watch
+
+- **The F1 repair MOVES C1/C2/C3.** They read R1/R2 nRMSEs, which depend on
+  `T_leg`, which depends on the selection. Measured at contract tier on
+  helmholtz: leg 3's ridge 0.1 → 0.0, C2 min 0.97158 → 0.94300. Not a
+  regression — nothing had run.
+- Every subset sentence B3 can write is UNIT_DEPENDENT (see the preflight INDEX).
+- `transfer_gain_anatomy.py --enumerate-folds` is computable on the ifc cells
+  ONLY: it materialises `list(combinations(range(400), 320))` before applying
+  `--max-folds` and is OOM-killed on every sharp cell. The band anatomy + ridge
+  ladder ARE archived for all four sharp cells; the enumerated-fold spread is
+  not. Fixing the tool is out of a builder's scope.
+- The original build note's "exactly out-of-sample" claim was overstated; the
+  correction is `build_notes[13]`.

@@ -183,7 +183,7 @@ def _minmax(vals):
 
 
 def clauses(legs: list, film: dict, tau: dict, floors_beat: dict,
-            split_transfer: dict, tol_logratio: float) -> dict:
+            split_transfer: dict, tol_logratio: float, g5_band: dict = None) -> dict:
     """Evaluate C1-C4 over the FULL leg population (`R3S2B3_MIN_OVER_LEGS_CLAUSES`).
 
     Every bar is a `min` (C1) or a `min`/`max` (C2) over legs, so no threshold
@@ -233,10 +233,23 @@ def clauses(legs: list, film: dict, tau: dict, floors_beat: dict,
                   "C3 ships its ceiling REPORT-ONLY.")
 
     # C4 -- floor arms, mandatory
+    # C4 -- floor arms. `by_rung` carries, per arm, the certified full-fit margin
+    # (unchanged, and what `registration` reads) PLUS the G5 band that
+    # `R3S2B3_G5_BAND_DISCLOSURE` names: the arm's own fit-set noise at the
+    # `R3S2B3_FLOOR_MATCHED_N` size, computed in `floor_matched_n.py`. Before the
+    # F2 repair this key was a prose sentence with no consumer anywhere.
     c4 = {"statistic": "R0 and R1 against the mandatory floor arms at matched fit-set size",
           "by_rung": floors_beat,
-          "g5_band_disclosure": ("every nn_condition-priced margin carries the arm's "
-                                 "fit-set noise band (G5 adoption, batch-3 clause rule 5)"),
+          "g5_band_disclosure": (g5_band if isinstance(g5_band, dict) else {
+              "applicable": False,
+              "reason": ("no matched-n band was supplied to clauses(); "
+                         "R3S2B3_G5_BAND_DISCLOSURE cannot be honoured from prose")}),
+          "g5_band_reading": ("every margin in `by_rung` carries `g5_band.sd_nrmse` and, "
+                              "where it can be formed, `margin_over_g5_band_sd`; a margin "
+                              "inside the band is not a difference (G5 adoption, batch-3 "
+                              "clause rule 5). `model_beats_floor` still reads the "
+                              "CERTIFIED full-fit floor -- the band informs the margin, "
+                              "it does not move the gate."),
           "matched_n_knob": "R3S2B3_FLOOR_MATCHED_N"}
 
     return {"C1_hallucination_term": c1, "C2_ceiling_existence": c2,

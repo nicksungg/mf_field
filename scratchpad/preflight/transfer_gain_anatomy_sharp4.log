@@ -1,0 +1,77 @@
+
+=== sharp__phase_field_crystal_2d  grid [128, 128] lf [64, 64] k_cut 32.0  Ntr 400
+  seed 0  n_fit=320 n_heldout=80
+    b1  unweighted |T|    0.0189 | ENERGY-wtd   0.0020 | signed  +0.0010 | coh 0.0663 (chance 0.056) | LF energy 9.998e-01 -> OK
+    b2  unweighted |T| 3628.2894 | ENERGY-wtd   0.0074 | signed  -0.0012 | coh 0.0325 (chance 0.056) | LF energy 1.838e-04 -> DISPERSION_ARTEFACT
+    b3  unweighted |T|   38.8351 | ENERGY-wtd 302.0272 | signed -37.4098 | coh 0.0228 (chance 0.056) | LF energy 1.399e-16 -> TRUE_AMPLIFICATION
+    b4  unweighted |T|    0.0000 | ENERGY-wtd 4122861.5150 | signed -12033.4840 | coh 0.0405 (chance 0.056) | LF energy 5.576e-32 -> TRUE_AMPLIFICATION
+    ridge ladder (band unweighted |T| ; heldout rho):
+      lam=0        [0.0189, 3628.2894, 38.8351, 0.0]  rho=-0.029067
+      lam=1e-10    [0.0189, 0.0068, 0.0, 0.0]  rho=-0.028967
+      lam=3.162e-10 [0.0189, 0.0068, 0.0, 0.0]  rho=-0.028967
+      lam=1e-09    [0.0189, 0.0067, 0.0, 0.0]  rho=-0.028967
+      lam=1e-08    [0.0189, 0.0062, 0.0, 0.0]  rho=-0.028965
+      lam=1e-07    [0.0188, 0.0045, 0.0, 0.0]  rho=-0.028952
+      lam=1e-06    [0.018, 0.0023, 0.0, 0.0]  rho=-0.028852
+      lam=0.0001   [0.0075, 0.0001, 0.0, 0.0]  rho=-0.026271
+      lam=0.01     [0.001, 0.0, 0.0, 0.0]  rho=-0.011701
+      lam=0.1      [0.0002, 0.0, 0.0, 0.0]  rho=-0.002679
+    min ridge in ladder passing tol 1.0 by band: [0.0, 1e-10, 1e-10, 0.0]
+
+=== sharp__allen_cahn_2d  grid [256, 256] lf [128, 128] k_cut 64.0  Ntr 400
+  seed 0  n_fit=320 n_heldout=80
+    b1  unweighted |T|    0.0072 | ENERGY-wtd   0.0003 | signed  +0.0002 | coh 0.1884 (chance 0.056) | LF energy 9.998e-01 -> OK
+    b2  unweighted |T|    0.0211 | ENERGY-wtd   0.0150 | signed  +0.0140 | coh 0.6219 (chance 0.056) | LF energy 1.499e-04 -> OK
+    b3  unweighted |T|    0.1095 | ENERGY-wtd   0.0405 | signed  +0.0056 | coh 0.7201 (chance 0.056) | LF energy 3.584e-07 -> OK
+    b4  unweighted |T|    0.0000 | ENERGY-wtd   1.0000 | signed  -1.0000 | coh 1.0000 (chance 0.056) | LF energy 1.623e-06 -> OK
+    ridge ladder (band unweighted |T| ; heldout rho):
+      lam=0        [0.0072, 0.0211, 0.1095, 0.0]  rho=0.129782
+      lam=1e-10    [0.0072, 0.0202, 0.006, 0.0]  rho=0.129745
+      lam=3.162e-10 [0.0072, 0.0188, 0.0032, 0.0]  rho=0.129710
+      lam=1e-09    [0.0072, 0.0163, 0.0015, 0.0]  rho=0.129642
+      lam=1e-08    [0.0072, 0.0093, 0.0002, 0.0]  rho=0.129256
+      lam=1e-07    [0.0068, 0.0037, 0.0, 0.0]  rho=0.127735
+      lam=1e-06    [0.0052, 0.0009, 0.0, 0.0]  rho=0.121903
+      lam=0.0001   [0.0007, 0.0, 0.0, 0.0]  rho=0.067876
+      lam=0.01     [0.0, 0.0, 0.0, 0.0]  rho=0.014692
+      lam=0.1      [0.0, 0.0, 0.0, 0.0]  rho=0.009194
+    min ridge in ladder passing tol 1.0 by band: [0.0, 0.0, 0.0, 0.0]
+
+=== sharp__fisher_kpp_2d  grid [256, 256] lf [128, 128] k_cut 64.0  Ntr 400
+  seed 0  n_fit=320 n_heldout=80
+    b1  unweighted |T|    0.0121 | ENERGY-wtd   0.0000 | signed  +0.0000 | coh 0.0521 (chance 0.056) | LF energy 1.000e+00 -> OK
+    b2  unweighted |T|    0.0593 | ENERGY-wtd   0.0388 | signed  +0.0388 | coh 0.9292 (chance 0.056) | LF energy 1.647e-06 -> OK
+    b3  unweighted |T|    0.4167 | ENERGY-wtd   0.1319 | signed  +0.1319 | coh 0.9349 (chance 0.056) | LF energy 1.697e-08 -> OK
+    b4  unweighted |T|    0.0000 | ENERGY-wtd   0.9999 | signed  -0.9996 | coh 0.9999 (chance 0.056) | LF energy 2.372e-08 -> OK
+    ridge ladder (band unweighted |T| ; heldout rho):
+      lam=0        [0.0121, 0.0593, 0.4167, 0.0]  rho=0.502784
+      lam=1e-10    [0.0116, 0.0215, 0.0019, 0.0]  rho=0.498572
+      lam=3.162e-10 [0.011, 0.014, 0.0007, 0.0]  rho=0.494459
+      lam=1e-09    [0.0098, 0.0081, 0.0002, 0.0]  rho=0.487242
+      lam=1e-08    [0.0065, 0.0018, 0.0, 0.0]  rho=0.457793
+      lam=1e-07    [0.0029, 0.0002, 0.0, 0.0]  rho=0.400417
+      lam=1e-06    [0.0009, 0.0, 0.0, 0.0]  rho=0.310840
+      lam=0.0001   [0.0, 0.0, 0.0, 0.0]  rho=0.092263
+      lam=0.01     [0.0, 0.0, 0.0, 0.0]  rho=0.001644
+      lam=0.1      [0.0, 0.0, 0.0, 0.0]  rho=0.000275
+    min ridge in ladder passing tol 1.0 by band: [0.0, 0.0, 0.0, 0.0]
+
+=== sharp__cahn_hilliard  grid [256, 256] lf [128, 128] k_cut 64.0  Ntr 400
+  seed 0  n_fit=320 n_heldout=80
+    b1  unweighted |T|    0.1125 | ENERGY-wtd   0.0015 | signed  +0.0007 | coh 0.0532 (chance 0.056) | LF energy 9.994e-01 -> OK
+    b2  unweighted |T|    0.0703 | ENERGY-wtd   0.0289 | signed  +0.0198 | coh 0.2459 (chance 0.056) | LF energy 6.107e-04 -> OK
+    b3  unweighted |T|    0.1438 | ENERGY-wtd   0.0521 | signed  +0.0451 | coh 0.2873 (chance 0.056) | LF energy 1.886e-06 -> OK
+    b4  unweighted |T|    0.0000 | ENERGY-wtd   1.0000 | signed  -1.0000 | coh 1.0000 (chance 0.056) | LF energy 5.675e-06 -> OK
+    ridge ladder (band unweighted |T| ; heldout rho):
+      lam=0        [0.1125, 0.0703, 0.1438, 0.0]  rho=0.330935
+      lam=1e-10    [0.1125, 0.0679, 0.0098, 0.0]  rho=0.330935
+      lam=3.162e-10 [0.1125, 0.0643, 0.0053, 0.0]  rho=0.330935
+      lam=1e-09    [0.1125, 0.0576, 0.0024, 0.0]  rho=0.330934
+      lam=1e-08    [0.1118, 0.0365, 0.0004, 0.0]  rho=0.330902
+      lam=1e-07    [0.1062, 0.0151, 0.0001, 0.0]  rho=0.330465
+      lam=1e-06    [0.0804, 0.0036, 0.0, 0.0]  rho=0.323296
+      lam=0.0001   [0.0103, 0.0001, 0.0, 0.0]  rho=0.144660
+      lam=0.01     [0.0002, 0.0, 0.0, 0.0]  rho=0.008604
+      lam=0.1      [0.0, 0.0, 0.0, 0.0]  rho=0.003174
+    min ridge in ladder passing tol 1.0 by band: [0.0, 0.0, 0.0, 0.0]
+wrote /resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round3/r3s2_field_reach/B3/eval/preflight/transfer_gain_anatomy_sharp4_no_enumerate.json
