@@ -1,0 +1,81 @@
+{
+  "root": "mffp_autoresearch/round3/state/preflight_view_pfc_adr0005",
+  "waivers": [],
+  "datasets": {
+    "sharp__phase_field_crystal_2d": {
+      "dataset": "sharp__phase_field_crystal_2d",
+      "levels": [
+        1,
+        3
+      ],
+      "n_rows_checked": 400,
+      "completeness": {
+        "status": "OK",
+        "witness": {
+          "closest_pair": [
+            47,
+            266
+          ],
+          "standardized_condition_distance": 2.1626822943533637,
+          "relative_field_difference": 0.4436199095950113
+        },
+        "meta_gate_verdict": "COMPLETE"
+      },
+      "pairing": {
+        "status": "OK",
+        "frac_diag_above_p95_offdiag": 1.0,
+        "row_match_accuracy": 0.3775,
+        "mean_diag_cosine": 0.9304668515826278
+      },
+      "fidelity_gap": {
+        "status": "OK",
+        "median_rel_l2": 0.004287120919553834
+      },
+      "nn_baseline": {
+        "status": "OK",
+        "median_rel_l2": 1.2279045130767914
+      },
+      "degenerate_rows": {
+        "status": "OK",
+        "n_rows": 100,
+        "n_void": 0,
+        "frac_void": 0.0,
+        "threshold": 4.519605352751487e-05,
+        "median_row_gap": 0.004519605352751487,
+        "min_row_gap": 0.0026917120372022345,
+        "void_indices_first10": []
+      },
+      "cell_stability": {
+        "status": "OUTLIER_DOMINATED",
+        "cell_point_value": 0.012358381634578816,
+        "ci95": [
+          0.008566868930372697,
+          0.016701926716577095
+        ],
+        "ci_halfwidth_rel": 0.3291311931751025,
+        "top5_share": 0.38836796163428716,
+        "min_detectable_delta": 0.658262386350205,
+        "n_boot": 1000,
+        "seed": 0
+      },
+      "rung_scale_coherence": {
+        "status": "OK",
+        "rms_ratio_by_level": {
+          "1": 0.9985006787458874
+        },
+        "bounds": [
+          0.5,
+          2.0
+        ],
+        "offending_levels": [],
+        "split": "test"
+      },
+      "hard_fails": [],
+      "warnings": [
+        "cell_stability"
+      ],
+      "status": "WARN"
+    }
+  },
+  "verdict": "PASS"
+}

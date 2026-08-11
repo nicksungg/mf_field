@@ -1,5 +1,10 @@
 # Round-3 launch gates
 
+**2026-08-10 (resolution): ADR r3-0005 phase 2 COMPLETE — pfc restored to the scored panel (6 datasets).**
+Scored cell L1(32²)→L3(128²) with the exact spectral reference (0.012358); serving swap + `panel_data` amendment seam-verified byte-exact on every other dataset; 18 re-score cells landed stale-gate CLEAN (incl. the re-vendored r2s3 lift); fifth-class preflight on the new cell: `degenerate_rows` OK, `cell_stability` OUTLIER_DOMINATED (priced: MDD 65.8%), verdict PASS (`state/preflight_pfc_adr0005_2026-08-10.json`).
+G3 re-certified on the 6-dataset panel: best-floor lineage 75.0673 → 38.6300 → 36.3912 → 34.4198 → **38.8368**; all 4 anchor cards CERTIFIED with pfc cells (r2s2-B1's pfc cell 63775 carries the known unregularised-LSI caveat, pre-flagged by r3s2 mechanism work).
+
+
 **2026-08-10 (resolution): STOP-THE-LINE #2 HOLD cleared — stale-checkpoint anchor contamination repaired, G3 re-certified below.**
 The launch-anchor ifc_poisson cells that had been re-scored with pre-repair weights (14 legs across the 4 anchor cards) were quarantined, fresh-trained (jobs 89201–89211, all COMPLETED, artifacts verified), re-audited CLEAN with `--fail-on-stale`, and the anchors rebuilt through the now-mandatory stale-checkpoint gate in `tools/make_round3_anchors.py`.
 Diff confined to ifc_poisson columns + derived aggregates; best-floor geomean unchanged.
