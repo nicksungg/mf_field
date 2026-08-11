@@ -196,11 +196,14 @@ def fig_performance(cards, best_floor, floors_ds, r2_anchors, film, scored, repo
 
     fig = plt.figure(figsize=(13.5, 7.2), constrained_layout=True)
     gs = GridSpec(1, 2, figure=fig, width_ratios=[1.15, 1.0])
+    best_anchor = min(r2_anchors.items(), key=lambda kv: kv[1]["mean"])
+    best_anchor_ratio = best_anchor[1]["mean"] * gc_cur
     fig.suptitle(
         "Round 3 — every certified model vs the learned baseline: error relative to mf_fno_transfer_film (ADR r3-0006; lower = better, 1.0 = the baseline)\n"
         "Scored panel per ADR r3-0007: allen_cahn, fisher_kpp, cahn_hilliard, pfc, ifc_heat (ifc_poisson report-only). Baselines certified at 3 fresh seeds, stale-gate clean.\n"
         "† = film-unit reading on the card's registered ADR r3-0004 panel (pre-pfc-restore); unmarked rows are on the current scored panel.\n"
-        "Batch-3 cards (r3s2-B3 emulator ceiling, r3s3-B3 sealed knee predictions) are in flight — no bars yet; final leaderboard at round close.",
+        "Batch-3 cards (r3s2-B3 emulator ceiling, r3s3-B3 sealed knee predictions) are in flight — no bars yet; final leaderboard at round close.\n"
+        f"Round-2 reference models not shown as bars: the best carried-forward family (r2s3) sits at {best_anchor_ratio:.2f}x film; the round-3 best (0.72x †) has not yet beaten it.",
         fontsize=9.5, x=0.02, ha="left")
 
     # Panel A: grouped bars — baselines | round-2 anchors | round-3 cards — in film units
@@ -221,12 +224,8 @@ def fig_performance(cards, best_floor, floors_ds, r2_anchors, film, scored, repo
         base_rows.append(("convnext U-Net (certified baseline)", unet_val,
                           unet_val - min(useed), max(useed) - unet_val, UNET_C))
     groups.append(("learned baselines (current panel)", base_rows))
-    anchor_rows = []
-    for card, e in sorted(r2_anchors.items(), key=lambda kv: kv[1]["mean"]):
-        v = e["mean"] * gc_cur
-        lo, hi = ((e["mean"] - e["ci"][0]) * gc_cur, (e["ci"][1] - e["mean"]) * gc_cur) if e.get("ci") else (0, 0)
-        anchor_rows.append((card, v, lo, hi, ANCHOR_C))
-    groups.append(("round-2 anchor families (carried forward, current panel)", anchor_rows))
+    # Round-2 anchor families dropped from the bars (operator decision 2026-08-11,
+    # option B): the carry-forward comparison lives in one suptitle sentence.
     card_rows = []
     b2 = load_r3s2_b2()
     if b2 is not None:
