@@ -55,9 +55,11 @@ BUILDER-RESOLVED, NOT IN THE CARD (both recorded in the seal itself)
       them; `0..63` is the round's own `SPLIT_SEED` generator family and
       contains the card's three scored draws `{0,1,2}`;
     * `round()` is Python's built-in (round-half-to-even). The card writes
-      `round(c_hat/4)`; on its own worked example (c_hat 80 -> {5,20,80,395})
-      no half-integer arises, so the tie rule is exercised only if a future
-      `c_hat` is 2 (mod 8), and it is pinned here rather than left implicit.
+      `round(c_hat/4)`; the card's worked example (c_hat 80) hits no tie, but
+      c_hat=10 (fisher_kpp AND ifc_heat) IS 2 (mod 8): round(2.5)=2 under
+      banker's rounding vs 3 half-up — the tie rule is LIVE on two predictive
+      cells and the sealed ladders embody it (rung 2). Pinned here explicitly.
+      (Corrected 2026-08-11 per review finding 3.8b; sealed payload unchanged.)
 
 USAGE
     python scripts/phase_p_prereg.py --out <prereg.json> --work <scratch dir>

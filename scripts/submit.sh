@@ -18,5 +18,6 @@ fi
 echo "[seal] $PREREG_JSON"
 "$PROJECT_ROOT/.venv/bin/python" -c "import json,sys;s=json.load(open(sys.argv[1]));print('[seal] sealed_utc',s['_sealed_utc'],'sha256',s['_payload_sha256'])" "$PREREG_JSON"
 
+mkdir -p "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round3/r3s3_lf_value/B3/slurm"  # SLURM opens --output before the job script runs (review finding 3.5)
 jid=$(sbatch --parsable --job-name=r3-r3s3_lf_value-B3-s0 "$SCRIPT_DIR/01_train_eval.sh" 0)
 echo "submitted seed 0: job $jid"
