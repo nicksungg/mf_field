@@ -120,5 +120,6 @@
   "sharp__cahn_hilliard",
   "ifc_heat"
  ],
- "_adr_r3_0007": "ifc_poisson report-only (option C, operator 2026-08-10): its per-dataset cell is retained in `datasets` for reporting but excluded from the scored panel aggregate. Per-dataset c_ds values unchanged."
+ "_adr_r3_0007": "ifc_poisson report-only (option C, operator 2026-08-10): its per-dataset cell is retained in `datasets` for reporting but excluded from the scored panel aggregate. Per-dataset c_ds values unchanged.",
+ "_convention_note_ifc": "CAVEAT (adr0007_meanremoved_check_2026-08-10.json): the ifc rows' nrmse_film_* values are AGGREGATE ratio-of-sums nRMSE (extract_nrmse / splits.test_hf.nRMSE), while state/anchors_repaired ifc floor records are per-sample-mean rel-L2 \u2014 cross-file skill ratios on ifc_heat are biased ~1.27x. Compare within one convention; the check record carries both for all arms. Model-vs-film ratios are consistent (both aggregate)."
 }
