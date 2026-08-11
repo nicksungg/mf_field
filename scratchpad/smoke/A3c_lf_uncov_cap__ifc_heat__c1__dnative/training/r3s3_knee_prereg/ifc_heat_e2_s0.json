@@ -197,8 +197,8 @@
     }
   },
   "n_params": 583873,
-  "train_seconds": 70.33288621902466,
-  "eval_seconds": 30.99529528617859,
+  "train_seconds": 28.007420301437378,
+  "eval_seconds": 12.881561279296875,
   "latency_ms_per_sample": null,
   "peak_mem_mb": null,
   "work_grid": [
@@ -324,9 +324,9 @@
       "role": "PRE-REGISTERED PREDICTION. The trained step-max knee K is computed ANALYSIS-SIDE from the five legs of this cell; this family emits no cross-arm quantity and never compares K to c_pred in-process.",
       "ordering": {
         "sealed_utc": "2026-08-11T04:59:09Z",
-        "leg_start_utc": "2026-08-11T05:27:34Z",
+        "leg_start_utc": "2026-08-11T05:51:27Z",
         "seal_precedes_leg": true,
-        "lead_seconds": 1705
+        "lead_seconds": 3138
       },
       "assert_enforced": true,
       "card_cells": [
@@ -825,8 +825,23 @@
     "gate_report": {
       "reported_never_a_switch": true,
       "data_binding_assert": {
-        "performed": false,
-        "reason": "R3S3B3_DATA_BINDING_ASSERT=0"
+        "performed": true,
+        "eval_dir": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round2/eval",
+        "copylf_baselines_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round2/eval/copylf_baselines.json",
+        "floors_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/state/anchors_repaired/floors.json",
+        "copylf_def_hash": "9794cc89f1647861a6188803361bdfbb571991c91f206685824a80a900ba09a7",
+        "nrmse_def_hash": "d3d0ade9191c13bacc40702f3eb26ad290e01641cacee22a1d2233b74c035850",
+        "reference_test_nrmse": 0.074,
+        "reference_type_baselines": "paper_bar",
+        "reference_type_floors": "paper_bar",
+        "floors_certified_utc": "2026-08-04T05:12:04Z",
+        "checks": [
+          "baselines._copylf_def_hash == panel_data.COPYLF_DEF_HASH",
+          "floors._copylf_def_hash == baselines._copylf_def_hash",
+          "floors._nrmse_def_hash == nrmse.NRMSE_DEF_HASH",
+          "dataset present in both files",
+          "baselines[ds].test_nrmse == floors[ds].reference.test_nrmse (exact)"
+        ]
       },
       "ckpt_data_binding": {
         "enabled": true,
@@ -858,8 +873,8 @@
         },
         "union_sha256": "7405cb4d2f2e219798e8a40d5b960ae706ba8de7ea04bc3a075d740ab3aac0a6",
         "layout": "ifc_raw",
-        "recorded_utc": "2026-08-11T05:27:34+00:00",
-        "seconds_to_record": 0.11,
+        "recorded_utc": "2026-08-11T05:51:27+00:00",
+        "seconds_to_record": 0.1,
         "written_at_every_save": true,
         "computed_once_per_leg": "the block is a pure function of (dataset_dir, dataset_name, roles_read); recomputing it at each save would re-hash the whole dataset ~20x per leg",
         "test_lf_note": "test_lf is read by NEITHER arm (stripped test view, program.md \u00a75 immutable #9): it carries the copy-LF denominator only, which is why a test_lf change is REREFERENCE and never RETRAIN"
@@ -1093,6 +1108,13 @@
         "tau_rel": 0.1640195793751628,
         "tau_rel_film": 0.33590501702088815,
         "tau_rel_certified": true,
+        "skill_copylf": 0.9416486407986502,
+        "skill_identity_check": {
+          "skill_copylf_times_c_ds": 1.9284557607094086,
+          "skill_film": 1.9284557607094086,
+          "abs_diff": 0.0,
+          "note": "c_ds = ref_copylf / nrmse_film_mean, so the two agree exactly up to float rounding; a divergence means the leg's copy-LF reference is not the one the denominator file was built against"
+        },
         "skill_film_by_arm": {
           "ref_affine_on_hf_train": 1.962671653611248,
           "ref_nn_condition_full": 2.8550613405014094,
@@ -1546,7 +1568,7 @@
       "noise_floor_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/state/anchors_repaired/noise_floor.json",
       "mce_mode": "certified_r3",
       "anchors_json": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/state/anchors/launch_anchors.json",
-      "data_binding_assert": "0",
+      "data_binding_assert": "1",
       "target_scale_audit": "1",
       "lf_row_manifest": "1",
       "dump_test_preds": "1",
@@ -1569,7 +1591,7 @@
       "R3S3B3_CKPT_BINDING": "1",
       "R3S3B3_CKPT_EVERY_STEPS": "250",
       "R3S3B3_CLIP": "1.0",
-      "R3S3B3_DATA_BINDING_ASSERT": "0",
+      "R3S3B3_DATA_BINDING_ASSERT": "1",
       "R3S3B3_DUMP_TEST_PREDS": "1",
       "R3S3B3_FILM_DENOM_JSON": "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch/round3/state/anchors/film_denominator.json",
       "R3S3B3_FILM_UNITS": "1",
