@@ -1,0 +1,114 @@
+{
+  "_card": "r3s2_field_reach-B3",
+  "_family": "r3s2_ceiling",
+  "_vendor_source": {
+    "family": "models_r3/r3s2_route",
+    "worktree": "mffp_autoresearch/round3/worktrees/r3s2_field_reach/B2",
+    "commit": "e606a4f14f8e870fccee097ed18b6050344a4ace",
+    "branch": "round3/exp-r3s2_field_reach-B2"
+  },
+  "_base_commit_adjudication": "The card's recipe.base_commit 23018cc5e11884b79bb68e80bcc18146a3e8b779 is a TRUNK commit (mffp-trunk-eloise, 2026-08-10 20:16 -0700, 'round3: batch-3 websearch reports') that contains NO models_r3/ path at all and is not an ancestor of the B2 branch tip. recipe.env._substrate_commit e606a4f14f8e870fccee097ed18b6050344a4ace IS the B2 branch tip and carries the full models_r3/r3s2_route tree, and _vendor_source names it explicitly ('@ e606a4f1'). e606a4f1 therefore governs the vendored code. B2's own builder recorded the identical discrepancy one batch earlier (models_r3/r3s2_route/upsample.py header: 'The recipe's base_commit 76d15c2d is a TRUNK commit that carries NO models_r3/ tree at all').",
+  "_batch3_contract": "batch-3 scope rule 2 (state/batch3_scope_2026-08-10.md): every batch-3 family adopts models_r3/_common/ckpt_binding.py so data_binding is written into last.pt at every save. Vendored byte-identically from round3/exp-r3s4_audit-B2 @ da855da together with its read-only dependency tools/ckpt_data_binding.py.",
+  "vendored_files": {
+    "model.py": {
+      "source_sha256": "9142cc5a047a7c51cde792d1fbc35e1f4f3600f4979a0531baba8e310afcc73e",
+      "vendored_sha256": "9142cc5a047a7c51cde792d1fbc35e1f4f3600f4979a0531baba8e310afcc73e",
+      "byte_identical": true,
+      "modification": null
+    },
+    "front_end.py": {
+      "source_sha256": "b5f0be83c7e1dcb6a3910ba62c061d375d07fcfe3a1db016f6f4cdf6a983d73a",
+      "vendored_sha256": "b5f0be83c7e1dcb6a3910ba62c061d375d07fcfe3a1db016f6f4cdf6a983d73a",
+      "byte_identical": true,
+      "modification": null
+    },
+    "ic_synth.py": {
+      "source_sha256": "fa20abb6dd736cf318c7de46ccdd76b999ef0717e751187d3651d57ee2cc02b7",
+      "vendored_sha256": "fa20abb6dd736cf318c7de46ccdd76b999ef0717e751187d3651d57ee2cc02b7",
+      "byte_identical": true,
+      "modification": null
+    },
+    "lsi_filter.py": {
+      "source_sha256": "245a659343c91a9901631c8e0301e72e2c9f7ced519383b11d28b9644c30e88a",
+      "vendored_sha256": "245a659343c91a9901631c8e0301e72e2c9f7ced519383b11d28b9644c30e88a",
+      "byte_identical": true,
+      "modification": null
+    },
+    "local_corrector.py": {
+      "source_sha256": "f0447642d38b837214090a2158e58ac2c2e0108ae23c2ff93d37a9079db07ebe",
+      "vendored_sha256": "f0447642d38b837214090a2158e58ac2c2e0108ae23c2ff93d37a9079db07ebe",
+      "byte_identical": true,
+      "modification": null
+    },
+    "direct_head.py": {
+      "source_sha256": "3eb64dbb177252fa07951a2fbaa96bd7d810274851cbd371467473840a75b132",
+      "vendored_sha256": "3eb64dbb177252fa07951a2fbaa96bd7d810274851cbd371467473840a75b132",
+      "byte_identical": true,
+      "modification": null
+    },
+    "bands.py": {
+      "source_sha256": "9eaabce1d79a500dc5860392f6bf08ea08f46e86b9788ef3fa20d9dd66056c64",
+      "vendored_sha256": "9eaabce1d79a500dc5860392f6bf08ea08f46e86b9788ef3fa20d9dd66056c64",
+      "byte_identical": true,
+      "modification": null
+    },
+    "periodicity.py": {
+      "source_sha256": "694c283d07974534ba9986c6095ea65add4d3770582ecb1b7ad34dade3ac1ed2",
+      "vendored_sha256": "694c283d07974534ba9986c6095ea65add4d3770582ecb1b7ad34dade3ac1ed2",
+      "byte_identical": true,
+      "modification": null
+    },
+    "upsample.py": {
+      "source_sha256": "ec60cffd7984418e0bf232c3a5638552d0b4045173f362cb4e6cd50c306511ae",
+      "vendored_sha256": "82853768bfa356bda581aac47bc1435e083e80ca5266a23f168a39154c91fd2d",
+      "byte_identical": false,
+      "modification": "APPEND-ONLY block: the ADR r3-0005 spectral (FFT zero-pad) lift, verbatim from round2/eval/panel_data.py, plus a resolve_convention rebind that keys sharp__phase_field_crystal_2d to it. Nothing above the block header is edited."
+    },
+    "floor_arms.py": {
+      "source_sha256": "869ff2ba7ca52c045c04cf9829d42b6f0507ad03a1055b9499ff0f29469d610f",
+      "vendored_sha256": "869ff2ba7ca52c045c04cf9829d42b6f0507ad03a1055b9499ff0f29469d610f",
+      "byte_identical": true,
+      "modification": null
+    },
+    "selector.py": {
+      "source_sha256": "b71c49a0191c9b8b72dfd433d917ae176f3ba02d006024f6d240d8993405aa67",
+      "vendored_sha256": "b71c49a0191c9b8b72dfd433d917ae176f3ba02d006024f6d240d8993405aa67",
+      "byte_identical": true,
+      "modification": null
+    },
+    "probes.py": {
+      "source_sha256": "3fbbce296cc332e269af635776002bfbb6d9d928e9315a188856a3c799192693",
+      "vendored_sha256": "3fbbce296cc332e269af635776002bfbb6d9d928e9315a188856a3c799192693",
+      "byte_identical": true,
+      "modification": null
+    },
+    "sidecars.py": {
+      "source_sha256": "8ac006697226559cadba0b10a9c182c7c4babd3f57381210699b7dd6c64be0de",
+      "vendored_sha256": "8ac006697226559cadba0b10a9c182c7c4babd3f57381210699b7dd6c64be0de",
+      "byte_identical": true,
+      "modification": null
+    }
+  },
+  "contract_modules": {
+    "models_r3/_common/ckpt_binding.py": {
+      "source_sha256": "48c7a03001f553e417a3b0c9aec96554eb1ff4ab2c331340fbdc8daddb2ced86",
+      "vendored_sha256": "48c7a03001f553e417a3b0c9aec96554eb1ff4ab2c331340fbdc8daddb2ced86",
+      "byte_identical": true,
+      "modification": null
+    },
+    "tools/ckpt_data_binding.py": {
+      "source_sha256": "2d7d8ee5f38e6a4b7821fe8f56e5f7403886e189786f6c124a5b923641cf426d",
+      "vendored_sha256": "2d7d8ee5f38e6a4b7821fe8f56e5f7403886e189786f6c124a5b923641cf426d",
+      "byte_identical": true,
+      "modification": null
+    }
+  },
+  "new_in_b3": [
+    "smoke_eval.py",
+    "hot_split.py",
+    "ladder.py",
+    "d2_select.py",
+    "rung_lift.py",
+    "target_scale.py"
+  ]
+}
