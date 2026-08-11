@@ -1,9 +1,9 @@
-# MFFP Autoresearch — Update for Mentor (Round 3, Batch 1 Close)
+# MFFP Autoresearch — Update for Mentor (Round 3: Batches 1–2 Closed, Batch 3 Running)
 
 Date: 2026-08-10. Author: Eloise (with the autoresearch orchestrator).
 Authoritative sources: `round3/state/orchestrator_flow.md` (decision log), `round3/state/gates.md`, per-experiment cards under `round3/experiment_cards/`, `round3/index.md` (dashboard).
 Companion to the 2026-08-02 update (round-2 results and the benchmark-repair pipeline are described there and are not repeated).
-Updated 2026-08-10 (evening): batch-2 midpoint results and the ADR r3-0006 scoring change are in §6.
+Updated 2026-08-11: batch-2 close (§6), the panel decision and certified baselines (§7), and the batch-3 launch (§8).
 
 Rendered versions of this update:
 [Claude artifact](https://claude.ai/code/artifact/a03c7fd2-cf39-42d6-8ec5-cf5ee44449cc)
@@ -35,21 +35,34 @@ Companion decision page for §5.1: [ADR r3-0005 decision memo](https://claude.ai
 - **The audit experiment established the round’s minimum detectable effects and measured the reliability of the audit tools.**
   One checkpoint-staleness heuristic found 0 unique true positives but raised 62 false alarms across 859 individual runs.
   We are replacing it with content hashes stored in checkpoints.
-- **Batch 2 is designed, reviewed, and now launching.**
-  The first two cluster jobs start today.
-  Searches in 7 research directions found no basis for outright novelty claims, so each experiment claims only its measured composition.
-- **ADR r3-0005 was ratified on 2026-08-10 with option A.**
-  The evaluated `pfc` task will use the coarsest available input resolution and a spectral reference.
-  This is the round’s only amendment to the frozen round-2 evaluation convention.
-  Phase 1, the serving change, is complete.
-  Phase 2, the reference amendment and re-evaluation that restore the 6-dataset panel, waits until batch-2 computation closes so no active experiment uses mixed reference hashes.
-- **Batch-2 midpoint (§6): the first batch-2 experiment is already complete and falsified its own novelty claim** — the calibrated selection rule loses to the plain cap fix it was registered against, and that stream now recommends its own consolidation.
-  The audit stream's new fairness probe fired as pre-registered, exposing a resolvable reference-fitting bias on one dataset; escalated to the operator per its clause.
-- **Scoring change (ADR r3-0006, operator decision): the headline denominator moves from copy-the-coarse-solve to the best learned baseline** (`mf_fno_transfer_film`).
-  The change is an exact per-dataset conversion — nothing is re-scored, the frozen evaluation layer is untouched, and in-flight verdicts stay in their registered units; the baseline's own 3-seed certification is running.
-- **Two new figures summarize performance and architectures.**
-  They are `round3/docs/figures/r3_performance_vs_baselines.png` and `r3_architectures_overview.png`.
-  Both are regenerated from the experiment records by `round3/tools/render_round3_update_figures.py` and embedded in the rendered page.
+- **Batch 2 closed on 2026-08-10: all 8 round-3 experiment cards from batches 1–2, across all four streams, are complete (§6).**
+  The headline is the audit stream's checkpoint↔data binding instrument, which binds a checkpoint to its data in six distinct roles: CONFIRMED at 108/108 on a labelled-defect exam.
+  It strictly dominates both whole-dataset hashes and wall-clock heuristics, and is now installed as a hard gate in every anchor build.
+  Its one fired falsifier — the G5 fit-set seam — was re-analyzed and correctly re-priced in closed form.
+  The operator adopted the correction; no verdict flipped, and every affected margin widened.
+  The repaired initial-condition stack is the round's best model at 10.09 (0.72× the film-transfer baseline).
+- **ADR r3-0005 (ratified 2026-08-10, option A) is now fully executed.**
+  The evaluated `pfc` task now uses the coarsest available input resolution and an exact spectral reference.
+  This is the round's only amendment to the frozen round-2 evaluation convention.
+  Phase 2 completed after batch-2 computation closed: `pfc` rejoined the scored panel on the honest 32²→128² task, so no active experiment ever used mixed reference hashes.
+- **Panel decision (ADR r3-0007; operator option C, 2026-08-10): `ifc_poisson` is demoted to report-only (§7).**
+  Its condition→answer map is exactly linear, with an oracle affine residual of 5.4e-16.
+  On this closed-form task, no learned model ever beat the copy-the-coarse-solve reference.
+  `ifc_heat` stays scored: a follow-up check proved the film baseline's win there is real field structure, not offset calibration.
+  The scored panel is now 5 datasets (4 sharp + `ifc_heat`); the best training-free floor becomes 53.2146 (lineage in `state/gates.md`).
+- **Scoring change (ADR r3-0006, operator decision) executed: the headline denominator moved from copy-the-coarse-solve to the best learned baseline** (`mf_fno_transfer_film`).
+  The change is an exact per-dataset conversion: nothing is re-scored, the frozen evaluation layer is untouched, and in-flight verdicts stay in their registered units.
+  The denominator is now certified at 3 fresh seeds.
+  An operator-requested ConvNeXt U-Net twin lands in a statistical dead heat with it (error ratio 0.9805, cross-seed range 0.94–1.04), so film stands (§7.2).
+- **Batch 3 — the round's final batch — launched 2026-08-11 with 2 cards, both through independent code review (§8).**
+  One tests whether a training-free surrogate can *predict* each dataset's sample-efficiency knee — the point beyond which more coarse training data stops helping.
+  The surrogate's per-cell predictions were sealed (sha256 content hash + timestamp) before any training job ran, and a 4-rung training ladder now adjudicates them.
+  The other bounds what the synthetic-coarse-field detour could ever buy, via a 5-rung ladder.
+  Its oracle rung can never be deployed, because the test-time LF field physically does not exist.
+  Round close is expected 2026-08-12/13, with a final leaderboard of all round-3 models against both learned baselines.
+- **Four figures summarize performance, the four experiment lines, and the top two models.**
+  They are `round3/docs/figures/r3_performance_vs_baselines.png` (performance), `r3_architectures_overview.png` (the four experiment lines), `r3_model_detail_ic_stack.png` (the initial-condition stack), and `r3_model_detail_lf_channels.png` (the LF-trained multi-resolution FNO).
+  All are regenerated from the experiment records by `round3/tools/render_round3_update_figures.py`, reflect the ADR r3-0007 panel, and are embedded in the rendered page.
 
 ## 1. What round 3 asked, and how it ran
 
@@ -62,9 +75,12 @@ Initial-condition coefficients are included in the condition vector, which retir
 The nested `ifc` fidelity hierarchies are repaired.
 `ifc_heat` is now evaluated in the scored panel.
 
-**The evaluated set contains 5 datasets after ADR r3-0004.**
-They are `allen_cahn_2d`, `fisher_kpp_2d`, `cahn_hilliard`, `ifc_poisson`, and `ifc_heat`.
-`helmholtz` and `pfc` are report-only.
+**The scored set contains 5 datasets.**
+Its membership changed twice during the round, each time through a recorded architecture decision record (ADR), never silently.
+At batch-1/2 registration it was `allen_cahn_2d`, `fisher_kpp_2d`, `cahn_hilliard`, `ifc_poisson`, and `ifc_heat`, with `helmholtz` and `pfc` report-only (ADR r3-0004).
+After batch 2 closed, ADR r3-0005 phase 2 restored `pfc` on its repaired 32²→128² task, and ADR r3-0007 demoted `ifc_poisson` to report-only (§7).
+The current scored panel is therefore `allen_cahn_2d`, `fisher_kpp_2d`, `cahn_hilliard`, `pfc`, and `ifc_heat`; `helmholtz` and `ifc_poisson` are report-only.
+Batch-1/2 numbers below are quoted in the units and on the panel they were registered with.
 
 **Batch 1 covered four experiment lines: factorised heads, initial-condition reach, the value of LF training data, and benchmark auditing.**
 All 4 experiments closed at 3 seeds.
@@ -86,7 +102,7 @@ FALSIFIED means the pre-registered prediction failed its threshold; because ever
 CERTIFIED is the strongest label: measured at 3 seeds and priced against the audited minimum-detectable-effect table.
 "Not resolvable" means the measured difference is smaller than the certified minimum detectable effect, so no claim is made either way.
 
-Leaderboard (3-seed geometric mean of normalized error across the panel, lower is better; no-training reference 34.4198):
+Leaderboard (3-seed geometric mean of normalized error across the batch-1 registration panel, lower is better; no-training reference 34.4198 on that panel — the current 5-dataset panel's floor is 53.2146, §7):
 
 | Rank | Card | Panel geomean [3-seed range/CI] | Verdict | What it is |
 |---|---|---|---|---|
@@ -127,7 +143,7 @@ A control receiving extra LF data only at conditions already covered by HF data 
 Their function-distance ratios are 0.098–0.307.
 New, distinct condition rows explain E_cov/E_total ∈ [0.972, 1.024] in 30/30 evaluated cases.
 Recovery is nearly deterministic given the measurable condition–response alignment, with Pearson r = 0.985.
-Batch 2 tests whether this mediator yields a stable exchange rate between LF rows and HF rows.
+Batch 2 tested whether this mediator yields a stable exchange rate between LF rows and HF rows; it does not — the measured rate came out an order of magnitude below the registered prediction (§6).
 
 **A seed-invariant hard subpopulation exists in `cahn_hilliard`.**
 It contains 27 of 100 test rows.
@@ -147,14 +163,14 @@ The condition enters every block as a learned affine modulation, so one network 
 The certified per-dataset interpolation convention lifts the synthetic coarse field to the fine grid.
 Stage 2 is a frozen local CNN corrector (7×7 kernels, depth 4, width 32) trained on real coarse→fine pairs in an earlier round; batch 2 added a cross-validated ridge plus a hard band-limit at the coarse grid's Nyquist frequency, repairing the one failure mode (a 66× spectral amplification fitted from 3 samples).
 Training uses ~400 (condition → coarse field) pairs per sharp dataset; the fine fields never enter stage 1, and stage 2's weights never change — which is why the mechanism stage located a covariate shift there.
-Established: the initial-condition information is the entire measurable effect and acts in stage 1; the corrector adds nothing resolvable (round 2's null replicates); the repair's attribution was proven by a replication arm that reproduced the old defect digit-for-digit; both ifc cells still lose to a 6-parameter affine fit.
+Established: the initial-condition information is the entire measurable effect and acts in stage 1; the corrector adds nothing resolvable (round 2's null replicates); the repair's attribution was proven by a replication arm that reproduced the old defect digit-for-digit; both ifc cells still lose to a 6-parameter affine fit (§7.1 explains how those affine floors are now quoted).
 
 **The LF-trained multi-resolution FNO (r3s3's A1 arm, 0.79× the film-transfer baseline; best model on ifc_heat and fisher_kpp).**
 One conditioned FNO (4 spectral blocks, width 64) with its Fourier modes pinned to the coarsest rung's Nyquist so every resolution shares one spectral basis, and per-rung output heads sharing the backbone.
 Training minimizes a joint loss: predict the coarse solve at every rung AND the fine field, equally weighted, with ~400 coarse rows against as few as 5 fine rows.
 At test only the fine head is read out; the coarse heads exist purely to absorb training signal.
 The controlled arms (no coarse data / coarse data only at already-covered conditions / full pool) are what let the round attribute the effect: the value is supply of new condition points, not regularization — the covered-only arm learns the same function as the no-coarse-data arm.
-Established: recovery tracks condition-response alignment at r = 0.985; the pre-repair −10.1% headline was retracted as a stale-baseline artifact; batch 2 is measuring the cost curve (seed-0 knee at ~80 distinct coarse conditions on cahn_hilliard).
+Established: recovery tracks condition-response alignment at r = 0.985; the pre-repair −10.1% headline was retracted as a stale-baseline artifact; batch 2 confirmed the cost curve's knee at c\* = 80 distinct coarse conditions on cahn_hilliard (7.0× the clause floor) plus a training-free surrogate for it — the basis of batch 3's sealed-prediction card (§8).
 
 ## 3. Benchmark-integrity findings (the part most relevant to the benchmark paper)
 
@@ -188,6 +204,7 @@ Established: recovery tracks condition-response alignment at r = 0.985; the pre-
   Only a content hash stored in the checkpoint can distinguish a training-invalidating data change from a harmless test-split trim.
   Current checkpoint-to-data hash coverage is 0/18.
   Building this mechanism is the batch-2 audit experiment.
+  (Update: built and CONFIRMED at 108/108 in batch 2; it now runs as a hard gate inside every anchor build — §6.)
 - **Tolerance setting now rests on a measured numerical-precision limit.**
   The audit experiment’s F1 condition triggered at 1.106e-9 against a 1e-9 tolerance.
   This is ~70× below the variation introduced by the float64→float32 data-loading boundary.
@@ -225,31 +242,31 @@ Established: recovery tracks condition-response alignment at r = 0.985; the pre-
   The cluster’s SLURM job-ID space also reset mid-round from 8-digit to 5-digit IDs.
   Job accounting was re-established, and old IDs still resolve.
 
-## 5. Gated next steps
+## 5. Decisions and next steps (statuses updated 2026-08-11)
 
-1. **ADR r3-0005, the `pfc` spectral-resolution repair, was ratified on 2026-08-10 with option A.**
-   Eloise made the decision for the mentor.
-   Phase 1 is complete, and phase 2 waits for batch-2 computation to close.
+1. **ADR r3-0005, the `pfc` spectral-resolution repair, is fully executed** (ratified 2026-08-10 with option A; Eloise made the decision for the mentor).
    The repair has two inseparable parts.
-   First, serving `pfc` resolutions {1, 3} changes the evaluated task to 32²→128².
-   At that resolution, the measured per-row gap is real, with mean 0.0124 and 0/100 task-void rows.
+   First, serving `pfc` resolution levels {1, 3} changes the evaluated task to 32²→128².
+   At that resolution, the measured per-row low-fidelity-to-high-fidelity gap is real, with mean 0.0124 and 0/100 task-void rows.
    Second, the reference that copies the LF field must use a `pfc`-specific spectral lift.
    A linear lift has ~0.07 error at 32²→128² and would again overwhelm the ~0.012 true gap.
+   Phase 2 completed on 2026-08-10, after batch-2 computation closed, so no active experiment ever used mixed reference hashes: `pfc` is back in the scored panel with the exact spectral reference (0.012358), and all re-scored cells passed the stale-checkpoint gate.
    The repaired task remains dominated by outliers.
    Its top-5 rows contribute 38.8% of the denominator, and its minimum detectable change is **65.8%**.
-   It therefore returns to the evaluated panel as an honest but low-resolution dataset.
-   Every claim about it must exceed that minimum detectable change.
-   One alternative is to keep `pfc` permanently report-only, which is conservative but removes the panel’s only stiff-map dataset.
-   Another is to regenerate a higher-resolution hierarchy, which costs the most computation.
-   The sweep suggests that the same convergence would recur one resolution level higher because crystal wavelength, rather than grid spacing, determines it.
-2. **Batch 2 will complete 4 experiments through the SLURM and analysis pipeline.**
-   The first two seed-0 jobs are running as of this update.
-3. **ADR r3-0006 executes in phases**: denominator certification on the cluster now; converted reporting once `film_denominator.json` is built; batch-3 experiments register their predictions in the new units.
-4. **The round-1 full runs of 2500 epochs remain on hold.**
-## 6. Batch-2 midpoint (added 2026-08-10, evening)
+   It is an honest but low-resolution dataset, and every claim about it must exceed that minimum detectable change.
+   The rejected alternatives are recorded in the ADR: permanent report-only status (conservative, but removes the panel's only stiff-map dataset) and regenerating a higher-resolution hierarchy (most computation; the sweep suggests the same convergence would recur one level higher, because crystal wavelength rather than grid spacing determines it).
+2. **Batch 2 completed all four experiments and closed on 2026-08-10** — results in §6.
+3. **ADR r3-0006 is executed**: the film-transfer denominator is certified at 3 fresh seeds, converted reporting is live, and batch-3 experiments register their predictions in the new units.
+   The certification and the operator-requested U-Net comparison are in §7.2.
+4. **Batch 3 — the final batch — is running** (§8); round close is expected 2026-08-12/13 with the final leaderboard.
+5. **The round-1 full runs of 2500 epochs remain on hold.**
+## 6. Batch-2 close (updated 2026-08-11; supersedes the 2026-08-10 midpoint note)
+
+All 8 round-3 experiment cards (batches 1–2, all four streams) are complete; every batch-2 card ran at 3 seeds through the full pipeline.
+In the new film units, the round's standing after batch 2: r3s2-B2 at 0.72, r3s3-B1 at 0.79, r3s2-B1 at 0.92, r3s4-B1 at 1.40, and r3s1-B1 at 1.77 (Fig. 1).
 
 - **Factorised head (r3s1-B2) — complete; falsified its novelty claim; the stream recommends its own consolidation.**
-  The statistically calibrated shape-selection rule was pre-registered head-to-head against the plain "raise the cap" bug-fix, and the plain fix wins.
+  The pre-registered, statistically calibrated shape-selection rule was compared head-to-head with the plain bug fix — simply raising the cap on how many principal shapes the first stage may keep — and the plain fix wins.
   What survives is a confirmed fisher_kpp improvement of 13.35 (1.30× that dataset's minimum claimable effect), attributable entirely to the cap fix.
   The input-space-expansion repair is now a certified null: worse than inert (3.62× the threshold), because widening the correction gate's input collapses it — 19 columns of pure noise collapse it identically, so input width alone explains the failure.
   The stream-closing measurement: on fisher_kpp, even a perfect predictor restricted to the model's 50 principal shapes (the oracle ceiling, 298.83) still loses to the 6-parameter affine reference (270.54).
@@ -259,10 +276,79 @@ Established: recovery tracks condition-response alignment at r = 0.985; the pre-
   The clause that fired is honest instrument accounting: with only 3 fitting samples, cross-validation chose zero regularisation in the frequency band that matters on ifc_poisson, so the repair was inert exactly where batch 1 blew up.
   The replication arm is the round's cleanest attribution: it reproduced batch 1's numbers within noise on every seed *including* the seed-2 blow-up, down to the identical amplification factor (66.219…), proving the repaired arms removed it via the band-limit and not via re-implementation drift.
   The stream's reference-to-beat improves from 12.96 to 10.09, recorded with the caveat that the card setting it is falsified on its own pre-registration.
-- **Value-of-coarse-data (r3s3-B2) — the cost-curve experiment (150 training runs across a ladder of coarse-data budgets) is on the cluster.**
-- **Audit (r3s4-B2) — the checkpoint-binding instrument passed its labelled-defect exam exactly** (every pre-registered detection count reproduced; zero false "retrain" verdicts), **and its fairness probe fired as pre-registered**: fitting reference baselines on 400 rows while scored models fit on 320 shifts cahn_hilliard's reference by 1.93× the minimum claimable effect.
-  Per the clause this is escalated to the operator rather than silently absorbed; the proposed fix is a closed-form re-pricing of the affected batch-1 comparisons once the pricing stage lands (no re-runs needed).
+- **Value-of-coarse-data (r3s3-B2) — complete at 3 seeds; CONFIRMED.**
+  The cost-curve experiment (150 training runs across a ladder of coarse-data budgets) found the pre-registered knee: on cahn_hilliard, adding distinct coarse conditions stops paying beyond c\* = 80, and the step into the knee is 7.0× the clause floor.
+  It also delivered a training-free surrogate that locates the knee without any training runs — the object batch 3 now tests as a pre-registered predictor (§8).
+  Two cautions are on the card: the mediator correlation is high (r = 0.9642) but the HF points do not collapse onto the LF curve, and the measured LF→HF exchange rate came out an order of magnitude below the registered prediction (0.67–2.18 LF rows per HF row) — so the surrogate has earned "locates the knee", not "prices the exchange".
+  By design the card scores only 2 of the 5 panel datasets (cahn_hilliard and ifc_heat), so it claims no panel geomean.
+- **Audit (r3s4-B2) — complete; the six-role checkpoint↔data binding instrument is CONFIRMED at 108/108.**
+  On a labelled fixture of deliberately mutated checkpoints and data it scored perfect recall (27/27, 18/18, 18/18) with 0/27 false "retrain" verdicts (Wilson 95% upper bound 0.125).
+  Both pre-registered "a simpler tool buys the same" branches failed: a whole-dataset hash certificate demands 36/36 unnecessary retrains on test-only changes, and a roles-blind variant misses 9/27 detections — the six-role structure is what makes the instrument both sharp and cheap.
+  Together with batch 1's finding that wall-clock heuristics have zero unique true positives, checkpoint↔data binding strictly dominates the alternatives, and it is now installed as a hard gate in every anchor build.
+  The card's compound hypothesis was falsified in exactly one conjunct: G5, its fairness probe, found a fit-set seam — reference floors were fitted on 400 rows while scored models fit on 320.
+  The seam fired at 1.93× the minimum claimable effect on cahn_hilliard and was escalated per its clause.
+- **The G5 fit-set seam was re-analyzed, re-priced in closed form, and ADOPTED by the operator — no re-runs, no verdict flips.**
+  The matched-fit-set correction is below the claim threshold on all 5 affected cells and always *widens* the models' margins (5/5 sign-unchanged), so the original escalation priced the seam correctly and conservatively.
+  The seam is generic to the nearest-neighbor-in-condition floor arm (it breaches on 56% of fisher_kpp fit sets and 23% of allen_cahn's, not just cahn_hilliard's), so every future claim priced against that floor now carries the arm's fit-set noise band beside the threshold.
+  One live comparand was quantitatively re-priced (r3s2-B1's cahn_hilliard skill 10.0023 → 10.3064; verdict unchanged).
 - **Scoring change (ADR r3-0006, operator decision).**
   The headline score's denominator moves from "copy the coarse solve and enlarge it" to the best learned baseline, `mf_fno_transfer_film`.
   Because both scores are ratios to the same model RMSE, the switch is an exact per-dataset conversion: nothing is re-scored, the frozen evaluation layer is untouched, rankings within the panel are preserved, and in-flight batch-2 verdicts evaluate in the units their predictions were registered in.
   The trade-off is recorded in the ADR: the denominator becomes a trained, seed-dependent object, so its own 3-seed variance is certified and disclosed beside every converted number.
+  The certification, and the U-Net twin the operator asked for, are in §7.2.
+
+## 7. Panel decision and certified baselines (added 2026-08-11)
+
+### 7.1 ADR r3-0007: `ifc_poisson` becomes report-only (operator option C)
+
+- **The trigger was an operator question, not a failure.**
+  With batch 2 closed, Eloise asked whether the two `ifc` datasets belong in the scored panel at all.
+  The on-file evidence was assembled into ADR r3-0007 with three options (keep both / demote both / demote `ifc_poisson` only); she chose option C, demote `ifc_poisson` only.
+- **`ifc_poisson` is demoted because it is a closed-form task.**
+  Its condition→answer map is exactly linear: an affine fit on the training conditions reproduces the fields to an oracle residual of 5.4e-16 — machine precision.
+  No learned model in three rounds ever beat the copy-the-coarse-solve reference there.
+  A scored cell that rewards memorizing a linear map tests nothing this benchmark is about.
+  It stays report-only: every model still runs it and reports it; it just no longer moves the headline score.
+- **`ifc_heat` is retained because the baseline's win there is real structure.**
+  The concern was that its fields are 88.5% level-dominated, so plain rel-L2 mostly measures a constant offset.
+  A dedicated mean-removed check settled it: the film baseline's advantage over the best training-free floor *grows* from 2.60× to 2.79× after removing each field's mean — the opposite of an offset signature — and film's error sits below even the oracle affine residual (0.0272 vs 0.0377).
+  That is structure no affine model can express, so the cell stays scored (record: `state/adr0007_meanremoved_check_2026-08-10.json`).
+- **Affine floors are now always quoted with their leave-one-out fold range.**
+  With only 5 HF training rows, a floor fitted once on all 5 rows is fragile.
+  On `ifc_heat` the single-fit affine floor is 0.96 (better than the published paper bar at 1.0), but the leave-one-out mean is 1.85 (worse).
+  Under refit, the yardstick itself crosses 1.0.
+  Disclosing the fold range is now mandatory wherever an affine floor appears (`program.md` §2, amended under this ADR).
+- **Panel arithmetic.**
+  The scored panel is `allen_cahn_2d`, `fisher_kpp_2d`, `cahn_hilliard`, `pfc`, and `ifc_heat` (4 sharp + 1 ifc).
+  The best training-free floor becomes **53.2146**, extending the audited lineage 75.0673 → 38.6300 → 36.3912 → 34.4198 → 38.8368 → 53.2146 (every step an ADR, recorded in `state/gates.md`).
+  All four round-2 anchor cards were re-certified on the new panel through the binding and stale-checkpoint gates.
+
+### 7.2 ADR r3-0006 executed: the learned-baseline denominator is certified — and has a twin
+
+- **`mf_fno_transfer_film` is certified as the denominator.**
+  Three fresh seeds on the repaired data, stale-audit clean; its 5-dataset panel value is 32.2165 in copy-LF units (`state/anchors/film_denominator.json`, the `_panel5_adr0007` keys).
+- **The operator-requested ConvNeXt U-Net twin is a statistical dead heat with it.**
+  Its panel error is 0.9805× film's, with cross-seed ratios spanning 0.94–1.04 (6 of 9 below 1) — neither model separates from the other at seed noise (`state/anchors/unet_baseline.json`).
+  The certified film denominator therefore stands (the operator holds the override), and batch-3 clauses register in film units as planned.
+  The two baselines have complementary per-dataset strengths (U-Net better on allen_cahn, fisher_kpp, and ifc_heat; film better on cahn_hilliard, pfc, and ifc_poisson), which is why the round-close leaderboard will show both.
+
+## 8. Batch 3 — the final batch (launched 2026-08-11)
+
+Batch-3 scope followed the streams' own recommendations: r3s1 and r3s4 consolidated (no new cards), and the two remaining streams each field one card.
+Both cards register their success clauses against the certified film baseline, per the operator's direction that round 3's target is the best learned baseline, and both passed independent code review before submission.
+
+- **r3s3-B3 — can the sample-efficiency knee be predicted before paying for the curve?** (seed 0 complete, under analysis)
+  Batch 2's training-free surrogate claims to locate each dataset's knee — the coarse-data budget beyond which more coarse solves stop helping — from structure alone.
+  Batch 3 makes that falsifiable the hard way: the surrogate's predicted knee for every cell was sealed (sha256 content hash + timestamp) *before any training job ran*, and a 4-rung ladder of coarse-data budgets now measures where the real knee is.
+  The literature search found that published knee and break-detection methods — kneedle, broken-neural-scaling-law fits, projective early stopping — find the knee only on a curve that has already been paid for.
+  As far as the search could establish, pre-declaring the knee from a structural descriptor, with zero training runs on the target cell, is untested.
+  Seed 0 completed on the cluster (job 261111, 2 h 09 m); a chance match is 1/3 per adjudicable cell, so only the joint pattern across cells carries evidence.
+- **r3s2-B3 — how much could the coarse-field detour ever buy?** (seed 0 relaunching after a guardrail stop)
+  The IC-stack routes through a synthetic ("hallucinated") coarse field; this card separates "the corrector is bad" from "the corrector was fed a hallucinated field" with a 5-rung ladder from fully-deployed to oracle.
+  The oracle rung feeds the corrector the *real* coarse field — which can never be deployed, because at test time that field physically does not exist — so the ladder measures a ceiling on what the route could ever buy, not an alternative model.
+  Seed 0 stopped rather than report a wrong number.
+  A disclosure module found that a guard dataset (`fluid`, 256 training rows) cannot satisfy the 320-row floor-fitting protocol it had declared, and the run refused to report a floor whose fit set did not match its declaration — the guardrail working as designed on a mapping defect.
+  The debugger isolated the fix (the guard cell carries no matched-count obligation) and is relaunching; the scored panel cells were unaffected.
+
+**Round close is expected 2026-08-12/13**: 3 seeds per card, mechanism analysis, then the round report with a final leaderboard of every round-3 model against *both* learned baselines (film and U-Net).
+One recorded bookkeeping item must be reconciled in that leaderboard: the ifc rows currently mix two metric conventions across files (aggregate nRMSE vs per-sample rel-L2, a ~1.27× difference on `ifc_heat`), and the final table must use one convention throughout.
