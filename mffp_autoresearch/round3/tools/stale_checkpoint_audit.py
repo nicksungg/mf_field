@@ -17,9 +17,16 @@ detectable signature is:
   * `<ckpt_dir>/last.pt` mtime strictly older than the result JSON's mtime
     (a real training run rewrites the checkpoint), and/or
   * `resumed_from_step` equal to the total step budget, and/or
-  * `train_seconds` collapsed to a few seconds, and/or
+  * `train_seconds` collapsed to a few seconds (INFORMATIONAL ONLY since
+    2026-08-10 — no longer a stale trigger, see the comment at the retired
+    rule below), and/or
   * the leg's own reported fit on its training rows being far worse than its
     reported training loss implies.
+
+Content supersedes clock (r3s4_audit-B2, 2026-08-10): legs whose checkpoint
+carries a `data_binding` block verified CLEAN by
+`tools/ckpt_data_binding.py` can be exempted via `--exempt-legs`; this audit
+remains the fallback for legs without a checkpoint binding.
 
 Any dataset swap, test-split trim or ladder repair between a checkpoint and a
 re-score is enough to trigger it. Run this after ANY re-score campaign.
@@ -77,9 +84,21 @@ def main(argv=None) -> int:
     ap.add_argument("--data-changed-after", default=None,
                     help="ISO timestamp of a dataset swap/trim; checkpoints older than this "
                          "are reported as PRE-CHANGE even if the mtime test is inconclusive")
+    # Default DELIBERATELY unchanged (r3s4_audit-B2 turn 3): the mtime statistic
+    # is a CLOCK, not a staleness rule — it is drawn from one distribution shared
+    # by all four truth classes and is a monotone function of the leg's position
+    # in the job's execution order (Spearman 0.9969 per seed), with the 60 s
+    # slack sitting inside that distribution. Slack tuning is deferred pending a
+    # tier-aware measurement.
     ap.add_argument("--mtime-slack-seconds", type=float, default=60.0)
     ap.add_argument("--train-seconds-floor", type=float, default=5.0,
-                    help="train_seconds below this is treated as 'did not train'")
+                    help="retained for CLI compatibility; train_seconds is reported "
+                         "as information only and no longer triggers STALE")
+    ap.add_argument("--exempt-legs", default=None,
+                    help="JSON file: list of leg result-file paths to skip because "
+                         "their checkpoint data binding verified CLEAN "
+                         "(tools/ckpt_data_binding.py; binding supersedes clock). "
+                         "Default None: behavior identical to the pre-flag audit.")
     ap.add_argument("--out", default=None)
     ap.add_argument("--fail-on-stale", action="store_true")
     args = ap.parse_args(argv)
@@ -88,10 +107,19 @@ def main(argv=None) -> int:
     if args.data_changed_after:
         cutoff = _dt.datetime.fromisoformat(args.data_changed_after).timestamp()
 
+    exempt = set()
+    if args.exempt_legs:
+        exempt = {str(Path(p).resolve())
+                  for p in json.loads(Path(args.exempt_legs).read_text())}
+
+    n_exempt = 0
     rows = []
     for f in sorted(Path(args.root).rglob(args.pattern)):
         s = str(f)
         if any(x in s for x in args.exclude):
+            continue
+        if str(f.resolve()) in exempt:
+            n_exempt += 1              # binding verified CLEAN; clock not consulted
             continue
         try:
             d = json.load(open(f))
@@ -108,8 +136,14 @@ def main(argv=None) -> int:
             reasons.append("ckpt_older_than_result")
         if resumed is not None and steps is not None and resumed >= steps:
             reasons.append("resumed_at_full_budget")
-        if tsec is not None and tsec < args.train_seconds_floor:
-            reasons.append("train_seconds_collapsed")
+        # `train_seconds_collapsed` RETIRED as a stale trigger (2026-08-10,
+        # r3s4_audit-B2 part 7 item (3c)): priced at 0 unique true positives /
+        # 62 false positives (r3s4-B1), and the B2 re-analysis showed the
+        # wall-clock statistics are drawn from one distribution shared by all
+        # truth classes. train_seconds stays in the record and printout as
+        # information. Removing a trigger can only REDUCE stale verdicts, and
+        # the certified repaired corpus is 0-stale, so no certified verdict
+        # flips.
         if cutoff and ck.exists() and os.path.getmtime(ck) < cutoff:
             reasons.append("ckpt_predates_data_change")
         rows.append({
@@ -125,6 +159,8 @@ def main(argv=None) -> int:
 
     stale = [r for r in rows if r["status"] == "STALE"]
     print(f"# stale-checkpoint audit: {len(rows)} legs under {args.root}")
+    if args.exempt_legs is not None:
+        print(f"# exempted (binding verified CLEAN): {n_exempt}")
     print(f"{'status':8s}{'train_s':>10s}{'resumed':>9s}{'ckpt_mtime':>18s}{'result_mtime':>18s}  leg / reasons")
     for r in sorted(rows, key=lambda x: (x["status"] != "STALE", x["leg"])):
         ts = "-" if r.get("train_seconds") is None else f"{r['train_seconds']:.1f}"
@@ -137,9 +173,12 @@ def main(argv=None) -> int:
     if args.out:
         Path(args.out).parent.mkdir(parents=True, exist_ok=True)
         with open(args.out, "w") as fh:
-            json.dump({"root": args.root, "pattern": args.pattern,
+            payload = {"root": args.root, "pattern": args.pattern,
                        "data_changed_after": args.data_changed_after,
-                       "n_legs": len(rows), "n_stale": len(stale), "legs": rows}, fh, indent=1)
+                       "n_legs": len(rows), "n_stale": len(stale), "legs": rows}
+            if args.exempt_legs is not None:
+                payload["n_exempt_binding_clean"] = n_exempt
+            json.dump(payload, fh, indent=1)
         print(f"wrote {args.out}")
     return 1 if (args.fail_on_stale and stale) else 0
 

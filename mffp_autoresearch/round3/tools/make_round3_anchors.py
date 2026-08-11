@@ -247,6 +247,133 @@ def load_card_skills(card, mode, family, floors_by_ds, include_void_ifc):
     return out
 
 
+# ---- checkpoint<->data binding gate (r3s4_audit-B2 part 7 item (3), 2026-08-10) ----
+# Content-resolved supersession of the wall-clock stale gate. A leg whose
+# `ckpt_<stem>/last.pt` carries a `data_binding` block (written at every save by
+# the models_r3/_common/ckpt_binding.py hook — a batch-3 contract requirement)
+# is verified against the CURRENT role hashes of the dataset it read, using the
+# vendored instrument tools/ckpt_data_binding.py (predicate R1: the only rule
+# with non-zero REREFERENCE recall, 18/18; 0/27 false RETRAIN, Wilson95 upper
+# 0.12456; 0/90 wrong RETRAIN — r3s4_audit-B2).
+#
+#   * no last.pt                 -> counted no_ckpt; the wall-clock fallback
+#                                   continues to govern (item 3c: keep a clock
+#                                   fallback ONLY where no checkpoint exists)
+#   * last.pt, no data_binding   -> counted no_binding, NOT a failure: binding
+#                                   coverage on all pre-existing legs is
+#                                   measured 0 (0/9, 0/6, 0/18 on the flagged
+#                                   roots), so an unconditional gate would block
+#                                   every build today; it becomes enforceable as
+#                                   families adopt the save hook
+#   * last.pt with data_binding  -> predicate_r1 verbatim against recomputed
+#                                   role hashes; any action other than NONE is a
+#                                   HARD failure — no anchor value may be
+#                                   published from a leg whose recorded binding
+#                                   mismatches the current data on a role that
+#                                   leg READ.  Legs verified CLEAN are exempt
+#                                   from the wall-clock stale audit (binding
+#                                   supersedes clock).
+
+
+def _find_nested(obj, key):
+    """First value for `key` anywhere in a nested dict/list (zero_work_resume_scan convention)."""
+    if isinstance(obj, dict):
+        if key in obj:
+            return obj[key]
+        for v in obj.values():
+            got = _find_nested(v, key)
+            if got is not None:
+                return got
+    elif isinstance(obj, list):
+        for v in obj:
+            got = _find_nested(v, key)
+            if got is not None:
+                return got
+    return None
+
+
+def binding_gate():
+    """Verify every audited leg's recorded data binding; return CLEAN leg paths."""
+    sys.path.insert(0, str(ROUND3 / "tools"))
+    import ckpt_data_binding as cdb
+    try:
+        import torch
+    except ImportError:
+        raise SystemExit(
+            "BINDING GATE: torch is required to read <ckpt_dir>/last.pt "
+            "(run under the project venv, /resnick/groups/Hippo/ezeng/mf_field/.venv)")
+
+    excludes = ("void", "quarantine", "backup")   # mirror stale_checkpoint_audit defaults
+    current_cache: dict = {}
+
+    def current_binding(ds_dir):
+        key = str(Path(ds_dir).resolve())
+        if key not in current_cache:
+            cen = cdb.census(ds_dir)
+            if not cen["census_ok"]:
+                current_cache[key] = None      # census failure -> unverifiable
+            else:
+                rh = cdb.role_hashes(ds_dir, cen)
+                current_cache[key] = {"roles": {r: rh[r]["sha256"] for r in cdb.ROLES}}
+        return current_cache[key]
+
+    n_clean = n_fail = n_no_binding = n_no_ckpt = 0
+    clean_paths, failures = [], []
+    for card, root in AUDIT_ROOTS.items():
+        for ds in PANEL:
+            for f in sorted(root.rglob(f"{ds}_e*_s*.json")):
+                s = str(f)
+                if any(x in s for x in excludes):
+                    continue
+                ck = f.parent / f"ckpt_{f.stem}" / "last.pt"
+                if not ck.exists():
+                    n_no_ckpt += 1
+                    continue
+                try:
+                    d = torch.load(ck, map_location="cpu", weights_only=False)
+                except Exception as e:                                # noqa: BLE001
+                    print(f"[binding-gate] WARNING unreadable checkpoint {ck}: {e!r}")
+                    n_no_binding += 1          # clock fallback governs it
+                    continue
+                blk = _find_nested(d, "data_binding") if isinstance(d, dict) else None
+                if not isinstance(blk, dict) or "roles" not in blk:
+                    n_no_binding += 1
+                    continue
+                ds_dir = blk.get("dataset_dir")
+                cur = current_binding(ds_dir) if ds_dir and Path(ds_dir).is_dir() else None
+                if cur is None:
+                    n_fail += 1
+                    failures.append((card, s, "UNVERIFIABLE",
+                                     f"dataset_dir {ds_dir!r} missing or census failed"))
+                    continue
+                executed = _find_nested(d, "executed_steps")
+                if executed is None:
+                    steps = _find_nested(d, "steps")
+                    resumed = _find_nested(d, "resumed_from_step")
+                    if steps is None or resumed is None:
+                        rj = json.loads(f.read_text())
+                        steps = steps if steps is not None else _find_nested(rj, "steps")
+                        resumed = resumed if resumed is not None else _find_nested(rj, "resumed_from_step")
+                    if steps is not None and resumed is not None:
+                        executed = int(steps) - int(resumed)
+                verdict = cdb.predicate_r1(blk, cur, blk.get("roles_read"), executed)
+                if verdict["action"] == "NONE":
+                    n_clean += 1
+                    clean_paths.append(str(f.resolve()))
+                else:
+                    n_fail += 1
+                    failures.append((card, s, verdict["action"], verdict["why"]))
+    print(f"[binding-gate] census: verified_clean={n_clean} binding_failures={n_fail} "
+          f"no_binding={n_no_binding} no_ckpt={n_no_ckpt}")
+    if failures:
+        lines = "\n".join(f"  {c}: {leg} -> {act} ({why})" for c, leg, act, why in failures)
+        raise SystemExit(
+            "CKPT-DATA BINDING GATE FAILED — anchors NOT built.\n"
+            "No anchor value may be published from a leg whose recorded binding "
+            "mismatches the current data on a role that leg READ.\n" + lines)
+    return clean_paths
+
+
 # ---- stale-checkpoint gate (STOP-THE-LINE #2 permanent instrument, 2026-08-09) ----
 # Every scored panel cell must have been TRAINED against the data it is scored
 # on — a resume from a completed checkpoint silently no-ops the training and
@@ -268,14 +395,25 @@ AUDIT_ROOTS = {
 }
 
 
-def stale_gate():
+def stale_gate(exempt_paths=()):
     import subprocess
+    import tempfile
     audit = ROUND3 / "tools" / "stale_checkpoint_audit.py"
+    # Legs verified CLEAN by binding_gate() are exempt from the wall-clock audit
+    # (binding supersedes clock — r3s4_audit-B2 item (3)); with no exemptions the
+    # audit invocation is byte-identical to the pre-binding-gate one.
+    exempt_args = []
+    if exempt_paths:
+        tf = tempfile.NamedTemporaryFile(
+            "w", suffix="_binding_clean_legs.json", delete=False)
+        json.dump(sorted(exempt_paths), tf)
+        tf.close()
+        exempt_args = ["--exempt-legs", tf.name]
     for card, root in AUDIT_ROOTS.items():
         for ds in PANEL:
             r = subprocess.run(
                 [sys.executable, str(audit), "--root", str(root),
-                 "--pattern", f"{ds}_e*_s*.json", "--fail-on-stale"],
+                 "--pattern", f"{ds}_e*_s*.json", "--fail-on-stale", *exempt_args],
                 capture_output=True, text=True)
             if r.returncode != 0:
                 if ds in STALE_ADJUDICATED_OK:
@@ -291,7 +429,8 @@ def stale_gate():
 
 
 def main():
-    stale_gate()
+    clean_legs = binding_gate()
+    stale_gate(exempt_paths=clean_legs)
     certified = json.loads((ROUND3 / "state" / "anchor_summary_3seed_2026-08-03.json").read_text())
     floors_repaired = json.loads((ROUND3 / "state" / "anchors_repaired" / "floors.json").read_text())
 
