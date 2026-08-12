@@ -18,4 +18,15 @@ Verdict: needs-attention. Scorecard: 3 findings (2 high, 1 medium, 0 low).
 
 All three dispositions are FIXED (none adjudicated-reject).
 
-### Round 2 — pending
+### Round 2 — Codex Terra/high, 2026-08-12
+
+Reviewed: spec.md at `2f73b10`.
+Verdict: needs-attention. Scorecard: 3 findings (0 high, 2 medium, 1 low); r1-1 and r1-3 confirmed resolved; r1-2's strategy confirmed with a coverage gap (→ r2-2).
+
+| # | Sev | Finding | Reproduction | Disposition |
+| --- | --- | --- | --- | --- |
+| r2-1 | medium | Whole-registry equality guard impossible: frozen sources already diverge on pfc (family PERIODIC_NODE vs round-2 SPECTRAL_RUNG override) | CONFIRMED — divergence independently observed in this session's own reads of both files | FIXED in spec `60535a7`: guard scoped to newly classified benchmark_30 IDs; pre-existing pfc difference (ADR r3-0005) preserved and exempted via the seam manifest |
+| r2-2 | medium | `manifest_hash` did not cover the stripped views the scorer actually consumes | CONFIRMED as a definition gap | FIXED in spec `60535a7`: D12 hash now covers source + stripped-view content hashes; aggregator re-hashes both; G0 wording notes the hash seals at G1 |
+| r2-3 | low | "two named seam deltas" vs three listed | CONFIRMED | FIXED in spec `60535a7`: count corrected everywhere |
+
+### Round 3 — pending (spec confirm + plan review, Terra; traceability + contradiction, Luna)
