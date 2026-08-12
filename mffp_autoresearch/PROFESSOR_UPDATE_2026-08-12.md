@@ -47,7 +47,7 @@ Figures: `round3/docs/figures/r3_{performance_vs_baselines,architectures_overvie
   An operator-requested ConvNeXt U-Net twin lands in a statistical dead heat with it (error ratio 0.9805, cross-seed range 0.94–1.04), so film stands (§7.2).
 - **DONE — Batch 3 — the round's final batch — launched 2026-08-11 with 2 cards and closed 2026-08-12 (§8–§9).**
   The emulator-ceiling card CONFIRMED its pre-registered prediction and retired the synthetic-coarse-field detour with a mechanism; the sealed knee-prediction card was FALSIFIED with a mechanism that explains exactly when such predictions can and cannot work.
-- **Four figures summarize the round**: the final era-scoped leaderboard (Fig. 1, §10), the four experiment lines (Fig. 2, §2), and the two architectures that beat the learned baseline in detail (Figs. 3–4, §2.1).
+- **Four figures summarize the round**: the final combined leaderboard (Fig. 1, §10), the four experiment lines (Fig. 2, §2), and the two architectures that beat the learned baseline in detail (Figs. 3–4, §2.1).
   All are regenerated from the experiment records by `round3/tools/render_round3_update_figures.py` and embedded in the rendered page.
 
 ## 1. What round 3 asked, and how it ran
@@ -85,7 +85,7 @@ CERTIFIED is the strongest label: measured at 3 seeds and priced against the aud
 "Not resolvable" means the measured difference is smaller than the certified minimum detectable effect, so no claim is made either way.
 
 Batch-1 leaderboard (3-seed geometric mean of normalized error across the batch-1 registration panel, lower is better; no-training reference 34.4198 on that panel — the current 5-dataset panel's floor is 53.2146, §7).
-The round-final, era-scoped leaderboard including batches 2–3 is in §10 (Fig. 1).
+The round-final leaderboard including batches 2–3 is in §10 (Fig. 1).
 
 | Rank | Card | Panel geomean [3-seed] | Verdict | What it is |
 |---|---|---|---|---|
@@ -358,13 +358,12 @@ Batch-1/2 cards registered on the old panel in copy-LF units; batch-3 cards regi
 Comparing across that boundary would assert exactly the comparison the ADRs disclaim, so **ranks are assigned within an era only** and the two tables below share no ordinal scale.
 Film-unit cells are quoted only where they exist on a primary record; no conversion was computed for this page.
 
-Fig. 1 (`round3/docs/figures/r3_performance_vs_baselines.png`) — **the round-3 final leaderboard, era-scoped (round closed 2026-08-12).**
-Panels A–B (above the divider): the batch-1/2 era — every certified 3-seed model ranked *within its era* by error ÷ `mf_fno_transfer_film`, the certified learned baseline (blue line at 1.0; its own 3-seed spread shaded); purple bars beat it.
-The U-Net twin (dotted) sits at 0.9805× film — a statistical dead heat (cross-seed ratios 0.94–1.04).
-The dashed line is the best training-free floor (53.2146 in copy-LF units on the ADR r3-0007 scored panel, §7.1) converted by the certified per-dataset constants.
-Panel B: best model per scored dataset vs baseline and floor, log scale.
-Row C (below the divider): the batch-3 era, era-separated and UNRANKED — C1 shows r3s2-B3's pre-registered replication against the certified anchor in copy-LF units on the anchor's own 5-cell subset ($\Delta$ = +0.3910 = 0.77× seed-mce, not resolvable); C2 shows r3s3-B3's arm in its registered film units (0.5780, beats the baseline).
-No rank order crosses the divider.
+Fig. 1 (`round3/docs/figures/r3_performance_vs_baselines.png`) — **the round-3 final leaderboard (round closed 2026-08-12).**
+Every certified card in one combined chart, ranked by 3-seed panel geomean skill in copy-LF units (error ÷ copy-LF; lower is better; whiskers = 95% CI).
+Purple bars beat the certified learned baseline `mf_fno_transfer_film` (solid blue line at its own copy-LF panel value 14.0770; its 3-seed spread shaded); each bar is annotated with its film-unit reading.
+The U-Net twin (dotted) sits at a statistical dead heat with film (cross-seed ratios 0.94–1.04).
+The dashed line is the best training-free floor (53.2146 in copy-LF units on the ADR r3-0007 scored panel, §7.1).
+† r3s3-B3 is scored on the ADR r3-0007 panel (`pfc` in place of `ifc_poisson`); all other bars share the ADR r3-0004 5-dataset panel. r3s2-B3 shown as its 5-cell anchor-comparand (same datasets as the batch-1/2 panel).
 The ifc affine-floor disclosure below applies to every ifc-containing value in this figure.
 
 **Batch-1/2 era** (ADR r3-0004 5-dataset panel: `allen_cahn`, `fisher_kpp`, `cahn_hilliard`, `ifc_poisson`, `ifc_heat`; copy-LF units; ranks within this era only):
