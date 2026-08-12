@@ -10,6 +10,22 @@ Full per-dataset stats in [`MANIFEST.csv`](MANIFEST.csv).
 
 ## Revision history
 
+**2026-08-07 — two datasets revised (hub commit `36a5f198`).**
+Both changes come from MFFP round-3 work that postdates the 2026-08-05 upload.
+Scores computed against the 2026-08-05 revision are **not comparable** on these two datasets; the previous revision remains reachable through this repository's git history.
+
+1. **`sharp/phase_field_crystal_2d` — regenerated on a crystalline box** (ADR r3-0002).
+   The shipped parameter box admitted non-crystalline samples whose fidelity ladder had no gap at all (median bottom-rung gap $1.2 \times 10^{-6}$).
+   The release now samples $r \in [-0.4, -0.3]$ and $\bar{\psi} \in [-0.25, -0.2]$, which is all-crystalline ($\sigma = -(r + 3\bar{\psi}^2) \ge 0.11$), restoring a real bottom-rung gap of $9.8 \times 10^{-3}$.
+   All six arrays plus the dataset card changed.
+   Its top-rung convergence was documented at the same time — see the `top-rung-converged` caveat below, and score this dataset at L1→L3.
+
+2. **`sharp/allen_cahn_2d` — 22 task-void test rows trimmed**, $n = 100 \to 78$ (ADR r3-0003 D1).
+   The removed rows carried no fidelity gap and so contributed no prediction task to the test split.
+   **Test splits only** — the train arrays are unchanged, which is why the `N (HF)` column in the tables below (a train count) still reads 400 and no derived statistic in `MANIFEST.csv` moves.
+
+`MANIFEST.csv` was recomputed for the affected rows with the original characterizer.
+
 **2026-08-05 — corrected release.**
 Three defect classes were fixed since the 2026-07-28 release.
 Seven datasets changed; the other 35 are byte-identical.
@@ -98,6 +114,23 @@ It is exactly what distinguishes the two flags:
 | `core/burgers_param_generated` | operator-hard | 0.2767 / 0.2767 |
 
 Three more sit just above the copy-LF threshold and deserve the same caution: `ext/pressure_poisson_poiseuille` (0.0117), `sharp/nls_1d` (0.0124), `ext/rayleigh_benard_2d` (0.0147).
+
+### Scoring caveat: `top-rung-converged` (not a degeneracy mode)
+
+`top-rung-converged` appears in the tables above alongside the four degeneracy flags, but it is a different kind of statement and is not counted in the 14.
+A degeneracy flag says the *dataset* is unsuitable; this one says a particular *rung pairing* of an otherwise healthy dataset carries no task.
+
+**Criterion.** Exact (spectral) interpolation of the top low-fidelity rung reproduces the high-fidelity field to $\le 10^{-5}$ relative $L_2$ on every test row.
+When that holds, the LF→HF pair at the top of the ladder has no fidelity gap left to learn, and any score computed on it measures interpolation error rather than prediction skill.
+
+**Who this affects.** `sharp/phase_field_crystal_2d` only.
+Its crystalline fields are spectrally converged at L2 ($64^2$): exact interpolation of L2 reproduces L3 to $\le 1.7 \times 10^{-6}$ relative $L_2$ on every test row.
+The real fidelity gap lives at **L1→L3**, with a per-row spectral copy gap of test median $4.5 \times 10^{-3}$.
+
+**What to do.** Score this dataset at **L1→L3**, not L2→L3, and use spectral (not polynomial) interpolation when lifting LF for reference baselines.
+Harnesses that select the low-fidelity input as `max(lf_fids)` will silently pick the converged rung and report a near-zero error that means nothing.
+This is a property of how smooth one-mode PFC crystals are, not a defect in the arrays — the shipped fields are healthy physics.
+Full statement in [`sharp/phase_field_crystal_2d/README.md`](sharp/phase_field_crystal_2d/README.md).
 
 ### Two caveats on `operator_hard`
 

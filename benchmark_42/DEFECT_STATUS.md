@@ -121,9 +121,17 @@ That is wrong — the 512-point 1D datasets exceed it too.
 
 ### HuggingFace sync status
 
-`eloisezeng/mf_field` re-pushed 2026-08-08 UTC (hub commit `36a5f198`): regenerated `sharp/phase_field_crystal_2d` (all arrays + card), trimmed `sharp/allen_cahn_2d` test split (+ card), recomputed `MANIFEST.csv` pfc row, updated collection README / DEFECT_STATUS, and a dated changelog on the hub dataset card.
+`eloisezeng/mf_field` re-pushed 2026-08-07 19:25 UTC (hub commit `36a5f198`): regenerated `sharp/phase_field_crystal_2d` (all arrays + card), trimmed `sharp/allen_cahn_2d` test split (+ card), recomputed `MANIFEST.csv` pfc row, updated collection README / DEFECT_STATUS, and a dated changelog on the hub dataset card.
 All 17 pushed files hash-verified byte-identical to local; the other 40 datasets were already byte-identical from the 2026-08-05 upload.
 The 2026-08-05 revision remains available via hub git history.
+
+**Data arrays are current as of 2026-08-12.**
+Every array of the two revised datasets was re-verified against the hub by LFS sha256 on 2026-08-12 — all byte-identical, along with three unmodified control datasets.
+`MANIFEST.csv` was re-verified the same day by recomputing the `phase_field_crystal_2d` row from the shipped arrays with the original characterizer: `lf_hf_pearson = 0.8765`, `pf_dist_corr = 0.0166`, reproducing the shipped row exactly.
+
+The documentation lagged the data by five days.
+This section, and the `top-rung-converged` definition and 2026-08-07 revision entry in `README.md`, were written before the 2026-08-07 push but pushed on 2026-08-12 — so the copy of this file on the hub between those dates still announced the two datasets as pending.
+Derived and descriptive files are the ones that go stale silently; treat every hub push as needing an explicit docs pass, not an implied one.
 
 ### `README.md` undercounts the changed datasets
 
