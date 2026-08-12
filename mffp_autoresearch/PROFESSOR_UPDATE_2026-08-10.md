@@ -1,3 +1,5 @@
+Superseded by PROFESSOR_UPDATE_2026-08-12.md (round close).
+
 # MFFP Autoresearch — Update for Mentor (Round 3: Batches 1–2 Closed, Batch 3 Running)
 
 Date: 2026-08-10. Author: Eloise (with the autoresearch orchestrator).

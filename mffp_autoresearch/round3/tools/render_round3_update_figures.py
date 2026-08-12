@@ -10,7 +10,12 @@ hand. Outputs land in `round3/docs/figures/`:
     3-seed panel number and verdict)
 
 Data sources (read-only): experiment_cards/*/batch_1/B1.json part 5,
-state/anchors/launch_anchors.json, state/anchors_repaired/noise_floor.json.
+state/anchors/launch_anchors.json, state/anchors_repaired/noise_floor.json;
+round close 2026-08-12 adds the two batch-3 cards' part 5
+(experiment_cards/{r3s2_field_reach,r3s3_lf_value}/batch_3/B3.json), drawn in an
+ERA-SEPARATED row of r3_performance_vs_baselines.png (round3_report.md §2:
+batch-1/2 and batch-3 registrations share no ordinal scale — never rank them
+on one axis).
 """
 from __future__ import annotations
 
@@ -52,10 +57,13 @@ REGISTERED_PANEL = [
 # state/anchors/launch_anchors.json (`_panel` / `_report_only`, ADR r3-0007),
 # never hardcoded here — see load_anchors().
 
-# Every round-3 card with a CERTIFIED 3-seed panel value (r3s2-B2's certified
-# value lives in state/anchors/r3s2_field_reach.json and is added separately).
-# Excluded by design: r3s3-B2 (2-dataset diagnostic geomean only, no 5-ds panel
-# claim) and r3s4-B2 (diagnostic instrument, 0 panel cells scored).
+# Every BATCH-1/2-era card with a CERTIFIED 3-seed panel value (r3s2-B2's
+# certified value lives in state/anchors/r3s2_field_reach.json and is added
+# separately).  Excluded by design: r3s3-B2 (2-dataset diagnostic geomean only,
+# no 5-ds panel claim) and r3s4-B2 (diagnostic instrument, 0 panel cells
+# scored).  The two batch-3 cards are NOT added here: they registered in a
+# different era (post ADR r3-0005/0006/0007) and are read by load_batch3() into
+# the era-separated row of fig_performance.
 CARDS = {
     "r3s1_factorised-B1": dict(label="r3s1 factorised head (B1)"),
     "r3s1_factorised-B2": dict(label="r3s1 factorised head (B2)"),
@@ -178,7 +186,39 @@ def load_film():
     return json.loads(p.read_text())
 
 
-def fig_performance(cards, best_floor, floors_ds, r2_anchors, film, scored, report_only):
+def load_batch3():
+    """Batch-3 era rows, read verbatim from the two B3 cards' adjudicated part 5.
+
+    Era rule (round3_report.md §2): these cards registered post ADR
+    r3-0005/0006/0007 on different panel compositions/units than the batch-1/2
+    cards, and the two batch-3 rows themselves quote different 5-dataset
+    compositions — so nothing here is ever placed on the batch-1/2 ranked axis,
+    and the two rows are drawn UNRANKED side by side.
+    """
+    out = {}
+    p = ROOT / "experiment_cards" / "r3s2_field_reach" / "batch_3" / "B3.json"
+    if p.exists():
+        r5 = json.loads(p.read_text())["5_actual_result"]
+        va = r5["vs_anchor"]
+        pg = r5["panel_geomean_skill"]
+        out["r3s2_B3"] = dict(
+            comparand=float(va["this_card_mean_same_subset"]),
+            comparand_ci=list(va["this_card_ci95"]),
+            anchor=float(va["anchor_value"]), anchor_ci=list(va["anchor_ci95"]),
+            delta=float(va["delta"]), delta_over_mce=float(va["delta_over_seed_mce"]),
+            panel6=float(pg["mean"]), panel6_ci=list(pg["ci95"]))
+    p = ROOT / "experiment_cards" / "r3s3_lf_value" / "batch_3" / "B3.json"
+    if p.exists():
+        pg = json.loads(p.read_text())["5_actual_result"]["panel_geomean_skill"]
+        f = pg["film_units"]
+        out["r3s3_B3"] = dict(
+            film=float(f["geomean_skill_film_mean"]),
+            film_ci=list(f["geomean_skill_film_ci95"]),
+            copylf=float(pg["mean"]), copylf_ci=list(pg["ci95"]))
+    return out
+
+
+def fig_performance(cards, best_floor, floors_ds, r2_anchors, film, scored, report_only, batch3):
     import numpy as np
     # Panel B shows the SCORED panel only; ifc_poisson (report-only) is dropped
     # from the figure per operator directive 2026-08-11 — its values stay in the
@@ -197,18 +237,19 @@ def fig_performance(cards, best_floor, floors_ds, r2_anchors, film, scored, repo
                 for ds in scored]
         film_seed_panels.append(float(np.exp(np.mean(np.log(vals)))))
 
-    fig = plt.figure(figsize=(13.5, 7.8), constrained_layout=True)
-    gs = GridSpec(1, 2, figure=fig, width_ratios=[1.15, 1.0])
+    fig = plt.figure(figsize=(13.5, 12.2), constrained_layout=True)
+    gs = GridSpec(3, 2, figure=fig, width_ratios=[1.15, 1.0], height_ratios=[1.0, 0.075, 0.52])
     best_anchor = min(r2_anchors.items(), key=lambda kv: kv[1]["mean"])
     best_anchor_ratio = best_anchor[1]["mean"] * gc_cur
     fig.suptitle(
-        "Round 3 leaderboard — certified models ranked best-to-worst by error vs the mf_fno_transfer_film baseline (ADR r3-0006 film units; lower = better, 1.0 = baseline)\n"
+        "Round 3 final leaderboard (round closed 2026-08-12, all 10 cards complete) — era-scoped: batch-1/2 era on top, batch-3 era below the divider (round3_report.md §2)\n"
+        "Panels A/B — batch-1/2 era: certified models ranked by error vs the mf_fno_transfer_film baseline (ADR r3-0006 film units; lower = better, 1.0 = baseline).\n"
         "Scored panel per ADR r3-0007: allen_cahn, fisher_kpp, cahn_hilliard, pfc, ifc_heat. Baselines certified at 3 fresh seeds, stale-gate clean.\n"
         "ifc_poisson is demoted to report-only (ADR r3-0007): its condition→field map is exactly linear — a closed-form task; no learned model ever beat copy-LF there.\n"
         "Its values remain in the state records, not in this figure — panel B shows the 5 scored datasets only.\n"
         "† (every bar) = film-unit reading on the cards' registered ADR r3-0004 panel (pre-pfc-restore); the baselines and the floor are on the current scored panel.\n"
-        "Batch-3 cards (r3s2-B3 emulator ceiling, r3s3-B3 sealed knee predictions) are in flight — no bars yet; final leaderboard at round close.\n"
-        f"Round-2 reference models not shown as bars: the best carried-forward family (r2s3) sits at {best_anchor_ratio:.2f}x film; the round-3 best (0.72x †) has not yet beaten it.",
+        "Row C — batch-3 era (post ADR r3-0005/0006/0007): the two cards quote DIFFERENT 5-dataset compositions and are UNRANKED — no rank order crosses the era divider.\n"
+        f"Round-2 reference models not shown as bars: the best carried-forward family (r2s3) sits at {best_anchor_ratio:.2f}x film; the round-3 best (0.72x †) did not beat it this round.",
         fontsize=9.5, x=0.02, ha="left")
 
     # Panel A: the ROUND-3 LEADERBOARD — every certified card ranked best→worst
@@ -262,7 +303,7 @@ def fig_performance(cards, best_floor, floors_ds, r2_anchors, film, scored, repo
     ax.text(floor_film + 0.04, -1.5, f"training-free floor {floor_film:.2f}\n(no model: best of NN / mean / zero;\nADR r3-0007 panel)",
             color=FLOOR, fontsize=7.6, va="center", ha="left")
     ax.set_xlabel("panel error ÷ film baseline, 3-seed mean, 95% CI (lower = better)")
-    ax.set_title("A — round-3 leaderboard: certified 3-seed models, ranked (purple = beats the film baseline)", loc="left")
+    ax.set_title("A — batch-1/2 era: certified 3-seed models, ranked within era\n(purple = beats the film baseline)", loc="left")
 
     # Panel B: per-dataset best model vs the baseline (1.0) and the floor, in film units
     ax2 = fig.add_subplot(gs[0, 1])
@@ -293,8 +334,8 @@ def fig_performance(cards, best_floor, floors_ds, r2_anchors, film, scored, repo
                          color=INK, ha="center")
         elif fl:
             ax2.annotate("no round-3 model cell\n(pfc re-scored under ADR r3-0005,\nafter batch-1/2 registration)",
-                         (fl * c, i), textcoords="offset points", xytext=(-10, 0), fontsize=7.2,
-                         color=MUTED, ha="right", va="center")
+                         (fl * c, i), textcoords="offset points", xytext=(-14, -24), fontsize=7.2,
+                         color=MUTED, ha="right", va="top")
     ax2.set_yticks(ypos, [DS_SHORT[r[0]] for r in rows])
     ax2.set_xscale("log")
     from matplotlib.ticker import NullFormatter, FixedLocator, ScalarFormatter
@@ -304,8 +345,82 @@ def fig_performance(cards, best_floor, floors_ds, r2_anchors, film, scored, repo
     ax2.xaxis.set_major_formatter(fmt)
     ax2.set_xlabel("per-dataset error ÷ baseline (log; 1.0 = baseline)")
     ax2.axvline(1.0, color=BLUE, lw=1.2, ls="-")
-    ax2.set_title("B — best model vs baseline/floor (scored panel)", loc="left")
+    ax2.set_title("B — batch-1/2 era: best model per dataset\nvs baseline/floor (scored panel)", loc="left")
     ax2.invert_yaxis()
+
+    # ---- Era divider (visually explicit: no ordinal scale crosses this line) ----
+    axd = fig.add_subplot(gs[1, :])
+    axd.set_axis_off()
+    axd.set_xlim(0, 1); axd.set_ylim(0, 1)
+    axd.axhline(0.5, color=MUTED, lw=1.2, ls=(0, (6, 4)))
+    axd.text(0.5, 0.5,
+             " BATCH-3 ERA below (registered post ADR r3-0005/0006/0007) — "
+             "no rank order crosses this line; the two batch-3 rows are UNRANKED against each other ",
+             ha="center", va="center", fontsize=8.6, color=INK, style="italic",
+             bbox=dict(boxstyle="round,pad=0.4", fc=GROUND, ec=MUTED, lw=1.0))
+
+    # ---- Panel C1: r3s2-B3 emulator-ceiling arm vs the certified stream anchor
+    # (pre-registered replication; copy-LF units on the 5-cell anchor-comparand
+    # subset — the composition the anchor is defined on) ----
+    axc1 = fig.add_subplot(gs[2, 0])
+    b3s2 = batch3.get("r3s2_B3")
+    if b3s2 is not None:
+        entries = [
+            ("r3s2-B2 stream anchor (batch-2,\ncertified; the value to replicate)", b3s2["anchor"], b3s2["anchor_ci"], BLUE),
+            ("r3s2-B3 emulator-ceiling arm,\n5-cell anchor-comparand", b3s2["comparand"], b3s2["comparand_ci"], ACCENT),
+        ]
+        for i, (lab, v, ci, col) in enumerate(entries):
+            y = -i
+            axc1.barh(y, v, color=col, alpha=0.9, height=0.5,
+                      xerr=[[v - ci[0]], [ci[1] - v]],
+                      error_kw=dict(ecolor=INK, capsize=3, lw=1), zorder=2)
+            axc1.annotate(f"{v:.4f}  [{ci[0]:.4f}, {ci[1]:.4f}]", (ci[1], y),
+                          textcoords="offset points", xytext=(8, 0), fontsize=7.8,
+                          color=INK, va="center", ha="left", zorder=4)
+        axc1.set_yticks([0, -1], [e[0] for e in entries], fontsize=8)
+        axc1.set_ylim(-3.6, 0.6)
+        axc1.set_xlim(9.4, 11.6)
+        axc1.set_xlabel("panel geomean skill, copy-LF units, 5-cell anchor-comparand subset\n(3-seed mean with 95% CI; lower = better)", fontsize=8.4)
+        axc1.set_title("C1 — batch-3 era: r3s2-B3 replication vs the certified anchor\n(the card itself: CONFIRMED)", loc="left")
+        axc1.text(9.47, -1.75,
+                  f"Δ = +{b3s2['delta']:.4f} = {b3s2['delta_over_mce']:.2f}× the certified panel seed-mce → NOT resolvable\n"
+                  "(pre-registered replication; does not beat the anchor).\n"
+                  f"Its registered 6-cell panel: {b3s2['panel6']:.4f} [{b3s2['panel6_ci'][0]:.4f}, {b3s2['panel6_ci'][1]:.4f}]\n"
+                  "— a different composition, not comparable to these bars.\n"
+                  "Subset includes both ifc cells — the mandatory ifc affine-floor\n"
+                  "leave-one-out disclosure applies (round3_report.md §2).\n"
+                  "CIs are seed+run intervals: a same-seed cross-node rerun moved\n"
+                  "this subset by 0.62× seed-mce (card part 5).",
+                  fontsize=7.0, color=MUTED, va="top", ha="left")
+
+    # ---- Panel C2: r3s3-B3 arm vs the learned film baseline (film units,
+    # ADR r3-0007 scored panel — its registered composition) ----
+    axc2 = fig.add_subplot(gs[2, 1])
+    b3s3 = batch3.get("r3s3_B3")
+    if b3s3 is not None:
+        v, ci = b3s3["film"], b3s3["film_ci"]
+        axc2.barh(0, v, color=ACCENT, alpha=0.9, height=0.5,
+                  xerr=[[v - ci[0]], [ci[1] - v]],
+                  error_kw=dict(ecolor=INK, capsize=3, lw=1), zorder=2)
+        axc2.annotate(f"{v:.4f}  [{ci[0]:.4f}, {ci[1]:.4f}]\n— beats film", (ci[1], 0),
+                      textcoords="offset points", xytext=(8, 0), fontsize=7.8,
+                      color=ACCENT, fontweight="bold", va="center", ha="left", zorder=4)
+        axc2.axvline(1.0, color=BLUE, ls="-", lw=1.4, zorder=1)
+        axc2.annotate("film baseline = 1.0", (1.0, 0.42), fontsize=7.4, color=BLUE,
+                      ha="left", va="center", xytext=(4, 0), textcoords="offset points")
+        axc2.set_yticks([0], ["r3s3-B3 knee-prereg arm\n(ADR r3-0007 scored 5-ds panel)"], fontsize=8)
+        axc2.set_ylim(-3.6, 0.6)
+        axc2.set_xlim(0, 1.28)
+        axc2.set_xlabel("panel geomean skill, FILM units (error ÷ mf_fno_transfer_film)\n(3-seed mean with 95% CI; lower = better; 1.0 = learned baseline)", fontsize=8.4)
+        axc2.set_title("C2 — batch-3 era: r3s3-B3 arm vs film\n(the card itself: FALSIFIED)", loc="left")
+        axc2.text(0.03, -1.75,
+                  "The round's best learned result against the learned baseline —\n"
+                  "even though the card's registered knee-prediction claim was\n"
+                  "FALSIFIED (both adjudicable cells missed at 6–19× τ_rel_film\n"
+                  "on every seed; the cahn_hilliard instrument control hit).\n"
+                  "Same arm in copy-LF units on its scored panel:\n"
+                  f"{b3s3['copylf']:.4f} [{b3s3['copylf_ci'][0]:.4f}, {b3s3['copylf_ci'][1]:.4f}].",
+                  fontsize=7.0, color=MUTED, va="top", ha="left")
 
     out = FIGDIR / "r3_performance_vs_baselines.png"
     fig.savefig(out, dpi=170)
@@ -325,13 +440,13 @@ ARCH = [
       "stage 1 — neural field generator:\na FiLM-conditioned Fourier neural operator synthesizes\na stand-in coarse field directly from the condition",
       "stage 2 — frozen corrector:\na network trained earlier on real coarse fields\nupgrades the synthetic coarse field to fine",
       "fine-grid field"],
-     "Question: does routing through a synthetic coarse field help?\nAnswer so far: all measurable value is stage 1 using the IC information;\nstage 2 adds nothing resolvable (same null as round 2).\nBatch 2: repaired corrector instrument → round-best 10.09 (0.72× film);\nbatch 3 asks what the coarse-field detour could EVER buy (ceiling card)."),
+     "Question: does routing through a synthetic coarse field help?\nAnswer: all measurable value is stage 1 using the IC information;\nstage 2 adds nothing resolvable (same null as round 2).\nBatch 2: repaired corrector instrument → round-best 10.09 (0.72× film).\nBatch 3 (closed, CONFIRMED): the ceiling is a scalar identity with stage-1's\nown LF error — unity gain, low-wavenumber failure; the detour is retired."),
     ("Value-of-coarse-data contrast (r3s3) — 11.08 [10.84, 11.25] · no resolvable delta",
      ["condition vector",
       "ONE multi-resolution Fourier neural operator,\ntrained repeatedly under controlled data diets:\nall coarse solves / coarse solves only at parameters the\nfine data already covers / no coarse solves at all",
       "the comparison of those training diets IS the result:\nwhat do coarse solves buy, and through which channel?",
       "fine-grid field (identical network interface at test)"],
-     "Answer: coarse solves help ONLY by covering new parameter points\n(the covered-only diet learns the same function as no-coarse-data);\nheadline vs-baseline win retracted after the baseline repair.\nBatch 2: cost-curve knee confirmed at c* = 80 coarse conditions (7×\nthe clause floor); batch 3 seals the surrogate's knee predictions."),
+     "Answer: coarse solves help ONLY by covering new parameter points\n(the covered-only diet learns the same function as no-coarse-data);\nheadline vs-baseline win retracted after the baseline repair.\nBatch 2: cost-curve knee confirmed at c* = 80 coarse conditions.\nBatch 3 (closed, FALSIFIED): the sealed knee predictions missed 6–19× τ —\nthe surrogate is a different learner's learning curve; its arm still beat film."),
     ("Noise-floor certifier (r3s4) — 19.64 [19.42, 19.93] · thresholds CERTIFIED",
      ["condition vector",
       "not a competitor — an instrument:\na fixed reference model plus the training-free predictors,\nre-run across seeds and data resamples",
@@ -467,7 +582,9 @@ def fig_top_models():
         "What the round established:  the initial-condition information is the entire measurable effect, and it acts in STAGE 1 (63.7% / 85.4% of generator error removed on\n"
         "allen_cahn / fisher_kpp; a fake IC does worse than none).  The corrector stage adds nothing resolvable — round 2's null replicates (0.0056 vs 0.0061).  B2's repair\n"
         "removed the one failure mode (the 66× spectral amplification fitted from 3 samples), lifting the stream best from 12.96 (0.92× film) to 10.09 (0.72× film) — the\n"
-        "round's best model.  Remaining weakness: both ifc cells still lose to a 6-parameter affine fit (floors now quoted with their leave-one-out fold range per ADR r3-0007).")
+        "round's best model.  Remaining weakness: both ifc cells still lose to a 6-parameter affine fit (floors now quoted with their leave-one-out fold range per ADR r3-0007).\n"
+        "Batch 3 (ceiling card, CONFIRMED) closed the stream: the synthetic-coarse-field detour's value is capped by a scalar identity — the corrector passes stage-1's own LF\n"
+        "error through at unity gain (0.80–1.02 on 6/6 cells), so the route is retired; the B3 replication matched the anchor within noise (+0.39 = 0.77× seed-mce).")
 
     p4 = fig_model_detail(
         "r3_model_detail_lf_channels.png",
@@ -490,7 +607,8 @@ def fig_top_models():
         "condition rows explain E_cov/E_total ≈ 1.0 on 30/30 cells.  Recovery tracks a measurable intermediate (condition–response alignment, r = 0.985).  Its headline vs-baseline\n"
         "win from before the anchor repair (−10.1%) was retracted as a stale-baseline artifact; what survives is the mechanism and the strongest panel number of batch 1 (11.08,\n"
         "0.79× film-transfer).  It is the best model on ifc_heat (0.07 = 15× better than copying the solver) and fisher_kpp.  Batch 2 confirmed the cost-curve knee at c* = 80 and a\n"
-        "training-free surrogate for it — the basis of batch 3's sealed-prediction card.")
+        "training-free surrogate for it.  Batch 3 (closed, FALSIFIED): the surrogate's sealed knee predictions missed at 6–19× τ_rel_film on both adjudicable cells — it is the\n"
+        "learning curve of a DIFFERENT learner — while the same card's trained arm scored the round's best film-unit result (0.5780 [0.5606, 0.5897]).")
     return p3, p4
 
 
@@ -500,11 +618,13 @@ def main():
     film = load_film()
     if film is None:
         raise SystemExit("film_denominator.json not built yet (ADR r3-0006) — run make_film_denominator.py first")
+    batch3 = load_batch3()
     missing = [(cid, ds) for cid, d in cards.items() for ds, v in d["per_ds"].items() if v is None]
     if missing:
         print("WARN: per-dataset values not found for:", missing)
     print("scored panel:", scored, "report-only:", report_only, "best_floor:", best_floor)
-    p1 = fig_performance(cards, best_floor, floors_ds, r2, film, scored, report_only)
+    print("batch3 era rows:", json.dumps(batch3, indent=1))
+    p1 = fig_performance(cards, best_floor, floors_ds, r2, film, scored, report_only, batch3)
     p2 = fig_architectures()
     p3, p4 = fig_top_models()
     print("wrote", p3)
