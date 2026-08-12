@@ -14,7 +14,7 @@ Deliverables:
 - `D-report`: `mffp_autoresearch/benchmark30/docs/report.md` — fact-check-converged benchmark report.
 - `D-results`: per-run result JSONs + an aggregate `leaderboard.json` under `mffp_autoresearch_outputs/benchmark30/` (gitignored heavy artifacts; JSON summaries committed).
 - `D-manifest`: dataset version/staging manifest (§5.1) committed to git.
-- `D-adr`: one ADR extending the upsample-convention registry to the 20 unclassified datasets (§5.3).
+- `D-adr`: one ADR extending the upsample-convention registry to the 17 unclassified 2-D datasets (§D4; the 4 1-D datasets bypass the registry).
 - `D-summary`: one consolidated summary to Eloise at the end (notify-on-response directive), including the benchmark_30 provenance finding that feeds her pending "coherent HF hub revision" decision.
 
 ## 2. Verified environment facts (probed 2026-08-12; do not re-derive)
@@ -40,7 +40,7 @@ The full 30, by local name:
 - Family `models_r3/r3s2_route`, scored arm `A1_stack_ic_reg`, one job computes 7 arms on identical inputs.
 - Certified checkout: worktree `mffp_autoresearch/round3/worktrees/r3s2_field_reach/B2` at `e606a4f` (build `211eb91` + reviewed citation fix; the commit the certified jobs ran at).
 - Certified result: panel geomean skill 10.0853, per-seed [10.3528, 9.7249, 10.1781] on the 5-dataset round-3 panel (sharp__allen_cahn_2d, sharp__fisher_kpp_2d, sharp__cahn_hilliard, ifc_poisson, ifc_heat), 200 epochs, seeds {0,1,2}, SLURM jobs 158775/165550/165551, ~44–55 min per seed on one H200.
-- The recipe carries ~60 env knobs, including `R3S2B2_ARM=A1_stack_ic_reg` and `R3S2_TARGET_SCALER_PREFLIGHT=not_applicable_no_helmholtz_no_pfc_in_datasets` — the latter is INVALID for benchmark_30 (which contains both Helmholtz variants and pfc) and must be re-derived (§5.5).
+- The recipe carries ~60 env knobs, including `R3S2B2_ARM=A1_stack_ic_reg` and `R3S2_TARGET_SCALER_PREFLIGHT=not_applicable_no_helmholtz_no_pfc_in_datasets` — the latter's NAME is stale for benchmark_30 (which contains both Helmholtz variants and pfc), but it is a hard-asserted, recorded-only knob with no active code path; see D5.
 - Checkpoints bind the dataset content sha256 into the payload; resume against changed arrays aborts.
 - The family's vendored `upsample.py` `resolve_convention()` RAISES for any unclassified 2-D dataset (ADR r2-0001: convention assignment is an ADR-level decision).
   Classified today: PERIODIC_NODE {sharp__phase_field_crystal_2d, sharp__allen_cahn_2d, sharp__fisher_kpp_2d, sharp__cahn_hilliard}; DIRICHLET_NODE {ext__helmholtz_2d}; LEGACY_CELL {heat_local, fluid, sharp__sod_1d, ifc_poisson, ifc_heat}.
@@ -57,7 +57,8 @@ The full 30, by local name:
 
 - `mffp_autoresearch/round2/eval/score_panel.py` invokes each family's `smoke_eval.py` against a STRIPPED test view (test split physically contains no LF fields; family gate V2 asserts `test['lf_fids']` empty) and extracts the metric itself: prefer `rel_l2_per_sample` mean, then `rel_l2_mean`, then `nRMSE` — one definition for all families, so metric parity is structural.
 - Stripped views are built by `round2/eval/make_stripped_view.py` into `round2/stripped_data/<dataset>/`; it currently iterates only the round-2 panel+guard list, so the campaign must extend coverage additively (§5.4).
-- Result/cache roots are redirectable via `ROUND2_EVAL_RESULTS` / `ROUND2_EVAL_CACHE` env (used to keep campaign outputs out of round-2/3 state).
+- Result/cache roots are redirectable via `ROUND2_EVAL_RESULTS` / `ROUND2_EVAL_CACHE` env — but the copy-LF baseline registry is NOT redirectable: `score_panel.py` hard-loads `round2/eval/copylf_baselines.json` and raises for unlisted datasets, and `COPYLF_DEF_HASH` = sha256 of `panel_data.py`, so in-place registry extension would invalidate round-2/3 state.
+  This is why D3 vendors the scorer.
 
 ## 3. Non-goals / out of scope
 
@@ -70,8 +71,9 @@ The full 30, by local name:
 ## 4. Necessity gate (skill step 4, answered early because the spec's shape depends on it)
 
 **What already does this?** The round-2/3 eval stack: `score_panel.py` + `make_stripped_view.py` + the family contract + the film-baseline runner layout under `round3_anchors/film_baseline-R3` + SLURM sbatch patterns from round 3.
-**Reuse decision: the campaign REUSES all of it.** New code is limited to: (a) a campaign staging/preflight script, (b) the convention-registry ADR extension (append-only data change inside a vendored family copy), (c) SLURM launcher scripts for 30-dataset sequential runs, (d) an aggregator/report generator.
-No new eval logic, no new metric code, no parallel scoring path.
+**Reuse decision: the campaign REUSES all of it — by VENDORING where in-place use is impossible.** The scorer cannot run unmodified on non-round-2 datasets (hard copy-LF registry dependency, §2.4), and extending it in place would invalidate round-2/3 state (`COPYLF_DEF_HASH`), so D3 vendors `score_panel.py`+`panel_data.py` byte-identically except two named seams, with a guard test proving the metric path is unchanged.
+New code is limited to: (a) a campaign staging/preflight script, (b) the convention-registry ADR extension (append-only, in the vendored copies), (c) the campaign copy-LF baseline builder, (d) SLURM launcher scripts, (e) an aggregator/report generator.
+No new eval logic, no new metric code; the vendored scorer is a pinned copy, not a parallel implementation.
 **Contradiction check:** ADR r2-0001 says convention assignment is ADR-level — we extend it BY an ADR, not by an env override.
 The round-3 "certified" label attaches to byte-identical family code — decision D2 keeps it so.
 **Mechanical guards:** §5.3 (registry completeness test), §5.2 (byte-identity manifest test).
@@ -94,23 +96,35 @@ HF-stale runs are never pooled with corrected runs.
   Exception per brainstorm: a correctness bug demonstrably affecting certified behaviour too would be a stop-the-line event for Eloise, not a silent patch.
 - Reporting rule: the model is labeled "r3s2-B2 certified stack (registry-extended to benchmark_30)"; the certified 10.0853 anchor is quoted only for the original 5-dataset panel.
 
-### D3 — Evaluation protocol: round-3 stripped-view score_panel, unmodified
+### D3 — Evaluation protocol: VENDORED copy of the round-3 stripped-view scorer, with two named seam deltas
 
-- Both families run through `round2/eval/score_panel.py` with `ROUND2_EVAL_RESULTS`/`ROUND2_EVAL_CACHE` pointed at `mffp_autoresearch_outputs/benchmark30/{results,cache}`.
-- Metric: per-sample rel-L2 mean, as score_panel computes it (the round's ONE definition); identical for both families by construction.
+Codex round-1 finding (CONFIRMED, score_panel.py:47/198–202): `score_panel.py` hard-loads `round2/eval/copylf_baselines.json` from its own directory (not env-redirectable) and RAISES for any dataset without an entry, so the unmodified scorer cannot score the 20 non-round-2 datasets.
+And `COPYLF_DEF_HASH` is the sha256 of `panel_data.py` itself (panel_data.py:219), so extending the registry in `round2/eval/panel_data.py` in place would invalidate ALL existing round-2/3 baselines and score caches — round-2 files must not be touched.
+
+Resolution — vendor, exactly as D2 vendors the family:
+
+- `mffp_autoresearch/benchmark30/eval/` gets byte-copies of `score_panel.py` + `panel_data.py` from `83a547e`, with ONLY these seam deltas: (a) the baseline path constant points at the campaign's own `copylf_baselines.json`; (b) the convention registry sets are extended append-only per D4; (c) data-root/config resolution points at the campaign config (which carries per-dataset `dataset_dir`, needed for era5's `era5_train_test/` subdir).
+- A seam manifest + guard test diff the vendored files against the `83a547e` originals and assert the delta is EXACTLY those named hunks — metric extraction (`_extract_test_metric`), nRMSE/skill definitions, cache logic, and the stripped-view contract assertions stay byte-identical, so metric parity with round 3 is provable, not claimed.
+- A campaign script builds `state/copylf_baselines.json` for all 30 datasets using the vendored construction (its self-consistent `COPYLF_DEF_HASH` = vendored panel_data hash); this is a G2 gate output.
+- `ROUND2_EVAL_RESULTS`/`ROUND2_EVAL_CACHE` point at `mffp_autoresearch_outputs/benchmark30/rev-<manifest_hash8>/{results,cache}` (content-addressed, D13).
+- Metric: per-sample rel-L2 mean, as the (vendored, byte-identical) extractor computes it; identical for both families by construction.
 - `eval/score.py` (factory leaderboard) is NOT used — it lacks the stripped-view guarantee.
 
 ### D4 — Convention registry extension is one ADR, fail-closed, with per-dataset rationale
 
-- One ADR (`docs/adr/` in the campaign tree) classifies each of the 20 unclassified datasets into `periodic_node` / `dirichlet_node` / `legacy_cell` (or `1d_path` where V-1D shows the 2-D registry is not consulted), each with a one-paragraph rationale grounded in the dataset's generator/grid semantics (solver docs in `mf_field_eloise_data/`, `mf_field_extension_data/solvers.py`, `datasets_summary.csv`).
+- Grid shapes MEASURED 2026-08-12: exactly 4 datasets are 1-D (sharp__{sod,burgers,shallow_water,porous_medium}_1d, 128 cells) and take the family's 1-D path that bypasses `resolve_convention`; sharp__euler is 2-D (128x128) contrary to the brainstorm's guess; era5 is 721x1440; every other 2-D dataset is ≤ 256x256.
+- One ADR (`docs/adr/` in the campaign tree) classifies each of the **17 genuinely-2-D unclassified datasets** (6 core: poisson_generated, poisson_local, heat_generated, darcy_generated, allen_cahn_generated, lid_driven_cavity_generated; era5; 5 ext: rayleigh_benard_2d, wave_2d, eikonal_2d, cahn_hilliard_2d, pressure_poisson_poiseuille; 5 sharp: euler, burgers_2d, shallow_water_2d, porous_medium_2d, helmholtz_2d) into `periodic_node` / `dirichlet_node` / `legacy_cell`, each with a one-paragraph rationale grounded in the dataset's generator/grid semantics (solver docs in `mf_field_eloise_data/`, `mf_field_extension_data/solvers.py`, `datasets_summary.csv`); the 3 unclassified 1-D datasets are recorded as `1d_path` for completeness.
+- era5 needs its classification even though r3s2 cannot run it (D11): the campaign copy-LF baseline construction upsamples LF→HF for every scored dataset.
+- The extension is applied append-only in BOTH vendored copies (campaign `panel_data.py` and the vendored family's `upsample.py`), and a guard test asserts the two registries are identical.
 - Unknown IDs keep failing closed (`resolve_convention` raise preserved).
 - A staging test asserts registry coverage of exactly the 30 campaign IDs before any launch.
 - Per brainstorm: for ambiguous datasets, deterministic synthetic-field interpolation unit checks validate the implementation semantics; conventions are NEVER chosen by looking at test metrics.
 - The ADR records the registry revision; every run manifest and checkpoint records that revision.
 
-### D5 — Recipe knob re-derivation, predeclared
+### D5 — Recipe knobs carried verbatim; the preflight knob documented, not changed
 
-- `R3S2_TARGET_SCALER_PREFLIGHT` is re-derived for the 30-dataset panel BEFORE launch by reading what the preflight actually checks in the family code, and the derived value + reasoning goes into the frozen campaign spec file.
+- VERIFIED (smoke_eval.py:369–374, 1671–1677): the family HARD-ASSERTS `R3S2_TARGET_SCALER_PREFLIGHT == "not_applicable_no_helmholtz_no_pfc_in_datasets"` (any other value raises `R3S2ContractError`), and the knob is recorded-only — the sidecar writes `"applied": False, "Recorded, never applied"`; no scaler code path exists for any dataset.
+- Therefore the knob is passed VERBATIM; running helmholtz/pfc datasets applies no special scaling to any dataset (identical treatment), and the campaign manifest documents that the knob's name and the sidecar's note text are historical strings scoped to the certified 5-dataset panel, superseded by this manifest's dataset list.
 - All other knobs are carried verbatim from the certified B2 recipe.
 - No per-dataset knob tuning at any point; anything the preflight rejects goes to the exclusion ledger rather than being tuned through (selection-leakage guard, brainstorm risk #6).
 - The 7-arm computation is preserved (intrinsic to the certified job); ONLY `A1_stack_ic_reg` is reported; no per-dataset best-arm selection.
@@ -119,7 +133,7 @@ HF-stale runs are never pooled with corrected runs.
 
 1. **G0 hash/version lock** — staging manifest written; 30/30 local dirs hashed; the two deviations documented.
 2. **G1 schema + stripped-view audit** — stripped views built for all 30; audit asserts test split physically LF-free for every dataset; loader smoke (shapes, LF rungs, condition vectors) for both layouts.
-3. **G2 registry completeness** — ADR merged; coverage test green; synthetic upsample unit checks green; V-1D resolved.
+3. **G2 registry completeness** — ADR merged; coverage test green; synthetic upsample unit checks green; campaign `copylf_baselines.json` built for all 30 with the vendored construction and committed.
 4. **G3 contract smoke** — both families x all 30 datasets x 2 epochs x seed 0 on SLURM; deterministic failures → exclusion ledger; this is the fixed, predeclared compatibility suite.
 5. **G4 one full seed** — both families x eligible datasets x 200 epochs x seed 0.
 6. **G5 remaining seeds** — seeds 1–2, launched only after G4 results validate (completion, not metric quality — no selection on metrics).
@@ -129,7 +143,7 @@ HF-stale runs are never pooled with corrected runs.
 - Same staging manifest and array hashes, same stripped test views, same seeds {0,1,2}, same 200-epoch ceiling, same checkpoint rule (`last.pt`, resume mandatory), same metric extraction.
 - FiLM's LF pretraining uses only training-fold LF data (its existing smoke_eval behaviour — verified in round 3; re-asserted in G1 audit); no test-derived statistics for either family.
 - Equal-epoch policy WITH reported wall-clock/GPU-time per run (the brainstorm's compute-parity caveat is handled by reporting, not by equalizing FiLM's extra pretrain phase — that phase is intrinsic to the method being benchmarked).
-- Peak memory / batch-size accommodations (era5) are declared per-dataset in the frozen spec BEFORE launch, applied to both families identically where applicable (D11).
+- No per-dataset accommodations for either family (D11); peak memory, wall-clock, and effective batch are recorded per run.
 
 ### D8 — Exclusion ledger; coverage separated from score
 
@@ -154,12 +168,27 @@ HF-stale runs are never pooled with corrected runs.
 - Immutable per-attempt logs under the campaign output root; a changed dataset hash invalidates resume by construction (checkpoint binding) and requires a new run id.
 - Estimated total: 30 ds x 2 families x 3 seeds x 200 epochs ≈ 15–25 GPU-h — within normal cluster usage, no overage spend.
 
-### D11 — era5 memory policy
+### D11 — No per-dataset accommodations; era5 is a predeclared r3s2 exclusion
 
-- A fixed, declared policy written into the frozen spec before launch (e.g. batch-size cap + gradient accumulation to preserve effective batch), applied identically where each family exposes the knob; peak memory and actual optimizer updates recorded per run.
-- If era5 cannot run under the declared policy without code changes to the frozen family, it goes to the exclusion ledger (D2 > completeness).
+Codex round-1 finding (CONFIRMED): D7/D11 as first drafted contradicted D5's verbatim-knob rule.
+Resolved policy — there are NO per-dataset knob accommodations for either family, period:
 
-### D12 — Decision records and notification
+- r3s2 hard-raises when its built-in `WORK_CAP=256` fires (smoke_eval.py:650–654: working grid must equal native HF grid); era5 is 721x1440, so **era5 is structurally unsupported by the frozen family** and enters the exclusion ledger (class unsupported-by-frozen-family) at G3 with the raise as evidence — predeclared here, not discovered post hoc.
+- The film baseline runs era5 as-is with its own internal batch handling; if it OOMs under the standard H200 allocation, that cell is ledgered as infra-failure after the bounded retries. Either way era5 cannot enter the common eligible set (D8 requires both families).
+- Peak memory and wall-clock are recorded for every run (D7); no knob of either family is changed for any dataset.
+
+### D12 — Content-addressed run identity (cache/checkpoint invalidation on data change)
+
+Codex round-1 finding (CONFIRMED): the scorer cache key is `sha256(code_hash|dataset|epochs|seed)` with no data-content term (score_panel.py:203), and the film checkpoint accepts `last.pt` on `(epochs_target, grid)` alone (film smoke_eval.py:156) with no dataset hash — so a changed array under the same name could silently reuse a stale score or checkpoint.
+Only r3s2 binds data hashes into its checkpoints.
+Resolution at the PATH layer, with zero frozen-code edits:
+
+- `manifest_hash = sha256(registry_revision + the 30 sorted per-dataset content hashes)` is computed at G0 and frozen in the staging manifest.
+- EVERY mutable root — results, cache, checkpoints, logs — lives under `mffp_autoresearch_outputs/benchmark30/rev-<manifest_hash8>/`; any data change → new manifest hash → empty cache and fresh checkpoint namespace by construction.
+- The aggregator re-hashes the staged arrays at collect time and REJECTS any result whose recomputed manifest hash differs from the frozen one (act-on-fresh-state directive).
+- Film's resume granularity is whole-run (it writes `last.pt` only after both training stages complete — verified); acceptable because per-dataset runs are minutes-scale, and the bounded-retry policy (D8) covers preemption restarts.
+
+### D13 — Decision records and notification
 
 - This spec + the ADR + the staging manifest ARE the written decision records (operator-delegation directive).
 - Eloise is notified once at the end with the consolidated report, plus immediately if a stop-the-line event occurs (pause-rounds-on-bug-discovery) or a decision outside the approved envelope becomes necessary.
@@ -171,19 +200,22 @@ All new code lives under `mffp_autoresearch/benchmark30/` in the worktree:
 
 - `staging/manifest.py` → writes `state/staging_manifest.json` (G0) — 30 IDs, source paths, split content hashes, corrected-vs-HF status, stripped-view hashes, registry revision.
 - `family/r3s2_route_b30/` — vendored family (D2) + `state/family_byte_identity.json` + guard test.
-- `staging/preflight.py` (G1–G2 checks as runnable asserts; includes the stripped-view build calls and the LF-free audit for all 30).
+- `eval/` — vendored `score_panel.py` + `panel_data.py` (D3) + seam manifest + byte-identity guard test; `eval/make_copylf_baselines_b30.py` → `state/copylf_baselines.json`.
+- `staging/preflight.py` (G1–G2 checks as runnable asserts; includes the stripped-view build calls — importing round-2 `_mirror`/`_verify` — and the LF-free audit for all 30).
 - `adr/0001-benchmark30-convention-registry.md` (D4).
 - `slurm/` — sbatch templates + launcher for the 6 {family, seed} jobs + the G3 smoke job pair.
 - `aggregate/collect.py` → `leaderboard.json`; `aggregate/report.py` → report tables.
 - `tests/` — registry coverage, byte-identity, synthetic upsample checks, aggregator unit tests on fixture results (marked FIXTURE).
 
-## 7. Build-time verification items (carried into the plan)
+## 7. Build-time verification items — ALL RESOLVED (probed 2026-08-12, this session)
 
-- **V-1D**: read the family's 1-D path; establish whether 1-D datasets consult `resolve_convention` and what registration they need; record in the ADR.
-- **V-PREFLIGHT**: read the preflight implementation; derive the correct `R3S2_TARGET_SCALER_PREFLIGHT` value for a panel containing helmholtz (x2) and pfc.
-- **V-FILM-LAYOUT**: confirm `mf_fno_transfer_film` supports both on-disk layouts across all 30 (it declares `ifc_raw` + `npz_l`; the certified family declares `ifc_raw` + `npz`) — any gap is a G3 exclusion, not a patch.
-- **V-STRIPPED-EXTEND**: confirm `make_stripped_view.py` can be driven additively for non-panel datasets without editing round-2 config (e.g. via its CLI or a thin campaign wrapper that calls its functions) — round-2 files are not modified.
-- **V-ERA5-SIZE**: measure era5 array sizes before declaring the memory policy.
+- **V-1D RESOLVED**: `upsample_fields()` routes any field with grid `H == 1` on both levels through a legacy 1-D `zoom` path BEFORE `resolve_convention` is consulted (upsample.py:147–156).
+  So genuinely 1-D datasets need NO 2-D convention entry; the ADR classifies only the genuinely 2-D unclassified datasets, and the staging manifest records every dataset's grid shape so the eligible-for-ADR set is measured, not assumed.
+- **V-PREFLIGHT RESOLVED**: see D5 — knob verbatim, hard assert, scaler never applied, historical note documented in the manifest.
+- **V-FILM-LAYOUT RESOLVED**: both families load through the SAME shared loader, `data_adapters.load_mf_dataset` (film smoke_eval.py:43; r3s2 smoke_eval.py:100) — layout support is symmetric at the loader level; residual per-dataset incompatibilities are exactly what the G3 smoke matrix is for.
+- **V-STRIPPED-EXTEND RESOLVED**: `make_stripped_view.py` exposes importable `_mirror(src, dst)` and `_verify(view)`; only its `main()` is panel+guard-scoped.
+  The campaign preflight imports `_mirror`/`_verify` and iterates the 30 campaign IDs — zero edits to round-2 files.
+- **V-ERA5-SIZE RESOLVED**: era5 is 1.2 GB, npz_l layout with 9 LF levels, and its npz files live in a SUBDIRECTORY `era5/era5_train_test/` — the staging manifest must therefore carry an explicit `dataset_dir` per dataset (not `data_root/<name>` by convention), and the preflight asserts each recorded dir actually loads.
 
 ## 8. Acceptance criteria
 
