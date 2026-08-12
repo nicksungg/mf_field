@@ -29,4 +29,24 @@ Verdict: needs-attention. Scorecard: 3 findings (0 high, 2 medium, 1 low); r1-1 
 | r2-2 | medium | `manifest_hash` did not cover the stripped views the scorer actually consumes | CONFIRMED as a definition gap | FIXED in spec `60535a7`: D12 hash now covers source + stripped-view content hashes; aggregator re-hashes both; G0 wording notes the hash seals at G1 |
 | r2-3 | low | "two named seam deltas" vs three listed | CONFIRMED | FIXED in spec `60535a7`: count corrected everywhere |
 
-### Round 3 — pending (spec confirm + plan review, Terra; traceability + contradiction, Luna)
+### Round 3 — Terra/high (spec confirm + plan review) ∥ Luna/low (traceability + contradiction), 2026-08-12
+
+Reviewed: spec.md + plan.md at `a29098f`.
+Terra: needs-attention, 4 findings (2 high, 2 medium); r2-1/r2-2/r2-3 all CONFIRMED resolved — the spec itself is clean.
+Luna: needs-attention, 8 findings (4 medium, 4 low); the two Terra highs found independently (cross-validation).
+All findings target the PLAN (drafted against the pre-round-2 spec).
+
+| # | Sev | Finding | Disposition (all in plan `fd0a13c`) |
+| --- | --- | --- | --- |
+| r3-1 (=L1) | high | A2 restored the pre-r2-2 manifest-hash formula; nothing sealed stripped-view hashes | FIXED: A2 writes a provisional unsealed source lock; A6 seals the D12 hash after the stripped build; downstream refuses unsealed; mutation test covers both byte classes |
+| r3-2 (=L2) | high | A5 asserted whole-registry equality, which spec D4 forbids | FIXED: guard scoped to newly classified IDs; pfc divergence (ADR r3-0005) exempted via seam manifest |
+| r3-3 | medium | Gate→tier launch prerequisites undefined (would deadlock or under-enforce) | FIXED: explicit matrix — smoke needs G0–G2; full seed 0 needs G3; seeds 1–2 need G4; Phase B writes immutable gate evidence; per-combination refusal tests |
+| r3-4 | medium | A9 didn't pin the D9 aggregation ORDER (per-seed panel geomean → mean/[min,max]) | FIXED: exact order stated; non-symmetric fixture pins it; A1-arm-only reporting test added |
+| L3 | medium | D5 verbatim-recipe carried by no task | FIXED: A1 `recipe_env` copied verbatim from the B2 card + byte-equality test against the card file |
+| L4 | medium | Phase B "deliver D-summary" lacked the D13 payload and notification triggers | FIXED: payload + triggers enumerated in Phase B step 4 |
+| L5 | low | Atomic-commit/red-transcript process untraced to spec | FIXED by labeling: marked NON-NORMATIVE process from the governing workflow |
+| L6 | low | "Who implements" section orphaned from spec | FIXED by labeling: marked NON-NORMATIVE process |
+| L7 | low | config.yaml necessity unanswered | FIXED: necessity note added (round-2 project.yaml is frozen round state; cannot carry dataset_dir/campaign roots/recipe block) |
+| L8 | low | run_gates.py/gates.json necessity unanswered | FIXED: necessity note added (round-3 gate machinery is round-scoped card state with a different protocol) |
+
+### Round 4 — pending (confirming round, Terra, both docs)
