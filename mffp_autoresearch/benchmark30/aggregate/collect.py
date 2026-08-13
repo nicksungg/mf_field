@@ -40,14 +40,22 @@ def _geomean(values: list) -> float:
     return math.exp(sum(math.log(v) for v in values) / len(values))
 
 
-def load_scores(rev_root: Path, expected_def_hash: str) -> dict:
-    """(family, seed, ds) -> per-dataset entry; every file validated."""
+def load_scores(rev_root: Path, expected_def_hash: str,
+                expected_epochs: int) -> dict:
+    """(family, seed, ds) -> per-dataset entry; every file validated.
+
+    Only files at `expected_epochs` are admitted (r1 fix F2: the smoke tier
+    shares the revision root, and a 2-epoch value must never enter a
+    200-epoch leaderboard); a duplicate cell at the same epochs hard-fails
+    instead of overwriting."""
     out = {}
     scores_dir = Path(rev_root) / "results/scores"
     for p in sorted(scores_dir.glob("*.json")):
         m = SCORE_RE.match(p.name)
         if not m:
             raise ValueError(f"unrecognized score filename: {p.name}")
+        if int(m["epochs"]) != expected_epochs:
+            continue  # other-tier file in the shared rev root
         score = json.load(open(p))
         ds = m["ds"]
         # the JSON's family field is the family-dir name, which for both
@@ -57,15 +65,48 @@ def load_scores(rev_root: Path, expected_def_hash: str) -> dict:
                                "epochs": int(m["epochs"])})
         if ds not in score["per_dataset"]:
             raise ValueError(f"{p.name}: JSON lacks per_dataset[{ds!r}]")
-        out[(m["family"], int(m["seed"]), ds)] = score["per_dataset"][ds]
+        key = (m["family"], int(m["seed"]), ds)
+        if key in out:
+            raise ValueError(f"duplicate score cell {key} at epochs "
+                             f"{expected_epochs} — refusing to overwrite")
+        out[key] = score["per_dataset"][ds]
     return out
 
 
+def _load_ops(rev_root: Path) -> dict:
+    """family -> ds -> s<seed> -> runtime/memory fields from the smoke_eval
+    result files score_panel writes under results/<family>/ (r1 fix F8)."""
+    ops = {}
+    res_re = re.compile(r"^(?P<ds>.+)_e(?P<epochs>\d+)_s(?P<seed>\d+)\.json$")
+    for fam_dir in sorted((Path(rev_root) / "results").iterdir()) \
+            if (Path(rev_root) / "results").is_dir() else []:
+        if not fam_dir.is_dir() or fam_dir.name == "scores":
+            continue
+        for p in sorted(fam_dir.glob("*.json")):
+            m = res_re.match(p.name)
+            if not m:
+                continue
+            try:
+                r = json.load(open(p))
+            except Exception:
+                continue
+            fields = {k: r[k] for k in ("train_seconds", "eval_seconds",
+                                        "peak_mem_bytes", "param_count") if k in r}
+            if fields:
+                ops.setdefault(fam_dir.name, {}).setdefault(
+                    m["ds"], {})[f"s{m['seed']}"] = fields
+    return ops
+
+
 def aggregate_scores(rev_root: Path, expected_def_hash: str, seeds: list,
-                     groups: dict = None, exclusion_ledger: dict = None) -> dict:
-    cells = load_scores(rev_root, expected_def_hash)
+                     expected_epochs: int = 200, groups: dict = None,
+                     exclusion_ledger: dict = None, universe: list = None,
+                     strict: bool = False) -> dict:
+    cells = load_scores(rev_root, expected_def_hash, expected_epochs)
     families = (MODEL, FILM)
-    datasets = sorted({ds for (_, _, ds) in cells})
+    observed = sorted({ds for (_, _, ds) in cells})
+    datasets = sorted(set(universe) | set(observed)) if universe else observed
+    ledger = exclusion_ledger or {}
 
     per_dataset = {}
     coverage = {}
@@ -81,6 +122,17 @@ def aggregate_scores(rev_root: Path, expected_def_hash: str, seeds: list,
 
     common = [ds for ds in datasets
               if all(coverage[ds][f] == len(seeds) for f in families)]
+
+    # r1 fix F3: every universe cell must be a result OR a ledger entry —
+    # a silently vanished dataset must never shrink the denominator unnoticed.
+    unaccounted = []
+    for ds in datasets:
+        for f in families:
+            if coverage[ds][f] < len(seeds) and ds not in ledger.get(f, {}):
+                unaccounted.append(f"{f}/{ds}: {coverage[ds][f]}/{len(seeds)} seeds, not ledgered")
+    if strict and unaccounted:
+        raise ValueError("unaccounted cells (spec D8 — result or ledger, never "
+                         "silence): " + "; ".join(unaccounted))
 
     def seed_geomeans(ds_list):
         out = []
@@ -114,12 +166,15 @@ def aggregate_scores(rev_root: Path, expected_def_hash: str, seeds: list,
     return {
         "inputs": "score_jsons_only_arm_A1",
         "seeds": seeds,
+        "expected_epochs": expected_epochs,
         "per_dataset": per_dataset,
         "coverage": coverage,
         "common_eligible_set": common,
+        "unaccounted_cells": unaccounted,
         "headline": headline,
         "group_geomeans": group_geomeans,
-        "exclusion_ledger": exclusion_ledger or {},
+        "exclusion_ledger": ledger,
+        "ops": _load_ops(rev_root),
     }
 
 
@@ -162,8 +217,10 @@ def main() -> None:
     groups = {g: [d["id"] for d in lst] for g, lst in cfg["datasets"].items()}
     ledger_p = campaign / "state/exclusion_ledger.json"
     ledger = json.load(open(ledger_p)) if ledger_p.exists() else {}
+    universe = [d["id"] for g in cfg["datasets"].values() for d in g]
     lb = aggregate_scores(rev_root, pd_mod.COPYLF_DEF_HASH, seeds=cfg["seeds"],
-                          groups=groups, exclusion_ledger=ledger)
+                          expected_epochs=cfg["epochs"]["full"], groups=groups,
+                          exclusion_ledger=ledger, universe=universe, strict=True)
     lb["manifest_hash"] = manifest["manifest_hash"]
     lb["registry_revision"] = manifest["registry_revision"]
     out = campaign / "state/leaderboard.json"

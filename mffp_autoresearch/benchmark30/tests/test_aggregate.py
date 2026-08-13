@@ -123,3 +123,56 @@ def test_report_tables_render_from_leaderboard_only(rev):
     assert f"{sum(per_seed) / 3:.4f}" in md, "headline mean must appear verbatim"
     assert "| a |" in md and "| b |" in md
     assert "score_jsons_only_arm_A1" in md
+
+
+def test_smoke_files_cannot_pollute_full_collection(rev):
+    """r1 fix F2: an e2 smoke file for the same cell must be ignored, and a
+    duplicate (family, seed, ds) at the SAME epochs must hard-fail."""
+    d = rev / "results/scores"
+    smoke = _score(MODEL, 0, "a", 99.0, epochs=2)
+    json.dump(smoke, open(d / f"{MODEL}_s0_e2_a.json", "w"))
+    lb = aggregate_scores(rev, expected_def_hash=DEF_HASH, seeds=[0, 1, 2],
+                          expected_epochs=200)
+    assert lb["per_dataset"]["a"][MODEL]["per_seed"][0] == 0.10, \
+        "the 2-epoch smoke value must never enter the 200-epoch leaderboard"
+    # any unexpected sibling that could shadow a cell fails LOUDLY (here the
+    # stray name parses as dataset "a " and is rejected on its content; a true
+    # same-cell duplicate is impossible as one filename, and load_scores
+    # additionally hard-fails on duplicate keys as a layout-change backstop)
+    json.dump(_score(MODEL, 0, "a", 0.5), open(d / f"{MODEL}_s0_e200_a.json.dup", "w"))
+    (d / f"{MODEL}_s0_e200_a.json.dup").rename(d / f"{MODEL}_s0_e200_a .json")
+    with pytest.raises(ValueError, match="duplicate|unrecognized|per_dataset"):
+        aggregate_scores(rev, expected_def_hash=DEF_HASH, seeds=[0, 1, 2],
+                         expected_epochs=200)
+
+
+def test_universe_is_authoritative_not_observed(rev):
+    """r1 fix F3: datasets with NO results still appear in coverage, and the
+    headline refuses to publish while any universe cell is unaccounted."""
+    lb = aggregate_scores(rev, expected_def_hash=DEF_HASH, seeds=[0, 1, 2],
+                          expected_epochs=200, universe=["a", "b", "ghost"])
+    assert lb["coverage"]["ghost"] == {MODEL: 0, FILM: 0}
+    assert "ghost" not in lb["common_eligible_set"]
+    assert lb["unaccounted_cells"], "missing cells must be surfaced"
+    with pytest.raises(ValueError, match="unaccounted"):
+        aggregate_scores(rev, expected_def_hash=DEF_HASH, seeds=[0, 1, 2],
+                         expected_epochs=200, universe=["a", "b", "ghost"],
+                         strict=True)
+    # a ledger entry accounts for the cell; strict mode then passes
+    lb2 = aggregate_scores(rev, expected_def_hash=DEF_HASH, seeds=[0, 1, 2],
+                           expected_epochs=200, universe=["a", "b", "ghost"],
+                           strict=True,
+                           exclusion_ledger={MODEL: {"ghost": "x"}, FILM: {"ghost": "x"}})
+    assert lb2["unaccounted_cells"] == []
+
+
+def test_ops_table_extracted_from_family_results(rev):
+    """r1 fix F8: wall-clock/memory join from the smoke_eval result files."""
+    fam_dir = rev / "results" / MODEL
+    fam_dir.mkdir(parents=True)
+    json.dump({"model": MODEL, "dataset": "a", "train_seconds": 123.4,
+               "peak_mem_bytes": 5_000_000},
+              open(fam_dir / "a_e200_s0.json", "w"))
+    lb = aggregate_scores(rev, expected_def_hash=DEF_HASH, seeds=[0, 1, 2],
+                          expected_epochs=200)
+    assert lb["ops"][MODEL]["a"]["s0"]["train_seconds"] == 123.4
