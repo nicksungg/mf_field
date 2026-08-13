@@ -320,7 +320,7 @@ The round-4 contract therefore pre-registers a hard rule: any future condition�
 **Honest accounting beside the result.**
 One licence check (C3) failed on the `ifc` cells for a real reason: at $N_{\text{hf}} = 5$ training rows, a cancellation-breaking bias appears (mean signed gap +0.3639 on `ifc_poisson`, larger than the 0.25 tolerance, vs |mean| ≤ 0.0369 on the 400-row cells).
 Per the mandatory rule, every `ifc` number here carries the fitted affine-floor disclosure quoted in full at §10.
-Second, the card's confidence intervals are *seed+run* intervals — upper bounds on the seed effect — because a same-seed cross-node rerun moved the 5-cell subset by 0.62× seed-mce (68% of the across-seed spread); this measured drift is also evidence in the open panel-composition question (§12).
+Second, the card's confidence intervals are *seed+run* intervals — upper bounds on the seed effect — because a same-seed cross-node rerun moved the 5-cell subset by 0.62× seed-mce (68% of the across-seed spread); this measured drift was also part of the evidence in the panel-composition question, since ruled (ADR r3-0008 Option C, §12).
 
 The stream is closed: its question — can the complete condition vector be converted into field-level structure through a coarse-field route? — is answered in graded form.
 Stage 1 provably benefits from exact IC information (up to 8×); nothing downstream can convert that into more, at unity gain.
