@@ -14,7 +14,7 @@ Deliverables:
 - `D-report`: `mffp_autoresearch/benchmark30/docs/report.md` — fact-check-converged benchmark report.
 - `D-results`: per-run result JSONs + an aggregate `leaderboard.json` under `mffp_autoresearch_outputs/benchmark30/` (gitignored heavy artifacts; JSON summaries committed).
 - `D-manifest`: dataset version/staging manifest (§5.1) committed to git.
-- `D-adr`: one ADR extending the upsample-convention registry to the 17 unclassified 2-D datasets (§D4; the 4 1-D datasets bypass the registry).
+- `D-adr`: one ADR extending the upsample-convention registry to the 16 unclassified 2-D datasets (§D4; the 5 1-D datasets bypass the registry).
 - `D-summary`: one consolidated summary to Eloise at the end (notify-on-response directive), including the benchmark_30 provenance finding that feeds her pending "coherent HF hub revision" decision.
 
 ## 2. Verified environment facts (probed 2026-08-12; do not re-derive)
@@ -46,7 +46,7 @@ The full 30, by local name:
 - The family's vendored `upsample.py` `resolve_convention()` RAISES for any unclassified 2-D dataset (ADR r2-0001: convention assignment is an ADR-level decision).
   Classified today: PERIODIC_NODE {sharp__phase_field_crystal_2d, sharp__allen_cahn_2d, sharp__fisher_kpp_2d, sharp__cahn_hilliard}; DIRICHLET_NODE {ext__helmholtz_2d}; LEGACY_CELL {heat_local, fluid, sharp__sod_1d, ifc_poisson, ifc_heat}.
   That classifies 10 of 30; **20 are unclassified** (7 core, 5 ext, 8 sharp).
-- `upsample_fields()` has a separate 1-D interpolation path; whether the four 1-D datasets (sod_1d is classified; burgers_1d, shallow_water_1d, porous_medium_1d are not) reach `resolve_convention()` at all is a build-time verification item (V-1D, §7).
+- `upsample_fields()` has a separate 1-D interpolation path taken by the five 1-D datasets (sod_1d classified; burgers_1d, shallow_water_1d, porous_medium_1d, allen_cahn_generated not) — resolved at V-1D (§7): the 1-D path bypasses `resolve_convention` entirely.
 
 ### 2.3 The baseline
 
@@ -112,10 +112,9 @@ Resolution — vendor, exactly as D2 vendors the family:
 
 ### D4 — Convention registry extension is one ADR, fail-closed, with per-dataset rationale
 
-- Grid shapes MEASURED 2026-08-12: exactly 4 datasets are 1-D (sharp__{sod,burgers,shallow_water,porous_medium}_1d, 128 cells) and take the family's 1-D path that bypasses `resolve_convention`; sharp__euler is 2-D (128x128) contrary to the brainstorm's guess; era5 is 721x1440; every other 2-D dataset is ≤ 256x256.
-- One ADR (`docs/adr/` in the campaign tree) classifies each of the **17 genuinely-2-D unclassified datasets** (6 core: poisson_generated, poisson_local, heat_generated, darcy_generated, allen_cahn_generated, lid_driven_cavity_generated; era5; 5 ext: rayleigh_benard_2d, wave_2d, eikonal_2d, cahn_hilliard_2d, pressure_poisson_poiseuille; 5 sharp: euler, burgers_2d, shallow_water_2d, porous_medium_2d, helmholtz_2d) into `periodic_node` / `dirichlet_node` / `legacy_cell`, each with a one-paragraph rationale grounded in the dataset's generator/grid semantics (solver docs in `mf_field_eloise_data/`, `mf_field_extension_data/solvers.py`, `datasets_summary.csv`); the 3 unclassified 1-D datasets are recorded as `1d_path` for completeness.
+- Grid shapes MEASURED 2026-08-12 (corrected by generator evidence): exactly 5 datasets are 1-D — sharp__{sod,burgers,shallow_water,porous_medium}_1d (128 cells) and allen_cahn_generated (registered `(1, L)` in the shared `KNOWN_GRIDS`; its README's "16x16" is wrong) — and all take the family's 1-D path that bypasses `resolve_convention`; sharp__euler is 2-D (128x128) contrary to the brainstorm's guess; era5 is 721x1440; every other 2-D dataset is ≤ 256x256.
+- One ADR (`docs/adr/` in the campaign tree) classifies each of the **16 genuinely-2-D unclassified datasets** (5 core: poisson_generated, poisson_local, heat_generated, darcy_generated, lid_driven_cavity_generated; era5; 5 ext: rayleigh_benard_2d, wave_2d, eikonal_2d, cahn_hilliard_2d, pressure_poisson_poiseuille; 5 sharp: euler, burgers_2d, shallow_water_2d, porous_medium_2d, helmholtz_2d) into `periodic_node` / `dirichlet_node` / `legacy_cell`, each with a one-paragraph rationale grounded in the dataset's generator/grid semantics (solver docs in `mf_field_eloise_data/`, `mf_field_extension_data/solvers.py`, `datasets_summary.csv`); the 4 unclassified 1-D datasets (burgers_1d, shallow_water_1d, porous_medium_1d, allen_cahn_generated) are recorded as `1d_path` for completeness.
 - era5 needs its classification even though r3s2 cannot run it (D11): the campaign copy-LF baseline construction upsamples LF→HF for every scored dataset.
-- CORRECTION from generator-evidence research: `allen_cahn_generated` is registered 1-D in the shared `data_adapters.geometry.KNOWN_GRIDS` (`(1, L)` entries; its dataset README's "16x16" is wrong), so it joins the 1-D bypass set — **16** 2-D datasets need ADR classification and **5** are 1-D.
 - Accepted-approximation policy: minting new upsample variants is out of scope (D2 freezes the family; the vendored scorer's metric path must stay byte-identical).
   Where generator evidence shows semantics no existing variant implements — endpoint-node `linspace` grids (lid_driven_cavity, rayleigh_benard, wave, eikonal, era5-latitude, heat_generated's spatial axis) or periodic-node data on a NON-NESTED ladder that variant C's nesting assert rejects (`ext__cahn_hilliard_2d`, 24→64) — the ADR records `legacy_cell` as an ACCEPTED APPROXIMATION with the mismatch documented per dataset, rather than silently pretending an exact match.
   Both families and the copy-LF baseline share the same approximation per dataset, so comparisons stay internally consistent.

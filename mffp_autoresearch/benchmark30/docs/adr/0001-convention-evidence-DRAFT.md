@@ -27,7 +27,7 @@ Integer HF/LF count ratios imply shared sample LOCATIONS only for periodic-node 
 | ext__rayleigh_benard_2d | FD streamfunction-vorticity + T | T: Dirichlet top/bottom (stored), Neumann sides; no-slip | node-endpoint (h=1/(n-1)) | 24/64 (NON-nested) | legacy_cell | medium | non-nested; node-endpoint truth |
 | ext__wave_2d | FD leapfrog | Dirichlet 0 (stored zero boundary rows) | node-endpoint (h=1/(n-1)) | 24/80 (NON-nested) | legacy_cell | medium | non-nested; node-endpoint truth |
 | ext__eikonal_2d | iterative upwind (fast-sweeping-like) | open boundary; T=0 at source node | node-endpoint (h=1/(n-1)) | 24/64 (NON-nested) | legacy_cell | medium | `np.roll` neighbour wrap can leak travel time across the boundary |
-| ext__cahn_hilliard_2d | pseudo-spectral FFT semi-implicit | periodic | periodic-node (`endpoint=False`) | 24/64 (NON-nested, 64%24≠0) | periodic_node (structurally) — blocked by variant C's nesting assert | high (structure) / blocked (mechanism) | the ONLY structurally periodic-node dataset whose ladder is not nested |
+| ext__cahn_hilliard_2d | pseudo-spectral FFT semi-implicit | periodic | periodic-node (`endpoint=False`) | 24/64 (NON-nested, 64%24≠0) | **legacy_cell (ACCEPTED APPROXIMATION, spec D4)** — structurally periodic-node, but variant C's nesting assert rejects the 24→64 ladder | high | the ONLY structurally periodic-node dataset whose ladder is not nested; structural truth recorded, campaign classification is legacy_cell |
 | ext__pressure_poisson_poiseuille | analytic field (no solver); LF = block-mean(HF)+noise | n/a | cell-centred ((j+0.5)/n explicit) | 8/16/32/64 (nested) | legacy_cell | high | LF is downsampled-HF + noise (paper-faithful, violates the repo LF rule); LF noise floors any exactness check |
 | sharp__euler | finite volume (PyClaw; WENO HF / Godunov LF) | extrap (outflow) all sides | cell-centred (`p_centers`) | 32/64/128 (counts nested) | legacy_cell | high | — |
 | sharp__burgers_2d | finite volume (PyClaw) | periodic | cell-centred (`p_centers`) | 64/128/256 (counts nested) | legacy_cell | medium-high | periodic topology: legacy clamp is wrong at the wrap seam ("periodic_cell" hybrid would be exact) |
@@ -35,7 +35,7 @@ Integer HF/LF count ratios imply shared sample LOCATIONS only for periodic-node 
 | sharp__porous_medium_2d | FD explicit, periodic roll stencil | periodic (compact support stays interior) | periodic-node (`j·L/res − L/2`) | 64/128/256 (nested, node-coincident) | periodic_node | high | — |
 | sharp__helmholtz_2d | FD 5-point (kron), sparse direct | homogeneous Dirichlet, boundary NOT stored | interior-node (h=L/(res+1), x=(j+1)h) | 64/128/256 (counts nested) | dirichlet_node | high | — |
 
-Proposed totals: legacy_cell 11, dirichlet_node 3, periodic_node 2 (one of which is blocked by the nesting assert), plus one legacy-by-default (ext__cahn_hilliard_2d if the assert is kept).
+Proposed totals (campaign classifications, resolved per spec D4's accepted-approximation policy): **legacy_cell 12** (incl. ext__cahn_hilliard_2d as accepted approximation), **dirichlet_node 3**, **periodic_node 1** (sharp__porous_medium_2d) — 16 2-D datasets; allen_cahn_generated is 1-D (`KNOWN_GRIDS` `(1, L)`) and joins the 1d_path records.
 
 ## Per-dataset evidence
 
@@ -179,7 +179,7 @@ Grid registration: periodic-node — the IC (and hence the field) lives on `xs =
 This is exactly variant C's premise: node-registered samples of a periodic domain.
 Ladder: `[24, 24] → [64, 64]` (`meta.json`; npz 576/4096); 64 % 24 = 16 ≠ 0 → NON-nested, so variant C's assert (`panel_data.py:104-105`; `upsample.py:91-92`) RAISES on this dataset.
 Note the map itself (`coords = k·h/H` with grid-wrap, `panel_data.py:106-111`) is well-defined without nesting; only the assert restricts it, and 24- and 64-node periodic grids still share 8 coincident nodes per axis (every third LF node).
-Proposal: **periodic_node structurally — currently blocked by the nesting assert**; interim assignment legacy_cell if the assert is kept; confidence high on the structure, with the mechanism decision escalated to the ADR.
+Proposal (resolved per spec D4 accepted-approximation policy): **legacy_cell for the campaign**, with the structural periodic-node truth and the non-nested-ladder blocker documented in the ADR; confidence high.
 Rationale: this is the only dataset of the 17 whose solver is genuinely spectral-periodic node-registered but whose ladder is not nested; classifying it legacy_cell would re-introduce exactly the half-cell shift plus clamped wrap seam that ADR r2-0001 removed for the nested periodic datasets, while relaxing the assert (or adding a non-nested periodic-node variant) keeps the convention honest.
 Disambiguating check: exactness at the 8 shared nodes per axis — under a correct periodic-node map, upsampled LF must reproduce LF values exactly at every coordinate `j·L/24` that coincides with a `k·L/64` node; the legacy map fails this test by a fixed offset.
 Red flags: variant C's nesting assert fires as-is (campaign-breaking if assigned naively); decision needed on relaxing the assert vs accepting the legacy misfit.
