@@ -25,7 +25,13 @@ WHAT IT REPORTS
     system, and a `UNIT_DEPENDENT` / `UNIT_INVARIANT` verdict;
   * `SUBSET_BAR_MISMATCH` whenever a subset differs from the bar's calibration
     panel, with the exact rescaling factor `geomean(c over subset) /
-    geomean(c over panel)`;
+    geomean(c over panel)`. The calibration panel is read from the bar's own
+    anchor file (`--bar-calibration-json`, key `_panel_geomean.panel`) or an
+    explicit `--bar-panel` -- NEVER from `--panel`, which is the headline
+    panel being decomposed and can itself mismatch the bar (ADR r3-0008: the
+    declared-panel comparison blessed a six-cell panel against a five-cell
+    bar). With no calibration source every verdict is
+    `UNVERIFIED_BAR_CALIBRATION`;
   * optionally, per-cell `|delta| / (1.5 tau_rel)` with an explicit assertion
     that those ratios are unit-invariant.
 
@@ -78,12 +84,22 @@ def main():
     ap.add_argument("--refs-json", default=None, help="{ds: refnrmse} (mode 2)")
     ap.add_argument("--seeds", default="0,1,2")
     ap.add_argument("--panel", required=True,
-                    help="comma-list of the cells the BAR was calibrated on")
+                    help="comma-list of the cells of the HEADLINE panel (the "
+                         "geomean being decomposed) — not the bar's calibration "
+                         "set, which comes from --bar-calibration-json/--bar-panel")
     ap.add_argument("--subset", action="append", default=[],
                     help="NAME=a,b,c — repeatable; the panel is added automatically")
     ap.add_argument("--bar", type=float, required=True,
                     help="the decision bar in the SAME units as --skills (e.g. "
                          "1.5 x the certified panel seed_mce)")
+    ap.add_argument("--bar-calibration-json", default=None,
+                    help="anchor file the bar came from (e.g. noise_floor.json); "
+                         "its _panel_geomean.panel is the set the bar was "
+                         "calibrated on")
+    ap.add_argument("--bar-panel", default=None,
+                    help="comma-list of the cells the BAR was calibrated on, for "
+                         "a bar with no anchor file; must agree with "
+                         "--bar-calibration-json when both are given")
     ap.add_argument("--denominator-json", default=None,
                     help="ADR r3-0006 film_denominator.json (per-dataset c_ds)")
     ap.add_argument("--tau", default=None, help="ds=tau_rel,... for the per-cell check")
@@ -95,6 +111,19 @@ def main():
 
     panel = [s for s in a.panel.split(",") if s.strip()]
     seeds = [int(s) for s in a.seeds.split(",") if s.strip()]
+
+    # ── the bar's true calibration set (never the declared --panel) ──────
+    bar_panel = None
+    if a.bar_calibration_json:
+        bar_panel = list(
+            json.load(open(a.bar_calibration_json))["_panel_geomean"]["panel"])
+    if a.bar_panel:
+        explicit = [s for s in a.bar_panel.split(",") if s.strip()]
+        if bar_panel is not None and sorted(explicit) != sorted(bar_panel):
+            raise SystemExit(
+                "--bar-panel disagrees with --bar-calibration-json: "
+                f"{sorted(explicit)} vs {sorted(bar_panel)}")
+        bar_panel = explicit
 
     # ── skills ───────────────────────────────────────────────────────────
     if a.skills_json:
@@ -131,7 +160,11 @@ def main():
                 json.load(open(a.denominator_json))["datasets"].items()}
 
     rep = {"_tool": "subset_geomean_unit_audit.py", "_args": vars(a),
-           "arm": arm, "ref": ref, "bar": a.bar}
+           "arm": arm, "ref": ref, "bar": a.bar,
+           "bar_calibration_panel": bar_panel,
+           "bar_calibration_source": (
+               a.bar_calibration_json if a.bar_calibration_json
+               else "--bar-panel" if a.bar_panel else None)}
 
     # ── log-space decomposition of the panel delta ───────────────────────
     logs = {ds: [float(np.log(sk[(arm, ds, i)] / sk[(ref, ds, i)]))
@@ -175,8 +208,15 @@ def main():
             entry["unit_relative_change"] = rel
             entry["crosses_bar_between_unit_systems"] = bool(
                 (entry["delta_over_bar"] >= 1.0) != (entry["delta_over_bar_alt_units"] >= 1.0))
-        entry["bar_calibration_verdict"] = (
-            "OK" if sorted(cells) == sorted(panel) else "SUBSET_BAR_MISMATCH")
+        if bar_panel is None:
+            entry["bar_calibration_verdict"] = "UNVERIFIED_BAR_CALIBRATION"
+        else:
+            entry["bar_calibration_verdict"] = (
+                "OK" if sorted(cells) == sorted(bar_panel)
+                else "SUBSET_BAR_MISMATCH")
+            if c_ds and all(d in c_ds for d in bar_panel):
+                entry["rescale_vs_bar_calibration"] = (
+                    gc / geo([c_ds[d] for d in bar_panel]))
         rep["subsets"][nm] = entry
 
     # ── per-cell ratios (unit-invariant by construction) ─────────────────
@@ -201,6 +241,8 @@ def main():
 
     # ── console ──────────────────────────────────────────────────────────
     print(f"arm={arm}  ref={ref}  bar={a.bar}  seeds={n_seed}")
+    print("bar calibration: " + (",".join(bar_panel) if bar_panel else
+                                 "UNVERIFIED (pass --bar-calibration-json or --bar-panel)"))
     print("\nper-cell share of the panel delta (log space):")
     for ds in panel:
         print(f"  {ds:28s} log(arm/ref) {rep['log_space']['per_cell_log_delta'][ds]:+.5f}"
