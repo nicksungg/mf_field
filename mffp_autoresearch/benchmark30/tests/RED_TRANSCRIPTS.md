@@ -36,3 +36,17 @@ FAILED tests/test_vendor_integrity.py::test_seam_manifest_names_every_seam - ...
 ```
 
 Green after vendoring + seams: `20 passed` (one intermediate failure was a test bug — ast.Name attribute is `.id` not `.name` — fixed in the test).
+
+## A4 — tests/test_family_integrity.py
+
+The intended pre-implementation red run mis-executed (wrong cwd, "no tests ran") — recorded honestly here.
+In its place, the guard was MUTATION-VERIFIED after implementation:
+
+```
+# appended "# tampered" to family/r3s2_route_b30/front_end.py and hid state/family_byte_identity.json
+FAILED tests/test_family_integrity.py::test_every_file_byte_identical_except_upsample
+FAILED tests/test_family_integrity.py::test_identity_record_matches_reality
+2 failed, 2 passed in 0.90s
+```
+
+Restored → `24 passed`.
