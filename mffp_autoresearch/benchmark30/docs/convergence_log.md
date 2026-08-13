@@ -59,4 +59,20 @@ Verdict: needs-attention. All 10 round-3 dispositions CONFIRMED; whole-document 
 | r4-1 | medium | Plan's log path `slurm/rev-<hash>/…` sat outside the D12 revision root | FIXED: logs now `mffp_autoresearch_outputs/benchmark30/rev-<manifest_hash8>/logs/…`; dry-run test asserts the complete path |
 | r4-2 | low | Spec §4 still said "two named seams" once | FIXED: corrected to three |
 
-### Round 5 — pending (final confirming round, Terra, both docs)
+### Round 5 — Terra/high final confirming round, 2026-08-12
+
+Reviewed: spec.md + plan.md at `36bab7c`.
+Verdict: **approve, 0 findings**. Both round-4 dispositions confirmed; end-to-end sweep clean.
+Spec + plan CONVERGED at `36bab7c` (clean round 5 following round 4 in which all prior dispositions were confirmed).
+
+### Round 5b — post-convergence factual amendment, 2026-08-12 (not a review round)
+
+Two external inputs landed after the round-5 approve:
+
+1. **Provenance correction (primary-source verified).** A sibling session re-pushed the round-3 regens to the hub on 2026-08-07 (commit `36a5f198`); a direct three-way sha256 check this session (nicksung benchmark_30 vs eloisezeng benchmark_42 vs local, every file of both formerly-stale datasets) shows ALL are byte-identical.
+   The spec's "two datasets newer locally" claim was therefore false against the current hub; §2.1/D1/D13/§8.1 and plan A2/Phase-B-4 amended at `fd0a590`: zero deviations, `hub_identity` kept as a staging tripwire.
+2. **Convention-evidence draft** (research agent, `docs/adr/0001-convention-evidence-DRAFT.md`): `allen_cahn_generated` is registered 1-D in `KNOWN_GRIDS` → 16 2-D + 5 1-D; accepted-approximation policy added to D4 (endpoint-node vocabulary gap, non-nested periodic ladders); A5/A6 wired to dispose of every red flag; data-methodology caveats (pressure_poisson LF rule violation, heat_generated time window, era5 pairing) added to the D13 summary payload as report caveats.
+
+Delta-confirm below (round 6) reviews ONLY this amendment, per the delta-scoping efficiency rule; the full range was already swept clean in round 5.
+
+### Round 6 — pending (Terra delta-confirm of the 5b amendment)
