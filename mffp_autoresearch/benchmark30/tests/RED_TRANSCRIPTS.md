@@ -74,3 +74,15 @@ Interrupted: 1 error during collection   # ModuleNotFoundError: staging.prefligh
 ```
 
 Green after implementation: full suite passes (one intermediate red was a test-expectation bug — `_verify` raises SystemExit, which `pytest.raises(Exception)` does not catch — fixed in the test; the leak WAS detected by the audit both times).
+
+## A7 — tests/test_copylf_baselines.py
+
+Command: `.venv/bin/python -m pytest tests/test_copylf_baselines.py -q` (before eval/make_copylf_baselines_b30.py existed)
+
+```
+no tests ran in 0.02s   # collection error: module absent
+```
+
+Green after implementation: full suite passes.
+Key anchor: freshly computed sharp__cahn_hilliard copy-LF equals the round-2 committed value to 1e-9 — the vendored construction IS the round-2 construction.
+(One intermediate red: fixture dict lacked grid_shape_by_fid, a loader-provided key — fixed in the fixture.)
