@@ -129,6 +129,10 @@ def main():
     subsets = {"panel": panel}
     for s in a.subset:
         nm, cells = s.split("=")
+        if nm in subsets:
+            raise SystemExit(
+                f"--subset {nm}: name already taken "
+                "('panel' is reserved for the declared --panel)")
         subsets[nm] = cellset(f"--subset {nm}", cells.split(","))
 
     # ── the bar's true calibration set (never the declared --panel) ──────

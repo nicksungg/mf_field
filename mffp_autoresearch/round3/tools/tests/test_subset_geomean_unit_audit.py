@@ -114,6 +114,13 @@ def test_malformed_cell_lists_fail_loudly():
         ("duplicate bar panel", ["--bar-panel", "a,a,b"]),
         ("empty subset", ["--bar-panel", ",".join(CALIB5), "--subset", "empty="]),
         ("duplicate subset", ["--bar-panel", ",".join(CALIB5), "--subset", "dupe=a,a"]),
+        # Codex round-2 finding: --subset panel=... replaced the auto-added
+        # headline entry, so the "panel" row read OK against a bar the declared
+        # panel mismatches; repeated names silently overwrote each other.
+        ("reserved subset name panel",
+         ["--bar-panel", ",".join(CALIB5), "--subset", "panel=" + ",".join(CALIB5)]),
+        ("repeated subset name",
+         ["--bar-panel", ",".join(CALIB5), "--subset", "x=a,b", "--subset", "x=a,c"]),
     ]
     with tempfile.TemporaryDirectory() as td:
         for label, extra in cases:
