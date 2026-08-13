@@ -182,3 +182,30 @@ Root causes (all in the vendored-relocation class — the family resolves paths 
 
 Suite: 75 tests green. Gates G0–G2 re-executed with floors folded into G2 evidence (manifest hash unchanged: no array or stripped-view bytes moved).
 Timing note from the card: 45–70 min/seed for 5 datasets → ≈4.4–6.8 h for 29; the 8 h full-tier limit stands.
+
+## Fact-check convergence (report.md) — 2026-08-13
+
+### Round 1 — Codex Terra/high, whole-document, schema-enforced
+
+Verdict: needs-attention. 8 findings; all 8 reproduced by the author against primary artifacts and ACCEPTED. Scorecard: 1 CRITICAL, 5 HIGH, 2 MED, 0 LOW.
+
+| # | sev | claim | disposition |
+| --- | --- | --- | --- |
+| 1 | HIGH | wins "precisely the certified round-3 home turf" | ACCEPT — panel is {sharp allen_cahn, fisher_kpp, cahn_hilliard, ifc_poisson, ifc_heat} (spec.md:43); ifc pair flips to film; rewritten |
+| 2 | HIGH | wins = "certification panel's difficulty core" | ACCEPT — same class; rewritten with copy-LF vs film denominator distinction |
+| 3 | HIGH | causal loss mechanism (informative LF / machinery adds error) | ACCEPT — downgraded to labeled hypothesis |
+| 4 | CRITICAL | "advantage survives only where inductive biases match the physics" | ACCEPT — replaced with observed pattern + open question |
+| 5 | MED | block-mean LF "faithful to the source paper" | ACCEPT — paper says subsampling; block-mean is repo implementation assumption |
+| 6 | HIGH | fisher_kpp mean-removal caveat cited ifc_heat-only artifact | ACCEPT — recited to benchmark_42/MANIFEST.csv (0.00062 raw vs 0.02161 detrended, 35x, level_dominated=1; verified) |
+| 7 | HIGH | "wall-clock and memory ... under ops" | ACCEPT — no memory fields exist; claim removed |
+| 8 | MED | "gates recorded before each tier launched" vs submissions.json | ACCEPT — reproduced (first smoke 01:23Z predates surviving G0-G2 records 03:22-03:24Z); rewritten with exact timeline |
+
+Numbers verdict: headline, tables, groups, per-dataset values, arithmetic, coverage, exclusion, anchor comparison, SLURM facts all CONFIRMED by Codex; independently recomputed by Claude from leaderboard.json (exact match, incl. 177-cell count).
+
+### Round 2 — Codex Terra/high, whole-document confirming round
+
+Verdict: needs-attention. All eight round-1 fixes CONFIRMED against artifacts; 1 NEW finding (HIGH): TL;DR classified both out-of-panel wins as "pattern-formation", but ext__helmholtz_2d is not. ACCEPTED — fixed the TL;DR (names the two datasets, no classifier) and the interpretation line ("four phase-field / reaction-diffusion problems plus one Helmholtz variant").
+
+### Round 3 — Codex Terra/high, delta confirming pass
+
+Verdict: APPROVE, 0 findings. Both revised sentences confirmed factually correct and consistent with the win set. FACT-CHECK CONVERGED (rounds: 8 -> 1 -> 0 findings).
