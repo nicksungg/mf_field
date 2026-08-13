@@ -66,7 +66,7 @@ SBATCH_TEMPLATE = """#!/bin/bash
 #SBATCH --error={rev_root}/logs/%x_%j.err
 
 set -u
-mkdir -p {rev_root}/logs {rev_root}/results {rev_root}/cache
+mkdir -p {rev_root}/logs {rev_root}/results/scores {rev_root}/cache
 export ROUND2_EVAL_RESULTS={rev_root}/results
 export ROUND2_EVAL_CACHE={rev_root}/cache
 export PYTHONHASHSEED={seed}
@@ -103,8 +103,9 @@ def render_jobs(cfg: dict, tier: str, state_dir: Path = None) -> list:
         for seed in TIER_SEEDS[tier]:
             lines = []
             for ds in datasets:
+                out_json = f"{rev_root}/results/scores/{family}_s{seed}_e{epochs}_{ds}.json"
                 cmd = (f"{venv_py} {scorer} --family_dir {fam_dir} --datasets {ds} "
-                       f"--epochs {epochs} --seed {seed}{env_args}")
+                       f"--epochs {epochs} --seed {seed} --out {out_json}{env_args}")
                 lines.append(f'{cmd} || FAILED="$FAILED {ds}"')
             script = SBATCH_TEMPLATE.format(
                 job_name=f"b30-{family}-s{seed}-{tier}",
