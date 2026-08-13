@@ -180,9 +180,9 @@ This is exactly variant C's premise: node-registered samples of a periodic domai
 Ladder: `[24, 24] → [64, 64]` (`meta.json`; npz 576/4096); 64 % 24 = 16 ≠ 0 → NON-nested, so variant C's assert (`panel_data.py:104-105`; `upsample.py:91-92`) RAISES on this dataset.
 Note the map itself (`coords = k·h/H` with grid-wrap, `panel_data.py:106-111`) is well-defined without nesting; only the assert restricts it, and 24- and 64-node periodic grids still share 8 coincident nodes per axis (every third LF node).
 Proposal (resolved per spec D4 accepted-approximation policy): **legacy_cell for the campaign**, with the structural periodic-node truth and the non-nested-ladder blocker documented in the ADR; confidence high.
-Rationale: this is the only dataset of the 17 whose solver is genuinely spectral-periodic node-registered but whose ladder is not nested; classifying it legacy_cell would re-introduce exactly the half-cell shift plus clamped wrap seam that ADR r2-0001 removed for the nested periodic datasets, while relaxing the assert (or adding a non-nested periodic-node variant) keeps the convention honest.
-Disambiguating check: exactness at the 8 shared nodes per axis — under a correct periodic-node map, upsampled LF must reproduce LF values exactly at every coordinate `j·L/24` that coincides with a `k·L/64` node; the legacy map fails this test by a fixed offset.
-Red flags: variant C's nesting assert fires as-is (campaign-breaking if assigned naively); decision needed on relaxing the assert vs accepting the legacy misfit.
+Rationale: this is the only dataset of the 16 whose solver is genuinely spectral-periodic node-registered but whose ladder is not nested; a correct treatment would need a non-nested periodic-node variant, which spec D2/D4 rule out for this campaign (no new upsample variants; the vendored metric path stays byte-identical).
+Structural-truth record: under a correct periodic-node map, upsampled LF would reproduce LF values exactly at every coordinate `j·L/24` coinciding with a `k·L/64` node; the legacy map misses this by a fixed offset — that known, documented misfit is what "accepted approximation" means here.
+RESOLVED per spec D4: campaign classification is legacy_cell (accepted approximation); the misfit above is documented in the ADR and carried as a report caveat; no assert is relaxed and no new variant is minted.
 
 ### ext__pressure_poisson_poiseuille
 
