@@ -109,9 +109,16 @@ def validate_tier(cfg: dict, tier: str, state_dir: Path = None,
                     continue
                 try:
                     j = json.load(open(score))
-                    assert j["family"] == fam and j["seed"] == seed and j["epochs"] == epochs
-                    assert j["copylf_def_hash"] == expected_hash
-                    assert "nRMSE" in j["per_dataset"][ds]
+                    # explicit raises, never assert: `python -O` must not be
+                    # able to strip gate validation (round-3 finding)
+                    if not (j["family"] == fam and j["seed"] == seed
+                            and j["epochs"] == epochs):
+                        raise ValueError(f"identity mismatch: {j.get('family')}/"
+                                         f"s{j.get('seed')}/e{j.get('epochs')}")
+                    if j["copylf_def_hash"] != expected_hash:
+                        raise ValueError("copylf_def_hash mismatch")
+                    if "nRMSE" not in j["per_dataset"][ds]:
+                        raise ValueError("nRMSE missing")
                 except Exception as e:  # noqa: BLE001
                     problems.append(f"{fam}/{ds}/s{seed}: score artifact invalid "
                                     f"({type(e).__name__}: {str(e)[:80]})")

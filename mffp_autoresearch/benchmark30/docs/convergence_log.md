@@ -152,4 +152,14 @@ Whole-diff lens: **approve, 0 findings** — all 16 prior dispositions confirmed
 Test-quality lens: 1 high — validate_tier counted `score.exists()` without parsing (a truncated artifact would certify a tier; named mutation `: > out_json`).
 FIXED: the validator now parses each artifact and checks family/seed/epochs/copylf_def_hash/metric presence; the `{}` fixture that reinforced the blind spot replaced with identity-complete fixtures; truncation test added (named mutation killed).
 
-### Round 3 — final confirming pass — pending (Sol, delta + guard re-check)
+### Round 3 — final confirming pass (Sol/high, delta `73bf4a8..ddffd9c`), 2026-08-12
+
+Verdict: needs-attention, 1 high — the round-2 fix's artifact checks used `assert`, strippable under `python -O` (vendored panel_data import path, module identity, and def-hash freshness all confirmed consistent).
+FIXED at the closing commit: explicit raises; the truncation test re-verified under `python -O`; a class sweep found ZERO other production `assert`s in the campaign (guard tests use pytest asserts, which -O does not affect in practice since gates run the suite unoptimized — and the gate-critical paths now use raises).
+
+## BUILD REVIEW CONVERGED
+
+Scorecard by round: r1 = 16 findings (3 crit-level, 9 high) → all fixed; micro = 4 (2 high) → fixed; r2 = whole-diff approve/0 + test-quality 1 high → fixed; r3 = 1 high (introduced by r2's fix) → fixed, class swept.
+Trend is sharply decreasing with a clean whole-diff sweep at r2; r3's single finding was scoped to the previous fix and its class is verified absent elsewhere.
+Gate closes at this commit; 72 tests green (also under `-O` for the affected path).
+Ready for G3 smoke submission.
