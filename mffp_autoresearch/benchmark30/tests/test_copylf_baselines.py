@@ -85,7 +85,8 @@ def test_committed_artifact_matches_full_regeneration():
         if k.startswith("_"):
             assert committed[k] == fresh[k], f"metadata field {k} differs"
             continue
-        for field in ("convention", "reference_type", "test_nrmse"):
+        assert set(committed[k]) == set(fresh[k]), f"{k}: entry key sets differ"
+        for field in fresh[k]:
             c, f = committed[k][field], fresh[k][field]
             if isinstance(f, float):
                 assert c == pytest.approx(f, rel=1e-9), \

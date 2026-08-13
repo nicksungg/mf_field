@@ -133,4 +133,16 @@ Deduped: 12 distinct findings, ALL accepted (0 rejected). Dispositions (fix comm
 | F11 | committed copy-LF artifact unvalidated (high) | full-regeneration comparison test, entry-by-entry (`45fa87b`) |
 | F12 | D12 re-hash never exercised (high) | end-to-end sealed-fixture test of both mutation classes + default-path pin (`45fa87b`) |
 
-### Micro-review of the fix diff — pending (Sol, `82c086f..45fa87b`)
+### Micro-review of the fix diff — Sol/high, `82c086f..495ee5d`, 2026-08-12
+
+Verdict: needs-attention, 4 findings; F1–F5, F7–F10, F12 confirmed correct.
+All 4 are defects introduced by the fixes (the class this pass exists for):
+
+| # | Sev | Finding | Disposition |
+| --- | --- | --- | --- |
+| M1 | high | validate_tier trusted whatever was submitted (missing expected job or missing sacct row could pass) | FIXED: expected cell set from tier definition; every cell needs a submission; a job invisible to sacct refuses the gate |
+| M2 | high | append-only submissions made a failed full-tier attempt permanently block G4 | FIXED: latest-attempt-per-cell semantics; retry test FAILED→retry→pass |
+| M3 | medium | ledgered dataset with stale complete scores re-entered the common set | FIXED: ledgered datasets excluded from common; score/ledger conflicts surfaced |
+| M4 | low | F11 regen test skipped the `source` field | FIXED: full key-set + exact non-numeric comparison |
+
+### Round 2 — confirming full-range panel — pending (whole-diff + test-quality, Sol)

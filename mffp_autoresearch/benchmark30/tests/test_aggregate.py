@@ -217,3 +217,13 @@ def test_final_collection_path_defaults_to_rehash():
     assert ap.parse_args([]).skip_rehash is False
     src = open(C.__file__).read()
     assert 'if not args.skip_rehash:' in src and 'rehash_and_check(cfg, manifest)' in src
+
+
+def test_ledgered_dataset_never_enters_common_set(rev):
+    """micro-fix M3: complete stale scores must not resurrect a ledgered dataset."""
+    lb = aggregate_scores(rev, expected_def_hash=DEF_HASH, seeds=[0, 1, 2],
+                          expected_epochs=200,
+                          exclusion_ledger={MODEL: {"a": "excluded after the fact"}})
+    assert lb["common_eligible_set"] == ["b"]
+    assert lb["score_ledger_conflicts"] == ["a"], \
+        "the score/ledger conflict must be surfaced, not silently resolved"

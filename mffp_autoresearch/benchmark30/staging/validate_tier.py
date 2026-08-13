@@ -51,14 +51,32 @@ def validate_tier(cfg: dict, tier: str, state_dir: Path = None,
     if not manifest.get("sealed"):
         raise RuntimeError("unsealed manifest (spec D12)")
     rev_root = Path(cfg["output_root"]) / f"rev-{manifest['manifest_hash'][:8]}"
-    subs = [s for s in _load(state_dir / "submissions.json", [])
-            if s["tier"] == tier and s["manifest_hash"] == manifest["manifest_hash"]]
-    if not subs:
-        raise RuntimeError(f"no {tier} submissions recorded for the active manifest")
+    all_subs = [s for s in _load(state_dir / "submissions.json", [])
+                if s["tier"] == tier and s["manifest_hash"] == manifest["manifest_hash"]]
     ledger = _load(state_dir / "exclusion_ledger.json", {})
     epochs = cfg["epochs"]["smoke"] if tier == "smoke" else cfg["epochs"]["full"]
+    tier_seeds = [0] if tier in ("smoke", "full-seed0") else [1, 2]
+
+    # micro-fix M1: the EXPECTED cell set comes from the tier definition, never
+    # from whatever happened to be submitted; every cell needs a submission.
+    # micro-fix M2: submissions are append-only history — validate the LATEST
+    # attempt per (family, seed) cell so a failed earlier attempt can be retried.
+    latest = {}
+    for sub in all_subs:  # file order is submission order
+        latest[(sub["family"], sub["seed"])] = sub
+    missing_cells = [(f, sd) for f in cfg["families"] for sd in tier_seeds
+                     if (f, sd) not in latest]
+    if missing_cells:
+        raise RuntimeError(f"no {tier} submission recorded for cells {missing_cells} "
+                           f"under the active manifest")
+    subs = list(latest.values())
 
     states = sacct_fn([s["job_id"] for s in subs])
+    # micro-fix M1: a job sacct cannot see is NOT terminal — refuse loudly.
+    unseen = [s["job_id"] for s in subs if s["job_id"] not in states]
+    if unseen:
+        raise RuntimeError(f"sacct returned no state for submitted jobs {unseen} — "
+                           f"cannot certify the tier")
     terminal = {"COMPLETED", "FAILED", "TIMEOUT", "CANCELLED", "OUT_OF_MEMORY"}
     pending = {j: st for j, st in states.items() if st not in terminal}
     if pending:
@@ -67,11 +85,12 @@ def validate_tier(cfg: dict, tier: str, state_dir: Path = None,
         not_completed = {j: st for j, st in states.items() if st != "COMPLETED"}
         if not_completed:
             raise RuntimeError(
-                f"full-tier jobs not COMPLETED (honest-exit: failures occurred): "
-                f"{not_completed} — triage into the exclusion ledger or retry first")
+                f"full-tier latest attempts not COMPLETED (honest-exit: failures "
+                f"occurred): {not_completed} — triage into the exclusion ledger or "
+                f"retry (a NEW submission supersedes this attempt) first")
 
     problems = []
-    seeds = sorted({s["seed"] for s in subs})
+    seeds = tier_seeds
     for fam in cfg["families"]:
         for ds in _cells(cfg, ledger, fam):
             for seed in seeds:

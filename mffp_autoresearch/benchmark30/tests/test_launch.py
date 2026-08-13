@@ -229,3 +229,31 @@ def test_validate_tier_refuses_unaccounted_cell_and_nonterminal(tmp_path):
     with pytest.raises(RuntimeError, match="not terminal"):
         validate_tier(cfg_small, "smoke", state_dir=state2,
                       sacct_fn=lambda ids: {j: "RUNNING" for j in ids})
+
+
+def test_validate_tier_latest_attempt_supersedes_failed(tmp_path):
+    """micro-fix M2: a retry (new submission) must clear an earlier FAILED
+    attempt; and (M1) a job invisible to sacct must refuse the gate."""
+    from staging.validate_tier import validate_tier
+    cfg_small = {"output_root": str(tmp_path / "out"),
+                 "families": {"famA": "x"},
+                 "epochs": {"smoke": 2, "full": 200},
+                 "datasets": {"core": [{"id": "d1", "dataset_dir": "d1"}]}}
+    state, _ = _mk_tier_env(tmp_path, cfg_small, "full-seed0", 200, [0],
+                            [("famA", 0, "d1")], {})
+    mh = HASH8 + "f" * 56
+    subs = json.load(open(state / "submissions.json"))
+    subs.append({**subs[0], "job_id": "2000"})  # retry of the same cell
+    (state / "submissions.json").write_text(json.dumps(subs))
+    entry = validate_tier(cfg_small, "full-seed0", state_dir=state,
+                          sacct_fn=lambda ids: {j: "COMPLETED" for j in ids}
+                          if ids == ["2000"] else {j: "FAILED" for j in ids})
+    assert list(entry["jobs"]) == ["2000"], "only the latest attempt is validated"
+    with pytest.raises(RuntimeError, match="no state for submitted"):
+        validate_tier(cfg_small, "full-seed0", state_dir=state,
+                      sacct_fn=lambda ids: {})
+    # missing expected cell refuses
+    (state / "submissions.json").write_text("[]")
+    with pytest.raises(RuntimeError, match="no full-seed0 submission recorded"):
+        validate_tier(cfg_small, "full-seed0", state_dir=state,
+                      sacct_fn=lambda ids: {})

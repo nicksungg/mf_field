@@ -120,8 +120,15 @@ def aggregate_scores(rev_root: Path, expected_def_hash: str, seeds: list,
                 per_dataset[ds][f] = {"per_seed": vals, "mean": sum(vals) / len(vals),
                                       "min": min(vals), "max": max(vals)}
 
+    # micro-fix M3: a ledgered dataset is EXCLUDED even if complete (stale)
+    # score files exist in the shared revision dir; the conflict is surfaced.
+    ledgered_anywhere = {ds for f in families for ds in ledger.get(f, {})}
     common = [ds for ds in datasets
-              if all(coverage[ds][f] == len(seeds) for f in families)]
+              if ds not in ledgered_anywhere
+              and all(coverage[ds][f] == len(seeds) for f in families)]
+    score_ledger_conflicts = sorted(
+        ds for ds in ledgered_anywhere
+        if any(coverage.get(ds, {}).get(f, 0) > 0 for f in families))
 
     # r1 fix F3: every universe cell must be a result OR a ledger entry —
     # a silently vanished dataset must never shrink the denominator unnoticed.
@@ -171,6 +178,7 @@ def aggregate_scores(rev_root: Path, expected_def_hash: str, seeds: list,
         "coverage": coverage,
         "common_eligible_set": common,
         "unaccounted_cells": unaccounted,
+        "score_ledger_conflicts": score_ledger_conflicts,
         "headline": headline,
         "group_geomeans": group_geomeans,
         "exclusion_ledger": ledger,
