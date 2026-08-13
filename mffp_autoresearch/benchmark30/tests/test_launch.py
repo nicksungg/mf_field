@@ -29,7 +29,8 @@ def _mk_state(tmp_path, gates):
         {"sealed": True, "manifest_hash": HASH8 + "f" * 56,
          "registry_revision": "b30-0001", "datasets": {}}))
     (state / "gates.json").write_text(json.dumps(
-        {g: {"utc": "2026-08-12T00:00:00Z", "evidence": "test"} for g in gates}))
+        {g: {"utc": "2026-08-12T00:00:00Z", "evidence": "test",
+             "manifest_hash": HASH8 + "f" * 56} for g in gates}))
     return state
 
 
@@ -104,7 +105,8 @@ def test_sbatch_script_contract(cfg, tmp_path):
     # per-dataset isolation: one scorer invocation per dataset, failure recorded
     assert script.count("score_panel.py") >= 30
     assert script.count("--out") >= 30 and "/results/scores/" in script
-    assert "FAILED" in script and "exit 0" in script.splitlines()[-1]
+    assert "FAILED" in script and "exit 1" in script, \
+        "residual non-ledgered failures must exit nonzero (r1-lifecycle-3)"
 
 
 def test_r3s2_carries_recipe_env_film_does_not(cfg, tmp_path):
@@ -116,3 +118,56 @@ def test_r3s2_carries_recipe_env_film_does_not(cfg, tmp_path):
     assert "R3S2_TARGET_SCALER_PREFLIGHT=not_applicable_no_helmholtz_no_pfc_in_datasets" \
         in r3s2["script"]
     assert "R3S2B2_ARM" not in film["script"]
+
+
+def test_gates_must_be_bound_to_the_active_manifest(cfg, tmp_path):
+    """r1 fix F4: a gate recorded under a DIFFERENT manifest must not authorize
+    a launch into the current revision namespace."""
+    state = _mk_state(tmp_path, [])
+    stale = {g: {"utc": "x", "evidence": "y", "manifest_hash": "0" * 64}
+             for g in ("G0", "G1", "G2")}
+    (state / "gates.json").write_text(json.dumps(stale))
+    with pytest.raises(GateError, match="manifest"):
+        render_jobs(cfg, tier="smoke", state_dir=state)
+    # matching hash -> allowed
+    good = {g: {"utc": "x", "evidence": "y", "manifest_hash": HASH8 + "f" * 56}
+            for g in ("G0", "G1", "G2")}
+    (state / "gates.json").write_text(json.dumps(good))
+    assert render_jobs(cfg, tier="smoke", state_dir=state)
+
+
+def test_sbatch_retries_and_honest_exit(cfg, tmp_path):
+    """r1 fix F5: per-dataset bounded retries (retry_cap) and a NONZERO exit
+    when any non-ledgered dataset still failed — so FAIL mail actually fires
+    and sacct COMPLETED means what G4 needs it to mean."""
+    state = _mk_state(tmp_path, ["G0", "G1", "G2"])
+    jobs = render_jobs(cfg, tier="smoke", state_dir=state)
+    script = jobs[0]["script"]
+    assert "for attempt in $(seq 1 3)" in script, "retry_cap=3 loop missing"
+    assert "exit 1" in script, "residual failures must exit nonzero"
+    assert not script.rstrip().endswith("exit 0"), \
+        "unconditional exit 0 masks failures (r1-lifecycle-3)"
+
+
+def test_submissions_persisted_incrementally(cfg, tmp_path, monkeypatch):
+    """r1 fix F7: each accepted job id lands on disk immediately."""
+    import slurm.launch as L
+    state = _mk_state(tmp_path, ["G0", "G1", "G2"])
+    calls = []
+
+    def fake_run(cmd, **kw):
+        calls.append(cmd)
+        if len(calls) == 2:
+            raise RuntimeError("sbatch down")
+        class R: stdout = f"Submitted batch job 100{len(calls)}\n"
+        return R()
+
+    monkeypatch.setattr(L.subprocess, "run", fake_run)
+    jobs = render_jobs(cfg, tier="smoke", state_dir=state)
+    sub_file = tmp_path / "submissions.json"
+    with pytest.raises(RuntimeError):
+        L.submit(jobs, tmp_path / "rev", sub_file=sub_file, tier="smoke",
+                 manifest_hash=HASH8 + "f" * 56)
+    recorded = json.load(open(sub_file))
+    assert len(recorded) == 1 and recorded[0]["job_id"] == "1001", \
+        "the job accepted before the sbatch failure must already be on disk"
