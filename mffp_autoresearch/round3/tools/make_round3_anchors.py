@@ -473,7 +473,11 @@ def main():
         # ADR r3-0007: only SCORED ifc cells gate certification; report-only
         # ifc_poisson values are carried separately below when present.
         have_ifc = all((ds, s) in live for ds in IFC if ds in PANEL for s in SEEDS)
-        entry = {"validated_against_certified_6ds": [round(v, 4) for v in val]}
+        # ADR r3-0008-C step 5: every aggregate carries its composition and era
+        # stamp so a later panel change cannot silently re-weight it.
+        entry = {"validated_against_certified_6ds": [round(v, 4) for v in val],
+                 "_composition": list(PANEL if have_ifc else SHARP4),
+                 "_composition_era": "adr-r3-0008-C (ratified 2026-08-12); scored panel per r3-0007"}
         if have_ifc:
             sg = [geomean([live[(ds, s)] for ds in PANEL]) for s in SEEDS]
             entry.update(status="CERTIFIED", seed_geomeans=[round(v, 4) for v in sg],
@@ -496,6 +500,10 @@ def main():
 
     out = {
         "_adr": "round3/docs/adr/0001-launch-panel-composition.md (D6; panel per D4 as amended by A1, r3-0005 pfc restore, r3-0007 ifc_poisson report-only)",
+        "_composition_era": ("adr-r3-0008-C (ratified 2026-08-12): report-only cells excluded "
+                             "from every claim-bearing aggregate; each aggregate stamped with its "
+                             "composition; panel/subset bars read only from an anchor file whose "
+                             "_panel_geomean.panel matches the composition"),
         "_panel": PANEL,
         "_report_only": REPORT_ONLY,
         "_note": ("Round-3 launch anchors over the ADR D4+A1 panel (helmholtz excluded, report-only; "

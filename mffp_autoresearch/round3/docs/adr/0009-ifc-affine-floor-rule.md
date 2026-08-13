@@ -1,6 +1,10 @@
-# ADR r3-0009 (PROPOSED): the ifc affine-floor rule
+# ADR r3-0009 (RATIFIED — Option B): the ifc affine-floor rule
 
-**Status: PROPOSED — awaiting operator (Eloise) ratification.**
+**Status: RATIFIED 2026-08-12 — operator (Eloise) chose Option B** (keep the rule, complete its numbers), ruled in-session via the decision brief (artifact `44eb5976`) after the recommendation below; recorded in `state/orchestrator_flow.md` (2026-08-12 operator-decisions entry).
+Executed the same day: `program.md` §2 line 38 replaced with the Option B text below.
+Per the retro-active section, the shipped report is left alone with no footnote — under Option B nothing in it becomes false.
+
+Original proposal follows unchanged.
 Nothing in this document is executed, and nothing in it changes a round-3 number.
 Raised from round-3 report §12 item 1 ("ifc affine-floor rule change — the explainer was delivered 2026-08-10; program.md §2's rule text stands unchanged until she rules"), drafted 2026-08-12 after re-verifying every cited number against its primary artifact.
 The status quo is in force and has been honoured throughout: the mandatory disclosure appears in round-3 report §2 and on every ifc reading in the round.

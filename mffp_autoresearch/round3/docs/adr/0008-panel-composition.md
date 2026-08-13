@@ -1,6 +1,9 @@
-# ADR r3-0008 (PROPOSED): panel composition for round 4, and the rule for a headline concentrated in one cell
+# ADR r3-0008 (RATIFIED — Option C): panel composition for round 4, and the rule for a headline concentrated in one cell
 
-**Status: PROPOSED — awaiting operator (Eloise) ratification.**
+**Status: RATIFIED 2026-08-12 — operator (Eloise) chose Option C**, ruled in-session via the decision brief (artifact `44eb5976`, plain-language restatement of this ADR) after the recommendation below; recorded in `state/orchestrator_flow.md` (2026-08-12 operator-decisions entry).
+Execution per the Option C sketch at the end of this document; the subset-audit tool fix (sketch step 2, ruling-independent) was already done and converged earlier the same day (commits `2b72977`–`4291ffd`).
+
+Original proposal follows unchanged.
 Nothing in this document is executed, and nothing in it changes a round-3 number.
 Raised from round-3 report §12 item 2 ("Panel-composition ADR — evidence on file, presented as evidence and not as a decision"), drafted 2026-08-12 after re-verifying every cited number against its primary artifact.
 Builds on ADR r3-0007 (RATIFIED 2026-08-10, option C); it does **not** supersede that ADR's `ifc_heat` / `ifc_poisson` call, and the evidence assembled here does not force reopening it (see "What this does NOT decide").

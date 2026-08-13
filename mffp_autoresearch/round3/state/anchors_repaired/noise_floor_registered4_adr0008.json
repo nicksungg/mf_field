@@ -1,0 +1,49 @@
+{
+ "_adr": "r3-0008 Option C step 1 (ratified 2026-08-12)",
+ "_certified_utc": "2026-08-12",
+ "_note": "Bar for reading subset deltas on the registered4 composition. Re-aggregated from the existing r3s4_cert_min certification legs (no new training); control reproduced the ADR-0004 certified constant exactly before this was written. The certified noise_floor.json is untouched and remains the ADR-0004-era artifact.",
+ "_protocol_source": "state/anchors_repaired/noise_floor.json _protocol",
+ "_provenance": {
+  "source_results": [
+   "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round3/r3s4_audit/B1/eval/result_panel5_s0.json",
+   "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round3/r3s4_audit/B1/eval/result_panel5_s1.json",
+   "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round3/r3s4_audit/B1/eval/result_panel5_s2.json",
+   "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round3/r3s4_audit/B1_pfc_ext/eval/result_pfc_certmin_s0.json",
+   "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round3/r3s4_audit/B1_pfc_ext/eval/result_pfc_certmin_s1.json",
+   "/resnick/groups/Hippo/ezeng/mf_field/mffp_autoresearch_outputs/round3/r3s4_audit/B1_pfc_ext/eval/result_pfc_certmin_s2.json"
+  ],
+  "control": {
+   "composition": [
+    "ifc_heat",
+    "ifc_poisson",
+    "sharp__allen_cahn_2d",
+    "sharp__cahn_hilliard",
+    "sharp__fisher_kpp_2d"
+   ],
+   "reproduced_seed_mce": 0.5082844131597604,
+   "reproduced_paired_null_95": 0.40667775361433317
+  }
+ },
+ "_panel_geomean": {
+  "panel": [
+   "sharp__allen_cahn_2d",
+   "sharp__cahn_hilliard",
+   "sharp__fisher_kpp_2d",
+   "ifc_heat"
+  ],
+  "per_seed": [
+   26.713297191750883,
+   27.75809433597902,
+   27.809349455829537
+  ],
+  "pairwise_seed_deltas": [
+   -1.0447971442281379,
+   -1.0960522640786543,
+   -0.05125511985051645
+  ],
+  "spread_maxmin": 1.0960522640786543,
+  "paired_null_95": 1.06188218417831,
+  "seed_mce": 1.0960522640786543,
+  "seed_mce_definition": "max(spread_maxmin, paired_null_95)"
+ }
+}
