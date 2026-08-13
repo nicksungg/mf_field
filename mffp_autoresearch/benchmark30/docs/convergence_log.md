@@ -75,4 +75,26 @@ Two external inputs landed after the round-5 approve:
 
 Delta-confirm below (round 6) reviews ONLY this amendment, per the delta-scoping efficiency rule; the full range was already swept clean in round 5.
 
-### Round 6 — pending (Terra delta-confirm of the 5b amendment)
+### Round 6 — Terra delta-confirm of the 5b amendment, 2026-08-12
+
+Reviewed delta `36bab7c..e74ee91`.
+Verdict: needs-attention, 2 medium — both editorial residue of the append-style amendment (stale 17/4 counts beside the 16/5 correction; evidence draft double-counting ext__cahn_hilliard_2d).
+Both FIXED at `b573202`.
+
+### Round 7 — Terra micro-confirm, 2026-08-12
+
+Reviewed delta `e74ee91..b573202`.
+Verdict: spec + plan counts and classifications CONFIRMED consistent (12+3+1=16, 5 1-D).
+One medium residue in the evidence DRAFT only (red-flag paragraph still called the ch_2d decision open); FIXED at `81714fc` by writing the D4 resolution into the paragraph.
+
+## CONVERGED
+
+Spec + plan are converged as of `81714fc` (2026-08-12): round 5 clean full sweep; the post-convergence factual amendment (5b) delta-confirmed over rounds 6–7 with all residue fixed; the last open item lived in the ADR evidence draft, which is an INPUT to build task A5 — the ADR itself is reviewed at build stage.
+Build-stage reviews (stage 7, Sol lenses) begin from this baseline.
+
+## Implementation ledger (author → range; reviewer must be the counter-party)
+
+| Task | Author | Range |
+| --- | --- | --- |
+| docs (spec/plan/log/ADR-draft edits) | Claude | `329e643..81714fc` (reviewed by Codex rounds 1–7) |
+| A1 config + skeleton | Claude | `4c87c2f` |
