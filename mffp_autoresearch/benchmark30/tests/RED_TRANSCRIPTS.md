@@ -12,3 +12,15 @@ ERROR tests/test_config.py::test_thirty_unique_datasets - AssertionError: cam...
 
 Failure reason: `campaign config missing at .../config.yaml` — the fixture asserts the file exists.
 Green after writing config.yaml: `8 passed in 0.34s`.
+
+## A2 — tests/test_manifest.py
+
+Command: `.venv/bin/python -m pytest tests/test_manifest.py -x -q` (before staging/manifest.py existed)
+
+```
+ERROR tests/test_manifest.py
+Interrupted: 1 error during collection   # ModuleNotFoundError: staging.manifest
+1 error in 0.70s
+```
+
+Green after implementing staging/manifest.py: `12 passed` (one intermediate failure was a fixture-arithmetic error in the TEST — expectation 32 vs the fixture's actual 16 cells — fixed in the test, implementation unchanged).
