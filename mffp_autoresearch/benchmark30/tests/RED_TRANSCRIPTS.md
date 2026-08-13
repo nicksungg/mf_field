@@ -63,3 +63,14 @@ FAILED tests/test_registry.py::test_campaign_classification_counts
 ```
 
 Green after appends + ADR: full suite passes (the dirichlet synthetic test was corrected mid-red to assert variant E's ACTUAL certified contract — exact at shared nodes + linear inside the LF span, clamped edge band — instead of an over-strong everywhere-linear property the frozen code never had).
+
+## A6 — tests/test_preflight.py
+
+Command: `.venv/bin/python -m pytest tests/test_preflight.py -q` (before staging/preflight.py existed)
+
+```
+Interrupted: 1 error during collection   # ModuleNotFoundError: staging.preflight
+1 error in 0.49s
+```
+
+Green after implementation: full suite passes (one intermediate red was a test-expectation bug — `_verify` raises SystemExit, which `pytest.raises(Exception)` does not catch — fixed in the test; the leak WAS detected by the audit both times).
