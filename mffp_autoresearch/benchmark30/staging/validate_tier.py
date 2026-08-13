@@ -89,6 +89,15 @@ def validate_tier(cfg: dict, tier: str, state_dir: Path = None,
                 f"occurred): {not_completed} — triage into the exclusion ledger or "
                 f"retry (a NEW submission supersedes this attempt) first")
 
+    # round-2 fix: a cell counts only if its artifact PARSES and carries the
+    # right identity + metric — a truncated/empty file must not certify a tier.
+    sys.path.insert(0, str(CAMPAIGN))
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("b30_pd_vt", CAMPAIGN / "eval/panel_data.py")
+    pd_mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(pd_mod)
+    expected_hash = pd_mod.COPYLF_DEF_HASH
+
     problems = []
     seeds = tier_seeds
     for fam in cfg["families"]:
@@ -97,6 +106,15 @@ def validate_tier(cfg: dict, tier: str, state_dir: Path = None,
                 score = rev_root / "results/scores" / f"{fam}_s{seed}_e{epochs}_{ds}.json"
                 if not score.exists():
                     problems.append(f"{fam}/{ds}/s{seed}: no score JSON and no ledger entry")
+                    continue
+                try:
+                    j = json.load(open(score))
+                    assert j["family"] == fam and j["seed"] == seed and j["epochs"] == epochs
+                    assert j["copylf_def_hash"] == expected_hash
+                    assert "nRMSE" in j["per_dataset"][ds]
+                except Exception as e:  # noqa: BLE001
+                    problems.append(f"{fam}/{ds}/s{seed}: score artifact invalid "
+                                    f"({type(e).__name__}: {str(e)[:80]})")
     if problems:
         raise RuntimeError(
             f"{tier} coverage incomplete ({len(problems)} cells): "

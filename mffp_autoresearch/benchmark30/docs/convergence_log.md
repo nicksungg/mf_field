@@ -145,4 +145,11 @@ All 4 are defects introduced by the fixes (the class this pass exists for):
 | M3 | medium | ledgered dataset with stale complete scores re-entered the common set | FIXED: ledgered datasets excluded from common; score/ledger conflicts surfaced |
 | M4 | low | F11 regen test skipped the `source` field | FIXED: full key-set + exact non-numeric comparison |
 
-### Round 2 — confirming full-range panel — pending (whole-diff + test-quality, Sol)
+### Round 2 — confirming full-range panel (whole-diff + test-quality, Sol/high), 2026-08-12
+
+Reviewed: full range `83a547e..73bf4a8`.
+Whole-diff lens: **approve, 0 findings** — all 16 prior dispositions confirmed in the committed code.
+Test-quality lens: 1 high — validate_tier counted `score.exists()` without parsing (a truncated artifact would certify a tier; named mutation `: > out_json`).
+FIXED: the validator now parses each artifact and checks family/seed/epochs/copylf_def_hash/metric presence; the `{}` fixture that reinforced the blind spot replaced with identity-complete fixtures; truncation test added (named mutation killed).
+
+### Round 3 — final confirming pass — pending (Sol, delta + guard re-check)

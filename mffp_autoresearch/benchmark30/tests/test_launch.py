@@ -191,8 +191,16 @@ def _mk_tier_env(tmp_path, cfg_small, tier, epochs, seeds, scores, states, ledge
     rev = Path(cfg_small["output_root"]) / f"rev-{HASH8}"
     d = rev / "results/scores"
     d.mkdir(parents=True, exist_ok=True)
+    import importlib.util
+    spec = importlib.util.spec_from_file_location(
+        "b30_pd_fixture", Path(__file__).resolve().parents[1] / "eval/panel_data.py")
+    pd_mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(pd_mod)
     for fam, seed, ds in scores:
-        (d / f"{fam}_s{seed}_e{epochs}_{ds}.json").write_text("{}")
+        (d / f"{fam}_s{seed}_e{epochs}_{ds}.json").write_text(json.dumps(
+            {"family": fam, "seed": seed, "epochs": epochs,
+             "copylf_def_hash": pd_mod.COPYLF_DEF_HASH,
+             "per_dataset": {ds: {"nRMSE": 0.1}}}))
     return state, (lambda ids: {j: states.get(j, "COMPLETED") for j in ids})
 
 
@@ -257,3 +265,19 @@ def test_validate_tier_latest_attempt_supersedes_failed(tmp_path):
     with pytest.raises(RuntimeError, match="no full-seed0 submission recorded"):
         validate_tier(cfg_small, "full-seed0", state_dir=state,
                       sacct_fn=lambda ids: {})
+
+
+def test_validate_tier_rejects_truncated_score_artifact(tmp_path):
+    """round-2 test-quality fix: an EMPTY score file must not certify a tier
+    (mutation: `run_ds ... && : > out_json` truncates after write)."""
+    from staging.validate_tier import validate_tier
+    cfg_small = {"output_root": str(tmp_path / "out"),
+                 "families": {"famA": "x"},
+                 "epochs": {"smoke": 2, "full": 200},
+                 "datasets": {"core": [{"id": "d1", "dataset_dir": "d1"}]}}
+    state, sacct = _mk_tier_env(tmp_path, cfg_small, "smoke", 2, [0],
+                                [("famA", 0, "d1")], {})
+    art = Path(cfg_small["output_root"]) / f"rev-{HASH8}/results/scores/famA_s0_e2_d1.json"
+    art.write_text("")  # truncated
+    with pytest.raises(RuntimeError, match="score artifact invalid"):
+        validate_tier(cfg_small, "smoke", state_dir=state, sacct_fn=sacct)
