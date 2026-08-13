@@ -70,3 +70,25 @@ def test_output_carries_vendored_def_hash(tmp_path):
     mod = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(mod)
     assert out["_copylf_def_hash"] == mod.COPYLF_DEF_HASH
+
+
+def test_committed_artifact_matches_full_regeneration():
+    """r1 fix F11: the COMMITTED state/copylf_baselines.json is the artifact
+    the scorer trusts — a hand-edited value must fail here.  Full 30-dataset
+    regeneration (slow, ~1-2 min) compared entry-by-entry."""
+    committed_path = CAMPAIGN / "state/copylf_baselines.json"
+    assert committed_path.exists(), "G2 artifact missing"
+    committed = json.load(open(committed_path))
+    fresh = build_all()
+    assert set(committed) == set(fresh), "dataset key sets differ"
+    for k in fresh:
+        if k.startswith("_"):
+            assert committed[k] == fresh[k], f"metadata field {k} differs"
+            continue
+        for field in ("convention", "reference_type", "test_nrmse"):
+            c, f = committed[k][field], fresh[k][field]
+            if isinstance(f, float):
+                assert c == pytest.approx(f, rel=1e-9), \
+                    f"{k}.{field}: committed {c} != regenerated {f}"
+            else:
+                assert c == f, f"{k}.{field}: committed {c!r} != regenerated {f!r}"

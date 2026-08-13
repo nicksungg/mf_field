@@ -176,3 +176,44 @@ def test_ops_table_extracted_from_family_results(rev):
     lb = aggregate_scores(rev, expected_def_hash=DEF_HASH, seeds=[0, 1, 2],
                           expected_epochs=200)
     assert lb["ops"][MODEL]["a"]["s0"]["train_seconds"] == 123.4
+
+
+def test_rehash_and_check_aborts_on_either_byte_class(tmp_path):
+    """r1 fix F12: the collect-time D12 re-hash is exercised end-to-end on a
+    sealed fixture manifest — both mutation classes must abort collection."""
+    import numpy as np
+    from aggregate.collect import rehash_and_check
+    from staging.manifest import build_manifest
+    from staging.preflight import build_stripped_views, seal_manifest
+    d = tmp_path / "data/fx"
+    d.mkdir(parents=True)
+    for split in ("train", "test"):
+        for lvl in (1, 2):
+            np.savez(d / f"{split}_l{lvl}.npz", x=np.zeros((2, 2)),
+                     y=np.full((2, 4 * lvl * lvl), 1.0))
+    cfg = {"data_root": str(tmp_path / "data"), "output_root": str(tmp_path / "out"),
+           "datasets": {"core": [{"id": "fx", "dataset_dir": "fx"}]}}
+    build_stripped_views(cfg)
+    sealed = seal_manifest(cfg, build_manifest(cfg), registry_revision="b30-0001")
+    rehash_and_check(cfg, sealed)  # clean -> no raise
+    src = d / "train_l1.npz"
+    src.write_bytes(src.read_bytes() + b"\x00")
+    with pytest.raises(ValueError, match="source re-hash"):
+        rehash_and_check(cfg, sealed)
+    src.write_bytes(src.read_bytes()[:-1])
+    view = Path(cfg["output_root"]) / "stripped_data/fx/test_l2.npz"
+    data = view.read_bytes(); view.unlink(); view.write_bytes(data + b"\x00")
+    with pytest.raises(ValueError, match="stripped-view re-hash"):
+        rehash_and_check(cfg, sealed)
+
+
+def test_final_collection_path_defaults_to_rehash():
+    """r1 fix F12 companion: main's parser must default to rehashing —
+    a flipped default would silently skip D12 verification."""
+    import argparse
+    import aggregate.collect as C
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--skip-rehash", action="store_true")
+    assert ap.parse_args([]).skip_rehash is False
+    src = open(C.__file__).read()
+    assert 'if not args.skip_rehash:' in src and 'rehash_and_check(cfg, manifest)' in src

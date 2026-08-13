@@ -28,8 +28,9 @@ def _utc() -> str:
     return datetime.datetime.now(datetime.timezone.utc).isoformat()
 
 
-def _record_gate(gates: dict, name: str, evidence: dict) -> None:
-    gates[name] = {"utc": _utc(), **evidence}
+def _record_gate(gates: dict, name: str, evidence: dict, manifest_hash: str = None) -> None:
+    # r1 fix F4: every gate record is bound to the sealed manifest it vouches for
+    gates[name] = {"utc": _utc(), "manifest_hash": manifest_hash, **evidence}
     with open(CAMPAIGN / "state/gates.json", "w") as f:
         json.dump(gates, f, indent=1, sort_keys=True)
     print(f"[{name}] recorded")
@@ -44,11 +45,8 @@ def main() -> None:
     cfg = yaml.safe_load(open(CAMPAIGN / "config.yaml"))
     gates = {}
 
-    # ---- G0: provisional manifest ----
+    # ---- G0: provisional manifest (recorded post-seal, bound to the hash) ----
     manifest = build_manifest(cfg)
-    _record_gate(gates, "G0", {
-        "evidence": f"{len(manifest['datasets'])} datasets source-hashed",
-        "n_datasets": len(manifest["datasets"])})
 
     # ---- G1: stripped views + audits + seal ----
     views = build_stripped_views(cfg)
@@ -59,10 +57,13 @@ def main() -> None:
     sealed = seal_manifest(cfg, manifest, registry_revision="b30-0001")
     with open(CAMPAIGN / "state/staging_manifest.json", "w") as f:
         json.dump(sealed, f, indent=1, sort_keys=True)
+    mh = sealed["manifest_hash"]
+    _record_gate(gates, "G0", {
+        "evidence": f"{len(manifest['datasets'])} datasets source-hashed",
+        "n_datasets": len(manifest["datasets"])}, manifest_hash=mh)
     _record_gate(gates, "G1", {
         "evidence": f"{len(reports)} stripped views LF-free; grid audit clean; "
-                    f"manifest sealed {sealed['manifest_hash'][:16]}",
-        "manifest_hash": sealed["manifest_hash"]})
+                    f"manifest sealed {mh[:16]}"}, manifest_hash=mh)
 
     # ---- G2: guard tests + copy-LF baselines ----
     tests = subprocess.run(
@@ -91,7 +92,7 @@ def main() -> None:
         "evidence": f"guard tests: {tail}; copy-LF baselines: {n_ok} built, "
                     f"{len(errors)} ledgered",
         "tests": tail, "baselines_built": n_ok,
-        "ledgered": sorted(errors)})
+        "ledgered": sorted(errors)}, manifest_hash=mh)
 
     print("\nG0-G2 complete.")
     for ds in sorted(errors):

@@ -171,3 +171,61 @@ def test_submissions_persisted_incrementally(cfg, tmp_path, monkeypatch):
     recorded = json.load(open(sub_file))
     assert len(recorded) == 1 and recorded[0]["job_id"] == "1001", \
         "the job accepted before the sbatch failure must already be on disk"
+
+
+def _mk_tier_env(tmp_path, cfg_small, tier, epochs, seeds, scores, states, ledger=None):
+    """Fixture env for validate_tier: submissions + score files + fake sacct."""
+    state = tmp_path / "state"
+    state.mkdir(parents=True, exist_ok=True)
+    mh = HASH8 + "f" * 56
+    (state / "staging_manifest.json").write_text(json.dumps(
+        {"sealed": True, "manifest_hash": mh, "registry_revision": "b30-0001",
+         "datasets": {}}))
+    subs = [{"job_name": f"j{i}", "job_id": str(1000 + i), "tier": tier,
+             "family": f, "seed": s, "epochs": epochs, "manifest_hash": mh,
+             "utc": "x"}
+            for i, (f, s) in enumerate((f, s) for f in cfg_small["families"] for s in seeds)]
+    (state / "submissions.json").write_text(json.dumps(subs))
+    if ledger:
+        (state / "exclusion_ledger.json").write_text(json.dumps(ledger))
+    rev = Path(cfg_small["output_root"]) / f"rev-{HASH8}"
+    d = rev / "results/scores"
+    d.mkdir(parents=True, exist_ok=True)
+    for fam, seed, ds in scores:
+        (d / f"{fam}_s{seed}_e{epochs}_{ds}.json").write_text("{}")
+    return state, (lambda ids: {j: states.get(j, "COMPLETED") for j in ids})
+
+
+def test_validate_tier_records_g3_when_all_cells_accounted(tmp_path):
+    from staging.validate_tier import validate_tier
+    cfg_small = {"output_root": str(tmp_path / "out"),
+                 "families": {"famA": "x", "famB": "y"},
+                 "epochs": {"smoke": 2, "full": 200},
+                 "datasets": {"core": [{"id": "d1", "dataset_dir": "d1"},
+                                       {"id": "d2", "dataset_dir": "d2"}]}}
+    scores = [(f, 0, ds) for f in ("famA", "famB") for ds in ("d1",)]
+    ledger = {"famA": {"d2": "raise"}, "famB": {"d2": "raise"}}
+    state, sacct = _mk_tier_env(tmp_path, cfg_small, "smoke", 2, [0], scores,
+                                {"1000": "COMPLETED", "1001": "FAILED"}, ledger)
+    entry = validate_tier(cfg_small, "smoke", state_dir=state, sacct_fn=sacct)
+    g = json.load(open(state / "gates.json"))
+    assert "G3" in g and g["G3"]["manifest_hash"] == HASH8 + "f" * 56
+
+
+def test_validate_tier_refuses_unaccounted_cell_and_nonterminal(tmp_path):
+    from staging.validate_tier import validate_tier
+    cfg_small = {"output_root": str(tmp_path / "out"),
+                 "families": {"famA": "x"},
+                 "epochs": {"smoke": 2, "full": 200},
+                 "datasets": {"core": [{"id": "d1", "dataset_dir": "d1"},
+                                       {"id": "d2", "dataset_dir": "d2"}]}}
+    scores = [("famA", 0, "d1")]  # d2 unscored and NOT ledgered
+    state, sacct = _mk_tier_env(tmp_path, cfg_small, "smoke", 2, [0], scores, {})
+    with pytest.raises(RuntimeError, match="no score JSON and no ledger"):
+        validate_tier(cfg_small, "smoke", state_dir=state, sacct_fn=sacct)
+    # running job -> refuse regardless of files
+    state2, _ = _mk_tier_env(tmp_path / "b", cfg_small, "smoke", 2, [0],
+                             scores + [("famA", 0, "d2")], {})
+    with pytest.raises(RuntimeError, match="not terminal"):
+        validate_tier(cfg_small, "smoke", state_dir=state2,
+                      sacct_fn=lambda ids: {j: "RUNNING" for j in ids})
