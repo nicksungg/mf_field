@@ -79,6 +79,10 @@ mkdir -p {rev_root}/logs {rev_root}/results/scores {rev_root}/cache
 export ROUND2_EVAL_RESULTS={rev_root}/results
 export ROUND2_EVAL_CACHE={rev_root}/cache
 export PYTHONHASHSEED={seed}
+# G3-fix: the vendored family resolves factory/eval roots relative to its own
+# depth, which differs from the certified layout; provide them via PYTHONPATH
+# (worktree paths — pinned code, hash-identical to the certified trees).
+export PYTHONPATH={worktree_root}/mf_field/factory_mffp:{worktree_root}/mffp_autoresearch/round2/eval${{PYTHONPATH:+:$PYTHONPATH}}
 FAILED=""
 run_ds() {{  # $1=dataset, rest=command; bounded retries (config retry_cap)
   ds="$1"; shift
@@ -95,6 +99,9 @@ if [ -n "$FAILED" ]; then
   exit 1
 fi
 """
+
+
+WORKTREE_ROOT = CAMPAIGN.parents[1]
 
 
 def render_jobs(cfg: dict, tier: str, state_dir: Path = None) -> list:
@@ -118,8 +125,18 @@ def render_jobs(cfg: dict, tier: str, state_dir: Path = None) -> list:
         datasets = [d for d in all_ids if d not in ledger.get(family, {})]
         env_args = ""
         if family == "r3s2_route_b30":
+            # G3-fix, DOCUMENTED D5 deviation (the only one): R3S2_DIAG_OUT is an
+            # infrastructure OUTPUT path; the verbatim relative value resolves to
+            # round-3's certified B2 output dir and would OVERWRITE certified
+            # diagnostics. Redirected to the campaign rev root; every scientific
+            # knob remains byte-verbatim (config recipe_env is card-equal by test).
+            # the B2 card's own _note: keys prefixed "_" are card DIRECTIVES,
+            # never passed to --env — filter them here (capture stays verbatim).
+            env = {k: v for k, v in cfg["recipe_env"].items()
+                   if not k.startswith("_")}
+            env["R3S2_DIAG_OUT"] = f"{rev_root}/diag/r3s2_route_b30"
             env_args = " --env " + " ".join(
-                shlex.quote(f"{k}={v}") for k, v in cfg["recipe_env"].items())
+                shlex.quote(f"{k}={v}") for k, v in env.items())
         for seed in TIER_SEEDS[tier]:
             lines = []
             for ds in datasets:
@@ -133,6 +150,7 @@ def render_jobs(cfg: dict, tier: str, state_dir: Path = None) -> list:
                 time=s["time_smoke"] if tier == "smoke" else s["time_full"],
                 mail_user=s["mail_user"], mail_type=s["mail_type"],
                 rev_root=rev_root, seed=seed, epochs=epochs, family=family,
+                worktree_root=WORKTREE_ROOT,
                 retry_cap=cfg.get("retry_cap", 3),
                 invocations="\n".join(lines),
             )

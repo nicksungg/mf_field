@@ -73,6 +73,13 @@ def main() -> None:
     if tests.returncode != 0:
         raise SystemExit(f"[G2] guard tests FAILED: {tail}")
 
+    from eval.make_floors_b30 import FLOORS_OUT, build_all as build_floors
+    floors = build_floors()
+    FLOORS_OUT.parent.mkdir(parents=True, exist_ok=True)
+    with open(FLOORS_OUT, "w") as f:
+        json.dump(floors, f, indent=1, sort_keys=True)
+    n_floors = sum(1 for k in floors if not k.startswith("_"))
+
     from eval.make_copylf_baselines_b30 import build_all
     baselines = build_all()
     with open(CAMPAIGN / "state/copylf_baselines.json", "w") as f:
@@ -90,7 +97,7 @@ def main() -> None:
     n_ok = sum(1 for k in baselines if not k.startswith("_"))
     _record_gate(gates, "G2", {
         "evidence": f"guard tests: {tail}; copy-LF baselines: {n_ok} built, "
-                    f"{len(errors)} ledgered",
+                    f"{len(errors)} ledgered; floors: {n_floors} built",
         "tests": tail, "baselines_built": n_ok,
         "ledgered": sorted(errors)}, manifest_hash=mh)
 

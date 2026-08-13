@@ -93,3 +93,45 @@ def test_committed_artifact_matches_full_regeneration():
                     f"{k}.{field}: committed {c} != regenerated {f}"
             else:
                 assert c == f, f"{k}.{field}: committed {c!r} != regenerated {f!r}"
+
+
+def test_campaign_floors_match_certified_for_overlap():
+    """G3-fix: the campaign floors builder must reproduce the certified
+    round-3 floors for every overlapping dataset (construction equivalence),
+    and the committed campaign floors file must match a fresh rebuild."""
+    from eval.make_floors_b30 import FLOORS_OUT, CERTIFIED, build_all
+    cert = json.load(open(CERTIFIED))
+    overlap = [k for k in cert if not k.startswith("_")]
+    fresh = build_all(only=overlap)
+    for ds in overlap:
+        for arm in ("nn_condition", "train_mean", "zero"):
+            # rel=1e-6: BLAS reduction-order noise across nodes (~1e-9 observed
+            # on ifc_heat) stays far below it; construction changes do not.
+            assert fresh[ds][arm]["nrmse"] == pytest.approx(
+                cert[ds][arm]["nrmse"], rel=1e-6), \
+                f"{ds}.{arm}: campaign construction diverges from certified floors"
+    assert FLOORS_OUT.exists(), "committed campaign floors file missing (run make_floors_b30)"
+    committed = json.load(open(FLOORS_OUT))
+    for ds in overlap:
+        assert committed[ds]["nn_condition"]["nrmse"] == pytest.approx(
+            fresh[ds]["nn_condition"]["nrmse"], rel=1e-9)
+    missing = [k for k in ("era5",) if k not in committed and k not in committed.get("_errors", {})]
+    assert not missing, f"floors neither built nor errored for {missing}"
+
+
+def test_family_collect_finds_campaign_floors():
+    """The frozen family's own floor_arms.collect must find the campaign file
+    at roots[0] (the vendored-depth quirk this fix relies on)."""
+    import importlib.util
+    fam = CAMPAIGN / "family/r3s2_route_b30"
+    spec = importlib.util.spec_from_file_location("b30_floorlib", fam / "floor_arms.py")
+    fl = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(fl)
+    roots = [CAMPAIGN, Path("/resnick/groups/Hippo/ezeng/mf_field")]
+    got = fl.collect("poisson_generated", roots,
+                     "nn_condition,train_mean,zero,affine_on_hf_train")
+    assert got["nn_condition"]["nrmse"] > 0
+    assert got["affine_on_hf_train"]["applicable"] is False, \
+        "non-ifc datasets get the frozen not-applicable affine fallback"
+    assert str(CAMPAIGN) in got["_source"]["floors_file"], \
+        "the campaign floors file must win over the round-3 one (roots order)"

@@ -1,0 +1,663 @@
+{
+ "_certified_utc": "2026-08-13T03:23:26.563327+00:00",
+ "_copylf_def_hash": "f4ae7a8976a7e9dd25d779b27886c81755053ae6d39e258f69e3d41aeb419c88",
+ "_notes": "benchmark30 campaign floors, all 30 datasets, round-2 floors_for construction via the vendored panel_data/nrmse; placed at roots[0]/FLOORS_REL for the frozen family (G3-fix, convergence log)",
+ "_nrmse_def_hash": "d3d0ade9191c13bacc40702f3eb26ad290e01641cacee22a1d2233b74c035850",
+ "_split": "test",
+ "allen_cahn_generated": {
+  "cond_dim": 2,
+  "n_test": 100,
+  "n_train_hf": 400,
+  "nn_condition": {
+   "definition": "L2 nearest in per-dim train-standardized condition space; tie -> lowest train index",
+   "nn_index_hist_top5": {
+    "237": 2,
+    "297": 2,
+    "328": 2,
+    "350": 2,
+    "364": 3
+   },
+   "nrmse": 0.025186706604035852
+  },
+  "train_mean": {
+   "nrmse": 1.0080237622851727
+  },
+  "zero": {
+   "nrmse": 1.0
+  }
+ },
+ "darcy_generated": {
+  "cond_dim": 16,
+  "n_test": 100,
+  "n_train_hf": 400,
+  "nn_condition": {
+   "definition": "L2 nearest in per-dim train-standardized condition space; tie -> lowest train index",
+   "nn_index_hist_top5": {
+    "130": 3,
+    "16": 3,
+    "235": 4,
+    "349": 2,
+    "79": 2
+   },
+   "nrmse": 0.3310669424422126
+  },
+  "train_mean": {
+   "nrmse": 0.44078052713111837
+  },
+  "zero": {
+   "nrmse": 1.0
+  }
+ },
+ "era5": {
+  "cond_dim": 12,
+  "n_test": 7,
+  "n_train_hf": 65,
+  "nn_condition": {
+   "definition": "L2 nearest in per-dim train-standardized condition space; tie -> lowest train index",
+   "nn_index_hist_top5": {
+    "64": 7
+   },
+   "nrmse": 0.04167952578346893
+  },
+  "train_mean": {
+   "nrmse": 0.06131656372458818
+  },
+  "zero": {
+   "nrmse": 1.0
+  }
+ },
+ "ext__cahn_hilliard_2d": {
+  "cond_dim": 2,
+  "n_test": 100,
+  "n_train_hf": 400,
+  "nn_condition": {
+   "definition": "L2 nearest in per-dim train-standardized condition space; tie -> lowest train index",
+   "nn_index_hist_top5": {
+    "190": 2,
+    "223": 2,
+    "364": 2,
+    "48": 2,
+    "74": 2
+   },
+   "nrmse": 0.20807964550345026
+  },
+  "train_mean": {
+   "nrmse": 1.0063804786609465
+  },
+  "zero": {
+   "nrmse": 1.0
+  }
+ },
+ "ext__eikonal_2d": {
+  "cond_dim": 3,
+  "n_test": 100,
+  "n_train_hf": 400,
+  "nn_condition": {
+   "definition": "L2 nearest in per-dim train-standardized condition space; tie -> lowest train index",
+   "nn_index_hist_top5": {
+    "154": 2,
+    "2": 2,
+    "372": 2,
+    "375": 2,
+    "399": 2
+   },
+   "nrmse": 0.06966751443635508
+  },
+  "train_mean": {
+   "nrmse": 0.32070417436669557
+  },
+  "zero": {
+   "nrmse": 1.0
+  }
+ },
+ "ext__helmholtz_2d": {
+  "cond_dim": 3,
+  "n_test": 100,
+  "n_train_hf": 400,
+  "nn_condition": {
+   "definition": "L2 nearest in per-dim train-standardized condition space; tie -> lowest train index",
+   "nn_index_hist_top5": {
+    "154": 2,
+    "2": 2,
+    "372": 2,
+    "375": 2,
+    "399": 2
+   },
+   "nrmse": 1.3113524474983616
+  },
+  "train_mean": {
+   "nrmse": 4.369072694559929
+  },
+  "zero": {
+   "nrmse": 1.0
+  }
+ },
+ "ext__pressure_poisson_poiseuille": {
+  "cond_dim": 2,
+  "n_test": 100,
+  "n_train_hf": 400,
+  "nn_condition": {
+   "definition": "L2 nearest in per-dim train-standardized condition space; tie -> lowest train index",
+   "nn_index_hist_top5": {
+    "190": 2,
+    "223": 2,
+    "364": 2,
+    "48": 2,
+    "74": 2
+   },
+   "nrmse": 0.0021000181919762343
+  },
+  "train_mean": {
+   "nrmse": 0.014791040317383703
+  },
+  "zero": {
+   "nrmse": 1.0
+  }
+ },
+ "ext__rayleigh_benard_2d": {
+  "cond_dim": 1,
+  "n_test": 100,
+  "n_train_hf": 400,
+  "nn_condition": {
+   "definition": "L2 nearest in per-dim train-standardized condition space; tie -> lowest train index",
+   "nn_index_hist_top5": {
+    "121": 3,
+    "144": 2,
+    "177": 2,
+    "296": 2,
+    "335": 2
+   },
+   "nrmse": 0.000878658789831841
+  },
+  "train_mean": {
+   "nrmse": 0.08822213087260311
+  },
+  "zero": {
+   "nrmse": 1.0
+  }
+ },
+ "ext__wave_2d": {
+  "cond_dim": 3,
+  "n_test": 100,
+  "n_train_hf": 400,
+  "nn_condition": {
+   "definition": "L2 nearest in per-dim train-standardized condition space; tie -> lowest train index",
+   "nn_index_hist_top5": {
+    "154": 2,
+    "2": 2,
+    "372": 2,
+    "375": 2,
+    "399": 2
+   },
+   "nrmse": 0.5142368543895419
+  },
+  "train_mean": {
+   "nrmse": 0.9866198783570441
+  },
+  "zero": {
+   "nrmse": 1.0
+  }
+ },
+ "fluid": {
+  "cond_dim": 2,
+  "n_test": 256,
+  "n_train_hf": 256,
+  "nn_condition": {
+   "definition": "L2 nearest in per-dim train-standardized condition space; tie -> lowest train index",
+   "nn_index_hist_top5": {
+    "175": 4,
+    "216": 3,
+    "222": 3,
+    "97": 3,
+    "98": 3
+   },
+   "nrmse": 0.04465925977189836
+  },
+  "train_mean": {
+   "nrmse": 0.4071398035791225
+  },
+  "zero": {
+   "nrmse": 1.0
+  }
+ },
+ "heat_generated": {
+  "cond_dim": 3,
+  "n_test": 100,
+  "n_train_hf": 400,
+  "nn_condition": {
+   "definition": "L2 nearest in per-dim train-standardized condition space; tie -> lowest train index",
+   "nn_index_hist_top5": {
+    "154": 2,
+    "2": 2,
+    "372": 2,
+    "375": 2,
+    "399": 2
+   },
+   "nrmse": 0.021135954148455986
+  },
+  "train_mean": {
+   "nrmse": 0.12553602175531475
+  },
+  "zero": {
+   "nrmse": 1.0
+  }
+ },
+ "heat_local": {
+  "cond_dim": 3,
+  "n_test": 512,
+  "n_train_hf": 1024,
+  "nn_condition": {
+   "definition": "L2 nearest in per-dim train-standardized condition space; tie -> lowest train index",
+   "nn_index_hist_top5": {
+    "261": 3,
+    "322": 3,
+    "340": 3,
+    "559": 4,
+    "578": 3
+   },
+   "nrmse": 0.015425060969713805
+  },
+  "train_mean": {
+   "nrmse": 0.1261611128431337
+  },
+  "zero": {
+   "nrmse": 1.0
+  }
+ },
+ "ifc_heat": {
+  "cond_dim": 3,
+  "n_test": 128,
+  "n_train_hf": 5,
+  "nn_condition": {
+   "definition": "L2 nearest in per-dim train-standardized condition space; tie -> lowest train index",
+   "nn_index_hist_top5": {
+    "0": 22,
+    "1": 25,
+    "2": 36,
+    "3": 8,
+    "4": 37
+   },
+   "nrmse": 0.10316357093777939
+  },
+  "train_mean": {
+   "nrmse": 0.13072869657042785
+  },
+  "zero": {
+   "nrmse": 1.0
+  }
+ },
+ "ifc_poisson": {
+  "cond_dim": 5,
+  "n_test": 128,
+  "n_train_hf": 5,
+  "nn_condition": {
+   "definition": "L2 nearest in per-dim train-standardized condition space; tie -> lowest train index",
+   "nn_index_hist_top5": {
+    "0": 17,
+    "1": 20,
+    "2": 35,
+    "3": 9,
+    "4": 47
+   },
+   "nrmse": 0.28947228644618306
+  },
+  "train_mean": {
+   "nrmse": 0.32414872635602593
+  },
+  "zero": {
+   "nrmse": 1.0
+  }
+ },
+ "lid_driven_cavity_generated": {
+  "cond_dim": 1,
+  "n_test": 10,
+  "n_train_hf": 40,
+  "nn_condition": {
+   "definition": "L2 nearest in per-dim train-standardized condition space; tie -> lowest train index",
+   "nn_index_hist_top5": {
+    "10": 1,
+    "18": 2,
+    "29": 1,
+    "32": 2,
+    "36": 1
+   },
+   "nrmse": 0.0072319967739320245
+  },
+  "train_mean": {
+   "nrmse": 0.15204374956690625
+  },
+  "zero": {
+   "nrmse": 1.0
+  }
+ },
+ "poisson_generated": {
+  "cond_dim": 5,
+  "n_test": 100,
+  "n_train_hf": 400,
+  "nn_condition": {
+   "definition": "L2 nearest in per-dim train-standardized condition space; tie -> lowest train index",
+   "nn_index_hist_top5": {
+    "294": 2,
+    "339": 2,
+    "399": 2,
+    "89": 3,
+    "90": 3
+   },
+   "nrmse": 0.10303614526419627
+  },
+  "train_mean": {
+   "nrmse": 0.30494173462014496
+  },
+  "zero": {
+   "nrmse": 1.0
+  }
+ },
+ "poisson_local": {
+  "cond_dim": 5,
+  "n_test": 512,
+  "n_train_hf": 64,
+  "nn_condition": {
+   "definition": "L2 nearest in per-dim train-standardized condition space; tie -> lowest train index",
+   "nn_index_hist_top5": {
+    "0": 14,
+    "1": 17,
+    "32": 13,
+    "42": 14,
+    "58": 14
+   },
+   "nrmse": 0.1719232118494397
+  },
+  "train_mean": {
+   "nrmse": 0.37218916136529795
+  },
+  "zero": {
+   "nrmse": 1.0
+  }
+ },
+ "sharp__allen_cahn_2d": {
+  "cond_dim": 19,
+  "n_test": 78,
+  "n_train_hf": 400,
+  "nn_condition": {
+   "definition": "L2 nearest in per-dim train-standardized condition space; tie -> lowest train index",
+   "nn_index_hist_top5": {
+    "129": 2,
+    "149": 2,
+    "16": 2,
+    "211": 2,
+    "44": 2
+   },
+   "nrmse": 0.9799593695877411
+  },
+  "train_mean": {
+   "nrmse": 1.0017020556718503
+  },
+  "zero": {
+   "nrmse": 1.0
+  }
+ },
+ "sharp__burgers_1d": {
+  "cond_dim": 2,
+  "n_test": 100,
+  "n_train_hf": 400,
+  "nn_condition": {
+   "definition": "L2 nearest in per-dim train-standardized condition space; tie -> lowest train index",
+   "nn_index_hist_top5": {
+    "212": 3,
+    "246": 2,
+    "313": 2,
+    "328": 2,
+    "366": 2
+   },
+   "nrmse": 0.0007973190863166915
+  },
+  "train_mean": {
+   "nrmse": 0.8922276202611461
+  },
+  "zero": {
+   "nrmse": 1.0
+  }
+ },
+ "sharp__burgers_2d": {
+  "cond_dim": 2,
+  "n_test": 100,
+  "n_train_hf": 400,
+  "nn_condition": {
+   "definition": "L2 nearest in per-dim train-standardized condition space; tie -> lowest train index",
+   "nn_index_hist_top5": {
+    "212": 3,
+    "251": 2,
+    "308": 3,
+    "328": 2,
+    "329": 2
+   },
+   "nrmse": 0.007796796160263512
+  },
+  "train_mean": {
+   "nrmse": 0.7363532097372901
+  },
+  "zero": {
+   "nrmse": 1.0
+  }
+ },
+ "sharp__cahn_hilliard": {
+  "cond_dim": 19,
+  "n_test": 100,
+  "n_train_hf": 400,
+  "nn_condition": {
+   "definition": "L2 nearest in per-dim train-standardized condition space; tie -> lowest train index",
+   "nn_index_hist_top5": {
+    "18": 3,
+    "255": 3,
+    "292": 2,
+    "387": 2,
+    "388": 2
+   },
+   "nrmse": 0.9690069811741324
+  },
+  "train_mean": {
+   "nrmse": 1.001977490272036
+  },
+  "zero": {
+   "nrmse": 1.0
+  }
+ },
+ "sharp__euler": {
+  "cond_dim": 7,
+  "n_test": 100,
+  "n_train_hf": 400,
+  "nn_condition": {
+   "definition": "L2 nearest in per-dim train-standardized condition space; tie -> lowest train index",
+   "nn_index_hist_top5": {
+    "11": 3,
+    "123": 2,
+    "339": 2,
+    "352": 2,
+    "372": 2
+   },
+   "nrmse": 0.07930218117534438
+  },
+  "train_mean": {
+   "nrmse": 0.3149521571566852
+  },
+  "zero": {
+   "nrmse": 1.0
+  }
+ },
+ "sharp__fisher_kpp_2d": {
+  "cond_dim": 50,
+  "n_test": 100,
+  "n_train_hf": 400,
+  "nn_condition": {
+   "definition": "L2 nearest in per-dim train-standardized condition space; tie -> lowest train index",
+   "nn_index_hist_top5": {
+    "186": 3,
+    "213": 3,
+    "222": 3,
+    "233": 3,
+    "79": 3
+   },
+   "nrmse": 0.06779736322524395
+  },
+  "train_mean": {
+   "nrmse": 0.0645618050684707
+  },
+  "zero": {
+   "nrmse": 1.0
+  }
+ },
+ "sharp__helmholtz_2d": {
+  "cond_dim": 2,
+  "n_test": 100,
+  "n_train_hf": 400,
+  "nn_condition": {
+   "definition": "L2 nearest in per-dim train-standardized condition space; tie -> lowest train index",
+   "nn_index_hist_top5": {
+    "190": 2,
+    "223": 2,
+    "364": 2,
+    "48": 2,
+    "74": 2
+   },
+   "nrmse": 0.22444584722011462
+  },
+  "train_mean": {
+   "nrmse": 0.9403941197355027
+  },
+  "zero": {
+   "nrmse": 1.0
+  }
+ },
+ "sharp__phase_field_crystal_2d": {
+  "cond_dim": 18,
+  "n_test": 100,
+  "n_train_hf": 400,
+  "nn_condition": {
+   "definition": "L2 nearest in per-dim train-standardized condition space; tie -> lowest train index",
+   "nn_index_hist_top5": {
+    "263": 3,
+    "313": 3,
+    "371": 2,
+    "372": 3,
+    "373": 3
+   },
+   "nrmse": 1.187748002107592
+  },
+  "train_mean": {
+   "nrmse": 0.877766362761513
+  },
+  "zero": {
+   "nrmse": 1.0
+  }
+ },
+ "sharp__porous_medium_1d": {
+  "cond_dim": 2,
+  "n_test": 100,
+  "n_train_hf": 400,
+  "nn_condition": {
+   "definition": "L2 nearest in per-dim train-standardized condition space; tie -> lowest train index",
+   "nn_index_hist_top5": {
+    "250": 3,
+    "268": 2,
+    "295": 2,
+    "32": 3,
+    "80": 2
+   },
+   "nrmse": 0.022054783925957784
+  },
+  "train_mean": {
+   "nrmse": 0.2929241627517916
+  },
+  "zero": {
+   "nrmse": 1.0
+  }
+ },
+ "sharp__porous_medium_2d": {
+  "cond_dim": 2,
+  "n_test": 100,
+  "n_train_hf": 400,
+  "nn_condition": {
+   "definition": "L2 nearest in per-dim train-standardized condition space; tie -> lowest train index",
+   "nn_index_hist_top5": {
+    "250": 3,
+    "268": 2,
+    "295": 2,
+    "32": 3,
+    "80": 2
+   },
+   "nrmse": 0.02917057279994926
+  },
+  "train_mean": {
+   "nrmse": 0.33077728519083105
+  },
+  "zero": {
+   "nrmse": 1.0
+  }
+ },
+ "sharp__shallow_water_1d": {
+  "cond_dim": 2,
+  "n_test": 100,
+  "n_train_hf": 400,
+  "nn_condition": {
+   "definition": "L2 nearest in per-dim train-standardized condition space; tie -> lowest train index",
+   "nn_index_hist_top5": {
+    "250": 3,
+    "268": 2,
+    "295": 2,
+    "32": 3,
+    "80": 2
+   },
+   "nrmse": 0.014721393875044047
+  },
+  "train_mean": {
+   "nrmse": 0.244961847036226
+  },
+  "zero": {
+   "nrmse": 1.0
+  }
+ },
+ "sharp__shallow_water_2d": {
+  "cond_dim": 2,
+  "n_test": 100,
+  "n_train_hf": 400,
+  "nn_condition": {
+   "definition": "L2 nearest in per-dim train-standardized condition space; tie -> lowest train index",
+   "nn_index_hist_top5": {
+    "250": 3,
+    "268": 2,
+    "295": 2,
+    "32": 3,
+    "80": 2
+   },
+   "nrmse": 0.01534579200395878
+  },
+  "train_mean": {
+   "nrmse": 0.2653689729257768
+  },
+  "zero": {
+   "nrmse": 1.0
+  }
+ },
+ "sharp__sod_1d": {
+  "cond_dim": 3,
+  "n_test": 100,
+  "n_train_hf": 400,
+  "nn_condition": {
+   "definition": "L2 nearest in per-dim train-standardized condition space; tie -> lowest train index",
+   "nn_index_hist_top5": {
+    "250": 3,
+    "268": 2,
+    "295": 2,
+    "32": 3,
+    "80": 2
+   },
+   "nrmse": 0.008074920688403445
+  },
+  "train_mean": {
+   "nrmse": 0.11591173505963606
+  },
+  "zero": {
+   "nrmse": 1.0
+  }
+ }
+}

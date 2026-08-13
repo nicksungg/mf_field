@@ -163,3 +163,22 @@ Scorecard by round: r1 = 16 findings (3 crit-level, 9 high) → all fixed; micro
 Trend is sharply decreasing with a clean whole-diff sweep at r2; r3's single finding was scoped to the previous fix and its class is verified absent elsewhere.
 Gate closes at this commit; 72 tests green (also under `-O` for the affected path).
 Ready for G3 smoke submission.
+
+## G3 smoke round 1 — systematic r3s2 failure, root-caused and fixed (2026-08-12)
+
+Jobs 552488 (r3s2, FAILED honestly per the new exit contract) / 552489 (film, COMPLETED 30/30 scored, 3m42s).
+r3s2 failed ALL 30 datasets — including its own certified panel — at IMPORT time; the G3 gate caught it at 2-epoch cost with zero science results affected (the stop-the-line directive's blast radius is nil; documented decision to fix-and-relaunch under operator delegation).
+
+Root causes (all in the vendored-relocation class — the family resolves paths relative to its own depth, which differs from the certified layout):
+
+1. `FACTORY_ROOT/EVAL_DIR = HERE.parents[1]/…` → `ModuleNotFoundError: data_adapters`.
+   FIX: sbatch exports PYTHONPATH to the WORKTREE's factory_mffp + round2/eval (hash-verified identical to the certified trees at e606a4f: data_adapters and models/_common tree hashes match).
+2. `floor_arms.collect` HARD-REQUIRES `nn_condition/train_mean/zero` floor entries per dataset (round-3 state covers only 10 of 30).
+   FIX: `eval/make_floors_b30.py` — the round-2 `floors_for` construction verbatim through the vendored panel_data/nrmse; 30/30 built (era5 included); equivalence-anchored against the certified floors for the 10 overlapping datasets (rel 1e-6; observed BLAS noise ~1e-9); placed at `roots[0]/FLOORS_REL`, which at the vendored depth is the campaign dir — found FIRST by the frozen family (test proves it); `affine_on_hf_train` uses the family's own frozen not-applicable fallback outside the ifc cells.
+3. `R3S2_DIAG_OUT` (relative) resolves against the MAIN repo root → the verbatim knob would have written campaign diagnostics INTO round-3's certified B2 output dir, potentially overwriting certified artifacts.
+   FIX: the ONE documented D5 deviation — launcher overrides it to `rev-<hash8>/diag/r3s2_route_b30`; every scientific knob remains byte-verbatim (config↔card test unchanged).
+4. The B2 card's `_note` states underscore-prefixed keys are card DIRECTIVES, never `--env`; the launcher was passing them.
+   FIX: launcher filters `_`-prefixed keys (capture in config stays byte-verbatim; the filter is where the directive is honored).
+
+Suite: 75 tests green. Gates G0–G2 re-executed with floors folded into G2 evidence (manifest hash unchanged: no array or stripped-view bytes moved).
+Timing note from the card: 45–70 min/seed for 5 datasets → ≈4.4–6.8 h for 29; the 8 h full-tier limit stands.

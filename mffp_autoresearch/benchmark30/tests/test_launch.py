@@ -281,3 +281,22 @@ def test_validate_tier_rejects_truncated_score_artifact(tmp_path):
     art.write_text("")  # truncated
     with pytest.raises(RuntimeError, match="score artifact invalid"):
         validate_tier(cfg_small, "smoke", state_dir=state, sacct_fn=sacct)
+
+
+def test_g3fix_pythonpath_and_diag_redirect(cfg, tmp_path):
+    """G3-fix: family import roots provided via PYTHONPATH; R3S2_DIAG_OUT
+    redirected away from round-3's certified output dir (the ONE documented
+    D5 deviation); all other recipe knobs still verbatim in the script."""
+    state = _mk_state(tmp_path, ["G0", "G1", "G2"])
+    jobs = render_jobs(cfg, tier="smoke", state_dir=state)
+    r3s2 = next(j for j in jobs if j["family"] == "r3s2_route_b30")
+    s = r3s2["script"]
+    assert "/mf_field/factory_mffp:" in s and "/mffp_autoresearch/round2/eval" in s \
+        and "export PYTHONPATH=" in s
+    assert "R3S2_DIAG_OUT=" in s
+    assert "mffp_autoresearch_outputs/round3" not in s, \
+        "campaign diagnostics must NEVER target round-3's certified output dir"
+    assert f"rev-{HASH8}/diag/r3s2_route_b30" in s
+    assert "R3S2B2_ARM=A1_stack_ic_reg" in s  # scientific knobs untouched
+    assert "_vendor_source" not in s and "_note" not in s, \
+        "card directive keys (leading underscore) must never reach --env (card _note)"
