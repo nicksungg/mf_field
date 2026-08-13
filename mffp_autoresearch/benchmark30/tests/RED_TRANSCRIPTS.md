@@ -96,3 +96,15 @@ no tests ran in 0.07s   # collection error: module absent
 ```
 
 Green after implementation: `49 passed` (one intermediate red was a test-helper bug — nested tmp state dirs need mkdir(parents=True)).
+
+## A9 — tests/test_aggregate.py
+
+Command: `.venv/bin/python -m pytest tests/test_aggregate.py -q` (before aggregate/collect.py existed)
+
+```
+1 error in 0.43s   # collection error: module absent
+```
+
+Green after implementation: `55 passed`.
+Key pin: the non-symmetric fixture proves the headline uses per-seed panel geomeans then mean/[min,max] — numerically distinct on this fixture from the seed-averaged-then-geomean order, which the test computes and asserts differs.
+(One intermediate red: a leftover expect={"family": None} placeholder in the validator call — fixed to validate against the filename prefix.)

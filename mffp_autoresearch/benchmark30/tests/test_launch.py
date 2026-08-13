@@ -103,6 +103,7 @@ def test_sbatch_script_contract(cfg, tmp_path):
         assert required in script, f"sbatch missing: {required}"
     # per-dataset isolation: one scorer invocation per dataset, failure recorded
     assert script.count("score_panel.py") >= 30
+    assert script.count("--out") >= 30 and "/results/scores/" in script
     assert "FAILED" in script and "exit 0" in script.splitlines()[-1]
 
 
