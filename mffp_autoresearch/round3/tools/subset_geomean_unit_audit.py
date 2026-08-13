@@ -62,6 +62,20 @@ def dotted(obj, key):
     return obj
 
 
+def cellset(label, cells):
+    """A cell list that may carry a verdict: non-empty, no duplicates.
+    An empty or duplicate-bearing list is a hard error — an empty calibration
+    list is falsy-but-not-None and would otherwise read OK against an empty
+    subset while the console said UNVERIFIED (Codex review, 2026-08-12)."""
+    cells = [c.strip() for c in cells if c.strip()]
+    if not cells:
+        raise SystemExit(f"{label}: empty cell list")
+    dupes = sorted({c for c in cells if cells.count(c) > 1})
+    if dupes:
+        raise SystemExit(f"{label}: duplicate cells {dupes}")
+    return cells
+
+
 def kv(spec):
     out = {}
     for part in str(spec).split(","):
@@ -109,16 +123,22 @@ def main():
     ap.add_argument("--out", default=None)
     a = ap.parse_args()
 
-    panel = [s for s in a.panel.split(",") if s.strip()]
+    panel = cellset("--panel", a.panel.split(","))
     seeds = [int(s) for s in a.seeds.split(",") if s.strip()]
+
+    subsets = {"panel": panel}
+    for s in a.subset:
+        nm, cells = s.split("=")
+        subsets[nm] = cellset(f"--subset {nm}", cells.split(","))
 
     # ── the bar's true calibration set (never the declared --panel) ──────
     bar_panel = None
     if a.bar_calibration_json:
-        bar_panel = list(
+        bar_panel = cellset(
+            "--bar-calibration-json _panel_geomean.panel",
             json.load(open(a.bar_calibration_json))["_panel_geomean"]["panel"])
     if a.bar_panel:
-        explicit = [s for s in a.bar_panel.split(",") if s.strip()]
+        explicit = cellset("--bar-panel", a.bar_panel.split(","))
         if bar_panel is not None and sorted(explicit) != sorted(bar_panel):
             raise SystemExit(
                 "--bar-panel disagrees with --bar-calibration-json: "
@@ -141,7 +161,7 @@ def main():
         arm, ref = [s.strip() for s in a.arms.split(",")]
         R = kv(a.refs) if a.refs else json.load(open(a.refs_json))
         sk = {}
-        for ds in panel + [c for s in a.subset for c in s.split("=")[1].split(",")]:
+        for ds in dict.fromkeys(c for cells in subsets.values() for c in cells):
             for i, seed in enumerate(seeds):
                 f = Path(a.diag_root) / a.diag_pattern.format(ds=ds, seed=seed)
                 obj = json.load(open(f))
@@ -149,10 +169,6 @@ def main():
                     sk[(w, ds, i)] = dotted(obj, a.nrmse_key.format(arm=w)) / R[ds]
 
     n_seed = len(seeds)
-    subsets = {"panel": panel}
-    for s in a.subset:
-        nm, cells = s.split("=")
-        subsets[nm] = [c for c in cells.split(",") if c.strip()]
 
     c_ds = None
     if a.denominator_json:

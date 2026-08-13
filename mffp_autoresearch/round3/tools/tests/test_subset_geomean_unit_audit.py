@@ -93,6 +93,46 @@ def test_unverified_without_source():
         assert set(verdicts(rep).values()) == {"UNVERIFIED_BAR_CALIBRATION"}
 
 
+def run_tool_raw(workdir, *extra):
+    """Like run_tool but returns the CompletedProcess without asserting exit 0."""
+    skills = workdir / "skills.json"
+    skills.write_text(json.dumps(SKILLS))
+    return subprocess.run(
+        [sys.executable, str(TOOL), "--skills-json", str(skills),
+         "--arms", "arm,ref", "--panel", ",".join(CELLS6),
+         "--bar", "0.5", *extra],
+        capture_output=True, text=True)
+
+
+def test_malformed_cell_lists_fail_loudly():
+    """Codex review round-1 finding (2026-08-12): `--bar-panel ','` produced an
+    empty-but-not-None calibration list, so an empty subset compared equal and
+    read OK while the console header said UNVERIFIED. Empty or duplicate cell
+    lists must be a hard error, never a verdict."""
+    cases = [
+        ("empty bar panel", ["--bar-panel", ","]),
+        ("duplicate bar panel", ["--bar-panel", "a,a,b"]),
+        ("empty subset", ["--bar-panel", ",".join(CALIB5), "--subset", "empty="]),
+        ("duplicate subset", ["--bar-panel", ",".join(CALIB5), "--subset", "dupe=a,a"]),
+    ]
+    with tempfile.TemporaryDirectory() as td:
+        for label, extra in cases:
+            proc = run_tool_raw(Path(td), *extra)
+            assert proc.returncode != 0, f"{label}: exited 0\n{proc.stdout}"
+
+
+def test_duplicate_declared_panel_fails_loudly():
+    with tempfile.TemporaryDirectory() as td:
+        wd = Path(td)
+        skills = wd / "skills.json"
+        skills.write_text(json.dumps(SKILLS))
+        proc = subprocess.run(
+            [sys.executable, str(TOOL), "--skills-json", str(skills),
+             "--arms", "arm,ref", "--panel", "a,a,b", "--bar", "0.5"],
+            capture_output=True, text=True)
+        assert proc.returncode != 0, proc.stdout
+
+
 def test_ok_when_declared_equals_calibration():
     """Sanity: when the declared panel IS the calibration set, it reads OK and
     a differing subset mismatches."""
