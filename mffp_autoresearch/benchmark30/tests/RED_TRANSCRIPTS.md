@@ -24,3 +24,15 @@ Interrupted: 1 error during collection   # ModuleNotFoundError: staging.manifest
 ```
 
 Green after implementing staging/manifest.py: `12 passed` (one intermediate failure was a fixture-arithmetic error in the TEST — expectation 32 vs the fixture's actual 16 cells — fixed in the test, implementation unchanged).
+
+## A3 — tests/test_vendor_integrity.py
+
+Command: `.venv/bin/python -m pytest tests/test_vendor_integrity.py -q` (before eval/ vendoring)
+
+```
+FAILED tests/test_vendor_integrity.py::test_registry_sets_append_only - FileN...
+FAILED tests/test_vendor_integrity.py::test_seam_manifest_names_every_seam - ...
+8 failed in 0.41s
+```
+
+Green after vendoring + seams: `20 passed` (one intermediate failure was a test bug — ast.Name attribute is `.id` not `.name` — fixed in the test).
