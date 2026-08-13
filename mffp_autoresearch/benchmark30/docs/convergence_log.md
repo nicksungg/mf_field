@@ -109,3 +109,28 @@ Build-stage reviews (stage 7, Sol lenses) begin from this baseline.
 | A10 gate runner + G0-G2 state | Claude | (this commit) |
 
 All Phase-A ranges are Claude-authored; the stage-7 Codex panel is therefore the independent reviewer for the ENTIRE build range `5523362..HEAD` — no self-review anywhere.
+
+## Build review (stage 7, Sol panel)
+
+### Round 1 — 4 parallel Sol/high lenses (necessity, correctness, test-quality, lifecycle), 2026-08-12
+
+Reviewed: full range `83a547e..82c086f`.
+Scorecard: necessity approve/0; correctness 4 (1 critical, 2 high, 1 medium); test-quality 5 (4 high, 1 medium); lifecycle 7 (2 critical, 3 high, 2 medium).
+Deduped: 12 distinct findings, ALL accepted (0 rejected). Dispositions (fix commits `391a7e7..45fa87b`):
+
+| Fix | Finding (sev) | Disposition |
+| --- | --- | --- |
+| F1 | launcher --out missing at HEAD (critical, both lenses) | root cause: A9's git add missed slurm/ — the amendment sat uncommitted while its test was committed; committed at `391a7e7`; stage-immediately violation acknowledged |
+| F2 | smoke e2 files overwrite full e200 cells (critical/high) | collector filters by expected_epochs + duplicate cells hard-fail (`fea01e2`) |
+| F3 | observed-only dataset universe shrinks the denominator silently (high) | authoritative 30-ID universe, coverage init, strict unaccounted-cell refusal (`fea01e2`) |
+| F4 | gates not bound to the manifest (medium/high) | every gate record carries manifest_hash; launcher requires equality; run_gates re-executed with bound records (`c8d7f9c`, `45fa87b`) |
+| F5 | exit 0 masks failures; no retries (high) | run_ds retry loop (retry_cap) + nonzero exit on non-ledgered failures; old test's exit-0 pin corrected (`c8d7f9c`) |
+| F6 | no G3/G4 writer (high) | staging/validate_tier.py — completion+coverage based, sacct-injectable, manifest-bound (`45fa87b`) |
+| F7 | submissions lost on partial sbatch failure (medium) | per-job immediate persistence, tested with an injected failure (`c8d7f9c`) |
+| F8 | no ops table (medium) | _load_ops joins train/eval seconds + peak mem from family result files (`fea01e2`); strict-fail-on-missing-ops DEFERRED with reason: field availability varies by family; report tables surface gaps instead |
+| F9 | AST guards blind to imports/module-level statements (high x2) | full module-sequence comparison in both guards; panel's three named mutations verified KILLED (`58eb0d0`) |
+| F10 | append-only guard admits unauthorized names (medium) | exact-set equality against certified ∪ ADR additions, both copies (`58eb0d0`) |
+| F11 | committed copy-LF artifact unvalidated (high) | full-regeneration comparison test, entry-by-entry (`45fa87b`) |
+| F12 | D12 re-hash never exercised (high) | end-to-end sealed-fixture test of both mutation classes + default-path pin (`45fa87b`) |
+
+### Micro-review of the fix diff — pending (Sol, `82c086f..45fa87b`)
