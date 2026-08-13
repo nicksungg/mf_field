@@ -50,3 +50,16 @@ FAILED tests/test_family_integrity.py::test_identity_record_matches_reality
 ```
 
 Restored → `24 passed`.
+
+## A5 — tests/test_registry.py
+
+Command: `.venv/bin/python -m pytest tests/test_registry.py -q` (before the registry appends)
+
+```
+FAILED tests/test_registry.py::test_every_2d_campaign_dataset_classified_in_both
+FAILED tests/test_registry.py::test_dirichlet_node_endpoint_mapping
+FAILED tests/test_registry.py::test_campaign_classification_counts
+3 failed, 6 passed in 1.74s
+```
+
+Green after appends + ADR: full suite passes (the dirichlet synthetic test was corrected mid-red to assert variant E's ACTUAL certified contract — exact at shared nodes + linear inside the LF span, clamped edge band — instead of an over-strong everywhere-linear property the frozen code never had).

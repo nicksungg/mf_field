@@ -70,9 +70,29 @@ PERIODIC_NODE_DATASETS = {
     "sharp__allen_cahn_2d",
     "sharp__fisher_kpp_2d",
     "sharp__cahn_hilliard",
+    "sharp__porous_medium_2d",  # benchmark30 ADR 0001
 }
-DIRICHLET_NODE_DATASETS = {"ext__helmholtz_2d"}
-LEGACY_CELL_DATASETS = {"heat_local", "fluid", "sharp__sod_1d", "ifc_poisson", "ifc_heat"}
+DIRICHLET_NODE_DATASETS = {
+    "ext__helmholtz_2d",
+    "poisson_generated",  # benchmark30 ADR 0001
+    "darcy_generated",  # benchmark30 ADR 0001
+    "sharp__helmholtz_2d",  # benchmark30 ADR 0001
+}
+LEGACY_CELL_DATASETS = {
+    "heat_local", "fluid", "sharp__sod_1d", "ifc_poisson", "ifc_heat",
+    "poisson_local",  # benchmark30 ADR 0001
+    "heat_generated",  # benchmark30 ADR 0001
+    "lid_driven_cavity_generated",  # benchmark30 ADR 0001
+    "era5",  # benchmark30 ADR 0001
+    "ext__rayleigh_benard_2d",  # benchmark30 ADR 0001
+    "ext__wave_2d",  # benchmark30 ADR 0001
+    "ext__eikonal_2d",  # benchmark30 ADR 0001
+    "ext__cahn_hilliard_2d",  # benchmark30 ADR 0001
+    "ext__pressure_poisson_poiseuille",  # benchmark30 ADR 0001
+    "sharp__euler",  # benchmark30 ADR 0001
+    "sharp__burgers_2d",  # benchmark30 ADR 0001
+    "sharp__shallow_water_2d",  # benchmark30 ADR 0001
+}
 
 
 def _legacy_cell_centred_up(lf2d: np.ndarray, hf_grid: tuple) -> np.ndarray:
