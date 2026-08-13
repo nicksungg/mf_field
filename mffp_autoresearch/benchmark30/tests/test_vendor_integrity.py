@@ -42,16 +42,35 @@ def _original(fname: str) -> str:
     ).stdout
 
 
+def _node_name(node):
+    if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
+        return node.name
+    if isinstance(node, ast.Assign) and len(node.targets) == 1 \
+            and isinstance(node.targets[0], ast.Name):
+        return node.targets[0].id
+    return None
+
+
 def _top_level_index(src: str) -> dict:
     """name -> ast dump for every top-level def/class/assignment."""
     out = {}
     for node in ast.parse(src).body:
-        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
-            out[node.name] = ast.dump(node)
-        elif isinstance(node, ast.Assign) and len(node.targets) == 1 \
-                and isinstance(node.targets[0], ast.Name):
-            out[node.targets[0].id] = ast.dump(node)
+        n = _node_name(node)
+        if n is not None:
+            out[n] = ast.dump(node)
     return out
+
+
+def _module_sequence(src: str, masked: set) -> list:
+    """ast dump of EVERY top-level node in order, with whitelisted names
+    replaced by a placeholder — imports, bare expressions, subscript
+    assignments, if-blocks and any other statement kind are all included,
+    so nothing can be appended or reordered invisibly (r1 fix F9)."""
+    seq = []
+    for node in ast.parse(src).body:
+        n = _node_name(node)
+        seq.append(f"<seam:{n}>" if n in masked else ast.dump(node))
+    return seq
 
 
 def _set_literal(src: str, name: str) -> set:
@@ -70,6 +89,19 @@ def test_vendored_file_exists(fname):
 
 def test_nrmse_byte_identical():
     assert (CAMPAIGN / "eval/nrmse.py").read_text() == _original("nrmse.py")
+
+
+@pytest.mark.parametrize("fname", ["score_panel.py", "panel_data.py"])
+def test_full_module_sequence_identical_outside_seams(fname):
+    """r1 fix F9: EVERY top-level node (imports, expressions, if-blocks,
+    subscript assignments included) must match the original in kind, content
+    and ORDER, except exactly the whitelisted seam definitions."""
+    masked = SEAMED[fname] | (APPEND_ONLY_SETS if fname == "panel_data.py" else set())
+    orig = _module_sequence(_original(fname), masked)
+    vend = _module_sequence((CAMPAIGN / "eval" / fname).read_text(), masked)
+    assert vend == orig, (
+        f"{fname}: module-level structure differs outside the declared seams "
+        f"(added/removed/reordered top-level statements are not permitted, spec D3)")
 
 
 @pytest.mark.parametrize("fname", ["score_panel.py", "panel_data.py"])

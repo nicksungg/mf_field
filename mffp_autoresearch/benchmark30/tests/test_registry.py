@@ -131,17 +131,45 @@ def test_legacy_cell_shape_and_constant_preservation(family_registry):
     assert np.allclose(up, 3.25)
 
 
-def test_campaign_classification_counts(eval_registry, campaign_ids):
+def test_campaign_classification_counts(eval_registry, family_registry, campaign_ids):
     """Pin the ADR's totals: 12 legacy + 3 dirichlet + 1 periodic NEW 2-D IDs."""
     orig_periodic = {"sharp__allen_cahn_2d", "sharp__fisher_kpp_2d", "sharp__cahn_hilliard"}
     orig_dirichlet = {"ext__helmholtz_2d"}
     orig_legacy = {"heat_local", "fluid", "sharp__sod_1d", "ifc_poisson", "ifc_heat"}
-    new_p = eval_registry.PERIODIC_NODE_DATASETS - orig_periodic
-    new_d = eval_registry.DIRICHLET_NODE_DATASETS - orig_dirichlet
-    new_l = eval_registry.LEGACY_CELL_DATASETS - orig_legacy
-    assert new_p == {"sharp__porous_medium_2d"}
-    assert new_d == {"poisson_generated", "darcy_generated", "sharp__helmholtz_2d"}
-    assert len(new_l) == 12 and "era5" in new_l and "ext__cahn_hilliard_2d" in new_l
+    ADR_LEGACY = {"poisson_local", "heat_generated", "lid_driven_cavity_generated",
+                  "era5", "ext__rayleigh_benard_2d", "ext__wave_2d", "ext__eikonal_2d",
+                  "ext__cahn_hilliard_2d", "ext__pressure_poisson_poiseuille",
+                  "sharp__euler", "sharp__burgers_2d", "sharp__shallow_water_2d"}
+    # r1 fix F10: EXACT set equality — an unauthorized extra name (even one
+    # affecting only the family copy) can no longer ride along.
+    assert eval_registry.PERIODIC_NODE_DATASETS == orig_periodic | {"sharp__porous_medium_2d"}
+    assert eval_registry.DIRICHLET_NODE_DATASETS == orig_dirichlet | {
+        "poisson_generated", "darcy_generated", "sharp__helmholtz_2d"}
+    assert eval_registry.LEGACY_CELL_DATASETS == orig_legacy | ADR_LEGACY
+    fam_orig_periodic = orig_periodic | {"sharp__phase_field_crystal_2d"}
+    assert family_registry.PERIODIC_NODE_DATASETS == fam_orig_periodic | {"sharp__porous_medium_2d"}
+    assert family_registry.DIRICHLET_NODE_DATASETS == eval_registry.DIRICHLET_NODE_DATASETS
+    assert family_registry.LEGACY_CELL_DATASETS == eval_registry.LEGACY_CELL_DATASETS
+    new_l = ADR_LEGACY
     assert set(campaign_ids) - ONE_D <= (
         eval_registry.PERIODIC_NODE_DATASETS | eval_registry.DIRICHLET_NODE_DATASETS
         | eval_registry.LEGACY_CELL_DATASETS | {"sharp__phase_field_crystal_2d"})
+
+
+def test_resolve_convention_dispatches_every_new_2d_id(family_registry, campaign_ids):
+    """r1 fix F9 companion: the registry is only meaningful through the real
+    dispatcher — every new 2-D ID must resolve to the expected variant FN."""
+    expected = {"sharp__porous_medium_2d": "node_aligned_periodic",
+                "poisson_generated": "dirichlet_node",
+                "darcy_generated": "dirichlet_node",
+                "sharp__helmholtz_2d": "dirichlet_node"}
+    for name in campaign_ids:
+        if name in ONE_D or name == "sharp__phase_field_crystal_2d":
+            continue
+        fn, conv = family_registry.resolve_convention(name)
+        assert conv == expected.get(name, conv)
+        if name in expected:
+            continue
+        # everything else new resolves legacy or was previously classified
+        assert conv in ("legacy_cell_centred", "node_aligned_periodic",
+                        "dirichlet_node")

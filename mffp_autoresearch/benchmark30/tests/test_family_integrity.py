@@ -86,14 +86,34 @@ def _set_literal(src: str, name: str) -> set:
     raise AssertionError(f"{name} not found")
 
 
+def _node_name(node):
+    if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
+        return node.name
+    if isinstance(node, ast.Assign) and len(node.targets) == 1 \
+            and isinstance(node.targets[0], ast.Name):
+        return node.targets[0].id
+    return None
+
+
+def _module_sequence(src: str, masked: set) -> list:
+    seq = []
+    for node in ast.parse(src).body:
+        n = _node_name(node)
+        seq.append(f"<seam:{n}>" if n in masked else ast.dump(node))
+    return seq
+
+
 def test_upsample_differs_only_in_registry_sets(cert):
+    """r1 fix F9: full module-sequence comparison — a subscript assignment
+    like CONVENTION_BY_FN[...] = ... appended after the checked defs would be
+    a NEW top-level node and now fails; only the three set literals may vary,
+    append-only, with the exact ADR additions pinned by test_registry."""
     orig = cert["upsample.py"].decode()
     vend = (VENDORED / "upsample.py").read_text()
-    oi, vi = _top_level_index(orig), _top_level_index(vend)
-    assert set(oi) == set(vi), "upsample.py definitions added/removed"
-    changed = {n for n in oi if oi[n] != vi[n]}
-    assert changed <= APPEND_ONLY_SETS, \
-        f"upsample.py changed outside the registry sets: {changed - APPEND_ONLY_SETS}"
+    assert _module_sequence(vend, APPEND_ONLY_SETS) == \
+        _module_sequence(orig, APPEND_ONLY_SETS), (
+        "upsample.py module structure differs outside the three registry sets "
+        "(spec D2 — no other statement may be added, removed or reordered)")
     for name in APPEND_ONLY_SETS:
         o, v = _set_literal(orig, name), _set_literal(vend, name)
         assert o <= v, f"{name}: vendored family dropped/changed entries {o - v}"
