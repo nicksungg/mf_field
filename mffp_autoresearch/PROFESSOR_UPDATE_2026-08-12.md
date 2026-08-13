@@ -13,9 +13,13 @@ Figures: `round3/docs/figures/r3_{performance_vs_baselines,architectures_overvie
 
 ## TL;DR
 
+- **NEW · POST-CLOSE RULINGS LANDED — Eloise ratified both open governance decisions on 2026-08-12, and both are executed (§12).**
+  The panel-composition ADR (r3-0008) was ratified as Option C: report-only datasets leave every claim-bearing average, each average's noise bar is now calibrated on the same set of datasets it is read against, and panel headlines must disclose how concentrated they are in single datasets.
+  Under the corrected bars the batch-3 route headline *survives at reduced magnitude* (scored-5 subset 2.75× its own bar, registered-4 subset 2.54×; direction unchanged), while the six-cell aggregate becomes an era-stamped historical value.
+  The ifc affine-floor rule (ADR r3-0009) was ratified as Option B: the rule text now pins both floor numbers (single-fit and leave-one-out mean) that this page already discloses — nothing shipped changes.
 - **NEW · ROUND CLOSED — Round 3 closed on 2026-08-12 with all 10 experiment cards complete, each adjudicated at 3 random seeds against the certified noise floor.**
   Batch 3's two cards resolved the round's last open questions: the synthetic-coarse-field detour is capped by a *scalar identity* (r3s2-B3, confirmed — §9), and the training-free knee predictor does *not* transfer (r3s3-B3, falsified — §9) even though its trained arm posted the round's best score against the learned baseline (0.5780 in film units).
-  The final era-scoped leaderboard is in §10; the decisions still open for you and Eloise are in §12.
+  The final era-scoped leaderboard is in §10; the rulings and their execution are in §12 — the only remaining hold is the round-1 2500-epoch queue.
 - **DONE — Round 3 launched on 2026-08-05 on the repaired benchmark; batch 1 closed with four experiments, each run at 3 random seeds.**
   All four models beat the no-training reference error of 34.4198.
   Their geometric-mean normalized errors across the evaluated datasets range 11.08–24.96; lower is better.
@@ -294,7 +298,7 @@ Both cards completed 3 seeds through the full pipeline; every claim below is a 3
 **The result in one sentence: routing through a synthetic coarse field can never beat the network that synthesizes it, because the corrector passes the synthesizer's error straight through.**
 
 **The numbers.**
-On its registered 6-cell panel the arm scores 14.1909 [14.0046, 14.5243].
+On its registered 6-cell panel the arm scores 14.1909 [14.0046, 14.5243] — since the 2026-08-12 ruling an era-stamped historical value (the launch-era composition includes report-only `ifc_poisson`, so this number is descriptive, not claim-bearing; §12).
 On the 5-cell subset the stream anchor is defined on, it scores 10.4763 [10.3176, 10.7785] against the certified anchor's 10.0853 [9.7249, 10.3528] — a difference of +0.3910, which is 0.77× the certified panel seed-mce and therefore *not resolvable*: exactly the pre-registered replication outcome (the card was not expected to beat the anchor, and did not).
 The primary falsification clause fired on 0 of 4 registered cells, with the ceiling share $\phi_{\text{ceil}} \ge 0.9648$ and the error hallucination-dominated on 4 cells.
 
@@ -383,21 +387,24 @@ The ifc affine-floor disclosure below applies to every ifc-containing value in t
 
 | Card / arm | Panel geomean skill | Film units | Verdict | Notes |
 |---|---|---|---|---|
-| r3s2-B3 emulator-ceiling arm, 5-cell anchor-comparand | 10.4763 [10.3176, 10.7785] (anchor subset) | — | confirmed | Does NOT beat the 10.0853 anchor ($\Delta$ +0.3910 = 0.77× seed-mce, pre-registered replication); 6-cell panel 14.1909 [14.0046, 14.5243]; subset audit below |
+| r3s2-B3 emulator-ceiling arm, 5-cell anchor-comparand | 10.4763 [10.3176, 10.7785] (anchor subset) | — | confirmed | Does NOT beat the 10.0853 anchor ($\Delta$ +0.3910 = 0.77× seed-mce, pre-registered replication); 6-cell panel 14.1909 [14.0046, 14.5243] (era-stamped historical, ADR r3-0008-C; §12); subset audit below |
 | r3s3-B3 knee-prereg arm | 18.6212 [18.0610, 18.9994] (r3-0007 scored 5-ds) | **0.5780** [0.5606, 0.5897] | falsified | Round-best vs the learned baseline (film units, its card's own record); the registered knee claim still failed (§9.2) |
 
 **Anchors and baselines on file.**
 Launch best-floor geomean 53.2146 on the ADR r3-0007 5-dataset scored panel (audited lineage 75.0673 → 38.6300 → 36.3912 → 34.4198 → 38.8368 → 53.2146); film-transfer denominator 14.0770 copy-LF units on the batch-1/2 panel (6-ds era 18.6894; ADR r3-0007 5-ds 32.2165); U-Net/film panel ratio 0.9805 — a statistical dead heat, so the film denominator stands.
 Every trained round-3 card beat the launch best-floor anchor of its era; the cards that also beat the learned film-transfer baseline (era-matched comparison) are **r3s2-B1, r3s2-B2, r3s3-B1, and r3s3-B3**, while r3s4-B1 (1.40) and r3s1-B1/B2 (1.77) lose to it.
 
-**Subset-geomean audit citations** (pre-report gate): r3s2-B3's 5-cell comparand and every subset sentence quoted from it passed the card's 3-seed `subset_geomean_unit_audit` re-run — verdict flips NONE, minimum over-bar ratio 3.30× in both unit systems; magnitudes are subset- and unit-dependent, so subset sentences are quoted with their subset named and no magnitude is carried across subsets.
+**Subset-geomean audit citations** (pre-report gate; restated 2026-08-12 under ratified ADR r3-0008-C): the original audit pass read every subset against one bar that had been calibrated on a stale five-dataset roster, and the tool's OK/mismatch labels compared the declared panel to itself — both defects are now fixed, and the re-run (archived beside the card's other audit passes) reproduces every original magnitude exactly with the labels the right way around.
+Read against bars recertified on their own compositions, the licensed subsets still clear: scored-5 −2.8943 = **2.75×** its own bar (seed-mce 1.0536) and registered-4 −2.7870 = **2.54×** its own bar (seed-mce 1.0961); the panel6 aggregate retires as claim-bearing.
+Magnitudes remain subset- and unit-dependent, so subset sentences are quoted with their subset named and no magnitude is carried across subsets.
 r3s2-B2's "survives restriction to claimable cells" reads 2.42× the bar in copy-LF units and 0.35× in film units per its own audit pass — the registered 5-cell verdict is exactly unit-invariant; the subset magnitude is not.
 
-> **Mandatory ifc affine-floor disclosure (applies to every ifc number on this page, including both tables above and §9.1's ifc readings; program §2, rule unchanged pending the operator's open decision, §12).**
+> **Mandatory ifc affine-floor disclosure (applies to every ifc number on this page, including both tables above and §9.1's ifc readings; program §2, numbers completed by ADR r3-0009 Option B, ratified 2026-08-12 — adjudication set unchanged, §12).**
 > The quoted affine-floor values are single-draw values of an exactly-determined 6-degree-of-freedom fit on 5 rows, and both cells are fold-catastrophic under leave-one-out:
 > `ifc_poisson` 1.5938 single-fit → LOO mean 4.2335 (systematic +3.820 ± 0.719 $\tau_{\text{rel}}$, 5/5 folds breach $\tau$);
 > `ifc_heat` 0.9584 single-fit → LOO mean 1.8469 (systematic +5.417 ± 4.890 $\tau_{\text{rel}}$, fold sd 10.935 $\tau_{\text{rel}}$, p95 20.534 $\tau_{\text{rel}}$, 3/5 folds breach — the floor crosses skill 1.0 under leave-one-out).
-> Per the rule, an ifc claim that does not beat the DISCLOSED RANGE has learned nothing beyond linearity; skill < 1 on `ifc_heat` is not by itself a strong claim.
+> Per the completed rule, an ifc claim that does not beat BOTH numbers of the pair has learned nothing beyond linearity; skill < 1 on `ifc_heat` is not by itself a strong claim.
+> (The LOO mean is the looser of the pair on both cells, so completing the numbers changed no adjudication.)
 
 One recorded bookkeeping split is honoured throughout: `film_denominator.json` ifc rows are aggregate nRMSE while the ifc floor records are per-sample-mean rel-L2 (~1.27× cross-file bias on `ifc_heat`); the tables above quote card-adjudicated skills throughout and never mix the two file conventions (reconciliation is queued, §12).
 
@@ -418,12 +425,19 @@ Both round questions are answered:
 
 A round-4 contract is on file (11 items), collected from the flow log and the terminal cards: dispatcher-verified card writes, commit-pinned job dispatch, the unity-gain pre-statement rule for any future pseudo-LF route card, decoupled knee-confirmation ladders, and the queued `nn_condition` floor-definition question, among others.
 
-## 12. Pending decisions (open at close)
+## 12. Decisions (both governance rulings landed 2026-08-12)
 
-1. **The ifc affine-floor rule change.**
-   The explainer was delivered to the operator 2026-08-10; `program.md` §2's rule text stands unchanged until she rules.
-   The mandatory disclosure (§10) was honoured throughout this page and the round report.
-2. **The panel-composition ADR — evidence on file, presented as evidence and not as a decision.**
+The two decisions that were open at round close were ratified by Eloise on 2026-08-12, via a plain-language decision brief built from ADRs r3-0008 and r3-0009 (each drafted with every cited number re-verified against its primary artifact), and executed the same session with no new training.
+
+1. **The ifc affine-floor rule — RULED: ADR r3-0009 Option B (keep the rule, complete its numbers).**
+   `program.md` §2 now pins both floor numbers per cell — the single fit and the leave-one-out mean this page discloses in §10 — and an ifc claim must beat both.
+   Because the LOO mean is the looser of the pair on both cells, no shipped number or verdict changed; the rule text now says what the record already said.
+   Original status: the explainer was delivered to the operator 2026-08-10; the rule text stood unchanged until she ruled, and the mandatory disclosure (§10) was honoured throughout this page and the round report.
+2. **The panel-composition ADR — RULED: ADR r3-0008 Option C (aggregation hygiene + a concentration rule).**
+   What changed: report-only datasets leave every claim-bearing average; noise bars are recertified per composition (scored-5 seed-mce 1.0536, registered-4 1.0961 — re-aggregated from the existing certification legs with a control that first reproduced the old certified constant exactly); the audit tool now verifies a bar against the panel it was *actually* calibrated on (its old check compared the claim to itself and could not fail); and any future panel headline must disclose per-dataset shares, the leave-one-out result, and whether its largest contributor is claim-eligible on its own.
+   What it means for the batch-3 headline: it restates as a two-cell claim — the LF route beats the matched-budget no-LF denominator on `allen_cahn` ($\Delta\log$ −0.145) and `fisher_kpp` (−0.170), not on `cahn_hilliard` (+0.023); on `ifc_heat` it does (−0.420), but that cell loses to its own nn-condition floor, so it does not carry the panel claim.
+   The subset readings survive correct calibration at reduced magnitude (§10: 2.75× and 2.54× their own bars), the six-cell 14.1909 is era-stamped historical, and the direction of every result is unchanged.
+   The evidence that drove the ruling, as presented at close:
    The registered-4 batch-3 headline ("the LF route beats the matched-budget no-LF denominator") is 59.1% carried by `ifc_heat` alone — the one cell that fails the split-transfer licence at every seed for a real reason and loses to its own nn-condition floor by 2.30 G5 band-sd.
    `ifc_poisson` is 55.8% of the same headline on the 6-cell panel AND 98.2% of the cross-node drift while REPORT-ONLY — the cell not allowed to carry a claim carries both the effect and the noise.
    Same-seed cross-node drift is 0.62× seed-mce (68% of across-seed spread), so current CIs are seed+run intervals.
