@@ -126,3 +126,14 @@ def test_identity_record_matches_reality(cert):
     for rel, blob in cert.items():
         assert rec["files"][rel] == hashlib.sha256(blob).hexdigest(), \
             f"identity record stale for {rel}"
+
+
+def test_family_eval_dir_materialized_byte_identical():
+    """G3-fix follow-up: the frozen family hashes EVAL_DIR/nrmse.py for
+    provenance at result-write time (smoke_eval.py:1912); at the vendored
+    depth EVAL_DIR is <campaign>/mffp_autoresearch/round2/eval, so that file
+    must EXIST there and be byte-identical to the vendored eval/nrmse.py
+    (itself byte-identical to round-2's, by test_nrmse_byte_identical)."""
+    materialized = CAMPAIGN / "mffp_autoresearch/round2/eval/nrmse.py"
+    assert materialized.exists(), "materialized EVAL_DIR/nrmse.py missing"
+    assert materialized.read_bytes() == (CAMPAIGN / "eval/nrmse.py").read_bytes()

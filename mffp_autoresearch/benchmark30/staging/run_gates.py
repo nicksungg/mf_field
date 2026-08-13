@@ -75,10 +75,20 @@ def main() -> None:
 
     from eval.make_floors_b30 import FLOORS_OUT, build_all as build_floors
     floors = build_floors()
+    # micro-review fix: an incomplete floors rebuild must never replace the
+    # committed artifact or leave G2 green (the family HARD-requires entries).
+    expected_ids = {d["id"] for g in cfg["datasets"].values() for d in g}
+    floor_errors = floors.get("_errors", {})
+    built_ids = {k for k in floors if not k.startswith("_")}
+    if floor_errors or built_ids != expected_ids:
+        raise SystemExit(
+            f"[G2] floors rebuild incomplete: errors={sorted(floor_errors)}, "
+            f"missing={sorted(expected_ids - built_ids)} — refusing to overwrite "
+            f"{FLOORS_OUT} or record G2 (ledger explicitly if intended)")
     FLOORS_OUT.parent.mkdir(parents=True, exist_ok=True)
     with open(FLOORS_OUT, "w") as f:
         json.dump(floors, f, indent=1, sort_keys=True)
-    n_floors = sum(1 for k in floors if not k.startswith("_"))
+    n_floors = len(built_ids)
 
     from eval.make_copylf_baselines_b30 import build_all
     baselines = build_all()
