@@ -173,6 +173,11 @@ def test_ops_table_extracted_from_family_results(rev):
     json.dump({"model": MODEL, "dataset": "a", "train_seconds": 123.4,
                "peak_mem_bytes": 5_000_000},
               open(fam_dir / "a_e200_s0.json", "w"))
+    # post-campaign fix: smoke-tier files share results/<family>/ and sort
+    # AFTER e200 ("a_e200_" < "a_e2_" because '0' < '_'), so without an
+    # epochs filter this 2-epoch entry silently replaced the full-tier one.
+    json.dump({"model": MODEL, "dataset": "a", "train_seconds": 2.6},
+              open(fam_dir / "a_e2_s0.json", "w"))
     lb = aggregate_scores(rev, expected_def_hash=DEF_HASH, seeds=[0, 1, 2],
                           expected_epochs=200)
     assert lb["ops"][MODEL]["a"]["s0"]["train_seconds"] == 123.4

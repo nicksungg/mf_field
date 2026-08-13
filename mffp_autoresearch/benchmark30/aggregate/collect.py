@@ -73,9 +73,12 @@ def load_scores(rev_root: Path, expected_def_hash: str,
     return out
 
 
-def _load_ops(rev_root: Path) -> dict:
+def _load_ops(rev_root: Path, expected_epochs: int) -> dict:
     """family -> ds -> s<seed> -> runtime/memory fields from the smoke_eval
-    result files score_panel writes under results/<family>/ (r1 fix F8)."""
+    result files score_panel writes under results/<family>/ (r1 fix F8).
+    Filtered to expected_epochs: smoke-tier files (e2) share this directory
+    and sort AFTER e200 lexicographically, so without the filter they
+    silently overwrite the full-tier ops entries for seed 0."""
     ops = {}
     res_re = re.compile(r"^(?P<ds>.+)_e(?P<epochs>\d+)_s(?P<seed>\d+)\.json$")
     for fam_dir in sorted((Path(rev_root) / "results").iterdir()) \
@@ -84,7 +87,7 @@ def _load_ops(rev_root: Path) -> dict:
             continue
         for p in sorted(fam_dir.glob("*.json")):
             m = res_re.match(p.name)
-            if not m:
+            if not m or int(m["epochs"]) != expected_epochs:
                 continue
             try:
                 r = json.load(open(p))
@@ -182,7 +185,7 @@ def aggregate_scores(rev_root: Path, expected_def_hash: str, seeds: list,
         "headline": headline,
         "group_geomeans": group_geomeans,
         "exclusion_ledger": ledger,
-        "ops": _load_ops(rev_root),
+        "ops": _load_ops(rev_root, expected_epochs),
     }
 
 

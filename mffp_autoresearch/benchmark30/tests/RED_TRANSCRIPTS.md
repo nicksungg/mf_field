@@ -108,3 +108,14 @@ Command: `.venv/bin/python -m pytest tests/test_aggregate.py -q` (before aggrega
 Green after implementation: `55 passed`.
 Key pin: the non-symmetric fixture proves the headline uses per-seed panel geomeans then mean/[min,max] — numerically distinct on this fixture from the seed-averaged-then-geomean order, which the test computes and asserts differs.
 (One intermediate red: a leftover expect={"family": None} placeholder in the validator call — fixed to validate against the filename prefix.)
+
+## post-campaign: ops table smoke contamination (test_ops_table_extracted_from_family_results, e2 fixture)
+
+Production red transcript (before the fix, first full collect at rev-eac7b48e):
+`leaderboard.json ops.mf_fno_transfer_film.allen_cahn_generated.s0.train_seconds == 2.66`
+while s1/s2 showed 77.4/76.6 — every seed-0 ops entry carried the 2-epoch smoke
+run's numbers because `_load_ops` had no epochs filter and `*_e2_s0.json` sorts
+after `*_e200_s0.json` ('0' < '_'), overwriting it. Scientific tables were
+unaffected (`load_scores` already filtered by epochs). Fix: `_load_ops` takes
+`expected_epochs` and skips non-matching files; the extended test plants the
+e2 file and asserts the e200 value survives.
