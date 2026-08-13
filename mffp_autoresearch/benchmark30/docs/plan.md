@@ -23,7 +23,7 @@ Commit: `bench30: A1 campaign config + tree skeleton`.
 
 `staging/manifest.py`: for each dataset, sha256 every data file under its `dataset_dir` (sorted walk), record `{dataset, dataset_dir, files: {relpath: sha256}, content_hash (sha256 of sorted file hashes), grid_shape, layout (npz_l|ifc_raw), n_levels, corrected_vs_hf: {status, adr}}`; writes `state/staging_manifest.json` as a PROVISIONAL source lock (`manifest_hash: null`, `sealed: false`).
 The final identity is sealed in A6 per the exact D12 formula: `manifest_hash = sha256(registry_revision + sorted per-dataset SOURCE content hashes + sorted per-dataset STRIPPED-VIEW content hashes)` — the hash cannot exist before the stripped views do.
-The two known deviations (`sharp__allen_cahn_2d` test, `sharp__phase_field_crystal_2d`) are marked `corrected_local_newer_than_hf` with their ADR ids; all others `identical_to_hf_benchmark30`.
+Every dataset carries `hub_identity: identical_to_hf_benchmark30` (verified this session, spec §2.1); the field is a tripwire — staging FAILS if any local array stops matching the recorded hash, so a future regen cannot silently change what "benchmark_30" means.
 Test (first): fixture mini-dataset in `tests/fixtures/` (tiny npz, FIXTURE-marked) — deterministic hash, deviation marking, provisional manifest carries `sealed: false` and no `manifest_hash`.
 Traceability: spec D1, D12, G0.
 Commit: `bench30: A2 staging manifest builder (G0)`.
@@ -47,7 +47,8 @@ Commit: `bench30: A4 vendored certified family + byte-identity guard`.
 
 ### A5. Convention ADR + registry appends + synthetic upsample checks (G2)
 
-Author `docs/adr/0001-benchmark30-convention-registry.md` from the evidence draft (research agent output): 17 2-D classifications with rationale + 3 `1d_path` records + era5.
+Author `docs/adr/0001-benchmark30-convention-registry.md` from the evidence draft (`docs/adr/0001-convention-evidence-DRAFT.md`): 16 2-D classifications with rationale + 5 `1d_path` records (incl. `allen_cahn_generated`, registered 1-D in `KNOWN_GRIDS`).
+The ADR must dispose of every red flag in the evidence draft: the non-nested ladders that variant C rejects, the endpoint-node vocabulary gap (accepted-approximation policy, spec D4), the darcy/poisson dirichlet-vs-legacy judgment (run the draft's proposed exactness + copy-LF check before flipping any same-lineage dataset), and the data-methodology caveats (carried to the report, spec D13).
 Append the new names to the three sets in BOTH `eval/panel_data.py` (vendored) and `family/r3s2_route_b30/upsample.py`.
 Tests (first): `tests/test_registry.py` — (i) coverage: every 2-D campaign dataset resolves, unknown name still raises; (ii) every NEWLY classified benchmark_30 ID receives the same convention in both vendored copies, with the pre-existing entries (including the intentional pfc divergence, ADR r3-0005) exempted exactly as recorded in the seam manifest — whole-registry equality is deliberately NOT asserted (spec D4); (iii) synthetic checks per convention: periodic_node exactness at shared nodes on nested grids, dirichlet interior-node endpoint mapping, cell-centre alignment for legacy_cell — on synthetic fields, never real test data.
 Traceability: spec D4, G2.
@@ -55,7 +56,7 @@ Commit: `bench30: A5 convention ADR + registry extension + synthetic checks`.
 
 ### A6. Stripped views + LF-free audit (G1)
 
-`staging/preflight.py`: imports `_mirror`/`_verify` from `round2/eval/make_stripped_view.py` (import-only reuse, no edits), builds `stripped_data/` under the campaign output root for all 30, then audits: every test view physically LF-free, loads via `data_adapters.load_mf_dataset`, grid/layout/condition-vector fields present, LF rung present in TRAIN (r3s2 requires a non-empty train LF ladder).
+`staging/preflight.py`: imports `_mirror`/`_verify` from `round2/eval/make_stripped_view.py` (import-only reuse, no edits), builds `stripped_data/` under the campaign output root for all 30, then audits: every test view physically LF-free, loads via `data_adapters.load_mf_dataset`, grid/layout/condition-vector fields present, LF rung present in TRAIN (r3s2 requires a non-empty train LF ladder); plus, per the evidence draft: `resolve_grid` output equals the generator-truth grid for every dataset (catches the allen_cahn_generated README trap class), per-rung sample counts recorded with era5's mismatched counts flagged, and nesting checked for every `periodic_node`-classified ladder (variant C's assert must be satisfiable before launch, not discovered in-job).
 After the audit passes, A6 SEALS the manifest: recomputes the D12 `manifest_hash` over source + stripped-view content hashes + registry revision, sets `sealed: true`, and rewrites `state/staging_manifest.json`; every downstream consumer (A8 rev-roots, A9 validator) refuses an unsealed manifest.
 Test (first): fixture dataset → stripped view produced, LF arrays absent, audit catches a deliberately-planted LF leak; sealing test proves BOTH a source-byte change AND a stripped-view-byte change alter `manifest_hash`, and unsealed manifests are refused downstream.
 Traceability: spec D3, D6-G1, D12, §6.
@@ -99,7 +100,7 @@ Commit: `bench30: A10 gates G0-G2 executed + state committed`.
 1. G3: submit smoke pair (2 epochs, seed 0, both families, all 30); triage every cell PASS/ledger; commit `state/exclusion_ledger.json` (era5×r3s2 expected: WORK_CAP raise).
 2. G4: submit full seed 0 (2 jobs); validate completion; no metric-based selection.
 3. G5: submit seeds 1–2 (4 jobs).
-4. Aggregate (A9), write report, run the Codex↔Claude fact-check loop on it, then deliver D-summary with the D13 payload: leaderboard headline + per-group results, coverage/exclusion ledger, AND the provenance finding (benchmark_30 = sha-identical subset of the corrected release; nicksung repo unfrozen 2026-08-12; the two locally-regenerated datasets are now stale in benchmark_30 too — input to her pending coherent-HF-hub-revision decision).
+4. Aggregate (A9), write report, run the Codex↔Claude fact-check loop on it, then deliver D-summary with the D13 payload: leaderboard headline + per-group results, coverage/exclusion ledger, the provenance finding (benchmark_30 verified byte-identical to the current corrected hub — no curator action needed), and the data-methodology caveats (pressure_poisson LF rule violation, heat_generated time-window inconsistency, era5 pairing) per spec D13.
    Notification triggers (D13): the consolidated summary at the end; immediately on a stop-the-line event or a decision outside the approved envelope; nothing else mid-campaign.
 
 ## Who implements (NON-NORMATIVE process — author/reviewer routing per the codex-converge workflow, not a spec decision)

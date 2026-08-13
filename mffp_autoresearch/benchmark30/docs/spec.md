@@ -24,7 +24,8 @@ Deliverables:
 - `benchmark_30` = 30 datasets: 11 `core`, 6 `ext`, 13 `sharp`; listed in `benchmark_30/datasets_final.txt` on HF.
 - Every LFS file in `benchmark_30` is sha256-identical to the corrected `eloisezeng/mf_field` `benchmark_42` release (three-way oid comparison, no downloads needed).
   `nicksung/mf_field` is no longer frozen — it was pushed 2026-08-12T18:56Z with this subset.
-- Two datasets are NEWER locally than the HF copies, from post-upload round-3 regenerations: `sharp/allen_cahn_2d` (test split only, ADR r3-0003) and `sharp/phase_field_crystal_2d` (all splits, ADR r3-0002).
+- SUPERSEDED 2026-08-12 (late): the earlier "two datasets newer locally" finding is FALSE against the current hub — the round-3 regens (`sharp/allen_cahn_2d` test split, `sharp/phase_field_crystal_2d`) were re-pushed as hub commit `36a5f198` on 2026-08-07, and a direct three-way sha256 check this session confirms benchmark_30 == corrected hub == local for every file of both datasets.
+  **All 30 datasets are byte-identical local ↔ benchmark_30**; there are no deviations to document.
 - All 30 datasets already exist locally under `mf_field/factory_mffp/data/` with the local naming rule: `core` names bare (`era5`, `fluid`, `heat_local`, `ifc_heat`, `ifc_poisson`, `poisson_local`, `poisson_generated`, `heat_generated`, `darcy_generated`, `allen_cahn_generated`, `lid_driven_cavity_generated`), `ext/X` → `ext__X`, `sharp/X` → `sharp__X`.
 
 The full 30, by local name:
@@ -80,12 +81,11 @@ The round-3 "certified" label attaches to byte-identical family code — decisio
 
 ## 5. Design decisions (locked unless Codex convergence overturns with evidence)
 
-### D1 — Score against the LOCAL corrected arrays
+### D1 — Score against the LOCAL arrays, which ARE benchmark_30 exactly
 
-The primary campaign scores against the local corrected arrays, not the stale HF copies of `sharp__allen_cahn_2d` (test) and `sharp__phase_field_crystal_2d`.
-Why: round 3 certified against corrected data; r3s2_route checkpoints bind content hashes; mixing versions destroys comparability (Codex brainstorm risk #3, concurring verdict).
-The staging manifest names the two deviations explicitly as "benchmark_30 IDs, corrected local realization" with all 30 dataset content hashes.
-HF-stale runs are never pooled with corrected runs.
+The primary campaign scores against the local arrays; these are verified byte-identical to published benchmark_30 for all 30 datasets (§2.1), so scoring local IS scoring the published benchmark with zero deviations.
+The staging manifest still records per-dataset `hub_identity` (verified hash equality) as a TRIPWIRE: any future local regeneration diverging from the published set fails staging loudly instead of silently changing what "benchmark_30" means.
+Arrays from the defective frozen `nicksung` benchmark_42 tree are never mixed in (never-mix rule, unchanged).
 
 ### D2 — The certified family is FROZEN; the campaign runs a vendored copy with an append-only registry extension
 
@@ -115,6 +115,10 @@ Resolution — vendor, exactly as D2 vendors the family:
 - Grid shapes MEASURED 2026-08-12: exactly 4 datasets are 1-D (sharp__{sod,burgers,shallow_water,porous_medium}_1d, 128 cells) and take the family's 1-D path that bypasses `resolve_convention`; sharp__euler is 2-D (128x128) contrary to the brainstorm's guess; era5 is 721x1440; every other 2-D dataset is ≤ 256x256.
 - One ADR (`docs/adr/` in the campaign tree) classifies each of the **17 genuinely-2-D unclassified datasets** (6 core: poisson_generated, poisson_local, heat_generated, darcy_generated, allen_cahn_generated, lid_driven_cavity_generated; era5; 5 ext: rayleigh_benard_2d, wave_2d, eikonal_2d, cahn_hilliard_2d, pressure_poisson_poiseuille; 5 sharp: euler, burgers_2d, shallow_water_2d, porous_medium_2d, helmholtz_2d) into `periodic_node` / `dirichlet_node` / `legacy_cell`, each with a one-paragraph rationale grounded in the dataset's generator/grid semantics (solver docs in `mf_field_eloise_data/`, `mf_field_extension_data/solvers.py`, `datasets_summary.csv`); the 3 unclassified 1-D datasets are recorded as `1d_path` for completeness.
 - era5 needs its classification even though r3s2 cannot run it (D11): the campaign copy-LF baseline construction upsamples LF→HF for every scored dataset.
+- CORRECTION from generator-evidence research: `allen_cahn_generated` is registered 1-D in the shared `data_adapters.geometry.KNOWN_GRIDS` (`(1, L)` entries; its dataset README's "16x16" is wrong), so it joins the 1-D bypass set — **16** 2-D datasets need ADR classification and **5** are 1-D.
+- Accepted-approximation policy: minting new upsample variants is out of scope (D2 freezes the family; the vendored scorer's metric path must stay byte-identical).
+  Where generator evidence shows semantics no existing variant implements — endpoint-node `linspace` grids (lid_driven_cavity, rayleigh_benard, wave, eikonal, era5-latitude, heat_generated's spatial axis) or periodic-node data on a NON-NESTED ladder that variant C's nesting assert rejects (`ext__cahn_hilliard_2d`, 24→64) — the ADR records `legacy_cell` as an ACCEPTED APPROXIMATION with the mismatch documented per dataset, rather than silently pretending an exact match.
+  Both families and the copy-LF baseline share the same approximation per dataset, so comparisons stay internally consistent.
 - The extension is applied append-only in BOTH vendored copies (campaign `panel_data.py` and the vendored family's `upsample.py`), and a guard test asserts every NEWLY classified benchmark_30 ID receives the same convention in both copies.
   The guard deliberately does NOT assert whole-registry equality: the frozen sources already differ intentionally on `sharp__phase_field_crystal_2d` (the family's `upsample.py` lists it PERIODIC_NODE; round-2 `panel_data.py` routes it through the `SPECTRAL_RUNG_DATASETS` override per ADR r3-0005) — that pre-existing difference is preserved as-is, and the guard exempts exactly the pre-existing entries recorded in the seam manifest.
 - Unknown IDs keep failing closed (`resolve_convention` raise preserved).
@@ -194,7 +198,9 @@ Resolution at the PATH layer, with zero frozen-code edits:
 
 - This spec + the ADR + the staging manifest ARE the written decision records (operator-delegation directive).
 - Eloise is notified once at the end with the consolidated report, plus immediately if a stop-the-line event occurs (pause-rounds-on-bug-discovery) or a decision outside the approved envelope becomes necessary.
-- The provenance finding (benchmark_30 = corrected-subset; nicksung repo unfrozen today; 2 stale datasets now ALSO stale in benchmark_30) is included in the summary as input to her pending HF-hub-revision decision.
+- The provenance finding is included in the summary: benchmark_30 (nicksung, unfrozen and pushed 2026-08-12) is a byte-identical subset of the CURRENT corrected hub — fully up to date, no action needed on it; the formerly pending hub staleness was resolved by the 2026-08-07 re-push (hub commit `36a5f198`).
+- The summary also carries the generator-evidence data-methodology caveats that Eloise may want to act on as benchmark curator: `ext__pressure_poisson_poiseuille`'s LF is block-mean(HF)+noise (paper-faithful to Partin 2022, but it violates the repo's own "LF is never downsampled HF" rule); `heat_generated`'s LF↔HF time-window inconsistency (`n/(n-1)` factor); era5's per-rung sample counts differ, making index-aligned LF↔HF pairing unverifiable for measurement data.
+  These are REPORT CAVEATS for the campaign (both models face identical data, so the comparison stands), not campaign blockers.
 
 ## 6. Engineering shape (what gets built; the plan will decompose this)
 
@@ -221,7 +227,7 @@ All new code lives under `mffp_autoresearch/benchmark30/` in the worktree:
 
 ## 8. Acceptance criteria
 
-1. Staging manifest committed, 30/30 hashed, deviations documented (G0).
+1. Staging manifest committed, 30/30 hashed, hub-identity tripwire recorded (G0).
 2. All 30 stripped views exist and pass the LF-free audit (G1).
 3. Registry ADR merged; coverage + byte-identity + synthetic-upsample tests green (G2).
 4. G3 smoke matrix complete with every cell either PASS or ledgered.
