@@ -86,3 +86,13 @@ no tests ran in 0.02s   # collection error: module absent
 Green after implementation: full suite passes.
 Key anchor: freshly computed sharp__cahn_hilliard copy-LF equals the round-2 committed value to 1e-9 — the vendored construction IS the round-2 construction.
 (One intermediate red: fixture dict lacked grid_shape_by_fid, a loader-provided key — fixed in the fixture.)
+
+## A8 — tests/test_launch.py
+
+Command: `.venv/bin/python -m pytest tests/test_launch.py -q` (before slurm/launch.py existed)
+
+```
+no tests ran in 0.07s   # collection error: module absent
+```
+
+Green after implementation: `49 passed` (one intermediate red was a test-helper bug — nested tmp state dirs need mkdir(parents=True)).
