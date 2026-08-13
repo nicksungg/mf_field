@@ -41,7 +41,7 @@ One win carries an asterisk: on `ext__helmholtz_2d` film is unstable (rel-L2 4.4
 
 ![Fig. 1 — benchmark_30 per-dataset film-relative skill](figures/b30_skill_per_dataset.png)
 
-*Fig. 1 — per-dataset film-relative skill of the certified model (log scale; bars right of 1.0 are its wins), colored by benchmark group, whiskers spanning the three per-seed ratios, with the panel geomean marked.*
+*Fig. 1 — each bar is one dataset; its length is the ratio of film's error to the certified model's error there (log scale), so longer = better for the certified model. The solid vertical line at 1.0 is parity (both models equally accurate): the 5 bars crossing right of it are the certified model's wins, and every bar ending left of it is a film win. The dashed vertical line is the 29-dataset geometric mean of those ratios (0.600 — the headline), and the narrow gray band around it is how much that geomean varies across the 3 training seeds ([0.593, 0.605]). Whiskers on each bar span the three per-seed ratios; colors are the benchmark's dataset groups.*
 
 **Integrity.** 177/177 eligible runs completed and scored, zero failures; the 30 published datasets were verified byte-identical (per-array sha256) to the local arrays and the corrected hub release, so the published benchmark needs no correction; and film's `ifc_heat` seed-0 error re-trained here matches the round-3 record to 0.03% (0.0268262 vs 0.0268172).
 

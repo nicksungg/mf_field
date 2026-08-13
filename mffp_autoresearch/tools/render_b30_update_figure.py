@@ -77,9 +77,22 @@ def main() -> None:
     ax.set_xlabel(r"film-relative skill $= \mathrm{relL2}_{\mathrm{film}} \,/\, "
                   r"\mathrm{relL2}_{\mathrm{r3s2}}$  (ratio of 3-seed means, log scale; "
                   r"$>1$: certified model beats film)", fontsize=9)
+    import matplotlib.lines as mlines
+    import matplotlib.patches as mpatches
     handles = [plt.Rectangle((0, 0), 1, 1, color=c) for c in GROUP_COLOR.values()]
-    ax.legend(handles, [f"{g} datasets" for g in GROUP_COLOR], loc="lower right",
-              fontsize=8, title="benchmark_30 group", title_fontsize=8)
+    labels = [f"{g} datasets" for g in GROUP_COLOR]
+    handles += [
+        mlines.Line2D([], [], color="0.15", lw=1.2),
+        mlines.Line2D([], [], color="0.3", lw=1.2, ls="--"),
+        mpatches.Patch(color="0.6", alpha=0.25),
+    ]
+    labels += [
+        "parity: both models equal error",
+        f"29-dataset panel geomean ({gm:.3f})",
+        "geomean range across the 3 seeds",
+    ]
+    ax.legend(handles, labels, loc="lower right", fontsize=8,
+              title="benchmark_30 group / reference lines", title_fontsize=8)
     ax.set_title(
         "benchmark_30 head-to-head: round-3 certified model (r3s2_route, arm A1_stack_ic_reg)\n"
         "vs the film-transfer FNO baseline — 29-dataset common set, 3 seeds × 200 epochs,\n"
