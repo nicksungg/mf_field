@@ -71,7 +71,7 @@ The full 30, by local name:
 ## 4. Necessity gate (skill step 4, answered early because the spec's shape depends on it)
 
 **What already does this?** The round-2/3 eval stack: `score_panel.py` + `make_stripped_view.py` + the family contract + the film-baseline runner layout under `round3_anchors/film_baseline-R3` + SLURM sbatch patterns from round 3.
-**Reuse decision: the campaign REUSES all of it — by VENDORING where in-place use is impossible.** The scorer cannot run unmodified on non-round-2 datasets (hard copy-LF registry dependency, §2.4), and extending it in place would invalidate round-2/3 state (`COPYLF_DEF_HASH`), so D3 vendors `score_panel.py`+`panel_data.py` byte-identically except two named seams, with a guard test proving the metric path is unchanged.
+**Reuse decision: the campaign REUSES all of it — by VENDORING where in-place use is impossible.** The scorer cannot run unmodified on non-round-2 datasets (hard copy-LF registry dependency, §2.4), and extending it in place would invalidate round-2/3 state (`COPYLF_DEF_HASH`), so D3 vendors `score_panel.py`+`panel_data.py` byte-identically except three named seams, with a guard test proving the metric path is unchanged.
 New code is limited to: (a) a campaign staging/preflight script, (b) the convention-registry ADR extension (append-only, in the vendored copies), (c) the campaign copy-LF baseline builder, (d) SLURM launcher scripts, (e) an aggregator/report generator.
 No new eval logic, no new metric code; the vendored scorer is a pinned copy, not a parallel implementation.
 **Contradiction check:** ADR r2-0001 says convention assignment is ADR-level — we extend it BY an ADR, not by an env override.

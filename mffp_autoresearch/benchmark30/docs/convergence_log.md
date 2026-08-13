@@ -49,4 +49,14 @@ All findings target the PLAN (drafted against the pre-round-2 spec).
 | L7 | low | config.yaml necessity unanswered | FIXED: necessity note added (round-2 project.yaml is frozen round state; cannot carry dataset_dir/campaign roots/recipe block) |
 | L8 | low | run_gates.py/gates.json necessity unanswered | FIXED: necessity note added (round-3 gate machinery is round-scoped card state with a different protocol) |
 
-### Round 4 — pending (confirming round, Terra, both docs)
+### Round 4 — Terra/high confirming round, 2026-08-12
+
+Reviewed: spec.md + plan.md at `803d77f`.
+Verdict: needs-attention. All 10 round-3 dispositions CONFIRMED; whole-document sweep found 2 residuals (1 medium, 1 low).
+
+| # | Sev | Finding | Disposition |
+| --- | --- | --- | --- |
+| r4-1 | medium | Plan's log path `slurm/rev-<hash>/…` sat outside the D12 revision root | FIXED: logs now `mffp_autoresearch_outputs/benchmark30/rev-<manifest_hash8>/logs/…`; dry-run test asserts the complete path |
+| r4-2 | low | Spec §4 still said "two named seams" once | FIXED: corrected to three |
+
+### Round 5 — pending (final confirming round, Terra, both docs)
