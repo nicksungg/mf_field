@@ -32,6 +32,49 @@ def dataset_group(ds: str) -> str:
     return "core"
 
 
+def render_wins_pairs(lb: dict, out: Path) -> None:
+    """Companion figure: absolute rel-L2 of both models on the 5 win datasets."""
+    pd = lb["per_dataset"]
+    wins = []
+    for ds in lb["common_eligible_set"]:
+        skill = pd[ds][FILM]["mean"] / pd[ds][MODEL]["mean"]
+        if skill > 1:
+            wins.append((ds, skill))
+    wins.sort(key=lambda t: -t[1])
+
+    fig = plt.figure(figsize=(9.5, 4.6), constrained_layout=True)
+    fig.get_layout_engine().set(rect=(0, 0.06, 1, 0.94))
+    ax = fig.add_subplot(1, 1, 1)
+    colors = {MODEL: "#4C72B0", FILM: "#C44E52"}
+    label = {MODEL: "round-3 certified model (r3s2_route)", FILM: "film-transfer FNO baseline"}
+    for i, (ds, skill) in enumerate(wins):
+        for k, fam in enumerate((MODEL, FILM)):
+            rec = pd[ds][fam]
+            yy = i + (0.19 if k == 0 else -0.19)
+            ax.barh(yy, rec["mean"],
+                    xerr=[[max(0.0, rec["mean"] - rec["min"])], [max(0.0, rec["max"] - rec["mean"])]],
+                    height=0.34, color=colors[fam],
+                    label=label[fam] if i == 0 else None,
+                    error_kw={"lw": 0.9, "capsize": 2, "ecolor": "0.35"})
+        ax.text(max(pd[ds][FILM]["max"], pd[ds][MODEL]["max"]) * 1.25, i,
+                f"{skill:.2f}× lower error", va="center", fontsize=9, color="0.2")
+    ax.set_yticks(range(len(wins)), [ds for ds, _ in wins], fontsize=9)
+    ax.invert_yaxis()
+    ax.set_xscale("log")
+    ax.set_xlim(right=ax.get_xlim()[1] * 4)
+    ax.set_xlabel("relative-L2 error, 3-seed mean (log scale; shorter bar = more accurate; "
+                  "whiskers span the per-seed values)", fontsize=9)
+    fig.legend(loc="outside right center", fontsize=9)
+    ax.set_title("The five datasets where the certified model beats film: absolute error, side by side\n"
+                 "(same runs as the skill figure; the annotation is film's error ÷ the certified model's)",
+                 fontsize=10)
+    fig.text(0.01, 0.005, "source: benchmark30 state/leaderboard.json (manifest eac7b48e; "
+             "fact-check-converged 2026-08-13).", fontsize=7, color="0.35")
+    out.parent.mkdir(parents=True, exist_ok=True)
+    fig.savefig(out, dpi=180)
+    print(f"wrote {out}")
+
+
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--leaderboard", default=DEFAULT_LB)
@@ -40,6 +83,7 @@ def main() -> None:
     args = ap.parse_args()
 
     lb = json.load(open(args.leaderboard))
+    render_wins_pairs(lb, Path(args.out).parent / "b30_wins_pairs.png")
     pd, common = lb["per_dataset"], lb["common_eligible_set"]
     head = lb["headline"]
 

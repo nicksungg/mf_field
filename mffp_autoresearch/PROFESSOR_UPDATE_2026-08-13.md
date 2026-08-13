@@ -12,7 +12,7 @@ Rendered page: [Claude artifact](https://claude.ai/code/artifact/a03c7fd2-cf39-4
    (The round leaderboard is era-scoped — rankings compare only within a panel composition; one batch-3 arm separately posted the round's best single score in film units, 0.5780.)
 2. **New (2026-08-13) — the round-3 winner was benchmarked at full breadth against that film baseline on the published `benchmark_30` release, and it is a specialist, not a generalist.**
    Film wins overall (the certified model's panel error is ~1.67× film's); the certified model wins 5 of 29 datasets, by up to 6.4×.
-   Details and Fig. 1 in §2.
+   Details in §2 (Figs. 1–2).
 3. **The system caught two real benchmark defects and corrected its own headline.**
    It found the `pfc` task had essentially no fidelity gap (the reported reference error was ~100% our own interpolation artifact) and that mandatory checkpoint resumption had silently skipped retraining several baselines; 32 runs were quarantined and retrained, and a permanent checkpoint↔data binding gate (108/108 on a labelled-defect exam) now guards every baseline build.
    After the repair, the early "+10.1% from low-fidelity training data" headline was retracted: the true panel change is −0.81%, only 0.08× the certified minimum detectable effect.
@@ -43,6 +43,10 @@ One win carries an asterisk: on `ext__helmholtz_2d` film is unstable (rel-L2 4.4
 
 *Fig. 1 — each bar is one dataset; its length is the ratio of film's error to the certified model's error there (log scale), so longer = better for the certified model. The solid vertical line at 1.0 is parity (both models equally accurate): the 5 bars crossing right of it are the certified model's wins, and every bar ending left of it is a film win. The dashed vertical line is the 29-dataset geometric mean of those ratios (0.600 — the headline), and the narrow gray band around it is how much that geomean varies across the 3 training seeds ([0.593, 0.605]). Whiskers on each bar span the three per-seed ratios; colors are the benchmark's dataset groups.*
 
+![Fig. 2 — the five wins, absolute error side by side](figures/b30_wins_pairs.png)
+
+*Fig. 2 — the same five winning datasets in absolute terms: each pair of bars is the relative-L2 error of the certified model (blue) and film (red) on one dataset, 3-seed mean on a log scale with whiskers spanning the per-seed values; shorter is more accurate, and the annotation restates the ratio from Fig. 1. Note `ext__helmholtz_2d` and `sharp__phase_field_crystal_2d`: the certified model wins, but both models' errors are near or above 0.8 — neither solves those datasets.*
+
 **Integrity.** 177/177 eligible runs completed and scored, zero failures; the 30 published datasets were verified byte-identical (per-array sha256) to the local arrays and the corrected hub release, so the published benchmark needs no correction; and film's `ifc_heat` seed-0 error re-trained here matches the round-3 record to 0.03% (0.0268262 vs 0.0268172).
 
 **Caveats** (full list in the campaign report): relative-L2 is level-dominated on near-uniform fields — on `sharp__fisher_kpp_2d` the manifest's copy-LF error is 35× larger mean-removed than raw, so the 6.4× win is protocol-true but metric-sensitive; one ext dataset's low-fidelity input is downsampled fine solution rather than a true coarse solve; and *why* each side wins where it does is left as labeled hypotheses until the round-3 diagnostic probes are run on these residuals.
@@ -52,13 +56,13 @@ One win carries an asterisk: on `ext__helmholtz_2d` film is unstable (rel-L2 4.4
 The round asked two questions and answered both: the synthetic-coarse-field detour is capped by a scalar identity (emulator ceiling **confirmed**, retiring that detour), and the training-free knee predictor does **not** transfer (**falsified**, with a mechanism for when such predictions can work).
 Along the way the round refined the scored panel for cause (e.g. `ifc_poisson` demoted to report-only: its condition→answer map is exactly linear, and no learned model ever beat the copy-the-coarse-solve reference there).
 
-![Fig. 2 — round-3 final leaderboard](round3/docs/figures/r3_performance_vs_baselines.png)
+![Fig. 3 — round-3 final leaderboard](round3/docs/figures/r3_performance_vs_baselines.png)
 
-*Fig. 2 — the round-3 leaderboard: every certified experiment card against the certified floors and the film baseline. Bars span two different 5-dataset panel compositions (eras); rankings compare only within an era, not across the whole figure.*
+*Fig. 3 — the round-3 leaderboard: every certified experiment card against the certified floors and the film baseline. Bars span two different 5-dataset panel compositions (eras); rankings compare only within an era, not across the whole figure.*
 
-![Fig. 3 — the four experiment lines](round3/docs/figures/r3_architectures_overview.png)
+![Fig. 4 — the four experiment lines](round3/docs/figures/r3_architectures_overview.png)
 
-*Fig. 3 — the four round-3 experiment lines ("streams": parallel research directions, one model family each), what each model actually is, and the round's verdict on each (CONFIRMED / FALSIFIED / etc.; the verdict vocabulary is keyed at the bottom of the figure itself).*
+*Fig. 4 — the four round-3 experiment lines ("streams": parallel research directions, one model family each), what each model actually is, and the round's verdict on each (CONFIRMED / FALSIFIED / etc.; the verdict vocabulary is keyed at the bottom of the figure itself).*
 
 ## 4. What happens next (round 4, approved 2026-08-13)
 
@@ -70,4 +74,4 @@ The only open hold from earlier rounds is the round-1 2500-epoch queue (unchange
 
 ---
 
-Archive (full narrative & all round-3 figures): `PROFESSOR_UPDATE_2026-08-12.{md,html}` · canonical records: `round3/docs/round3_report.md` and `mffp_autoresearch/benchmark30/docs/report.md` + `state/leaderboard.json` (branch `bench30-campaign`) · Fig. 1 rendered by `tools/render_b30_update_figure.py`, Figs. 2–3 by `round3/tools/render_round3_update_figures.py` · this page is private until shared from its share menu.
+Archive (full narrative & all round-3 figures): `PROFESSOR_UPDATE_2026-08-12.{md,html}` · canonical records: `round3/docs/round3_report.md` and `mffp_autoresearch/benchmark30/docs/report.md` + `state/leaderboard.json` (branch `bench30-campaign`) · Figs. 1–2 rendered by `tools/render_b30_update_figure.py`, Figs. 3–4 by `round3/tools/render_round3_update_figures.py` · this page is private until shared from its share menu.
