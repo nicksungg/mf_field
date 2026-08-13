@@ -98,3 +98,14 @@ Build-stage reviews (stage 7, Sol lenses) begin from this baseline.
 | --- | --- | --- |
 | docs (spec/plan/log/ADR-draft edits) | Claude | `329e643..81714fc` (reviewed by Codex rounds 1–7) |
 | A1 config + skeleton | Claude | `4c87c2f` |
+| A2 staging manifest builder | Claude | `7f390f7` |
+| A3 vendored scorer + seams | Claude | `c49256c` |
+| A4 vendored certified family | Claude | `f5c274d` |
+| A5 convention ADR + registry | Claude | `3c3ac60` |
+| A6 stripped views + seal | Claude | `1bbe789` |
+| A7 copy-LF baselines | Claude | `58821c5` |
+| A8 SLURM launcher (+ --out amendment) | Claude | `60f762f`, part of `7182a0e` |
+| A9 aggregator + report renderer | Claude | `7182a0e` |
+| A10 gate runner + G0-G2 state | Claude | (this commit) |
+
+All Phase-A ranges are Claude-authored; the stage-7 Codex panel is therefore the independent reviewer for the ENTIRE build range `5523362..HEAD` — no self-review anywhere.
