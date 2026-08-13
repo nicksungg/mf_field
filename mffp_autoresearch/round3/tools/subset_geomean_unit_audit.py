@@ -123,8 +123,19 @@ def main():
     ap.add_argument("--out", default=None)
     a = ap.parse_args()
 
+    # every scalar that reaches verdict-bearing output is validated here;
+    # cell lists go through cellset() below (Codex rounds 1-3, 2026-08-12)
+    if not (np.isfinite(a.bar) and a.bar > 0):
+        raise SystemExit(f"--bar must be a finite positive number, got {a.bar}")
+    if not (np.isfinite(a.unit_tol) and a.unit_tol >= 0):
+        raise SystemExit(f"--unit-tol must be finite and >= 0, got {a.unit_tol}")
+
     panel = cellset("--panel", a.panel.split(","))
     seeds = [int(s) for s in a.seeds.split(",") if s.strip()]
+    if not seeds:
+        raise SystemExit("--seeds: empty")
+    if len(set(seeds)) != len(seeds):
+        raise SystemExit(f"--seeds: duplicate seeds in {seeds}")
 
     subsets = {"panel": panel}
     for s in a.subset:

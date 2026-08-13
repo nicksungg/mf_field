@@ -121,11 +121,29 @@ def test_malformed_cell_lists_fail_loudly():
          ["--bar-panel", ",".join(CALIB5), "--subset", "panel=" + ",".join(CALIB5)]),
         ("repeated subset name",
          ["--bar-panel", ",".join(CALIB5), "--subset", "x=a,b", "--subset", "x=a,c"]),
+        ("duplicate seeds", ["--bar-panel", ",".join(CALIB5), "--seeds", "0,0"]),
     ]
     with tempfile.TemporaryDirectory() as td:
         for label, extra in cases:
             proc = run_tool_raw(Path(td), *extra)
             assert proc.returncode != 0, f"{label}: exited 0\n{proc.stdout}"
+
+
+def test_invalid_bar_fails_loudly():
+    """Codex round-3 finding: --bar is a verdict denominator; a negative, zero,
+    or non-finite bar completed successfully and emitted authoritative-looking
+    ratios (negative `|delta|/bar`, NaN unit verdicts). Must be a hard error."""
+    with tempfile.TemporaryDirectory() as td:
+        for label, bad in [("negative", "-0.5"), ("zero", "0"), ("nan", "nan"),
+                           ("inf", "inf")]:
+            skills = Path(td) / "skills.json"
+            skills.write_text(json.dumps(SKILLS))
+            proc = subprocess.run(
+                [sys.executable, str(TOOL), "--skills-json", str(skills),
+                 "--arms", "arm,ref", "--panel", ",".join(CELLS6),
+                 "--bar-panel", ",".join(CALIB5), "--bar", bad],
+                capture_output=True, text=True)
+            assert proc.returncode != 0, f"--bar {bad} ({label}): exited 0"
 
 
 def test_duplicate_declared_panel_fails_loudly():
