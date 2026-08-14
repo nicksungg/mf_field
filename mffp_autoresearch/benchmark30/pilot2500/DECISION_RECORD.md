@@ -33,6 +33,19 @@ This pilot measures the epoch dose-response before any full 29×3×2500 rerun (~
 - Single-seed pilot results are trend reads only — round-3 cross-node drift means no headline claims from this pilot.
 - The pilot set is enriched for r3s2 wins/near-wins by design; its geomean is not comparable to the benchmark_30 headline.
 
+## Known asymmetries and inherited caveats (pre-launch review, Codex Terra/xhigh 2026-08-14)
+
+- **Nominal optimizer-epoch asymmetry (reviewer BLOCKER, adjudicated to a scope correction).**
+  At every rung, `--epochs E` gives r3s2's scored arm `E_emu + 2·E_dc = 1.5E` optimizer epochs while film gets `E` pretrain + `E` finetune `= 2E`.
+  This asymmetry is inherited from the certified recipes and was present in the closed e200 campaign; changing it would break byte-identity with the frozen family and comparability with the reused e200 rung.
+  The pilot's claim is therefore scoped: it tests whether the e200 verdict is **scaling-confounded** (does the ranking move when both families' own budgets scale ×3 and ×12.5), not whether the two families are equal in absolute optimizer budget.
+  A flat ladder means "more training does not change the verdict"; it does not certify budget equality.
+  If a budget-matched rung is ever wanted, r3s2 at `--epochs 3333` nominally matches film at 2500 and can be added for ~1 extra GPU-h.
+- **Helmholtz preflight provenance string (reviewer MAJOR, inherited, metadata-only).**
+  The frozen env pins `R3S2_TARGET_SCALER_PREFLIGHT=not_applicable_no_helmholtz_no_pfc_in_datasets`, which is false for the `ext__helmholtz_2d` cell; the estimator is unchanged and the same false label exists in the reused e200 artifact.
+  Kept as-is for rung comparability; treat that sidecar field as unreliable for helmholtz cells.
+- Aggregator `log(0)` guard fixed (reviewer MINOR): non-positive nRMSE cells render as DEGENERATE and are excluded from the geomean instead of aborting aggregation.
+
 ## Relations
 
 - Does not touch the round-1 2500-epoch holds (round-1 winners; still held).

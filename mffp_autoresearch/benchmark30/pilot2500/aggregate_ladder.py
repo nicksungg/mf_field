@@ -64,8 +64,12 @@ def main():
                 row.append(fmt(grid[(f, e, ds)]))
         for e in EPOCHS:
             film, r3s2 = grid[("mf_fno_transfer_film", e, ds)], grid[("r3s2_route_b30", e, ds)]
-            if film is None or r3s2 is None or r3s2 == 0:
+            if film is None or r3s2 is None:
                 row.append("MISSING")
+            elif film <= 0 or r3s2 <= 0:
+                # a zero/negative nRMSE cell has no finite log-ratio; keep it
+                # out of the geomean instead of aborting after the GPU spend
+                row.append("DEGENERATE")
             else:
                 ratio = film / r3s2
                 ratios_by_e[e].append(ratio)
