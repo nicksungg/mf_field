@@ -28,7 +28,7 @@ This pilot measures the epoch dose-response before any full 29×3×2500 rerun (~
 
 ## Decision rule (declared before results)
 
-- If the film/r3s2 ratio ladder is flat (each dataset's e2500 ratio within noise of e200), the 200-epoch verdict stands; no full campaign; the ~130 GPU-h delta is saved.
+- If the film/r3s2 ratio ladder is flat (each dataset's e2500 ratio within noise of e200), the read is "no observed ranking movement under the tested budget scalings" — no full campaign is warranted and the ~130 GPU-h delta is saved. A flat single-seed 8-dataset ladder does not reaffirm the benchmark_30 verdict generally.
 - If ratios move materially toward r3s2 (narrow losses flip, or wins grow), escalate to the full 29-dataset × 3-seed × 2500 campaign for a citable number.
 - Single-seed pilot results are trend reads only — round-3 cross-node drift means no headline claims from this pilot.
 - The pilot set is enriched for r3s2 wins/near-wins by design; its geomean is not comparable to the benchmark_30 headline.

@@ -66,7 +66,7 @@ def main():
             film, r3s2 = grid[("mf_fno_transfer_film", e, ds)], grid[("r3s2_route_b30", e, ds)]
             if film is None or r3s2 is None:
                 row.append("MISSING")
-            elif film <= 0 or r3s2 <= 0:
+            elif not (math.isfinite(film) and math.isfinite(r3s2)) or film <= 0 or r3s2 <= 0:
                 # a zero/negative nRMSE cell has no finite log-ratio; keep it
                 # out of the geomean instead of aborting after the GPU spend
                 row.append("DEGENERATE")
