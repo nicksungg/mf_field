@@ -71,10 +71,12 @@ Numbers the paper will use (appendix A §B for full tables):
 - Tension to reconcile in the paper: "film buys robustness, medians tie" (zoo view) vs "film is 1.5× better in geomean" (15-dataset view); both are true under their aggregates and the paper should say so.
 - In flight: the pilot2500 epoch ladder (jobs 753056-753061, pending as of 2026-08-14) tests whether the 200-epoch verdict is scaling-confounded; only the reused e200 rung exists so far.
 
-### Discrepancy to resolve with Eloise
+### The 8-model × 30-dataset artifact (resolved 2026-08-14)
 
-The requested framing "we benchmarked 8 models across 30 datasets" matches no artifact on disk: the options are 17×15 (paper era), 30×15 (mentor's zoo), 12×42 (pre-round-1), and 2×30 (benchmark_30).
-If an 8-model × 30-dataset table is wanted for the paper, the closest honest move is to run a selected ~8-family subset on the benchmark_30 release under the campaign protocol — a real but schedulable compute cost (film's 30×3×200 cost was modest; ~8 families ≈ 4× the campaign's GPU budget) — and it would supersede the era mismatch by putting the conditioning ablation and the generalist claim on one artifact.
+The "8 models across 30 datasets" table exists: `final_error_matrix.csv` at the repo root (commit `58634b6`, pushed by Eloise from another machine on 2026-08-14, after this document's first draft).
+Rows: `mf_fno_transfer_film`, `mf_fno_transfer_bar`, `mf_fno_transfer`, `transolver_residual`, `fno_coregionalization`, `mf_deeponet`, `nomad_mf`, `mfrnp`; columns: the 30 benchmark_30 datasets including era5.
+Film is the broad winner in this matrix too, and it includes families absent from the other artifacts (`nomad_mf`).
+**Provenance still needed from Eloise before the paper can cite it:** epochs, seeds (single or multi), code revision, which data view (stripped or LF-available), and metric definition — its film numbers differ from the benchmark_30 campaign's 3-seed/200-epoch values (e.g. ifc_heat 0.0072 here vs 0.0272 there; ext__helmholtz_2d 1.42 vs 4.43), so it is a different protocol and the two must not be mixed in one table.
 
 ---
 
@@ -204,7 +206,7 @@ Also required by the venue: the responsible-use statement, and an anonymized cod
 
 ## 11. Decisions needed from Eloise
 
-1. Resolve the "8 models × 30 datasets" reference (§3): cite existing artifacts as-is, or run an ~8-family subset on benchmark_30 under the campaign protocol to unify the evidence base?
+1. Supply the provenance of `final_error_matrix.csv` (§3): epochs, seeds, code revision, data view, metric — and decide whether it or the benchmark_30 campaign is the paper's headline table.
 2. Pick the 2-3 analyses from §6 (recommended bundle: 1 + 3 + 4).
 3. Approve adding the three cheap baselines (§7) — new compute, though small.
 4. Confirm benchmark_30 as the pinned primary artifact (§3).
