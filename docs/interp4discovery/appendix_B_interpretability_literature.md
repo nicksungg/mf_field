@@ -123,7 +123,7 @@ Failure cases and negative results are explicitly welcomed — useful safety val
   The classic MF architecture explicitly decomposes the LF→HF map into a linear correlator plus a nonlinear correction network; the decomposition itself is an interpretability statement (where is the fidelity gap linear vs nonlinear), and it grounds a linear-vs-nonlinear LF↔HF correlation probe.
 - Howard et al. 2022, "Multifidelity Deep Operator Networks For Data-Driven and Physics-Informed Problems," arXiv:2204.09157 (JCP 2023). [VERIFIED]
   MF DeepONet via residual learning + input augmentation; the operator-learning instantiation of the Meng decomposition.
-- Lu et al. 2022, "Multifidelity deep neural operators for efficient learning of PDEs with application to fast inverse design of nanoscale heat transport," Phys. Rev. Research 4:023210. [UNVERIFIED search-snippet only]
+- Lu, Pestourie, Johnson, Romano 2022, "Multifidelity deep neural operators for efficient learning of partial differential equations with application to fast inverse design of nanoscale heat transport," Phys. Rev. Research 4:023210, doi:10.1103/PhysRevResearch.4.023210. [VERIFIED via Crossref, citation audit 2026-08-14]
   MF DeepONet applied to nanoscale heat transport; cited here as additional evidence for the MF-operator line.
 - Lyu et al. 2023, "Multi-fidelity prediction of fluid flow and temperature field based on transfer learning using Fourier Neural Operator," arXiv:2304.06972. [VERIFIED]
   Pretrains an FNO on cheap LF data and fine-tunes on scarce HF data by migrating the LF parameters as initialization — this is essentially our winning recipe, published as a method paper for one application; it contains no analysis of *why* it works, which is exactly the gap our paper fills.

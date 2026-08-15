@@ -26,8 +26,9 @@ training schedule, so `m` never enters the net — keeping this a pure
 concat→FiLM ablation. (Contrast `fno_coreg_conditioned`, which FiLMs on `m`
 and still concatenates `X`.)
 
-References: li2020fno (FNO backbone); perez2018film (FiLM); beggs2025pdecond
-(FiLM-via-LayerNorm for PDE-parameter conditioning, arXiv:2509.09599);
+References: li2020fno (FNO backbone); perez2018film (FiLM);
+dumoulin2018featurewise (FiLM-via-norm, Distill 2018) and shokar2025pdecond
+(explicit PDE-parameter conditioning, Shokar/Kerswell/Haynes arXiv:2509.09599);
 lyu2023mffno (LF→HF transfer schedule, retained in smoke_eval.py).
 """
 from __future__ import annotations

@@ -22,7 +22,7 @@ The literature splits into two nearly disjoint baseline lineages, and knowing wh
 - **IFC (arXiv:2207.00678, NeurIPS 2022)** — infinite-fidelity coregionalization via a neural-ODE latent output over continuous fidelity; the team's existing published anchor.
   Public code: github.com/shib0li/Infinite-Fidelity-Coregionalization (datasets: Heat, Poisson, Burgers, TopOpt, Navier-Stokes). [VERIFIED]
 - **GAR (arXiv:2301.05729, NeurIPS 2022)** — tensor-generalized autoregression handling arbitrary-dimensional outputs with tractable likelihood. [VERIFIED]
-- **ContinuAR (NeurIPS 2023)** — continuous autoregression for infinite-fidelity fusion; reports up to 4x accuracy and 62,500x training speedup over IFC; baseline in FIRE. [VERIFIED via NeurIPS proceedings page; arXiv ID not confirmed]
+- **ContinuAR (NeurIPS 2023)** — continuous autoregression for infinite-fidelity fusion; reports up to 4x accuracy and 62,500x training speedup over IFC; baseline in FIRE. [VERIFIED — Xing, Wang & Xing, NeurIPS 36, pp. 47279-47308, doi:10.52202/075280-2048; citation audit 2026-08-14. No arXiv posting located; cite the proceedings.]
 - **MFRNP (arXiv:2402.18846, ICML 2024)** — residual neural process aggregating lower-fidelity outputs and modeling the HF residual; the team's other anchor.
   Its own baseline set, verified from the paper: SF-NP (single-fidelity lower bound), DMF, NARGP, MF-HNP, D-MFD; datasets Heat/Poisson/Fluid + climate. [VERIFIED]
   Public code: github.com/Rose-STL-Lab/MFRNP. [VERIFIED]
@@ -62,14 +62,14 @@ The team's design (in-house FNO-family set + published IFC/MFRNP numbers as anch
 - **DPOT (arXiv:2403.03542, ICML 2024)** — auto-regressive denoising pretrained Fourier-attention transformer, up to 0.5B params, 10+ datasets; code github.com/thu-ml/DPOT (60 stars) + HuggingFace weights. [VERIFIED]
   Designed for autoregressive temporal rollout; adapting to a one-shot LF→HF mapping is a nontrivial re-purposing.
 - **scOT** — the backbone of Poseidon; not a separate baseline to add. [VERIFIED via Poseidon abstract]
-- **Transolver (arXiv:2402.02366 [UNVERIFIED-ID], ICML 2024)** — physics-attention over learned slices; code github.com/thuml/Transolver (399 stars) [VERIFIED repo].
+- **Transolver (arXiv:2402.02366, ICML 2024)** — physics-attention over learned slices; code github.com/thuml/Transolver (399 stars) [VERIFIED repo]. [ID + ICML 2024 venue VERIFIED via arXiv API, DBLP and Semantic Scholar; citation audit 2026-08-14]
   The team already has in-house Transolver hybrids, so this reviewer objection is pre-empted.
 - **Transolver++ (arXiv:2502.02414)** — parallelized physics-attention for million-scale meshes; no official standalone public repo found (thuml/Transolver_plus_plus 404s). [VERIFIED absence as of 2026-08-14]
   Irrelevant scale regime for 64-256 px grids; safe to cite-and-dismiss.
 - **AROMA (arXiv:2406.02176, NeurIPS 2024)** — latent local-neural-field PDE model with diffusion-based transformer dynamics; code github.com/LouisSerrano/aroma (28 stars). [VERIFIED]
 - **UPT (arXiv:2402.12365, NeurIPS 2024)** — Universal Physics Transformers, unified grid/particle neural-operator scaling framework; code github.com/ml-jku/UPT (167 stars). [VERIFIED]
 - **UPS (arXiv:2403.07187)** — LLM-warm-started FNO-transformer unified solver; SOTA on 8/10 PDEBench tasks with 4x less data. [VERIFIED abstract; code not checked]
-- **FactFormer (arXiv:2305.17560, NeurIPS 2023)** — axial factorized attention for large-grid surrogates; code github.com/BaratiLab/FactFormer (57 stars). [VERIFIED]
+- **FactFormer (arXiv:2305.17560, NeurIPS 2023)** — axial factorized attention for large-grid surrogates; code github.com/BaratiLab/FactFormer (57 stars). [VERIFIED — note the paper's actual title is "Scalable Transformer for PDE Surrogate Modeling" (Li, Shu, Barati Farimani); "FactFormer" is the method name. Citation audit 2026-08-14]
 - **F-FNO, CNO, PDE-Refiner** — appear as the operator-family baselines in MFFM 2026; all have public code (F-FNO arXiv:2111.13802, CNO arXiv:2302.01178, PDE-Refiner arXiv:2308.05732 [UNVERIFIED-IDs]).
   An F-FNO or CNO backbone swap inside the team's existing training harness is the cheapest way to add a "non-in-house architecture" if desired.
 - Cheap-to-adapt ranking: F-FNO/CNO backbone swap (cheapest, drop-in), Poseidon finetune (moderate, highest name value), FactFormer (moderate), AROMA/UPT/DPOT/UPS (expensive re-purposing for a non-rollout task, poor fit).
@@ -77,7 +77,7 @@ The team's design (in-house FNO-family set + published IFC/MFRNP numbers as anch
 ## 4. Simple non-neural baselines reviewers expect in multi-fidelity settings
 
 - **Bilinear/bicubic prolongation of LF, no learning** — MFFM (arXiv:2605.16118) not only includes it but builds §5.4 around "bilinear as the task-difficulty zero line": the bilinear NRMSE equals ‖HF−I(LF)‖/‖HF‖ and organizes datasets into low/intermediate/large-residual regimes. [VERIFIED from paper HTML]
-  SRaFTE/RELift (arXiv:2509.12220) likewise adopt bicubic interpolation of the coarse solve as the standing baseline for coarse-to-fine propagation. [VERIFIED via search snippets]
+  RELift (arXiv:2509.12220, Bassi et al., "Learned Coarse-to-Fine Propagators for Time-Dependent PDEs with Applications to Electron Dynamics") likewise adopts bicubic interpolation of the coarse solve as the standing baseline for coarse-to-fine propagation. [Title + authors VERIFIED via arXiv API, citation audit 2026-08-14; the earlier "SRaFTE/RELift" label came from search snippets]
   SuperBench institutionalizes bicubic as the reference in scientific super-resolution. [VERIFIED abstract]
 - **Single-fidelity lower bound** — MFRNP includes SF-NP, "the naive single-fidelity neural process trained on the highest fidelity data, as the lower performance bound"; the analogous control here is an FNO trained on HF-only (no LF input). [VERIFIED]
 - **Linear map on LF (AR(1) structure)** — the Kennedy-O'Hagan form ρ·LF + δ is literally a per-dataset linear regression from LF to HF; the SMT MFK implementation and FIRE's AR(1) baseline show it remains a live 2026 comparison. [VERIFIED]

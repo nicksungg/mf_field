@@ -7,7 +7,7 @@ posterior-predictive summary FIELDS (mean, std, quantiles), and the high-fidelit
 correction is a residual on top of the LF mean. The novelty is the *injection*. FIRE
 (fno_fire_distcond) concatenates those uncertainty fields at the lift; the factory's
 leaderboard winner (mf_fno_transfer_film) instead showed that per-block FiLM
-modulation (perez2018film; beggs2025pdecond, FiLM-via-norm) beats concatenation for
+modulation (perez2018film; dumoulin2018featurewise, FiLM-via-norm) beats concatenation for
 the global condition vector X. DG-FNO crosses the two: the uncertainty field
 modulates every spectral block — Gate A as a per-pixel FiLM affine alongside the
 proven global X-FiLM term, and Gate B as a *spectral mode-gate* that scales each kept
@@ -24,7 +24,7 @@ residual model and grows the gates only where they reduce HF error; the
 `DG_GATES` env var toggles each gate for ablation. The learned `rho(x)` doubles as a
 discrepancy map: at eval we report its correlation with the true `|HF - mu_LF|` field.
 
-bibtex_keys: li2020fno, yu2026fire, perez2018film, kennedy2000ohagan, beggs2025pdecond
+bibtex_keys: li2020fno, yu2026fire, perez2018film, kennedy2000ohagan, dumoulin2018featurewise, shokar2025pdecond
 
 ```bibtex
 @inproceedings{li2020fno,
@@ -61,11 +61,24 @@ bibtex_keys: li2020fno, yu2026fire, perez2018film, kennedy2000ohagan, beggs2025p
   year    = {2000}
 }
 
-@article{beggs2025pdecond,
-  title   = {FiLM-Conditioned Neural Operators for PDE-Parameter Generalization},
-  author  = {Beggs, and others},
+@article{dumoulin2018featurewise,
+  title   = {Feature-wise transformations},
+  author  = {Dumoulin, Vincent and Perez, Ethan and Schucher, Nathan and Strub, Florian and
+             de Vries, Harm and Courville, Aaron and Bengio, Yoshua},
+  journal = {Distill},
+  volume  = {3},
+  number  = {7},
+  year    = {2018},
+  doi     = {10.23915/distill.00011}
+}
+
+@article{shokar2025pdecond,
+  title   = {Conditioning on {PDE} Parameters to Generalise Deep Learning Emulation of
+             Stochastic and Chaotic Dynamics},
+  author  = {Shokar, Ira J. S. and Kerswell, Rich R. and Haynes, Peter H.},
   year    = {2025},
   eprint  = {2509.09599},
-  archivePrefix = {arXiv}
+  archivePrefix = {arXiv},
+  primaryClass = {cs.LG}
 }
 ```

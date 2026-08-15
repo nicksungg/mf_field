@@ -28,7 +28,7 @@ comparison isolates the gating MECHANISM, not the backbone.
 
 References: li2020fno (FNO); perez2018film (FiLM); FIRE (Yu, Sung & Ahmed 2026,
 arXiv:2601.22371; distribution-conditioned residual); kennedy2000ohagan (rho gain);
-beggs2025pdecond (FiLM-via-norm).
+dumoulin2018featurewise (FiLM-via-norm).
 """
 from __future__ import annotations
 

@@ -7,7 +7,7 @@ affine modulation inside the FNO blocks themselves. A single full-resolution
 HF FNO produces the prediction directly; the fidelity index `m` modulates the
 normalization-layer (γ, β) affines via a small MLP on `[m, m^2]`.
 
-The architectural precedent is `beggs2025pdecond` (FiLM-via-LayerNorm for
+The architectural precedent is `dumoulin2018featurewise` (FiLM-via-norm for
 PDE-parameter conditioning, arXiv:2509.09599) and `herde2024poseidon`
 (Poseidon scOT time-conditioned LayerNorm at scale, NeurIPS 2024). The FNO
 backbone is `li2020fno`; the LF→HF training schedule retained in
@@ -90,7 +90,7 @@ class FiLMNorm(nn.Module):
     `2 * channels` values which are split into γ and β and broadcast
     over the spatial grid.
 
-    Reference: beggs2025pdecond (FiLM-via-LayerNorm for PDE-parameter
+    Reference: dumoulin2018featurewise (FiLM-via-norm for PDE-parameter
     conditioning, arXiv:2509.09599); herde2024poseidon (time-conditioned
     LayerNorm at scale, NeurIPS 2024).
     """

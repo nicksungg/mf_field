@@ -9,9 +9,13 @@ block applies GroupNorm followed by a per-channel affine
 `γ(m), β(m) = MLP([m, m^2])` so the conditioning signal modulates the
 normalisation layer rather than feeding a K-dim coregionalization head.
 This is the canonical 2024-2025 PDE-parameter-conditioning composition
-(beggs2025pdecond presents FiLM-via-LayerNorm specifically for parametric
-PDE surrogates; herde2024poseidon scales time-conditioned LayerNorm to
-the Poseidon scOT foundation model at NeurIPS 2024). The LF→HF transfer
+(dumoulin2018featurewise establishes conditional/adaptive normalisation as
+the FiLM-via-norm mechanism; shokar2025pdecond is the PDE-side precedent for
+explicitly conditioning an emulator on PDE parameters and pre-training then
+fine-tuning to generalise across them — note it uses local attention, not
+FiLM-via-LayerNorm, so the mechanism cite is Dumoulin, not Shokar;
+herde2024poseidon scales time-conditioned LayerNorm to the Poseidon scOT
+foundation model at NeurIPS 2024). The LF→HF transfer
 training schedule from lyu2023mffno is retained in `smoke_eval.py`
 unchanged from the sibling `fno_coregionalization` family; the K-dim
 basis is the only architectural component being replaced. Hypothesis:
@@ -30,7 +34,7 @@ broadcast `B(m) ∈ R^K` over the grid and concatenate to the FNO input
 channels — kept in reserve if Mode A fails the smoke contract or wall
 budget.
 
-bibtex_keys: li2022ifc, li2020fno, lyu2023mffno, beggs2025pdecond, herde2024poseidon
+bibtex_keys: li2022ifc, li2020fno, lyu2023mffno, dumoulin2018featurewise, shokar2025pdecond, herde2024poseidon
 
 ```bibtex
 @article{li2022ifc,
@@ -65,12 +69,25 @@ bibtex_keys: li2022ifc, li2020fno, lyu2023mffno, beggs2025pdecond, herde2024pose
 ```
 
 ```bibtex
-@article{beggs2025pdecond,
-  title   = {FiLM-via-LayerNorm Conditioning for Parametric PDE Surrogates},
-  author  = {Beggs, et al.},
-  journal = {arXiv preprint},
+@article{dumoulin2018featurewise,
+  title   = {Feature-wise transformations},
+  author  = {Dumoulin, Vincent and Perez, Ethan and Schucher, Nathan and Strub, Florian and
+             de Vries, Harm and Courville, Aaron and Bengio, Yoshua},
+  journal = {Distill},
+  volume  = {3},
+  number  = {7},
+  year    = {2018},
+  doi     = {10.23915/distill.00011}
+}
+
+@article{shokar2025pdecond,
+  title   = {Conditioning on {PDE} Parameters to Generalise Deep Learning Emulation of
+             Stochastic and Chaotic Dynamics},
+  author  = {Shokar, Ira J. S. and Kerswell, Rich R. and Haynes, Peter H.},
   year    = {2025},
-  note    = {arXiv:2509.09599}
+  eprint  = {2509.09599},
+  archivePrefix = {arXiv},
+  primaryClass = {cs.LG}
 }
 ```
 
