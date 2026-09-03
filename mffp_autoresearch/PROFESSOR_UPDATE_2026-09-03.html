@@ -469,7 +469,7 @@
   <header class="masthead">
     <p class="eyebrow">MFFP Autoresearch<span class="sep">/</span>Round 4<span class="sep">/</span>2026-09-03</p>
     <h1>Beating the film bar on benchmark_30</h1>
-    <p class="standfirst">Five challengers, one that clears the bar by a modest margin, and a measurement error on our side that briefly made the whole round look impossible.</p>
+    <p class="standfirst">Five challengers, one that clears the bar by a modest margin, and two measurement errors on our side &mdash; one that briefly made the whole round look impossible, one that sent you the wrong dataset size.</p>
   </header>
 
   <dl class="figures">
@@ -612,7 +612,7 @@
   </section>
 
   <section>
-    <div class="sec-head"><div class="sec-num">05</div><h2>Your answers, verified &mdash; and the one that doesn't fit</h2></div>
+    <div class="sec-head"><div class="sec-num">05</div><h2>Your answers, verified &mdash; and the one that traces back to us</h2></div>
     <div class="body"><div class="content">
       <p>Each answer you sent on 2026-09-02 was checked against our artifacts rather than accepted on its face, because the whole point of the audit was that an inferred protocol had already cost us a week.</p>
 
@@ -634,7 +634,7 @@
             </tr>
             <tr>
               <td><span class="ds">lid_driven</span> was a smaller 40/10 v2 snapshot against our documented 400/100</td>
-              <td><strong>Does not resolve it.</strong> Our cells also trained on the published 40/10 snapshot &mdash; see below.</td>
+              <td><strong>The 400/100 was our documentation error</strong> &mdash; and our cells also ran 40/10, so the size difference isn't the cause. See below.</td>
             </tr>
             <tr>
               <td>Other matrix rows: not confirmed for now</td>
@@ -644,18 +644,22 @@
         </table>
       </div>
 
-      <div class="callout warn">
-        <h3>The one request in this brief</h3>
-        <p>On <span class="ds">lid_driven_cavity_generated</span> your film gets <span class="num">0.0203</span>; our three seeds land at <span class="num">0.0496</span>, <span class="num">0.0327</span> and <span class="num">0.0345</span>. The size explanation does not fit our side: our cells train on <code>train_l4</code> of shape (40, 65536) and <code>test_l4</code> of shape (10, 65536) &mdash; the published 40/10 snapshot &mdash; and those files' SHA-256 hashes (<span class="num">b161bc52773c&hellip;</span>, <span class="num">b42a022c5039&hellip;</span>) are identical on both the <code>nicksung/mf_field</code> and <code>eloisezeng/mf_field</code> releases.</p>
-        <p>Two things would settle it:</p>
-        <ol class="ask">
-          <li>The hashes of <code>train_l4.npz</code> and <code>test_l4.npz</code> in your local v2 copy, compared against the release. If they differ, that is the answer.</li>
-          <li>Which low-fidelity rung your film pretrained on for that dataset. Ours uses <code>l1</code> (32&times;32) against the 256&times;256 high-fidelity grid.</li>
-        </ol>
-        <p style="margin-bottom:0">We are also running film at seed 42 under exactly the protocol you described on that dataset, so we will know shortly whether it is seed luck on a 10-sample test set. Separately and lower priority: a film number on the re-paired <span class="ds">ifc_heat</span> would let us put that dataset back into the comparison instead of excluding it.</p>
+      <div class="retraction">
+        <span class="label">Our error, not yours</span>
+        <p>The 400/100 figure you were comparing against came from our own <code>datasets_summary.csv</code>, and it was wrong. No dataset of that size exists anywhere &mdash; not in either hub release, not in our local copy, not in any run we have on record. You were reasoning from a document we published. That row is now corrected to 40/10, with the hub release treated as canonical.</p>
       </div>
 
-      <p>This also exposed a documentation error on our side. <code>datasets_summary.csv</code> listed 400/100 for that dataset, which describes a snapshot that exists nowhere; the row is now corrected to 40/10, with the hub release treated as canonical.</p>
+      <div class="callout warn">
+        <h3>Why that still doesn't close the gap</h3>
+        <p>Our cells never used a 400/100 snapshot either. They train on <code>train_l4</code> of shape (40, 65536) and <code>test_l4</code> of shape (10, 65536) &mdash; the same published 40/10 snapshot you describe &mdash; and those files' SHA-256 hashes (<span class="num">b161bc52773c&hellip;</span>, <span class="num">b42a022c5039&hellip;</span>) are identical on the <code>nicksung/mf_field</code> and <code>eloisezeng/mf_field</code> releases. On that data your film gets <span class="num">0.0203</span> and our three seeds land at <span class="num">0.0496</span>, <span class="num">0.0327</span> and <span class="num">0.0345</span>.</p>
+        <p>Both sides are at 40/10, so roughly a factor of <span class="num">2.4</span> is still unaccounted for. Three candidates remain, and we can only close the third from here:</p>
+        <ol class="ask">
+          <li><strong>Your local v2 copy differs in content from the release</strong>, even though it matches in size. The SHA-256 of <code>train_l4.npz</code> and <code>test_l4.npz</code> in your copy would settle this &mdash; if they differ, that is the whole answer.</li>
+          <li><strong>A different low-fidelity rung.</strong> Ours pretrains on <code>l1</code> (32&times;32) against the 256&times;256 high-fidelity grid; if yours differs, that alone could account for it.</li>
+          <li><strong>Seed variance on a 10-sample test set.</strong> Ours to close &mdash; film at seed 42 under exactly the protocol you described is queued on that dataset now.</li>
+        </ol>
+        <p style="margin-bottom:0">So the ask is only the first two. Lower priority, whenever convenient: a film number on the re-paired <span class="ds">ifc_heat</span> would let us put that dataset back into the comparison instead of excluding it.</p>
+      </div>
     </div></div>
   </section>
 

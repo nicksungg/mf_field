@@ -28,10 +28,11 @@ Rendered page: [Claude artifact](https://claude.ai/code/artifact/fecd8b31-934c-4
    Once matched, our film reproduces your matrix to a panel geometric mean of 0.944, and the "2.5× gap" on `ext__cahn_hilliard_2d` became 1.003.
    Your answers on 2026-09-02 confirmed the metric and the protocol; details and the safeguards we added are in §4.
 
-5. **One discrepancy is still open, and it is the one thing we'd like from you.**
+5. **One discrepancy is still open, and it starts with a mistake of ours.**
    On `lid_driven_cavity_generated` your film gets 0.0203 and our three seeds land between 0.033 and 0.050.
-   The offered explanation — that your v2 snapshot was 40 train / 10 test against our documented 400/100 — does not resolve it, because our cells also trained on the published 40/10 snapshot, and its file hashes match the release on both hubs.
-   We've asked for the hashes of your local copy and the low-fidelity rung you pretrained on; see §5.
+   Your explanation was that you ran a 40/10 snapshot against our documented 400/100 — but that 400/100 figure was an error in our own `datasets_summary.csv`, describing a dataset that exists nowhere, and our cells in fact trained on the same published 40/10 snapshot with matching hashes.
+   So the size difference isn't the cause, and a factor of about 2.4 is still unexplained.
+   We've narrowed it to three candidates and can close only one ourselves; see §5.
    That dataset is currently excluded from the 28-dataset panel as unexplained rather than silently kept or silently dropped.
 
 6. **In flight right now:** a zero-extra-training ensemble of C3a's three certified checkpoints, which on a device-consistent estimate is **about 27% better than the bar across 30 datasets** and better than the mean of its own seeds on all 30, plus two further challengers (a capacity sweep and a combined-mechanism model).
@@ -136,21 +137,31 @@ The full-30 reproduction gate currently reports FAIL honestly, because 8 optiona
 
 ## 5. The one open request
 
-On `lid_driven_cavity_generated`, the size explanation does not fit our side of the comparison.
-
-- Our cells train on `train_l4` of shape (40, 65536) and `test_l4` of shape (10, 65536) — the published 40/10 snapshot, not 400/100.
-- Those files' SHA-256 hashes (`b161bc52773c…`, `b42a022c5039…`) are identical on both the `nicksung/mf_field` and `eloisezeng/mf_field` hub releases.
-- With that data our three film seeds give 0.0496 / 0.0327 / 0.0345 against your 0.0203.
-
-Separately, this exposed a documentation error on our side: `datasets_summary.csv` listed 400/100 for that dataset, which describes a snapshot that exists nowhere.
+**First, the part that is our fault.**
+Your explanation for `lid_driven_cavity_generated` was that you evaluated a smaller dataset than we did — your 40/10 v2 snapshot against our documented 400/100.
+The 400/100 figure came from our `datasets_summary.csv`, and it was wrong.
+No dataset of that size exists anywhere: not in either hub release, not in our local copy, not in any run we have on record.
+So you were reasoning from a document we published, and the document was the error.
 That row is now corrected to 40/10, with the hub release treated as canonical.
 
-**Two things would settle it:**
+**Why that doesn't close the gap:** our cells never used a 400/100 snapshot either.
 
-1. The hashes of `train_l4.npz` / `test_l4.npz` in your local v2 copy, compared with the release. If they differ, that is the answer.
-2. Which low-fidelity rung your film pretrained on for that dataset — ours uses `l1` (32×32) against the 256×256 high-fidelity grid.
+- They train on `train_l4` of shape (40, 65536) and `test_l4` of shape (10, 65536) — the same published 40/10 snapshot you describe.
+- Those files' SHA-256 hashes (`b161bc52773c…`, `b42a022c5039…`) are identical on the `nicksung/mf_field` and `eloisezeng/mf_field` releases.
+- On that data our three film seeds give 0.0496 / 0.0327 / 0.0345 against your 0.0203.
 
-We are also running film at seed 42 under exactly the protocol you described on that dataset, so we will know shortly whether it is seed luck on a 10-sample test set.
+Both sides are therefore at 40/10, and roughly a factor of 2.4 is still unaccounted for.
+Three candidates remain, and we can only close one of them from here:
+
+1. **Your local v2 copy differs in content from the release**, even though it matches in size.
+   We can't check this without your hashes.
+2. **A different low-fidelity rung.**
+   Ours pretrains on `l1` (32×32) against the 256×256 high-fidelity grid; if yours differs, that alone could account for it.
+3. **Seed variance on a 10-sample test set.**
+   This one is ours to close, and film at seed 42 under exactly the protocol you described is queued on that dataset now.
+
+**So the ask is just the first two:** the SHA-256 of `train_l4.npz` and `test_l4.npz` in your local v2 copy, and which rung you pretrained on.
+Either would settle it, and if the hashes differ that is the whole answer.
 
 Lower priority, whenever convenient: a film number on the re-paired `ifc_heat` would let us put that dataset back into the comparison instead of excluding it.
 
