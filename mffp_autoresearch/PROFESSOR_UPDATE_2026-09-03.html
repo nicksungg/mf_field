@@ -378,8 +378,20 @@
   /* ---- tables ---- */
 
   .table-scroll { overflow-x: auto; margin: 0 0 1.2rem; }
-  table { border-collapse: collapse; width: 100%; min-width: 24rem; font-size: 0.885rem; }
-  th, td { text-align: left; padding: 0.62rem 0.85rem 0.62rem 0; vertical-align: top; border-bottom: 1px solid var(--rule-soft); }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    min-width: 27rem;
+    font-size: 0.885rem;
+    table-layout: fixed;          /* auto layout dumped all slack into column 1 */
+  }
+  th, td {
+    text-align: left;
+    padding: 0.62rem 1.15rem 0.62rem 0;
+    vertical-align: top;
+    border-bottom: 1px solid var(--rule-soft);
+  }
+  th:last-child, td:last-child { padding-right: 0; }
   th {
     font-family: var(--f-mono);
     font-size: 0.635rem;
@@ -389,6 +401,7 @@
     color: var(--muted);
     border-bottom: 1px solid var(--rule);
     padding-bottom: 0.5rem;
+    white-space: nowrap;
   }
   td.n { font-family: var(--f-mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
   tr:last-child td { border-bottom: 1px solid var(--rule); }
@@ -574,6 +587,9 @@
 
       <div class="table-scroll">
         <table>
+          <colgroup>
+            <col style="width:24%"><col style="width:15%"><col style="width:13%"><col style="width:48%">
+          </colgroup>
           <thead><tr><th>Panel</th><th>Bar &divide; C3a</th><th>Margin</th><th>Reading</th></tr></thead>
           <tbody>
             <tr><td>All 30 datasets</td><td class="n">1.0351</td><td class="n">+3.5%</td><td>Reportable, below the credibility line</td></tr>
@@ -619,7 +635,8 @@
 
       <div class="table-scroll">
         <table>
-          <thead><tr><th style="width:44%">Your answer</th><th>What we found</th></tr></thead>
+          <colgroup><col style="width:42%"><col style="width:58%"></colgroup>
+          <thead><tr><th>Your answer</th><th>What we found</th></tr></thead>
           <tbody>
             <tr>
               <td>Metric is per-sample <span class="num">&#8214;pred&minus;y&#8214; / max(&#8214;y&#8214;, 1e-8)</span>, then mean over test samples</td>
