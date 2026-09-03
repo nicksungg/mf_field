@@ -5,6 +5,7 @@ Author: Eloise (with the autoresearch orchestrator).
 Scope: round 4 in full, from its start on 2026-08-13 to today.
 Previous brief: [`PROFESSOR_UPDATE_2026-08-13.md`](PROFESSOR_UPDATE_2026-08-13.md) (round 3 close + the benchmark_30 head-to-head).
 Adjudicated records behind every number here live on branch `round4-program` under `mffp_autoresearch/round4/docs/`; the specific file is named at each claim.
+Rendered page: [Claude artifact](https://claude.ai/code/artifact/fecd8b31-934c-4845-8eb9-944025cd189e) (private until shared from its share menu) — same content as this file, with the per-dataset certification chart drawn from `state/bar_reverdict_r4_0013.json`.
 
 ## The short version
 

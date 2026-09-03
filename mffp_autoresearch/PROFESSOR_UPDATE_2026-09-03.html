@@ -1,0 +1,765 @@
+<title>Round 4 Mentor Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Literata:ital,opsz,wght@0,7..72,400;0,500;0,600;1,7..72,400&family=Public+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+
+<style>
+  :root {
+    --ground:      #F1F4F0;
+    --surface:     #FAFBF9;
+    --surface-2:   #E8EDE7;
+    --ink:         #171C19;
+    --ink-2:       #3D4642;
+    --muted:       #6B756E;
+    --rule:        #CBD3CB;
+    --rule-soft:   #DDE3DC;
+    --accent:      #1D6355;
+    --accent-soft: #CBE0D8;
+    --loss:        #A9502A;
+    --loss-soft:   #EDD6C8;
+    --flag:        #8A6A15;
+
+    --f-display: "Literata", Georgia, "Times New Roman", serif;
+    --f-body:    "Public Sans", "Helvetica Neue", Arial, sans-serif;
+    --f-mono:    "IBM Plex Mono", "SF Mono", Menlo, Consolas, monospace;
+
+    --col: 41rem;
+    --gutter: 6.5rem;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground:      #10140F;
+      --surface:     #171C18;
+      --surface-2:   #1F2621;
+      --ink:         #E7EDE6;
+      --ink-2:       #BAC4BD;
+      --muted:       #8A948C;
+      --rule:        #2C352F;
+      --rule-soft:   #232B26;
+      --accent:      #6FBFA6;
+      --accent-soft: #24443B;
+      --loss:        #DE9264;
+      --loss-soft:   #48291A;
+      --flag:        #C9A542;
+    }
+  }
+  :root[data-theme="dark"] {
+    --ground:      #10140F;
+    --surface:     #171C18;
+    --surface-2:   #1F2621;
+    --ink:         #E7EDE6;
+    --ink-2:       #BAC4BD;
+    --muted:       #8A948C;
+    --rule:        #2C352F;
+    --rule-soft:   #232B26;
+    --accent:      #6FBFA6;
+    --accent-soft: #24443B;
+    --loss:        #DE9264;
+    --loss-soft:   #48291A;
+    --flag:        #C9A542;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    background: var(--ground);
+    color: var(--ink);
+    font-family: var(--f-body);
+    font-size: 16.5px;
+    line-height: 1.62;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page {
+    max-width: calc(var(--col) + var(--gutter) + 3rem);
+    margin: 0 auto;
+    padding: 3.5rem 1.5rem 5rem;
+  }
+
+  /* ---- masthead ---- */
+
+  .masthead { border-bottom: 2px solid var(--ink); padding-bottom: 1.5rem; }
+
+  .eyebrow {
+    font-family: var(--f-mono);
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 0 0 1.1rem;
+  }
+  .eyebrow .sep { opacity: 0.45; padding: 0 0.45em; }
+
+  h1 {
+    font-family: var(--f-display);
+    font-size: clamp(2.1rem, 5.4vw, 3.05rem);
+    font-weight: 600;
+    line-height: 1.06;
+    letter-spacing: -0.017em;
+    text-wrap: balance;
+    margin: 0 0 0.75rem;
+  }
+
+  .standfirst {
+    font-family: var(--f-display);
+    font-size: 1.09rem;
+    line-height: 1.55;
+    color: var(--ink-2);
+    max-width: 34rem;
+    margin: 0;
+  }
+
+  /* ---- headline figures ---- */
+
+  .figures {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(9.5rem, 1fr));
+    gap: 1px;
+    background: var(--rule);
+    border-bottom: 1px solid var(--rule);
+    margin: 0 0 3rem;
+  }
+  .fig { background: var(--ground); padding: 1.15rem 1.1rem 1.25rem; }
+  .fig dt {
+    font-family: var(--f-mono);
+    font-size: 0.655rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.5rem;
+  }
+  .fig dd {
+    margin: 0;
+    font-family: var(--f-display);
+    font-size: 1.72rem;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+  }
+  .fig dd .unit { font-size: 0.95rem; color: var(--muted); font-weight: 400; }
+  .fig .note {
+    font-family: var(--f-body);
+    font-size: 0.775rem;
+    color: var(--muted);
+    line-height: 1.4;
+    margin-top: 0.5rem;
+  }
+  .fig.win dd { color: var(--accent); }
+  .fig.lose dd { color: var(--loss); }
+
+  /* ---- sections with numbered gutter ---- */
+
+  section { margin-bottom: 3.4rem; }
+
+  .sec-head {
+    display: grid;
+    grid-template-columns: var(--gutter) minmax(0, 1fr);
+    align-items: baseline;
+    margin-bottom: 1.15rem;
+  }
+  .sec-num {
+    font-family: var(--f-mono);
+    font-size: 0.68rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+    padding-top: 0.45rem;
+  }
+  h2 {
+    font-family: var(--f-display);
+    font-size: 1.42rem;
+    font-weight: 600;
+    letter-spacing: -0.012em;
+    line-height: 1.22;
+    text-wrap: balance;
+    margin: 0;
+  }
+
+  .body { display: grid; grid-template-columns: var(--gutter) minmax(0, 1fr); }
+  .body > .content { max-width: var(--col); }
+  .body > .content > *:first-child { margin-top: 0; }
+  .body > .content > *:last-child { margin-bottom: 0; }
+
+  @media (max-width: 720px) {
+    :root { --gutter: 0rem; }
+    .sec-head, .body { grid-template-columns: minmax(0, 1fr); }
+    .sec-num { padding-top: 0; margin-bottom: 0.4rem; }
+  }
+
+  p { margin: 0 0 1rem; }
+  strong { font-weight: 600; }
+  em { font-style: italic; }
+
+  h3 {
+    font-family: var(--f-body);
+    font-size: 0.98rem;
+    font-weight: 600;
+    letter-spacing: 0.005em;
+    margin: 1.9rem 0 0.6rem;
+  }
+
+  code, .ds {
+    font-family: var(--f-mono);
+    font-size: 0.855em;
+    background: var(--surface-2);
+    padding: 0.08em 0.34em;
+    border-radius: 2px;
+    color: var(--ink-2);
+    word-break: break-word;
+  }
+
+  .num { font-variant-numeric: tabular-nums; }
+
+  ul { margin: 0 0 1rem; padding-left: 1.15rem; }
+  li { margin-bottom: 0.5rem; }
+  li::marker { color: var(--muted); }
+
+  /* ---- challenger ladder ---- */
+
+  .ladder { display: flex; flex-direction: column; gap: 0; }
+
+  .rung {
+    display: grid;
+    grid-template-columns: 4.1rem minmax(0, 1fr);
+    gap: 1.1rem;
+    padding: 1.15rem 0 1.25rem;
+    border-top: 1px solid var(--rule-soft);
+  }
+  .rung:first-child { border-top: 1px solid var(--rule); }
+  .rung:last-child { border-bottom: 1px solid var(--rule); }
+
+  .rung-id {
+    font-family: var(--f-mono);
+    font-size: 0.9rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    padding-top: 0.05rem;
+  }
+  .rung-mech {
+    font-weight: 600;
+    font-size: 0.945rem;
+    line-height: 1.4;
+    margin: 0 0 0.15rem;
+  }
+  .rung-body { font-size: 0.905rem; color: var(--ink-2); line-height: 1.55; margin: 0.45rem 0 0; }
+
+  .verdict {
+    display: inline-block;
+    font-family: var(--f-mono);
+    font-size: 0.63rem;
+    font-weight: 600;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    padding: 0.18em 0.5em;
+    border-radius: 2px;
+    vertical-align: 0.12em;
+    white-space: nowrap;
+  }
+  .v-pass { background: var(--accent-soft); color: var(--accent); }
+  .v-fail { background: var(--loss-soft); color: var(--loss); }
+  .v-open { background: var(--surface-2); color: var(--muted); border: 1px solid var(--rule); }
+
+  .rung.pass .rung-id { color: var(--accent); }
+  .rung.fail .rung-id { color: var(--muted); }
+  .rung.open .rung-id { color: var(--muted); }
+
+  /* ---- chart ---- */
+
+  .chart-frame {
+    border: 1px solid var(--rule);
+    background: var(--surface);
+    padding: 1.4rem 1.25rem 1.1rem;
+    margin: 0 0 0.9rem;
+  }
+  .chart-title {
+    font-family: var(--f-mono);
+    font-size: 0.665rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 0 0 1.15rem;
+  }
+  .chart-scroll { overflow-x: auto; }
+  .chart { min-width: 31rem; }
+
+  .axis-row {
+    display: grid;
+    grid-template-columns: 11.6rem minmax(0, 1fr) 3rem;
+    margin-bottom: 0.45rem;
+  }
+  .axis {
+    position: relative;
+    height: 1.15rem;
+    border-bottom: 1px solid var(--rule);
+  }
+  .tick {
+    position: absolute;
+    bottom: 0;
+    transform: translateX(-50%);
+    font-family: var(--f-mono);
+    font-size: 0.63rem;
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .bar-row {
+    display: grid;
+    grid-template-columns: 11.6rem minmax(0, 1fr) 3rem;
+    align-items: center;
+    column-gap: 0;
+    height: 1.28rem;
+  }
+  .bar-label {
+    font-family: var(--f-mono);
+    font-size: 0.665rem;
+    color: var(--ink-2);
+    text-align: right;
+    padding-right: 0.6rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .bar-label.excl { color: var(--muted); font-style: italic; }
+  .bar-track { position: relative; height: 100%; }
+  .bar-track .parity {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: var(--ink);
+    opacity: 0.55;
+  }
+  .bar {
+    position: absolute;
+    top: 0.28rem;
+    height: 0.72rem;
+    border-radius: 1px;
+  }
+  .bar.up { background: var(--accent); }
+  .bar.down { background: var(--loss); }
+  .bar.excl { opacity: 0.34; }
+  .bar-val {
+    font-family: var(--f-mono);
+    font-size: 0.645rem;
+    font-variant-numeric: tabular-nums;
+    color: var(--muted);
+    white-space: nowrap;
+    text-align: right;
+    padding-left: 0.5rem;
+  }
+  .bar-row.clear .bar-val { color: var(--accent); font-weight: 600; }
+
+  .caption {
+    font-size: 0.815rem;
+    line-height: 1.55;
+    color: var(--muted);
+    margin: 0 0 1.4rem;
+  }
+
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem 1.15rem;
+    font-family: var(--f-mono);
+    font-size: 0.645rem;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+    margin-top: 1rem;
+    padding-top: 0.85rem;
+    border-top: 1px solid var(--rule-soft);
+  }
+  .legend span { display: inline-flex; align-items: center; gap: 0.42em; }
+  .swatch { width: 0.72rem; height: 0.5rem; border-radius: 1px; display: inline-block; }
+
+  /* ---- tables ---- */
+
+  .table-scroll { overflow-x: auto; margin: 0 0 1.2rem; }
+  table { border-collapse: collapse; width: 100%; min-width: 24rem; font-size: 0.885rem; }
+  th, td { text-align: left; padding: 0.62rem 0.85rem 0.62rem 0; vertical-align: top; border-bottom: 1px solid var(--rule-soft); }
+  th {
+    font-family: var(--f-mono);
+    font-size: 0.635rem;
+    font-weight: 500;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--muted);
+    border-bottom: 1px solid var(--rule);
+    padding-bottom: 0.5rem;
+  }
+  td.n { font-family: var(--f-mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  tr:last-child td { border-bottom: 1px solid var(--rule); }
+
+  /* ---- callouts ---- */
+
+  .callout {
+    border-left: 2px solid var(--accent);
+    background: var(--surface);
+    padding: 1.15rem 1.25rem;
+    margin: 0 0 1.3rem;
+  }
+  .callout.warn { border-left-color: var(--flag); }
+  .callout h3 { margin-top: 0; }
+  .callout > *:last-child { margin-bottom: 0; }
+  .callout p { font-size: 0.925rem; }
+
+  .retraction {
+    border: 1px solid var(--rule);
+    background: var(--surface);
+    padding: 1.1rem 1.2rem;
+    margin: 0 0 1.3rem;
+  }
+  .retraction .label {
+    font-family: var(--f-mono);
+    font-size: 0.635rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--loss);
+    display: block;
+    margin-bottom: 0.55rem;
+  }
+  .retraction p { font-size: 0.925rem; margin-bottom: 0; }
+
+  .ask {
+    counter-reset: ask;
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1.2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+  }
+  .ask li {
+    counter-increment: ask;
+    display: grid;
+    grid-template-columns: 1.7rem minmax(0, 1fr);
+    gap: 0.55rem;
+    margin: 0;
+  }
+  .ask li::before {
+    content: counter(ask);
+    font-family: var(--f-mono);
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--flag);
+    padding-top: 0.22rem;
+  }
+
+  /* ---- footer ---- */
+
+  footer {
+    border-top: 1px solid var(--rule);
+    padding-top: 1.3rem;
+    margin-top: 1rem;
+    font-family: var(--f-mono);
+    font-size: 0.695rem;
+    line-height: 1.75;
+    color: var(--muted);
+  }
+  footer strong { color: var(--ink-2); font-weight: 500; }
+
+  a { color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+  a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+</style>
+
+<div class="page">
+
+  <header class="masthead">
+    <p class="eyebrow">MFFP Autoresearch<span class="sep">/</span>Round 4<span class="sep">/</span>2026-09-03</p>
+    <h1>Beating the film bar on benchmark_30</h1>
+    <p class="standfirst">Five challengers, one that clears the bar by a modest margin, and a measurement error on our side that briefly made the whole round look impossible.</p>
+  </header>
+
+  <dl class="figures">
+    <div class="fig win">
+      <dt>C3a vs bar &middot; 30 datasets</dt>
+      <dd>+3.5<span class="unit">%</span></dd>
+      <p class="note">Reportable, below the 5% credibility line</p>
+    </div>
+    <div class="fig win">
+      <dt>C3a vs bar &middot; 28 comparable</dt>
+      <dd>+7.2<span class="unit">%</span></dd>
+      <p class="note">Suggestive band (5&ndash;10%)</p>
+    </div>
+    <div class="fig">
+      <dt>Sole credible per-dataset win</dt>
+      <dd>6.46<span class="unit">&times;</span></dd>
+      <p class="note"><span class="ds">sharp__fisher_kpp_2d</span></p>
+    </div>
+    <div class="fig">
+      <dt>Certification cells run</dt>
+      <dd>180<span class="unit">/180</span></dd>
+      <p class="note">Two challengers, 3 seeds, zero failures</p>
+    </div>
+  </dl>
+
+  <section>
+    <div class="sec-head"><div class="sec-num">01</div><h2>What round 4 is testing, and how</h2></div>
+    <div class="body"><div class="content">
+      <p>The goal for the whole round is a model that beats your film row in <code>final_error_matrix.csv</code> across benchmark_30, trained at 2500 epochs per stage. That row is the bar, fixed in writing before any challenger existed, together with the rules for judging a margin against it: below 5% is not credible, 5&ndash;10% is suggestive, above 10% is credible, and a per-dataset ratio under 1.5&times; is descriptive rather than a win.</p>
+      <p>We deliberately did not train our own film at 2500 epochs to serve as the bar. The point of the round is to beat a number you produced independently of our harness.</p>
+      <p>Every challenger runs the same sequence. A design document states the mechanism and its falsification thresholds, and those thresholds ship as executable functions with tests rather than as prose, so they cannot be softened later by rewording. A pilot at 200 epochs on a pre-signed 14-dataset development subset costs under an hour of GPU time and kills most ideas. Only a passing pilot earns certification: all 30 datasets, 2500 epochs per stage, three seeds, roughly 65 H100-hours.</p>
+      <p>Inference is condition-only throughout &mdash; the high-fidelity field is predicted from the small condition vector alone. Re-running a coarse solve at test time stays banned.</p>
+    </div></div>
+  </section>
+
+  <section>
+    <div class="sec-head"><div class="sec-num">02</div><h2>The five challengers, and what each one ruled out</h2></div>
+    <div class="body"><div class="content">
+      <div class="ladder">
+
+        <article class="rung fail">
+          <div class="rung-id">C1</div>
+          <div>
+            <p class="rung-mech">Film plus three zero-initialised input columns: nearest-neighbour retrieval, retrieval mean, rendered initial condition <span class="verdict v-fail">killed at pilot</span></p>
+            <p class="rung-body">Two of three falsification clauses failed. The retrieval columns actively hurt &mdash; <span class="num">19.8%</span> worse than film overall, worst case <span class="num">8&times;</span> on <span class="ds">ext__wave_2d</span> &mdash; and a derangement control (shuffle the conditions, re-run) confirmed they were exploiting almost no information. The initial-condition column was the one part that worked, at <span class="num">+82%</span> on <span class="ds">sharp__fisher_kpp_2d</span>. That signal is what became C3a.</p>
+          </div>
+        </article>
+
+        <article class="rung fail">
+          <div class="rung-id">C2</div>
+          <div>
+            <p class="rung-mech">Tail-averaging of film's weights over the last quarter of training, plus spectral weight decay <span class="verdict v-fail">no-go at 2500</span></p>
+            <p class="rung-body">The premise was that film drifts late in training. At 200 epochs the averaging window was inert (<span class="num">0.56%</span> worse). At 2500 the within-run drift is essentially nil on the sharp datasets &mdash; at most <span class="num">1.023</span> on <span class="ds">sharp__allen_cahn_2d</span> &mdash; so the average <em>is</em> the last iterate. Useful negative: the &ldquo;film is worse at 2500 on sharp problems&rdquo; pattern we had seen across separate runs is not within-run drift.</p>
+          </div>
+        </article>
+
+        <article class="rung pass">
+          <div class="rung-id">C3a</div>
+          <div>
+            <p class="rung-mech">Film plus <em>one</em> zero-initialised channel carrying the closed-form initial condition <span class="verdict v-pass">certified &middot; beats the bar</span></p>
+            <p class="rung-body">The design identified six candidate datasets; in the certified runs the channel is live on four &mdash; <span class="ds">sharp__allen_cahn_2d</span>, <span class="ds">sharp__cahn_hilliard</span>, <span class="ds">sharp__fisher_kpp_2d</span>, <span class="ds">sharp__phase_field_crystal_2d</span>. On the other 26 the channel is identically zero and the network is film bit-for-bit, verified as bit-equality rather than asserted, which is what bounds the downside by construction. Section 3.</p>
+          </div>
+        </article>
+
+        <article class="rung fail">
+          <div class="rung-id">C3b</div>
+          <div>
+            <p class="rung-mech">Zero-initialised low-rank, condition-driven multiplicative modulation of film's spectral weights <span class="verdict v-fail">failed certification</span></p>
+            <p class="rung-body">At 200 epochs it looked good &mdash; <span class="num">5.9%</span> better than film, <span class="num">1.92&times;</span> on <span class="ds">lid_driven_cavity_generated</span> &mdash; and the derangement control confirmed the win was real rather than an artefact. At 2500 epochs it lands <span class="num">5.8%</span> <em>worse</em> than the bar over 30 datasets. The pilot-tier gain did not survive the full budget, which is exactly the failure mode the two-tier protocol exists to catch.</p>
+          </div>
+        </article>
+
+        <article class="rung open">
+          <div class="rung-id">C4</div>
+          <div>
+            <p class="rung-mech">Three follow-ons: a prediction ensemble of C3a's own checkpoints, a capacity sweep, and the two C3 mechanisms combined <span class="verdict v-open">in flight</span></p>
+            <p class="rung-body">The ensemble adds no training at all and is currently the round's largest effect. The capacity sweep separates &ldquo;the mechanism helps&rdquo; from &ldquo;the model was too small&rdquo;. Section 6.</p>
+          </div>
+        </article>
+
+      </div>
+    </div></div>
+  </section>
+
+  <section>
+    <div class="sec-head"><div class="sec-num">03</div><h2>The certified result, dataset by dataset</h2></div>
+    <div class="body"><div class="content">
+      <p>C3a is film's trunk and recipe verbatim, plus one extra input channel holding the initial condition rendered analytically from the <code>ic_*</code> entries of the condition vector. Certification ran as a 90-cell array, 30 datasets by 3 seeds, complete with zero failures.</p>
+
+      <div class="chart-frame">
+        <p class="chart-title">Bar &divide; C3a per dataset &middot; log scale &middot; 3-seed mean vs your seed 42</p>
+        <div class="chart-scroll"><div class="chart" id="chart"></div></div>
+        <div class="legend">
+          <span><i class="swatch" style="background:var(--accent)"></i> C3a better</span>
+          <span><i class="swatch" style="background:var(--loss)"></i> bar better</span>
+          <span><i class="swatch" style="background:var(--muted);opacity:.4"></i> excluded from the 28-panel</span>
+          <span>&#8942; parity = 1.00</span>
+        </div>
+      </div>
+      <p class="caption">Each row is one dataset; the bar runs from parity to the ratio of your film's error to C3a's, so right of the line is C3a winning. Only <span class="ds">sharp__fisher_kpp_2d</span> clears the pre-registered 1.5&times; line for calling a single dataset a win; everything between roughly 0.9 and 1.2 is recorded as descriptive. The two greyed rows are excluded from the comparable-28 panel for the reasons in section 5.</p>
+
+      <div class="table-scroll">
+        <table>
+          <thead><tr><th>Panel</th><th>Bar &divide; C3a</th><th>Margin</th><th>Reading</th></tr></thead>
+          <tbody>
+            <tr><td>All 30 datasets</td><td class="n">1.0351</td><td class="n">+3.5%</td><td>Reportable, below the credibility line</td></tr>
+            <tr><td>Comparable 28</td><td class="n">1.0722</td><td class="n">+7.2%</td><td>Suggestive band</td></tr>
+            <tr><td>C3b, all 30</td><td class="n">0.9418</td><td class="n">&minus;5.8%</td><td>Not reportable &mdash; fails</td></tr>
+            <tr><td>C3b, comparable 28</td><td class="n">0.9544</td><td class="n">&minus;4.6%</td><td>Not reportable &mdash; fails</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p><strong>The honest reading.</strong> A 3.5% panel margin is real but modest, and it rests substantially on one dataset where the mechanism obviously applies. The claim we are comfortable making is narrow: giving the network the initial condition as a field, where one exists, is worth a great deal on the reaction&ndash;diffusion problems and costs nothing elsewhere. We are not claiming a general improvement over film.</p>
+    </div></div>
+  </section>
+
+  <section>
+    <div class="sec-head"><div class="sec-num">04</div><h2>The metric audit &mdash; what went wrong on our side</h2></div>
+    <div class="body"><div class="content">
+      <p>This is the part most relevant to anyone else comparing against your matrix, so it is worth stating carefully.</p>
+
+      <div class="retraction">
+        <span class="label">Retracted 2026-08-26</span>
+        <p>For about a week we believed your film was a systematically stronger lineage than ours &mdash; <span class="num">2.51&times;</span> better on <span class="ds">ext__cahn_hilliard_2d</span>, <span class="num">3.19&times;</span> on <span class="ds">sharp__shallow_water_1d</span> &mdash; which would have meant that no challenger built on our film could reach your panel regardless of merit. That conclusion was wrong, and it was wrong for a reason entirely on our side.</p>
+      </div>
+
+      <p>Our harness reports relative L2 in two aggregations: the mean over test samples of the per-sample relative error, and a ratio of summed norms over the whole split. On datasets with skewed per-sample errors the two differ by a factor of two or more. Your matrix is the per-sample mean; the pre-registered comparison clauses were reading the ratio-of-sums field. The two &ldquo;lineages&rdquo; were two columns of one lineage.</p>
+
+      <h3>The proof chain</h3>
+      <ul>
+        <li>Our round-4 film and the factory's film agree to <span class="num">1e-6</span> on a fixed input &mdash; same weights, same code.</li>
+        <li>The earlier training-ladder film numbers equal the round-4 runs' per-sample-mean values to printed precision on 8 of 8 overlapping datasets.</li>
+        <li>Panel geometric mean of your matrix over our film: <strong class="num">0.944</strong> under the per-sample mean, against <span class="num">0.729</span> under the ratio-of-sums.</li>
+        <li>The <span class="num">2.51&times;</span> apparent gap on <span class="ds">ext__cahn_hilliard_2d</span> becomes <strong class="num">1.003</strong>.</li>
+      </ul>
+
+      <p><strong>What changed as a result.</strong> The pre-registered FAIL verdicts still stand &mdash; C3b is worse than the bar under the corrected metric too, and its verdict was recorded before the audit. C3a moved from &ldquo;loses to the bar&rdquo; to the numbers in section 3. We added a metric contract that every comparison must resolve against, a gate that refuses to score a panel unless our own film reproduces your matrix within tolerance across the full 30, and explicit <em>waived-unexplained</em> semantics so that a dataset cannot be dropped from a panel without a written reason. That full-30 gate currently reports FAIL honestly, because 8 optional cells have not been run; it is not marked green on partial evidence.</p>
+    </div></div>
+  </section>
+
+  <section>
+    <div class="sec-head"><div class="sec-num">05</div><h2>Your answers, verified &mdash; and the one that doesn't fit</h2></div>
+    <div class="body"><div class="content">
+      <p>Each answer you sent on 2026-09-02 was checked against our artifacts rather than accepted on its face, because the whole point of the audit was that an inferred protocol had already cost us a week.</p>
+
+      <div class="table-scroll">
+        <table>
+          <thead><tr><th style="width:44%">Your answer</th><th>What we found</th></tr></thead>
+          <tbody>
+            <tr>
+              <td>Metric is per-sample <span class="num">&#8214;pred&minus;y&#8214; / max(&#8214;y&#8214;, 1e-8)</span>, then mean over test samples</td>
+              <td><strong>Confirmed.</strong> Matches our <code>rel_l2_mean</code>. We checked that the <span class="num">1e-8</span> floor is immaterial: the smallest <span class="num">&#8214;y&#8214;</span> across all 30 high-fidelity test splits is <span class="num">0.0035</span>.</td>
+            </tr>
+            <tr>
+              <td>2500 is per stage (2500 LF pretrain + 2500 HF finetune), last checkpoint, seed 42</td>
+              <td><strong>Confirmed identical</strong> to our protocol. The one remaining difference is the seed &mdash; your 42 against our {0, 1, 2}.</td>
+            </tr>
+            <tr>
+              <td><span class="ds">ifc_heat</span> is the older pairing</td>
+              <td><strong>Confirmed</strong>, and that dataset is now excluded from the comparable panel rather than compared across different data.</td>
+            </tr>
+            <tr>
+              <td><span class="ds">lid_driven</span> was a smaller 40/10 v2 snapshot against our documented 400/100</td>
+              <td><strong>Does not resolve it.</strong> Our cells also trained on the published 40/10 snapshot &mdash; see below.</td>
+            </tr>
+            <tr>
+              <td>Other matrix rows: not confirmed for now</td>
+              <td>Recorded as a caveat everywhere a non-film row is used, including the &ldquo;perfect per-dataset model selection is worth 1.247&times;&rdquo; figure.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="callout warn">
+        <h3>The one request in this brief</h3>
+        <p>On <span class="ds">lid_driven_cavity_generated</span> your film gets <span class="num">0.0203</span>; our three seeds land at <span class="num">0.0496</span>, <span class="num">0.0327</span> and <span class="num">0.0345</span>. The size explanation does not fit our side: our cells train on <code>train_l4</code> of shape (40, 65536) and <code>test_l4</code> of shape (10, 65536) &mdash; the published 40/10 snapshot &mdash; and those files' SHA-256 hashes (<span class="num">b161bc52773c&hellip;</span>, <span class="num">b42a022c5039&hellip;</span>) are identical on both the <code>nicksung/mf_field</code> and <code>eloisezeng/mf_field</code> releases.</p>
+        <p>Two things would settle it:</p>
+        <ol class="ask">
+          <li>The hashes of <code>train_l4.npz</code> and <code>test_l4.npz</code> in your local v2 copy, compared against the release. If they differ, that is the answer.</li>
+          <li>Which low-fidelity rung your film pretrained on for that dataset. Ours uses <code>l1</code> (32&times;32) against the 256&times;256 high-fidelity grid.</li>
+        </ol>
+        <p style="margin-bottom:0">We are also running film at seed 42 under exactly the protocol you described on that dataset, so we will know shortly whether it is seed luck on a 10-sample test set. Separately and lower priority: a film number on the re-paired <span class="ds">ifc_heat</span> would let us put that dataset back into the comparison instead of excluding it.</p>
+      </div>
+
+      <p>This also exposed a documentation error on our side. <code>datasets_summary.csv</code> listed 400/100 for that dataset, which describes a snapshot that exists nowhere; the row is now corrected to 40/10, with the hub release treated as canonical.</p>
+    </div></div>
+  </section>
+
+  <section>
+    <div class="sec-head"><div class="sec-num">06</div><h2>Diagnostics about the benchmark, independent of any model</h2></div>
+    <div class="body"><div class="content">
+      <p>These came out of the round's Phase 0 and describe the benchmark rather than a challenger.</p>
+      <ul>
+        <li><strong>The error is shape, not level.</strong> At both budgets, the share of squared error attributable to a constant offset is small &mdash; at most <span class="num">0.094</span> on 9 of the 10 datasets probed at 200 epochs, and <span class="num">0.016&ndash;0.237</span> at 2500. A mean or level correction is not a lever.</li>
+        <li><strong>There are at least three distinct spatial failure modes, not one.</strong> Interface-dominated (<span class="ds">lid_driven_cavity_generated</span>, where <span class="num">0.898</span> of the error mass sits on 5% of the pixels), bimodal (<span class="ds">sharp__fisher_kpp_2d</span>), and bulk (<span class="ds">sharp__allen_cahn_2d</span>, <span class="ds">sharp__cahn_hilliard</span>, peaking well away from any interface). <span class="ds">ifc_heat</span> is the counter-example that kills a single-mode story: <span class="num">0.086</span> of its error at the interface and <span class="num">0.408</span> in the farthest bin. Any mechanism aimed only at sharpening interfaces leaves a large part of the panel untouched.</li>
+        <li><strong>Twelve and a half times the training budget does not relocate the failure.</strong> On <span class="ds">sharp__allen_cahn_2d</span> the spatial error profile at 2500 epochs is effectively identical to the one at 200, while the total error is <em>worse</em> at the larger budget.</li>
+        <li><strong>A zero-cost reference beats a trained model on several datasets &mdash; but far less than it first appeared.</strong> Simply resampling the coarse solution beats film at 2500 epochs on seven datasets, by up to <span class="num">242&times;</span> on <span class="ds">sharp__allen_cahn_2d</span>. That reference uses the test split's low-fidelity field, which no model may see &mdash; the scorer raises if it is exposed. The implementable version of the observation is worth 2 datasets and a <span class="num">1.054&times;</span> panel gain, not <span class="num">2.072&times;</span>. We recorded that correction against our own earlier draft, which had the larger number as its headline.</li>
+        <li><strong>Numbers move across hardware more than expected.</strong> Evaluating the same certified checkpoints on CPU versus H100 differs by up to <span class="num">148%</span> on <span class="ds">lid_driven_cavity_generated</span> and <span class="num">41%</span> on <span class="ds">heat_local</span>, traced to TF32 defaults in cuDNN convolutions with no pin in the model family. Any comparison between numbers produced on different machines needs the device stated. Every certification number here is H100.</li>
+      </ul>
+    </div></div>
+  </section>
+
+  <section>
+    <div class="sec-head"><div class="sec-num">07</div><h2>What is running now</h2></div>
+    <div class="body"><div class="content">
+      <p>All queued on a congested GPU partition as of this morning &mdash; 24 or more H100 and 45 or more H200 jobs pending ahead of ours.</p>
+
+      <div class="callout">
+        <h3>C4-ens &mdash; ensembling C3a's own three checkpoints, no additional training</h3>
+        <p>The CPU run is complete: the ensemble is better than the mean of its own three seeds on <strong>30 of 30</strong> datasets, geometric mean <span class="num">0.816</span> &mdash; 18% lower error &mdash; with the largest gains on the smooth and elliptic problems and the smallest on the sharp ones.</p>
+        <p>Combining that ratio with the H100 three-seed means, so the cross-device offset cancels, gives a device-consistent estimate of <strong class="num">+26.8%</strong> over the bar on 30 datasets and <strong class="num">+31.2%</strong> on 28, with six per-dataset clears above 1.5&times; (<span class="ds">sharp__fisher_kpp_2d</span> 6.75&times;, <span class="ds">sharp__helmholtz_2d</span> 1.74&times;, <span class="ds">sharp__burgers_1d</span> 1.70&times;, <span class="ds">poisson_generated</span> 1.64&times;, <span class="ds">sharp__allen_cahn_2d</span> 1.57&times;, <span class="ds">heat_generated</span> 1.53&times;) and 5 of 30 still below the bar.</p>
+        <p style="margin-bottom:0">This is an <em>estimate</em> until the GPU evaluation runs, and it carries three times the training compute of a single-seed bar, labelled as such wherever it appears.</p>
+      </div>
+
+      <p><strong>C4b</strong>, a capacity sweep on C3a's trunk in three configurations, has its pilot queued; it separates &ldquo;the mechanism helps&rdquo; from &ldquo;the model was under-parameterised&rdquo;. <strong>C4a</strong>, C3a's initial-condition channel combined with C3b's condition modulation, is mid-build with its specification and plan converged and seven implementation tasks committed. The <strong>seed-42 film probe</strong> on <span class="ds">lid_driven_cavity_generated</span> is queued on three device classes for section 5.</p>
+
+      <p>The judgement call ahead is whether the ensemble result, if it survives GPU evaluation, becomes the round's headline. A 27% panel improvement at zero extra training cost is a larger effect than any architecture change the round has produced &mdash; and it says something about the benchmark's variance rather than about the model, which is how we would report it.</p>
+    </div></div>
+  </section>
+
+  <footer>
+    <p>All figures traceable to <strong>mffp_autoresearch/round4/</strong> on branch <strong>round4-program</strong>. Certification arrays <strong>1354161</strong> (C3a) and <strong>1354162</strong> (C3b), 180/180 cells complete, zero failures. Re-verdict producer <strong>tools/make_bar_reverdict.py</strong> &rarr; <strong>state/bar_reverdict_r4_0013.json</strong>. Metric audit <strong>docs/audit_r4_bar_metric_identity.md</strong>; bar metric contract <strong>vendor/bar_metric_contract.json</strong>, status <strong>confirmed_by_mentor</strong> as of 2026-09-02. Prepared by Eloise with the autoresearch orchestrator.</p>
+  </footer>
+
+</div>
+
+<script>
+  var DATA = [
+    {d:"sharp__fisher_kpp_2d",r:6.4554,c:1},
+    {d:"sharp__allen_cahn_2d",r:1.4414,c:1},
+    {d:"sharp__cahn_hilliard",r:1.1984,c:1},
+    {d:"sharp__helmholtz_2d",r:1.1611,c:1},
+    {d:"sharp__phase_field_crystal_2d",r:1.1424,c:1},
+    {d:"ifc_poisson",r:1.1173,c:1},
+    {d:"sharp__porous_medium_1d",r:1.0925,c:1},
+    {d:"poisson_local",r:1.0389,c:1},
+    {d:"ext__wave_2d",r:1.0289,c:1},
+    {d:"era5",r:1.0206,c:1},
+    {d:"ext__eikonal_2d",r:1.0140,c:1},
+    {d:"poisson_generated",r:1.0092,c:1},
+    {d:"sharp__shallow_water_2d",r:1.0089,c:1},
+    {d:"ext__cahn_hilliard_2d",r:1.0033,c:1},
+    {d:"sharp__burgers_2d",r:0.9979,c:1},
+    {d:"sharp__burgers_1d",r:0.9965,c:1},
+    {d:"darcy_generated",r:0.9937,c:1},
+    {d:"heat_local",r:0.9893,c:1},
+    {d:"sharp__euler",r:0.9889,c:1},
+    {d:"heat_generated",r:0.9853,c:1},
+    {d:"ext__pressure_poisson_poiseuille",r:0.9832,c:1},
+    {d:"fluid",r:0.9785,c:1},
+    {d:"allen_cahn_generated",r:0.9641,c:1},
+    {d:"sharp__sod_1d",r:0.9335,c:1},
+    {d:"sharp__porous_medium_2d",r:0.9135,c:1},
+    {d:"ext__rayleigh_benard_2d",r:0.8834,c:1},
+    {d:"sharp__shallow_water_1d",r:0.8151,c:1},
+    {d:"ifc_heat",r:0.7651,c:0},
+    {d:"ext__helmholtz_2d",r:0.6366,c:1},
+    {d:"lid_driven_cavity_generated",r:0.5226,c:0}
+  ];
+
+  var LO = -0.40, HI = 0.86;               // log10 domain, padded past 0.52x and 6.46x
+  function pos(v) { return (Math.log(v) / Math.LN10 - LO) / (HI - LO) * 100; }
+  var PARITY = pos(1);
+
+  var host = document.getElementById("chart");
+  var html = '<div class="axis-row"><div></div><div class="axis">';
+  [0.5, 0.7, 1.0, 1.5, 2, 3, 5].forEach(function (t) {
+    html += '<div class="tick" style="left:' + pos(t).toFixed(3) + '%">' + (t === 1.0 ? "1.00" : t) + "</div>";
+  });
+  html += "</div><div></div></div>";
+
+  DATA.forEach(function (row) {
+    var p = pos(row.r);
+    var up = row.r >= 1;
+    var left = up ? PARITY : p;
+    var width = Math.max(Math.abs(p - PARITY), 0.15);
+    var excl = row.c ? "" : " excl";
+    var clear = row.r >= 1.5 ? " clear" : "";
+
+    html +=
+      '<div class="bar-row' + clear + '">' +
+        '<div class="bar-label' + excl + '">' + row.d + "</div>" +
+        '<div class="bar-track">' +
+          '<div class="parity" style="left:' + PARITY.toFixed(3) + '%"></div>' +
+          '<div class="bar ' + (up ? "up" : "down") + excl + '" style="left:' + left.toFixed(3) + "%;width:" + width.toFixed(3) + '%"></div>' +
+        "</div>" +
+        '<div class="bar-val">' + row.r.toFixed(2) + "</div>" +
+      "</div>";
+  });
+
+  host.innerHTML = html;
+</script>
