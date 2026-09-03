@@ -445,20 +445,29 @@
     flex-direction: column;
     gap: 0.85rem;
   }
+  /* Marker is absolutely positioned, NOT a grid column: as a grid, every
+     inline <strong>/<code> child became its own grid item and the item's
+     prose shattered across the columns. */
   .ask li {
     counter-increment: ask;
-    display: grid;
-    grid-template-columns: 1.7rem minmax(0, 1fr);
-    gap: 0.55rem;
+    position: relative;
+    padding-left: 1.95rem;
     margin: 0;
+    font-size: 0.925rem;
+    line-height: 1.58;
   }
   .ask li::before {
     content: counter(ask);
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 1.35rem;
+    text-align: right;
     font-family: var(--f-mono);
     font-size: 0.72rem;
     font-weight: 600;
     color: var(--flag);
-    padding-top: 0.22rem;
+    line-height: 1.95;
   }
 
   /* ---- footer ---- */
