@@ -143,3 +143,14 @@ python -c "import json;print(json.load(open('mffp_autoresearch/ladder_fix_propos
 # which datasets actually changed between releases
 MFFP_HF_REPO=nicksung/mf_field python hf_download_benchmark_42.py   # then diff sha256 against eloisezeng/mf_field
 ```
+
+## Addendum 2026-09-06 — three findings not covered by the 2026-08-06 audit
+
+| dataset | finding | class | action |
+|---|---|---|---|
+| `core/poisson_generated`, `core/poisson_local`, `core/ifc_poisson` | boundary data scaled by dx^2 in the Poisson generator -> field amplitude ∝ 1/n^2 per level (RMS ratios 4.31/4.16; MANIFEST copy_lf_rel_l2 16.5 / 66.8 / 78.3 are this scalar). Upstream (IFC) origin, reproduced in our re-implementation. | 4 — needs fixing | regenerated as `mf_field_v2/core/poisson_generated_v2`; the inherited two are flagged, not fixable by us |
+| `core/lid_driven_cavity_generated` (v1, 400/100) | `MAX_STEPS=8000` stops before steady state on 128^2 -> unconverged HF. The v2 (40/10) shipped here is converged. | 4 | 500-sample converged regeneration in progress (`mf_field_v2`) |
+| `ext/pressure_poisson_poiseuille` | coarse levels are block-mean(HF)+noise, i.e. synthetic LF, not a coarse solve | 1 for the surrogate track / excluded from the correction track | README caveat |
+
+Also corrected: `core/allen_cahn_generated` is 1-D (64/128/256 points), `core/heat_*` fields are space-time (t, x);
+`ext/helmholtz_2d` samples k across cavity resonances. Details in `DATASET_ISSUES_2026-09-06.md`.

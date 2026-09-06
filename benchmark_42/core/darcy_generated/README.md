@@ -27,3 +27,9 @@ import numpy as np
 z = np.load("train_l3.npz")
 x, y = z["x"], z["y"]
 ```
+
+## Parameters (2026-09-06)
+`x` = 16 standard-normal Karhunen-Loeve coefficients of log-permeability (exponential covariance, correlation length 0.2,
+sigma = 1, built on a 48x48 reference grid and bilinearly interpolated to each level). PDE: -div(k grad u) = 1 with zero
+Dirichlet boundaries, harmonic-averaged conductivities, interior nodes at spacing 1/(n+1). Amplitudes consistent across
+levels (RMS ratio 1.00-1.01). LF-abundant variant: `mf_field_v2/core/darcy_generated_lfabund`.

@@ -65,3 +65,8 @@ import numpy as np
 Xs = np.load("train/fidelity_8/Xs.npy")   # (100, 5)
 ys = np.load("train/fidelity_8/ys.npy")   # (100, 8, 8)
 ```
+
+## ⚠️ Known defect (found 2026-09-06)
+Same dx^2 amplitude scaling as `core/poisson_generated` / `core/poisson_local` (MANIFEST `copy_lf_rel_l2 = 78.3`):
+the LF field is tens of times larger than the HF field because each level solves a differently-scaled problem.
+The defect is in the upstream IFC generator. Excluded from the correction track (also: unpaired, HF-only test).

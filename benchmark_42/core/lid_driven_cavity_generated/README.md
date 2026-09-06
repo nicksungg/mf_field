@@ -28,3 +28,13 @@ import numpy as np
 z = np.load("train_l4.npz")
 x, y = z["x"], z["y"]
 ```
+
+## Version note (2026-09-06)
+Two versions exist. **v1** (400/100, HF 128x128, `mf_field/lid_driven_cavity_generated`) was produced by the original
+generator with `MAX_STEPS = 8000`, which stops time-marching before steady state on fine grids (128^2 needs ~28k steps,
+256^2 ~100k) — its "HF" fields are not converged and it should not be used as ground truth. **v2** (this dataset: 40/10,
+levels 32/64/128/256, `gen_cavity/lid_driven_cavity.py`, `MAX_STEPS = 200000`, tol 1e-5) is converged. The paper's
+dataset table (400/100, 128^2) describes v1; the harness has been running v2 since 2026-08-13.
+A 500-sample converged set (400/100, same solver, Re seed 42 so samples 0-49 coincide with v2) is being generated as
+`mf_field_v2/core/lid_driven_cavity_generated` (+ `_lfabund` with 4000 rows at 32^2/64^2).
+Parameter: `x = [Re]`, log-uniform in [100, 1000]; field = steady vorticity.
