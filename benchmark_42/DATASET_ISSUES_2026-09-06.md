@@ -28,7 +28,12 @@ Rows are index-paired across levels by construction ("aligned MF"); `ifc_*` were
    HF rows) were generated for the core and ext datasets; sharp variants need the SURF/PyClaw environment and are pending.
 7. **No cost accounting**: solver wall-time per level was never recorded; `mf_field_v2/*/meta.json` now carries
    `cost_per_solve` (median seconds per sample per level) for the regenerated sets.
-8. **Test-file identity**: 24 of 27 paired datasets have byte-identical test files between `mf_field_final` and the leaderboard
+8. **ext/cahn_hilliard_2d is not reconstructible from theta**: the current solver reproduces row 0 (rel 0.09) but not rows 1-2
+   (1.59, 1.06); the shipped ICs were seeded by batch position. Condition vector incomplete for the surrogate track;
+   correction track unaffected. No `_lfabund` variant.
+9. **darcy regeneration is not bit-reproducible** (KL eigenvector signs depend on the LAPACK build): the v2 tree keeps the
+   original paired arrays and appends 3600 new coarse rows drawn from the same distribution.
+10. **Test-file identity**: 24 of 27 paired datasets have byte-identical test files between `mf_field_final` and the leaderboard
    copies; `sharp/fisher_kpp_2d`, `sharp/allen_cahn_2d`, `sharp/phase_field_crystal_2d` differ (regenerated 2026-08-06),
    so surrogate-track numbers on those three must come from reruns on the final copies.
 
