@@ -1,0 +1,77 @@
+{
+  "jobs": [
+    {
+      "id": "5621602",
+      "name": "era5nine-coarse",
+      "command": [
+        "sbatch",
+        "--parsable",
+        "--job-name=era5nine-coarse",
+        "--chdir=/archive/user/mf_field/experiments/era5_nine_20260914",
+        "--array=0-19%4",
+        "--dependency=afterok:5621590",
+        "--kill-on-invalid-dep=yes",
+        "/archive/user/mf_field/experiments/era5_nine_20260914/gpu.sbatch",
+        "worker.py",
+        "coarse"
+      ]
+    },
+    {
+      "id": "5621603",
+      "name": "era5nine-oof",
+      "command": [
+        "sbatch",
+        "--parsable",
+        "--job-name=era5nine-oof",
+        "--chdir=/archive/user/mf_field/experiments/era5_nine_20260914",
+        "--dependency=afterok:5621602",
+        "--kill-on-invalid-dep=yes",
+        "/archive/user/mf_field/experiments/era5_nine_20260914/cpu.sbatch",
+        "run_coarse.py",
+        "--assemble"
+      ]
+    },
+    {
+      "id": "5621604",
+      "name": "era5nine-correct",
+      "command": [
+        "sbatch",
+        "--parsable",
+        "--job-name=era5nine-correct",
+        "--chdir=/archive/user/mf_field/experiments/era5_nine_20260914",
+        "--array=0-1%2",
+        "--dependency=afterok:5621603",
+        "--kill-on-invalid-dep=yes",
+        "/archive/user/mf_field/experiments/era5_nine_20260914/gpu.sbatch",
+        "worker.py",
+        "corrector"
+      ]
+    },
+    {
+      "id": "5621605",
+      "name": "era5nine-ensemble",
+      "command": [
+        "sbatch",
+        "--parsable",
+        "--job-name=era5nine-ensemble",
+        "--chdir=/archive/user/mf_field/experiments/era5_nine_20260914",
+        "--dependency=afterok:5621604",
+        "--kill-on-invalid-dep=yes",
+        "/archive/user/mf_field/experiments/era5_nine_20260914/cpu.sbatch",
+        "collect_nine.py"
+      ]
+    }
+  ],
+  "source_sha256": "2721959e5d6bc2a7440c1849c9e58eef5e3ba114cd554bfe99951b276f1dcb12",
+  "preflight_sha256": "dd9c724afa519af283eed30826dad697e3a375beda9378c77f2abec42cb4e615",
+  "complete": true,
+  "new_coarse_models": 20,
+  "new_correctors": 2,
+  "ensemble_experts": 9,
+  "reused_experts": 7,
+  "calibration_budgets": [
+    5,
+    10
+  ],
+  "reserved_evaluation_cases": 7
+}

@@ -1,0 +1,45 @@
+{
+  "model": "nomad_mf",
+  "dataset": "era5",
+  "splits": {
+    "test_hf": {
+      "nRMSE": 0.14163581115732196,
+      "rel_l2_mean": 0.14124545756673296,
+      "rel_l2_ci95_lo": 0.1340862425782383,
+      "rel_l2_ci95_hi": 0.14943107343703596,
+      "rel_l2_std": 0.011154320023528619,
+      "rel_l2_per_sample": [
+        0.16159331563257653,
+        0.14179718838643815,
+        0.14465419980028682,
+        0.1461352973784817,
+        0.13324392053975237,
+        0.1326433996332796,
+        0.12865088159631557
+      ],
+      "n_samples": 7
+    }
+  },
+  "n_params": 201601,
+  "train_seconds": 2622.3975160121918,
+  "eval_seconds": 0.0023186206817626953,
+  "latency_ms_per_sample": 0.33123152596609934,
+  "peak_mem_mb": 218.2144,
+  "work_grid": [
+    128,
+    256
+  ],
+  "eval_protocol": "full_field_on_working_grid",
+  "device": "cuda",
+  "hf_fidelity": 9,
+  "lf_fidelity": 1,
+  "mf_mechanism": "transfer_learning_pretrain_LF_finetune_HF",
+  "operator": "deeponet",
+  "decoder": "nonlinear",
+  "decoder_kind": "nonlinear_manifold_NOMAD",
+  "latent_dim": 128,
+  "hf_grid_native": [
+    721,
+    1440
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "dataset": "sharp__cahn_hilliard",
+  "model": "fno_hf_only_control",
+  "smoke": false,
+  "seed": 42,
+  "epochs": 2500,
+  "prediction_sha256": "7d1ff3d4182b826b0b42c3e3ed03f0d20005f04ec8eef715d12c1a996e425cf9",
+  "source_manifest_sha256": "77a2449ddb835dbd06dc2b08905869661f53e3780449657aac4728c4ec6c7638",
+  "plan_sha256": "21887b37d053dd51a5a484ba8490e9b33e153ffd4cc6ce5ca4bd46e499957689",
+  "n_base_hf_train": 400,
+  "elapsed_seconds": 2858.025839328766,
+  "train_seconds": 2855.1300559043884,
+  "device": "NVIDIA H200",
+  "matmul_tf32": false,
+  "cudnn_tf32": false,
+  "raw_test_answers_loaded": false,
+  "loaded_data_paths": [
+    "/archive/mf_field/experiments/automl_repair_20260913/data/sharp/cahn_hilliard/test_l1.npz",
+    "/archive/mf_field/experiments/automl_repair_20260913/data/sharp/cahn_hilliard/test_l2.npz",
+    "/archive/mf_field/experiments/automl_repair_20260913/data/sharp/cahn_hilliard/test_l3.npz",
+    "/archive/mf_field/experiments/automl_repair_20260913/data/sharp/cahn_hilliard/train_l1.npz",
+    "/archive/mf_field/experiments/automl_repair_20260913/data/sharp/cahn_hilliard/train_l2.npz",
+    "/archive/mf_field/experiments/automl_repair_20260913/data/sharp/cahn_hilliard/train_l3.npz"
+  ],
+  "extra": {
+    "device": "cuda",
+    "hf_fidelity": 3,
+    "lf_fidelity": 3,
+    "mf_mechanism": "transfer_learning_pretrain_LF_finetune_HF",
+    "conditioning": "film_on_X_per_block",
+    "hf_grid_native": [
+      256,
+      256
+    ],
+    "work_grid": [
+      256,
+      256
+    ]
+  }
+}

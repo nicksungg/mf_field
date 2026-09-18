@@ -1,0 +1,44 @@
+{
+  "dataset": "sharp__fisher_kpp_2d",
+  "model": "fno_fire_distcond",
+  "smoke": false,
+  "seed": 42,
+  "epochs": 2500,
+  "prediction_sha256": "3045b99a3f3ffe1168a17974597e4a2e954b58422fb42bf793eaf687f39a2b65",
+  "source_manifest_sha256": "77a2449ddb835dbd06dc2b08905869661f53e3780449657aac4728c4ec6c7638",
+  "plan_sha256": "21887b37d053dd51a5a484ba8490e9b33e153ffd4cc6ce5ca4bd46e499957689",
+  "n_base_hf_train": 400,
+  "elapsed_seconds": 16052.485533237457,
+  "train_seconds": 16047.938582658768,
+  "device": "NVIDIA H200",
+  "matmul_tf32": false,
+  "cudnn_tf32": false,
+  "raw_test_answers_loaded": false,
+  "loaded_data_paths": [
+    "/archive/mf_field/experiments/automl_repair_20260913/data/sharp/fisher_kpp_2d/test_l1.npz",
+    "/archive/mf_field/experiments/automl_repair_20260913/data/sharp/fisher_kpp_2d/test_l2.npz",
+    "/archive/mf_field/experiments/automl_repair_20260913/data/sharp/fisher_kpp_2d/test_l3.npz",
+    "/archive/mf_field/experiments/automl_repair_20260913/data/sharp/fisher_kpp_2d/train_l1.npz",
+    "/archive/mf_field/experiments/automl_repair_20260913/data/sharp/fisher_kpp_2d/train_l2.npz",
+    "/archive/mf_field/experiments/automl_repair_20260913/data/sharp/fisher_kpp_2d/train_l3.npz"
+  ],
+  "extra": {
+    "device": "cuda",
+    "hf_fidelity": 3,
+    "lf_fidelity": 1,
+    "mf_mechanism": "FIRE_distribution_conditioned_residual_HF=muLF+delta(aug)",
+    "ensemble_size": 5,
+    "aug_channels": [
+      "mu",
+      "sigma",
+      "q10",
+      "q50",
+      "q90"
+    ],
+    "lf_ensemble_gaussian_nll": 55953.37347362434,
+    "work_grid": [
+      256,
+      256
+    ]
+  }
+}

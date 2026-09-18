@@ -1,0 +1,20 @@
+{
+  "_doc": "Hyperparameters for non-smoke full runs of fno_coregionalization. The smoke pipeline in smoke_eval.py uses SMOKE_DEFAULTS; this file documents the larger config that should be used when wall-time is not the constraint. Not read automatically — kept as a reference for future cycle Builders to wire in once the per-call timeout is relaxed.",
+  "K": 20,
+  "n_blocks": 6,
+  "modes": 16,
+  "hidden_channels": 128,
+  "b_hidden": 128,
+  "epochs": 400,
+  "lr": 3e-4,
+  "weight_decay": 1e-5,
+  "batch_size": 8,
+  "val_frac": 0.1,
+  "_rationale": {
+    "K": "Larger basis (20 vs 10) better expresses the coregionalization across continuous m; the paper uses K=20 on Poisson.",
+    "n_blocks": "Deeper FNO captures finer-scale spectral structure once epochs allow it to fit.",
+    "modes": "More Fourier modes (16 vs 12) keeps higher-frequency content; only useful with enough capacity downstream.",
+    "hidden_channels": "Double the channels — capacity bumps that are budget-prohibitive at smoke scale.",
+    "epochs": "400 vs 200 to let cosine schedule fully anneal at the larger model size."
+  }
+}

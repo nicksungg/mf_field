@@ -1,0 +1,80 @@
+\section{Checking comparison coverage}
+\label{app:reanalysis}
+We test whether the mixture gains depend on comparison coverage using the
+original trained models and stored predictions. These diagnostics cover the
+original 17 PDE datasets, a subset of the 21 PDE datasets in the primary
+comparison. Historical evaluation outcomes had already influenced development
+and scope selection, so these analyses are retrospective. The direct relative
+$L^2$ fit in Appendix~\ref{app:geometry} is reported as a separate control.
+
+\subsection{Repeating all central comparisons on fixed subsets}
+\label{app:subsets}
+The 14 dataset subset excludes Poisson II because of inherited numerical
+defects, Cahn Hilliard I because its parameters omit realization information,
+and Pressure Poisson because its coarse fields are synthetic.
+The 15 dataset subset excludes Heat II and Burgers to check sensitivity to
+the two B8 entries recovered by checkpoint evaluation. Their
+intersection has 12 datasets. Within the revised collection, these subsets use
+documented data properties and the recovered entries. None is a newly certified
+benchmark. The original seven class assignment is retained, with normalization
+over represented classes in each subset.
+
+\begin{table}[h!]
+\centering\small\setlength{\tabcolsep}{3pt}
+\caption{\textbf{Sensitivity of the principal comparisons.} Each entry gives the
+class ratio followed by the equal dataset ratio. Library and baseline denote
+the respective best models identified after evaluation. Both mixtures use five fitting examples. Training budgets remain unequal.}
+\label{tab:reviewsensitivity}
+\resizebox{\linewidth}{!}{\input{tables/review_sensitivity_main}}
+\end{table}
+
+The common 15 setting comparison is especially relevant to a claim of beating
+individual models. The fitted mixture has ratios 0.916 across classes and 1.020
+across datasets to the hindsight best library member. The conclusion changes
+with aggregation and coverage even though the fitted mixture improves on
+fitting based single model selection.
+Table~\ref{tab:reviewsubsets} reports all headline comparisons under each scope.
+
+\begin{table}[p]
+\centering\footnotesize
+\caption{\textbf{All headline comparisons under each fixed scope.} The four
+values of $N$ refer to Table~\ref{tab:reviewsensitivity}. Best library and best
+baseline are retrospective minima of partition averaged errors. W, T, and L
+use the one percent threshold. Methods use five fitting examples.}
+\label{tab:reviewsubsets}\input{tables/review_subsets}
+\end{table}
+
+\begin{table}[p]
+\centering\footnotesize
+\caption{\textbf{Budget and subset sensitivity of the two mixtures.} Ratios compare with the selected model within each scope.
+$N=17,14,15$ denote the historical, audit retained, and common baseline subsets.
+All fits share the original models.}
+\label{tab:reviewbudgets}\input{tables/review_fixed_budgets}
+\end{table}
+
+\subsection{Duplicate library entries and interpretability of weights}
+The prediction source hashes identify the same complete archive for M8 and M9
+on Darcy. These two entries therefore do not supply independent
+prediction diversity on that dataset. The reanalysis preserves the original
+library, including these entries, so it measures the stated historical procedure.
+For identical models, many fitted weight allocations have the same combined
+field. The inverse error mixture is not invariant to duplicating an entry, since each
+copy receives weight before normalization. Effective model count measures
+concentration over entries, not the number of distinct mechanisms. A deduplicated
+library is a different design whose utility requires a separately specified
+evaluation.
+
+\subsection{Additional evaluation inputs for Heat I}
+\label{app:additionalheat}
+This supplementary experiment evaluates Heat I, one of the 22 datasets, on
+additional inputs. It uses 40 new fitting pool cases and 128 new evaluation
+cases with the previously trained library. Its scores are reported separately
+from the main comparison tables. It evaluates the three main rules and
+predates the direct relative $L^2$ fitting control.
+\begin{table}[h!]
+\centering\small
+\caption{\textbf{Additional Heat I inputs.} Mean relative $L^2$ errors in percent. Three
+fitting selections share the same 128 evaluation cases and trained models.
+Selected model, inverse error mixture, and fitted mixture are the fixed rules in Section~\ref{sec:method}.}
+\label{tab:fresh}\input{tables/fresh_heat_main}
+\end{table}

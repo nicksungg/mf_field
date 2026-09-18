@@ -1,0 +1,20 @@
+\subsection{From a trained surrogate library to a deployed ensemble}\label{app:algorithm}
+\refstepcounter{algorithm}\label{alg:calibration}
+\begin{center}
+\fbox{\begin{minipage}{0.94\linewidth}\small
+\textbf{Algorithm \thealgorithm: train models, fit the ensemble, and predict}\par
+\textbf{Input:} LF/HF training tables, $K$ reserved fine cases, fixed model recipes,
+and one prescribed rule: Selected model, Inverse error mixture, or Fitted mixture.\par
+1. Check input identities and working grids within the dataset. Train the surrogate models
+using training data only. Record unresolved units or simulation metadata.\par
+2. Predict fields for the fitting inputs and compute $G_1,\ldots,G_K$.\par
+3. Fit the prescribed rule on all $K$ cases using the definitions in Section~\ref{sec:method}.\par
+4. Save preprocessing, model identities, and fitted weights.\par
+\textbf{Predict:} combine model predictions at new parameters using Equation~\eqref{eq:mixture}.\par
+\textbf{Evaluate:} score reserved fine answers only after saving these choices.
+\end{minipage}}
+\end{center}
+The algorithm separates surrogate training from ensemble fitting. The bundled
+program implements steps 2 to 4 and combines saved model predictions for new
+inputs. Dataset adapters and base model training remain separate components.
+The three rules use the same fitting and evaluation cases within each comparison.

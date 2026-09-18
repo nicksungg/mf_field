@@ -1,0 +1,46 @@
+{
+  "task": {
+    "id": "st_hf_pod_gp__poisson_generated_v2",
+    "model": "st_hf_pod_gp",
+    "dataset": "poisson_generated_v2",
+    "rel": "core/poisson_generated_v2",
+    "seed": 42,
+    "device": "cpu",
+    "note": "Classical estimator state was not saved; reproduce its original training-only fit."
+  },
+  "seconds": 7.128376245498657,
+  "replay": {
+    "device": "cpu",
+    "base_retrained": true,
+    "reason": "POD-GP estimator was not checkpointed",
+    "raw_units_multiplier": 0.9115880727767944,
+    "registration": "generic"
+  },
+  "n": 100,
+  "work_grid": [
+    64,
+    64
+  ],
+  "base_train_overlap": 0,
+  "rel_l2_mean": 6.521360366399028e-05,
+  "archive_mean": 6.521350587718189e-05,
+  "prediction_sha256": "fc14df7dced3d0534c3f6848f8756b82b9cc589f77bd5d51080c03e80c30c31d",
+  "model_metadata": {
+    "method": "fine-only POD + shared-ARD-RBF GP emulator",
+    "n_hf_train": 400,
+    "fit_seconds": 6.044390678405762,
+    "hf_pod_modes": 5,
+    "hf_pod_energy_captured": 0.9999999999999857,
+    "hf_gp_log_lengthscales": [
+      4.0,
+      3.742626038040692,
+      3.7997698157348934,
+      3.8453295920384605,
+      3.994358368070561
+    ],
+    "hf_gp_log_signal": 2.2209579076672177,
+    "hf_gp_log_noise": -7.0,
+    "hf_gp_nlml": -11320.902386964437,
+    "hf_gp_converged": true
+  }
+}

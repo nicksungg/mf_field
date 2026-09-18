@@ -1,0 +1,324 @@
+{
+  "source_manifest_sha256": "77a2449ddb835dbd06dc2b08905869661f53e3780449657aac4728c4ec6c7638",
+  "excluded_nodes": "node2900,node4200,node2901,node4002,node1702,node2119,node2809,node2810,node4004,node4007,node4008,node5003,node5004,node5005,node5101,node5103,node5104,node5106,node5202,node5203,node5204",
+  "jobs": [
+    {
+      "id": "22704263",
+      "name": "automl-base",
+      "command": [
+        "sbatch",
+        "--parsable",
+        "--job-name=automl-base",
+        "--exclude=node2900,node4200,node2901,node4002,node1702,node2119,node2809,node2810,node4004,node4007,node4008,node5003,node5004,node5005,node5101,node5103,node5104,node5106,node5202,node5203,node5204",
+        "--array=0-28%4",
+        "/archive/mf_field/experiments/automl_repair_20260913/gpu.sbatch",
+        "array_worker.py",
+        "base_gpu"
+      ]
+    },
+    {
+      "id": "22704264",
+      "name": "automl-pod",
+      "command": [
+        "sbatch",
+        "--parsable",
+        "--job-name=automl-pod",
+        "--exclude=node2900,node4200,node2901,node4002,node1702,node2119,node2809,node2810,node4004,node4007,node4008,node5003,node5004,node5005,node5101,node5103,node5104,node5106,node5202,node5203,node5204",
+        "--array=0-3%2",
+        "/archive/mf_field/experiments/automl_repair_20260913/cpu.sbatch",
+        "array_worker.py",
+        "base_cpu"
+      ]
+    },
+    {
+      "id": "22704265",
+      "name": "automl-lf-cahn_hilliar",
+      "command": [
+        "sbatch",
+        "--parsable",
+        "--job-name=automl-lf-cahn_hilliar",
+        "--exclude=node2900,node4200,node2901,node4002,node1702,node2119,node2809,node2810,node4004,node4007,node4008,node5003,node5004,node5005,node5101,node5103,node5104,node5106,node5202,node5203,node5204",
+        "--array=0-19%1",
+        "/archive/mf_field/experiments/automl_repair_20260913/gpu.sbatch",
+        "array_worker.py",
+        "coarse",
+        "--dataset",
+        "sharp__cahn_hilliard"
+      ]
+    },
+    {
+      "id": "22704266",
+      "name": "automl-oof-cahn_hilliar",
+      "command": [
+        "sbatch",
+        "--parsable",
+        "--job-name=automl-oof-cahn_hilliar",
+        "--exclude=node2900,node4200,node2901,node4002,node1702,node2119,node2809,node2810,node4004,node4007,node4008,node5003,node5004,node5005,node5101,node5103,node5104,node5106,node5202,node5203,node5204",
+        "--dependency=afterok:22704265",
+        "--kill-on-invalid-dep=yes",
+        "/archive/mf_field/experiments/automl_repair_20260913/cpu.sbatch",
+        "run_uq.py",
+        "--dataset",
+        "sharp__cahn_hilliard",
+        "--kind",
+        "assemble"
+      ]
+    },
+    {
+      "id": "22704267",
+      "name": "automl-corr-cahn_hilliar",
+      "command": [
+        "sbatch",
+        "--parsable",
+        "--job-name=automl-corr-cahn_hilliar",
+        "--exclude=node2900,node4200,node2901,node4002,node1702,node2119,node2809,node2810,node4004,node4007,node4008,node5003,node5004,node5005,node5101,node5103,node5104,node5106,node5202,node5203,node5204",
+        "--array=0-1%1",
+        "--dependency=afterok:22704266",
+        "--kill-on-invalid-dep=yes",
+        "/archive/mf_field/experiments/automl_repair_20260913/gpu.sbatch",
+        "array_worker.py",
+        "corrector",
+        "--dataset",
+        "sharp__cahn_hilliard"
+      ]
+    },
+    {
+      "id": "22704268",
+      "name": "automl-lf-fisher_kpp_2",
+      "command": [
+        "sbatch",
+        "--parsable",
+        "--job-name=automl-lf-fisher_kpp_2",
+        "--exclude=node2900,node4200,node2901,node4002,node1702,node2119,node2809,node2810,node4004,node4007,node4008,node5003,node5004,node5005,node5101,node5103,node5104,node5106,node5202,node5203,node5204",
+        "--array=0-19%1",
+        "/archive/mf_field/experiments/automl_repair_20260913/gpu.sbatch",
+        "array_worker.py",
+        "coarse",
+        "--dataset",
+        "sharp__fisher_kpp_2d"
+      ]
+    },
+    {
+      "id": "22704270",
+      "name": "automl-oof-fisher_kpp_2",
+      "command": [
+        "sbatch",
+        "--parsable",
+        "--job-name=automl-oof-fisher_kpp_2",
+        "--exclude=node2900,node4200,node2901,node4002,node1702,node2119,node2809,node2810,node4004,node4007,node4008,node5003,node5004,node5005,node5101,node5103,node5104,node5106,node5202,node5203,node5204",
+        "--dependency=afterok:22704268",
+        "--kill-on-invalid-dep=yes",
+        "/archive/mf_field/experiments/automl_repair_20260913/cpu.sbatch",
+        "run_uq.py",
+        "--dataset",
+        "sharp__fisher_kpp_2d",
+        "--kind",
+        "assemble"
+      ]
+    },
+    {
+      "id": "22704272",
+      "name": "automl-corr-fisher_kpp_2",
+      "command": [
+        "sbatch",
+        "--parsable",
+        "--job-name=automl-corr-fisher_kpp_2",
+        "--exclude=node2900,node4200,node2901,node4002,node1702,node2119,node2809,node2810,node4004,node4007,node4008,node5003,node5004,node5005,node5101,node5103,node5104,node5106,node5202,node5203,node5204",
+        "--array=0-1%1",
+        "--dependency=afterok:22704270",
+        "--kill-on-invalid-dep=yes",
+        "/archive/mf_field/experiments/automl_repair_20260913/gpu.sbatch",
+        "array_worker.py",
+        "corrector",
+        "--dataset",
+        "sharp__fisher_kpp_2d"
+      ]
+    },
+    {
+      "id": "22704273",
+      "name": "automl-lf-allen_cahn_2",
+      "command": [
+        "sbatch",
+        "--parsable",
+        "--job-name=automl-lf-allen_cahn_2",
+        "--exclude=node2900,node4200,node2901,node4002,node1702,node2119,node2809,node2810,node4004,node4007,node4008,node5003,node5004,node5005,node5101,node5103,node5104,node5106,node5202,node5203,node5204",
+        "--array=0-19%1",
+        "/archive/mf_field/experiments/automl_repair_20260913/gpu.sbatch",
+        "array_worker.py",
+        "coarse",
+        "--dataset",
+        "sharp__allen_cahn_2d"
+      ]
+    },
+    {
+      "id": "22704274",
+      "name": "automl-oof-allen_cahn_2",
+      "command": [
+        "sbatch",
+        "--parsable",
+        "--job-name=automl-oof-allen_cahn_2",
+        "--exclude=node2900,node4200,node2901,node4002,node1702,node2119,node2809,node2810,node4004,node4007,node4008,node5003,node5004,node5005,node5101,node5103,node5104,node5106,node5202,node5203,node5204",
+        "--dependency=afterok:22704273",
+        "--kill-on-invalid-dep=yes",
+        "/archive/mf_field/experiments/automl_repair_20260913/cpu.sbatch",
+        "run_uq.py",
+        "--dataset",
+        "sharp__allen_cahn_2d",
+        "--kind",
+        "assemble"
+      ]
+    },
+    {
+      "id": "22704275",
+      "name": "automl-corr-allen_cahn_2",
+      "command": [
+        "sbatch",
+        "--parsable",
+        "--job-name=automl-corr-allen_cahn_2",
+        "--exclude=node2900,node4200,node2901,node4002,node1702,node2119,node2809,node2810,node4004,node4007,node4008,node5003,node5004,node5005,node5101,node5103,node5104,node5106,node5202,node5203,node5204",
+        "--array=0-1%1",
+        "--dependency=afterok:22704274",
+        "--kill-on-invalid-dep=yes",
+        "/archive/mf_field/experiments/automl_repair_20260913/gpu.sbatch",
+        "array_worker.py",
+        "corrector",
+        "--dataset",
+        "sharp__allen_cahn_2d"
+      ]
+    },
+    {
+      "id": "22704276",
+      "name": "automl-lf-phase_field_",
+      "command": [
+        "sbatch",
+        "--parsable",
+        "--job-name=automl-lf-phase_field_",
+        "--exclude=node2900,node4200,node2901,node4002,node1702,node2119,node2809,node2810,node4004,node4007,node4008,node5003,node5004,node5005,node5101,node5103,node5104,node5106,node5202,node5203,node5204",
+        "--array=0-19%1",
+        "/archive/mf_field/experiments/automl_repair_20260913/gpu.sbatch",
+        "array_worker.py",
+        "coarse",
+        "--dataset",
+        "sharp__phase_field_crystal_2d"
+      ]
+    },
+    {
+      "id": "22704277",
+      "name": "automl-oof-phase_field_",
+      "command": [
+        "sbatch",
+        "--parsable",
+        "--job-name=automl-oof-phase_field_",
+        "--exclude=node2900,node4200,node2901,node4002,node1702,node2119,node2809,node2810,node4004,node4007,node4008,node5003,node5004,node5005,node5101,node5103,node5104,node5106,node5202,node5203,node5204",
+        "--dependency=afterok:22704276",
+        "--kill-on-invalid-dep=yes",
+        "/archive/mf_field/experiments/automl_repair_20260913/cpu.sbatch",
+        "run_uq.py",
+        "--dataset",
+        "sharp__phase_field_crystal_2d",
+        "--kind",
+        "assemble"
+      ]
+    },
+    {
+      "id": "22704278",
+      "name": "automl-corr-phase_field_",
+      "command": [
+        "sbatch",
+        "--parsable",
+        "--job-name=automl-corr-phase_field_",
+        "--exclude=node2900,node4200,node2901,node4002,node1702,node2119,node2809,node2810,node4004,node4007,node4008,node5003,node5004,node5005,node5101,node5103,node5104,node5106,node5202,node5203,node5204",
+        "--array=0-1%1",
+        "--dependency=afterok:22704277",
+        "--kill-on-invalid-dep=yes",
+        "/archive/mf_field/experiments/automl_repair_20260913/gpu.sbatch",
+        "array_worker.py",
+        "corrector",
+        "--dataset",
+        "sharp__phase_field_crystal_2d"
+      ]
+    },
+    {
+      "id": "22704279",
+      "name": "automl-score-era5",
+      "command": [
+        "sbatch",
+        "--parsable",
+        "--job-name=automl-score-era5",
+        "--exclude=node2900,node4200,node2901,node4002,node1702,node2119,node2809,node2810,node4004,node4007,node4008,node5003,node5004,node5005,node5101,node5103,node5104,node5106,node5202,node5203,node5204",
+        "--dependency=afterany:22704263_0:22704263_1:22704263_2:22704263_3:22704263_4:22704263_5:22704263_6:22704264_0",
+        "/archive/mf_field/experiments/automl_repair_20260913/cpu.sbatch",
+        "collect_dataset.py",
+        "--dataset",
+        "era5"
+      ]
+    },
+    {
+      "id": "22704280",
+      "name": "automl-score-sharp__cahn_",
+      "command": [
+        "sbatch",
+        "--parsable",
+        "--job-name=automl-score-sharp__cahn_",
+        "--exclude=node2900,node4200,node2901,node4002,node1702,node2119,node2809,node2810,node4004,node4007,node4008,node5003,node5004,node5005,node5101,node5103,node5104,node5106,node5202,node5203,node5204",
+        "--dependency=afterany:22704263_7:22704267",
+        "/archive/mf_field/experiments/automl_repair_20260913/cpu.sbatch",
+        "collect_dataset.py",
+        "--dataset",
+        "sharp__cahn_hilliard"
+      ]
+    },
+    {
+      "id": "22704281",
+      "name": "automl-score-sharp__fishe",
+      "command": [
+        "sbatch",
+        "--parsable",
+        "--job-name=automl-score-sharp__fishe",
+        "--exclude=node2900,node4200,node2901,node4002,node1702,node2119,node2809,node2810,node4004,node4007,node4008,node5003,node5004,node5005,node5101,node5103,node5104,node5106,node5202,node5203,node5204",
+        "--dependency=afterany:22704263_8:22704263_9:22704263_10:22704263_11:22704263_12:22704263_13:22704263_14:22704264_1:22704272",
+        "/archive/mf_field/experiments/automl_repair_20260913/cpu.sbatch",
+        "collect_dataset.py",
+        "--dataset",
+        "sharp__fisher_kpp_2d"
+      ]
+    },
+    {
+      "id": "22704282",
+      "name": "automl-score-sharp__allen",
+      "command": [
+        "sbatch",
+        "--parsable",
+        "--job-name=automl-score-sharp__allen",
+        "--exclude=node2900,node4200,node2901,node4002,node1702,node2119,node2809,node2810,node4004,node4007,node4008,node5003,node5004,node5005,node5101,node5103,node5104,node5106,node5202,node5203,node5204",
+        "--dependency=afterany:22704263_15:22704263_16:22704263_17:22704263_18:22704263_19:22704263_20:22704263_21:22704264_2:22704275",
+        "/archive/mf_field/experiments/automl_repair_20260913/cpu.sbatch",
+        "collect_dataset.py",
+        "--dataset",
+        "sharp__allen_cahn_2d"
+      ]
+    },
+    {
+      "id": "22704283",
+      "name": "automl-score-sharp__phase",
+      "command": [
+        "sbatch",
+        "--parsable",
+        "--job-name=automl-score-sharp__phase",
+        "--exclude=node2900,node4200,node2901,node4002,node1702,node2119,node2809,node2810,node4004,node4007,node4008,node5003,node5004,node5005,node5101,node5103,node5104,node5106,node5202,node5203,node5204",
+        "--dependency=afterany:22704263_22:22704263_23:22704263_24:22704263_25:22704263_26:22704263_27:22704263_28:22704264_3:22704278",
+        "/archive/mf_field/experiments/automl_repair_20260913/cpu.sbatch",
+        "collect_dataset.py",
+        "--dataset",
+        "sharp__phase_field_crystal_2d"
+      ]
+    }
+  ],
+  "base_gpu_tasks": 29,
+  "base_cpu_tasks": 4,
+  "coarse_tasks": 80,
+  "corrector_tasks": 8,
+  "era5_neural_models": 7,
+  "era5_ensemble_experts": 7,
+  "submission_complete": true
+}

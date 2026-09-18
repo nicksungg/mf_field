@@ -1,0 +1,48 @@
+{
+  "model": "nomad_mf",
+  "dataset": "lid_driven_cavity_generated",
+  "splits": {
+    "test_hf": {
+      "nRMSE": 0.4796470836673143,
+      "rel_l2_mean": 0.480817231482075,
+      "rel_l2_ci95_lo": 0.4691747720104181,
+      "rel_l2_ci95_hi": 0.49488974954614584,
+      "rel_l2_std": 0.022253997695063296,
+      "rel_l2_per_sample": [
+        0.4703259570419745,
+        0.47434959294348794,
+        0.45898583635078605,
+        0.49298666761476906,
+        0.4742821759456839,
+        0.4700917245089631,
+        0.4783516867319029,
+        0.4981611951728951,
+        0.4579333233125924,
+        0.5327041551976948
+      ],
+      "n_samples": 10
+    }
+  },
+  "n_params": 198785,
+  "train_seconds": 327.58341121673584,
+  "eval_seconds": 0.00586247444152832,
+  "latency_ms_per_sample": 0.586247444152832,
+  "peak_mem_mb": 283.270656,
+  "work_grid": [
+    256,
+    256
+  ],
+  "eval_protocol": "full_field_on_working_grid",
+  "device": "cuda",
+  "hf_fidelity": 4,
+  "lf_fidelity": 1,
+  "mf_mechanism": "transfer_learning_pretrain_LF_finetune_HF",
+  "operator": "deeponet",
+  "decoder": "nonlinear",
+  "decoder_kind": "nonlinear_manifold_NOMAD",
+  "latent_dim": 128,
+  "hf_grid_native": [
+    256,
+    256
+  ]
+}

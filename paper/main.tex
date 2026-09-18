@@ -1,0 +1,88 @@
+\documentclass{article}
+\usepackage{iclr2026_conference,times}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amssymb,amsthm,booktabs,graphicx,array,multirow}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{url}
+\usepackage{etoolbox}
+\setcitestyle{citesep={,},yysep={,}}
+\makeatletter
+\patchcmd{\@maketitle}{Paper under double-blind review}{Paper under anonymous review}{}{}
+\makeatother
+% Avoid automatic word splitting in the manuscript.
+\hyphenpenalty=10000
+\exhyphenpenalty=10000
+\emergencystretch=2em
+\hypersetup{colorlinks=true,linkcolor=blue!55!black,citecolor=blue!55!black,urlcolor=blue!55!black,
+ pdftitle={AutoMF: Automated Ensembles for Multifidelity Field Prediction},pdfauthor={Anonymous authors}}
+\newcommand{\method}{\textsc{AutoMF}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\calD}{\mathcal{D}}
+\newcommand{\simplex}{\Delta_M}
+\newcommand{\norm}[1]{\left\lVert#1\right\rVert}
+\newtheorem{proposition}{Proposition}
+\newcounter{algorithm}
+\title{AutoMF: Automated Ensembles\\for Multifidelity Field Prediction}
+\author{Anonymous authors}
+% Anonymous ICLR review layout. The manuscript has not been submitted.
+\begin{document}
+\maketitle
+\begin{abstract}
+Learning to predict physical fields requires fine simulation data that can be
+expensive to obtain. Multifidelity learning combines inexpensive coarse solutions
+with fine data to improve generalization to new parameter inputs, but the most
+effective way to use these fidelities varies across problems. We present
+\method{}, an automated ensemble workflow for multifidelity field prediction.
+We construct its library by adapting neural operators, convolutional networks,
+and reduced basis models into nine parameter to field surrogates. For each dataset, five additional input and
+fine solution pairs, reserved from surrogate training, guide model selection
+and ensemble weighting. The workflow either selects an individual model,
+weights models according to their individual errors, or jointly fits weights
+to minimize the combined prediction error. Each model receives one weight that
+remains fixed across the field and across new inputs, allowing prediction
+without an additional coarse simulation. We assemble a benchmark of 22 datasets
+spanning seven classes of partial differential equations (PDEs) and climate
+emulation, combining our simulations with imported data to compare individual
+models, additional baselines, and ensembles. Different models lead on different datasets, motivating their
+combination. Compared with selecting the lowest error individual model,
+the fitted ensemble improves accuracy on 16
+datasets and reduces geometric mean relative $L^2$ error by 11.6\% when averaged
+across PDE classes and 7.5\% when averaged across all datasets.
+\end{abstract}
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=\linewidth]{figures/graphical_abstract.pdf}
+\caption{\textbf{An ERA5 example from training data to field prediction.}
+The input $x$ comprises 12 emissions variables and the target $y$ is a fine ERA5
+temperature field \citep{hersbach2020,niu2024}. Five reserved fine examples
+determine inverse error weights $w_m$ for nine model fields $f_m(x)$, whose weighted average is
+$\widehat y(x)$. Each weight applies across the whole field. The training pair
+shares one input, while predictions use a separate reserved input.}
+\label{fig:overview}
+\end{figure}
+
+\input{sections/introduction}
+\input{sections/related_work}
+\input{sections/method}
+\input{sections/experiments}
+\input{sections/results}
+\input{sections/analysis}
+\input{sections/climate}
+\input{sections/discussion}
+\label{main:end}
+
+\clearpage
+\bibliographystyle{iclr2026_conference}
+\phantomsection\label{references:start}
+\bibliography{references}
+\label{references:end}
+\clearpage
+\appendix
+\phantomsection\label{appendices:start}
+\input{sections/appendix}
+\input{sections/statements}
+\end{document}

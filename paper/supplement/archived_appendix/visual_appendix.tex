@@ -1,0 +1,217 @@
+\clearpage
+\section{Additional reference implementations on the ensemble test subsets}
+\label{app:matchedbaselines}
+The baseline tables answer whether the library offers better predictions than
+the additional reference implementations on the cases used by the ensembles.
+We score each baseline on the same evaluation rows within each of the three
+partitions, excluding that partition's fitting cases. Training uses a
+single seed, and provenance determines which saved predictions are eligible.
+The verified comparison contains 273 baseline entries across 21 PDE datasets.
+For fidelity basis FNO on Heat II and Burgers, we regenerate errors from the
+fixed final campaign checkpoints on identified test inputs, replacing archived
+scores whose case correspondence was unverified. These entries are included
+without retraining. ERA5 is the climate dataset
+and uses its separate input disjoint experiment. Its twelve completed baseline
+entries and training mean control are scored on exactly the same seven evaluation
+inputs as all nine library members and their ensembles. These twelve entries
+represent eleven independent fits, because B10 reuses B9. ERA5 has complete
+baseline coverage for B1 to B11. The additional controls B12 and B13 are outside
+the ranked comparison, and a dash marks an unavailable control.
+
+Baselines follow the training settings of the evaluated benchmark implementations,
+with adaptations documented in Appendix~\ref{app:adaptations}.
+Source file hashes, saved target identities, or checkpoint evaluation establish case correspondence.
+Where field storage has lower precision, a global normalization scale and
+storage rounding are allowed when checking row identity. Reported errors use
+the original numerical predictions. These checks establish common evaluation
+cases, while training budgets, validation procedures, and inference precision
+remain different across implementations. They therefore support comparison
+under a common test set, without establishing equal training cost or total
+fine label exposure. Repeated partitions share trained models and do not
+estimate training seed variance.
+
+For example, the inspected Darcy recipes allocate 360 fine rows to fitting and
+40 to internal validation for B3 to B5, whereas B1, B2, and the library transfer
+recipe fit 400 rows before ensemble fitting. The former still consume 400
+fine labels, but their fitting and validation roles differ. Additional
+fitting examples are counted separately. These comparisons describe the
+available recipes rather than attributing the error differences to architecture
+or multifidelity information alone. Some saved timing fields measure prediction
+export rather than original training, so they cannot support a common training
+cost estimate. The fitted weights also combine a heterogeneous library that
+includes a fine only model. Without a matched fine only ensemble and label
+allocation controls, the resulting gain is evidence for combination of this
+library, not an isolated multifidelity benefit.
+
+\begin{table}[h!]
+\centering\footnotesize\setlength{\tabcolsep}{3pt}
+\caption{\textbf{Additional reference implementations on identical test subsets.}
+Mean relative $L^2$ errors in percent, averaged over three partitions. B1:
+Autoregressive POD GP. B2: Nonlinear POD GP. B3: composite MF MLP. B4: composite MF DeepONet.
+B5: the latent MF network. B6: nonlinear decoder transfer. B7: MFRNP adapter.
+The last two columns repeat the $K=5$ mixtures on exactly these cases.
+ERA5 is a separate row. A dash indicates a result not reported on that split. Imported rows use MFRNP data \citep{niu2024}
+and ERA5 reanalysis \citep{hersbach2020}.}
+\label{tab:baseline_detail1}
+\resizebox{\linewidth}{!}{\input{tables/paper_baselines_detail_1}}
+\end{table}
+
+\begin{table}[t]
+\centering\footnotesize\setlength{\tabcolsep}{3pt}
+\caption{\textbf{Remaining reference implementations.}
+B8: fidelity basis FNO. B9: FNO transfer I. B10: FNO transfer II.
+B11: affine POD GP. B12: parameter kNN. B13: training mean.
+B9 and B10 are archived entries for the same inspected recipe, with unresolved
+score provenance in the historical PDE archives. For ERA5 and the four additional reaction diffusion datasets, B10 explicitly
+reuses B9 predictions with no additional training. Neither comparison treats them as
+two distinct baseline families.
+Units, partitions, and mixture columns match Table~\ref{tab:baseline_detail1}.
+A dash indicates an absent control on the current split.
+ERA5's B13 entry is its training mean control.
+Imported rows use MFRNP data \citep{niu2024} and ERA5 reanalysis \citep{hersbach2020}.}
+\label{tab:baseline_detail2}
+\resizebox{\linewidth}{!}{\input{tables/paper_baselines_detail_2}}
+\end{table}
+
+\subsection{Elo ranking across all datasets}
+\label{app:elo}
+Table~\ref{tab:paperbaselines} ranks the nine library members, eleven additional
+baseline entries, and three ensemble rules on all 22 datasets, including ERA5.
+Each pair of methods plays one comparison per dataset using its unrounded
+mean relative $L^2$ error. The lower error wins, and an absolute difference
+below $10^{-12}$ is a tie. Cases and fitting partitions are averaged before
+these comparisons, so datasets receive equal weight regardless of their
+number of evaluation cases. Every method is ranked on the same 22 datasets
+in the present reporting collection, with no further exclusions for the Elo calculation.
+
+Following the benchmark ranking procedure, each method starts at 1500.
+For methods $a$ and $b$ with ratings $R_a$ and $R_b$, the expected score and
+rating update are
+\begin{equation}
+ p_a=\frac{1}{1+10^{(R_b-R_a)/400}},\qquad
+ R_a'=R_a+32(s_a-p_a),\qquad R_b'=R_b-32(s_a-p_a).
+\end{equation}
+Here $s_a$ is one for a win, zero for a loss, and one half for a tie, and
+primed ratings denote the updated values.
+The update raises a winner's rating and lowers a loser's rating. A tie moves
+the ratings toward each other when they differ.
+We reset ratings and shuffle all comparisons independently 500 times, then
+report each method's mean final rating. The random order seeds are fixed in
+the reporting code. Rows are sorted by unrounded Elo, while displayed ratings
+are rounded to integers. This descriptive ranking measures how often a method
+wins, rather than the size of its error reduction. It does not estimate
+statistical significance or equalize training resources. B9 and B10 remain
+separate reported entries of the same transfer recipe, as elsewhere in the paper.
+
+\subsection{Method sources and implementation scope}
+The provenance tables connect each evaluated implementation to the component
+or modeling idea that motivated it. The results concern these adaptations,
+whose differences from the complete published methods are documented in
+Appendix~\ref{app:adaptations}. In particular, fidelity basis FNO omits the
+continuous fidelity ODE and GP, the latent MF network omits both the variational
+last layer and active acquisition, and the all pairs recipe uses fidelity pairs
+rather than Poseidon's time pairs.
+The latter is inspiration for pair enumeration, not an implementation of the
+Poseidon foundation model. FNO transfer builds on multifidelity transfer
+\citep{lyu2023}, with FiLM conditioning where indicated \citep{perez2018}.
+
+\begin{table}[t]
+\centering\footnotesize\setlength{\tabcolsep}{3pt}
+\caption{Sources and adaptations for the nine ensemble members.}
+\label{tab:portfolio}\input{tables/baseline_provenance_1}
+\end{table}
+\begin{table}[t]
+\centering\footnotesize\setlength{\tabcolsep}{3pt}
+\caption{Sources and adaptations for the additional reference implementations.}
+\input{tables/baseline_provenance_2}
+\end{table}
+\begin{table}[t]
+\centering\footnotesize\setlength{\tabcolsep}{3pt}
+\caption{Transfer variants and classical controls.}
+\input{tables/baseline_provenance_3}
+\end{table}
+
+\input{sections/mixture_aggregate}
+\input{sections/expert_heatmap}
+\input{sections/pseudocode}
+
+\subsection{Field comparison example}
+\label{app:fieldcomparison}
+Figure~\ref{fig:fieldcomparison} uses Heat I as an illustrative success case
+selected after examining the dataset results. Within that dataset, it shows
+the first evaluation input of the first partition, rather than the case with
+the largest gain. The five fitting inputs are disjoint from this case, and all
+weights are reused from the saved fits. The nine prediction archives are
+verified by their source hashes and input identities. Recomputing error
+products from the plotted fields reproduces the stored error matrix.
+Across all 20 evaluation inputs in this partition, the fitted mixture has
+lower relative $L^2$ error than every individual model. The main aggregate
+comparisons include the other partitions and datasets, including failures.
+
+The top row uses one linear color scale for all predicted and true fields.
+The bottom row shows absolute error with one shared logarithmic color scale,
+linear between zero and $10^{-5}$ so exact zeros remain visible. Its limits
+cover every plotted value. No field values are smoothed or modified, and each
+reported relative $L^2$ error is computed on the complete $64\times64$ grid.
+The three comparison columns show the selected model, inverse error mixture,
+and fitted mixture. The selected model is M4, chosen using the fitting examples,
+so its column reproduces M4. The source package includes
+the field arrays, extraction manifest, plotting script, and numerical checks.
+
+\clearpage
+\section{Visual inventory of every dataset}
+\label{app:gallery}
+The gallery illustrates the structures that the models must learn.
+The first five plates enlarge the 21 PDE fields in Figure~\ref{fig:datasets},
+and the sixth enlarges ERA5. Every example is row zero of its HF training table,
+selected by a fixed rule independent of prediction errors. Numerical color scales show the
+stored target values and coordinate labels denote native array indices. Heat
+fields span space and time. The ERA5 illustration uses the native
+$721\times1440$ array, while predictions and losses use a $128\times256$ working
+grid. Its supplied metadata do not establish the physical units or target
+transformation, so the colors cannot be read as absolute temperatures. The
+sample arrays and extraction manifest preserve shapes, hashes, source paths,
+and this fixed selection rule. Imported fields are from MFRNP \citep{niu2024}
+and ERA5 reanalysis \citep{hersbach2020}.
+
+The cavity target is vorticity, not velocity or streamfunction. Its field
+values range from about $-391$ to $195$, while 90\% of grid values lie between
+$-7.44$ and $2.98$. A linear full range makes the interior appear almost constant.
+We use a symmetric logarithmic scale for the cavity panel, linear within
+$[-1,1]$, with limits $[-400,400]$. Square geometry is preserved and no values
+are clipped or altered. Cavity displays its first training field at
+$\mathrm{Re}=594.23$. Array rows increase upward from the bottom wall,
+and the top lid moves to the right. This display change does not change any
+model inputs, targets, or reported errors.
+
+\begin{figure}[h!]
+\centering\includegraphics[width=\linewidth]{figures/dataset_detail_1.pdf}
+\caption{Elliptic HF training examples, entries 1 to 6 in the main gallery.
+Poisson II is from \citet{niu2024}.}
+\end{figure}
+\begin{figure}[t]
+\centering\includegraphics[width=\linewidth]{figures/dataset_detail_2.pdf}
+\caption{Diffusion and convection HF training examples, entries 7 to 11 in the
+main gallery. Heat II and Navier Stokes are from \citet{niu2024}. The cavity panel
+uses a signed logarithmic scale.}
+\end{figure}
+\begin{figure}[t]
+\centering\includegraphics[width=\linewidth]{figures/dataset_detail_3.pdf}
+\caption{Shock and porous flow HF training examples, entries 12 to 14 in the main gallery.}
+\end{figure}
+\begin{figure}[t]
+\centering\includegraphics[width=\linewidth]{figures/dataset_detail_4.pdf}
+\caption{Reaction diffusion HF training examples, entries 15 to 19 in the main
+gallery, with Cahn Hilliard I and II shown together.}
+\end{figure}
+\begin{figure}[t]
+\centering\includegraphics[width=\linewidth]{figures/dataset_detail_5.pdf}
+\caption{Wave HF training examples, entries 20 and 21 in the main gallery.}
+\end{figure}
+\begin{figure}[t]
+\centering\includegraphics[width=\linewidth]{figures/dataset_detail_6.pdf}
+\caption{HF training example for ERA5 \citep{hersbach2020,niu2024}, the twenty second
+dataset in the main gallery. This native $721\times1440$ illustration displays
+stored target values. Evaluation uses the $128\times256$ working grid.}
+\end{figure}
+\clearpage

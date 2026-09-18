@@ -1,0 +1,136 @@
+\subsection{Error geometry behind the main analysis}
+\label{app:geometry}
+Two models with similar individual accuracy can give very different ensemble
+gains, depending on where their errors occur and how those errors align.
+Classical ensemble analysis makes this dependence explicit
+\citep{breiman1996,krogh1994}. For a fixed trained library and population of
+inputs, let $C=\E[G(x,y)]$. Because the mixture error is a weighted sum of
+individual normalized error fields, its expected squared relative error is
+\begin{equation}
+ R(w)=\E\left[\frac{\norm{\widehat y_w(x)-y}_Q^2}{\max(\norm y_Q,10^{-8})^2}\right]
+ =w^\top Cw.
+\label{eq:risk}
+\end{equation}
+Here $\widehat y_w$ is the combined prediction, $y$ the target, $w$ the model
+weights, and $\norm{\cdot}_Q$ the field norm. Expectation $\E$ averages over
+input and target pairs, $G(x,y)$ contains their model error products, and $C$
+is its mean. The identity computes population squared error from these products.
+The diagonal measures individual error and the cross terms measure alignment.
+We retain uncentered errors so that shared bias remains part of the risk.
+Keeping only a positive diagonal yields the inverse error mixture as the simplex
+minimizer before clipping. This is an approximation used to choose weights,
+and does not require the actual model errors to be independent.
+
+To separate individual accuracy from complementarity, consider one case and write $r_m=\norm{e_m}_Q$.
+If the errors all pointed in the same direction, the squared error of their
+weighted sum would be $(\sum_m w_m r_m)^2$.
+The difference from the actual mixture is
+\begin{equation}
+ \left(\sum_m w_m r_m\right)^2-w^\top Gw
+ =2\sum_{m<n}w_mw_n\bigl(r_mr_n-\langle e_m,e_n\rangle_Q\bigr)\geq0.
+\label{eq:direction}
+\end{equation}
+Here $r_m$ is the size of error field $e_m$, $G$ is the error product matrix for
+the same case, and $m<n$ counts each model pair once. The nonnegative difference
+measures how much error alignment matters when the individual error sizes are fixed.
+Models can benefit from making errors in different locations or from partially
+canceling one another. Negative pairwise correlation is not required.
+The inverse error mixture can exploit the same complementarity without fitting cross terms.
+
+\paragraph{The fitting loss can change the preferred weights.}
+The effect of the fitting criterion is established in engineering surrogate
+ensembles \citep{acar2009}.
+The fitted mixture minimizes empirical squared relative error, an estimate of
+$R(w)$ in Equation~\eqref{eq:risk}. The reported mean relative $L^2$ error
+instead estimates
+\begin{equation}
+ L(w)=\E\!\left[\sqrt{w^\top G(x,y)w}\right].
+\label{eq:reportedrisk}
+\end{equation}
+Here $L(w)$ is the expected relative $L^2$ error of weights $w$. Taking the
+square root for each field before averaging matches the reported metric,
+whereas $R(w)$ averages its square.
+Jensen's inequality gives $L(w)\leq\sqrt{R(w)}$ for a given $w$ but does not
+transfer an excess risk guarantee relative to the minimizer of $L$.
+Consider two equally probable scalar cases with normalized errors
+$e_A=(0,2)$ and $e_B=(1.1,1.1)$ across cases. Giving A weight $t\in[0,1]$
+and B weight $1-t$ yields
+\begin{align}
+ L(t)&=1.1-0.1t,\\
+ R(t)&=1.21-0.22t+1.01t^2.
+\end{align}
+Here $t$ is model A's weight, and $L(t)$ and $R(t)$ evaluate the unsquared and
+squared losses of the same two model mixture. The formulas expose their different optima.
+Thus $L$ is minimized at $t=1$, with value one, while $R$ is minimized at
+$t=11/101$, where $L=110/101$. Optimizing squared error is approximately
+$8.9\%$ worse under the reporting metric in this example. The example also
+applies to constant fields and persists with infinitely many fitting cases.
+
+Direct fitting of the reported metric is a convex alternative:
+\begin{equation}
+ \min_{w\in\Delta_M}\frac{1}{K}\sum_{i=1}^{K}\sqrt{w^\top G_iw}
+ =\min_{w\in\Delta_M}\frac{1}{K}\sum_{i=1}^{K}\norm{A_iw}_2,
+ \qquad A_i^\top A_i=G_i.
+\label{eq:metricfit}
+\end{equation}
+Here $A_i$ is a matrix factor of the error matrix $G_i$ for fitting example $i$, $\norm{\cdot}_2$
+is the Euclidean norm, and $\Delta_M$ enforces nonnegative unit sum weights.
+The objective fits the mean relative error over $K$ whole fields directly.
+Each summand is a norm of a linear map. Introducing an upper bound $t_i$ for
+each field's error, with constraints $\norm{A_iw}_2\leq t_i$, gives a second order cone problem.
+This is a standard loss choice, not a new ensemble construction.
+
+\paragraph{What the estimation bound establishes.}
+Appendix~\ref{app:proof} shows that entrywise matrix error at most $\epsilon$
+and empirical optimization error at most $\delta$ imply excess squared risk
+at most $2\epsilon+\delta$ over the best fixed convex mixture for squared
+relative error. The deterministic implication requires accurate error
+estimation, not independent cases. Independence is needed for the stated
+probabilistic sufficient condition, conditional on the frozen library.
+That condition concerns whole fields, not individual pixels, and its
+assumptions are unverified for this collection. Its numerical bound is weaker
+than the trivial bounded risk guarantee at all three reported budgets.
+It therefore establishes neither that five fields suffice nor near optimality
+under Equation~\eqref{eq:reportedrisk}.
+
+\paragraph{Testing the loss choice while keeping predictions fixed.}
+To isolate the fitting objective, we evaluate Equation~\eqref{eq:metricfit} on
+all 51 historical partitions at $K=5$, keeping the original nine models,
+fitting rows, and evaluation rows. We first reproduce the original selected,
+inverse, and fitted error vectors from the stored per case Gram matrices and
+verify their input identities. We then fit and save all new weights before
+scoring them. The specification was saved before these additional errors were
+computed, but the predictions had previously been inspected. This is therefore
+a post hoc diagnostic, and the new fit is reported separately from the three main rules.
+
+The epigraph problem uses CVXPY 1.9.2 and Clarabel 0.11.1. All 51 retained solves returned
+optimal status with absolute and relative gap tolerances $10^{-10}$ and
+feasibility tolerance $10^{-9}$. Scaling by the mean diagonal on the fitting set improves
+conditioning without changing the minimizer. Eigenvalues below zero are
+clipped only within $10^{-12}$ of spectral scale and every adjustment is
+recorded. The most negative relative eigenvalue was approximately
+$-1.04\times10^{-18}$. More substantial indefiniteness raises an error.
+The largest simplex feasibility residual before nonnegative clipping and
+renormalization was $4.15\times10^{-11}$. We also verified the counterexample
+above numerically and rejected a deliberately indefinite input matrix.
+
+\begin{table}[t]
+\centering\small
+\caption{\textbf{Fitting the reported metric directly.} Ratios compare with the
+selected model on the original 17 PDE dataset diagnostic subset at five fitting examples.
+The fitted mixture uses squared relative error. A win or loss requires
+more than a one percent difference after averaging the three partitions for
+each dataset. Remaining datasets are within one percent. These are post hoc
+results on a fixed library, without independent training replicates.}
+\label{tab:losscontrol}
+\input{tables/loss_control}
+\end{table}
+
+Direct relative $L^2$ fitting reduces class balanced error by $2.0\%$ and equal
+dataset error by $2.1\%$ relative to the original squared error fit
+(Table~\ref{tab:losscontrol}). Nine datasets improve by more than one percent,
+none worsens by that margin, and eight remain within one percent. Against the
+selected model, 12 datasets improve and five worsen. The loss mismatch therefore
+has a measurable consequence in these stored predictions. The result motivates
+an independent evaluation of this objective choice, without establishing a new
+weighting principle or eliminating the limitations of the historical comparison.

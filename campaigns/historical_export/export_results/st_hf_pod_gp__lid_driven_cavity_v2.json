@@ -1,0 +1,42 @@
+{
+  "task": {
+    "id": "st_hf_pod_gp__lid_driven_cavity_v2",
+    "model": "st_hf_pod_gp",
+    "dataset": "lid_driven_cavity_v2",
+    "rel": "core/lid_driven_cavity_v2",
+    "seed": 42,
+    "device": "cpu",
+    "note": "Classical estimator state was not saved; reproduce its original training-only fit."
+  },
+  "seconds": 12.171121835708618,
+  "replay": {
+    "device": "cpu",
+    "base_retrained": true,
+    "reason": "POD-GP estimator was not checkpointed",
+    "raw_units_multiplier": 5.708289623260498,
+    "registration": "generic"
+  },
+  "n": 100,
+  "work_grid": [
+    256,
+    256
+  ],
+  "base_train_overlap": 0,
+  "rel_l2_mean": 0.004127296384878829,
+  "archive_mean": 0.004127295687794685,
+  "prediction_sha256": "817393a0f161fe75e2a9bb264dd1b8fd5ec7390a5f6a5532bb6d18a5ecae0d83",
+  "model_metadata": {
+    "method": "fine-only POD + shared-ARD-RBF GP emulator",
+    "n_hf_train": 400,
+    "fit_seconds": 6.4521708488464355,
+    "hf_pod_modes": 3,
+    "hf_pod_energy_captured": 0.9994364406411713,
+    "hf_gp_log_lengthscales": [
+      -0.5426670589731826
+    ],
+    "hf_gp_log_signal": 0.8297640483544861,
+    "hf_gp_log_noise": -7.0,
+    "hf_gp_nlml": -6929.598859513098,
+    "hf_gp_converged": true
+  }
+}

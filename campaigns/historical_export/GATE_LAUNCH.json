@@ -1,0 +1,87 @@
+{
+  "plan_sha256": "e5d36244f81cd2c143b998cf7fdaae8278806fb88d5b575aafdf1ea7003c39c3",
+  "source_sha256": {
+    "cache.py": "5f6c4ae7719cd20caa04759e5b423495dc7d0fcd5e583c6598883ac220ad9abf",
+    "launch_gates.py": "8d45b9addf8f2c62fc787507311b6ce86a5d59dbc60c87b31eaf7b41a2d2040e",
+    "rules.py": "c3b0e0403e52fc7364314f47f226db304bafd7677dfde57b42ed492f429f839f",
+    "test_fieldgate.py": "53222d490980289ee05686033221adc175c198faf2d0fd912fef5fc7d6c8ef66",
+    "collect.py": "260bdf1e65df83d541ade23b3aee2210642b2413408e01aaad6c73b503e40efc",
+    "export_gpu.sbatch": "9050fed95c5b96bae7151cbfafa84a38d0d7c018136221333ff8852b31fca5e3",
+    "protocols.py": "f6383b888de7ee0412116ae3d293285f74b1ef3489ed41935cce9f3b6608c12c",
+    "smoke.sbatch": "950ebfaa5d0ae66359ea17193739161898dde639b177cbe49d1a6b8c67bdf1c1",
+    "audit_inputs.py": "5cd7aed0d24f234edc988822743b9b211ca226684b4b6bf01270ec01f6cc7e4a",
+    "collect.sbatch": "5cbd4509a6fb0d49c3d845c3c14d2759f1496a11626ca5f6acbb63e064653b8c",
+    "run.sbatch": "2aa24fd4b0be49dcfc950d175ee0f6c88b806cc39739f7632e8cac89d2eb3b11",
+    "task.py": "c23bb9770fd3795fb02145b3ad81d7c2c571ff1d49afbf2e34d0bc1d0a9cee63",
+    "cache.sbatch": "b8a4860b08c4fc83361f73aa85a8ec8f1d0383377fe18ecad40eea7e1495ace8",
+    "export_cpu.sbatch": "d6d3b5c6a336194173817f8a148a0a43bcf8a00df609a30c678b864b98d8659b",
+    "config.py": "0a620c848fdf19b65dd1ea9d501e8a088ec278ac7495fe961569a58bea4c6dd9",
+    "launch_exports.py": "b14990817a3416d9fea52572a357c074af705e55475ef19cbfd151a069b89a88",
+    "export_worker.py": "9c7bec0e687dab3c442edf1fff4a4b293acd9e8dfe36881266202ef94065de60",
+    "verify_and_launch.sbatch": "88d91061359806cda6d1f339cc103752323af9ea63c18ab64756fb8c5a75d684",
+    "features.py": "16627050eb6b69dc4baf27f5e456cd4ae80ec68e979a0c809ae5af5f8355973e",
+    "mixture.py": "810632467a0ed98287a272a95732017a6438073c5003556e29f136d7c3a2511c",
+    "prepare.py": "0da2507736769baadfa5c5f20eda841b4d7824c3d5ef2c08edf81d69af3fc54a",
+    "export_one.py": "0fcda1ee38588e1a96dd95ec9eee65929ef0eecc323b97d9373fb87fe52fe312",
+    "run.py": "a6d71da59324b725a204d884511671f50a1c131105774c9fae04ff415040c5c1"
+  },
+  "tasks": [
+    {
+      "protocol": "class",
+      "seed": 71,
+      "held_class": "elliptic"
+    },
+    {
+      "protocol": "class",
+      "seed": 71,
+      "held_class": "diffusion"
+    },
+    {
+      "protocol": "class",
+      "seed": 71,
+      "held_class": "shocks"
+    },
+    {
+      "protocol": "class",
+      "seed": 71,
+      "held_class": "convection"
+    },
+    {
+      "protocol": "class",
+      "seed": 71,
+      "held_class": "porous"
+    },
+    {
+      "protocol": "class",
+      "seed": 71,
+      "held_class": "reaction_diffusion"
+    },
+    {
+      "protocol": "class",
+      "seed": 71,
+      "held_class": "waves"
+    },
+    {
+      "protocol": "class",
+      "seed": 71,
+      "held_class": "climate"
+    }
+  ],
+  "smoke_job": 22661052,
+  "smoke_result_sha256": "53659c1a7df7d77177eb605c0a0e9fbaa949ea6c5c63a5ef2a077282d47b3c78",
+  "jobs": [
+    {
+      "kind": "gate_array",
+      "id": "22661061"
+    },
+    {
+      "kind": "report",
+      "id": "22661062"
+    }
+  ],
+  "revision": 2,
+  "revision_reason": "Match global starting priors at fit/tune/evaluation for class holdout. Reuse the unchanged original case-split evaluations.",
+  "exclusions": "node2900,node4200,node4002,node1702,node2119,node2809,node2810,node4004,node4007,node4008,node5003,node5004,node5005,node5101,node5103,node5104,node5106,node5202,node5203,node5204",
+  "no_evaluation_labels_for_fit_or_selection": true,
+  "cache_ready_before_submission": true
+}

@@ -1,0 +1,44 @@
+{
+  "task": {
+    "id": "st_hf_pod_gp__heat_local",
+    "model": "st_hf_pod_gp",
+    "dataset": "heat_local",
+    "rel": "core/heat_local",
+    "seed": 42,
+    "device": "cpu",
+    "note": "Classical estimator state was not saved; reproduce its original training-only fit."
+  },
+  "seconds": 44.08999824523926,
+  "replay": {
+    "device": "cpu",
+    "base_retrained": true,
+    "reason": "POD-GP estimator was not checkpointed",
+    "raw_units_multiplier": 0.5373032689094543,
+    "registration": "generic"
+  },
+  "n": 512,
+  "work_grid": [
+    128,
+    128
+  ],
+  "base_train_overlap": 0,
+  "rel_l2_mean": 0.003048741363739992,
+  "archive_mean": 0.0030487417243421078,
+  "prediction_sha256": "d6d43d681891b7a2853b91464320cf1b2feb18254c43f6ff8acd5966e799c7c4",
+  "model_metadata": {
+    "method": "fine-only POD + shared-ARD-RBF GP emulator",
+    "n_hf_train": 1024,
+    "fit_seconds": 34.64366579055786,
+    "hf_pod_modes": 5,
+    "hf_pod_energy_captured": 0.9993527119895378,
+    "hf_gp_log_lengthscales": [
+      4.0,
+      4.0,
+      -1.516507762085095
+    ],
+    "hf_gp_log_signal": 3.0,
+    "hf_gp_log_noise": -7.0,
+    "hf_gp_nlml": -26552.62772343715,
+    "hf_gp_converged": false
+  }
+}

@@ -1,0 +1,133 @@
+{
+  "passed": true,
+  "dataset": "heat_generated",
+  "display_name": "Heat I",
+  "partition": 71,
+  "budget": 5,
+  "query_row": 0,
+  "selection": "Dataset chosen as an illustrative success. First evaluation row of the first partition, not the largest case gain.",
+  "fitting_rows": [
+    31,
+    43,
+    70,
+    86,
+    93
+  ],
+  "evaluation_rows": [
+    0,
+    5,
+    15,
+    25,
+    27,
+    30,
+    35,
+    38,
+    45,
+    51,
+    56,
+    68,
+    71,
+    74,
+    75,
+    76,
+    80,
+    83,
+    91,
+    92
+  ],
+  "models": [
+    "mf_fno_transfer_film",
+    "mf_fno_allpairs",
+    "convnext_unet_film",
+    "fno_fire_distcond",
+    "wno_transfer_film",
+    "mf_deeponet",
+    "st_hf_pod_gp",
+    "uqcorr_transolver_pred",
+    "uqcorr_convnext_pred"
+  ],
+  "methods": [
+    "selected_single",
+    "inverse_mse",
+    "full"
+  ],
+  "weights": [
+    [
+      0.0,
+      0.0,
+      0.0,
+      1.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.08101723321675548,
+      0.16872289544499913,
+      0.2556801766307987,
+      0.35867115809217304,
+      0.027669603551767112,
+      1.7011015504429616e-06,
+      0.00021304484923171846,
+      0.007906181870120854,
+      0.10011800524260352
+    ],
+    [
+      0.05948737886396163,
+      0.16503169611153695,
+      0.28795400635151797,
+      0.3662614249019039,
+      0.03129103139691564,
+      0.0,
+      0.00043557986870227576,
+      7.431627986156129e-05,
+      0.08946456622560012
+    ]
+  ],
+  "weights_source_sha256": "6a483f5b6e1775638a4af4932dbf6dafb59e955d0caf244ce9dac732f1898678",
+  "bundle_sha256": "85a0de172cbe44b3df0784abc5a4a2d3b47f244c2ad3baae8911b301e6e1a133",
+  "field_gram_replay_passed": true,
+  "saved_errors_replayed": true,
+  "evaluation_case_excluded_from_fitting": true,
+  "relative_errors_percent": {
+    "Ground truth": 0.0,
+    "M1": 0.010608676236595354,
+    "M2": 0.007399618021585958,
+    "M3": 0.0058787583632111595,
+    "M4": 0.005322666199467613,
+    "M5": 0.020979330289444088,
+    "M6": 0.7866687037083088,
+    "M7": 0.1356791170056064,
+    "M8": 0.038016973015131,
+    "M9": 0.009161369472765314,
+    "Selected model": 0.005322666199467613,
+    "Inverse error mixture": 0.002930770424629064,
+    "Fitted mixture": 0.00296126212895645
+  },
+  "best_individual": "M4",
+  "fitted_reduction_vs_best_individual_percent": 44.36506032911394,
+  "inverse_reduction_vs_best_individual_percent": 44.93792556590891,
+  "fitted_case_wins_over_each_individual": 20,
+  "evaluation_cases_in_partition": 20,
+  "selected_model": "M4",
+  "selected_model_identical_to_saved_member": true,
+  "automatic_selection_displayed": false,
+  "field_color_limits": [
+    -0.027869118377566338,
+    1.0002802610397339
+  ],
+  "error_color_limits": [
+    0,
+    0.013046562671661377
+  ],
+  "error_color_linthresh": 1e-05,
+  "shared_color_scales": true,
+  "field_values_transformed": false,
+  "grid": [
+    64,
+    64
+  ],
+  "orientation": "Stored arrays with origin lower. Heat panels span space and time."
+}

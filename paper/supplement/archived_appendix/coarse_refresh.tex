@@ -1,0 +1,16 @@
+\subsection{Refreshing weights after a coarse input change}
+\label{app:refresh}
+Fine answers in the fitting set can also be reused when the coarse input procedure
+changes. We use the additional Heat I input experiment in
+Appendix~\ref{app:additionalheat}, with 128 evaluation cases. We pool the
+predicted coarse field to half resolution and reconstruct it before supplying
+it to the two correctors. The other seven models remain fixed. Keeping the
+inverse weights fitted before this resolution change on the same fitting examples
+then gives 0.182726\% error at $K=5$. Repeating predictions for the five fitting examples
+with the modified correctors and refitting the weights reduces this to
+0.005563\%. The fitted mixture similarly changes from 0.148234\% to 0.005688\%.
+Errors average evaluation cases and then fitting selections. The fine
+answers are reused, so refreshing the weights requires additional predictions
+but no new fine simulations. This controlled perturbation supports
+refitting after that change in coarse resolution, without establishing
+robustness to arbitrary changes in physics or climate.

@@ -1,0 +1,5886 @@
+{
+  "status": "completed",
+  "interpretation": "post hoc exploratory frozen prediction reanalysis",
+  "protocol_sha256": "7f2e15f94484c3ff54495590e4da2a2af976153af6d3c1b02412decc424cf743",
+  "rules_sha256": "139f5397dda25899adf021083aaccb54385617676d78ca34292bf8bc1883a924",
+  "locked_weights_sha256": "6a483f5b6e1775638a4af4932dbf6dafb59e955d0caf244ce9dac732f1898678",
+  "scopes": {
+    "historical": [
+      "darcy_generated",
+      "ext__eikonal_2d",
+      "sharp__helmholtz_2d",
+      "poisson_generated_v2",
+      "poisson_local",
+      "ext__pressure_poisson_poiseuille",
+      "heat_generated",
+      "heat_local",
+      "lid_driven_cavity_v2",
+      "fluid",
+      "ext__rayleigh_benard_2d",
+      "sharp__burgers_2d",
+      "sharp__euler",
+      "sharp__porous_medium_2d",
+      "ext__cahn_hilliard_2d",
+      "sharp__shallow_water_2d",
+      "ext__wave_2d"
+    ],
+    "audit": [
+      "darcy_generated",
+      "ext__eikonal_2d",
+      "sharp__helmholtz_2d",
+      "poisson_generated_v2",
+      "heat_generated",
+      "heat_local",
+      "lid_driven_cavity_v2",
+      "fluid",
+      "ext__rayleigh_benard_2d",
+      "sharp__burgers_2d",
+      "sharp__euler",
+      "sharp__porous_medium_2d",
+      "sharp__shallow_water_2d",
+      "ext__wave_2d"
+    ],
+    "common": [
+      "darcy_generated",
+      "ext__eikonal_2d",
+      "sharp__helmholtz_2d",
+      "poisson_generated_v2",
+      "poisson_local",
+      "ext__pressure_poisson_poiseuille",
+      "heat_generated",
+      "lid_driven_cavity_v2",
+      "fluid",
+      "ext__rayleigh_benard_2d",
+      "sharp__euler",
+      "sharp__porous_medium_2d",
+      "ext__cahn_hilliard_2d",
+      "sharp__shallow_water_2d",
+      "ext__wave_2d"
+    ],
+    "audit_common": [
+      "darcy_generated",
+      "ext__eikonal_2d",
+      "sharp__helmholtz_2d",
+      "poisson_generated_v2",
+      "heat_generated",
+      "lid_driven_cavity_v2",
+      "fluid",
+      "ext__rayleigh_benard_2d",
+      "sharp__euler",
+      "sharp__porous_medium_2d",
+      "sharp__shallow_water_2d",
+      "ext__wave_2d"
+    ]
+  },
+  "exclusions": {
+    "poisson_local": "inherited numerical defects",
+    "ext__cahn_hilliard_2d": "incomplete input conditioning",
+    "ext__pressure_poisson_poiseuille": "synthetic low-fidelity fields"
+  },
+  "summaries": {
+    "5": {
+      "scopes": {
+        "historical": {
+          "datasets": [
+            "darcy_generated",
+            "ext__eikonal_2d",
+            "sharp__helmholtz_2d",
+            "poisson_generated_v2",
+            "poisson_local",
+            "ext__pressure_poisson_poiseuille",
+            "heat_generated",
+            "heat_local",
+            "lid_driven_cavity_v2",
+            "fluid",
+            "ext__rayleigh_benard_2d",
+            "sharp__burgers_2d",
+            "sharp__euler",
+            "sharp__porous_medium_2d",
+            "ext__cahn_hilliard_2d",
+            "sharp__shallow_water_2d",
+            "ext__wave_2d"
+          ],
+          "selection_counts": {
+            "selected_single": 16,
+            "inverse_mse": 12,
+            "full": 23
+          },
+          "comparisons": {
+            "auto / selected_single": {
+              "n_datasets": 17,
+              "n_classes": 7,
+              "class_ratio": 0.8755418310261578,
+              "dataset_ratio": 0.9131571001388057,
+              "wins": 12,
+              "losses": 2,
+              "neutral": 3
+            },
+            "auto / inverse_mse": {
+              "n_datasets": 17,
+              "n_classes": 7,
+              "class_ratio": 0.9930470020364335,
+              "dataset_ratio": 0.9882702098044299,
+              "wins": 6,
+              "losses": 3,
+              "neutral": 8
+            },
+            "auto / full": {
+              "n_datasets": 17,
+              "n_classes": 7,
+              "class_ratio": 0.9992333087249543,
+              "dataset_ratio": 0.9948814610244555,
+              "wins": 5,
+              "losses": 6,
+              "neutral": 6
+            },
+            "auto / best fixed rule per dataset": {
+              "n_datasets": 17,
+              "n_classes": 7,
+              "class_ratio": 1.0185547804260822,
+              "dataset_ratio": 1.0242029348781136,
+              "wins": 0,
+              "losses": 7,
+              "neutral": 10
+            },
+            "auto / best fixed rule per partition": {
+              "n_datasets": 17,
+              "n_classes": 7,
+              "class_ratio": 1.0292910550093348,
+              "dataset_ratio": 1.0446778530669492,
+              "wins": 0,
+              "losses": 8,
+              "neutral": 9
+            },
+            "inverse / selected": {
+              "n_datasets": 17,
+              "n_classes": 7,
+              "class_ratio": 0.8816720953093773,
+              "dataset_ratio": 0.9239953719939727,
+              "wins": 11,
+              "losses": 4,
+              "neutral": 2
+            },
+            "fitted / selected": {
+              "n_datasets": 17,
+              "n_classes": 7,
+              "class_ratio": 0.8762136163608979,
+              "dataset_ratio": 0.9178551776394586,
+              "wins": 12,
+              "losses": 5,
+              "neutral": 0
+            }
+          },
+          "historical_headlines": {
+            "Best library / best additional baseline": {
+              "n_datasets": 17,
+              "n_classes": 7,
+              "class_ratio": 0.7640712446859559,
+              "dataset_ratio": 0.8195176197132131,
+              "wins": 12,
+              "losses": 5,
+              "neutral": 0
+            },
+            "Fitted / best library": {
+              "n_datasets": 17,
+              "n_classes": 7,
+              "class_ratio": 0.9149711825490014,
+              "dataset_ratio": 0.9920264682291343,
+              "wins": 11,
+              "losses": 5,
+              "neutral": 1
+            },
+            "Inverse / best library": {
+              "n_datasets": 17,
+              "n_classes": 7,
+              "class_ratio": 0.920671106454717,
+              "dataset_ratio": 0.9986628477671509,
+              "wins": 11,
+              "losses": 6,
+              "neutral": 0
+            },
+            "Fitted / best additional baseline": {
+              "n_datasets": 17,
+              "n_classes": 7,
+              "class_ratio": 0.6991031703019964,
+              "dataset_ratio": 0.8129831699356456,
+              "wins": 10,
+              "losses": 7,
+              "neutral": 0
+            },
+            "Fitted / selected": {
+              "n_datasets": 17,
+              "n_classes": 7,
+              "class_ratio": 0.8762136163608979,
+              "dataset_ratio": 0.9178551776394587,
+              "wins": 12,
+              "losses": 5,
+              "neutral": 0
+            },
+            "Inverse / selected": {
+              "n_datasets": 17,
+              "n_classes": 7,
+              "class_ratio": 0.8816720953093772,
+              "dataset_ratio": 0.9239953719939727,
+              "wins": 11,
+              "losses": 4,
+              "neutral": 2
+            },
+            "Automatic / best library": {
+              "n_datasets": 17,
+              "n_classes": 7,
+              "class_ratio": 0.9142696821264229,
+              "dataset_ratio": 0.9869487420867317,
+              "wins": 9,
+              "losses": 3,
+              "neutral": 5
+            },
+            "Automatic / best additional baseline": {
+              "n_datasets": 17,
+              "n_classes": 7,
+              "class_ratio": 0.6985671740009691,
+              "dataset_ratio": 0.8088218838938682,
+              "wins": 10,
+              "losses": 6,
+              "neutral": 1
+            },
+            "Automatic / selected": {
+              "n_datasets": 17,
+              "n_classes": 7,
+              "class_ratio": 0.8755418310261578,
+              "dataset_ratio": 0.9131571001388057,
+              "wins": 12,
+              "losses": 2,
+              "neutral": 3
+            }
+          },
+          "squared_loss_comparisons": {
+            "auto / selected_single": {
+              "n_datasets": 17,
+              "n_classes": 7,
+              "class_ratio": 0.7771783724489362,
+              "dataset_ratio": 0.8239073510915935,
+              "wins": 14,
+              "losses": 1,
+              "neutral": 2
+            },
+            "auto / inverse_mse": {
+              "n_datasets": 17,
+              "n_classes": 7,
+              "class_ratio": 0.9891258457891545,
+              "dataset_ratio": 0.9717099061622249,
+              "wins": 7,
+              "losses": 5,
+              "neutral": 5
+            },
+            "auto / full": {
+              "n_datasets": 17,
+              "n_classes": 7,
+              "class_ratio": 1.0111428939639064,
+              "dataset_ratio": 0.9857051458747677,
+              "wins": 5,
+              "losses": 8,
+              "neutral": 4
+            }
+          }
+        },
+        "audit": {
+          "datasets": [
+            "darcy_generated",
+            "ext__eikonal_2d",
+            "sharp__helmholtz_2d",
+            "poisson_generated_v2",
+            "heat_generated",
+            "heat_local",
+            "lid_driven_cavity_v2",
+            "fluid",
+            "ext__rayleigh_benard_2d",
+            "sharp__burgers_2d",
+            "sharp__euler",
+            "sharp__porous_medium_2d",
+            "sharp__shallow_water_2d",
+            "ext__wave_2d"
+          ],
+          "selection_counts": {
+            "selected_single": 10,
+            "inverse_mse": 12,
+            "full": 20
+          },
+          "comparisons": {
+            "auto / selected_single": {
+              "n_datasets": 14,
+              "n_classes": 6,
+              "class_ratio": 0.8662917348584678,
+              "dataset_ratio": 0.8915366920563998,
+              "wins": 11,
+              "losses": 1,
+              "neutral": 2
+            },
+            "auto / inverse_mse": {
+              "n_datasets": 14,
+              "n_classes": 6,
+              "class_ratio": 0.9895796774179235,
+              "dataset_ratio": 0.9815819308709356,
+              "wins": 4,
+              "losses": 2,
+              "neutral": 8
+            },
+            "auto / full": {
+              "n_datasets": 14,
+              "n_classes": 6,
+              "class_ratio": 0.9918448588995512,
+              "dataset_ratio": 0.9910080648634193,
+              "wins": 4,
+              "losses": 4,
+              "neutral": 6
+            },
+            "auto / best fixed rule per dataset": {
+              "n_datasets": 14,
+              "n_classes": 6,
+              "class_ratio": 1.0125451331646722,
+              "dataset_ratio": 1.0152558166613594,
+              "wins": 0,
+              "losses": 5,
+              "neutral": 9
+            },
+            "auto / best fixed rule per partition": {
+              "n_datasets": 14,
+              "n_classes": 6,
+              "class_ratio": 1.0251532647715238,
+              "dataset_ratio": 1.0330479851789762,
+              "wins": 0,
+              "losses": 6,
+              "neutral": 8
+            },
+            "inverse / selected": {
+              "n_datasets": 14,
+              "n_classes": 6,
+              "class_ratio": 0.8754138293531383,
+              "dataset_ratio": 0.9082651829841237,
+              "wins": 10,
+              "losses": 2,
+              "neutral": 2
+            },
+            "fitted / selected": {
+              "n_datasets": 14,
+              "n_classes": 6,
+              "class_ratio": 0.87341455378376,
+              "dataset_ratio": 0.8996260713370394,
+              "wins": 11,
+              "losses": 3,
+              "neutral": 0
+            }
+          },
+          "historical_headlines": {
+            "Best library / best additional baseline": {
+              "n_datasets": 14,
+              "n_classes": 6,
+              "class_ratio": 0.7468686867947404,
+              "dataset_ratio": 0.8098962985749286,
+              "wins": 9,
+              "losses": 5,
+              "neutral": 0
+            },
+            "Fitted / best library": {
+              "n_datasets": 14,
+              "n_classes": 6,
+              "class_ratio": 0.9125578228400825,
+              "dataset_ratio": 0.959195960759053,
+              "wins": 10,
+              "losses": 3,
+              "neutral": 1
+            },
+            "Inverse / best library": {
+              "n_datasets": 14,
+              "n_classes": 6,
+              "class_ratio": 0.9146466986813946,
+              "dataset_ratio": 0.9684071222187405,
+              "wins": 10,
+              "losses": 4,
+              "neutral": 0
+            },
+            "Fitted / best additional baseline": {
+              "n_datasets": 14,
+              "n_classes": 6,
+              "class_ratio": 0.6815608627688398,
+              "dataset_ratio": 0.7768492582267794,
+              "wins": 9,
+              "losses": 5,
+              "neutral": 0
+            },
+            "Fitted / selected": {
+              "n_datasets": 14,
+              "n_classes": 6,
+              "class_ratio": 0.87341455378376,
+              "dataset_ratio": 0.8996260713370394,
+              "wins": 11,
+              "losses": 3,
+              "neutral": 0
+            },
+            "Inverse / selected": {
+              "n_datasets": 14,
+              "n_classes": 6,
+              "class_ratio": 0.8754138293531383,
+              "dataset_ratio": 0.9082651829841237,
+              "wins": 10,
+              "losses": 2,
+              "neutral": 2
+            },
+            "Automatic / best library": {
+              "n_datasets": 14,
+              "n_classes": 6,
+              "class_ratio": 0.9051157850325031,
+              "dataset_ratio": 0.9505709328966374,
+              "wins": 8,
+              "losses": 2,
+              "neutral": 4
+            },
+            "Automatic / best additional baseline": {
+              "n_datasets": 14,
+              "n_classes": 6,
+              "class_ratio": 0.6760026377644162,
+              "dataset_ratio": 0.7698638800859035,
+              "wins": 8,
+              "losses": 5,
+              "neutral": 1
+            },
+            "Automatic / selected": {
+              "n_datasets": 14,
+              "n_classes": 6,
+              "class_ratio": 0.8662917348584678,
+              "dataset_ratio": 0.8915366920563998,
+              "wins": 11,
+              "losses": 1,
+              "neutral": 2
+            }
+          },
+          "squared_loss_comparisons": {
+            "auto / selected_single": {
+              "n_datasets": 14,
+              "n_classes": 6,
+              "class_ratio": 0.7505860546904178,
+              "dataset_ratio": 0.7869486092958561,
+              "wins": 13,
+              "losses": 0,
+              "neutral": 1
+            },
+            "auto / inverse_mse": {
+              "n_datasets": 14,
+              "n_classes": 6,
+              "class_ratio": 0.9863756265229828,
+              "dataset_ratio": 0.9678525676310196,
+              "wins": 5,
+              "losses": 4,
+              "neutral": 5
+            },
+            "auto / full": {
+              "n_datasets": 14,
+              "n_classes": 6,
+              "class_ratio": 0.9909571156651913,
+              "dataset_ratio": 0.9870329561139612,
+              "wins": 4,
+              "losses": 6,
+              "neutral": 4
+            }
+          }
+        },
+        "common": {
+          "datasets": [
+            "darcy_generated",
+            "ext__eikonal_2d",
+            "sharp__helmholtz_2d",
+            "poisson_generated_v2",
+            "poisson_local",
+            "ext__pressure_poisson_poiseuille",
+            "heat_generated",
+            "lid_driven_cavity_v2",
+            "fluid",
+            "ext__rayleigh_benard_2d",
+            "sharp__euler",
+            "sharp__porous_medium_2d",
+            "ext__cahn_hilliard_2d",
+            "sharp__shallow_water_2d",
+            "ext__wave_2d"
+          ],
+          "selection_counts": {
+            "selected_single": 14,
+            "inverse_mse": 11,
+            "full": 20
+          },
+          "comparisons": {
+            "auto / selected_single": {
+              "n_datasets": 15,
+              "n_classes": 7,
+              "class_ratio": 0.8708630932175531,
+              "dataset_ratio": 0.929187170290727,
+              "wins": 10,
+              "losses": 2,
+              "neutral": 3
+            },
+            "auto / inverse_mse": {
+              "n_datasets": 15,
+              "n_classes": 7,
+              "class_ratio": 0.9982528510795721,
+              "dataset_ratio": 0.9879949875531262,
+              "wins": 5,
+              "losses": 3,
+              "neutral": 7
+            },
+            "auto / full": {
+              "n_datasets": 15,
+              "n_classes": 7,
+              "class_ratio": 0.998265866030902,
+              "dataset_ratio": 0.9938349155075507,
+              "wins": 5,
+              "losses": 6,
+              "neutral": 4
+            },
+            "auto / best fixed rule per dataset": {
+              "n_datasets": 15,
+              "n_classes": 7,
+              "class_ratio": 1.0220716694761176,
+              "dataset_ratio": 1.0270956390213088,
+              "wins": 0,
+              "losses": 7,
+              "neutral": 8
+            },
+            "auto / best fixed rule per partition": {
+              "n_datasets": 15,
+              "n_classes": 7,
+              "class_ratio": 1.0333869820820474,
+              "dataset_ratio": 1.0503149333238122,
+              "wins": 0,
+              "losses": 8,
+              "neutral": 7
+            },
+            "inverse / selected": {
+              "n_datasets": 15,
+              "n_classes": 7,
+              "class_ratio": 0.8723872837184968,
+              "dataset_ratio": 0.9404776157741013,
+              "wins": 10,
+              "losses": 4,
+              "neutral": 1
+            },
+            "fitted / selected": {
+              "n_datasets": 15,
+              "n_classes": 7,
+              "class_ratio": 0.8723759099167625,
+              "dataset_ratio": 0.9349512235804192,
+              "wins": 10,
+              "losses": 5,
+              "neutral": 0
+            }
+          },
+          "historical_headlines": {
+            "Best library / best additional baseline": {
+              "n_datasets": 15,
+              "n_classes": 7,
+              "class_ratio": 0.7895469610841804,
+              "dataset_ratio": 0.8652207388073747,
+              "wins": 10,
+              "losses": 5,
+              "neutral": 0
+            },
+            "Fitted / best library": {
+              "n_datasets": 15,
+              "n_classes": 7,
+              "class_ratio": 0.9160797393355241,
+              "dataset_ratio": 1.019837149337289,
+              "wins": 9,
+              "losses": 5,
+              "neutral": 1
+            },
+            "Inverse / best library": {
+              "n_datasets": 15,
+              "n_classes": 7,
+              "class_ratio": 0.9160916829359945,
+              "dataset_ratio": 1.0258652927513823,
+              "wins": 10,
+              "losses": 5,
+              "neutral": 0
+            },
+            "Fitted / best additional baseline": {
+              "n_datasets": 15,
+              "n_classes": 7,
+              "class_ratio": 0.7232879743031512,
+              "dataset_ratio": 0.8823842518128162,
+              "wins": 8,
+              "losses": 7,
+              "neutral": 0
+            },
+            "Fitted / selected": {
+              "n_datasets": 15,
+              "n_classes": 7,
+              "class_ratio": 0.8723759099167625,
+              "dataset_ratio": 0.9349512235804192,
+              "wins": 10,
+              "losses": 5,
+              "neutral": 0
+            },
+            "Inverse / selected": {
+              "n_datasets": 15,
+              "n_classes": 7,
+              "class_ratio": 0.8723872837184968,
+              "dataset_ratio": 0.9404776157741012,
+              "wins": 10,
+              "losses": 4,
+              "neutral": 1
+            },
+            "Automatic / best library": {
+              "n_datasets": 15,
+              "n_classes": 7,
+              "class_ratio": 0.9144911343411398,
+              "dataset_ratio": 1.013549767143086,
+              "wins": 8,
+              "losses": 3,
+              "neutral": 4
+            },
+            "Automatic / best additional baseline": {
+              "n_datasets": 15,
+              "n_classes": 7,
+              "class_ratio": 0.722033696057472,
+              "dataset_ratio": 0.8769442783455834,
+              "wins": 8,
+              "losses": 6,
+              "neutral": 1
+            },
+            "Automatic / selected": {
+              "n_datasets": 15,
+              "n_classes": 7,
+              "class_ratio": 0.870863093217553,
+              "dataset_ratio": 0.929187170290727,
+              "wins": 10,
+              "losses": 2,
+              "neutral": 3
+            }
+          },
+          "squared_loss_comparisons": {
+            "auto / selected_single": {
+              "n_datasets": 15,
+              "n_classes": 7,
+              "class_ratio": 0.7710902278360553,
+              "dataset_ratio": 0.8500933675985881,
+              "wins": 12,
+              "losses": 1,
+              "neutral": 2
+            },
+            "auto / inverse_mse": {
+              "n_datasets": 15,
+              "n_classes": 7,
+              "class_ratio": 0.9972808767620334,
+              "dataset_ratio": 0.9695130701852829,
+              "wins": 6,
+              "losses": 5,
+              "neutral": 4
+            },
+            "auto / full": {
+              "n_datasets": 15,
+              "n_classes": 7,
+              "class_ratio": 1.0107416078616218,
+              "dataset_ratio": 0.9833780163092863,
+              "wins": 5,
+              "losses": 7,
+              "neutral": 3
+            }
+          }
+        },
+        "audit_common": {
+          "datasets": [
+            "darcy_generated",
+            "ext__eikonal_2d",
+            "sharp__helmholtz_2d",
+            "poisson_generated_v2",
+            "heat_generated",
+            "lid_driven_cavity_v2",
+            "fluid",
+            "ext__rayleigh_benard_2d",
+            "sharp__euler",
+            "sharp__porous_medium_2d",
+            "sharp__shallow_water_2d",
+            "ext__wave_2d"
+          ],
+          "selection_counts": {
+            "selected_single": 8,
+            "inverse_mse": 11,
+            "full": 17
+          },
+          "comparisons": {
+            "auto / selected_single": {
+              "n_datasets": 12,
+              "n_classes": 6,
+              "class_ratio": 0.8608932854170589,
+              "dataset_ratio": 0.907511155839437,
+              "wins": 9,
+              "losses": 1,
+              "neutral": 2
+            },
+            "auto / inverse_mse": {
+              "n_datasets": 12,
+              "n_classes": 6,
+              "class_ratio": 0.9956346019074838,
+              "dataset_ratio": 0.9801303255232423,
+              "wins": 3,
+              "losses": 2,
+              "neutral": 7
+            },
+            "auto / full": {
+              "n_datasets": 12,
+              "n_classes": 6,
+              "class_ratio": 0.990724611789259,
+              "dataset_ratio": 0.9890618960652321,
+              "wins": 4,
+              "losses": 4,
+              "neutral": 4
+            },
+            "auto / best fixed rule per dataset": {
+              "n_datasets": 12,
+              "n_classes": 6,
+              "class_ratio": 1.0166251342677302,
+              "dataset_ratio": 1.017352565623937,
+              "wins": 0,
+              "losses": 5,
+              "neutral": 7
+            },
+            "auto / best fixed rule per partition": {
+              "n_datasets": 12,
+              "n_classes": 6,
+              "class_ratio": 1.0299142128042567,
+              "dataset_ratio": 1.0380819032112123,
+              "wins": 0,
+              "losses": 6,
+              "neutral": 6
+            },
+            "inverse / selected": {
+              "n_datasets": 12,
+              "n_classes": 6,
+              "class_ratio": 0.8646679050403822,
+              "dataset_ratio": 0.9259086594988911,
+              "wins": 9,
+              "losses": 2,
+              "neutral": 1
+            },
+            "fitted / selected": {
+              "n_datasets": 12,
+              "n_classes": 6,
+              "class_ratio": 0.8689531633440262,
+              "dataset_ratio": 0.9175473844961302,
+              "wins": 9,
+              "losses": 3,
+              "neutral": 0
+            }
+          },
+          "historical_headlines": {
+            "Best library / best additional baseline": {
+              "n_datasets": 12,
+              "n_classes": 6,
+              "class_ratio": 0.7760011783764913,
+              "dataset_ratio": 0.8650383910315635,
+              "wins": 7,
+              "losses": 5,
+              "neutral": 0
+            },
+            "Fitted / best library": {
+              "n_datasets": 12,
+              "n_classes": 6,
+              "class_ratio": 0.9138478579862267,
+              "dataset_ratio": 0.987372017573628,
+              "wins": 8,
+              "losses": 3,
+              "neutral": 1
+            },
+            "Inverse / best library": {
+              "n_datasets": 12,
+              "n_classes": 6,
+              "class_ratio": 0.9093412006807484,
+              "dataset_ratio": 0.9963695790167328,
+              "wins": 9,
+              "losses": 3,
+              "neutral": 0
+            },
+            "Fitted / best additional baseline": {
+              "n_datasets": 12,
+              "n_classes": 6,
+              "class_ratio": 0.7091470146541443,
+              "dataset_ratio": 0.8541147014314798,
+              "wins": 7,
+              "losses": 5,
+              "neutral": 0
+            },
+            "Fitted / selected": {
+              "n_datasets": 12,
+              "n_classes": 6,
+              "class_ratio": 0.8689531633440262,
+              "dataset_ratio": 0.9175473844961302,
+              "wins": 9,
+              "losses": 3,
+              "neutral": 0
+            },
+            "Inverse / selected": {
+              "n_datasets": 12,
+              "n_classes": 6,
+              "class_ratio": 0.8646679050403822,
+              "dataset_ratio": 0.925908659498891,
+              "wins": 9,
+              "losses": 2,
+              "neutral": 1
+            },
+            "Automatic / best library": {
+              "n_datasets": 12,
+              "n_classes": 6,
+              "class_ratio": 0.9053715643378503,
+              "dataset_ratio": 0.9765720398231262,
+              "wins": 7,
+              "losses": 2,
+              "neutral": 3
+            },
+            "Automatic / best additional baseline": {
+              "n_datasets": 12,
+              "n_classes": 6,
+              "class_ratio": 0.7025694007947391,
+              "dataset_ratio": 0.8447723060550091,
+              "wins": 6,
+              "losses": 5,
+              "neutral": 1
+            },
+            "Automatic / selected": {
+              "n_datasets": 12,
+              "n_classes": 6,
+              "class_ratio": 0.8608932854170589,
+              "dataset_ratio": 0.907511155839437,
+              "wins": 9,
+              "losses": 1,
+              "neutral": 2
+            }
+          },
+          "squared_loss_comparisons": {
+            "auto / selected_single": {
+              "n_datasets": 12,
+              "n_classes": 6,
+              "class_ratio": 0.7437307413078654,
+              "dataset_ratio": 0.812100324284559,
+              "wins": 11,
+              "losses": 0,
+              "neutral": 1
+            },
+            "auto / inverse_mse": {
+              "n_datasets": 12,
+              "n_classes": 6,
+              "class_ratio": 0.9958698792704253,
+              "dataset_ratio": 0.964478609514196,
+              "wins": 4,
+              "losses": 4,
+              "neutral": 4
+            },
+            "auto / full": {
+              "n_datasets": 12,
+              "n_classes": 6,
+              "class_ratio": 0.9904983098959033,
+              "dataset_ratio": 0.9843418079071993,
+              "wins": 4,
+              "losses": 5,
+              "neutral": 3
+            }
+          }
+        }
+      },
+      "means": {
+        "mean_relative_l2": {
+          "darcy_generated": {
+            "selected_single": 0.025220196568950786,
+            "inverse_mse": 0.025466255707538382,
+            "full": 0.023329038774827213,
+            "auto": 0.02351287638035936
+          },
+          "ext__eikonal_2d": {
+            "selected_single": 0.018088125382175316,
+            "inverse_mse": 0.017649336013445222,
+            "full": 0.017639483903041684,
+            "auto": 0.01755361520500398
+          },
+          "sharp__helmholtz_2d": {
+            "selected_single": 0.0624592566531702,
+            "inverse_mse": 0.06888586722958986,
+            "full": 0.06552195592249475,
+            "auto": 0.06891746392521732
+          },
+          "poisson_generated_v2": {
+            "selected_single": 6.843416283350502e-05,
+            "inverse_mse": 7.996322831232389e-05,
+            "full": 7.882190582979432e-05,
+            "auto": 6.843416283350502e-05
+          },
+          "poisson_local": {
+            "selected_single": 0.00012093001298030472,
+            "inverse_mse": 0.0001250059384791473,
+            "full": 0.0001291282996317829,
+            "auto": 0.00012093001298030472
+          },
+          "ext__pressure_poisson_poiseuille": {
+            "selected_single": 0.0007335165604221624,
+            "inverse_mse": 0.0007685835865374569,
+            "full": 0.0008024092898561945,
+            "auto": 0.0008596645013306835
+          },
+          "heat_generated": {
+            "selected_single": 9.716317162075589e-05,
+            "inverse_mse": 5.9256997539802134e-05,
+            "full": 6.203254887677932e-05,
+            "auto": 5.971322084571874e-05
+          },
+          "heat_local": {
+            "selected_single": 6.619835423846401e-05,
+            "inverse_mse": 4.3657500074672277e-05,
+            "full": 4.350846474454642e-05,
+            "auto": 4.345755244760503e-05
+          },
+          "lid_driven_cavity_v2": {
+            "selected_single": 0.0016429439414948936,
+            "inverse_mse": 0.0014208703607311325,
+            "full": 0.0014169568283088337,
+            "auto": 0.0014163284145303223
+          },
+          "fluid": {
+            "selected_single": 0.016069024826573578,
+            "inverse_mse": 0.015180622541260208,
+            "full": 0.014966702000932893,
+            "auto": 0.01518513586617107
+          },
+          "ext__rayleigh_benard_2d": {
+            "selected_single": 3.0089903282056452e-05,
+            "inverse_mse": 2.8574780621748463e-05,
+            "full": 2.6882624416967982e-05,
+            "auto": 2.6882624416967982e-05
+          },
+          "sharp__burgers_2d": {
+            "selected_single": 0.005161857353224495,
+            "inverse_mse": 0.005125708550944196,
+            "full": 0.005016558415723756,
+            "auto": 0.005050255645686477
+          },
+          "sharp__euler": {
+            "selected_single": 0.06092792456750313,
+            "inverse_mse": 0.05641170633002109,
+            "full": 0.05732396381223309,
+            "auto": 0.059073785335075034
+          },
+          "sharp__porous_medium_2d": {
+            "selected_single": 0.00032497316732467565,
+            "inverse_mse": 0.00026214808972888326,
+            "full": 0.0002632087162040076,
+            "auto": 0.00026031963548061817
+          },
+          "ext__cahn_hilliard_2d": {
+            "selected_single": 0.1216137469326068,
+            "inverse_mse": 0.11264557666798082,
+            "full": 0.10661089946957066,
+            "auto": 0.11050654476932982
+          },
+          "sharp__shallow_water_2d": {
+            "selected_single": 0.0036669248740744073,
+            "inverse_mse": 0.0035746477753025637,
+            "full": 0.003885481776738551,
+            "auto": 0.003635251722459145
+          },
+          "ext__wave_2d": {
+            "selected_single": 0.048407347923066175,
+            "inverse_mse": 0.04393511711604716,
+            "full": 0.042745841023144326,
+            "auto": 0.04393511711604716
+          }
+        },
+        "mean_squared_relative_l2": {
+          "darcy_generated": {
+            "selected_single": 0.0009725520827277638,
+            "inverse_mse": 0.001150689560809718,
+            "full": 0.00087343309367542,
+            "auto": 0.0008875768554416605
+          },
+          "ext__eikonal_2d": {
+            "selected_single": 0.0004926957809925854,
+            "inverse_mse": 0.0004431223754692611,
+            "full": 0.00047345768905704644,
+            "auto": 0.0004702658857369123
+          },
+          "sharp__helmholtz_2d": {
+            "selected_single": 0.08116714374732882,
+            "inverse_mse": 0.07338905895312645,
+            "full": 0.07178938249677666,
+            "auto": 0.07338880383112582
+          },
+          "poisson_generated_v2": {
+            "selected_single": 1.0208466131985914e-08,
+            "inverse_mse": 1.4513994011117994e-08,
+            "full": 1.3972524198576999e-08,
+            "auto": 1.0208466131985914e-08
+          },
+          "poisson_local": {
+            "selected_single": 4.4030299646904364e-08,
+            "inverse_mse": 4.821497832233874e-08,
+            "full": 5.6515677946447074e-08,
+            "auto": 4.4030299646904364e-08
+          },
+          "ext__pressure_poisson_poiseuille": {
+            "selected_single": 2.5885313712343662e-06,
+            "inverse_mse": 2.712697906395261e-06,
+            "full": 2.87360473378588e-06,
+            "auto": 3.005745191985954e-06
+          },
+          "heat_generated": {
+            "selected_single": 1.4497171222592659e-08,
+            "inverse_mse": 5.665220361430801e-09,
+            "full": 6.151011844747519e-09,
+            "auto": 5.790976985163879e-09
+          },
+          "heat_local": {
+            "selected_single": 5.631514168690209e-09,
+            "inverse_mse": 2.4543801634826862e-09,
+            "full": 2.4856130692538143e-09,
+            "auto": 2.476347393758238e-09
+          },
+          "lid_driven_cavity_v2": {
+            "selected_single": 2.987591898800859e-06,
+            "inverse_mse": 2.2755920520314963e-06,
+            "full": 2.2656589735404463e-06,
+            "auto": 2.263119428668457e-06
+          },
+          "fluid": {
+            "selected_single": 0.00037605457034256654,
+            "inverse_mse": 0.00031880172225517864,
+            "full": 0.0002988232447941793,
+            "auto": 0.000319632926820552
+          },
+          "ext__rayleigh_benard_2d": {
+            "selected_single": 9.334113380249743e-10,
+            "inverse_mse": 8.514882077775228e-10,
+            "full": 7.584280270946903e-10,
+            "auto": 7.584280270946903e-10
+          },
+          "sharp__burgers_2d": {
+            "selected_single": 3.4171044421543384e-05,
+            "inverse_mse": 3.407665179611358e-05,
+            "full": 3.2650582926328045e-05,
+            "auto": 3.299171324025234e-05
+          },
+          "sharp__euler": {
+            "selected_single": 0.0043092467606020675,
+            "inverse_mse": 0.0038268625300778326,
+            "full": 0.0038581175682426976,
+            "auto": 0.004102501015513216
+          },
+          "sharp__porous_medium_2d": {
+            "selected_single": 1.2107083447988995e-07,
+            "inverse_mse": 8.10650727374202e-08,
+            "full": 8.293040541439381e-08,
+            "auto": 7.924269549643723e-08
+          },
+          "ext__cahn_hilliard_2d": {
+            "selected_single": 0.023968003700419765,
+            "inverse_mse": 0.02289511966006758,
+            "full": 0.0190312765994248,
+            "auto": 0.021949081209209825
+          },
+          "sharp__shallow_water_2d": {
+            "selected_single": 2.9472977787813216e-05,
+            "inverse_mse": 2.3231799743709782e-05,
+            "full": 2.8289646683351308e-05,
+            "auto": 2.747947557538384e-05
+          },
+          "ext__wave_2d": {
+            "selected_single": 0.0031554769476357567,
+            "inverse_mse": 0.002715349688603142,
+            "full": 0.002455971836441463,
+            "auto": 0.002715349688603142
+          }
+        }
+      }
+    },
+    "10": {
+      "scopes": {
+        "historical": {
+          "datasets": [
+            "darcy_generated",
+            "ext__eikonal_2d",
+            "sharp__helmholtz_2d",
+            "poisson_generated_v2",
+            "poisson_local",
+            "ext__pressure_poisson_poiseuille",
+            "heat_generated",
+            "heat_local",
+            "lid_driven_cavity_v2",
+            "fluid",
+            "ext__rayleigh_benard_2d",
+            "sharp__burgers_2d",
+            "sharp__euler",
+            "sharp__porous_medium_2d",
+            "ext__cahn_hilliard_2d",
+            "sharp__shallow_water_2d",
+            "ext__wave_2d"
+          ],
+          "selection_counts": {
+            "selected_single": 15,
+            "inverse_mse": 8,
+            "full": 28
+          },
+          "comparisons": {
+            "auto / selected_single": {
+              "n_datasets": 17,
+              "n_classes": 7,
+              "class_ratio": 0.8774045147191494,
+              "dataset_ratio": 0.9121571888544612,
+              "wins": 11,
+              "losses": 2,
+              "neutral": 4
+            },
+            "auto / inverse_mse": {
+              "n_datasets": 17,
+              "n_classes": 7,
+              "class_ratio": 0.9942419456121919,
+              "dataset_ratio": 0.9817857528591989,
+              "wins": 8,
+              "losses": 4,
+              "neutral": 5
+            },
+            "auto / full": {
+              "n_datasets": 17,
+              "n_classes": 7,
+              "class_ratio": 1.0153904104866842,
+              "dataset_ratio": 1.0133545029228388,
+              "wins": 4,
+              "losses": 6,
+              "neutral": 7
+            },
+            "auto / best fixed rule per dataset": {
+              "n_datasets": 17,
+              "n_classes": 7,
+              "class_ratio": 1.0225937620094006,
+              "dataset_ratio": 1.0253986079808104,
+              "wins": 2,
+              "losses": 7,
+              "neutral": 8
+            },
+            "auto / best fixed rule per partition": {
+              "n_datasets": 17,
+              "n_classes": 7,
+              "class_ratio": 1.0337600125031883,
+              "dataset_ratio": 1.0449318510890775,
+              "wins": 0,
+              "losses": 10,
+              "neutral": 7
+            },
+            "inverse / selected": {
+              "n_datasets": 17,
+              "n_classes": 7,
+              "class_ratio": 0.8824859166235423,
+              "dataset_ratio": 0.9290796756808067,
+              "wins": 12,
+              "losses": 5,
+              "neutral": 0
+            },
+            "fitted / selected": {
+              "n_datasets": 17,
+              "n_classes": 7,
+              "class_ratio": 0.8641055752127921,
+              "dataset_ratio": 0.9001363157942336,
+              "wins": 12,
+              "losses": 3,
+              "neutral": 2
+            }
+          },
+          "historical_headlines": {
+            "Best library / best additional baseline": {
+              "n_datasets": 17,
+              "n_classes": 7,
+              "class_ratio": 0.7640712446859559,
+              "dataset_ratio": 0.8195176197132131,
+              "wins": 12,
+              "losses": 5,
+              "neutral": 0
+            },
+            "Fitted / best library": {
+              "n_datasets": 17,
+              "n_classes": 7,
+              "class_ratio": 0.8904548606623078,
+              "dataset_ratio": 0.9504539529170037,
+              "wins": 11,
+              "losses": 4,
+              "neutral": 2
+            },
+            "Inverse / best library": {
+              "n_datasets": 17,
+              "n_classes": 7,
+              "class_ratio": 0.9093956762516585,
+              "dataset_ratio": 0.9810152471701082,
+              "wins": 11,
+              "losses": 6,
+              "neutral": 0
+            },
+            "Fitted / best additional baseline": {
+              "n_datasets": 17,
+              "n_classes": 7,
+              "class_ratio": 0.6803709537229089,
+              "dataset_ratio": 0.7789137611415572,
+              "wins": 10,
+              "losses": 7,
+              "neutral": 0
+            },
+            "Fitted / selected": {
+              "n_datasets": 17,
+              "n_classes": 7,
+              "class_ratio": 0.864105575212792,
+              "dataset_ratio": 0.9001363157942336,
+              "wins": 12,
+              "losses": 3,
+              "neutral": 2
+            },
+            "Inverse / selected": {
+              "n_datasets": 17,
+              "n_classes": 7,
+              "class_ratio": 0.8824859166235424,
+              "dataset_ratio": 0.9290796756808067,
+              "wins": 12,
+              "losses": 5,
+              "neutral": 0
+            },
+            "Automatic / best library": {
+              "n_datasets": 17,
+              "n_classes": 7,
+              "class_ratio": 0.904159326487764,
+              "dataset_ratio": 0.9631467930092578,
+              "wins": 10,
+              "losses": 4,
+              "neutral": 3
+            },
+            "Automatic / best additional baseline": {
+              "n_datasets": 17,
+              "n_classes": 7,
+              "class_ratio": 0.6908421419839214,
+              "dataset_ratio": 0.7893157672413617,
+              "wins": 11,
+              "losses": 6,
+              "neutral": 0
+            },
+            "Automatic / selected": {
+              "n_datasets": 17,
+              "n_classes": 7,
+              "class_ratio": 0.8774045147191494,
+              "dataset_ratio": 0.9121571888544612,
+              "wins": 11,
+              "losses": 2,
+              "neutral": 4
+            }
+          },
+          "squared_loss_comparisons": {
+            "auto / selected_single": {
+              "n_datasets": 17,
+              "n_classes": 7,
+              "class_ratio": 0.7711936183383108,
+              "dataset_ratio": 0.8284350715452902,
+              "wins": 12,
+              "losses": 3,
+              "neutral": 2
+            },
+            "auto / inverse_mse": {
+              "n_datasets": 17,
+              "n_classes": 7,
+              "class_ratio": 0.9944255111898321,
+              "dataset_ratio": 0.9653804079575357,
+              "wins": 9,
+              "losses": 5,
+              "neutral": 3
+            },
+            "auto / full": {
+              "n_datasets": 17,
+              "n_classes": 7,
+              "class_ratio": 1.0574146117912124,
+              "dataset_ratio": 1.0451488941438194,
+              "wins": 4,
+              "losses": 8,
+              "neutral": 5
+            }
+          }
+        },
+        "audit": {
+          "datasets": [
+            "darcy_generated",
+            "ext__eikonal_2d",
+            "sharp__helmholtz_2d",
+            "poisson_generated_v2",
+            "heat_generated",
+            "heat_local",
+            "lid_driven_cavity_v2",
+            "fluid",
+            "ext__rayleigh_benard_2d",
+            "sharp__burgers_2d",
+            "sharp__euler",
+            "sharp__porous_medium_2d",
+            "sharp__shallow_water_2d",
+            "ext__wave_2d"
+          ],
+          "selection_counts": {
+            "selected_single": 9,
+            "inverse_mse": 8,
+            "full": 25
+          },
+          "comparisons": {
+            "auto / selected_single": {
+              "n_datasets": 14,
+              "n_classes": 6,
+              "class_ratio": 0.8753145395849358,
+              "dataset_ratio": 0.9050596340289335,
+              "wins": 9,
+              "losses": 2,
+              "neutral": 3
+            },
+            "auto / inverse_mse": {
+              "n_datasets": 14,
+              "n_classes": 6,
+              "class_ratio": 0.9888756715262189,
+              "dataset_ratio": 0.9796792025630555,
+              "wins": 7,
+              "losses": 2,
+              "neutral": 5
+            },
+            "auto / full": {
+              "n_datasets": 14,
+              "n_classes": 6,
+              "class_ratio": 1.007611510309197,
+              "dataset_ratio": 1.010187972971525,
+              "wins": 3,
+              "losses": 4,
+              "neutral": 7
+            },
+            "auto / best fixed rule per dataset": {
+              "n_datasets": 14,
+              "n_classes": 6,
+              "class_ratio": 1.0168327109424762,
+              "dataset_ratio": 1.0227048516707415,
+              "wins": 2,
+              "losses": 5,
+              "neutral": 7
+            },
+            "auto / best fixed rule per partition": {
+              "n_datasets": 14,
+              "n_classes": 6,
+              "class_ratio": 1.0311268643236198,
+              "dataset_ratio": 1.0423125284384238,
+              "wins": 0,
+              "losses": 7,
+              "neutral": 7
+            },
+            "inverse / selected": {
+              "n_datasets": 14,
+              "n_classes": 6,
+              "class_ratio": 0.8851613653655628,
+              "dataset_ratio": 0.9238326501788536,
+              "wins": 10,
+              "losses": 4,
+              "neutral": 0
+            },
+            "fitted / selected": {
+              "n_datasets": 14,
+              "n_classes": 6,
+              "class_ratio": 0.8687024022942489,
+              "dataset_ratio": 0.8959319040065874,
+              "wins": 10,
+              "losses": 2,
+              "neutral": 2
+            }
+          },
+          "historical_headlines": {
+            "Best library / best additional baseline": {
+              "n_datasets": 14,
+              "n_classes": 6,
+              "class_ratio": 0.7468686867947404,
+              "dataset_ratio": 0.8098962985749286,
+              "wins": 9,
+              "losses": 5,
+              "neutral": 0
+            },
+            "Fitted / best library": {
+              "n_datasets": 14,
+              "n_classes": 6,
+              "class_ratio": 0.8872198209870777,
+              "dataset_ratio": 0.9244298335089999,
+              "wins": 10,
+              "losses": 2,
+              "neutral": 2
+            },
+            "Inverse / best library": {
+              "n_datasets": 14,
+              "n_classes": 6,
+              "class_ratio": 0.9040296263141935,
+              "dataset_ratio": 0.9532180505860597,
+              "wins": 10,
+              "losses": 4,
+              "neutral": 0
+            },
+            "Fitted / best additional baseline": {
+              "n_datasets": 14,
+              "n_classes": 6,
+              "class_ratio": 0.6626367025988834,
+              "dataset_ratio": 0.7486923004511765,
+              "wins": 8,
+              "losses": 6,
+              "neutral": 0
+            },
+            "Fitted / selected": {
+              "n_datasets": 14,
+              "n_classes": 6,
+              "class_ratio": 0.8687024022942489,
+              "dataset_ratio": 0.8959319040065873,
+              "wins": 10,
+              "losses": 2,
+              "neutral": 2
+            },
+            "Inverse / selected": {
+              "n_datasets": 14,
+              "n_classes": 6,
+              "class_ratio": 0.8851613653655629,
+              "dataset_ratio": 0.9238326501788537,
+              "wins": 10,
+              "losses": 4,
+              "neutral": 0
+            },
+            "Automatic / best library": {
+              "n_datasets": 14,
+              "n_classes": 6,
+              "class_ratio": 0.8939729038010448,
+              "dataset_ratio": 0.9338478996668612,
+              "wins": 9,
+              "losses": 3,
+              "neutral": 2
+            },
+            "Automatic / best additional baseline": {
+              "n_datasets": 14,
+              "n_classes": 6,
+              "class_ratio": 0.667680368691967,
+              "dataset_ratio": 0.7563199573721622,
+              "wins": 9,
+              "losses": 5,
+              "neutral": 0
+            },
+            "Automatic / selected": {
+              "n_datasets": 14,
+              "n_classes": 6,
+              "class_ratio": 0.8753145395849358,
+              "dataset_ratio": 0.9050596340289335,
+              "wins": 9,
+              "losses": 2,
+              "neutral": 3
+            }
+          },
+          "squared_loss_comparisons": {
+            "auto / selected_single": {
+              "n_datasets": 14,
+              "n_classes": 6,
+              "class_ratio": 0.7695165394551716,
+              "dataset_ratio": 0.8143458546245059,
+              "wins": 10,
+              "losses": 3,
+              "neutral": 1
+            },
+            "auto / inverse_mse": {
+              "n_datasets": 14,
+              "n_classes": 6,
+              "class_ratio": 0.9816716900129057,
+              "dataset_ratio": 0.957988102219456,
+              "wins": 8,
+              "losses": 3,
+              "neutral": 3
+            },
+            "auto / full": {
+              "n_datasets": 14,
+              "n_classes": 6,
+              "class_ratio": 1.0353194358029858,
+              "dataset_ratio": 1.0401123323684431,
+              "wins": 3,
+              "losses": 6,
+              "neutral": 5
+            }
+          }
+        },
+        "common": {
+          "datasets": [
+            "darcy_generated",
+            "ext__eikonal_2d",
+            "sharp__helmholtz_2d",
+            "poisson_generated_v2",
+            "poisson_local",
+            "ext__pressure_poisson_poiseuille",
+            "heat_generated",
+            "lid_driven_cavity_v2",
+            "fluid",
+            "ext__rayleigh_benard_2d",
+            "sharp__euler",
+            "sharp__porous_medium_2d",
+            "ext__cahn_hilliard_2d",
+            "sharp__shallow_water_2d",
+            "ext__wave_2d"
+          ],
+          "selection_counts": {
+            "selected_single": 14,
+            "inverse_mse": 7,
+            "full": 24
+          },
+          "comparisons": {
+            "auto / selected_single": {
+              "n_datasets": 15,
+              "n_classes": 7,
+              "class_ratio": 0.8739004793597764,
+              "dataset_ratio": 0.9279035098076845,
+              "wins": 10,
+              "losses": 2,
+              "neutral": 3
+            },
+            "auto / inverse_mse": {
+              "n_datasets": 15,
+              "n_classes": 7,
+              "class_ratio": 0.9977237211831753,
+              "dataset_ratio": 0.9811112967281613,
+              "wins": 7,
+              "losses": 4,
+              "neutral": 4
+            },
+            "auto / full": {
+              "n_datasets": 15,
+              "n_classes": 7,
+              "class_ratio": 1.01368087587295,
+              "dataset_ratio": 1.014917519135844,
+              "wins": 4,
+              "losses": 6,
+              "neutral": 5
+            },
+            "auto / best fixed rule per dataset": {
+              "n_datasets": 15,
+              "n_classes": 7,
+              "class_ratio": 1.0239877366082413,
+              "dataset_ratio": 1.0285993542314484,
+              "wins": 2,
+              "losses": 7,
+              "neutral": 6
+            },
+            "auto / best fixed rule per partition": {
+              "n_datasets": 15,
+              "n_classes": 7,
+              "class_ratio": 1.0357767495074899,
+              "dataset_ratio": 1.0508341796483933,
+              "wins": 0,
+              "losses": 10,
+              "neutral": 5
+            },
+            "inverse / selected": {
+              "n_datasets": 15,
+              "n_classes": 7,
+              "class_ratio": 0.875894258907105,
+              "dataset_ratio": 0.9457678378610911,
+              "wins": 11,
+              "losses": 4,
+              "neutral": 0
+            },
+            "fitted / selected": {
+              "n_datasets": 15,
+              "n_classes": 7,
+              "class_ratio": 0.8621061126433907,
+              "dataset_ratio": 0.9142649449954832,
+              "wins": 10,
+              "losses": 3,
+              "neutral": 2
+            }
+          },
+          "historical_headlines": {
+            "Best library / best additional baseline": {
+              "n_datasets": 15,
+              "n_classes": 7,
+              "class_ratio": 0.7895469610841804,
+              "dataset_ratio": 0.8652207388073747,
+              "wins": 10,
+              "losses": 5,
+              "neutral": 0
+            },
+            "Fitted / best library": {
+              "n_datasets": 15,
+              "n_classes": 7,
+              "class_ratio": 0.8906457939734602,
+              "dataset_ratio": 0.9723991538924174,
+              "wins": 9,
+              "losses": 4,
+              "neutral": 2
+            },
+            "Inverse / best library": {
+              "n_datasets": 15,
+              "n_classes": 7,
+              "class_ratio": 0.9048903913569704,
+              "dataset_ratio": 1.0059051813687658,
+              "wins": 10,
+              "losses": 5,
+              "neutral": 0
+            },
+            "Fitted / best additional baseline": {
+              "n_datasets": 15,
+              "n_classes": 7,
+              "class_ratio": 0.7032066800341527,
+              "dataset_ratio": 0.8413399143464634,
+              "wins": 8,
+              "losses": 7,
+              "neutral": 0
+            },
+            "Fitted / selected": {
+              "n_datasets": 15,
+              "n_classes": 7,
+              "class_ratio": 0.8621061126433907,
+              "dataset_ratio": 0.9142649449954832,
+              "wins": 10,
+              "losses": 3,
+              "neutral": 2
+            },
+            "Inverse / selected": {
+              "n_datasets": 15,
+              "n_classes": 7,
+              "class_ratio": 0.875894258907105,
+              "dataset_ratio": 0.9457678378610912,
+              "wins": 11,
+              "losses": 4,
+              "neutral": 0
+            },
+            "Automatic / best library": {
+              "n_datasets": 15,
+              "n_classes": 7,
+              "class_ratio": 0.9028306085275762,
+              "dataset_ratio": 0.986904936878286,
+              "wins": 9,
+              "losses": 4,
+              "neutral": 2
+            },
+            "Automatic / best additional baseline": {
+              "n_datasets": 15,
+              "n_classes": 7,
+              "class_ratio": 0.7128271633367291,
+              "dataset_ratio": 0.853890618618476,
+              "wins": 9,
+              "losses": 6,
+              "neutral": 0
+            },
+            "Automatic / selected": {
+              "n_datasets": 15,
+              "n_classes": 7,
+              "class_ratio": 0.8739004793597764,
+              "dataset_ratio": 0.9279035098076845,
+              "wins": 10,
+              "losses": 2,
+              "neutral": 3
+            }
+          },
+          "squared_loss_comparisons": {
+            "auto / selected_single": {
+              "n_datasets": 15,
+              "n_classes": 7,
+              "class_ratio": 0.7646886522611108,
+              "dataset_ratio": 0.855204608306571,
+              "wins": 10,
+              "losses": 3,
+              "neutral": 2
+            },
+            "auto / inverse_mse": {
+              "n_datasets": 15,
+              "n_classes": 7,
+              "class_ratio": 0.9989560745418562,
+              "dataset_ratio": 0.9632008098717554,
+              "wins": 8,
+              "losses": 5,
+              "neutral": 2
+            },
+            "auto / full": {
+              "n_datasets": 15,
+              "n_classes": 7,
+              "class_ratio": 1.0561772779600334,
+              "dataset_ratio": 1.0512681947229674,
+              "wins": 4,
+              "losses": 8,
+              "neutral": 3
+            }
+          }
+        },
+        "audit_common": {
+          "datasets": [
+            "darcy_generated",
+            "ext__eikonal_2d",
+            "sharp__helmholtz_2d",
+            "poisson_generated_v2",
+            "heat_generated",
+            "lid_driven_cavity_v2",
+            "fluid",
+            "ext__rayleigh_benard_2d",
+            "sharp__euler",
+            "sharp__porous_medium_2d",
+            "sharp__shallow_water_2d",
+            "ext__wave_2d"
+          ],
+          "selection_counts": {
+            "selected_single": 8,
+            "inverse_mse": 7,
+            "full": 21
+          },
+          "comparisons": {
+            "auto / selected_single": {
+              "n_datasets": 12,
+              "n_classes": 6,
+              "class_ratio": 0.87123759481585,
+              "dataset_ratio": 0.9234283338023643,
+              "wins": 8,
+              "losses": 2,
+              "neutral": 2
+            },
+            "auto / inverse_mse": {
+              "n_datasets": 12,
+              "n_classes": 6,
+              "class_ratio": 0.9929169964788955,
+              "dataset_ratio": 0.9784876626312888,
+              "wins": 6,
+              "losses": 2,
+              "neutral": 4
+            },
+            "auto / full": {
+              "n_datasets": 12,
+              "n_classes": 6,
+              "class_ratio": 1.0056326105963462,
+              "dataset_ratio": 1.0116082054395266,
+              "wins": 3,
+              "losses": 4,
+              "neutral": 5
+            },
+            "auto / best fixed rule per dataset": {
+              "n_datasets": 12,
+              "n_classes": 6,
+              "class_ratio": 1.0184500360656865,
+              "dataset_ratio": 1.0262468090422083,
+              "wins": 2,
+              "losses": 5,
+              "neutral": 5
+            },
+            "auto / best fixed rule per partition": {
+              "n_datasets": 12,
+              "n_classes": 6,
+              "class_ratio": 1.03347411239103,
+              "dataset_ratio": 1.0492381388976304,
+              "wins": 0,
+              "losses": 7,
+              "neutral": 5
+            },
+            "inverse / selected": {
+              "n_datasets": 12,
+              "n_classes": 6,
+              "class_ratio": 0.8774525946332394,
+              "dataset_ratio": 0.9437301757276506,
+              "wins": 9,
+              "losses": 3,
+              "neutral": 0
+            },
+            "fitted / selected": {
+              "n_datasets": 12,
+              "n_classes": 6,
+              "class_ratio": 0.8663577390347362,
+              "dataset_ratio": 0.912831992501633,
+              "wins": 8,
+              "losses": 2,
+              "neutral": 2
+            }
+          },
+          "historical_headlines": {
+            "Best library / best additional baseline": {
+              "n_datasets": 12,
+              "n_classes": 6,
+              "class_ratio": 0.7760011783764913,
+              "dataset_ratio": 0.8650383910315635,
+              "wins": 7,
+              "losses": 5,
+              "neutral": 0
+            },
+            "Fitted / best library": {
+              "n_datasets": 12,
+              "n_classes": 6,
+              "class_ratio": 0.8874417712072364,
+              "dataset_ratio": 0.9467957397900848,
+              "wins": 8,
+              "losses": 2,
+              "neutral": 2
+            },
+            "Inverse / best library": {
+              "n_datasets": 12,
+              "n_classes": 6,
+              "class_ratio": 0.8988066356968114,
+              "dataset_ratio": 0.978843551967959,
+              "wins": 9,
+              "losses": 3,
+              "neutral": 0
+            },
+            "Fitted / best additional baseline": {
+              "n_datasets": 12,
+              "n_classes": 6,
+              "class_ratio": 0.6886558601973362,
+              "dataset_ratio": 0.8190146633835538,
+              "wins": 6,
+              "losses": 6,
+              "neutral": 0
+            },
+            "Fitted / selected": {
+              "n_datasets": 12,
+              "n_classes": 6,
+              "class_ratio": 0.8663577390347362,
+              "dataset_ratio": 0.9128319925016329,
+              "wins": 8,
+              "losses": 2,
+              "neutral": 2
+            },
+            "Inverse / selected": {
+              "n_datasets": 12,
+              "n_classes": 6,
+              "class_ratio": 0.8774525946332394,
+              "dataset_ratio": 0.9437301757276506,
+              "wins": 9,
+              "losses": 3,
+              "neutral": 0
+            },
+            "Automatic / best library": {
+              "n_datasets": 12,
+              "n_classes": 6,
+              "class_ratio": 0.8924403851313788,
+              "dataset_ratio": 0.9577863392468368,
+              "wins": 8,
+              "losses": 3,
+              "neutral": 1
+            },
+            "Automatic / best additional baseline": {
+              "n_datasets": 12,
+              "n_classes": 6,
+              "class_ratio": 0.6925347904927196,
+              "dataset_ratio": 0.8285219538540949,
+              "wins": 7,
+              "losses": 5,
+              "neutral": 0
+            },
+            "Automatic / selected": {
+              "n_datasets": 12,
+              "n_classes": 6,
+              "class_ratio": 0.87123759481585,
+              "dataset_ratio": 0.9234283338023643,
+              "wins": 8,
+              "losses": 2,
+              "neutral": 2
+            }
+          },
+          "squared_loss_comparisons": {
+            "auto / selected_single": {
+              "n_datasets": 12,
+              "n_classes": 6,
+              "class_ratio": 0.7619492514874162,
+              "dataset_ratio": 0.8449514145438415,
+              "wins": 8,
+              "losses": 3,
+              "neutral": 1
+            },
+            "auto / inverse_mse": {
+              "n_datasets": 12,
+              "n_classes": 6,
+              "class_ratio": 0.9868915355649414,
+              "dataset_ratio": 0.9540621553278363,
+              "wins": 7,
+              "losses": 3,
+              "neutral": 2
+            },
+            "auto / full": {
+              "n_datasets": 12,
+              "n_classes": 6,
+              "class_ratio": 1.0339061813197508,
+              "dataset_ratio": 1.046886965287914,
+              "wins": 3,
+              "losses": 6,
+              "neutral": 3
+            }
+          }
+        }
+      },
+      "means": {
+        "mean_relative_l2": {
+          "darcy_generated": {
+            "selected_single": 0.02318965202150478,
+            "inverse_mse": 0.02555614956738139,
+            "full": 0.023123058207527122,
+            "auto": 0.023389054462815306
+          },
+          "ext__eikonal_2d": {
+            "selected_single": 0.018088125382175316,
+            "inverse_mse": 0.017857629766979473,
+            "full": 0.017229567925505684,
+            "auto": 0.017014104740851146
+          },
+          "sharp__helmholtz_2d": {
+            "selected_single": 0.047904862391611604,
+            "inverse_mse": 0.06080394020900088,
+            "full": 0.05106598181197517,
+            "auto": 0.05724878111951006
+          },
+          "poisson_generated_v2": {
+            "selected_single": 6.843416283350502e-05,
+            "inverse_mse": 7.674749800979046e-05,
+            "full": 7.231219122965282e-05,
+            "auto": 7.316284236029327e-05
+          },
+          "poisson_local": {
+            "selected_single": 0.00012093001298030472,
+            "inverse_mse": 0.00012918073393958465,
+            "full": 0.00012442076140522387,
+            "auto": 0.00012093001298030472
+          },
+          "ext__pressure_poisson_poiseuille": {
+            "selected_single": 0.0007771853069501591,
+            "inverse_mse": 0.0006978989232697218,
+            "full": 0.0006880384460779456,
+            "auto": 0.0007179900266637462
+          },
+          "heat_generated": {
+            "selected_single": 9.146040517147266e-05,
+            "inverse_mse": 5.8672596952518806e-05,
+            "full": 6.027213813052952e-05,
+            "auto": 5.872920863665504e-05
+          },
+          "heat_local": {
+            "selected_single": 6.619835423846401e-05,
+            "inverse_mse": 4.323448410336923e-05,
+            "full": 4.289428068765775e-05,
+            "auto": 4.303372434021524e-05
+          },
+          "lid_driven_cavity_v2": {
+            "selected_single": 0.0016429439414948936,
+            "inverse_mse": 0.0013817167359252355,
+            "full": 0.0013775899454046107,
+            "auto": 0.0013775899454046107
+          },
+          "fluid": {
+            "selected_single": 0.015517467787974484,
+            "inverse_mse": 0.015316245429059794,
+            "full": 0.015481302283133783,
+            "auto": 0.014956285018799184
+          },
+          "ext__rayleigh_benard_2d": {
+            "selected_single": 3.0089903282056452e-05,
+            "inverse_mse": 2.8480011165498927e-05,
+            "full": 2.664247018682857e-05,
+            "auto": 2.664247018682857e-05
+          },
+          "sharp__burgers_2d": {
+            "selected_single": 0.00507223589182969,
+            "inverse_mse": 0.0051327315587049475,
+            "full": 0.005021194483177086,
+            "auto": 0.005022039090839086
+          },
+          "sharp__euler": {
+            "selected_single": 0.06092792456750313,
+            "inverse_mse": 0.05651463687099473,
+            "full": 0.05741264366411921,
+            "auto": 0.05774406097461307
+          },
+          "sharp__porous_medium_2d": {
+            "selected_single": 0.00032497316732467565,
+            "inverse_mse": 0.0002617462031440902,
+            "full": 0.00026161151513731315,
+            "auto": 0.00026161151513731315
+          },
+          "ext__cahn_hilliard_2d": {
+            "selected_single": 0.12222777894368075,
+            "inverse_mse": 0.11061966540477369,
+            "full": 0.10449940849059641,
+            "auto": 0.11201598436725647
+          },
+          "sharp__shallow_water_2d": {
+            "selected_single": 0.0037328374950524068,
+            "inverse_mse": 0.0034975370824531613,
+            "full": 0.003488646558292966,
+            "auto": 0.0037328374950524068
+          },
+          "ext__wave_2d": {
+            "selected_single": 0.04769144129851649,
+            "inverse_mse": 0.04356018668832944,
+            "full": 0.04311900456835662,
+            "auto": 0.04314847492921655
+          }
+        },
+        "mean_squared_relative_l2": {
+          "darcy_generated": {
+            "selected_single": 0.000829257652267188,
+            "inverse_mse": 0.0011606236622014518,
+            "full": 0.0008508796935646769,
+            "auto": 0.0008623369181327785
+          },
+          "ext__eikonal_2d": {
+            "selected_single": 0.0004926957809925854,
+            "inverse_mse": 0.0004495682137072039,
+            "full": 0.00044447392388197805,
+            "auto": 0.00043682109650440863
+          },
+          "sharp__helmholtz_2d": {
+            "selected_single": 0.0412449412568422,
+            "inverse_mse": 0.052707266578644274,
+            "full": 0.036214052176198025,
+            "auto": 0.04789758095079492
+          },
+          "poisson_generated_v2": {
+            "selected_single": 1.0208466131985914e-08,
+            "inverse_mse": 1.3378323350644055e-08,
+            "full": 1.1088594204279555e-08,
+            "auto": 1.1407735708659718e-08
+          },
+          "poisson_local": {
+            "selected_single": 4.4030299646904364e-08,
+            "inverse_mse": 5.1309509234257675e-08,
+            "full": 4.8935317065883116e-08,
+            "auto": 4.4030299646904364e-08
+          },
+          "ext__pressure_poisson_poiseuille": {
+            "selected_single": 3.3398482933737994e-06,
+            "inverse_mse": 2.6314517072737623e-06,
+            "full": 2.713862843188568e-06,
+            "auto": 2.9882533197576867e-06
+          },
+          "heat_generated": {
+            "selected_single": 1.3397712040594684e-08,
+            "inverse_mse": 5.525569533312496e-09,
+            "full": 5.7102828147206e-09,
+            "auto": 5.5288261822148205e-09
+          },
+          "heat_local": {
+            "selected_single": 5.631514168690209e-09,
+            "inverse_mse": 2.4289498767478524e-09,
+            "full": 2.43658741651893e-09,
+            "auto": 2.444899576675698e-09
+          },
+          "lid_driven_cavity_v2": {
+            "selected_single": 2.987591898800859e-06,
+            "inverse_mse": 2.1016178785918462e-06,
+            "full": 2.088014716524017e-06,
+            "auto": 2.088014716524017e-06
+          },
+          "fluid": {
+            "selected_single": 0.0003075354001769357,
+            "inverse_mse": 0.00031782925217530835,
+            "full": 0.00030478489298936155,
+            "auto": 0.00028883393226005876
+          },
+          "ext__rayleigh_benard_2d": {
+            "selected_single": 9.334113380249743e-10,
+            "inverse_mse": 8.491865533621832e-10,
+            "full": 7.487219525765139e-10,
+            "auto": 7.487219525765139e-10
+          },
+          "sharp__burgers_2d": {
+            "selected_single": 3.331837153447198e-05,
+            "inverse_mse": 3.412812431834183e-05,
+            "full": 3.277514574134414e-05,
+            "auto": 3.2688239693812544e-05
+          },
+          "sharp__euler": {
+            "selected_single": 0.0043092467606020675,
+            "inverse_mse": 0.003847123678068791,
+            "full": 0.003885151373673169,
+            "auto": 0.003950387828928711
+          },
+          "sharp__porous_medium_2d": {
+            "selected_single": 1.2107083447988995e-07,
+            "inverse_mse": 8.072547237271133e-08,
+            "full": 8.173635317471154e-08,
+            "auto": 8.173635317471154e-08
+          },
+          "ext__cahn_hilliard_2d": {
+            "selected_single": 0.029204405621743812,
+            "inverse_mse": 0.022949359493572255,
+            "full": 0.019137302359576034,
+            "auto": 0.02359539974684165
+          },
+          "sharp__shallow_water_2d": {
+            "selected_single": 2.889296945297107e-05,
+            "inverse_mse": 2.250146162236602e-05,
+            "full": 2.1385790747752538e-05,
+            "auto": 2.889296945297107e-05
+          },
+          "ext__wave_2d": {
+            "selected_single": 0.0030655361807285036,
+            "inverse_mse": 0.0026392194573376555,
+            "full": 0.0024872573487628104,
+            "auto": 0.002523271178940628
+          }
+        }
+      }
+    },
+    "20": {
+      "scopes": {
+        "historical": {
+          "datasets": [
+            "darcy_generated",
+            "ext__eikonal_2d",
+            "sharp__helmholtz_2d",
+            "poisson_generated_v2",
+            "poisson_local",
+            "ext__pressure_poisson_poiseuille",
+            "heat_generated",
+            "heat_local",
+            "lid_driven_cavity_v2",
+            "fluid",
+            "ext__rayleigh_benard_2d",
+            "sharp__burgers_2d",
+            "sharp__euler",
+            "sharp__porous_medium_2d",
+            "ext__cahn_hilliard_2d",
+            "sharp__shallow_water_2d",
+            "ext__wave_2d"
+          ],
+          "selection_counts": {
+            "selected_single": 10,
+            "inverse_mse": 8,
+            "full": 33
+          },
+          "comparisons": {
+            "auto / selected_single": {
+              "n_datasets": 17,
+              "n_classes": 7,
+              "class_ratio": 0.8730365350707255,
+              "dataset_ratio": 0.9056669370971752,
+              "wins": 12,
+              "losses": 3,
+              "neutral": 2
+            },
+            "auto / inverse_mse": {
+              "n_datasets": 17,
+              "n_classes": 7,
+              "class_ratio": 0.9914208676798931,
+              "dataset_ratio": 0.9810716068589725,
+              "wins": 8,
+              "losses": 3,
+              "neutral": 6
+            },
+            "auto / full": {
+              "n_datasets": 17,
+              "n_classes": 7,
+              "class_ratio": 1.0154556280590301,
+              "dataset_ratio": 1.0140801662323051,
+              "wins": 2,
+              "losses": 4,
+              "neutral": 11
+            },
+            "auto / best fixed rule per dataset": {
+              "n_datasets": 17,
+              "n_classes": 7,
+              "class_ratio": 1.0206095258004937,
+              "dataset_ratio": 1.0244634818189655,
+              "wins": 0,
+              "losses": 5,
+              "neutral": 12
+            },
+            "auto / best fixed rule per partition": {
+              "n_datasets": 17,
+              "n_classes": 7,
+              "class_ratio": 1.027097238708177,
+              "dataset_ratio": 1.03843856267135,
+              "wins": 0,
+              "losses": 7,
+              "neutral": 10
+            },
+            "inverse / selected": {
+              "n_datasets": 17,
+              "n_classes": 7,
+              "class_ratio": 0.8805912438718295,
+              "dataset_ratio": 0.9231405034712856,
+              "wins": 12,
+              "losses": 5,
+              "neutral": 0
+            },
+            "fitted / selected": {
+              "n_datasets": 17,
+              "n_classes": 7,
+              "class_ratio": 0.8597485807818818,
+              "dataset_ratio": 0.8930920525367078,
+              "wins": 13,
+              "losses": 3,
+              "neutral": 1
+            }
+          },
+          "historical_headlines": {
+            "Best library / best additional baseline": {
+              "n_datasets": 17,
+              "n_classes": 7,
+              "class_ratio": 0.7640712446859559,
+              "dataset_ratio": 0.8195176197132131,
+              "wins": 12,
+              "losses": 5,
+              "neutral": 0
+            },
+            "Fitted / best library": {
+              "n_datasets": 17,
+              "n_classes": 7,
+              "class_ratio": 0.8884590524691839,
+              "dataset_ratio": 0.947281403154233,
+              "wins": 11,
+              "losses": 4,
+              "neutral": 2
+            },
+            "Inverse / best library": {
+              "n_datasets": 17,
+              "n_classes": 7,
+              "class_ratio": 0.9099977361189884,
+              "dataset_ratio": 0.9791530771693236,
+              "wins": 10,
+              "losses": 6,
+              "neutral": 1
+            },
+            "Fitted / best additional baseline": {
+              "n_datasets": 17,
+              "n_classes": 7,
+              "class_ratio": 0.6788460140726342,
+              "dataset_ratio": 0.7763138007115497,
+              "wins": 11,
+              "losses": 6,
+              "neutral": 0
+            },
+            "Fitted / selected": {
+              "n_datasets": 17,
+              "n_classes": 7,
+              "class_ratio": 0.8597485807818819,
+              "dataset_ratio": 0.8930920525367078,
+              "wins": 13,
+              "losses": 3,
+              "neutral": 1
+            },
+            "Inverse / selected": {
+              "n_datasets": 17,
+              "n_classes": 7,
+              "class_ratio": 0.8805912438718295,
+              "dataset_ratio": 0.9231405034712857,
+              "wins": 12,
+              "losses": 5,
+              "neutral": 0
+            },
+            "Automatic / best library": {
+              "n_datasets": 17,
+              "n_classes": 7,
+              "class_ratio": 0.9021907451298259,
+              "dataset_ratio": 0.9606192827794159,
+              "wins": 10,
+              "losses": 4,
+              "neutral": 3
+            },
+            "Automatic / best additional baseline": {
+              "n_datasets": 17,
+              "n_classes": 7,
+              "class_ratio": 0.6893380055754961,
+              "dataset_ratio": 0.7872444280740009,
+              "wins": 10,
+              "losses": 6,
+              "neutral": 1
+            },
+            "Automatic / selected": {
+              "n_datasets": 17,
+              "n_classes": 7,
+              "class_ratio": 0.8730365350707256,
+              "dataset_ratio": 0.9056669370971752,
+              "wins": 12,
+              "losses": 3,
+              "neutral": 2
+            }
+          },
+          "squared_loss_comparisons": {
+            "auto / selected_single": {
+              "n_datasets": 17,
+              "n_classes": 7,
+              "class_ratio": 0.7610659974734784,
+              "dataset_ratio": 0.8127813006424807,
+              "wins": 14,
+              "losses": 2,
+              "neutral": 1
+            },
+            "auto / inverse_mse": {
+              "n_datasets": 17,
+              "n_classes": 7,
+              "class_ratio": 0.9852892918090875,
+              "dataset_ratio": 0.9630338110963966,
+              "wins": 10,
+              "losses": 3,
+              "neutral": 4
+            },
+            "auto / full": {
+              "n_datasets": 17,
+              "n_classes": 7,
+              "class_ratio": 1.0476166508267801,
+              "dataset_ratio": 1.0377198420269589,
+              "wins": 4,
+              "losses": 5,
+              "neutral": 8
+            }
+          }
+        },
+        "audit": {
+          "datasets": [
+            "darcy_generated",
+            "ext__eikonal_2d",
+            "sharp__helmholtz_2d",
+            "poisson_generated_v2",
+            "heat_generated",
+            "heat_local",
+            "lid_driven_cavity_v2",
+            "fluid",
+            "ext__rayleigh_benard_2d",
+            "sharp__burgers_2d",
+            "sharp__euler",
+            "sharp__porous_medium_2d",
+            "sharp__shallow_water_2d",
+            "ext__wave_2d"
+          ],
+          "selection_counts": {
+            "selected_single": 5,
+            "inverse_mse": 8,
+            "full": 29
+          },
+          "comparisons": {
+            "auto / selected_single": {
+              "n_datasets": 14,
+              "n_classes": 6,
+              "class_ratio": 0.868466366212148,
+              "dataset_ratio": 0.8975714276107069,
+              "wins": 10,
+              "losses": 3,
+              "neutral": 1
+            },
+            "auto / inverse_mse": {
+              "n_datasets": 14,
+              "n_classes": 6,
+              "class_ratio": 0.9835611426358812,
+              "dataset_ratio": 0.9760907668673268,
+              "wins": 7,
+              "losses": 1,
+              "neutral": 6
+            },
+            "auto / full": {
+              "n_datasets": 14,
+              "n_classes": 6,
+              "class_ratio": 1.0079096727103676,
+              "dataset_ratio": 1.0103740519284237,
+              "wins": 1,
+              "losses": 2,
+              "neutral": 11
+            },
+            "auto / best fixed rule per dataset": {
+              "n_datasets": 14,
+              "n_classes": 6,
+              "class_ratio": 1.015144860078126,
+              "dataset_ratio": 1.0213993356174673,
+              "wins": 0,
+              "losses": 3,
+              "neutral": 11
+            },
+            "auto / best fixed rule per partition": {
+              "n_datasets": 14,
+              "n_classes": 6,
+              "class_ratio": 1.0237283014127834,
+              "dataset_ratio": 1.034824492621202,
+              "wins": 0,
+              "losses": 4,
+              "neutral": 10
+            },
+            "inverse / selected": {
+              "n_datasets": 14,
+              "n_classes": 6,
+              "class_ratio": 0.882981574368334,
+              "dataset_ratio": 0.9195573383932106,
+              "wins": 10,
+              "losses": 4,
+              "neutral": 0
+            },
+            "fitted / selected": {
+              "n_datasets": 14,
+              "n_classes": 6,
+              "class_ratio": 0.8616509888993892,
+              "dataset_ratio": 0.8883555806857678,
+              "wins": 11,
+              "losses": 2,
+              "neutral": 1
+            }
+          },
+          "historical_headlines": {
+            "Best library / best additional baseline": {
+              "n_datasets": 14,
+              "n_classes": 6,
+              "class_ratio": 0.7468686867947404,
+              "dataset_ratio": 0.8098962985749286,
+              "wins": 9,
+              "losses": 5,
+              "neutral": 0
+            },
+            "Fitted / best library": {
+              "n_datasets": 14,
+              "n_classes": 6,
+              "class_ratio": 0.8847190464351534,
+              "dataset_ratio": 0.9222396633779362,
+              "wins": 10,
+              "losses": 2,
+              "neutral": 2
+            },
+            "Inverse / best library": {
+              "n_datasets": 14,
+              "n_classes": 6,
+              "class_ratio": 0.9066206927851375,
+              "dataset_ratio": 0.9546315334247238,
+              "wins": 9,
+              "losses": 4,
+              "neutral": 1
+            },
+            "Fitted / best additional baseline": {
+              "n_datasets": 14,
+              "n_classes": 6,
+              "class_ratio": 0.6607689523933181,
+              "dataset_ratio": 0.7469184897687787,
+              "wins": 9,
+              "losses": 5,
+              "neutral": 0
+            },
+            "Fitted / selected": {
+              "n_datasets": 14,
+              "n_classes": 6,
+              "class_ratio": 0.8616509888993892,
+              "dataset_ratio": 0.8883555806857678,
+              "wins": 11,
+              "losses": 2,
+              "neutral": 1
+            },
+            "Inverse / selected": {
+              "n_datasets": 14,
+              "n_classes": 6,
+              "class_ratio": 0.8829815743683339,
+              "dataset_ratio": 0.9195573383932106,
+              "wins": 10,
+              "losses": 4,
+              "neutral": 0
+            },
+            "Automatic / best library": {
+              "n_datasets": 14,
+              "n_classes": 6,
+              "class_ratio": 0.8917168845330841,
+              "dataset_ratio": 0.9318070255362708,
+              "wins": 9,
+              "losses": 3,
+              "neutral": 2
+            },
+            "Automatic / best additional baseline": {
+              "n_datasets": 14,
+              "n_classes": 6,
+              "class_ratio": 0.6659954185439216,
+              "dataset_ratio": 0.7546670609679398,
+              "wins": 8,
+              "losses": 5,
+              "neutral": 1
+            },
+            "Automatic / selected": {
+              "n_datasets": 14,
+              "n_classes": 6,
+              "class_ratio": 0.868466366212148,
+              "dataset_ratio": 0.8975714276107069,
+              "wins": 10,
+              "losses": 3,
+              "neutral": 1
+            }
+          },
+          "squared_loss_comparisons": {
+            "auto / selected_single": {
+              "n_datasets": 14,
+              "n_classes": 6,
+              "class_ratio": 0.750007483757619,
+              "dataset_ratio": 0.7937575448976231,
+              "wins": 12,
+              "losses": 2,
+              "neutral": 0
+            },
+            "auto / inverse_mse": {
+              "n_datasets": 14,
+              "n_classes": 6,
+              "class_ratio": 0.9695792053217465,
+              "dataset_ratio": 0.9517059729986177,
+              "wins": 9,
+              "losses": 1,
+              "neutral": 4
+            },
+            "auto / full": {
+              "n_datasets": 14,
+              "n_classes": 6,
+              "class_ratio": 1.0194758666861496,
+              "dataset_ratio": 1.0262063841189326,
+              "wins": 3,
+              "losses": 3,
+              "neutral": 8
+            }
+          }
+        },
+        "common": {
+          "datasets": [
+            "darcy_generated",
+            "ext__eikonal_2d",
+            "sharp__helmholtz_2d",
+            "poisson_generated_v2",
+            "poisson_local",
+            "ext__pressure_poisson_poiseuille",
+            "heat_generated",
+            "lid_driven_cavity_v2",
+            "fluid",
+            "ext__rayleigh_benard_2d",
+            "sharp__euler",
+            "sharp__porous_medium_2d",
+            "ext__cahn_hilliard_2d",
+            "sharp__shallow_water_2d",
+            "ext__wave_2d"
+          ],
+          "selection_counts": {
+            "selected_single": 10,
+            "inverse_mse": 7,
+            "full": 28
+          },
+          "comparisons": {
+            "auto / selected_single": {
+              "n_datasets": 15,
+              "n_classes": 7,
+              "class_ratio": 0.8687975922546597,
+              "dataset_ratio": 0.9206634235753381,
+              "wins": 11,
+              "losses": 3,
+              "neutral": 1
+            },
+            "auto / inverse_mse": {
+              "n_datasets": 15,
+              "n_classes": 7,
+              "class_ratio": 0.9928729418865174,
+              "dataset_ratio": 0.9803169587714312,
+              "wins": 7,
+              "losses": 3,
+              "neutral": 5
+            },
+            "auto / full": {
+              "n_datasets": 15,
+              "n_classes": 7,
+              "class_ratio": 1.0143963348650622,
+              "dataset_ratio": 1.0160980139729257,
+              "wins": 2,
+              "losses": 4,
+              "neutral": 9
+            },
+            "auto / best fixed rule per dataset": {
+              "n_datasets": 15,
+              "n_classes": 7,
+              "class_ratio": 1.020982316743853,
+              "dataset_ratio": 1.0278972125574293,
+              "wins": 0,
+              "losses": 5,
+              "neutral": 10
+            },
+            "auto / best fixed rule per partition": {
+              "n_datasets": 15,
+              "n_classes": 7,
+              "class_ratio": 1.0273624196210942,
+              "dataset_ratio": 1.0436741215493386,
+              "wins": 0,
+              "losses": 7,
+              "neutral": 8
+            },
+            "inverse / selected": {
+              "n_datasets": 15,
+              "n_classes": 7,
+              "class_ratio": 0.8750340104987581,
+              "dataset_ratio": 0.9391487266823854,
+              "wins": 11,
+              "losses": 4,
+              "neutral": 0
+            },
+            "fitted / selected": {
+              "n_datasets": 15,
+              "n_classes": 7,
+              "class_ratio": 0.8564675979140142,
+              "dataset_ratio": 0.90607737729509,
+              "wins": 12,
+              "losses": 3,
+              "neutral": 0
+            }
+          },
+          "historical_headlines": {
+            "Best library / best additional baseline": {
+              "n_datasets": 15,
+              "n_classes": 7,
+              "class_ratio": 0.7895469610841804,
+              "dataset_ratio": 0.8652207388073747,
+              "wins": 10,
+              "losses": 5,
+              "neutral": 0
+            },
+            "Fitted / best library": {
+              "n_datasets": 15,
+              "n_classes": 7,
+              "class_ratio": 0.885894821541099,
+              "dataset_ratio": 0.9686326684901442,
+              "wins": 10,
+              "losses": 4,
+              "neutral": 1
+            },
+            "Inverse / best library": {
+              "n_datasets": 15,
+              "n_classes": 7,
+              "class_ratio": 0.9050991543185211,
+              "dataset_ratio": 1.0039872532202219,
+              "wins": 9,
+              "losses": 5,
+              "neutral": 1
+            },
+            "Fitted / best additional baseline": {
+              "n_datasets": 15,
+              "n_classes": 7,
+              "class_ratio": 0.6994555641879872,
+              "dataset_ratio": 0.8380810730640014,
+              "wins": 9,
+              "losses": 6,
+              "neutral": 0
+            },
+            "Fitted / selected": {
+              "n_datasets": 15,
+              "n_classes": 7,
+              "class_ratio": 0.8564675979140142,
+              "dataset_ratio": 0.9060773772950901,
+              "wins": 12,
+              "losses": 3,
+              "neutral": 0
+            },
+            "Inverse / selected": {
+              "n_datasets": 15,
+              "n_classes": 7,
+              "class_ratio": 0.875034010498758,
+              "dataset_ratio": 0.9391487266823854,
+              "wins": 11,
+              "losses": 4,
+              "neutral": 0
+            },
+            "Automatic / best library": {
+              "n_datasets": 15,
+              "n_classes": 7,
+              "class_ratio": 0.8986484600472291,
+              "dataset_ratio": 0.9842257307221308,
+              "wins": 9,
+              "losses": 4,
+              "neutral": 2
+            },
+            "Automatic / best additional baseline": {
+              "n_datasets": 15,
+              "n_classes": 7,
+              "class_ratio": 0.7095251607132684,
+              "dataset_ratio": 0.8515725138886302,
+              "wins": 8,
+              "losses": 6,
+              "neutral": 1
+            },
+            "Automatic / selected": {
+              "n_datasets": 15,
+              "n_classes": 7,
+              "class_ratio": 0.8687975922546597,
+              "dataset_ratio": 0.9206634235753381,
+              "wins": 11,
+              "losses": 3,
+              "neutral": 1
+            }
+          },
+          "squared_loss_comparisons": {
+            "auto / selected_single": {
+              "n_datasets": 15,
+              "n_classes": 7,
+              "class_ratio": 0.7531925900686792,
+              "dataset_ratio": 0.8371145462029709,
+              "wins": 12,
+              "losses": 2,
+              "neutral": 1
+            },
+            "auto / inverse_mse": {
+              "n_datasets": 15,
+              "n_classes": 7,
+              "class_ratio": 0.98602936315361,
+              "dataset_ratio": 0.9603528217801088,
+              "wins": 9,
+              "losses": 3,
+              "neutral": 3
+            },
+            "auto / full": {
+              "n_datasets": 15,
+              "n_classes": 7,
+              "class_ratio": 1.0465398866614095,
+              "dataset_ratio": 1.0440433962193456,
+              "wins": 3,
+              "losses": 5,
+              "neutral": 7
+            }
+          }
+        },
+        "audit_common": {
+          "datasets": [
+            "darcy_generated",
+            "ext__eikonal_2d",
+            "sharp__helmholtz_2d",
+            "poisson_generated_v2",
+            "heat_generated",
+            "lid_driven_cavity_v2",
+            "fluid",
+            "ext__rayleigh_benard_2d",
+            "sharp__euler",
+            "sharp__porous_medium_2d",
+            "sharp__shallow_water_2d",
+            "ext__wave_2d"
+          ],
+          "selection_counts": {
+            "selected_single": 5,
+            "inverse_mse": 7,
+            "full": 24
+          },
+          "comparisons": {
+            "auto / selected_single": {
+              "n_datasets": 12,
+              "n_classes": 6,
+              "class_ratio": 0.8635488144861834,
+              "dataset_ratio": 0.9148177319126649,
+              "wins": 9,
+              "losses": 3,
+              "neutral": 0
+            },
+            "auto / inverse_mse": {
+              "n_datasets": 12,
+              "n_classes": 6,
+              "class_ratio": 0.9852420039817361,
+              "dataset_ratio": 0.9743254538618075,
+              "wins": 6,
+              "losses": 1,
+              "neutral": 5
+            },
+            "auto / full": {
+              "n_datasets": 12,
+              "n_classes": 6,
+              "class_ratio": 1.0066831209857416,
+              "dataset_ratio": 1.0122698671876758,
+              "wins": 1,
+              "losses": 2,
+              "neutral": 9
+            },
+            "auto / best fixed rule per dataset": {
+              "n_datasets": 12,
+              "n_classes": 6,
+              "class_ratio": 1.015577467297745,
+              "dataset_ratio": 1.0251685166208178,
+              "wins": 0,
+              "losses": 3,
+              "neutral": 9
+            },
+            "auto / best fixed rule per partition": {
+              "n_datasets": 12,
+              "n_classes": 6,
+              "class_ratio": 1.0240366710020605,
+              "dataset_ratio": 1.0407453578115646,
+              "wins": 0,
+              "losses": 4,
+              "neutral": 8
+            },
+            "inverse / selected": {
+              "n_datasets": 12,
+              "n_classes": 6,
+              "class_ratio": 0.8764839612970778,
+              "dataset_ratio": 0.9389241842001772,
+              "wins": 9,
+              "losses": 3,
+              "neutral": 0
+            },
+            "fitted / selected": {
+              "n_datasets": 12,
+              "n_classes": 6,
+              "class_ratio": 0.8578159268634589,
+              "dataset_ratio": 0.9037290959319417,
+              "wins": 10,
+              "losses": 2,
+              "neutral": 0
+            }
+          },
+          "historical_headlines": {
+            "Best library / best additional baseline": {
+              "n_datasets": 12,
+              "n_classes": 6,
+              "class_ratio": 0.7760011783764913,
+              "dataset_ratio": 0.8650383910315635,
+              "wins": 7,
+              "losses": 5,
+              "neutral": 0
+            },
+            "Fitted / best library": {
+              "n_datasets": 12,
+              "n_classes": 6,
+              "class_ratio": 0.8817407540298227,
+              "dataset_ratio": 0.9440711359016222,
+              "wins": 9,
+              "losses": 2,
+              "neutral": 1
+            },
+            "Inverse / best library": {
+              "n_datasets": 12,
+              "n_classes": 6,
+              "class_ratio": 0.9009294473639975,
+              "dataset_ratio": 0.9808373162858964,
+              "wins": 8,
+              "losses": 3,
+              "neutral": 1
+            },
+            "Fitted / best additional baseline": {
+              "n_datasets": 12,
+              "n_classes": 6,
+              "class_ratio": 0.6842318641497184,
+              "dataset_ratio": 0.8166577764196797,
+              "wins": 7,
+              "losses": 5,
+              "neutral": 0
+            },
+            "Fitted / selected": {
+              "n_datasets": 12,
+              "n_classes": 6,
+              "class_ratio": 0.8578159268634589,
+              "dataset_ratio": 0.9037290959319417,
+              "wins": 10,
+              "losses": 2,
+              "neutral": 0
+            },
+            "Inverse / selected": {
+              "n_datasets": 12,
+              "n_classes": 6,
+              "class_ratio": 0.8764839612970777,
+              "dataset_ratio": 0.9389241842001772,
+              "wins": 9,
+              "losses": 3,
+              "neutral": 0
+            },
+            "Automatic / best library": {
+              "n_datasets": 12,
+              "n_classes": 6,
+              "class_ratio": 0.887633534167063,
+              "dataset_ratio": 0.9556547633548532,
+              "wins": 8,
+              "losses": 3,
+              "neutral": 1
+            },
+            "Automatic / best additional baseline": {
+              "n_datasets": 12,
+              "n_classes": 6,
+              "class_ratio": 0.6888046684801306,
+              "dataset_ratio": 0.8266780588741319,
+              "wins": 6,
+              "losses": 5,
+              "neutral": 1
+            },
+            "Automatic / selected": {
+              "n_datasets": 12,
+              "n_classes": 6,
+              "class_ratio": 0.8635488144861835,
+              "dataset_ratio": 0.914817731912665,
+              "wins": 9,
+              "losses": 3,
+              "neutral": 0
+            }
+          },
+          "squared_loss_comparisons": {
+            "auto / selected_single": {
+              "n_datasets": 12,
+              "n_classes": 6,
+              "class_ratio": 0.7409631383135344,
+              "dataset_ratio": 0.8203280118037681,
+              "wins": 10,
+              "losses": 2,
+              "neutral": 0
+            },
+            "auto / inverse_mse": {
+              "n_datasets": 12,
+              "n_classes": 6,
+              "class_ratio": 0.9704289081923663,
+              "dataset_ratio": 0.9465268554529074,
+              "wins": 8,
+              "losses": 1,
+              "neutral": 3
+            },
+            "auto / full": {
+              "n_datasets": 12,
+              "n_classes": 6,
+              "class_ratio": 1.0182534909234608,
+              "dataset_ratio": 1.0321080878529396,
+              "wins": 2,
+              "losses": 3,
+              "neutral": 7
+            }
+          }
+        }
+      },
+      "means": {
+        "mean_relative_l2": {
+          "darcy_generated": {
+            "selected_single": 0.024133854267175885,
+            "inverse_mse": 0.025829236836397023,
+            "full": 0.0231150229280772,
+            "auto": 0.0231150229280772
+          },
+          "ext__eikonal_2d": {
+            "selected_single": 0.018088125382175316,
+            "inverse_mse": 0.017831389859969907,
+            "full": 0.017152038181188226,
+            "auto": 0.017152038181188226
+          },
+          "sharp__helmholtz_2d": {
+            "selected_single": 0.047904862391611604,
+            "inverse_mse": 0.05958232845046461,
+            "full": 0.05170180468809706,
+            "auto": 0.05704249156589658
+          },
+          "poisson_generated_v2": {
+            "selected_single": 6.843416283350502e-05,
+            "inverse_mse": 7.528458690499103e-05,
+            "full": 7.237155672826713e-05,
+            "auto": 7.223417342513829e-05
+          },
+          "poisson_local": {
+            "selected_single": 0.00012093001298030472,
+            "inverse_mse": 0.00012778481696020614,
+            "full": 0.00012352588461960037,
+            "auto": 0.00012093001298030472
+          },
+          "ext__pressure_poisson_poiseuille": {
+            "selected_single": 0.0007771853069501591,
+            "inverse_mse": 0.0006740948485170115,
+            "full": 0.0006720931398340982,
+            "auto": 0.0007074963396774942
+          },
+          "heat_generated": {
+            "selected_single": 9.146040517147266e-05,
+            "inverse_mse": 5.795854920941682e-05,
+            "full": 5.91131168258981e-05,
+            "auto": 5.795854920941682e-05
+          },
+          "heat_local": {
+            "selected_single": 6.619835423846401e-05,
+            "inverse_mse": 4.306656826920356e-05,
+            "full": 4.290247450167437e-05,
+            "auto": 4.282301215565554e-05
+          },
+          "lid_driven_cavity_v2": {
+            "selected_single": 0.0016429439414948936,
+            "inverse_mse": 0.0013831202723373819,
+            "full": 0.0013800483156364085,
+            "auto": 0.0013800483156364085
+          },
+          "fluid": {
+            "selected_single": 0.015601371840355593,
+            "inverse_mse": 0.015201279564981745,
+            "full": 0.015016850709010444,
+            "auto": 0.015095627392836273
+          },
+          "ext__rayleigh_benard_2d": {
+            "selected_single": 3.0089903282056452e-05,
+            "inverse_mse": 2.8526544517895455e-05,
+            "full": 2.659714125031571e-05,
+            "auto": 2.659714125031571e-05
+          },
+          "sharp__burgers_2d": {
+            "selected_single": 0.00507223589182969,
+            "inverse_mse": 0.005133853446025413,
+            "full": 0.005027137976755668,
+            "auto": 0.005027137976755668
+          },
+          "sharp__euler": {
+            "selected_single": 0.059580140700759676,
+            "inverse_mse": 0.05665812863387204,
+            "full": 0.05612545490499624,
+            "auto": 0.0563086587814669
+          },
+          "sharp__porous_medium_2d": {
+            "selected_single": 0.00032497316732467565,
+            "inverse_mse": 0.0002609046739349987,
+            "full": 0.0002598849954292614,
+            "auto": 0.0002598849954292614
+          },
+          "ext__cahn_hilliard_2d": {
+            "selected_single": 0.12113721505775392,
+            "inverse_mse": 0.10979569370775433,
+            "full": 0.10523712161471126,
+            "auto": 0.11209246694292385
+          },
+          "sharp__shallow_water_2d": {
+            "selected_single": 0.003760356088299374,
+            "inverse_mse": 0.0036419227771061907,
+            "full": 0.003584252950287827,
+            "auto": 0.00381035573779411
+          },
+          "ext__wave_2d": {
+            "selected_single": 0.05040843082835261,
+            "inverse_mse": 0.04498397551991135,
+            "full": 0.04351482271799815,
+            "auto": 0.04351482271799815
+          }
+        },
+        "mean_squared_relative_l2": {
+          "darcy_generated": {
+            "selected_single": 0.0009589338425349999,
+            "inverse_mse": 0.0011912704581995075,
+            "full": 0.0008670662153441051,
+            "auto": 0.0008670662153441051
+          },
+          "ext__eikonal_2d": {
+            "selected_single": 0.0004926957809925854,
+            "inverse_mse": 0.000448944260350233,
+            "full": 0.0004384571144778803,
+            "auto": 0.0004384571144778803
+          },
+          "sharp__helmholtz_2d": {
+            "selected_single": 0.0412449412568422,
+            "inverse_mse": 0.051164832004216475,
+            "full": 0.03754412457654526,
+            "auto": 0.04758786454598505
+          },
+          "poisson_generated_v2": {
+            "selected_single": 1.0208466131985914e-08,
+            "inverse_mse": 1.2838949234913749e-08,
+            "full": 1.137672680754496e-08,
+            "auto": 1.1154073446438499e-08
+          },
+          "poisson_local": {
+            "selected_single": 4.4030299646904364e-08,
+            "inverse_mse": 5.0438903595256227e-08,
+            "full": 4.821034501426267e-08,
+            "auto": 4.4030299646904364e-08
+          },
+          "ext__pressure_poisson_poiseuille": {
+            "selected_single": 3.3398482933737994e-06,
+            "inverse_mse": 2.513853596809473e-06,
+            "full": 2.5614218364763944e-06,
+            "auto": 2.939936210008884e-06
+          },
+          "heat_generated": {
+            "selected_single": 1.3397712040594684e-08,
+            "inverse_mse": 5.51628077321221e-09,
+            "full": 5.694404897270777e-09,
+            "auto": 5.51628077321221e-09
+          },
+          "heat_local": {
+            "selected_single": 5.631514168690209e-09,
+            "inverse_mse": 2.4100143450750847e-09,
+            "full": 2.456980616467501e-09,
+            "auto": 2.415380324208743e-09
+          },
+          "lid_driven_cavity_v2": {
+            "selected_single": 2.987591898800859e-06,
+            "inverse_mse": 2.1063790784016156e-06,
+            "full": 2.0955488957703275e-06,
+            "auto": 2.0955488957703275e-06
+          },
+          "fluid": {
+            "selected_single": 0.0003147508134885441,
+            "inverse_mse": 0.00030384720163858115,
+            "full": 0.0002815277455516761,
+            "auto": 0.00030078302438452266
+          },
+          "ext__rayleigh_benard_2d": {
+            "selected_single": 9.334113380249743e-10,
+            "inverse_mse": 8.549607257044909e-10,
+            "full": 7.490746418661369e-10,
+            "auto": 7.490746418661369e-10
+          },
+          "sharp__burgers_2d": {
+            "selected_single": 3.331837153447198e-05,
+            "inverse_mse": 3.416843649011654e-05,
+            "full": 3.296879341121397e-05,
+            "auto": 3.296879341121397e-05
+          },
+          "sharp__euler": {
+            "selected_single": 0.004245330070032543,
+            "inverse_mse": 0.003871135788189091,
+            "full": 0.0037819359416613935,
+            "auto": 0.003783096691205731
+          },
+          "sharp__porous_medium_2d": {
+            "selected_single": 1.2107083447988995e-07,
+            "inverse_mse": 8.004441068857323e-08,
+            "full": 7.971501299428634e-08,
+            "auto": 7.971501299428634e-08
+          },
+          "ext__cahn_hilliard_2d": {
+            "selected_single": 0.02768766437657295,
+            "inverse_mse": 0.022788458399551726,
+            "full": 0.018879483067688132,
+            "auto": 0.023528702735712826
+          },
+          "sharp__shallow_water_2d": {
+            "selected_single": 3.09089267438076e-05,
+            "inverse_mse": 2.5328012844979727e-05,
+            "full": 2.6681630350194846e-05,
+            "auto": 3.030265786673497e-05
+          },
+          "ext__wave_2d": {
+            "selected_single": 0.003545728120930028,
+            "inverse_mse": 0.0028433309906193906,
+            "full": 0.002547894284120538,
+            "auto": 0.002547894284120538
+          }
+        }
+      }
+    }
+  },
+  "partitions": [
+    {
+      "run": "darcy_generated__s172",
+      "dataset": "darcy_generated",
+      "budget": 5,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 0.02201723089826647,
+        "inverse_mse": 0.024706466857519704,
+        "full": 0.0210674798308021,
+        "auto": 0.0210674798308021
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 0.000695618929011,
+        "inverse_mse": 0.00107707328614351,
+        "full": 0.0006982304306241114,
+        "auto": 0.0006982304306241114
+      }
+    },
+    {
+      "run": "darcy_generated__s172",
+      "dataset": "darcy_generated",
+      "budget": 10,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 0.02201723089826647,
+        "inverse_mse": 0.02497527311188432,
+        "full": 0.021219242132401908,
+        "auto": 0.02201723089826647
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 0.000695618929011,
+        "inverse_mse": 0.0010982610352985205,
+        "full": 0.0006612472553066955,
+        "auto": 0.000695618929011
+      }
+    },
+    {
+      "run": "darcy_generated__s172",
+      "dataset": "darcy_generated",
+      "budget": 20,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 0.02201723089826647,
+        "inverse_mse": 0.024935324306160602,
+        "full": 0.02119088632448126,
+        "auto": 0.02119088632448126
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 0.000695618929011,
+        "inverse_mse": 0.001096830606831204,
+        "full": 0.0006602702056129132,
+        "auto": 0.0006602702056129132
+      }
+    },
+    {
+      "run": "darcy_generated__s273",
+      "dataset": "darcy_generated",
+      "budget": 5,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 0.026088089792630165,
+        "inverse_mse": 0.02669472063156118,
+        "full": 0.025536576976033724,
+        "auto": 0.026088089792630165
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 0.0011275769966261093,
+        "inverse_mse": 0.0013253893445531273,
+        "full": 0.0010851457113273877,
+        "auto": 0.0011275769966261093
+      }
+    },
+    {
+      "run": "darcy_generated__s273",
+      "dataset": "darcy_generated",
+      "budget": 10,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 0.026088089792630165,
+        "inverse_mse": 0.02671350061192974,
+        "full": 0.025237655185660967,
+        "auto": 0.025237655185660967
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 0.0011275769966261093,
+        "inverse_mse": 0.0013336391962319972,
+        "full": 0.0010834869323619373,
+        "auto": 0.0010834869323619373
+      }
+    },
+    {
+      "run": "darcy_generated__s273",
+      "dataset": "darcy_generated",
+      "budget": 20,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 0.028920696529643474,
+        "inverse_mse": 0.026982338769449877,
+        "full": 0.02512992408648234,
+        "auto": 0.02512992408648234
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 0.0015166055674295448,
+        "inverse_mse": 0.001367868192040153,
+        "full": 0.001117073804123845,
+        "auto": 0.001117073804123845
+      }
+    },
+    {
+      "run": "darcy_generated__s71",
+      "dataset": "darcy_generated",
+      "budget": 5,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 0.02755526901595572,
+        "inverse_mse": 0.024997579633534252,
+        "full": 0.023383059517645816,
+        "auto": 0.023383059517645816
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 0.0010944603225461823,
+        "inverse_mse": 0.0010496060517325167,
+        "full": 0.0008369231390747608,
+        "auto": 0.0008369231390747608
+      }
+    },
+    {
+      "run": "darcy_generated__s71",
+      "dataset": "darcy_generated",
+      "budget": 10,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 0.021463635373617704,
+        "inverse_mse": 0.024979674978330108,
+        "full": 0.02291227730451849,
+        "auto": 0.02291227730451849
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 0.0006645770311644547,
+        "inverse_mse": 0.0010499707550738373,
+        "full": 0.000807904893025398,
+        "auto": 0.000807904893025398
+      }
+    },
+    {
+      "run": "darcy_generated__s71",
+      "dataset": "darcy_generated",
+      "budget": 20,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 0.021463635373617704,
+        "inverse_mse": 0.025570047433580594,
+        "full": 0.023024258373268,
+        "auto": 0.023024258373268
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 0.0006645770311644547,
+        "inverse_mse": 0.0011091125757271658,
+        "full": 0.000823854636295557,
+        "auto": 0.000823854636295557
+      }
+    },
+    {
+      "run": "ext__cahn_hilliard_2d__s172",
+      "dataset": "ext__cahn_hilliard_2d",
+      "budget": 5,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 0.11374886784224543,
+        "inverse_mse": 0.10432885732914976,
+        "full": 0.09595204116153302,
+        "auto": 0.09595204116153302
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 0.017396351716608704,
+        "inverse_mse": 0.018243820804488366,
+        "full": 0.014228082861147722,
+        "auto": 0.014228082861147722
+      }
+    },
+    {
+      "run": "ext__cahn_hilliard_2d__s172",
+      "dataset": "ext__cahn_hilliard_2d",
+      "budget": 10,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 0.10731782607042706,
+        "inverse_mse": 0.10142178944607405,
+        "full": 0.09274747844070573,
+        "auto": 0.09274747844070573
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 0.027635125256224552,
+        "inverse_mse": 0.018146804809631663,
+        "full": 0.014053075433891934,
+        "auto": 0.014053075433891934
+      }
+    },
+    {
+      "run": "ext__cahn_hilliard_2d__s172",
+      "dataset": "ext__cahn_hilliard_2d",
+      "budget": 20,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 0.1040461344126465,
+        "inverse_mse": 0.09710036410506322,
+        "full": 0.09362948684309995,
+        "auto": 0.09362948684309995
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 0.02308490152071195,
+        "inverse_mse": 0.017375048392077368,
+        "full": 0.013973545106287519,
+        "auto": 0.013973545106287519
+      }
+    },
+    {
+      "run": "ext__cahn_hilliard_2d__s273",
+      "dataset": "ext__cahn_hilliard_2d",
+      "budget": 5,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 0.11119906838736959,
+        "inverse_mse": 0.1082063509512832,
+        "full": 0.09951213248809206,
+        "auto": 0.11119906838736959
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 0.024827648893143442,
+        "inverse_mse": 0.0203799624695612,
+        "full": 0.01607423506378838,
+        "auto": 0.024827648893143442
+      }
+    },
+    {
+      "run": "ext__cahn_hilliard_2d__s273",
+      "dataset": "ext__cahn_hilliard_2d",
+      "budget": 10,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 0.1194722061924098,
+        "inverse_mse": 0.10438079752529568,
+        "full": 0.09692247856242958,
+        "auto": 0.1194722061924098
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 0.030298081117499744,
+        "inverse_mse": 0.02036101256305311,
+        "full": 0.016923788955702887,
+        "auto": 0.030298081117499744
+      }
+    },
+    {
+      "run": "ext__cahn_hilliard_2d__s273",
+      "dataset": "ext__cahn_hilliard_2d",
+      "budget": 20,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 0.1194722061924098,
+        "inverse_mse": 0.10693387151938986,
+        "full": 0.09890617020777201,
+        "auto": 0.1194722061924098
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 0.030298081117499744,
+        "inverse_mse": 0.020407196934229252,
+        "full": 0.01635042211342565,
+        "auto": 0.030298081117499744
+      }
+    },
+    {
+      "run": "ext__cahn_hilliard_2d__s71",
+      "dataset": "ext__cahn_hilliard_2d",
+      "budget": 5,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 0.13989330456820545,
+        "inverse_mse": 0.12540152172350952,
+        "full": 0.12436852475908688,
+        "auto": 0.12436852475908688
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 0.029680010491507147,
+        "inverse_mse": 0.03006157570615317,
+        "full": 0.0267915118733383,
+        "auto": 0.0267915118733383
+      }
+    },
+    {
+      "run": "ext__cahn_hilliard_2d__s71",
+      "dataset": "ext__cahn_hilliard_2d",
+      "budget": 10,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 0.13989330456820545,
+        "inverse_mse": 0.12605640924295136,
+        "full": 0.12382826846865391,
+        "auto": 0.12382826846865391
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 0.029680010491507147,
+        "inverse_mse": 0.030340261108031997,
+        "full": 0.02643504268913328,
+        "auto": 0.02643504268913328
+      }
+    },
+    {
+      "run": "ext__cahn_hilliard_2d__s71",
+      "dataset": "ext__cahn_hilliard_2d",
+      "budget": 20,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 0.13989330456820545,
+        "inverse_mse": 0.12535284549880987,
+        "full": 0.12317570779326178,
+        "auto": 0.12317570779326178
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 0.029680010491507147,
+        "inverse_mse": 0.030583129872348562,
+        "full": 0.026314481983351228,
+        "auto": 0.026314481983351228
+      }
+    },
+    {
+      "run": "ext__eikonal_2d__s172",
+      "dataset": "ext__eikonal_2d",
+      "budget": 5,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 0.019421113308473393,
+        "inverse_mse": 0.018333837481103166,
+        "full": 0.018868068441283487,
+        "auto": 0.018868068441283487
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 0.000578206025128972,
+        "inverse_mse": 0.0004764517095983598,
+        "full": 0.0005501123674768501,
+        "auto": 0.0005501123674768501
+      }
+    },
+    {
+      "run": "ext__eikonal_2d__s172",
+      "dataset": "ext__eikonal_2d",
+      "budget": 10,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 0.019421113308473393,
+        "inverse_mse": 0.018347199963575176,
+        "full": 0.01774759950411341,
+        "auto": 0.01774759950411341
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 0.000578206025128972,
+        "inverse_mse": 0.00046725976769216345,
+        "full": 0.0004789049629365016,
+        "auto": 0.0004789049629365016
+      }
+    },
+    {
+      "run": "ext__eikonal_2d__s172",
+      "dataset": "ext__eikonal_2d",
+      "budget": 20,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 0.019421113308473393,
+        "inverse_mse": 0.01842254895296805,
+        "full": 0.01800517978910392,
+        "auto": 0.01800517978910392
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 0.000578206025128972,
+        "inverse_mse": 0.0004667259206740678,
+        "full": 0.0004909482426532891,
+        "auto": 0.0004909482426532891
+      }
+    },
+    {
+      "run": "ext__eikonal_2d__s273",
+      "dataset": "ext__eikonal_2d",
+      "budget": 5,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 0.014410333886202257,
+        "inverse_mse": 0.0162628477053162,
+        "full": 0.01466793998031537,
+        "auto": 0.014410333886202257
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 0.0002430146510385586,
+        "inverse_mse": 0.0003118175226854855,
+        "full": 0.000252590060998961,
+        "auto": 0.0002430146510385586
+      }
+    },
+    {
+      "run": "ext__eikonal_2d__s273",
+      "dataset": "ext__eikonal_2d",
+      "budget": 10,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 0.014410333886202257,
+        "inverse_mse": 0.0166384677713867,
+        "full": 0.01505672344016586,
+        "auto": 0.014410333886202257
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 0.0002430146510385586,
+        "inverse_mse": 0.00032506567500832856,
+        "full": 0.00026597313317126684,
+        "auto": 0.0002430146510385586
+      }
+    },
+    {
+      "run": "ext__eikonal_2d__s273",
+      "dataset": "ext__eikonal_2d",
+      "budget": 20,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 0.014410333886202257,
+        "inverse_mse": 0.016458454897243728,
+        "full": 0.014689921182967908,
+        "auto": 0.014689921182967908
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 0.0002430146510385586,
+        "inverse_mse": 0.0003235980635222612,
+        "full": 0.0002528587478436382,
+        "auto": 0.0002528587478436382
+      }
+    },
+    {
+      "run": "ext__eikonal_2d__s71",
+      "dataset": "ext__eikonal_2d",
+      "budget": 5,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 0.020432928951850293,
+        "inverse_mse": 0.0183513228539163,
+        "full": 0.019382443287526196,
+        "auto": 0.019382443287526196
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 0.0006568666668102256,
+        "inverse_mse": 0.0005410978941239381,
+        "full": 0.000617670638695328,
+        "auto": 0.000617670638695328
+      }
+    },
+    {
+      "run": "ext__eikonal_2d__s71",
+      "dataset": "ext__eikonal_2d",
+      "budget": 10,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 0.020432928951850293,
+        "inverse_mse": 0.018587221565976537,
+        "full": 0.018884380832237774,
+        "auto": 0.018884380832237774
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 0.0006568666668102256,
+        "inverse_mse": 0.0005563791984211198,
+        "full": 0.0005885436755381657,
+        "auto": 0.0005885436755381657
+      }
+    },
+    {
+      "run": "ext__eikonal_2d__s71",
+      "dataset": "ext__eikonal_2d",
+      "budget": 20,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 0.020432928951850293,
+        "inverse_mse": 0.018613165729697945,
+        "full": 0.018761013571492846,
+        "auto": 0.018761013571492846
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 0.0006568666668102256,
+        "inverse_mse": 0.00055650879685437,
+        "full": 0.0005715643529367136,
+        "auto": 0.0005715643529367136
+      }
+    },
+    {
+      "run": "ext__pressure_poisson_poiseuille__s172",
+      "dataset": "ext__pressure_poisson_poiseuille",
+      "budget": 5,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 0.001130204104591169,
+        "inverse_mse": 0.0010456563374125999,
+        "full": 0.001063268706371024,
+        "auto": 0.001130204104591169
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 5.501127814578429e-06,
+        "inverse_mse": 5.538026531599848e-06,
+        "full": 5.672671381245318e-06,
+        "auto": 5.501127814578429e-06
+      }
+    },
+    {
+      "run": "ext__pressure_poisson_poiseuille__s172",
+      "dataset": "ext__pressure_poisson_poiseuille",
+      "budget": 10,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 0.0012612103441751589,
+        "inverse_mse": 0.0011493023402679718,
+        "full": 0.0011813580186700698,
+        "auto": 0.0012612103441751589
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 7.755078580996729e-06,
+        "inverse_mse": 6.578705318363786e-06,
+        "full": 6.938387668778134e-06,
+        "auto": 7.755078580996729e-06
+      }
+    },
+    {
+      "run": "ext__pressure_poisson_poiseuille__s172",
+      "dataset": "ext__pressure_poisson_poiseuille",
+      "budget": 20,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 0.0012612103441751589,
+        "inverse_mse": 0.0011198101867132691,
+        "full": 0.001155000744644971,
+        "auto": 0.0012612103441751589
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 7.755078580996729e-06,
+        "inverse_mse": 6.2310978142950955e-06,
+        "full": 6.61953546039926e-06,
+        "auto": 7.755078580996729e-06
+      }
+    },
+    {
+      "run": "ext__pressure_poisson_poiseuille__s273",
+      "dataset": "ext__pressure_poisson_poiseuille",
+      "budget": 5,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 0.0005654430946118467,
+        "inverse_mse": 0.0004540192613179051,
+        "full": 0.0004606128584085248,
+        "auto": 0.0005654430946118467
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 1.8124439578961173e-06,
+        "inverse_mse": 1.2066503355409626e-06,
+        "full": 1.244479016629006e-06,
+        "auto": 1.8124439578961173e-06
+      }
+    },
+    {
+      "run": "ext__pressure_poisson_poiseuille__s273",
+      "dataset": "ext__pressure_poisson_poiseuille",
+      "budget": 10,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 0.0005654430946118467,
+        "inverse_mse": 0.00035465144844513746,
+        "full": 0.0003878572537526079,
+        "auto": 0.0003878572537526079
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 1.8124439578961173e-06,
+        "inverse_mse": 6.473762745125193e-07,
+        "full": 7.57659037047779e-07,
+        "auto": 7.57659037047779e-07
+      }
+    },
+    {
+      "run": "ext__pressure_poisson_poiseuille__s273",
+      "dataset": "ext__pressure_poisson_poiseuille",
+      "budget": 20,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 0.0005654430946118467,
+        "inverse_mse": 0.00034700275638588444,
+        "full": 0.000355404437536864,
+        "auto": 0.000355404437536864
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 1.8124439578961173e-06,
+        "inverse_mse": 6.211956267824677e-07,
+        "full": 6.192992316546995e-07,
+        "auto": 6.192992316546995e-07
+      }
+    },
+    {
+      "run": "ext__pressure_poisson_poiseuille__s71",
+      "dataset": "ext__pressure_poisson_poiseuille",
+      "budget": 5,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 0.0005049024820634717,
+        "inverse_mse": 0.000806075160881866,
+        "full": 0.0008833463047890344,
+        "auto": 0.0008833463047890344
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 4.520223412285523e-07,
+        "inverse_mse": 1.3934168520449709e-06,
+        "full": 1.7036638034833166e-06,
+        "auto": 1.7036638034833166e-06
+      }
+    },
+    {
+      "run": "ext__pressure_poisson_poiseuille__s71",
+      "dataset": "ext__pressure_poisson_poiseuille",
+      "budget": 10,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 0.0005049024820634717,
+        "inverse_mse": 0.0005897429810960562,
+        "full": 0.0004949000658111588,
+        "auto": 0.0005049024820634717
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 4.520223412285523e-07,
+        "inverse_mse": 6.682735289449812e-07,
+        "full": 4.455418237397911e-07,
+        "auto": 4.520223412285523e-07
+      }
+    },
+    {
+      "run": "ext__pressure_poisson_poiseuille__s71",
+      "dataset": "ext__pressure_poisson_poiseuille",
+      "budget": 20,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 0.0005049024820634717,
+        "inverse_mse": 0.0005554716024518809,
+        "full": 0.0005058742373204597,
+        "auto": 0.0005058742373204597
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 4.520223412285523e-07,
+        "inverse_mse": 6.892673493508558e-07,
+        "full": 4.454308173752237e-07,
+        "auto": 4.454308173752237e-07
+      }
+    },
+    {
+      "run": "ext__rayleigh_benard_2d__s172",
+      "dataset": "ext__rayleigh_benard_2d",
+      "budget": 5,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 2.989064136468539e-05,
+        "inverse_mse": 2.7769985013688902e-05,
+        "full": 2.5848862584957943e-05,
+        "auto": 2.5848862584957943e-05
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 9.169486412029675e-10,
+        "inverse_mse": 7.948819701182324e-10,
+        "full": 6.937484511972258e-10,
+        "auto": 6.937484511972258e-10
+      }
+    },
+    {
+      "run": "ext__rayleigh_benard_2d__s172",
+      "dataset": "ext__rayleigh_benard_2d",
+      "budget": 10,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 2.989064136468539e-05,
+        "inverse_mse": 2.772147253534418e-05,
+        "full": 2.573724500947835e-05,
+        "auto": 2.573724500947835e-05
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 9.169486412029675e-10,
+        "inverse_mse": 7.943565085250882e-10,
+        "full": 6.907024421327984e-10,
+        "auto": 6.907024421327984e-10
+      }
+    },
+    {
+      "run": "ext__rayleigh_benard_2d__s172",
+      "dataset": "ext__rayleigh_benard_2d",
+      "budget": 20,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 2.989064136468539e-05,
+        "inverse_mse": 2.7738834417149e-05,
+        "full": 2.5916820428438e-05,
+        "auto": 2.5916820428438e-05
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 9.169486412029675e-10,
+        "inverse_mse": 7.918441758652173e-10,
+        "full": 6.959534801777622e-10,
+        "auto": 6.959534801777622e-10
+      }
+    },
+    {
+      "run": "ext__rayleigh_benard_2d__s273",
+      "dataset": "ext__rayleigh_benard_2d",
+      "budget": 5,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 3.100479806397231e-05,
+        "inverse_mse": 3.0012734204227116e-05,
+        "full": 2.8549199668736833e-05,
+        "auto": 2.8549199668736833e-05
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 9.985572872870565e-10,
+        "inverse_mse": 9.594553850992275e-10,
+        "full": 8.700609558410957e-10,
+        "auto": 8.700609558410957e-10
+      }
+    },
+    {
+      "run": "ext__rayleigh_benard_2d__s273",
+      "dataset": "ext__rayleigh_benard_2d",
+      "budget": 10,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 3.100479806397231e-05,
+        "inverse_mse": 2.9862764145226993e-05,
+        "full": 2.8115592426792753e-05,
+        "auto": 2.8115592426792753e-05
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 9.985572872870565e-10,
+        "inverse_mse": 9.565047438022606e-10,
+        "full": 8.516112160987265e-10,
+        "auto": 8.516112160987265e-10
+      }
+    },
+    {
+      "run": "ext__rayleigh_benard_2d__s273",
+      "dataset": "ext__rayleigh_benard_2d",
+      "budget": 20,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 3.100479806397231e-05,
+        "inverse_mse": 2.9958590466396975e-05,
+        "full": 2.806456192695715e-05,
+        "auto": 2.806456192695715e-05
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 9.985572872870565e-10,
+        "inverse_mse": 9.7213275433586e-10,
+        "full": 8.579929420816044e-10,
+        "auto": 8.579929420816044e-10
+      }
+    },
+    {
+      "run": "ext__rayleigh_benard_2d__s71",
+      "dataset": "ext__rayleigh_benard_2d",
+      "budget": 5,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 2.937427041751165e-05,
+        "inverse_mse": 2.794162264732937e-05,
+        "full": 2.6249810997209173e-05,
+        "auto": 2.6249810997209173e-05
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 8.84728085584899e-10,
+        "inverse_mse": 8.001272681151085e-10,
+        "full": 7.114746742457495e-10,
+        "auto": 7.114746742457495e-10
+      }
+    },
+    {
+      "run": "ext__rayleigh_benard_2d__s71",
+      "dataset": "ext__rayleigh_benard_2d",
+      "budget": 10,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 2.937427041751165e-05,
+        "inverse_mse": 2.7855796815925602e-05,
+        "full": 2.607457312421461e-05,
+        "auto": 2.607457312421461e-05
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 8.84728085584899e-10,
+        "inverse_mse": 7.966984077592009e-10,
+        "full": 7.038521994980172e-10,
+        "auto": 7.038521994980172e-10
+      }
+    },
+    {
+      "run": "ext__rayleigh_benard_2d__s71",
+      "dataset": "ext__rayleigh_benard_2d",
+      "budget": 20,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 2.937427041751165e-05,
+        "inverse_mse": 2.7882208670140393e-05,
+        "full": 2.5810041395551976e-05,
+        "auto": 2.5810041395551976e-05
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 8.84728085584899e-10,
+        "inverse_mse": 8.009052469123955e-10,
+        "full": 6.932775033390438e-10,
+        "auto": 6.932775033390438e-10
+      }
+    },
+    {
+      "run": "ext__wave_2d__s172",
+      "dataset": "ext__wave_2d",
+      "budget": 5,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 0.05540619397286763,
+        "inverse_mse": 0.04685711169409269,
+        "full": 0.043022825109616095,
+        "auto": 0.04685711169409269
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 0.004561144017378809,
+        "inverse_mse": 0.00348176027722786,
+        "full": 0.0027514929865204174,
+        "auto": 0.00348176027722786
+      }
+    },
+    {
+      "run": "ext__wave_2d__s172",
+      "dataset": "ext__wave_2d",
+      "budget": 10,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 0.05540619397286763,
+        "inverse_mse": 0.04721177960307783,
+        "full": 0.04597664432573915,
+        "auto": 0.04597664432573915
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 0.004561144017378809,
+        "inverse_mse": 0.0034725746586947554,
+        "full": 0.0031247298235036742,
+        "auto": 0.0031247298235036742
+      }
+    },
+    {
+      "run": "ext__wave_2d__s172",
+      "dataset": "ext__wave_2d",
+      "budget": 20,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 0.05540619397286763,
+        "inverse_mse": 0.049674365878363276,
+        "full": 0.04516611779543555,
+        "auto": 0.04516611779543555
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 0.004561144017378809,
+        "inverse_mse": 0.003915044419666168,
+        "full": 0.003028327950495973,
+        "auto": 0.003028327950495973
+      }
+    },
+    {
+      "run": "ext__wave_2d__s273",
+      "dataset": "ext__wave_2d",
+      "budget": 5,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 0.04386120758132371,
+        "inverse_mse": 0.04334993979524497,
+        "full": 0.04398333979794784,
+        "auto": 0.04334993979524497
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 0.0022865233438452864,
+        "inverse_mse": 0.0025443958684460664,
+        "full": 0.0025299816924165414,
+        "auto": 0.0025443958684460664
+      }
+    },
+    {
+      "run": "ext__wave_2d__s273",
+      "dataset": "ext__wave_2d",
+      "budget": 10,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 0.04386120758132371,
+        "inverse_mse": 0.042781984050212975,
+        "full": 0.041076395211478066,
+        "auto": 0.042781984050212975
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 0.0022865233438452864,
+        "inverse_mse": 0.002456535925511727,
+        "full": 0.0021465684083735487,
+        "auto": 0.002456535925511727
+      }
+    },
+    {
+      "run": "ext__wave_2d__s273",
+      "dataset": "ext__wave_2d",
+      "budget": 20,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 0.052012176170832106,
+        "inverse_mse": 0.04428724433918747,
+        "full": 0.04386875484819671,
+        "auto": 0.04386875484819671
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 0.003727099164449862,
+        "inverse_mse": 0.0025999115209808096,
+        "full": 0.0025144629209768355,
+        "auto": 0.0025144629209768355
+      }
+    },
+    {
+      "run": "ext__wave_2d__s71",
+      "dataset": "ext__wave_2d",
+      "budget": 5,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 0.04595464221500719,
+        "inverse_mse": 0.041598299858803825,
+        "full": 0.041231358161869035,
+        "auto": 0.041598299858803825
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 0.002618763481683173,
+        "inverse_mse": 0.0021198929201355007,
+        "full": 0.0020864408303874313,
+        "auto": 0.0021198929201355007
+      }
+    },
+    {
+      "run": "ext__wave_2d__s71",
+      "dataset": "ext__wave_2d",
+      "budget": 10,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 0.04380692234135812,
+        "inverse_mse": 0.040686796411697514,
+        "full": 0.04230397416785263,
+        "auto": 0.040686796411697514
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 0.0023489411809614136,
+        "inverse_mse": 0.0019885477878064835,
+        "full": 0.0021904738144112082,
+        "auto": 0.0019885477878064835
+      }
+    },
+    {
+      "run": "ext__wave_2d__s71",
+      "dataset": "ext__wave_2d",
+      "budget": 20,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 0.04380692234135812,
+        "inverse_mse": 0.0409903163421833,
+        "full": 0.04150959551036219,
+        "auto": 0.04150959551036219
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 0.0023489411809614136,
+        "inverse_mse": 0.002015037031211195,
+        "full": 0.002100891980888806,
+        "auto": 0.002100891980888806
+      }
+    },
+    {
+      "run": "fluid__s172",
+      "dataset": "fluid",
+      "budget": 5,
+      "n_evaluation": 52,
+      "mean_relative_l2": {
+        "selected_single": 0.014633291393984615,
+        "inverse_mse": 0.013819996480106903,
+        "full": 0.014247752859083548,
+        "auto": 0.014247752859083548
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 0.00026031150559262256,
+        "inverse_mse": 0.0002235668020090338,
+        "full": 0.00023903274129701292,
+        "auto": 0.00023903274129701292
+      }
+    },
+    {
+      "run": "fluid__s172",
+      "dataset": "fluid",
+      "budget": 10,
+      "n_evaluation": 52,
+      "mean_relative_l2": {
+        "selected_single": 0.014633291393984615,
+        "inverse_mse": 0.014494156852274682,
+        "full": 0.016069208645278478,
+        "auto": 0.014494156852274682
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 0.00026031150559262256,
+        "inverse_mse": 0.00023954868189009622,
+        "full": 0.00028740156407800453,
+        "auto": 0.00023954868189009622
+      }
+    },
+    {
+      "run": "fluid__s172",
+      "dataset": "fluid",
+      "budget": 20,
+      "n_evaluation": 52,
+      "mean_relative_l2": {
+        "selected_single": 0.014633291393984615,
+        "inverse_mse": 0.01431009806175909,
+        "full": 0.01434636461225556,
+        "auto": 0.01434636461225556
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 0.00026031150559262256,
+        "inverse_mse": 0.0002347355672610821,
+        "full": 0.00023735618623976182,
+        "auto": 0.00023735618623976182
+      }
+    },
+    {
+      "run": "fluid__s273",
+      "dataset": "fluid",
+      "budget": 5,
+      "n_evaluation": 52,
+      "mean_relative_l2": {
+        "selected_single": 0.016491874017713605,
+        "inverse_mse": 0.015828075287469615,
+        "full": 0.015413858883225554,
+        "auto": 0.015413858883225554
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 0.0003502943401326597,
+        "inverse_mse": 0.0003206950145677977,
+        "full": 0.00030772268897593866,
+        "auto": 0.00030772268897593866
+      }
+    },
+    {
+      "run": "fluid__s273",
+      "dataset": "fluid",
+      "budget": 10,
+      "n_evaluation": 52,
+      "mean_relative_l2": {
+        "selected_single": 0.016491874017713605,
+        "inverse_mse": 0.0156828522148014,
+        "full": 0.015373146424497388,
+        "auto": 0.015373146424497388
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 0.0003502943401326597,
+        "inverse_mse": 0.0003165985792085807,
+        "full": 0.0003036534795449467,
+        "auto": 0.0003036534795449467
+      }
+    },
+    {
+      "run": "fluid__s273",
+      "dataset": "fluid",
+      "budget": 20,
+      "n_evaluation": 52,
+      "mean_relative_l2": {
+        "selected_single": 0.01674358617485694,
+        "inverse_mse": 0.015616930169003774,
+        "full": 0.01526370710207088,
+        "auto": 0.01526370710207088
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 0.000371940580067485,
+        "inverse_mse": 0.0003152591732300143,
+        "full": 0.0003034460224891593,
+        "auto": 0.0003034460224891593
+      }
+    },
+    {
+      "run": "fluid__s71",
+      "dataset": "fluid",
+      "budget": 5,
+      "n_evaluation": 52,
+      "mean_relative_l2": {
+        "selected_single": 0.01708190906802252,
+        "inverse_mse": 0.01589379585620411,
+        "full": 0.015238494260489581,
+        "auto": 0.01589379585620411
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 0.0005175578653024173,
+        "inverse_mse": 0.0004121433501887043,
+        "full": 0.00034971430410958636,
+        "auto": 0.0004121433501887043
+      }
+    },
+    {
+      "run": "fluid__s71",
+      "dataset": "fluid",
+      "budget": 10,
+      "n_evaluation": 52,
+      "mean_relative_l2": {
+        "selected_single": 0.015427237952225229,
+        "inverse_mse": 0.015771727220103296,
+        "full": 0.01500155177962548,
+        "auto": 0.01500155177962548
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 0.0003120003548055248,
+        "inverse_mse": 0.00039734049542724815,
+        "full": 0.0003232996353451335,
+        "auto": 0.0003232996353451335
+      }
+    },
+    {
+      "run": "fluid__s71",
+      "dataset": "fluid",
+      "budget": 20,
+      "n_evaluation": 52,
+      "mean_relative_l2": {
+        "selected_single": 0.015427237952225229,
+        "inverse_mse": 0.015676810464182376,
+        "full": 0.015440480412704892,
+        "auto": 0.015676810464182376
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 0.0003120003548055248,
+        "inverse_mse": 0.00036154686442464696,
+        "full": 0.00030378102792610716,
+        "auto": 0.00036154686442464696
+      }
+    },
+    {
+      "run": "heat_generated__s172",
+      "dataset": "heat_generated",
+      "budget": 5,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 0.00010583804343528017,
+        "inverse_mse": 6.577600898986246e-05,
+        "full": 6.714467890761228e-05,
+        "auto": 6.714467890761228e-05
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 2.3147937596437343e-08,
+        "inverse_mse": 9.57945697605503e-09,
+        "full": 9.956726847254263e-09,
+        "auto": 9.956726847254263e-09
+      }
+    },
+    {
+      "run": "heat_generated__s172",
+      "dataset": "heat_generated",
+      "budget": 10,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 0.00010583804343528017,
+        "inverse_mse": 6.645149838649817e-05,
+        "full": 6.604138828527579e-05,
+        "auto": 6.645149838649817e-05
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 2.3147937596437343e-08,
+        "inverse_mse": 9.462097487676215e-09,
+        "full": 9.211002731186855e-09,
+        "auto": 9.462097487676215e-09
+      }
+    },
+    {
+      "run": "heat_generated__s172",
+      "dataset": "heat_generated",
+      "budget": 20,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 0.00010583804343528017,
+        "inverse_mse": 6.622465348213559e-05,
+        "full": 6.616289484313459e-05,
+        "auto": 6.622465348213559e-05
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 2.3147937596437343e-08,
+        "inverse_mse": 9.64092217109156e-09,
+        "full": 9.601440153030925e-09,
+        "auto": 9.64092217109156e-09
+      }
+    },
+    {
+      "run": "heat_generated__s273",
+      "dataset": "heat_generated",
+      "budget": 5,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 0.00010952731593424118,
+        "inverse_mse": 6.536464118509108e-05,
+        "full": 7.202680379142938e-05,
+        "auto": 6.536464118509108e-05
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 1.3791352556314343e-08,
+        "inverse_mse": 4.8851780978740045e-09,
+        "full": 5.943383140064849e-09,
+        "auto": 4.8851780978740045e-09
+      }
+    },
+    {
+      "run": "heat_generated__s273",
+      "dataset": "heat_generated",
+      "budget": 10,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 9.24190165863915e-05,
+        "inverse_mse": 6.291893389600034e-05,
+        "full": 6.795783247884615e-05,
+        "auto": 6.291893389600034e-05
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 1.0492975010320423e-08,
+        "inverse_mse": 4.5802828641079255e-09,
+        "full": 5.3757475181146245e-09,
+        "auto": 4.5802828641079255e-09
+      }
+    },
+    {
+      "run": "heat_generated__s273",
+      "dataset": "heat_generated",
+      "budget": 20,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 9.24190165863915e-05,
+        "inverse_mse": 6.0958755691003e-05,
+        "full": 6.43547412039732e-05,
+        "auto": 6.0958755691003e-05
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 1.0492975010320423e-08,
+        "inverse_mse": 4.366744325948457e-09,
+        "full": 4.9308822283416704e-09,
+        "auto": 4.366744325948457e-09
+      }
+    },
+    {
+      "run": "heat_generated__s71",
+      "dataset": "heat_generated",
+      "budget": 5,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 7.612415549274629e-05,
+        "inverse_mse": 4.6630342444452846e-05,
+        "full": 4.692616393129632e-05,
+        "auto": 4.6630342444452846e-05
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 6.5522235150262865e-09,
+        "inverse_mse": 2.5310260103633704e-09,
+        "full": 2.552925546923446e-09,
+        "auto": 2.5310260103633704e-09
+      }
+    },
+    {
+      "run": "heat_generated__s71",
+      "dataset": "heat_generated",
+      "budget": 10,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 7.612415549274629e-05,
+        "inverse_mse": 4.664735857505791e-05,
+        "full": 4.6817193627466616e-05,
+        "auto": 4.6817193627466616e-05
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 6.5522235150262865e-09,
+        "inverse_mse": 2.534328248153347e-09,
+        "full": 2.54409819486032e-09,
+        "auto": 2.54409819486032e-09
+      }
+    },
+    {
+      "run": "heat_generated__s71",
+      "dataset": "heat_generated",
+      "budget": 20,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 7.612415549274629e-05,
+        "inverse_mse": 4.669223845511189e-05,
+        "full": 4.6821714430586506e-05,
+        "auto": 4.669223845511189e-05
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 6.5522235150262865e-09,
+        "inverse_mse": 2.541175822596612e-09,
+        "full": 2.5508923104397344e-09,
+        "auto": 2.541175822596612e-09
+      }
+    },
+    {
+      "run": "heat_local__s172",
+      "dataset": "heat_local",
+      "budget": 5,
+      "n_evaluation": 103,
+      "mean_relative_l2": {
+        "selected_single": 6.554642436249024e-05,
+        "inverse_mse": 4.4853872335456846e-05,
+        "full": 4.500660922628103e-05,
+        "auto": 4.4853872335456846e-05
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 5.270219141222575e-09,
+        "inverse_mse": 2.491377959039843e-09,
+        "full": 2.519174985526572e-09,
+        "auto": 2.491377959039843e-09
+      }
+    },
+    {
+      "run": "heat_local__s172",
+      "dataset": "heat_local",
+      "budget": 10,
+      "n_evaluation": 103,
+      "mean_relative_l2": {
+        "selected_single": 6.554642436249024e-05,
+        "inverse_mse": 4.401089763658835e-05,
+        "full": 4.359256667891584e-05,
+        "auto": 4.401089763658835e-05
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 5.270219141222575e-09,
+        "inverse_mse": 2.427006275265622e-09,
+        "full": 2.402069794795319e-09,
+        "auto": 2.427006275265622e-09
+      }
+    },
+    {
+      "run": "heat_local__s172",
+      "dataset": "heat_local",
+      "budget": 20,
+      "n_evaluation": 103,
+      "mean_relative_l2": {
+        "selected_single": 6.554642436249024e-05,
+        "inverse_mse": 4.342497558577827e-05,
+        "full": 4.306297577537562e-05,
+        "auto": 4.306297577537562e-05
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 5.270219141222575e-09,
+        "inverse_mse": 2.3791574802521253e-09,
+        "full": 2.3836355159461427e-09,
+        "auto": 2.3836355159461427e-09
+      }
+    },
+    {
+      "run": "heat_local__s273",
+      "dataset": "heat_local",
+      "budget": 5,
+      "n_evaluation": 103,
+      "mean_relative_l2": {
+        "selected_single": 6.92261102618739e-05,
+        "inverse_mse": 4.445015180093342e-05,
+        "full": 4.4348991239583425e-05,
+        "auto": 4.4348991239583425e-05
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 6.442339884823414e-09,
+        "inverse_mse": 2.713944430187916e-09,
+        "full": 2.781584819139214e-09,
+        "auto": 2.781584819139214e-09
+      }
+    },
+    {
+      "run": "heat_local__s273",
+      "dataset": "heat_local",
+      "budget": 10,
+      "n_evaluation": 103,
+      "mean_relative_l2": {
+        "selected_single": 6.92261102618739e-05,
+        "inverse_mse": 4.4355032883930115e-05,
+        "full": 4.4297643186775934e-05,
+        "auto": 4.4297643186775934e-05
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 6.442339884823414e-09,
+        "inverse_mse": 2.723815479372093e-09,
+        "full": 2.779095200465442e-09,
+        "auto": 2.779095200465442e-09
+      }
+    },
+    {
+      "run": "heat_local__s273",
+      "dataset": "heat_local",
+      "budget": 20,
+      "n_evaluation": 103,
+      "mean_relative_l2": {
+        "selected_single": 6.92261102618739e-05,
+        "inverse_mse": 4.4690409723435464e-05,
+        "full": 4.492879676149197e-05,
+        "auto": 4.4690409723435464e-05
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 6.442339884823414e-09,
+        "inverse_mse": 2.728713764675282e-09,
+        "full": 2.8535146414515576e-09,
+        "auto": 2.728713764675282e-09
+      }
+    },
+    {
+      "run": "heat_local__s71",
+      "dataset": "heat_local",
+      "budget": 5,
+      "n_evaluation": 103,
+      "mean_relative_l2": {
+        "selected_single": 6.382252809102788e-05,
+        "inverse_mse": 4.1668476087626565e-05,
+        "full": 4.116979376777483e-05,
+        "auto": 4.116979376777483e-05
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 5.18198348002464e-09,
+        "inverse_mse": 2.1578181012203004e-09,
+        "full": 2.1560794030956573e-09,
+        "auto": 2.1560794030956573e-09
+      }
+    },
+    {
+      "run": "heat_local__s71",
+      "dataset": "heat_local",
+      "budget": 10,
+      "n_evaluation": 103,
+      "mean_relative_l2": {
+        "selected_single": 6.382252809102788e-05,
+        "inverse_mse": 4.1337521789589225e-05,
+        "full": 4.079263219728146e-05,
+        "auto": 4.079263219728146e-05
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 5.18198348002464e-09,
+        "inverse_mse": 2.1360278756058427e-09,
+        "full": 2.1285972542960293e-09,
+        "auto": 2.1285972542960293e-09
+      }
+    },
+    {
+      "run": "heat_local__s71",
+      "dataset": "heat_local",
+      "budget": 20,
+      "n_evaluation": 103,
+      "mean_relative_l2": {
+        "selected_single": 6.382252809102788e-05,
+        "inverse_mse": 4.1084319498396965e-05,
+        "full": 4.0715650968155525e-05,
+        "auto": 4.0715650968155525e-05
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 5.18198348002464e-09,
+        "inverse_mse": 2.122171790297847e-09,
+        "full": 2.1337916920048035e-09,
+        "auto": 2.1337916920048035e-09
+      }
+    },
+    {
+      "run": "lid_driven_cavity_v2__s172",
+      "dataset": "lid_driven_cavity_v2",
+      "budget": 5,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 0.001771033171293735,
+        "inverse_mse": 0.0015912804207836699,
+        "full": 0.0015852771358366442,
+        "auto": 0.0015852771358366442
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 3.6067441375933576e-06,
+        "inverse_mse": 3.0221488669673115e-06,
+        "full": 3.0044181982807056e-06,
+        "auto": 3.0044181982807056e-06
+      }
+    },
+    {
+      "run": "lid_driven_cavity_v2__s172",
+      "dataset": "lid_driven_cavity_v2",
+      "budget": 10,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 0.001771033171293735,
+        "inverse_mse": 0.0014793690283635176,
+        "full": 0.0014712316938158888,
+        "auto": 0.0014712316938158888
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 3.6067441375933576e-06,
+        "inverse_mse": 2.508547511412057e-06,
+        "full": 2.478566701392942e-06,
+        "auto": 2.478566701392942e-06
+      }
+    },
+    {
+      "run": "lid_driven_cavity_v2__s172",
+      "dataset": "lid_driven_cavity_v2",
+      "budget": 20,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 0.001771033171293735,
+        "inverse_mse": 0.0014801156731820528,
+        "full": 0.0014720259207032919,
+        "auto": 0.0014720259207032919
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 3.6067441375933576e-06,
+        "inverse_mse": 2.5129512427643654e-06,
+        "full": 2.483095689237457e-06,
+        "auto": 2.483095689237457e-06
+      }
+    },
+    {
+      "run": "lid_driven_cavity_v2__s273",
+      "dataset": "lid_driven_cavity_v2",
+      "budget": 5,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 0.0016459737760325555,
+        "inverse_mse": 0.0013915943395437884,
+        "full": 0.0013934795808793231,
+        "auto": 0.0013915943395437884
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 3.0282420755436536e-06,
+        "inverse_mse": 2.1420283382396096e-06,
+        "full": 2.149646972855578e-06,
+        "auto": 2.1420283382396096e-06
+      }
+    },
+    {
+      "run": "lid_driven_cavity_v2__s273",
+      "dataset": "lid_driven_cavity_v2",
+      "budget": 10,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 0.0016459737760325555,
+        "inverse_mse": 0.0013903599321569405,
+        "full": 0.0013892077812720357,
+        "auto": 0.0013892077812720357
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 3.0282420755436536e-06,
+        "inverse_mse": 2.145111947163378e-06,
+        "full": 2.1417244342449895e-06,
+        "auto": 2.1417244342449895e-06
+      }
+    },
+    {
+      "run": "lid_driven_cavity_v2__s273",
+      "dataset": "lid_driven_cavity_v2",
+      "budget": 20,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 0.0016459737760325555,
+        "inverse_mse": 0.0013912443977582448,
+        "full": 0.0013878460698271927,
+        "auto": 0.0013878460698271927
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 3.0282420755436536e-06,
+        "inverse_mse": 2.148663044997952e-06,
+        "full": 2.1393139071564408e-06,
+        "auto": 2.1393139071564408e-06
+      }
+    },
+    {
+      "run": "lid_driven_cavity_v2__s71",
+      "dataset": "lid_driven_cavity_v2",
+      "budget": 5,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 0.0015118248771583901,
+        "inverse_mse": 0.0012797363218659394,
+        "full": 0.001272113768210534,
+        "auto": 0.001272113768210534
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 2.327789483265565e-06,
+        "inverse_mse": 1.6625989508875687e-06,
+        "full": 1.6429117494850548e-06,
+        "auto": 1.6429117494850548e-06
+      }
+    },
+    {
+      "run": "lid_driven_cavity_v2__s71",
+      "dataset": "lid_driven_cavity_v2",
+      "budget": 10,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 0.0015118248771583901,
+        "inverse_mse": 0.0012754212472552483,
+        "full": 0.0012723303611259077,
+        "auto": 0.0012723303611259077
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 2.327789483265565e-06,
+        "inverse_mse": 1.6511941772001034e-06,
+        "full": 1.6437530139341204e-06,
+        "auto": 1.6437530139341204e-06
+      }
+    },
+    {
+      "run": "lid_driven_cavity_v2__s71",
+      "dataset": "lid_driven_cavity_v2",
+      "budget": 20,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 0.0015118248771583901,
+        "inverse_mse": 0.0012780007460718478,
+        "full": 0.0012802729563787406,
+        "auto": 0.0012802729563787406
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 2.327789483265565e-06,
+        "inverse_mse": 1.6575229474425295e-06,
+        "full": 1.664237090917084e-06,
+        "auto": 1.664237090917084e-06
+      }
+    },
+    {
+      "run": "poisson_generated_v2__s172",
+      "dataset": "poisson_generated_v2",
+      "budget": 5,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 6.319043625972638e-05,
+        "inverse_mse": 8.422883312130573e-05,
+        "full": 8.524746316298478e-05,
+        "auto": 6.319043625972638e-05
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 5.358965751375086e-09,
+        "inverse_mse": 1.113068580061799e-08,
+        "full": 1.1613205779889594e-08,
+        "auto": 5.358965751375086e-09
+      }
+    },
+    {
+      "run": "poisson_generated_v2__s172",
+      "dataset": "poisson_generated_v2",
+      "budget": 10,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 6.319043625972638e-05,
+        "inverse_mse": 7.73764748400911e-05,
+        "full": 7.507443836970796e-05,
+        "auto": 7.73764748400911e-05
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 5.358965751375086e-09,
+        "inverse_mse": 8.956774481396507e-09,
+        "full": 7.999577933717882e-09,
+        "auto": 8.956774481396507e-09
+      }
+    },
+    {
+      "run": "poisson_generated_v2__s172",
+      "dataset": "poisson_generated_v2",
+      "budget": 20,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 6.319043625972638e-05,
+        "inverse_mse": 7.459046803462615e-05,
+        "full": 7.452088329795187e-05,
+        "auto": 7.459046803462615e-05
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 5.358965751375086e-09,
+        "inverse_mse": 8.195787694732843e-09,
+        "full": 8.19548464593602e-09,
+        "auto": 8.195787694732843e-09
+      }
+    },
+    {
+      "run": "poisson_generated_v2__s273",
+      "dataset": "poisson_generated_v2",
+      "budget": 5,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 7.485621847820043e-05,
+        "inverse_mse": 8.024484596752537e-05,
+        "full": 7.455034477849729e-05,
+        "auto": 7.485621847820043e-05
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 1.5299767007378884e-08,
+        "inverse_mse": 1.8152308728332978e-08,
+        "full": 1.5129417108001598e-08,
+        "auto": 1.5299767007378884e-08
+      }
+    },
+    {
+      "run": "poisson_generated_v2__s273",
+      "dataset": "poisson_generated_v2",
+      "budget": 10,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 7.485621847820043e-05,
+        "inverse_mse": 7.920141412502032e-05,
+        "full": 7.345873581154439e-05,
+        "auto": 7.485621847820043e-05
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 1.5299767007378884e-08,
+        "inverse_mse": 1.7717659163905346e-08,
+        "full": 1.459301463485491e-08,
+        "auto": 1.5299767007378884e-08
+      }
+    },
+    {
+      "run": "poisson_generated_v2__s273",
+      "dataset": "poisson_generated_v2",
+      "budget": 20,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 7.485621847820043e-05,
+        "inverse_mse": 8.210639165092971e-05,
+        "full": 7.432450552291036e-05,
+        "auto": 7.485621847820043e-05
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 1.5299767007378884e-08,
+        "inverse_mse": 1.8821947167578875e-08,
+        "full": 1.5255908491123836e-08,
+        "auto": 1.5299767007378884e-08
+      }
+    },
+    {
+      "run": "poisson_generated_v2__s71",
+      "dataset": "poisson_generated_v2",
+      "budget": 5,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 6.725583376258827e-05,
+        "inverse_mse": 7.541600584814055e-05,
+        "full": 7.666790954790087e-05,
+        "auto": 6.725583376258827e-05
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 9.966665637203767e-09,
+        "inverse_mse": 1.4258987504403016e-08,
+        "full": 1.5174949707839807e-08,
+        "auto": 9.966665637203767e-09
+      }
+    },
+    {
+      "run": "poisson_generated_v2__s71",
+      "dataset": "poisson_generated_v2",
+      "budget": 10,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 6.725583376258827e-05,
+        "inverse_mse": 7.366460506425998e-05,
+        "full": 6.840339950770613e-05,
+        "auto": 6.725583376258827e-05
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 9.966665637203767e-09,
+        "inverse_mse": 1.3460536406630308e-08,
+        "full": 1.0673190044265879e-08,
+        "auto": 9.966665637203767e-09
+      }
+    },
+    {
+      "run": "poisson_generated_v2__s71",
+      "dataset": "poisson_generated_v2",
+      "budget": 20,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 6.725583376258827e-05,
+        "inverse_mse": 6.915690102941723e-05,
+        "full": 6.82692813639392e-05,
+        "auto": 6.725583376258827e-05
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 9.966665637203767e-09,
+        "inverse_mse": 1.1499112842429525e-08,
+        "full": 1.0678787285575025e-08,
+        "auto": 9.966665637203767e-09
+      }
+    },
+    {
+      "run": "poisson_local__s172",
+      "dataset": "poisson_local",
+      "budget": 5,
+      "n_evaluation": 103,
+      "mean_relative_l2": {
+        "selected_single": 0.00011845053033769564,
+        "inverse_mse": 0.00012248104384756403,
+        "full": 0.00011877312934051048,
+        "auto": 0.00011845053033769564
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 3.060015198986567e-08,
+        "inverse_mse": 3.254329049543833e-08,
+        "full": 2.718621641132638e-08,
+        "auto": 3.060015198986567e-08
+      }
+    },
+    {
+      "run": "poisson_local__s172",
+      "dataset": "poisson_local",
+      "budget": 10,
+      "n_evaluation": 103,
+      "mean_relative_l2": {
+        "selected_single": 0.00011845053033769564,
+        "inverse_mse": 0.00012182381910903024,
+        "full": 0.00011676557425250423,
+        "auto": 0.00011845053033769564
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 3.060015198986567e-08,
+        "inverse_mse": 3.22730196310415e-08,
+        "full": 2.6638306000406442e-08,
+        "auto": 3.060015198986567e-08
+      }
+    },
+    {
+      "run": "poisson_local__s172",
+      "dataset": "poisson_local",
+      "budget": 20,
+      "n_evaluation": 103,
+      "mean_relative_l2": {
+        "selected_single": 0.00011845053033769564,
+        "inverse_mse": 0.0001212197541858717,
+        "full": 0.00011604904765576382,
+        "auto": 0.00011845053033769564
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 3.060015198986567e-08,
+        "inverse_mse": 3.2016432538713165e-08,
+        "full": 2.6632397212590838e-08,
+        "auto": 3.060015198986567e-08
+      }
+    },
+    {
+      "run": "poisson_local__s273",
+      "dataset": "poisson_local",
+      "budget": 5,
+      "n_evaluation": 103,
+      "mean_relative_l2": {
+        "selected_single": 0.00011439160256177944,
+        "inverse_mse": 0.00011907007807839336,
+        "full": 0.0001386638635133992,
+        "auto": 0.00011439160256177944
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 5.642424792193711e-08,
+        "inverse_mse": 6.283266475526484e-08,
+        "full": 9.729431839910451e-08,
+        "auto": 5.642424792193711e-08
+      }
+    },
+    {
+      "run": "poisson_local__s273",
+      "dataset": "poisson_local",
+      "budget": 10,
+      "n_evaluation": 103,
+      "mean_relative_l2": {
+        "selected_single": 0.00011439160256177944,
+        "inverse_mse": 0.00011946509115843113,
+        "full": 0.0001330396944516477,
+        "auto": 0.00011439160256177944
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 5.642424792193711e-08,
+        "inverse_mse": 6.359597241422763e-08,
+        "full": 8.569597956406337e-08,
+        "auto": 5.642424792193711e-08
+      }
+    },
+    {
+      "run": "poisson_local__s273",
+      "dataset": "poisson_local",
+      "budget": 20,
+      "n_evaluation": 103,
+      "mean_relative_l2": {
+        "selected_single": 0.00011439160256177944,
+        "inverse_mse": 0.00011895408996563662,
+        "full": 0.00013119673096029957,
+        "auto": 0.00011439160256177944
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 5.642424792193711e-08,
+        "inverse_mse": 6.313380991976638e-08,
+        "full": 8.33223909393661e-08,
+        "auto": 5.642424792193711e-08
+      }
+    },
+    {
+      "run": "poisson_local__s71",
+      "dataset": "poisson_local",
+      "budget": 5,
+      "n_evaluation": 103,
+      "mean_relative_l2": {
+        "selected_single": 0.00012994790604143905,
+        "inverse_mse": 0.00013346669351148454,
+        "full": 0.00012994790604143905,
+        "auto": 0.00012994790604143905
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 4.506649902891031e-08,
+        "inverse_mse": 4.926897971631303e-08,
+        "full": 4.506649902891031e-08,
+        "auto": 4.506649902891031e-08
+      }
+    },
+    {
+      "run": "poisson_local__s71",
+      "dataset": "poisson_local",
+      "budget": 10,
+      "n_evaluation": 103,
+      "mean_relative_l2": {
+        "selected_single": 0.00012994790604143905,
+        "inverse_mse": 0.00014625329155129257,
+        "full": 0.0001234570155115197,
+        "auto": 0.00012994790604143905
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 4.506649902891031e-08,
+        "inverse_mse": 5.8059535657503885e-08,
+        "full": 3.447166563317953e-08,
+        "auto": 4.506649902891031e-08
+      }
+    },
+    {
+      "run": "poisson_local__s71",
+      "dataset": "poisson_local",
+      "budget": 20,
+      "n_evaluation": 103,
+      "mean_relative_l2": {
+        "selected_single": 0.00012994790604143905,
+        "inverse_mse": 0.0001431806067291101,
+        "full": 0.00012333187524273773,
+        "auto": 0.00012994790604143905
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 4.506649902891031e-08,
+        "inverse_mse": 5.6166468327289155e-08,
+        "full": 3.4676246890831073e-08,
+        "auto": 4.506649902891031e-08
+      }
+    },
+    {
+      "run": "sharp__burgers_2d__s172",
+      "dataset": "sharp__burgers_2d",
+      "budget": 5,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 0.004880802737313281,
+        "inverse_mse": 0.005038504429029167,
+        "full": 0.004832546501131252,
+        "auto": 0.004880802737313281
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 2.863569393389325e-05,
+        "inverse_mse": 3.108763737803932e-05,
+        "full": 2.830758143718235e-05,
+        "auto": 2.863569393389325e-05
+      }
+    },
+    {
+      "run": "sharp__burgers_2d__s172",
+      "dataset": "sharp__burgers_2d",
+      "budget": 10,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 0.004880802737313281,
+        "inverse_mse": 0.00502363550809186,
+        "full": 0.00487826891432728,
+        "auto": 0.004880802737313281
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 2.863569393389325e-05,
+        "inverse_mse": 3.093313064899814e-05,
+        "full": 2.8896412076488054e-05,
+        "auto": 2.863569393389325e-05
+      }
+    },
+    {
+      "run": "sharp__burgers_2d__s172",
+      "dataset": "sharp__burgers_2d",
+      "budget": 20,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 0.004880802737313281,
+        "inverse_mse": 0.005030231024009849,
+        "full": 0.004867056362872378,
+        "auto": 0.004867056362872378
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 2.863569393389325e-05,
+        "inverse_mse": 3.097947594797762e-05,
+        "full": 2.877745816229061e-05,
+        "auto": 2.877745816229061e-05
+      }
+    },
+    {
+      "run": "sharp__burgers_2d__s273",
+      "dataset": "sharp__burgers_2d",
+      "budget": 5,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 0.0050848768878894515,
+        "inverse_mse": 0.005108388396250373,
+        "full": 0.005032041434183315,
+        "auto": 0.0050848768878894515
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 3.441744596476684e-05,
+        "inverse_mse": 3.4356530482312606e-05,
+        "full": 3.3722167519704854e-05,
+        "auto": 3.441744596476684e-05
+      }
+    },
+    {
+      "run": "sharp__burgers_2d__s273",
+      "dataset": "sharp__burgers_2d",
+      "budget": 10,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 0.0050848768878894515,
+        "inverse_mse": 0.005153243014546394,
+        "full": 0.005021493192825041,
+        "auto": 0.005021493192825041
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 3.441744596476684e-05,
+        "inverse_mse": 3.4706953096098046e-05,
+        "full": 3.359454510191277e-05,
+        "auto": 3.359454510191277e-05
+      }
+    },
+    {
+      "run": "sharp__burgers_2d__s273",
+      "dataset": "sharp__burgers_2d",
+      "budget": 20,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 0.0050848768878894515,
+        "inverse_mse": 0.005118983991592967,
+        "full": 0.005024337932544197,
+        "auto": 0.005024337932544197
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 3.441744596476684e-05,
+        "inverse_mse": 3.444067701707302e-05,
+        "full": 3.37706652352274e-05,
+        "auto": 3.37706652352274e-05
+      }
+    },
+    {
+      "run": "sharp__burgers_2d__s71",
+      "dataset": "sharp__burgers_2d",
+      "budget": 5,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 0.005519892434470755,
+        "inverse_mse": 0.005230232827553048,
+        "full": 0.005185087311856701,
+        "auto": 0.005185087311856701
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 3.9459993365970064e-05,
+        "inverse_mse": 3.678578752798882e-05,
+        "full": 3.5921999822096924e-05,
+        "auto": 3.5921999822096924e-05
+      }
+    },
+    {
+      "run": "sharp__burgers_2d__s71",
+      "dataset": "sharp__burgers_2d",
+      "budget": 10,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 0.005251028050286339,
+        "inverse_mse": 0.005221316153476589,
+        "full": 0.005163821342378936,
+        "auto": 0.005163821342378936
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 3.690197470475584e-05,
+        "inverse_mse": 3.6744289209929306e-05,
+        "full": 3.58344800456316e-05,
+        "auto": 3.58344800456316e-05
+      }
+    },
+    {
+      "run": "sharp__burgers_2d__s71",
+      "dataset": "sharp__burgers_2d",
+      "budget": 20,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 0.005251028050286339,
+        "inverse_mse": 0.005252345322473422,
+        "full": 0.005190019634850431,
+        "auto": 0.005190019634850431
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 3.690197470475584e-05,
+        "inverse_mse": 3.708515650529899e-05,
+        "full": 3.635825683612392e-05,
+        "auto": 3.635825683612392e-05
+      }
+    },
+    {
+      "run": "sharp__euler__s172",
+      "dataset": "sharp__euler",
+      "budget": 5,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 0.05585987486433036,
+        "inverse_mse": 0.05422027218623103,
+        "full": 0.052785321707858476,
+        "auto": 0.05422027218623103
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 0.0037619856505195825,
+        "inverse_mse": 0.0036581852962767453,
+        "full": 0.0034414201673281805,
+        "auto": 0.0036581852962767453
+      }
+    },
+    {
+      "run": "sharp__euler__s172",
+      "dataset": "sharp__euler",
+      "budget": 10,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 0.05585987486433036,
+        "inverse_mse": 0.05415957664944297,
+        "full": 0.053165324717961385,
+        "auto": 0.05415957664944297
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 0.0037619856505195825,
+        "inverse_mse": 0.0036458163518798305,
+        "full": 0.003450106986113205,
+        "auto": 0.0036458163518798305
+      }
+    },
+    {
+      "run": "sharp__euler__s172",
+      "dataset": "sharp__euler",
+      "budget": 20,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 0.05585987486433036,
+        "inverse_mse": 0.05417727172146345,
+        "full": 0.05365922850675693,
+        "auto": 0.05365922850675693
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 0.0037619856505195825,
+        "inverse_mse": 0.003647473963639973,
+        "full": 0.003510453412262418,
+        "auto": 0.003510453412262418
+      }
+    },
+    {
+      "run": "sharp__euler__s273",
+      "dataset": "sharp__euler",
+      "budget": 5,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 0.06664294044527119,
+        "inverse_mse": 0.05993106193589246,
+        "full": 0.06282842635511794,
+        "auto": 0.06664294044527119
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 0.004733137974434822,
+        "inverse_mse": 0.0040319677714903464,
+        "full": 0.00421675276157183,
+        "auto": 0.004733137974434822
+      }
+    },
+    {
+      "run": "sharp__euler__s273",
+      "dataset": "sharp__euler",
+      "budget": 10,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 0.06664294044527119,
+        "inverse_mse": 0.060038476655792726,
+        "full": 0.06152584559387063,
+        "auto": 0.06152584559387063
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 0.004733137974434822,
+        "inverse_mse": 0.004058591454964627,
+        "full": 0.004097592734916806,
+        "auto": 0.004097592734916806
+      }
+    },
+    {
+      "run": "sharp__euler__s273",
+      "dataset": "sharp__euler",
+      "budget": 20,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 0.06259958884504083,
+        "inverse_mse": 0.06020628572945589,
+        "full": 0.05965667410004396,
+        "auto": 0.06020628572945589
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 0.004541387902726247,
+        "inverse_mse": 0.004098088170363405,
+        "full": 0.004094605921730394,
+        "auto": 0.004098088170363405
+      }
+    },
+    {
+      "run": "sharp__euler__s71",
+      "dataset": "sharp__euler",
+      "budget": 5,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 0.06028095839290785,
+        "inverse_mse": 0.05508378486793976,
+        "full": 0.05635814337372287,
+        "auto": 0.05635814337372287
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 0.004432616656851799,
+        "inverse_mse": 0.003790434522466405,
+        "full": 0.003916179775828083,
+        "auto": 0.003916179775828083
+      }
+    },
+    {
+      "run": "sharp__euler__s71",
+      "dataset": "sharp__euler",
+      "budget": 10,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 0.06028095839290785,
+        "inverse_mse": 0.05534585730774848,
+        "full": 0.05754676068052561,
+        "auto": 0.05754676068052561
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 0.004432616656851799,
+        "inverse_mse": 0.003836963227361915,
+        "full": 0.004107754399989496,
+        "auto": 0.004107754399989496
+      }
+    },
+    {
+      "run": "sharp__euler__s71",
+      "dataset": "sharp__euler",
+      "budget": 20,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 0.06028095839290785,
+        "inverse_mse": 0.05559082845069677,
+        "full": 0.055060462108187866,
+        "auto": 0.055060462108187866
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 0.004432616656851799,
+        "inverse_mse": 0.003867845230563894,
+        "full": 0.003740748490991369,
+        "auto": 0.003740748490991369
+      }
+    },
+    {
+      "run": "sharp__helmholtz_2d__s172",
+      "dataset": "sharp__helmholtz_2d",
+      "budget": 5,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 0.07007084240554369,
+        "inverse_mse": 0.117090509835401,
+        "full": 0.10115812072594714,
+        "auto": 0.117090509835401
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 0.061954787614463394,
+        "inverse_mse": 0.1050835519597952,
+        "full": 0.08342400865410042,
+        "auto": 0.1050835519597952
+      }
+    },
+    {
+      "run": "sharp__helmholtz_2d__s172",
+      "dataset": "sharp__helmholtz_2d",
+      "budget": 10,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 0.07007084240554369,
+        "inverse_mse": 0.11389980223372183,
+        "full": 0.10030855284103384,
+        "auto": 0.10030855284103384
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 0.061954787614463394,
+        "inverse_mse": 0.10068345730633857,
+        "full": 0.08194163952009273,
+        "auto": 0.08194163952009273
+      }
+    },
+    {
+      "run": "sharp__helmholtz_2d__s172",
+      "dataset": "sharp__helmholtz_2d",
+      "budget": 20,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 0.07007084240554369,
+        "inverse_mse": 0.11125797150124409,
+        "full": 0.09964800893160483,
+        "auto": 0.09964800893160483
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 0.061954787614463394,
+        "inverse_mse": 0.09731798181059349,
+        "full": 0.08100920407756777,
+        "auto": 0.08100920407756777
+      }
+    },
+    {
+      "run": "sharp__helmholtz_2d__s273",
+      "dataset": "sharp__helmholtz_2d",
+      "budget": 5,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 0.10979784883492931,
+        "inverse_mse": 0.08425008661669611,
+        "full": 0.08999595171798225,
+        "auto": 0.08425008661669611
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 0.1814846873255201,
+        "inverse_mse": 0.11504634405369378,
+        "full": 0.13190762335634104,
+        "auto": 0.11504634405369378
+      }
+    },
+    {
+      "run": "sharp__helmholtz_2d__s273",
+      "dataset": "sharp__helmholtz_2d",
+      "budget": 10,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 0.0661346660502535,
+        "inverse_mse": 0.06325092560125498,
+        "full": 0.04758626812764884,
+        "auto": 0.0661346660502535
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 0.061718079854060234,
+        "inverse_mse": 0.05740308445523044,
+        "full": 0.02666749353026953,
+        "auto": 0.061718079854060234
+      }
+    },
+    {
+      "run": "sharp__helmholtz_2d__s273",
+      "dataset": "sharp__helmholtz_2d",
+      "budget": 20,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 0.0661346660502535,
+        "inverse_mse": 0.06208899244454539,
+        "full": 0.05011260541685496,
+        "auto": 0.0661346660502535
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 0.061718079854060234,
+        "inverse_mse": 0.05613858653771995,
+        "full": 0.03158685994574086,
+        "auto": 0.061718079854060234
+      }
+    },
+    {
+      "run": "sharp__helmholtz_2d__s71",
+      "dataset": "sharp__helmholtz_2d",
+      "budget": 5,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 0.0075090787190375975,
+        "inverse_mse": 0.0053170052366724625,
+        "full": 0.0054117953235548345,
+        "auto": 0.0054117953235548345
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 6.195630200297722e-05,
+        "inverse_mse": 3.7280845890357836e-05,
+        "full": 3.651547988849424e-05,
+        "auto": 3.651547988849424e-05
+      }
+    },
+    {
+      "run": "sharp__helmholtz_2d__s71",
+      "dataset": "sharp__helmholtz_2d",
+      "budget": 10,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 0.0075090787190375975,
+        "inverse_mse": 0.0052610927920258305,
+        "full": 0.00530312446724286,
+        "auto": 0.00530312446724286
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 6.195630200297722e-05,
+        "inverse_mse": 3.5257974363826986e-05,
+        "full": 3.302347823180476e-05,
+        "auto": 3.302347823180476e-05
+      }
+    },
+    {
+      "run": "sharp__helmholtz_2d__s71",
+      "dataset": "sharp__helmholtz_2d",
+      "budget": 20,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 0.0075090787190375975,
+        "inverse_mse": 0.005400021405604351,
+        "full": 0.005344799715831396,
+        "auto": 0.005344799715831396
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 6.195630200297722e-05,
+        "inverse_mse": 3.7927664335978865e-05,
+        "full": 3.6309706327147684e-05,
+        "auto": 3.6309706327147684e-05
+      }
+    },
+    {
+      "run": "sharp__porous_medium_2d__s172",
+      "dataset": "sharp__porous_medium_2d",
+      "budget": 5,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 0.0003333421658951349,
+        "inverse_mse": 0.0002775514793159051,
+        "full": 0.00028621872148607333,
+        "auto": 0.0002775514793159051
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 1.3443850519247183e-07,
+        "inverse_mse": 9.752465243703827e-08,
+        "full": 1.08587782190908e-07,
+        "auto": 9.752465243703827e-08
+      }
+    },
+    {
+      "run": "sharp__porous_medium_2d__s172",
+      "dataset": "sharp__porous_medium_2d",
+      "budget": 10,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 0.0003333421658951349,
+        "inverse_mse": 0.0002756344844071061,
+        "full": 0.00028414616247147495,
+        "auto": 0.00028414616247147495
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 1.3443850519247183e-07,
+        "inverse_mse": 9.581334870284941e-08,
+        "full": 1.060178977870066e-07,
+        "auto": 1.060178977870066e-07
+      }
+    },
+    {
+      "run": "sharp__porous_medium_2d__s172",
+      "dataset": "sharp__porous_medium_2d",
+      "budget": 20,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 0.0003333421658951349,
+        "inverse_mse": 0.0002744966335170051,
+        "full": 0.00027574870891011315,
+        "auto": 0.00027574870891011315
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 1.3443850519247183e-07,
+        "inverse_mse": 9.488064609915761e-08,
+        "full": 9.863852587875707e-08,
+        "auto": 9.863852587875707e-08
+      }
+    },
+    {
+      "run": "sharp__porous_medium_2d__s273",
+      "dataset": "sharp__porous_medium_2d",
+      "budget": 5,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 0.0003266989991010459,
+        "inverse_mse": 0.0002571637260124896,
+        "full": 0.00025549233317392195,
+        "auto": 0.00025549233317392195
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 1.2344024788195092e-07,
+        "inverse_mse": 7.709584600681568e-08,
+        "full": 7.446774164594191e-08,
+        "auto": 7.446774164594191e-08
+      }
+    },
+    {
+      "run": "sharp__porous_medium_2d__s273",
+      "dataset": "sharp__porous_medium_2d",
+      "budget": 10,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 0.0003266989991010459,
+        "inverse_mse": 0.0002579656428170943,
+        "full": 0.000253233628670814,
+        "auto": 0.000253233628670814
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 1.2344024788195092e-07,
+        "inverse_mse": 7.779074567978961e-08,
+        "full": 7.359369112202653e-08,
+        "auto": 7.359369112202653e-08
+      }
+    },
+    {
+      "run": "sharp__porous_medium_2d__s273",
+      "dataset": "sharp__porous_medium_2d",
+      "budget": 20,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 0.0003266989991010459,
+        "inverse_mse": 0.00025819971579110247,
+        "full": 0.0002525955528660365,
+        "auto": 0.0002525955528660365
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 1.2344024788195092e-07,
+        "inverse_mse": 7.77156629734615e-08,
+        "full": 7.317994129042909e-08,
+        "auto": 7.317994129042909e-08
+      }
+    },
+    {
+      "run": "sharp__porous_medium_2d__s71",
+      "dataset": "sharp__porous_medium_2d",
+      "budget": 5,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 0.000314878336977846,
+        "inverse_mse": 0.00025172906385825496,
+        "full": 0.00024791509395202734,
+        "auto": 0.00024791509395202734
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 1.053337503652471e-07,
+        "inverse_mse": 6.857471976840661e-08,
+        "full": 6.573569240633151e-08,
+        "auto": 6.573569240633151e-08
+      }
+    },
+    {
+      "run": "sharp__porous_medium_2d__s71",
+      "dataset": "sharp__porous_medium_2d",
+      "budget": 10,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 0.000314878336977846,
+        "inverse_mse": 0.00025163848220807023,
+        "full": 0.0002474547542696504,
+        "auto": 0.0002474547542696504
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 1.053337503652471e-07,
+        "inverse_mse": 6.857232273549498e-08,
+        "full": 6.559747061510147e-08,
+        "auto": 6.559747061510147e-08
+      }
+    },
+    {
+      "run": "sharp__porous_medium_2d__s71",
+      "dataset": "sharp__porous_medium_2d",
+      "budget": 20,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 0.000314878336977846,
+        "inverse_mse": 0.00025001767249688836,
+        "full": 0.00025131072451163464,
+        "auto": 0.00025131072451163464
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 1.053337503652471e-07,
+        "inverse_mse": 6.753692299310059e-08,
+        "full": 6.732657181367288e-08,
+        "auto": 6.732657181367288e-08
+      }
+    },
+    {
+      "run": "sharp__shallow_water_2d__s172",
+      "dataset": "sharp__shallow_water_2d",
+      "budget": 5,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 0.0037215902010875775,
+        "inverse_mse": 0.003499194679207037,
+        "full": 0.0035674566484489275,
+        "auto": 0.0037215902010875775
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 3.59717591448979e-05,
+        "inverse_mse": 2.8655499420601533e-05,
+        "full": 2.5704094708175492e-05,
+        "auto": 3.59717591448979e-05
+      }
+    },
+    {
+      "run": "sharp__shallow_water_2d__s172",
+      "dataset": "sharp__shallow_water_2d",
+      "budget": 10,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 0.0037215902010875775,
+        "inverse_mse": 0.0034434412799521407,
+        "full": 0.00341747404344162,
+        "auto": 0.0037215902010875775
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 3.59717591448979e-05,
+        "inverse_mse": 2.7530682964286683e-05,
+        "full": 2.5444016470965822e-05,
+        "auto": 3.59717591448979e-05
+      }
+    },
+    {
+      "run": "sharp__shallow_water_2d__s172",
+      "dataset": "sharp__shallow_water_2d",
+      "budget": 20,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 0.0037215902010875775,
+        "inverse_mse": 0.00356657259550758,
+        "full": 0.003525700465012275,
+        "auto": 0.0037215902010875775
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 3.59717591448979e-05,
+        "inverse_mse": 3.1266001403626356e-05,
+        "full": 3.2547194361549396e-05,
+        "auto": 3.59717591448979e-05
+      }
+    },
+    {
+      "run": "sharp__shallow_water_2d__s273",
+      "dataset": "sharp__shallow_water_2d",
+      "budget": 5,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 0.003200721109517155,
+        "inverse_mse": 0.003358311229645966,
+        "full": 0.004105544824994024,
+        "auto": 0.003200721109517155
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 1.450292115011155e-05,
+        "inverse_mse": 1.7433350285401705e-05,
+        "full": 2.7201098910736355e-05,
+        "auto": 1.450292115011155e-05
+      }
+    },
+    {
+      "run": "sharp__shallow_water_2d__s273",
+      "dataset": "sharp__shallow_water_2d",
+      "budget": 10,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 0.003200721109517155,
+        "inverse_mse": 0.003280612232460781,
+        "full": 0.0031993876170819404,
+        "auto": 0.003200721109517155
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 1.450292115011155e-05,
+        "inverse_mse": 1.690941646089007e-05,
+        "full": 1.5606186699919884e-05,
+        "auto": 1.450292115011155e-05
+      }
+    },
+    {
+      "run": "sharp__shallow_water_2d__s273",
+      "dataset": "sharp__shallow_water_2d",
+      "budget": 20,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 0.0032832768892580586,
+        "inverse_mse": 0.0034332758377422653,
+        "full": 0.00331234406428978,
+        "auto": 0.0034332758377422653
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 2.0550793022621147e-05,
+        "inverse_mse": 1.873198639140325e-05,
+        "full": 1.9044092068047985e-05,
+        "auto": 1.873198639140325e-05
+      }
+    },
+    {
+      "run": "sharp__shallow_water_2d__s71",
+      "dataset": "sharp__shallow_water_2d",
+      "budget": 5,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 0.004078463311618491,
+        "inverse_mse": 0.0038664374170546876,
+        "full": 0.003983443856772702,
+        "auto": 0.003983443856772702
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 3.79442530684302e-05,
+        "inverse_mse": 2.3606549525126098e-05,
+        "full": 3.1963746431142074e-05,
+        "auto": 3.1963746431142074e-05
+      }
+    },
+    {
+      "run": "sharp__shallow_water_2d__s71",
+      "dataset": "sharp__shallow_water_2d",
+      "budget": 10,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 0.004276201174552487,
+        "inverse_mse": 0.003768557734946563,
+        "full": 0.0038490780143553374,
+        "auto": 0.004276201174552487
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 3.6204228063903755e-05,
+        "inverse_mse": 2.3064285441921315e-05,
+        "full": 2.3107169072371904e-05,
+        "auto": 3.6204228063903755e-05
+      }
+    },
+    {
+      "run": "sharp__shallow_water_2d__s71",
+      "dataset": "sharp__shallow_water_2d",
+      "budget": 20,
+      "n_evaluation": 20,
+      "mean_relative_l2": {
+        "selected_single": 0.004276201174552487,
+        "inverse_mse": 0.003925919898068727,
+        "full": 0.003914714321561426,
+        "auto": 0.004276201174552487
+      },
+      "mean_squared_relative_l2": {
+        "selected_single": 3.6204228063903755e-05,
+        "inverse_mse": 2.5986050739909566e-05,
+        "full": 2.8453604620987154e-05,
+        "auto": 3.6204228063903755e-05
+      }
+    }
+  ]
+}

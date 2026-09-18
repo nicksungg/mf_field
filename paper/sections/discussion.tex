@@ -1,0 +1,36 @@
+\section{Discussion and limitations}
+\label{sec:discussion}
+The findings connect the diversity of the surrogate library to a practical
+model choice procedure. Different representations and uses of coarse data
+provide accurate predictions on different problems. Reserved fine examples
+then guide how much each model contributes before the next field is known.
+Mixtures often improve on selecting one model, while inverse error weighting
+shows that much of this gain is accessible through individual error estimates.
+For an application with expensive simulations, additional surrogate computation
+can therefore be a useful way to exploit the available fields. Once the library
+is trained, comparing and fitting the three rules reuses its predictions without
+retraining the models.
+
+These results do not isolate a benefit specific to multifidelity data. The library includes
+a fine only model, many datasets have equally sized coarse and fine training
+tables, and validation allocations vary. Establishing data efficiency requires a
+fine only library and alternative uses of fitting labels under equal total
+label and computation budgets, counting every candidate and shared coarse
+ensemble. Whether the additional surrogate computation is worthwhile depends
+on simulation cost, the number of prediction queries, and the required accuracy.
+Net cost savings and comparison with complete engineering automation systems
+remain open.
+
+\section{Conclusion}
+The strongest surrogate for multifidelity field prediction changes across
+problems. \method{} combines an adapted library of nine neural and reduced
+basis models with an ensemble fitting workflow. Reserved fine solutions
+determine which models to select or combine, and new inputs require no
+additional coarse simulation. The assembled benchmark compares these choices
+across field structures and fidelity relationships.
+
+Across 22 datasets, the fitted mixture improves on selecting one model on 16
+datasets using five reserved fine examples. Inverse error weighting captures most of this benefit.
+ERA5 extends the comparison beyond PDE simulations. These findings support ensemble
+fitting when uncertain model choice and expensive field data justify additional
+surrogate computation.

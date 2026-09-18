@@ -1,0 +1,30 @@
+{
+  "field_outputs": {
+    "question": "Do existing AutoML / MF ensembles cover learned full-field surrogates?",
+    "status": "Resolved: LANE-SI already learns field combinations; EL-MFS, AQBMF and MAESTRO cover adaptive MF ensembles. Restrict contribution to the specific common-deployment workflow and its evaluation, not first field AutoML."
+  },
+  "automation": {
+    "question": "Is singleton/inverse/full rule selection novel?",
+    "status": "No algorithmic priority claim. ERA5 complete selector chooses full, which loses to inverse weighting at evaluation. Broader selector validation and exact-library Caruana control remain gaps."
+  },
+  "calibration": {
+    "question": "Does k=5 prove low total HF cost?",
+    "status": "No; k is additional, most training tables have N_L=N_H=400."
+  },
+  "generality": {
+    "question": "Does procedure generalize to untrained PDEs?",
+    "status": "No; base experts are per-dataset. Test new inputs and fixed procedure separately."
+  },
+  "climate": {
+    "question": "Can ERA5 establish impact?",
+    "status": "Repaired ERA5 complete: inverse gives modest 2.35% K5 relative gain vs strong mean; automatic/full worsens 0.53%. Seven historical evaluation cases, one base seed, no fresh years. Pattern-scaling, physical units, area weights, time provenance and larger independent evaluations remain gaps."
+  },
+  "validation": {
+    "question": "Can headline be retrospective20 including defects?",
+    "status": "Addressed transparently: main historical20 result retained, retrospective15 sensitivity recomputed from five pre-documented data exclusions; fresh heat reported separately. Broader fresh confirmation still needed."
+  },
+  "theory": {
+    "question": "What does math establish?",
+    "status": "Quadratic risk identity and conditional perturbation bound; neither novelty nor universal tiny-k guarantee."
+  }
+}

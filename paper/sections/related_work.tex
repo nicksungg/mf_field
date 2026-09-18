@@ -1,0 +1,40 @@
+\section{Background: from surrogate selection to field ensembles}
+\label{sec:related}
+Engineering studies already show why choosing one surrogate can be difficult
+and why combining several can help. \citet{goel2007} weight surrogates using
+error estimates, \citet{acar2009} and \citet{stromberg2021} optimize metamodel weights, and
+\citet{viana2009} compare cross validation selection, weighted prediction, and
+library subsets. For functional outputs, \citet{brunel2025} compare more than
+a dozen multifidelity surrogates in a common framework. Their findings connect
+model performance to fidelity correlation, training size, and residual
+complexity. These studies establish both the ensemble principle and the need
+for comparisons across problems. We extend this empirical line of work to a
+surrogate library for fields and measure combination gains under small,
+explicitly counted fitting budgets.
+
+The weighting rules follow stacked generalization \citep{wolpert1992}, stacked
+regression \citep{breiman1996}, and Super Learner \citep{superlearner2007}.
+Greedy ensemble selection \citep{caruana2004}, auto sklearn
+\citep{feurer2015,feurer2022}, and AutoGluon \citep{erickson2020} automate
+selection from broader libraries. Related multifidelity workflows automate
+other parts of the process: EL MFS combines low fidelity models inside
+hierarchical fusion \citep{wang2024elmfs}, AQBMF screens low fidelity information
+and surrogate candidates \citep{lee2026aqbmf}, and the MAESTRO preprint screens
+families by leave one out validation \citep{kim2026maestro}. Our ensemble fitting
+stage acts on completed target field predictions from different fidelity
+strategies. We evaluate that stage and its library, without a direct comparison
+against these complete engineering automation systems.
+
+The library draws on Fourier neural operators (FNO) \citep{li2021fno}, DeepONet
+\citep{lu2021}, wavelet neural operators (WNO) \citep{tripura2022wno}, and Transolver
+\citep{wu2024transolver}. Multifidelity operator learning also includes
+DeepONet \citep{howard2023}, MF WNO \citep{thakur2022mf}, and FNO for carbon
+storage \citep{tang2023}. MFRNP uses decoded coarse outputs in residual prediction
+\citep{niu2024}, while FIRE uses coarse predictive distributions
+\citep{yu2026fire}. Appendix~\ref{app:adaptations} identifies the components we
+adapt and the departures from their original formulations. HyperNOs addresses
+automated operator training \citep{ghiotto2025}, and LANE SI combines sea ice
+fields \citep{borisova2024}. PDEBench and The Well supply broader physical
+benchmarks \citep{takamoto2022,ohana2024}. Our study starts from supplied training
+data and fits ensemble weights, leaving simulation acquisition to approaches
+such as active multi resolution learning \citep{li2024active}.

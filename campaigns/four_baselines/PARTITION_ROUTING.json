@@ -1,0 +1,43 @@
+{
+  "groups": {
+    "pi_faez": {
+      "indices": [
+        1,
+        4,
+        5,
+        8
+      ],
+      "gpu": "h100",
+      "time": "4-00:00:00",
+      "cap": 2
+    },
+    "mit_normal_gpu": {
+      "indices": [
+        2,
+        6
+      ],
+      "gpu": "h200",
+      "time": "06:00:00",
+      "cap": 2
+    },
+    "mit_preemptable": {
+      "indices": [
+        0,
+        3,
+        7,
+        9
+      ],
+      "gpu": "h200",
+      "time": "2-00:00:00",
+      "cap": 2
+    }
+  },
+  "excluded_nodes": [
+    "node2900",
+    "node4002",
+    "node4200"
+  ],
+  "replaces_training_array": "22806679",
+  "replaces_collector": "22806680",
+  "scope": "Same ten missing fits; one owner partition per task. No changes to model recipes, data or existing ERA5 job."
+}

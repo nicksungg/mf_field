@@ -1,0 +1,27 @@
+\section{Ensemble implementation}
+\subsection{Numerical fitting}
+\label{app:numerics}
+The Selected model, Inverse error mixture, and Fitted mixture use the same
+$K$ input and fine field pairs. Their definitions appear in
+Section~\ref{sec:method}. For joint fitting, the empirical error matrix is
+symmetrized and divided by
+$\max(\operatorname{tr}(\widehat C)/M,10^{-30})$. Here the trace sums diagonal
+errors and $M=9$ counts models. This positive scaling changes the objective
+magnitude without changing the matrix condition number or the exact minimizer. SLSQP uses the analytic
+gradient, bounds $0\leq w_m\leq1$, the unit sum constraint, tolerance
+$10^{-12}$, and at most 300 iterations. Uniform weights and the lowest
+diagonal singleton initialize separate solves. Finite solutions with unit sum
+residual below $10^{-6}$ are clipped to nonnegative values and renormalized.
+Feasible starting points remain candidates, and the lowest fitting objective
+determines the retained weights. These checks establish numerical feasibility,
+not generalization to new inputs.
+
+Uniform averaging, used as a control in Table~\ref{tab:main}, assigns every
+member weight $1/M$. Forming the error matrices costs $O(KM^2P)$ for $P$
+values per field. Streaming predictions and keeping only these matrices
+requires $O(KM^2)$ storage. These costs exclude surrogate training and inference.
+The companion package preserves additional regularization, pair fitting, and
+coarse input refresh experiments separately from the three main rules.
+
+\input{sections/pseudocode}
+

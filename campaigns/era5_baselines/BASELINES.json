@@ -1,0 +1,99 @@
+{
+  "version": 1,
+  "dataset": "era5",
+  "models": [
+    {
+      "id": "B1",
+      "model": "st_koh_pod",
+      "worker": "st",
+      "device": "cpu"
+    },
+    {
+      "id": "B2",
+      "model": "st_nargp_pod",
+      "worker": "st",
+      "device": "cpu"
+    },
+    {
+      "id": "B3",
+      "model": "st_mfdnn",
+      "worker": "st",
+      "device": "gpu"
+    },
+    {
+      "id": "B4",
+      "model": "st_mfdeeponet",
+      "worker": "st",
+      "device": "gpu"
+    },
+    {
+      "id": "B5",
+      "model": "st_dmfal",
+      "worker": "st",
+      "device": "gpu"
+    },
+    {
+      "id": "B6",
+      "model": "nomad_mf",
+      "worker": "paper",
+      "device": "gpu"
+    },
+    {
+      "id": "B7",
+      "model": "mfrnp",
+      "worker": "paper",
+      "device": "gpu"
+    },
+    {
+      "id": "B8",
+      "model": "fno_coregionalization",
+      "worker": "paper",
+      "device": "gpu"
+    },
+    {
+      "id": "B9",
+      "model": "mf_fno_transfer",
+      "worker": "paper",
+      "device": "gpu"
+    },
+    {
+      "id": "B10",
+      "model": "mf_fno_transfer_bar",
+      "worker": "paper",
+      "device": "alias",
+      "alias_of": "mf_fno_transfer",
+      "independent_training": false
+    },
+    {
+      "id": "B11",
+      "model": "st_lf_affine_pod",
+      "worker": "st",
+      "device": "cpu"
+    },
+    {
+      "id": "B12",
+      "model": "st_knn",
+      "worker": "st",
+      "device": "cpu"
+    }
+  ],
+  "base_seed": 42,
+  "paper_epochs": 2500,
+  "neural_steps_per_stage": 100000,
+  "working_grid": [
+    128,
+    256
+  ],
+  "n_base_hf_train": 55,
+  "n_calibration": 10,
+  "n_evaluation": 7,
+  "scope": "Only the twelve missing ERA5 baseline entries. Existing nine-expert extension stays on SuperCloud. The25datasetcampaign remains deferred.",
+  "orcd_only": true,
+  "excluded_nodes": [
+    "node2900",
+    "node4200",
+    "node2901",
+    "node4002"
+  ],
+  "baseline_alias": "B9 and B10 have the same model and training recipe; B10 is an explicitly reported alias, not a second independent run."
+}

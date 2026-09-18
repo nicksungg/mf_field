@@ -1,0 +1,348 @@
+{
+  "date": "2026-09-14",
+  "scope": "Internal evidence and claim-source ledger for the AutoMF working draft; bibliography supplies canonical titles/URLs for all keys.",
+  "claims": [
+    {
+      "id": "C01",
+      "claim": "Stacking learns combinations from reserved or cross-validated base predictions; residual-product objectives are established.",
+      "sources": [
+        "wolpert1992",
+        "breiman1996",
+        "superlearner2007"
+      ],
+      "status": "Supported; no novelty claim",
+      "location": "Related work; Analysis"
+    },
+    {
+      "id": "C02",
+      "claim": "Automatic ensemble/library construction and validation-error weighting precede AutoMF.",
+      "sources": [
+        "caruana2004",
+        "goel2007",
+        "feurer2015",
+        "feurer2022",
+        "erickson2020"
+      ],
+      "status": "Supported; identical-library Caruana experiment remains missing",
+      "location": "Related work; Appendix F"
+    },
+    {
+      "id": "C03",
+      "claim": "Adaptive MF strategy selection already occurs in EL-MFS, AQBMF and MAESTRO.",
+      "sources": [
+        "wang2024elmfs",
+        "lee2026aqbmf",
+        "kim2026maestro"
+      ],
+      "status": "Supported at indicated access levels; no quantitative superiority inferred",
+      "location": "Related work; Appendix F"
+    },
+    {
+      "id": "C04",
+      "claim": "MAESTRO was publicly available before the research cutoff although its journal issue is later.",
+      "sources": [
+        "kim2026maestro"
+      ],
+      "status": "SSRN indexed primary metadata gives February 10, 2026; cite preprint, not November issue",
+      "location": "Bibliography"
+    },
+    {
+      "id": "C05",
+      "claim": "Learned field ensembles and automated neural-operator training already exist.",
+      "sources": [
+        "borisova2024",
+        "ghiotto2025"
+      ],
+      "status": "Supported; LANE-SI has learned linear/CNN combination, HyperNOs operator HPO; neither should be called our new invention",
+      "location": "Related work; Appendix F"
+    },
+    {
+      "id": "C06",
+      "claim": "FNO, DeepONet, WNO, Transolver and ConvNeXt supply distinct architecture building blocks.",
+      "sources": [
+        "li2021fno",
+        "lu2021",
+        "tripura2022wno",
+        "wu2024transolver",
+        "liu2022convnext"
+      ],
+      "status": "Supported; local adaptations explicitly distinguished from exact paper reproductions",
+      "location": "Method; Appendix B"
+    },
+    {
+      "id": "C07",
+      "claim": "MF operators and scientific climate/carbon-storage applications already exist.",
+      "sources": [
+        "kennedy2000",
+        "howard2023",
+        "thakur2022mf",
+        "tang2023",
+        "niu2024"
+      ],
+      "status": "Supported; portfolio study does not originate multifidelity field learning",
+      "location": "Introduction; Related work"
+    },
+    {
+      "id": "C08",
+      "claim": "Fidelity differences and distribution-conditioned residuals have close precedents.",
+      "sources": [
+        "faza2026",
+        "yu2026fire"
+      ],
+      "status": "Supported; FIRE local trained FNO is an adaptation of a tabular-foundation-model principle",
+      "location": "Introduction; Related work; Appendix B"
+    },
+    {
+      "id": "C09",
+      "claim": "Broad PDE benchmarks motivate cross-system evaluation; active multi-resolution acquisition solves a different task.",
+      "sources": [
+        "takamoto2022",
+        "ohana2024",
+        "li2024active"
+      ],
+      "status": "Supported; local release is not identified with those benchmarks",
+      "location": "Related work"
+    },
+    {
+      "id": "C10",
+      "claim": "Gram-risk, ambiguity identity, and bounded-entry perturbation analysis explain mixtures without proving five fields suffice.",
+      "sources": [
+        "breiman1996",
+        "krogh1994",
+        "hoeffding1963"
+      ],
+      "local_sources": [
+        "sections/analysis.tex",
+        "sections/appendix.tex",
+        "scripts/verify_paper.py"
+      ],
+      "status": "Elementary derivation, assumptions explicit; 100 algebraic checks do not establish statistical assumptions",
+      "location": "Analysis (risk identity and explanation); Appendix A (formal bound and proof)"
+    },
+    {
+      "id": "C11",
+      "claim": "Historical full stacking at K=5 has ratios 0.8743288831 class-balanced and 0.9217276517 equal-dataset, with 14 wins and 6 losses above 1%.",
+      "local_sources": [
+        "data/mechanism_summary.json",
+        "data/per_dataset_errors.csv",
+        "scripts/build_data.py",
+        "qa/data_checks.json"
+      ],
+      "status": "Recomputed; historical component results, not complete AutoMF selector scores",
+      "location": "Abstract; Results; Tables 2,7"
+    },
+    {
+      "id": "C12",
+      "claim": "Simple inverse-error weighting nearly matches full fitting; uniform averaging is unreliable in this corpus.",
+      "local_sources": [
+        "data/mechanism_summary.json",
+        "tables/main_results.tex",
+        "tables/budgets.tex"
+      ],
+      "status": "Supported descriptively; no independent-seed significance claim",
+      "location": "Results; Figure 2"
+    },
+    {
+      "id": "C13",
+      "claim": "Historical design is 20 datasets, 7 descriptive classes, 9 experts and 3 calibration partitions of the same base seed.",
+      "local_sources": [
+        "data/dataset_inventory.json",
+        "data/mechanism_summary.json",
+        "data/audit_findings.md"
+      ],
+      "status": "Supported; calibration counts additional to base HF training, legacy cavity capped at 8",
+      "location": "Experimental protocol"
+    },
+    {
+      "id": "C14",
+      "claim": "Retrospective 15-dataset audit sensitivity preserves aggregate gains after five exclusions selected by previously documented properties.",
+      "local_sources": [
+        "data/dataset_issues.md",
+        "data/audit_sensitivity.json",
+        "scripts/build_data.py"
+      ],
+      "status": "New descriptive recomputation; not fresh testing or certification of remaining generators",
+      "location": "Results; Appendix C"
+    },
+    {
+      "id": "C15",
+      "claim": "On 128 fresh heat evaluation cases, inverse weighting beats full fitting and LOO shrinkage at tested budgets.",
+      "local_sources": [
+        "data/fresh_heat_summary.json",
+        "tables/fresh_heat.tex"
+      ],
+      "status": "Supported; one PDE and one trained expert seed, three calibration draws share evaluation cases",
+      "location": "Results"
+    },
+    {
+      "id": "C16",
+      "claim": "Refreshing mixture weights after changing coarse-input resolution can use the same five known HF answers.",
+      "local_sources": [
+        "data/fresh_heat_summary.json"
+      ],
+      "status": "Supported for this controlled perturbation; not arbitrary physics/climate shift",
+      "location": "Results; Method"
+    },
+    {
+      "id": "C17",
+      "claim": "Richer global/input/local feature gates did not beat the fixed fallback in the 24 examined configurations.",
+      "local_sources": [
+        "data/feature_findings.md"
+      ],
+      "status": "Supported; separate larger calibration experiment, not K=5 feature ablation or impossibility result",
+      "location": "Results; Appendix D"
+    },
+    {
+      "id": "C18",
+      "claim": "Historical ERA5 evaluation inputs overlap LF training, so the repaired protocol purges reserved inputs at every fidelity.",
+      "local_sources": [
+        "data/audit_findings.md",
+        "data/repair_protocol.md",
+        "data/era5_summary.json",
+        "data/era5_archive_checks.json"
+      ],
+      "status": "Completed ERA5 evaluation: 55 base HF / 10 calibration / 7 evaluation; all 17 reserved inputs excluded at every training fidelity. Reported separately from the 17 PDE aggregate.",
+      "location": "Climate application; Appendix E"
+    },
+    {
+      "id": "C19",
+      "claim": "ERA5 is reanalysis; the local task is climate-driver emulation, distinct from operational weather forecasting and ClimateBench.",
+      "sources": [
+        "hersbach2020",
+        "niu2024",
+        "climatebench2022"
+      ],
+      "local_sources": [
+        "data/repair_protocol.md"
+      ],
+      "status": "Supported with local calendar provenance explicitly unresolved",
+      "location": "Climate application"
+    },
+    {
+      "id": "C20",
+      "claim": "Simple climate pattern scaling and internal variability are important comparators and confounders.",
+      "sources": [
+        "lutjens2025"
+      ],
+      "status": "Supported for the cited climate evaluation; recommends controls rather than importing scores to ERA5",
+      "location": "Climate application"
+    },
+    {
+      "id": "C21",
+      "claim": "Automatic singleton/inverse/full selection is leave-one-out within the same calibration budget, followed by refitting.",
+      "local_sources": [
+        "data/ensemble_rules.py",
+        "sections/method.tex",
+        "data/era5/s71/fit.json",
+        "data/era5/s172/fit.json",
+        "data/era5/s273/fit.json",
+        "qa/era5_checks.json"
+      ],
+      "status": "Completed ERA5 nine expert evaluation: full chosen on every calibration subset at both budgets; final error higher than inverse weighting.",
+      "location": "Method; Algorithm 1"
+    },
+    {
+      "id": "C22",
+      "claim": "The proposed contribution is an application/evaluation scope at the intersection of established components.",
+      "sources": [
+        "caruana2004",
+        "wang2024elmfs",
+        "lee2026aqbmf",
+        "kim2026maestro",
+        "borisova2024",
+        "ghiotto2025",
+        "niu2024"
+      ],
+      "status": "Interpretive positioning, not verified priority or proof of acceptance; missing baselines and costs listed",
+      "location": "Introduction; Discussion; Appendix F"
+    },
+    {
+      "id": "C23",
+      "claim": "The current manuscript follows the user-supplied ICLR 2026 template and nine-page initial-submission limit.",
+      "status": "Exact style files from user archive; nine pages before references, appendices after bibliography. Earlier 2027 policy research does not specify the current template.",
+      "location": "main.tex; README.md",
+      "local_sources": [
+        "qa/template_source.json",
+        "qa/verification.json"
+      ]
+    },
+    {
+      "id": "C24",
+      "claim": "ERA5 nine expert inverse K5 gives 5.8146% relative L2 versus selected POD GP and training mean 6.7369% (13.69% relative gain); automatic/full gives 6.4877% (3.70% relative gain). POD GP is constant across 17 reserved inputs.",
+      "local_sources": [
+        "data/era5_summary.json",
+        "data/era5_archive_checks.json",
+        "data/era5_per_case_errors.csv",
+        "qa/era5_checks.json"
+      ],
+      "status": "Recomputed from the completed nine expert campaign; seven shared evaluation inputs, one base seed. K10 repeats the same calibration pool; not confirmation on new years.",
+      "location": "Section 7; Appendix F.1"
+    },
+    {
+      "id": "C25",
+      "claim": "Eight of the nine experts minimize the partition-averaged individual error on at least one of the 20 historical datasets.",
+      "local_sources": [
+        "data/historical_runs/",
+        "data/individual_model_summary.json",
+        "data/individual_model_errors.csv",
+        "qa/individual_model_checks.json"
+      ],
+      "status": "All 180 means reconstructed from the same archived evaluation rows used by mixtures, with 60 task hash and replay checks. Hindsight descriptive rankings; not a deployment selection rule, new training run, or independent confirmation.",
+      "location": "Abstract; Introduction; Figure 2; Appendix D.1"
+    },
+    {
+      "id": "C26",
+      "claim": "All twelve ERA5 baseline entries are complete, representing eleven independent fits with B10 reusing B9. Fidelity basis FNO (B8) gives 5.1503% mean relative L2 error; autoregressive POD GP gives 5.0032%. Both are below the inverse and fitted mixtures on the same seven evaluation inputs.",
+      "local_sources": [
+        "data/era5_baselines_summary.json",
+        "data/era5_baselines_reported.csv",
+        "data/era5_completion/baselines/production_results/BASELINES_AUDIT.json",
+        "qa/era5_baseline_checks.json"
+      ],
+      "status": "All baseline per case errors replayed from saved predictions and matched to the completed ORCD production collector. Shared input identities and working grid verified. No new weight fitting.",
+      "location": "Section 7; Appendix H, Tables 22 and 23"
+    }
+  ],
+  "source_access": {
+    "wolpert1992": "Primary abstract/metadata; full publisher text inaccessible.",
+    "breiman1996": "Primary author-hosted full PDF inspected; residual Gram objective checked.",
+    "superlearner2007": "Primary institutional abstract and bibliographic record; full text not obtained.",
+    "caruana2004": "Primary author PDF and research-lane inspection; direct algorithmic precedent.",
+    "goel2007": "Primary institutional abstract/metadata and research-lane review; publisher access limited.",
+    "feurer2015": "Official NeurIPS record; research-lane method review.",
+    "feurer2022": "Official JMLR paper page; research-lane method review.",
+    "erickson2020": "Author arXiv record; research-lane full-text review; workshop status checked.",
+    "borisova2024": "Primary arXiv full HTML inspected; method and conclusion checked; conflicting date descriptions not imported.",
+    "ghiotto2025": "Primary arXiv metadata/abstract and author code; cite preprint.",
+    "kennedy2000": "Primary author-hosted abstract; bibliographic metadata.",
+    "wang2024elmfs": "Primary publisher abstract/section snippets; full text not obtained.",
+    "lee2026aqbmf": "Primary author-hosted full PDF inspected; online/issue dates distinguished.",
+    "kim2026maestro": "Primary SSRN indexed abstract/metadata; direct page 403; full text not inspected.",
+    "li2021fno": "Primary arXiv/proceedings record; established architecture scope.",
+    "lu2021": "Primary Nature record/abstract; bibliographic metadata.",
+    "howard2023": "Primary arXiv paper record and research-lane review.",
+    "niu2024": "Official PMLR record and primary arXiv full HTML inspected.",
+    "faza2026": "Primary arXiv record/full-text research-lane review; August 2026 date verified.",
+    "yu2026fire": "Primary arXiv record/full-text research-lane review; workshop/preprint status distinguished.",
+    "wu2024transolver": "Official PMLR record; local implementation separately audited.",
+    "liu2022convnext": "Official CVF paper record; local implementation separately audited.",
+    "tripura2022wno": "Primary arXiv record/research-lane review.",
+    "thakur2022mf": "Primary arXiv record/research-lane review.",
+    "tang2023": "Primary arXiv record/research-lane review.",
+    "li2024active": "Official PMLR record/research-lane review.",
+    "krogh1994": "Official NeurIPS full PDF inspected; ambiguity identity checked.",
+    "hoeffding1963": "Primary publisher record and standard inequality; 1963 print date distinguished from online posting.",
+    "takamoto2022": "Official NeurIPS dataset/benchmark record.",
+    "ohana2024": "Official NeurIPS dataset/benchmark record.",
+    "climatebench2022": "Primary DOI metadata and research-lane paper review; Crossref author initials verified.",
+    "lutjens2025": "Primary arXiv abstract/revision and journal metadata inspected.",
+    "hersbach2020": "Primary journal/reanalysis source and research-lane review."
+  },
+  "exclusions": [
+    "Unverified AutoNO naming not cited.",
+    "MAESTRO November 2026 journal issue not used as pre-cutoff publication; February SSRN preprint used.",
+    "Historical ERA5 accuracy excluded.",
+    "Failed fresh Darcy replay not accepted.",
+    "No source interpreted as proving unique priority, universal five-label sufficiency, or our quantitative superiority."
+  ]
+}

@@ -1,0 +1,21 @@
+\section{Analysis: why averaging can help}
+\label{sec:analysis}
+Averaging can improve predictions when spatial errors partly offset. For a
+fixed library, classical ensemble analysis writes the expected squared relative
+error as
+\begin{equation}
+ R(w)=\E[w^\top G(x,y)w]=w^\top Cw,\qquad C=\E[G(x,y)].
+ \label{eq:riskmain}
+\end{equation}
+Here $G(x,y)$ is the error product matrix for a new input and target pair,
+$\E$ averages over such pairs, $C$ is its population mean, and $R(w)$ is the
+mixture's expected squared relative error. Its diagonal measures individual
+error and its other entries retain alignment and shared bias
+\citep{breiman1996,krogh1994}. The inverse error mixture can exploit complementary
+predictions even though it uses only individual accuracy to choose weights.
+
+This identity does not guarantee useful weights from a small fitting set,
+and the bound in Appendix~\ref{app:proof} does not certify accuracy from five fields.
+The reported metric $L(w)=\E[\sqrt{w^\top Gw}]$ averages unsquared relative error
+and can favor different weights from $R$ even with unlimited fitting data.
+Appendix~\ref{app:geometry} gives a counterexample and a direct fitting control.

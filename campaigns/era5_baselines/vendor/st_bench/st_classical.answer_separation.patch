@@ -1,0 +1,11 @@
+--- release/st_classical.py
++++ vendor/st_classical.py
+@@ -132,7 +132,7 @@
+                  n_hf_train=int(len(hf_tr)), hf_pod_modes=int(basis.shape[0]), hf_pod_energy_captured=energy, lf_modes_as_inputs=int(rL),
+                  mc_samples=S, gp_nlml=float(fit.fun), gp_converged=bool(fit.success), gp_log_noise=float(p[-1]),
+                  gp_log_ell_rho=p[:d].tolist(), gp_log_sf_rho=float(p[d]), gp_log_ell_f=float(p[d + 1]), gp_log_ell_delta=p[d + 2:2 * d + 2].tolist(), gp_log_sf_delta=float(p[2 * d + 2]),
+-                 plugin_test_rel_l2=float(rel_l2_per_sample(pred_plug, data["Ytest"]).mean()), fit_seconds=time.time() - t0, **info)
++                 plugin_test_diagnostic_omitted="query answers withheld from training worker", fit_seconds=time.time() - t0, **info)
+     return pred, extra
+ 
+ 

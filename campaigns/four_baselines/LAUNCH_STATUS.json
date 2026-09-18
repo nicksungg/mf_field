@@ -1,0 +1,13 @@
+{
+  "checked_at": "2026-09-15T23:28:14.374097",
+  "queue": "                   JOBID          PARTITION      STATE         TIME             NODELIST(REASON)\n                22776601         mit_normal    PENDING         0:00                 (Dependency)\n                22807198         mit_normal    PENDING         0:00                 (Dependency)\n        22807011_[2,6%2]     mit_normal_gpu    PENDING         0:00                   (Priority)\n    22807014_[0,3,7,9%2]    mit_preemptable    PENDING         0:00                       (None)\n        22807197_[5,8%2]            pi_faez    PENDING         0:00          (JobArrayTaskLimit)\n              22807197_4            pi_faez    RUNNING         1:07                     node2435\n              22807197_1            pi_faez    RUNNING         1:15                     node2901\n              22776600_5            pi_faez    RUNNING      6:16:31                     node2435\n",
+  "scope": "Ten missing independent baseline fits for the four additional datasets; existing nine-expert and ensemble artifacts reused.",
+  "verified": "First two pi_faez workers loaded actual datasets, initialized CUDA models and started smoke training. Full training follows smoke checks automatically.",
+  "excluded_nodes": [
+    "node2900",
+    "node4002",
+    "node4200"
+  ],
+  "duplicates": false,
+  "collector": "22807198"
+}

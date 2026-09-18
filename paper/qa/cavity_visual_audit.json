@@ -1,0 +1,50 @@
+{
+  "passed": true,
+  "cases": {
+    "lid_driven_cavity_generated": {
+      "reynolds_number": 594.2320181394981,
+      "field_sha256": "c30f8775beb1edca254e5f7fd38f6cf62a8a359b18e0ad93981ccad27f52a642",
+      "shape": [
+        256,
+        256
+      ],
+      "field_quantity": "vorticity",
+      "min": -391.2167922178048,
+      "max": 194.5464938889417,
+      "p05": -7.441440595799322,
+      "p95": 2.979504644043941,
+      "squared_magnitude_fraction_at_boundary": 0.41299999392544984
+    },
+    "lid_driven_cavity_v2": {
+      "reynolds_number": 594.2320181394981,
+      "field_sha256": "c30f8775beb1edca254e5f7fd38f6cf62a8a359b18e0ad93981ccad27f52a642",
+      "shape": [
+        256,
+        256
+      ],
+      "field_quantity": "vorticity",
+      "min": -391.2167922178048,
+      "max": 194.5464938889417,
+      "p05": -7.441440595799322,
+      "p95": 2.979504644043941,
+      "squared_magnitude_fraction_at_boundary": 0.41299999392544984
+    }
+  },
+  "same_field": true,
+  "finding": "Full linear color range suppresses interior contrast because wall vorticity is much larger.",
+  "original_cached_sample_matches_cavity_I_training_archive": true,
+  "solver_source": "/archive/workspace/mf_field/gen_cavity/lid_driven_cavity.py",
+  "solver_sha256": "3f0fe1227233aafb0d7e58630ee60cc8089983aaefc436ac6c504709f23b97d1",
+  "orientation": "Rows are y, columns x. Bottom row index 0. Moving top lid is last row, moving toward positive x.",
+  "fix": "Shared SymLogNorm, threshold 1, base 10, limits -400 to 400, diverging colormap. All values retained. Equal aspect ratio preserves the verified square cavity domain.",
+  "limitations": "Display and source identity audit. No new solver run or independent convergence validation.",
+  "display_update_20260916": {
+    "dataset": "lid_driven_cavity_v2",
+    "display_name": "Cavity",
+    "colormap": "viridis",
+    "scope": "Figure 2 and the enlarged appendix gallery",
+    "normalization_unchanged": true,
+    "data_unchanged": true,
+    "note": "The earlier fix field records the original diverging palette. Current gallery panels share viridis."
+  }
+}

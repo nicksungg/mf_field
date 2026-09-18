@@ -1,0 +1,74 @@
+{
+  "model": "mf_fno_transfer",
+  "dataset": "era5",
+  "seed": 42,
+  "epochs": 2500,
+  "plan_sha256": "21887b37d053dd51a5a484ba8490e9b33e153ffd4cc6ce5ca4bd46e499957689",
+  "inputs_sha256": "b7071be2fbb0a0e8949ab33a3f855596998382bfed4329654262593f7d0c53b0",
+  "source_sha256": "f39dc85b9078b8a41555056666ca704a1dfe2515e9eb8dfba319a7569b0dcaf6",
+  "smoke": false,
+  "elapsed_seconds": 4612.041134119034,
+  "train_seconds": 4603.155046463013,
+  "eval_seconds": 0.027509450912475586,
+  "n_params": 4740929,
+  "n_base_hf_train": 55,
+  "device": "NVIDIA H100 80GB HBM3",
+  "raw_test_answers_loaded": false,
+  "calibration_answers_loaded": false,
+  "loaded_data_paths": [
+    "/archive/mf_field/experiments/era5_baselines_20260915/data/core/era5/test_l1.npz",
+    "/archive/mf_field/experiments/era5_baselines_20260915/data/core/era5/test_l2.npz",
+    "/archive/mf_field/experiments/era5_baselines_20260915/data/core/era5/test_l3.npz",
+    "/archive/mf_field/experiments/era5_baselines_20260915/data/core/era5/test_l4.npz",
+    "/archive/mf_field/experiments/era5_baselines_20260915/data/core/era5/test_l5.npz",
+    "/archive/mf_field/experiments/era5_baselines_20260915/data/core/era5/test_l6.npz",
+    "/archive/mf_field/experiments/era5_baselines_20260915/data/core/era5/test_l7.npz",
+    "/archive/mf_field/experiments/era5_baselines_20260915/data/core/era5/test_l8.npz",
+    "/archive/mf_field/experiments/era5_baselines_20260915/data/core/era5/test_l9.npz",
+    "/archive/mf_field/experiments/era5_baselines_20260915/data/core/era5/train_l1.npz",
+    "/archive/mf_field/experiments/era5_baselines_20260915/data/core/era5/train_l2.npz",
+    "/archive/mf_field/experiments/era5_baselines_20260915/data/core/era5/train_l3.npz",
+    "/archive/mf_field/experiments/era5_baselines_20260915/data/core/era5/train_l4.npz",
+    "/archive/mf_field/experiments/era5_baselines_20260915/data/core/era5/train_l5.npz",
+    "/archive/mf_field/experiments/era5_baselines_20260915/data/core/era5/train_l6.npz",
+    "/archive/mf_field/experiments/era5_baselines_20260915/data/core/era5/train_l7.npz",
+    "/archive/mf_field/experiments/era5_baselines_20260915/data/core/era5/train_l8.npz",
+    "/archive/mf_field/experiments/era5_baselines_20260915/data/core/era5/train_l9.npz"
+  ],
+  "matmul_tf32": false,
+  "cudnn_tf32": false,
+  "independent_training": true,
+  "recipe_source": "vendor/mf_fno_transfer/smoke_eval.py",
+  "architecture_and_hyperparameters": "Frozen release recipe, unchanged",
+  "adaptations": [
+    "Audited 55 HF training rows and purged LF pool",
+    "Input-only 17-row query split and intercepted metrics finalizer",
+    "Atomic resumable checkpoints with optimizer and RNG state"
+  ],
+  "extra": {
+    "device": "cuda",
+    "hf_fidelity": 9,
+    "lf_fidelity": 1,
+    "mf_mechanism": "transfer_learning_pretrain_LF_finetune_HF",
+    "hf_grid_native": [
+      721,
+      1440
+    ],
+    "work_grid": [
+      128,
+      256
+    ]
+  },
+  "source_manifest_sha256": "f39dc85b9078b8a41555056666ca704a1dfe2515e9eb8dfba319a7569b0dcaf6",
+  "input_manifest_sha256": "b7071be2fbb0a0e8949ab33a3f855596998382bfed4329654262593f7d0c53b0",
+  "prediction_sha256": "108002056fe526f590d9e939bc79a382b7595662c9a3721000ba8d059ef9a2de",
+  "scientific_result": true,
+  "n_calibration": 10,
+  "n_evaluation": 7,
+  "n_query": 17,
+  "work_grid": [
+    128,
+    256
+  ],
+  "evaluation_answers_used_for_training": false
+}

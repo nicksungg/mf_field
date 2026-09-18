@@ -1,0 +1,83 @@
+{
+  "architecture_and_hyperparameters": "Frozen release recipe; optimizer/RNG checkpoint adaptations only",
+  "calibration_answers_loaded": false,
+  "cost": {
+    "eval_seconds": 0.42028355598449707,
+    "n_params": 50477608,
+    "peak_gpu_allocated_bytes": 4115505664,
+    "train_seconds": 26925.268312692642,
+    "wall_seconds": 26935.80687381
+  },
+  "cudnn_tf32": false,
+  "dataset": "sharp__fisher_kpp_2d",
+  "device": "cuda",
+  "device_name": "NVIDIA H100 80GB HBM3",
+  "dtype": "float32",
+  "elapsed_seconds": 26935.80687381,
+  "epochs": 2500,
+  "eval_seconds": 0.42028355598449707,
+  "fit": {
+    "best_val_nRMSE": 0.007107016176599856,
+    "device": "cuda:0",
+    "h2_finetune_lr": 0.0003,
+    "h2_pretrain_lr": 0.001,
+    "h2_stage1_epochs": 625,
+    "h2_stage2_epochs": 1875,
+    "hf_grid": [
+      256,
+      256
+    ],
+    "modes": [
+      16,
+      16
+    ],
+    "notes": "H2: FNO+IFC coregionalization with two-stage LF\u2192HF transfer training. Stage 1: 625 LF-only epochs (lr=0.001, fresh Adam+cosine). Stage 2: 1875 joint epochs (lr=0.0003, fresh Adam+cosine). K=20, blocks=6, modes=(16,16), hidden=128, hf_grid=(256, 256), work_grid=(256, 256) (cap=256), per-fidelity output normalization (scalers=['1', '1', '1']). Geometry via data_adapters.geometry.resolve_grid (1-D as height-1 grid)."
+  },
+  "identity": {
+    "dataset": "sharp__fisher_kpp_2d",
+    "input_sha256": {
+      "test_l1.npz": "87a070893b8ac7dd23f959100aeb9d419381d1670c7ca52c6815153e8da6fcca",
+      "test_l2.npz": "ef085186ebe59b4bc82d18bfa09d4e4c82922b6faa300e68bcec9fff3818e8f5",
+      "test_l3.npz": "3e6c9c6c8a38c9f73da41809299bd0a9be6bd28896aa4408664c83487bcc2d07",
+      "train_l1.npz": "5857a914b201907cb5e45067c48c60ab12dbc19fdb99fc17e262986f05e18f56",
+      "train_l2.npz": "05be01bab0f2b548d09b9949cc792cf71951c4f449e0d8029c21ee7bdfcafc39",
+      "train_l3.npz": "4a01b5c0cee00eef46952694349b5b03b197916f958fc0bdc062d5039a32dda5"
+    },
+    "model": "fno_coregionalization",
+    "plan_sha256": "ce030fb65b8608ca9144df105469cfa89b65d80ff17c6d9a46e0a343a7ea0e73",
+    "seed": 42,
+    "smoke": false,
+    "source_sha256": "72eee79a1a26c89135279b00d1dd66309ce1117da66c753ee3fdf98e5eb6098a"
+  },
+  "independent_training": true,
+  "inputs_at_inference": [
+    "theta"
+  ],
+  "loaded_data_paths": [
+    "/archive/mf_field/experiments/four_baselines_20260915/data/sharp__fisher_kpp_2d/test_l1.npz",
+    "/archive/mf_field/experiments/four_baselines_20260915/data/sharp__fisher_kpp_2d/test_l2.npz",
+    "/archive/mf_field/experiments/four_baselines_20260915/data/sharp__fisher_kpp_2d/test_l3.npz",
+    "/archive/mf_field/experiments/four_baselines_20260915/data/sharp__fisher_kpp_2d/train_l1.npz",
+    "/archive/mf_field/experiments/four_baselines_20260915/data/sharp__fisher_kpp_2d/train_l2.npz",
+    "/archive/mf_field/experiments/four_baselines_20260915/data/sharp__fisher_kpp_2d/train_l3.npz"
+  ],
+  "matmul_tf32": false,
+  "model": "fno_coregionalization",
+  "n_base_hf_train": 400,
+  "n_params": 50477608,
+  "n_query": 100,
+  "prediction_path": "predictions/sharp__fisher_kpp_2d/fno_coregionalization.npz",
+  "prediction_sha256": "ec67f7733ece65232decbcd71e5c16041ad4facc84a56cea5400cd150a8e399c",
+  "query_answers_read": false,
+  "query_sha256": "36aee0c7c403c0824c2b54afea9c16767c35a9e1e6b3854e84608a0b6ed34371",
+  "raw_test_answers_loaded": false,
+  "resume_supported": true,
+  "scientific_result": true,
+  "seed": 42,
+  "smoke": false,
+  "train_seconds": 26925.268312692642,
+  "work_grid": [
+    256,
+    256
+  ]
+}

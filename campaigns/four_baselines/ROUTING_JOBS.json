@@ -1,0 +1,87 @@
+{
+  "replaced": {
+    "training": "22806679",
+    "collector": "22806680"
+  },
+  "groups": {
+    "pi_faez": {
+      "job_id": "22807197",
+      "command": [
+        "sbatch",
+        "--parsable",
+        "--hold",
+        "/archive/mf_field/experiments/four_baselines_20260915/train_pi_faez.sbatch"
+      ],
+      "indices": [
+        1,
+        4,
+        5,
+        8
+      ]
+    },
+    "mit_normal_gpu": {
+      "job_id": "22807011",
+      "indices": [
+        2,
+        6
+      ],
+      "command": [
+        "sbatch",
+        "--parsable",
+        "/archive/mf_field/experiments/four_baselines_20260915/train_mit_normal_gpu.sbatch"
+      ]
+    },
+    "mit_preemptable": {
+      "job_id": "22807014",
+      "indices": [
+        0,
+        3,
+        7,
+        9
+      ],
+      "command": [
+        "sbatch",
+        "--parsable",
+        "/archive/mf_field/experiments/four_baselines_20260915/train_mit_preemptable.sbatch"
+      ]
+    }
+  },
+  "old_jobs_stopped": true,
+  "collector": {
+    "job_id": "22807198",
+    "command": [
+      "sbatch",
+      "--parsable",
+      "--dependency=afterok:22807197:22807011:22807014",
+      "--kill-on-invalid-dep=yes",
+      "/archive/mf_field/experiments/four_baselines_20260915/collect.sbatch"
+    ]
+  },
+  "superseded_path_check_attempt": {
+    "training": {
+      "job_id": "22807010",
+      "indices": [
+        1,
+        4,
+        5,
+        8
+      ],
+      "command": [
+        "sbatch",
+        "--parsable",
+        "/archive/mf_field/experiments/four_baselines_20260915/train_pi_faez.sbatch"
+      ]
+    },
+    "collector": {
+      "job_id": "22807015",
+      "command": [
+        "sbatch",
+        "--parsable",
+        "--dependency=afterok:22807010:22807011:22807014",
+        "--kill-on-invalid-dep=yes",
+        "/archive/mf_field/experiments/four_baselines_20260915/collect.sbatch"
+      ]
+    },
+    "reason": "Data folder symlinks rejected by staged-tree guard before training. Replaced with hash-identical copies."
+  }
+}

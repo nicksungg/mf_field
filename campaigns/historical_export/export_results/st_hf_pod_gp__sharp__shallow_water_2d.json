@@ -1,0 +1,43 @@
+{
+  "task": {
+    "id": "st_hf_pod_gp__sharp__shallow_water_2d",
+    "model": "st_hf_pod_gp",
+    "dataset": "sharp__shallow_water_2d",
+    "rel": "sharp/shallow_water_2d",
+    "seed": 42,
+    "device": "cpu",
+    "note": "Classical estimator state was not saved; reproduce its original training-only fit."
+  },
+  "seconds": 6.21815299987793,
+  "replay": {
+    "device": "cpu",
+    "base_retrained": true,
+    "reason": "POD-GP estimator was not checkpointed",
+    "raw_units_multiplier": 1.2965774536132812,
+    "registration": "periodic_cell"
+  },
+  "n": 100,
+  "work_grid": [
+    128,
+    128
+  ],
+  "base_train_overlap": 0,
+  "rel_l2_mean": 0.010844511047181591,
+  "archive_mean": 0.010844510048627853,
+  "prediction_sha256": "ccb7d282ee99134707ea01b35dfca8b4919b1cea35f057cfda64c8fe07509fa6",
+  "model_metadata": {
+    "method": "fine-only POD + shared-ARD-RBF GP emulator",
+    "n_hf_train": 400,
+    "fit_seconds": 4.248828411102295,
+    "hf_pod_modes": 7,
+    "hf_pod_energy_captured": 0.9992006450559819,
+    "hf_gp_log_lengthscales": [
+      0.2775650938426012,
+      -2.2333078327526565
+    ],
+    "hf_gp_log_signal": -0.0629935817730932,
+    "hf_gp_log_noise": -2.641070594037922,
+    "hf_gp_nlml": -1167.7115978770553,
+    "hf_gp_converged": true
+  }
+}

@@ -1,0 +1,80 @@
+{
+  "architecture_and_hyperparameters": "Frozen release recipe; optimizer/RNG checkpoint adaptations only",
+  "calibration_answers_loaded": false,
+  "cost": {
+    "eval_seconds": 0.09519267082214355,
+    "n_params": 4741377,
+    "peak_gpu_allocated_bytes": 1917897216,
+    "train_seconds": 5556.434474468231,
+    "wall_seconds": 5558.214046532288
+  },
+  "cudnn_tf32": false,
+  "dataset": "sharp__allen_cahn_2d",
+  "device": "cuda",
+  "device_name": "NVIDIA H100 80GB HBM3",
+  "dtype": "float32",
+  "elapsed_seconds": 5558.214046532288,
+  "epochs": 2500,
+  "eval_seconds": 0.09519267082214355,
+  "fit": {
+    "device": "cuda",
+    "hf_fidelity": 3,
+    "hf_grid_native": [
+      256,
+      256
+    ],
+    "lf_fidelity": 1,
+    "mf_mechanism": "transfer_learning_pretrain_LF_finetune_HF",
+    "work_grid": [
+      256,
+      256
+    ]
+  },
+  "identity": {
+    "dataset": "sharp__allen_cahn_2d",
+    "input_sha256": {
+      "test_l1.npz": "31f326202c42f84ac86d7d9c9542e7905ef7492e0381534482e6e17736accdb5",
+      "test_l2.npz": "d3bb8e1e2c3c007edb0da8d49d275ea8c69f2b2a781e6b684518677b1d35eaad",
+      "test_l3.npz": "cc3cf82e21ecc783c3ca9a035b44089bf0178cf21f192cdfb7a4fb90b2fa6ef0",
+      "train_l1.npz": "f3720854f41cf077f2f3e697f20de8782347f89ec08a8055161866b2a9df049c",
+      "train_l2.npz": "23c66bd3e18043dfc7fc3f5e38d15a8fa4ffa87335499884f1d0e727f7c01dfa",
+      "train_l3.npz": "d570f5ccc5796f8a3a38a69bad1ec9bbad25fbb574422377742f6ba5ec02ea2a"
+    },
+    "model": "mf_fno_transfer",
+    "plan_sha256": "ce030fb65b8608ca9144df105469cfa89b65d80ff17c6d9a46e0a343a7ea0e73",
+    "seed": 42,
+    "smoke": false,
+    "source_sha256": "72eee79a1a26c89135279b00d1dd66309ce1117da66c753ee3fdf98e5eb6098a"
+  },
+  "independent_training": true,
+  "inputs_at_inference": [
+    "theta"
+  ],
+  "loaded_data_paths": [
+    "/archive/mf_field/experiments/four_baselines_20260915/data/sharp__allen_cahn_2d/test_l1.npz",
+    "/archive/mf_field/experiments/four_baselines_20260915/data/sharp__allen_cahn_2d/test_l2.npz",
+    "/archive/mf_field/experiments/four_baselines_20260915/data/sharp__allen_cahn_2d/test_l3.npz",
+    "/archive/mf_field/experiments/four_baselines_20260915/data/sharp__allen_cahn_2d/train_l1.npz",
+    "/archive/mf_field/experiments/four_baselines_20260915/data/sharp__allen_cahn_2d/train_l2.npz",
+    "/archive/mf_field/experiments/four_baselines_20260915/data/sharp__allen_cahn_2d/train_l3.npz"
+  ],
+  "matmul_tf32": false,
+  "model": "mf_fno_transfer",
+  "n_base_hf_train": 400,
+  "n_params": 4741377,
+  "n_query": 78,
+  "prediction_path": "predictions/sharp__allen_cahn_2d/mf_fno_transfer.npz",
+  "prediction_sha256": "663f73d15751415265a86480c735cddecf3f9bd4e5bba495647d8e17d3d1c6e0",
+  "query_answers_read": false,
+  "query_sha256": "81a7781e7e87b05d96030d098bbc49b8695a2f922625671aca6fd137c76ba2fe",
+  "raw_test_answers_loaded": false,
+  "resume_supported": true,
+  "scientific_result": true,
+  "seed": 42,
+  "smoke": false,
+  "train_seconds": 5556.434474468231,
+  "work_grid": [
+    256,
+    256
+  ]
+}

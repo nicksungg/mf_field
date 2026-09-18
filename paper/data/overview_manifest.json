@@ -1,0 +1,180 @@
+{
+  "selection": "First HF training row with an exactly matching LF input, then first matching LF row. ERA5 predictions retain the first reserved evaluation row in the first archived calibration partition. No row is selected by prediction quality.",
+  "era5": {
+    "models": [
+      "mf_fno_transfer_film",
+      "mf_fno_allpairs",
+      "convnext_unet_film",
+      "fno_fire_distcond",
+      "wno_transfer_film",
+      "mf_deeponet",
+      "st_hf_pod_gp",
+      "uqcorr_transolver_pred",
+      "uqcorr_convnext_pred"
+    ],
+    "weights": [
+      0.14686240001678855,
+      0.0679761176692531,
+      0.0526159180930083,
+      0.12675095901208688,
+      0.08634073806319895,
+      0.11322620048070488,
+      0.2246710699860771,
+      0.051995002686428794,
+      0.12956159399245343
+    ],
+    "weight_rule": "Inverse normalized squared error, five calibration examples, partition s71",
+    "weight_file": "data/era5/s71/locked_weights.npz",
+    "weight_key": "b5__inverse_mse",
+    "evaluation_query_row": 10,
+    "theta": [
+      0.161691814661026,
+      0.4671708941459656,
+      -2.7068097591400146,
+      -1.3751722574234009,
+      -0.8193802237510681,
+      -0.2563011348247528,
+      -1.716713786125183,
+      -0.9035054445266724,
+      -2.3317360877990723,
+      -0.10426642000675201,
+      -1.1381112337112427,
+      -1.0452593564987183
+    ],
+    "grid": [
+      128,
+      256
+    ],
+    "source_predictions": [
+      {
+        "model": "mf_fno_transfer_film",
+        "source_path": "data/era5_completion/nine/predictions/mf_fno_transfer_film__era5.npz",
+        "archive_sha256": "fe24ccd8e8cb1033778b615e9aa72617b68421a5515fae6bf1b83fc16c149a23",
+        "prediction_row": 10,
+        "prediction_sample_sha256": "7001622d8ecbfb606cb69d5b1d3949dce34f18dcf42df7b13d2013fa5084199d"
+      },
+      {
+        "model": "mf_fno_allpairs",
+        "source_path": "data/era5_completion/nine/predictions/mf_fno_allpairs__era5.npz",
+        "archive_sha256": "70bd2355690a293ef716f2b641c39838cc359df26934942110467f8ff6efbba1",
+        "prediction_row": 10,
+        "prediction_sample_sha256": "16a78c966a89e9cd9e518573b429ae27d0c1ae912cb0d40db2e175101fecd1fa"
+      },
+      {
+        "model": "convnext_unet_film",
+        "source_path": "data/era5_completion/nine/predictions/convnext_unet_film__era5.npz",
+        "archive_sha256": "99235a66f2ed9e438d253c3a800047d0e3bb9f10b337b4bf40e69bfb213c44f7",
+        "prediction_row": 10,
+        "prediction_sample_sha256": "ed37ff073e0456370b54ae834dace67c8b827246216c1b375176c18349fb9105"
+      },
+      {
+        "model": "fno_fire_distcond",
+        "source_path": "data/era5_completion/nine/predictions/fno_fire_distcond__era5.npz",
+        "archive_sha256": "1ac0207a322a7f1f388156485992bf16f17fa57291c82997ffd2e17be26e5f46",
+        "prediction_row": 10,
+        "prediction_sample_sha256": "ca84e9ffdbaa9611ebb492f292b674f79c026ea7f9ca480d21690731775f7381"
+      },
+      {
+        "model": "wno_transfer_film",
+        "source_path": "data/era5_completion/nine/predictions/wno_transfer_film__era5.npz",
+        "archive_sha256": "daca95aabac9c323bbd6cbc608fa38f8f69c543f45015ac3601bb690cb63a617",
+        "prediction_row": 10,
+        "prediction_sample_sha256": "925ef1669794100e1877b90382c152b759ceb0c6a9a0b7bcfd722275e678b4b6"
+      },
+      {
+        "model": "mf_deeponet",
+        "source_path": "data/era5_completion/nine/predictions/mf_deeponet__era5.npz",
+        "archive_sha256": "672786b6d6e64271eea23bfdfd5642d0c567251659cdee84204f92147496de3d",
+        "prediction_row": 10,
+        "prediction_sample_sha256": "8ce08a719100207f30b2967d2cedba2b3d1ae834c2b4b6821b00c480a0bd677c"
+      },
+      {
+        "model": "st_hf_pod_gp",
+        "source_path": "data/era5_completion/nine/predictions/st_hf_pod_gp__era5.npz",
+        "archive_sha256": "8f6fd070f03fa36084c1e624a732d15218e3c1c61c72135bd7128c99bc9c7444",
+        "prediction_row": 10,
+        "prediction_sample_sha256": "abfad34f86d0a85e37b9b717ab5164e02ad5ea46bfa886f54cdc807195c4f2c0"
+      },
+      {
+        "model": "uqcorr_transolver_pred",
+        "source_path": "data/era5_completion/nine/predictions/uqcorr_transolver_pred__era5.npz",
+        "archive_sha256": "3a257e19cd08c7c1aa6e5fa748f58f213e7ee2d945d83e20499cf43b55df9729",
+        "prediction_row": 10,
+        "prediction_sample_sha256": "288fc0e63642e2e4715318b2796722fe3dbe203a7d89a921c6c33d50f8a89f19"
+      },
+      {
+        "model": "uqcorr_convnext_pred",
+        "source_path": "data/era5_completion/nine/predictions/uqcorr_convnext_pred__era5.npz",
+        "archive_sha256": "9805a5c33adaa8bfae82341e59a78f876e729f10de974ba224684f42fc0ce9a2",
+        "prediction_row": 10,
+        "prediction_sample_sha256": "d402126d2eb4b89709669f98df2455873a3d7b68159ad6a3dc419195b479b7f0"
+      }
+    ],
+    "prediction_target": "Temperature field in native stored orientation",
+    "mixture_sha256": "5184eea93c672b3a54f653b1e63860bc50d741df03b941a1c0f14d4a89f581d6",
+    "weights_file_sha256": "661dac969b669617fc6442361c7fc53763b7741fb22a004f6239ec2d14cb32d8",
+    "first_evaluation_relative_l2": 0.06906196940187304,
+    "archived_first_evaluation_relative_l2": 0.06906196940187306,
+    "archived_error_agrees_at_absolute_tolerance": 2e-08,
+    "training_pair": {
+      "selection": "First exactly matched HF training input, first LF occurrence",
+      "hf_row": 3,
+      "lf_row": 354,
+      "coarse_level": 8,
+      "fine_level": 9,
+      "coarse_grid": [
+        192,
+        384
+      ],
+      "fine_grid": [
+        721,
+        1440
+      ],
+      "coarse_source": "/archive/workspace/mf_field_era5_nine_20260914/source/data/core/era5/train_l8.npz",
+      "fine_source": "/archive/workspace/mf_field_era5_nine_20260914/source/data/core/era5/train_l9.npz",
+      "coarse_source_sha256": "2bb6163464d2f0ce6732b8ac5e63c3cdce5abc896fd36980bc925390cb7e22da",
+      "fine_source_sha256": "2bf52c54be638446d1088d042bea521bf41c979a514a18077c9472ca6a23034e",
+      "coarse_array_sha256": "046a82df5da478aa293f68edb756da25296d9facc8e405c66dbfc757601f7343",
+      "fine_array_sha256": "8f192cfb51a2ddfeb1670e58d8f7c07ba96b79092267389a971eb17f3aa889fc",
+      "lf_input_sha256": "cb82c87e894ab1a702345240a85e7f09c696460573fd726f569128babd6a74ea",
+      "hf_input_sha256": "cb82c87e894ab1a702345240a85e7f09c696460573fd726f569128babd6a74ea",
+      "parameters": [
+        0.02529212057705381,
+        0.19241606247274132,
+        0.46906923688035634,
+        -1.6229041423868187,
+        0.8732435553364679,
+        0.022837664451463156,
+        0.13221050048104133,
+        -1.2625346478908532,
+        0.9067034858275724,
+        0.8193292964392667,
+        -0.5775673571797727,
+        -0.40287374014135324
+      ],
+      "input_vectors_bitwise_equal": true,
+      "roles": "Both example fields are from base training tables, not calibration or evaluation.",
+      "fidelity_definition": "Observed coarse climate source at level 8 and ERA5 fine target at level 9, in native stored grids. Neither is synthesized by resizing the other.",
+      "native_values_retained": true,
+      "source_files_verified_against_transfer_manifest": true
+    }
+  },
+  "illustrative_elements": [
+    "Connecting arrows describe training, calibration and prediction on the same ERA5 task. The training pair shares input parameters. Candidate and combined fields refer to a distinct reserved query.",
+    "The coarse preview is intentionally blurred for illustration. The input label defines x. The caption defines the fine target y. The coarse display blur is documented in this manifest. Native bundled field arrays, model predictions and fitted weights are unchanged."
+  ],
+  "bundled_data": "data/overview_era5.npz",
+  "bundled_data_sha256": "9a7f4fad095ea15588f44e10e3231abb77f3d8a6282f6a58fa08d5dc23a2faab",
+  "display_transform": {
+    "field": "era5_training_coarse",
+    "operation": "gaussian_filter",
+    "sigma_grid_cells": 6.0,
+    "boundary_mode": "reflect",
+    "illustrative_only": true,
+    "native_source_data_unchanged": true,
+    "disclosed_in_image_and_caption": false,
+    "reason": "Make the conceptual difference in spatial detail visible at the small workflow figure size.",
+    "disclosed_in_caption": false,
+    "documented_in_source_manifest": true
+  }
+}

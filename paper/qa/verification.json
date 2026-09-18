@@ -1,0 +1,1192 @@
+{
+  "passed": true,
+  "main_text_end_page": 9,
+  "conclusion_page": 9,
+  "total_pages": 29,
+  "template_year": 2026,
+  "template_files_match_archive": true,
+  "paper_size": "US Letter",
+  "references_start_page": 10,
+  "references_end_page": 14,
+  "appendices_start_page": 15,
+  "disclosure_statements_page": 29,
+  "all_prebibliography_pages_within_submission_limit": true,
+  "bibliography_entries": 55,
+  "all_references_cited": true,
+  "missing_citations": false,
+  "overfull_boxes": false,
+  "prose_semicolons": false,
+  "automatic_word_hyphenation": false,
+  "descriptive_names": true,
+  "aggregate_checks": 15,
+  "review_analysis_checks": {
+    "passed": true,
+    "n_datasets": 17,
+    "n_partitions": 51,
+    "n_fits": 153,
+    "source_hashes_verified": true,
+    "evaluation_rows_excluded_from_every_fit": true,
+    "all_fits_locked_before_scoring": true,
+    "locked_weights_hash_unchanged": true,
+    "maximum_mean_gram_replay_difference": 0.0,
+    "maximum_inverse_weight_replay_difference": 3.3306690738754696e-16,
+    "maximum_simplex_residual": 3.3306690738754696e-16,
+    "minimum_scaled_evaluation_eigenvalue": -5.42101086243522e-20,
+    "maximum_original_per_case_error_replay_difference": 2.220446049250313e-16,
+    "maximum_new_full_vs_historical_full_relative_mean_error_difference": 1.5543122344752192e-15,
+    "original_fixed_results_preserved": true,
+    "protocol_sha256": "7f2e15f94484c3ff54495590e4da2a2af976153af6d3c1b02412decc424cf743"
+  },
+  "loss_control_checks": {
+    "passed": true,
+    "n_partitions": 51,
+    "n_datasets": 17,
+    "budget": 5,
+    "reference_evaluation_replay_passed": true,
+    "source_hashes_passed": true,
+    "all_weights_locked_before_evaluation": true,
+    "selfcheck": {
+      "counterexample_optimal_weight": [
+        0.9999999999377388,
+        6.226121273303346e-11
+      ],
+      "counterexample_objective": 1.0000000000062261,
+      "indefinite_gram_rejected": true,
+      "field_identity_passed": true
+    },
+    "max_primal_simplex_residual": 4.145014699904802e-11,
+    "min_relative_gram_eigenvalue": -1.0409407862937774e-18,
+    "max_calibration_objective_ratio_to_original": 1.000000000968303,
+    "locked_weights_sha256": "34769747a1e49c34aeff237b861b085c339ddc91c2b840cbc1d257ce86149555"
+  },
+  "calibration_cli_checks": {
+    "passed": true,
+    "integration_tests": 8,
+    "scope": "Calibration and fixed weight prediction only",
+    "script_sha256": "d1ae5536e0df276d71456d5b87caa481685f874dfa7af7a965b1699a037f3750"
+  },
+  "era5_checks": {
+    "passed": true,
+    "means_recomputed": 23,
+    "reported_csv_rows_verified": 69,
+    "partition_hash_checks": 3,
+    "n_evaluation": 7,
+    "base_seed": 42,
+    "n_base_hf": 55,
+    "models": 9,
+    "auto_selected_full_all_partitions": true,
+    "ten_case_budget_reuses_same_pool": true,
+    "pod_gp_query_variation": 0,
+    "inverse5_gain_vs_mean_percent": 13.690261751931443,
+    "auto5_change_vs_mean_percent": -3.698771314422322
+  },
+  "individual_model_checks": {
+    "passed": true,
+    "datasets": 21,
+    "models": [
+      "mf_fno_transfer_film",
+      "mf_fno_allpairs",
+      "convnext_unet_film",
+      "fno_fire_distcond",
+      "wno_transfer_film",
+      "mf_deeponet",
+      "st_hf_pod_gp",
+      "uqcorr_transolver_pred",
+      "uqcorr_convnext_pred"
+    ],
+    "partitions_verified": 63,
+    "expert_means_recomputed": 189,
+    "ensemble_means_reproduced": 63,
+    "best_expert_counts": {
+      "wno_transfer_film": 2,
+      "convnext_unet_film": 4,
+      "mf_fno_transfer_film": 3,
+      "st_hf_pod_gp": 2,
+      "fno_fire_distcond": 6,
+      "uqcorr_convnext_pred": 3,
+      "mf_fno_allpairs": 1
+    },
+    "distinct_best_experts": 7,
+    "hindsight_only": true,
+    "clipped_heatmap_cells": 32
+  },
+  "matched_baseline_checks": {
+    "passed": true,
+    "datasets": 21,
+    "additional_methods": 13,
+    "matched_model_dataset_cells": 273,
+    "partition_means_verified": 819,
+    "missing_cells": [
+      {
+        "dataset": "darcy_generated",
+        "model": "st_film_hf_only",
+        "reason": "No source-file hash or matching saved target/error export"
+      },
+      {
+        "dataset": "darcy_generated",
+        "model": "st_film_affine",
+        "reason": "No source-file hash or matching saved target/error export"
+      },
+      {
+        "dataset": "darcy_generated",
+        "model": "st_film_lf_only",
+        "reason": "No source-file hash or matching saved target/error export"
+      },
+      {
+        "dataset": "darcy_generated",
+        "model": "st_film_pooled",
+        "reason": "No source-file hash or matching saved target/error export"
+      },
+      {
+        "dataset": "ext__cahn_hilliard_2d",
+        "model": "st_film_hf_only",
+        "reason": "No source-file hash or matching saved target/error export"
+      },
+      {
+        "dataset": "ext__cahn_hilliard_2d",
+        "model": "st_film_affine",
+        "reason": "No source-file hash or matching saved target/error export"
+      },
+      {
+        "dataset": "ext__cahn_hilliard_2d",
+        "model": "st_film_lf_only",
+        "reason": "No source-file hash or matching saved target/error export"
+      },
+      {
+        "dataset": "ext__cahn_hilliard_2d",
+        "model": "st_film_pooled",
+        "reason": "No source-file hash or matching saved target/error export"
+      },
+      {
+        "dataset": "ext__eikonal_2d",
+        "model": "st_film_hf_only",
+        "reason": "No source-file hash or matching saved target/error export"
+      },
+      {
+        "dataset": "ext__eikonal_2d",
+        "model": "st_film_affine",
+        "reason": "No source-file hash or matching saved target/error export"
+      },
+      {
+        "dataset": "ext__eikonal_2d",
+        "model": "st_film_lf_only",
+        "reason": "No source-file hash or matching saved target/error export"
+      },
+      {
+        "dataset": "ext__eikonal_2d",
+        "model": "st_film_pooled",
+        "reason": "No source-file hash or matching saved target/error export"
+      },
+      {
+        "dataset": "ext__pressure_poisson_poiseuille",
+        "model": "st_film_hf_only",
+        "reason": "No source-file hash or matching saved target/error export"
+      },
+      {
+        "dataset": "ext__pressure_poisson_poiseuille",
+        "model": "st_film_affine",
+        "reason": "No source-file hash or matching saved target/error export"
+      },
+      {
+        "dataset": "ext__pressure_poisson_poiseuille",
+        "model": "st_film_lf_only",
+        "reason": "No source-file hash or matching saved target/error export"
+      },
+      {
+        "dataset": "ext__pressure_poisson_poiseuille",
+        "model": "st_film_pooled",
+        "reason": "No source-file hash or matching saved target/error export"
+      },
+      {
+        "dataset": "ext__rayleigh_benard_2d",
+        "model": "st_film_hf_only",
+        "reason": "No source-file hash or matching saved target/error export"
+      },
+      {
+        "dataset": "ext__rayleigh_benard_2d",
+        "model": "st_film_affine",
+        "reason": "No source-file hash or matching saved target/error export"
+      },
+      {
+        "dataset": "ext__rayleigh_benard_2d",
+        "model": "st_film_lf_only",
+        "reason": "No source-file hash or matching saved target/error export"
+      },
+      {
+        "dataset": "ext__rayleigh_benard_2d",
+        "model": "st_film_pooled",
+        "reason": "No source-file hash or matching saved target/error export"
+      },
+      {
+        "dataset": "ext__wave_2d",
+        "model": "st_film_hf_only",
+        "reason": "No source-file hash or matching saved target/error export"
+      },
+      {
+        "dataset": "ext__wave_2d",
+        "model": "st_film_affine",
+        "reason": "No source-file hash or matching saved target/error export"
+      },
+      {
+        "dataset": "ext__wave_2d",
+        "model": "st_film_lf_only",
+        "reason": "No source-file hash or matching saved target/error export"
+      },
+      {
+        "dataset": "ext__wave_2d",
+        "model": "st_film_pooled",
+        "reason": "No source-file hash or matching saved target/error export"
+      },
+      {
+        "dataset": "fluid",
+        "model": "st_film_hf_only",
+        "reason": "No source-file hash or matching saved target/error export"
+      },
+      {
+        "dataset": "fluid",
+        "model": "st_film_affine",
+        "reason": "No source-file hash or matching saved target/error export"
+      },
+      {
+        "dataset": "fluid",
+        "model": "st_film_lf_only",
+        "reason": "No source-file hash or matching saved target/error export"
+      },
+      {
+        "dataset": "fluid",
+        "model": "st_film_pooled",
+        "reason": "No source-file hash or matching saved target/error export"
+      },
+      {
+        "dataset": "heat_generated",
+        "model": "st_film_hf_only",
+        "reason": "No source-file hash or matching saved target/error export"
+      },
+      {
+        "dataset": "heat_generated",
+        "model": "st_film_affine",
+        "reason": "No source-file hash or matching saved target/error export"
+      },
+      {
+        "dataset": "heat_generated",
+        "model": "st_film_lf_only",
+        "reason": "No source-file hash or matching saved target/error export"
+      },
+      {
+        "dataset": "heat_generated",
+        "model": "st_film_pooled",
+        "reason": "No source-file hash or matching saved target/error export"
+      },
+      {
+        "dataset": "heat_local",
+        "model": "st_film_hf_only",
+        "reason": "No source-file hash or matching saved target/error export"
+      },
+      {
+        "dataset": "heat_local",
+        "model": "st_film_affine",
+        "reason": "No source-file hash or matching saved target/error export"
+      },
+      {
+        "dataset": "heat_local",
+        "model": "st_film_lf_only",
+        "reason": "No source-file hash or matching saved target/error export"
+      },
+      {
+        "dataset": "heat_local",
+        "model": "st_film_pooled",
+        "reason": "No source-file hash or matching saved target/error export"
+      },
+      {
+        "dataset": "lid_driven_cavity_v2",
+        "model": "st_film_hf_only",
+        "reason": "No source-file hash or matching saved target/error export"
+      },
+      {
+        "dataset": "lid_driven_cavity_v2",
+        "model": "st_film_affine",
+        "reason": "No source-file hash or matching saved target/error export"
+      },
+      {
+        "dataset": "lid_driven_cavity_v2",
+        "model": "st_film_lf_only",
+        "reason": "No source-file hash or matching saved target/error export"
+      },
+      {
+        "dataset": "lid_driven_cavity_v2",
+        "model": "st_film_pooled",
+        "reason": "No source-file hash or matching saved target/error export"
+      },
+      {
+        "dataset": "poisson_generated_v2",
+        "model": "st_film_hf_only",
+        "reason": "No source-file hash or matching saved target/error export"
+      },
+      {
+        "dataset": "poisson_generated_v2",
+        "model": "st_film_affine",
+        "reason": "No source-file hash or matching saved target/error export"
+      },
+      {
+        "dataset": "poisson_generated_v2",
+        "model": "st_film_lf_only",
+        "reason": "No source-file hash or matching saved target/error export"
+      },
+      {
+        "dataset": "poisson_generated_v2",
+        "model": "st_film_pooled",
+        "reason": "No source-file hash or matching saved target/error export"
+      },
+      {
+        "dataset": "poisson_local",
+        "model": "st_film_hf_only",
+        "reason": "No source-file hash or matching saved target/error export"
+      },
+      {
+        "dataset": "poisson_local",
+        "model": "st_film_affine",
+        "reason": "No source-file hash or matching saved target/error export"
+      },
+      {
+        "dataset": "poisson_local",
+        "model": "st_film_lf_only",
+        "reason": "No source-file hash or matching saved target/error export"
+      },
+      {
+        "dataset": "poisson_local",
+        "model": "st_film_pooled",
+        "reason": "No source-file hash or matching saved target/error export"
+      },
+      {
+        "dataset": "sharp__burgers_2d",
+        "model": "st_film_hf_only",
+        "reason": "No source-file hash or matching saved target/error export"
+      },
+      {
+        "dataset": "sharp__burgers_2d",
+        "model": "st_film_affine",
+        "reason": "No source-file hash or matching saved target/error export"
+      },
+      {
+        "dataset": "sharp__burgers_2d",
+        "model": "st_film_lf_only",
+        "reason": "No source-file hash or matching saved target/error export"
+      },
+      {
+        "dataset": "sharp__burgers_2d",
+        "model": "st_film_pooled",
+        "reason": "No source-file hash or matching saved target/error export"
+      },
+      {
+        "dataset": "sharp__euler",
+        "model": "st_film_hf_only",
+        "reason": "No source-file hash or matching saved target/error export"
+      },
+      {
+        "dataset": "sharp__euler",
+        "model": "st_film_affine",
+        "reason": "No source-file hash or matching saved target/error export"
+      },
+      {
+        "dataset": "sharp__euler",
+        "model": "st_film_lf_only",
+        "reason": "No source-file hash or matching saved target/error export"
+      },
+      {
+        "dataset": "sharp__euler",
+        "model": "st_film_pooled",
+        "reason": "No source-file hash or matching saved target/error export"
+      },
+      {
+        "dataset": "sharp__helmholtz_2d",
+        "model": "st_film_hf_only",
+        "reason": "No source-file hash or matching saved target/error export"
+      },
+      {
+        "dataset": "sharp__helmholtz_2d",
+        "model": "st_film_affine",
+        "reason": "No source-file hash or matching saved target/error export"
+      },
+      {
+        "dataset": "sharp__helmholtz_2d",
+        "model": "st_film_lf_only",
+        "reason": "No source-file hash or matching saved target/error export"
+      },
+      {
+        "dataset": "sharp__helmholtz_2d",
+        "model": "st_film_pooled",
+        "reason": "No source-file hash or matching saved target/error export"
+      },
+      {
+        "dataset": "sharp__porous_medium_2d",
+        "model": "st_film_hf_only",
+        "reason": "No source-file hash or matching saved target/error export"
+      },
+      {
+        "dataset": "sharp__porous_medium_2d",
+        "model": "st_film_affine",
+        "reason": "No source-file hash or matching saved target/error export"
+      },
+      {
+        "dataset": "sharp__porous_medium_2d",
+        "model": "st_film_lf_only",
+        "reason": "No source-file hash or matching saved target/error export"
+      },
+      {
+        "dataset": "sharp__porous_medium_2d",
+        "model": "st_film_pooled",
+        "reason": "No source-file hash or matching saved target/error export"
+      },
+      {
+        "dataset": "sharp__shallow_water_2d",
+        "model": "st_film_hf_only",
+        "reason": "No source-file hash or matching saved target/error export"
+      },
+      {
+        "dataset": "sharp__shallow_water_2d",
+        "model": "st_film_affine",
+        "reason": "No source-file hash or matching saved target/error export"
+      },
+      {
+        "dataset": "sharp__shallow_water_2d",
+        "model": "st_film_lf_only",
+        "reason": "No source-file hash or matching saved target/error export"
+      },
+      {
+        "dataset": "sharp__shallow_water_2d",
+        "model": "st_film_pooled",
+        "reason": "No source-file hash or matching saved target/error export"
+      }
+    ],
+    "proof_counts": {
+      "saved target rows and pre-export errors": 83,
+      "source HF file hash": 138,
+      "verified completion on sealed query identities": 52
+    },
+    "training_seed": 42,
+    "evaluation_partitions": [
+      71,
+      172,
+      273
+    ],
+    "selection_rule": "Seed 42; source priority reevaluated, st_bench_reruns, st_bench, leaderboard_legacy; never selected by error",
+    "scalar_errors_precede_float16_export": true,
+    "training_budgets_matched": false,
+    "statistics": {
+      "mf_fno_transfer_film": {
+        "n": 21,
+        "class_ratio": 1.9401242246405639,
+        "dataset_ratio": 2.0319071679937872,
+        "wins": 4,
+        "losses": 17
+      },
+      "mf_fno_allpairs": {
+        "n": 21,
+        "class_ratio": 1.332571774883995,
+        "dataset_ratio": 1.502179871790639,
+        "wins": 3,
+        "losses": 15
+      },
+      "convnext_unet_film": {
+        "n": 21,
+        "class_ratio": 2.607109146975695,
+        "dataset_ratio": 2.420307057557366,
+        "wins": 4,
+        "losses": 13
+      },
+      "fno_fire_distcond": {
+        "n": 21,
+        "class_ratio": 1.7952539961465823,
+        "dataset_ratio": 2.1728923762795707,
+        "wins": 5,
+        "losses": 13
+      },
+      "wno_transfer_film": {
+        "n": 21,
+        "class_ratio": 2.4590204069929906,
+        "dataset_ratio": 2.4589731941814703,
+        "wins": 3,
+        "losses": 18
+      },
+      "mf_deeponet": {
+        "n": 21,
+        "class_ratio": 20.846652939834193,
+        "dataset_ratio": 16.65563860213478,
+        "wins": 0,
+        "losses": 21
+      },
+      "st_hf_pod_gp": {
+        "n": 21,
+        "class_ratio": 5.492109313277281,
+        "dataset_ratio": 3.280775833156059,
+        "wins": 0,
+        "losses": 17
+      },
+      "uqcorr_transolver_pred": {
+        "n": 21,
+        "class_ratio": 4.189134695719707,
+        "dataset_ratio": 3.576334868536646,
+        "wins": 1,
+        "losses": 20
+      },
+      "uqcorr_convnext_pred": {
+        "n": 21,
+        "class_ratio": 1.6952340553884273,
+        "dataset_ratio": 1.9053632736506714,
+        "wins": 3,
+        "losses": 17
+      },
+      "st_koh_pod": {
+        "n": 21,
+        "class_ratio": 5.854287603816303,
+        "dataset_ratio": 3.61309195340764,
+        "wins": 1,
+        "losses": 19
+      },
+      "st_nargp_pod": {
+        "n": 21,
+        "class_ratio": 5.871082000831124,
+        "dataset_ratio": 3.8548726235936432,
+        "wins": 2,
+        "losses": 19
+      },
+      "st_mfdnn": {
+        "n": 21,
+        "class_ratio": 4.17441549234879,
+        "dataset_ratio": 3.876968186350603,
+        "wins": 2,
+        "losses": 19
+      },
+      "st_mfdeeponet": {
+        "n": 21,
+        "class_ratio": 8.001043550010557,
+        "dataset_ratio": 6.04129985422807,
+        "wins": 0,
+        "losses": 21
+      },
+      "st_dmfal": {
+        "n": 21,
+        "class_ratio": 3.7944004528340396,
+        "dataset_ratio": 2.950105807855889,
+        "wins": 2,
+        "losses": 19
+      },
+      "nomad_mf": {
+        "n": 21,
+        "class_ratio": 9.927044370102893,
+        "dataset_ratio": 8.59056051069611,
+        "wins": 0,
+        "losses": 21
+      },
+      "mfrnp": {
+        "n": 21,
+        "class_ratio": 49.969399874007266,
+        "dataset_ratio": 26.768694938362916,
+        "wins": 0,
+        "losses": 21
+      },
+      "fno_coregionalization": {
+        "n": 21,
+        "class_ratio": 8.978713611451404,
+        "dataset_ratio": 6.869025814857122,
+        "wins": 1,
+        "losses": 19
+      },
+      "mf_fno_transfer": {
+        "n": 21,
+        "class_ratio": 1.7935329866989522,
+        "dataset_ratio": 1.8519369306401352,
+        "wins": 3,
+        "losses": 18
+      },
+      "mf_fno_transfer_bar": {
+        "n": 21,
+        "class_ratio": 1.7940573566593425,
+        "dataset_ratio": 1.8542690876753847,
+        "wins": 3,
+        "losses": 18
+      },
+      "st_lf_affine_pod": {
+        "n": 21,
+        "class_ratio": 17.623701423835747,
+        "dataset_ratio": 12.472483427161704,
+        "wins": 0,
+        "losses": 20
+      },
+      "st_knn": {
+        "n": 21,
+        "class_ratio": 9.225395185116103,
+        "dataset_ratio": 7.589986353458306,
+        "wins": 1,
+        "losses": 20
+      },
+      "st_mean": {
+        "n": 21,
+        "class_ratio": 98.05264642176559,
+        "dataset_ratio": 54.7398605442763,
+        "wins": 0,
+        "losses": 21
+      },
+      "single_l2": {
+        "n": 21,
+        "class_ratio": 1.0,
+        "dataset_ratio": 1.0,
+        "wins": 0,
+        "losses": 0
+      },
+      "uniform": {
+        "n": 21,
+        "class_ratio": 5.919234724465122,
+        "dataset_ratio": 4.943535768030376,
+        "wins": 2,
+        "losses": 19
+      },
+      "inverse_mse": {
+        "n": 21,
+        "class_ratio": 0.88764734071159,
+        "dataset_ratio": 0.9348909475768176,
+        "wins": 13,
+        "losses": 5
+      },
+      "full": {
+        "n": 21,
+        "class_ratio": 0.8839531934971416,
+        "dataset_ratio": 0.9232910363163854,
+        "wins": 15,
+        "losses": 5
+      }
+    }
+  },
+  "gallery_checks": {
+    "passed": true,
+    "datasets": 22,
+    "archived_datasets": 25,
+    "main_datasets": 22,
+    "order": [
+      "darcy_generated",
+      "ext__eikonal_2d",
+      "sharp__helmholtz_2d",
+      "poisson_generated_v2",
+      "poisson_local",
+      "ext__pressure_poisson_poiseuille",
+      "heat_generated",
+      "heat_local",
+      "lid_driven_cavity_v2",
+      "fluid",
+      "ext__rayleigh_benard_2d",
+      "sharp__burgers_2d",
+      "sharp__euler",
+      "sharp__porous_medium_2d",
+      "sharp__allen_cahn_2d",
+      "ext__cahn_hilliard_2d",
+      "sharp__cahn_hilliard",
+      "sharp__fisher_kpp_2d",
+      "sharp__phase_field_crystal_2d",
+      "sharp__shallow_water_2d",
+      "ext__wave_2d",
+      "era5"
+    ],
+    "appendix_only": [],
+    "class_order": [
+      "elliptic",
+      "diffusion",
+      "convection",
+      "shocks",
+      "porous",
+      "reaction_diffusion",
+      "waves",
+      "climate"
+    ],
+    "class_labels_displayed": true,
+    "detail_groups": [
+      [
+        "darcy_generated",
+        "ext__eikonal_2d",
+        "sharp__helmholtz_2d",
+        "poisson_generated_v2",
+        "poisson_local",
+        "ext__pressure_poisson_poiseuille"
+      ],
+      [
+        "heat_generated",
+        "heat_local",
+        "lid_driven_cavity_v2",
+        "fluid",
+        "ext__rayleigh_benard_2d"
+      ],
+      [
+        "sharp__burgers_2d",
+        "sharp__euler",
+        "sharp__porous_medium_2d"
+      ],
+      [
+        "sharp__allen_cahn_2d",
+        "ext__cahn_hilliard_2d",
+        "sharp__cahn_hilliard",
+        "sharp__fisher_kpp_2d",
+        "sharp__phase_field_crystal_2d"
+      ],
+      [
+        "sharp__shallow_water_2d",
+        "ext__wave_2d"
+      ]
+    ],
+    "selection": "First HF training row for each of the 22 paper entries. All 25 archived sample hashes remain verified.",
+    "sample_hashes_verified": 25,
+    "extension_sample_hashes_verified": 4,
+    "main_panel_normalization": "Cavity: signed logarithmic scale, linear within [-1,1], no clipping. Other fields: individual linear ranges.",
+    "field_colormap": "viridis",
+    "cavity_scale": {
+      "kind": "symmetric logarithmic",
+      "linear_threshold": 1,
+      "bound": 400.0,
+      "data_unchanged": true,
+      "dataset": "lid_driven_cavity_v2"
+    },
+    "orientation": "Native array rows/columns, origin lower; no geographic or physical-axis claims",
+    "main_colorbars": false,
+    "main_era5_annotation": false,
+    "detailed_figures": 6
+  },
+  "overview_checks": {
+    "passed": true,
+    "source_manifest": "data/overview_manifest.json",
+    "bundled_data": "data/overview_era5.npz",
+    "bundled_data_sha256": "9a7f4fad095ea15588f44e10e3231abb77f3d8a6282f6a58fa08d5dc23a2faab",
+    "canvas_inches": [
+      7.1,
+      2.6
+    ],
+    "source_fields_are_actual": true,
+    "coarse_preview_is_transformed": true,
+    "coarse_display_transform": {
+      "field": "era5_training_coarse",
+      "operation": "gaussian_filter",
+      "sigma_grid_cells": 6.0,
+      "boundary_mode": "reflect",
+      "illustrative_only": true,
+      "native_source_data_unchanged": true,
+      "disclosed_in_image_and_caption": false,
+      "reason": "Make the conceptual difference in spatial detail visible at the small workflow figure size.",
+      "disclosed_in_caption": false,
+      "documented_in_source_manifest": true
+    },
+    "coarse_preview_sha256": "79df915b3b3fee3d87d637aa5360732a71ab5cd24246a15ee29609295d92b97c",
+    "fine_and_prediction_fields_unchanged": true,
+    "saved_prediction_arrays_unchanged": true,
+    "prediction_label": "Predicted fine grid: 721 \u00d7 1440",
+    "prediction_display_transform": {
+      "operation": "bilinear interpolation",
+      "source_grid": [
+        128,
+        256
+      ],
+      "display_grid": [
+        721,
+        1440
+      ],
+      "illustrative_only": true,
+      "evaluation_grid_unchanged": true,
+      "disclosed_in_caption": false,
+      "disclosed_in_appendix": true
+    },
+    "single_dataset": "era5",
+    "era5_training_pair": {
+      "selection": "First exactly matched HF training input, first LF occurrence",
+      "hf_row": 3,
+      "lf_row": 354,
+      "coarse_level": 8,
+      "fine_level": 9,
+      "coarse_grid": [
+        192,
+        384
+      ],
+      "fine_grid": [
+        721,
+        1440
+      ],
+      "coarse_source": "/archive/workspace/mf_field_era5_nine_20260914/source/data/core/era5/train_l8.npz",
+      "fine_source": "/archive/workspace/mf_field_era5_nine_20260914/source/data/core/era5/train_l9.npz",
+      "coarse_source_sha256": "2bb6163464d2f0ce6732b8ac5e63c3cdce5abc896fd36980bc925390cb7e22da",
+      "fine_source_sha256": "2bf52c54be638446d1088d042bea521bf41c979a514a18077c9472ca6a23034e",
+      "coarse_array_sha256": "046a82df5da478aa293f68edb756da25296d9facc8e405c66dbfc757601f7343",
+      "fine_array_sha256": "8f192cfb51a2ddfeb1670e58d8f7c07ba96b79092267389a971eb17f3aa889fc",
+      "lf_input_sha256": "cb82c87e894ab1a702345240a85e7f09c696460573fd726f569128babd6a74ea",
+      "hf_input_sha256": "cb82c87e894ab1a702345240a85e7f09c696460573fd726f569128babd6a74ea",
+      "parameters": [
+        0.02529212057705381,
+        0.19241606247274132,
+        0.46906923688035634,
+        -1.6229041423868187,
+        0.8732435553364679,
+        0.022837664451463156,
+        0.13221050048104133,
+        -1.2625346478908532,
+        0.9067034858275724,
+        0.8193292964392667,
+        -0.5775673571797727,
+        -0.40287374014135324
+      ],
+      "input_vectors_bitwise_equal": true,
+      "roles": "Both example fields are from base training tables, not calibration or evaluation.",
+      "fidelity_definition": "Observed coarse climate source at level 8 and ERA5 fine target at level 9, in native stored grids. Neither is synthesized by resizing the other.",
+      "native_values_retained": true,
+      "source_files_verified_against_transfer_manifest": true
+    },
+    "training_inputs_bitwise_equal": true,
+    "training_field_hashes_verified": true,
+    "training_source_fields_native_grids": true,
+    "input_label": "x: 12 emissions inputs",
+    "target_label_in_image": false,
+    "target_defined_in_caption": true,
+    "displayed_native_grid_labels": {
+      "coarse": [
+        192,
+        384
+      ],
+      "fine": [
+        721,
+        1440
+      ]
+    },
+    "fidelity_headings": [
+      "Low fidelity",
+      "High fidelity"
+    ],
+    "calibration_count_text_in_image": false,
+    "equation_position": "Below the ensemble field",
+    "equation_color": "#243541",
+    "shared_color_limits": [
+      -72.1149673461914,
+      84.63903045654297
+    ],
+    "shared_color_limits_cover_all_fields": true,
+    "era5_shown_models": [
+      "M1",
+      "M4",
+      "M7"
+    ],
+    "era5_mixture_expert_count": 9,
+    "era5_weights": [
+      0.14686240001678855,
+      0.0679761176692531,
+      0.0526159180930083,
+      0.12675095901208688,
+      0.08634073806319895,
+      0.11322620048070488,
+      0.2246710699860771,
+      0.051995002686428794,
+      0.12956159399245343
+    ],
+    "era5_weight_rule": "Inverse normalized squared error, five calibration examples, partition s71",
+    "era5_prediction_selected_by": "First evaluation row, without selection by error",
+    "orientation": "Stored array orientation, origin lower. Ensemble output interpolated to the fine grid for display. No geographic axes or outlines added.",
+    "illustrative_elements": [
+      "Connecting arrows describe training, calibration and prediction on the same ERA5 task. The training pair shares input parameters. Candidate and combined fields refer to a distinct reserved query.",
+      "The coarse preview is intentionally blurred for illustration. The input label defines x. The caption defines the fine target y. The coarse display blur is documented in this manifest. Native bundled field arrays, model predictions and fitted weights are unchanged."
+    ],
+    "recommended_caption": "The entire workflow illustrates the ERA5 field emulation task. The coarse climate field and fine ERA5 field are actual training examples with identical 12 dimensional inputs. Known fine examples determine one weight per model, and the saved mixture predicts fields from new inputs. The three candidate images, nine weight bars, and final field show an actual ERA5 example using inverse error weights fitted with five fitting examples. The displayed model predictions and combined field belong to a separate reserved input. The native source arrays, fine field and prediction arrays are unchanged."
+  },
+  "field_comparison_checks": {
+    "passed": true,
+    "dataset": "heat_generated",
+    "display_name": "Heat I",
+    "partition": 71,
+    "budget": 5,
+    "query_row": 0,
+    "selection": "Dataset chosen as an illustrative success. First evaluation row of the first partition, not the largest case gain.",
+    "fitting_rows": [
+      31,
+      43,
+      70,
+      86,
+      93
+    ],
+    "evaluation_rows": [
+      0,
+      5,
+      15,
+      25,
+      27,
+      30,
+      35,
+      38,
+      45,
+      51,
+      56,
+      68,
+      71,
+      74,
+      75,
+      76,
+      80,
+      83,
+      91,
+      92
+    ],
+    "models": [
+      "mf_fno_transfer_film",
+      "mf_fno_allpairs",
+      "convnext_unet_film",
+      "fno_fire_distcond",
+      "wno_transfer_film",
+      "mf_deeponet",
+      "st_hf_pod_gp",
+      "uqcorr_transolver_pred",
+      "uqcorr_convnext_pred"
+    ],
+    "methods": [
+      "selected_single",
+      "inverse_mse",
+      "full"
+    ],
+    "weights": [
+      [
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      [
+        0.08101723321675548,
+        0.16872289544499913,
+        0.2556801766307987,
+        0.35867115809217304,
+        0.027669603551767112,
+        1.7011015504429616e-06,
+        0.00021304484923171846,
+        0.007906181870120854,
+        0.10011800524260352
+      ],
+      [
+        0.05948737886396163,
+        0.16503169611153695,
+        0.28795400635151797,
+        0.3662614249019039,
+        0.03129103139691564,
+        0.0,
+        0.00043557986870227576,
+        7.431627986156129e-05,
+        0.08946456622560012
+      ]
+    ],
+    "weights_source_sha256": "6a483f5b6e1775638a4af4932dbf6dafb59e955d0caf244ce9dac732f1898678",
+    "bundle_sha256": "85a0de172cbe44b3df0784abc5a4a2d3b47f244c2ad3baae8911b301e6e1a133",
+    "field_gram_replay_passed": true,
+    "saved_errors_replayed": true,
+    "evaluation_case_excluded_from_fitting": true,
+    "relative_errors_percent": {
+      "Ground truth": 0.0,
+      "M1": 0.010608676236595354,
+      "M2": 0.007399618021585958,
+      "M3": 0.0058787583632111595,
+      "M4": 0.005322666199467613,
+      "M5": 0.020979330289444088,
+      "M6": 0.7866687037083088,
+      "M7": 0.1356791170056064,
+      "M8": 0.038016973015131,
+      "M9": 0.009161369472765314,
+      "Selected model": 0.005322666199467613,
+      "Inverse error mixture": 0.002930770424629064,
+      "Fitted mixture": 0.00296126212895645
+    },
+    "best_individual": "M4",
+    "fitted_reduction_vs_best_individual_percent": 44.36506032911394,
+    "inverse_reduction_vs_best_individual_percent": 44.93792556590891,
+    "fitted_case_wins_over_each_individual": 20,
+    "evaluation_cases_in_partition": 20,
+    "selected_model": "M4",
+    "selected_model_identical_to_saved_member": true,
+    "automatic_selection_displayed": false,
+    "field_color_limits": [
+      -0.027869118377566338,
+      1.0002802610397339
+    ],
+    "error_color_limits": [
+      0,
+      0.013046562671661377
+    ],
+    "error_color_linthresh": 1e-05,
+    "shared_color_scales": true,
+    "field_values_transformed": false,
+    "grid": [
+      64,
+      64
+    ],
+    "orientation": "Stored arrays with origin lower. Heat panels span space and time."
+  },
+  "paper_datasets": 22,
+  "unreported_era5_experts": 0,
+  "era5_ensemble_experts": 9,
+  "era5_baseline_checks": {
+    "passed": true,
+    "snapshot_verified": true,
+    "campaign_complete": true,
+    "available_entries": 12,
+    "independent_fits": 11,
+    "missing_models": [],
+    "missing_ids": [],
+    "models": [
+      "st_koh_pod",
+      "st_nargp_pod",
+      "st_mfdnn",
+      "st_mfdeeponet",
+      "st_dmfal",
+      "nomad_mf",
+      "mfrnp",
+      "fno_coregionalization",
+      "mf_fno_transfer",
+      "mf_fno_transfer_bar",
+      "st_lf_affine_pod",
+      "st_knn"
+    ],
+    "means": {
+      "st_koh_pod": 0.0500319854691584,
+      "st_nargp_pod": 0.06736881916186399,
+      "st_mfdnn": 0.45022507752517205,
+      "st_mfdeeponet": 0.1676701193013098,
+      "st_dmfal": 0.05050976939834268,
+      "nomad_mf": 0.23917920890023406,
+      "mfrnp": 0.19491514537346452,
+      "fno_coregionalization": 0.0515025334760673,
+      "mf_fno_transfer": 0.11888788412052662,
+      "mf_fno_transfer_bar": 0.11888788412052662,
+      "st_lf_affine_pod": 0.08445676430241209,
+      "st_knn": 0.05164194115299283,
+      "st_mean": 0.0673688197211345
+    },
+    "aliases": {
+      "mf_fno_transfer_bar": "mf_fno_transfer"
+    },
+    "n_base_hf_train": 55,
+    "n_calibration": 10,
+    "n_evaluation": 7,
+    "work_grid": [
+      128,
+      256
+    ],
+    "prediction_artifacts": {
+      "st_koh_pod": {
+        "prediction_sha256": "80aa3a41654f0669b36139df5f9110b12755ac00672ae14147099b051bdb16db",
+        "metadata_sha256": "86dbca8feef936e338a4498309861cf5abdec4c239ed42a2052af35d18090d10"
+      },
+      "st_nargp_pod": {
+        "prediction_sha256": "314efb50c38392e21572409f93782351b7183f67d1d2767e2a02e1de9de5b156",
+        "metadata_sha256": "1fa2f8335f59b2573b7896dcce4a2aaf4f326fd75d103b3ae95bec6040a0b3d8"
+      },
+      "st_mfdnn": {
+        "prediction_sha256": "8db2751b7ead5315bfcd2aeecc8bb636b5a20ebccc05439c23abcad12cd2e964",
+        "metadata_sha256": "825571e253b71abf44ea4a7ce614769af032830acf366844eb5c71ad5c9efbdb"
+      },
+      "st_mfdeeponet": {
+        "prediction_sha256": "997e1e340f65e8a4a794010a90b08c574e984f1f30f7fa932958dddc9c06662f",
+        "metadata_sha256": "73d6fbd95ef745404b61b735d759e867cbe847d6770f680c7e339ed5b1731a94"
+      },
+      "st_dmfal": {
+        "prediction_sha256": "33fd2e9c9b31e52ccf11efb80f14d88704607df43fb4858172c6f3c270cf349b",
+        "metadata_sha256": "f04e3d38b4c9ec6d14ecd68bd0c74d93524b82502aba811f7ace0bcd014666ac"
+      },
+      "nomad_mf": {
+        "prediction_sha256": "c17e3f03b4eed49460e36909c50f5dc2f5e9aed545884aba6b9556bcf5abf13a",
+        "metadata_sha256": "dd4cd9ae73644b3ac266d5ecb98698939a223e1ff7c8e129aa028a23de742cc2"
+      },
+      "mfrnp": {
+        "prediction_sha256": "61a77c549a2336849db618ccdf99deb04a90f8df01f6d64db44cd214f9d4c224",
+        "metadata_sha256": "77259f2868dc9b9524f506fa08d8564beb8aa9a9ab2f02b6561beab186419c8f"
+      },
+      "fno_coregionalization": {
+        "prediction_sha256": "f9033025aba88afd15abaaed51a4d0800fa72c43f9bec237be0a69437b8f79ef",
+        "metadata_sha256": "3ecf271148422904980f63d3a079c65ab7d09cbb1f16bd6c80318ec9bf075015"
+      },
+      "mf_fno_transfer": {
+        "prediction_sha256": "108002056fe526f590d9e939bc79a382b7595662c9a3721000ba8d059ef9a2de",
+        "metadata_sha256": "9b61c1392997ca31e7741fc0b0cfe1a41a23280a9ec01d22fa163d3817b44901"
+      },
+      "mf_fno_transfer_bar": {
+        "prediction_sha256": "108002056fe526f590d9e939bc79a382b7595662c9a3721000ba8d059ef9a2de",
+        "metadata_sha256": "66cd07dff6c9fd388a0b46d854b66330849270f2cae50fb713b716449345f4a9"
+      },
+      "st_lf_affine_pod": {
+        "prediction_sha256": "af1988abed86db4a1397b5b41d8cca5e94f798b00db01386f58709625257c942",
+        "metadata_sha256": "14703d5c3b959d518ed23e4f0b1037fe3c63295eca85674222b1259f2c33de8f"
+      },
+      "st_knn": {
+        "prediction_sha256": "44b4a899e8042c44cd82d0e7b53e33c94758c14a5d5c5847eac590c215ab3d20",
+        "metadata_sha256": "3e5354e50c3e0abf7dbdf3f6cf0fc4cec8a8f16147286bcda3564a61126c1002"
+      }
+    },
+    "manifests": {
+      "source_manifest_sha256": "f39dc85b9078b8a41555056666ca704a1dfe2515e9eb8dfba319a7569b0dcaf6",
+      "plan_sha256": "21887b37d053dd51a5a484ba8490e9b33e153ffd4cc6ce5ca4bd46e499957689",
+      "input_manifest_sha256": "b7071be2fbb0a0e8949ab33a3f855596998382bfed4329654262593f7d0c53b0"
+    },
+    "answers_identical_to_nine_model_study": true,
+    "production_collection_verified": true,
+    "production_audit_sha256": "4831be3647f8177b5c4a155ad1c30bf43000294da696835760947857ed63415c",
+    "scope": "All twelve ERA5 baseline entries from eleven independent fits, plus the training mean control. Production collection and per-case scores verified."
+  },
+  "headline_comparisons": {
+    "Best library / best additional baseline": {
+      "n": 21,
+      "class_ratio": 0.7655407960078353,
+      "dataset_ratio": 0.8335192183114404,
+      "wins": 15,
+      "losses": 5
+    },
+    "Full / best library": {
+      "n": 21,
+      "class_ratio": 0.9226686581912872,
+      "dataset_ratio": 0.9891938103207164,
+      "wins": 13,
+      "losses": 6
+    },
+    "Inverse / best library": {
+      "n": 21,
+      "class_ratio": 0.9265246020111533,
+      "dataset_ratio": 1.0016217013840463,
+      "wins": 12,
+      "losses": 7
+    },
+    "Full / best additional baseline": {
+      "n": 21,
+      "class_ratio": 0.7063404990432393,
+      "dataset_ratio": 0.8245120515370388,
+      "wins": 13,
+      "losses": 7
+    },
+    "Full / selected model": {
+      "n": 21,
+      "class_ratio": 0.8839531934971416,
+      "dataset_ratio": 0.9232910363163854,
+      "wins": 15,
+      "losses": 5
+    }
+  },
+  "algebraic_spot_checks": 100,
+  "workbook_sheets": [
+    "Dataset errors",
+    "Aggregate ratios",
+    "Class plot",
+    "Fresh heat",
+    "ERA5 results",
+    "ERA5 cases",
+    "ERA5 selection",
+    "ERA5 weights",
+    "ERA5 baselines",
+    "ERA5 baseline cases",
+    "Individual models",
+    "Sources and definitions",
+    "Matched baselines",
+    "Baseline coverage",
+    "Baseline aggregates",
+    "Headline comparisons",
+    "Table 2 ranking"
+  ],
+  "main_pdf_sha256": "c95a2fa7d3c4152082a9585adbe062fd496ebd0ed2987fd3217866362211b11d",
+  "limitations": "Structural/numerical checks; not a new model replication, literature-priority proof, or human scientific sign-off."
+}

@@ -1,0 +1,84 @@
+{
+  "exclusions_from_prior_audit": {
+    "poisson_generated": "documented scale defect",
+    "poisson_local": "documented inherited scale defect",
+    "lid_driven_cavity_generated": "documented unconverged field",
+    "ext__cahn_hilliard_2d": "documented incomplete conditioning",
+    "ext__pressure_poisson_poiseuille": "synthetic LF rather than independent solver"
+  },
+  "interpretation": "Retrospective sensitivity analysis selected by documented dataset properties; does not certify remaining generators. Not a fresh validation or replacement of historical20 primary.",
+  "results": {
+    "5": {
+      "n_datasets": 15,
+      "n_classes": 6,
+      "methods": {
+        "inverse_mse": {
+          "class_balanced_ratio": 0.8683823983147043,
+          "dataset_balanced_ratio": 0.903071371949295,
+          "wins_1pct": 11,
+          "losses_1pct": 2
+        },
+        "full": {
+          "class_balanced_ratio": 0.8688780280943919,
+          "dataset_balanced_ratio": 0.8978933545078991,
+          "wins_1pct": 12,
+          "losses_1pct": 3
+        },
+        "best_pair": {
+          "class_balanced_ratio": 0.9183444037590208,
+          "dataset_balanced_ratio": 0.9288023432220281,
+          "wins_1pct": 12,
+          "losses_1pct": 3
+        }
+      }
+    },
+    "10": {
+      "n_datasets": 15,
+      "n_classes": 6,
+      "methods": {
+        "inverse_mse": {
+          "class_balanced_ratio": 0.8747273450686782,
+          "dataset_balanced_ratio": 0.9135952659733174,
+          "wins_1pct": 11,
+          "losses_1pct": 4
+        },
+        "full": {
+          "class_balanced_ratio": 0.8598757908686199,
+          "dataset_balanced_ratio": 0.8852680205037824,
+          "wins_1pct": 11,
+          "losses_1pct": 2
+        },
+        "best_pair": {
+          "class_balanced_ratio": 0.9169341636037548,
+          "dataset_balanced_ratio": 0.9303414594169571,
+          "wins_1pct": 12,
+          "losses_1pct": 3
+        }
+      }
+    },
+    "20": {
+      "n_datasets": 15,
+      "n_classes": 6,
+      "methods": {
+        "inverse_mse": {
+          "class_balanced_ratio": 0.8801287430909291,
+          "dataset_balanced_ratio": 0.9243862540446223,
+          "wins_1pct": 10,
+          "losses_1pct": 4
+        },
+        "full": {
+          "class_balanced_ratio": 0.8628569377077451,
+          "dataset_balanced_ratio": 0.8984406011019047,
+          "wins_1pct": 11,
+          "losses_1pct": 3
+        },
+        "best_pair": {
+          "class_balanced_ratio": 0.9251644147514172,
+          "dataset_balanced_ratio": 0.951923918272399,
+          "wins_1pct": 10,
+          "losses_1pct": 3
+        }
+      }
+    }
+  }
+}

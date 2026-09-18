@@ -1,0 +1,15 @@
+\begin{tabular}{p{.045\linewidth}p{.20\linewidth}p{.23\linewidth}p{.39\linewidth}}
+\toprule
+ID & Implementation & Source & Adaptation and inclusion rationale \\
+\midrule
+M1 & FiLM FNO transfer & \citep{li2021fno,perez2018,lyu2023} & Coordinate input and parameter FiLM at every FNO block, with LF to HF transfer. Tests repeated conditioning and spectral transfer. \\
+M2 & All pairs FNO & \citep{li2021fno,perez2018,herde2024} & Fidelity labels and repeated target supervision. Poseidon is pair enumeration inspiration only. No source field input. \\
+M3 & ConvNeXt transfer & \citep{liu2022convnext,ronneberger2015,perez2018,lyu2023} & ConvNeXt blocks in a U shaped field decoder, parameter FiLM, and LF to HF transfer. Tests local spatial processing. \\
+M4 & Distribution FNO & \citep{yu2026fire,li2021fno} & FIRE distribution summaries become spatial channels from five LF FNOs. A trained residual FNO replaces foundation model inference. \\
+M5 & Wavelet transfer & \citep{tripura2022wno,perez2018,lyu2023} & WNO motivates a custom single level db4 coefficient mixer with FiLM and transfer training. \\
+M6 & Retrieved field DeepONet & \citep{lu2021,lu2022mf} & Parameters and a nearest neighbour LF training field enter the branch. The residual needs no new coarse solve. \\
+M7 & POD GP & \citep{higdon2008} & HF field SVD and shared coefficient GP hyperparameters. Basis emulation inspiration, not the original Bayesian model. \\
+M8 & Slice attention corrector & \citep{wu2024transolver,perez2018} & Changed pooling and cell to slice attention, parameter FiLM, and six corrections of a predicted coarse field. \\
+M9 & ConvNeXt corrector & \citep{liu2022convnext,ronneberger2015,perez2018} & ConvNeXt blocks in a U shaped corrector with FiLM. Six updates refine a predicted coarse field rather than generating it directly. \\
+\bottomrule
+\end{tabular}

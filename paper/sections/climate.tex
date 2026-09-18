@@ -1,0 +1,18 @@
+\section{Application to climate field emulation}
+\label{sec:climate}
+ERA5 asks whether the workflow remains useful beyond the simulation datasets.
+The task maps 12 emissions related inputs to temperature fields, combining
+MFRNP's climate assembly \citep{niu2024} with ERA5 reanalysis
+\citep{hersbach2020}, in the climate emulation setting motivated by ClimateBench
+\citep{climatebench2022}. It contains 55 fine training inputs, ten fitting
+inputs, and seven evaluation inputs. Reserved inputs are excluded from all
+training fidelities. All nine models predict on a $128\times256$ working grid.
+
+
+POD GP is the most accurate of the nine library models on ERA5, with a mean
+relative $L^2$ error of 6.7369\%. With five fitting examples, the inverse error
+mixture reduces this error to 5.8146\%, a 13.69\% relative improvement. The
+fitted mixture reaches 6.4877\%, improving by 3.70\%. Both mixtures therefore
+improve on the best individual model in the library. Table~\ref{tab:allexperts}
+shows the individual models and mixtures alongside the strongest additional
+baseline, with all baseline results in Appendix~\ref{app:matchedbaselines}.

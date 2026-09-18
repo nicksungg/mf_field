@@ -1,0 +1,574 @@
+\section{Why error estimation controls mixture accuracy}
+\label{app:proof}
+Fitting weights involves two distinct errors: estimating how the models behave
+on new inputs and solving the resulting fitting problem numerically.
+The following bound separates these contributions for a fixed library and
+expected squared relative error. It uses the population matrix $C$ and its
+fitting estimate $\widehat C$ from Section~\ref{sec:analysis}.
+
+\begin{proposition}[Error estimation and mixture risk]
+\label{prop:bound}
+Suppose $\max_{m,n}|\widehat C_{mn}-C_{mn}|\leq\epsilon$, and $\widehat w$ has empirical
+objective within $\delta\geq0$ of the simplex minimum. If $w^*$ minimizes $R$ on the simplex, then
+\begin{equation}
+ R(\widehat w)-R(w^*)\leq 2\epsilon+\delta.
+ \label{eq:bound}
+\end{equation}
+\end{proposition}
+Here $\widehat w$ is the fitted weight vector and $w^*$ is the best population
+weight vector. The bound limits their squared risk difference using the largest
+matrix estimation error $\epsilon$ and the numerical fitting error $\delta$.
+
+\subsection{Proof of Proposition~\ref{prop:bound}}
+Let $A=\widehat C-C$. For every simplex vector,
+\begin{equation}
+ |w^\top Aw|\leq\sum_{m,n}w_mw_n|A_{mn}|
+\leq\epsilon\left(\sum_m w_m\right)^2=\epsilon.
+\end{equation}
+Here $A_{mn}$ is the estimation error for model pair $(m,n)$. Since the weights
+are nonnegative and sum to one, this bounds the risk error for every feasible mixture.
+Define $\widehat R(w)=w^\top\widehat Cw$, the fitting mean squared relative
+error. Applying empirical near optimality gives
+\begin{align}
+ R(\widehat w)&\leq\widehat R(\widehat w)+\epsilon\\
+ &\leq\widehat R(w^*)+\delta+\epsilon\\
+ &\leq R(w^*)+\delta+2\epsilon.
+\end{align}
+The proof compares both sets of weights under the same estimated risk.
+The first and third inequalities each contribute at most $\epsilon$ when
+moving between fitting and population error. The middle inequality adds
+the numerical optimization error $\delta$. For a feasible numerical solution,
+convexity also gives the computable first order gap
+\begin{equation}
+ \delta_{\rm FW}=\nabla\widehat R(\widehat w)^\top\widehat w
+                  -\min_m[\nabla\widehat R(\widehat w)]_m,
+\end{equation}
+Here $\nabla\widehat R(\widehat w)=2\widehat C\widehat w$ is the objective gradient,
+and $[\cdot]_m$ selects its component for model $m$. The Frank Wolfe gap
+$\delta_{\rm FW}$ bounds the remaining empirical optimization error. It can
+diagnose the numerical solve, while the unknown fitting to population
+difference still depends on $\epsilon$. The reported tables therefore provide
+no population risk certificate.
+
+\subsection{The number of fields determines the ensemble fitting sample size}
+Suppose, conditional on the trained library, fitting examples are independent and identically
+distributed and satisfy $|[G_i]_{mn}|\leq B$ almost surely for all $m,n$. Hoeffding's inequality
+\citep{hoeffding1963} and a union bound give, with probability at least $1-\alpha$,
+\begin{equation}
+ \max_{m,n}|\widehat C_{mn}-C_{mn}|
+ \leq B\sqrt{\frac{2\log(2M^2/\alpha)}{K}}.
+\label{eq:hoeffding}
+\end{equation}
+Here $B$ bounds each error product, $\alpha\in(0,1)$ is the allowed failure
+probability, $M$ counts models, and $K$ counts fitting examples. The equation
+controls the largest matrix estimation error simultaneously across model pairs.
+Combining this standard result with Proposition~\ref{prop:bound} gives a bound in
+terms of the number of fitting examples. The assumptions require care.
+Related simulations or climate time dependence can violate independence. Large
+errors and near zero target norms can weaken boundedness.
+We have not established these assumptions for the present datasets.
+For $M=9$, $\alpha=0.05$, and $\delta=0$, the resulting excess risk
+bounds are $3.596B$, $2.543B$, and $1.798B$ at $K=5,10,20$.
+Since every positive semidefinite $G_i$ has entries bounded by $B$, every
+simplex risk lies in $[0,B]$. The trivial excess bound $B$ is therefore tighter
+at all three budgets. The concentration result explains a dependence on the
+number of fields but is not a useful certificate for these experiments.
+
+Let $P$ be the number of values in one field. Replacing the sample size $K$ with $KP$ would
+incorrectly count a field's spatial pixels as independent experiments. This
+does not prevent a single field from producing a full rank $M\times M$ Gram
+matrix when its model error vectors span $M$ dimensions. Statistical sample
+size and matrix rank describe different properties of ensemble fitting.
+
+\subsection{Individual accuracy and complementary errors play different roles}
+For positive $d_m=\widehat C_{mm}$, minimize $\sum_m d_m w_m^2$ subject to simplex constraints.
+Here $d_m$ is model $m$'s fitting mean squared relative error. Stationarity
+yields $2d_m w_m=\lambda$, where $\lambda$ enforces the unit sum constraint.
+Normalization yields $w_m\propto d_m^{-1}$, giving more weight to smaller errors.
+If any $d_m=0$, a minimum is supported on zero error models. The implementation instead uses
+the stated numerical floor. Thus inverse MSE weighting solves the diagonal approximation.
+The derivation does not require the actual model errors to be independent.
+
+Equation~\eqref{eq:direction} follows by expanding both quadratic expressions and applying
+Cauchy Schwarz to each cross term. For comparison, the usual ambiguity identity is
+\begin{equation}
+ \sum_m w_m\norm{e_m}_Q^2-\norm{\sum_mw_me_m}_Q^2
+ =\sum_m w_m\norm{e_m-\sum_nw_ne_n}_Q^2,
+\end{equation}
+a standard relation in ensemble analysis \citep{krogh1994}. Here $e_m$ is model
+$m$'s relative error field for one case, and $\sum_mw_me_m$ is the mixture error.
+The right side measures spread around that mixture error and equals the
+reduction from averaging the individual squared errors to averaging predictions.
+Both identities describe how combining given error fields can help.
+Neither establishes that a particular fitting rule will find useful weights.
+The risk bound concerns expected squared relative error. It does not directly
+bound the difference in mean relative $L^2$ reported for two methods.
+
+\section{Implementation and reproducibility}
+\label{app:protocol}
+This section follows the workflow from training the individual models to
+fitting and evaluating their combination. We first give each model's data use
+and training recipe, then describe the numerical weighting rules and the checks
+that keep fitting and evaluation separate. The detailed comparison with
+the cited architectures follows in Appendix~\ref{app:adaptations}.
+
+\subsection{How each model uses the available data}
+\label{app:experts}
+
+\paragraph{Transfer models.}
+FiLM FNO, ConvNeXt, and wavelet transfer use LF pretraining followed by HF finetuning
+\citep{li2021fno,perez2018,liu2022convnext,tripura2022wno,lyu2023}.
+The nominal setting is 2,500 epochs per stage, AdamW, batch size at most 16,
+weight decay $10^{-5}$, gradient clipping at 1, cosine learning rate decay to $10^{-6}$,
+and initial learning rates $10^{-3}$ (LF) and $3\times10^{-4}$ (HF).
+The FNO recipe uses width 64, four blocks, and up to 12 Fourier modes per direction, subject
+to the grid cap. WNO uses a single level wavelet implementation with the archived \texttt{db4}
+setting. The ConvNeXt field encoder decoder adapts the visual backbone principle
+\citep{liu2022convnext}. The release archive retains the original model definitions and grid dependent choices.
+These families have different architectures. They are not matched backbone comparisons.
+
+\paragraph{All pairs.}
+One FNO \citep{li2021fno} is conditioned on $x$ and normalized source/target fidelity labels.
+Pair enumeration is inspired by Poseidon \citep{herde2024}, with the adaptations in
+Appendix~\ref{app:adaptations}.
+Its pooled training rows contain target fields. A source field is not an input.
+The model therefore predicts from parameters and fidelity labels, rather than
+transporting one input field to another. HF finetuning follows joint training.
+This changes target repetition and optimization cost as well as conditioning.
+Matched update controls are needed to isolate the effect of fidelity pair labels.
+For paired data, source/target input identity is verified. In the ERA5 adapter,
+exact input joins preserve the correspondence of fields and parameters, and HF finetuning uses HF inputs.
+The adapter retains each target field with its own parameters, including repeated target
+parameters arising from multiple climate sources.
+
+\paragraph{Distribution FNO.}
+The field adaptation trains five LF FNO members and a residual FNO. The residual model
+receives parameters and the LF mean, standard deviation, and 10th/50th/90th percentile
+summaries. Each member and the residual stage uses the nominal 2,500 epoch recipe.
+The original FIRE method uses distribution conditioned in context learning with tabular
+foundation models \citep{yu2026fire}. Our trained field implementation is an adaptation.
+It is distinct from the separate out of fold corrector construction below.
+
+\paragraph{Retrieved field DeepONet.}
+The branch input concatenates parameters and an LF field retrieved from the training
+library by nearest neighbor in standardized parameter space. The trunk input is the working grid
+coordinate. The output is a residual relative to the interpolated LF field.
+At training inputs with an exact LF match, retrieval supplies that matched training field. At unseen queries it supplies a neighboring training field. This inherited retrieval mismatch
+is not eliminated by the out of fold construction of the other correctors.
+The recipe uses width 256, five affine layers of width 256 in each branch and trunk specification, including
+the latent output layer, ReLU,
+and 125,000 Adam iterations at learning rate $10^{-3}$ for the nominal 2,500 epoch argument.
+It is a DeepONet adaptation \citep{lu2021}, not an exact implementation of the composite
+multifidelity architecture of \citet{howard2023}.
+
+\paragraph{Reduced basis.}
+POD GP uses reduced basis field emulation \citep{higdon2008}. It fits a basis from
+HF base training fields and predicts coefficients with a shared
+automatic relevance determination RBF Gaussian process. The selected mode count and fitted
+hyperparameters are recorded per dataset. The estimator state was not archived originally. The common export reproduces the training only fit and restores physical scaling.
+No fine fitting or evaluation field enters the basis construction.
+The additional baselines B1, B2, and B11 evaluate multifidelity models built around POD GP emulators,
+while this library member deliberately uses HF data only.
+
+\paragraph{Which coarse data each model uses.}
+M1, M3, M4, M5, and M6 use the lowest registered LF level. M2 pools fidelity
+pairs across the registered levels, while M8 and M9 predict the finest
+registered LF level before correction. M7 uses no LF fields.
+Thus common training archives do not imply that each model uses the same
+coarse level. In ERA5, the transfer and retrieved field recipes use level one,
+whereas the iterative correctors use level eight.
+
+\paragraph{Predicted coarse correctors.}
+Each paired dataset uses five LF training folds and four members per fold: plain and
+heteroscedastic variants, each with two initializations. Base training rows receive their
+held out fold's mean. All query cases use the four members from fixed fold zero.
+The Slice attention and ConvNeXt correctors use six refinement steps and predicted mean input,
+with adaptations of attention and convolution components \citep{wu2024transolver,liu2022convnext}.
+Coarse members have 30,000 requested optimizer steps (rounded to whole epochs by the inherited
+trainer). The correctors have 6,000 steps with training only validation. They are custom correctors using the components detailed in
+Appendix~\ref{app:adaptations}.
+
+\subsection{Mixture optimization}
+\label{app:numerics}
+The empirical Gram is symmetrized and scaled by
+$\max(\operatorname{tr}(\widehat C)/M,10^{-30})$, which leaves the exact minimizer unchanged.
+The trace $\operatorname{tr}(\widehat C)$ sums the diagonal errors, so dividing by
+$M$ sets a typical error scale for the optimizer.
+SLSQP uses the analytic quadratic gradient, box constraints $0\leq w_m\leq1$, the unit sum
+constraint, tolerance $10^{-12}$, and at most 300 iterations. Uniform and lowest diagonal
+singleton weights initialize separate solves. Finite candidates with unit sum residual below
+$10^{-6}$ are clipped to nonnegative values and renormalized. Feasible starting points remain
+available. The lowest empirical objective among candidates is retained. These steps check numerical feasibility and the fitted objective.
+They do not establish accuracy on new cases.
+
+\paragraph{Supplementary mixture controls.}
+Uniform averaging assigns every model weight $1/M$. Top three uniform first
+ranks models by their mean relative $L^2$ error on the fitting examples, then assigns
+weight $1/3$ to the best three and zero to the rest. A fitted pair enumerates
+all model pairs and fits their nonnegative weights summing to one by minimizing
+fitting squared relative error. It retains the best pair or singleton under
+that same objective. This control tests whether two active models can approximate
+the fitted mixture, while still evaluating all candidates during fitting.
+Uniform averaging appears in Table~\ref{tab:main}. Top three and fitted pair
+results are retained in the numerical supplement rather than the main
+comparison tables.
+
+\paragraph{Cost and refitting.}
+For fields with $P$ values, forming the error matrices costs $O(KM^2P)$.
+Keeping the matrices after streaming predictions requires $O(KM^2)$ storage.
+Here $O$ describes how runtime or storage grows with the numbers of fitting
+fields $K$, models $M$, and field values $P$.
+These costs exclude training and evaluating the models.
+If the coarse input procedure later changes, we can predict the same fitting
+cases again and refit the weights using their existing fine answers.
+This requires new model predictions but no new fine simulations.
+
+\subsection{Keeping surrogate training, ensemble fitting, and evaluation separate}
+The fitting examples are additional fine labels beyond the base training
+data. Many datasets have 400 coarse and 400 fine base training rows. Each rule
+uses the same stated fitting allowance to select an individual model or fit
+mixture weights.
+Within a partition, fitting and evaluation input hashes are disjoint and the fitting
+budgets are nested: the five examples are included in the ten, which are
+included in the twenty. This guarantee is within each dataset. Query grouping
+across related variants does not remove their shared base training simulations.
+Saved weight hashes and per case
+errors are retained for replay. Checks independently reproduce original model errors,
+the field/Gram quadratic identity, convex feasibility, and the reported aggregate denominators.
+Some cases change roles across the three PDE partitions. Their 1,842
+evaluation appearances represent 1,505 distinct dataset and row pairs from
+query pools containing 3,058 rows across the 21 PDE datasets. These
+are not necessarily independent physical cases across related variants.
+The partitions therefore do not constitute three untouched experiments.
+
+For Allen Cahn, Cahn Hilliard II, Fisher KPP, and Phase field crystal, each
+fidelity supplies 400 training inputs. Their query pools contain 78, 100, 100,
+and 100 inputs, respectively. Each partition reserves 16 evaluation cases for
+Allen Cahn and 20 for each other dataset, with the remaining inputs forming
+the fitting pool. All nine models, B1 to B11, and the three main ensemble rules
+use the same dataset version and evaluation identities. Weight files are sealed
+before evaluation. Input hashes verify that reserved inputs do not occur in
+any fidelity training table. These additions expand the primary comparison to
+21 PDE datasets. Error geometry, subset comparisons, and direct loss
+controls in Appendices~\ref{app:geometry} and~\ref{app:reanalysis} retain the
+original 17 dataset diagnostic subset.
+
+The ERA5 experiment separates fitting/evaluation answers into different files from
+training inputs. Query targets in training trees are zero placeholders, and wrappers reject
+access to the answer directory while fitting models. A collector regression changes final
+answers and verifies that fitted weights do not change. This verifies the implemented separation of answers and weight fitting.
+It does not reconstruct all historical researcher access.
+Per stage optimizer and random number generator checkpoints allow training to
+resume with the same prescribed budget.
+
+Common array grids, target scaling, and row order are checked before mixing. Seven model export
+targets agree within relative tolerance $5\times10^{-7}$. The corrector to canonical target
+comparison had maximum discrepancy $3.26\times10^{-8}$ in the feature corpus.
+Working grid capping uses the registered data adapter, with a maximum side length of 256.
+Historical exports use float32, with TF32 disabled for the seven direct models. Error matrix calculations use float64. The two original corrector exports did not record
+their TF32 settings. Fresh heat correctors retain their original convolution precision to
+pass replay checks. All comparisons use identical cached predictions within their experiment.
+These TF32 differences across historical and fresh exports preclude claiming bit identical inference
+across hardware or campaigns. ERA5's unweighted grid metric is not an area weighted global metric.
+The source arrays do not verify absolute units or time coordinates. Relative
+temperature error changes under an additive unit offset, so its value here
+should be interpreted as an archive metric rather than a unit independent
+measure of climate skill.
+
+\input{sections/model_adaptations}
+
+\section{Dataset definitions and evaluation scope}
+\label{app:roster}
+Table~\ref{tab:roster} lists the available base training rows and reserved query counts
+for the paper's 22 datasets. Here $d$ counts input parameters, $N_H$ counts fine
+training rows, and $N_{L,\min}$ is the smallest LF table, not the sum over all fidelities.
+Counts are input table sizes after excluding reserved query inputs from
+training. They do not imply that every model has identical target exposure
+or optimizer updates. ERA5 uses 55 HF training cases and 17 reserved queries,
+comprising ten fitting pool cases and seven evaluation cases. Its smallest
+retained LF table has 313 rows. The original archive had 65 HF training rows,
+including the ten subsequently reserved for ensemble fitting.
+The class column groups PDE datasets and distinguishes ERA5 climate emulation
+\citep{hersbach2020,niu2024}.
+Roman numerals distinguish entries with the same governing equation.
+Poisson II, Heat II, and Navier Stokes use the MFRNP released data
+\citep{niu2024}. ERA5 uses the reanalysis target \citep{hersbach2020} assembled
+with climate model sources by MFRNP \citep{niu2024}. Other entries were simulated
+for this collection and do not inherit the identity of an external benchmark.
+
+\begin{table}[h!]
+\centering\footnotesize\setlength{\tabcolsep}{3pt}
+\caption{Inventory of the 22 datasets in this paper. Query cases are later partitioned into fitting pools and evaluation
+sets. They are not all final test cases in every reported mixture experiment. Citations identify
+imported data. Uncited rows use our simulation code, with recipe influences
+distinguished from data sources below.}
+\label{tab:roster}\resizebox{\linewidth}{!}{\input{tables/roster}}
+\end{table}
+
+The class balanced summary uses elliptic (six entries), diffusion (two),
+convection (three), shocks (two), porous flow (one), reaction diffusion (five), and waves (two).
+ERA5 supplies a
+separate climate case outside the PDE class aggregate. These groups are descriptive labels, not independent
+samples of all possible PDE families. Heat outputs are space time fields. The label
+``field'' does not imply that both axes are spatial.
+
+The simulation recipes adapt selected settings from existing work: Pressure Poisson
+uses an analytic construction motivated by \citet{partin2022}, Euler uses a
+quadrant setup motivated by The Well \citep{ohana2024}, and Shallow water uses a
+radial dam break recipe motivated by PDEBench \citep{takamoto2022}. These are independently
+simulated data, not copies of the cited benchmark datasets. Equation or solver
+references alone do not establish dataset provenance.
+
+Poisson I and II are related parameterizations of the same equation.
+Cahn Hilliard I and II are distinct data definitions with 2 and 19 input
+parameters, respectively. Cahn Hilliard II, Allen Cahn, and Fisher KPP use
+$64\times64$, $128\times128$, and $256\times256$ fidelity grids. Phase field
+crystal uses $32\times32$, $64\times64$, and $128\times128$ grids. Their input
+dimensions are 19, 19, 50, and 18, respectively. These four entries broaden the
+reaction diffusion class without adding another PDE class.
+Helmholtz normalizes field amplitudes, so its prediction task concerns the
+normalized fields.
+
+\section{Detailed results for the common nine model comparison}
+\label{app:allresults}
+\begin{table}[h!]
+\centering\footnotesize\setlength{\tabcolsep}{3.3pt}
+\caption{All 21 PDE datasets at $K=5$, averaged over three partitions. Errors are relative $L^2$ percentages.
+Change is the percentage change of the fitted mixture relative to the selected model. Negative favors
+the fitted mixture. A dagger marks the three entries excluded only in the separate audit sensitivity. Imported Poisson II, Heat II, and Navier Stokes fields are from \citet{niu2024}.}
+\label{tab:perdataset}\input{tables/per_dataset}
+\end{table}
+
+The main comparison selects an individual model using fine answers in the fitting set,
+which are available before deployment. To measure the accuracy that selection
+might miss, we also identify the best fixed model within each partition using
+evaluation answers. This is a stronger hindsight reference than choosing one
+model per dataset after averaging partitions (Appendix~\ref{app:headlines}).
+Against this reference, the fitted mixture at $K=5$ has class aggregated ratio
+0.933 and dataset aggregated ratio 1.006, with 13 improvements and 6 losses
+larger than 1\%. The mixture is better under one aggregation and worse under
+the other. Its advantage therefore depends on both the information used to
+choose the reference and the way datasets are weighted.
+
+\subsection{Individual models on the mixture evaluation cases}
+\label{app:individual}
+Tables~\ref{tab:directexperts} and~\ref{tab:remainingexperts} show whether an
+ensemble gain reflects the choice of its members or the combination itself.
+They report every member on the exact evaluation cases used by the mixtures,
+averaging three partitions of models trained with a single seed. We verify
+source hashes, split identities, and saved weights before reconstructing the
+means. Replaying the selected model and all pairs columns reproduces their
+individual errors, and replaying the mixtures reproduces the reported summary.
+Appendix~\ref{app:matchedbaselines} applies the same case correspondence checks
+to 13 additional baselines. These tables make the existing predictions directly
+comparable without adding new training runs or independent confirmation.
+
+\begin{table}[h!]
+\centering\footnotesize\setlength{\tabcolsep}{3pt}
+\caption{\textbf{Individual direct models, part one.} Mean relative $L^2$ errors in
+percent, averaged over the same three partitions as the mixtures. ``Tr.'' denotes
+transfer. A dagger identifies the three entries excluded only in the sensitivity
+analysis. Table~\ref{tab:perdataset} provides mixture errors on these cases. Imported Poisson II, Heat II, and Navier Stokes fields are from \citet{niu2024}.}
+\label{tab:directexperts}\input{tables/individual_direct}
+\end{table}
+
+\begin{table}[h!]
+\centering\footnotesize\setlength{\tabcolsep}{3pt}
+\caption{\textbf{Individual direct models and predicted coarse correctors, part two.}
+The protocol and percentage error units match Table~\ref{tab:directexperts}.
+The POD GP uses HF training data only. Individual models are not retrained on
+the additional examples used to fit the mixtures. Imported Poisson II, Heat II, and Navier Stokes fields are from \citet{niu2024}.}
+\label{tab:remainingexperts}\input{tables/individual_remaining}
+\end{table}
+
+\subsection{Class level and fitting budget comparisons}
+\label{app:budgets}
+The per dataset table shows where each method succeeds or fails.
+Figure~\ref{fig:results} asks how these differences change across problem
+classes and as more fitting examples become available.
+Table~\ref{tab:budgets} gives the corresponding class aggregated ratios.
+The models, partitions, and label accounting are the same as in the main
+comparison. These summaries describe the fixed fitting rules on each
+dataset, rather than a learned rule for choosing models on another dataset.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{figures/results_overview.pdf}
+\caption{\textbf{Gains vary by problem class and fitting budget.}
+Left: geometric error ratios within each class at five fitting examples.
+Right: class balanced ratios as the fitting budget increases.
+The reference is a single model selected using the same answers.
+These points summarize historical partitions, not independent training seeds
+with confidence intervals. Appendix~\ref{app:roster} defines the classes.}
+\label{fig:results}
+\end{figure}
+
+\begin{table}[h!]
+\centering\small
+\caption{\textbf{Increasing the fitting budget.} Historical class balanced error
+ratios. The single model is selected using the same budget as the mixture.}
+\label{tab:budgets}\input{tables/budgets}
+\end{table}
+
+\subsection{Separating library quality from the benefit of averaging}
+\label{app:headlines}
+For each dataset, the best library reference is the smallest partition averaged
+error among M1 to M9. The best additional baseline is the corresponding minimum
+among available B1 to B11 results. These are retrospective comparisons using
+evaluation answers, not rules for deploying a model. They differ from the
+partition specific hindsight control in the original mechanism analysis. All
+comparisons below use the same 21 PDE datasets, with complete B1 to B11 coverage.
+Table~\ref{tab:paperbaselines} additionally includes ERA5 in its dataset ratios
+and Elo ranking.
+
+\begin{table}[h!]
+\centering\small
+\caption{The two stages of the empirical comparison. Wins and losses require a
+relative difference greater than 1\%. Ratios are geometric means. The references
+called best use evaluation answers only for this retrospective analysis.}
+\input{tables/headline_comparisons}
+\end{table}
+
+\subsection{Regularized mixture controls}
+The supplementary stability experiment tests whether regularizing fixed
+weights helps when fitting examples are scarce. It uses the original 17 PDE
+dataset subset and the additional Heat I inputs. These are supplementary
+controls, separate from the three main rules. Both variants
+use the same counted fitting budgets. Shrinkage fits the mixture using
+$C_\alpha=\alpha\widehat C+(1-\alpha)\operatorname{diag}(\widehat C)$.
+Here $\alpha\in[0,1]$ controls how much of the estimated error interaction is
+retained. The operator $\operatorname{diag}$ keeps the diagonal and zeros all
+other entries, and $C_\alpha$ replaces $\widehat C$ in the mixture objective.
+Thus $\alpha=0$ gives the inverse error mixture and $\alpha=1$ gives the
+fitted mixture. Leave one out fitting error selects $\alpha$ from
+$\{0,0.25,0.5,0.75,1\}$, and the mixture is refitted on all $K$ fields at the selected value.
+This is the LOO shrinkage control. The ridge variant instead minimizes
+$w^\top\widehat Cw+\eta s\lVert w-w_{\rm inverse}\rVert_2^2$ on the simplex,
+where $s=\max(\min_m\widehat C_{mm},10^{-30})$ and leave one out error selects
+$\eta$ from $\{10,1,0.1,0.01,0\}$.
+Here $w_{\rm inverse}=w^{\rm inv}$ is the inverse error weight vector, $\eta$ controls the
+penalty strength, and $s$ scales it relative to the best individual squared
+fitting error. The penalty discourages large departures from inverse weights.
+The additional Heat I comparison includes LOO shrinkage under the same fitting
+budget, with its errors retained in the numerical supplement.
+Such regularization does not supply independent training replicates.
+
+\input{sections/coarse_refresh}
+
+\input{sections/review_analysis}
+
+\section{ERA5 evaluation}
+\label{app:climateprotocol}
+ERA5 contributes the climate dataset \citep{hersbach2020,niu2024}.
+Its reported mixture combines nine models trained on inputs disjoint from
+fitting and evaluation, with separate fine only FNO and training mean
+controls.
+ERA5 uses the same nine model library as the PDE experiments, but its climate
+results are reported separately from the PDE aggregates. The two correctors
+use 49 fine cases for fitting and six for internal validation. Each receives
+four coarse predictions per case, with training input identities excluded from
+the coarse models producing their features. Observed coarse solutions at the
+fine query inputs are not required.
+
+\subsection{ERA5 results}
+\label{app:era5}
+\begin{table}[t]
+\centering\small
+\caption{\textbf{ERA5 favors the simple mixture.} Mean relative $L^2$ errors
+in percent on seven evaluation cases. Three fitting selections share the same
+models trained with a single seed and evaluation inputs. $K=10$ repeats the same ten case pool.}
+\label{tab:era5}\input{tables/era5_main}
+\end{table}
+The target working grid is $128\times256$, compared with the native $721\times1440$
+grid. Figure~\ref{fig:overview} displays the ensemble output on the native fine
+grid using bilinear interpolation from the working grid. Its fields share one
+color scale. The coarse thumbnail is smoothed for illustration, without
+changing the training fields or predictions used to compute errors.
+The nine evaluated models and separate controls are reported in
+Table~\ref{tab:era5experts}. All were retrained on the input disjoint split within ERA5, using a single training seed.
+The training mean field is a strong reference: it matches the selected POD GP's error
+to displayed precision and outperforms each neural model. The POD GP output is
+identical across all 17 fitting/evaluation inputs. Thus its score alone does not
+show that it learned a useful response to the climate drivers.
+
+\begin{table}[h!]
+\centering\small
+\caption{\textbf{All ERA5 models and controls.} Errors are mean relative $L^2$
+percentages over the same seven evaluation cases. The separate fine only FNO and
+training mean controls are not additional members of the nine model mixture.}
+\label{tab:era5experts}\input{tables/era5_experts}
+\end{table}
+
+Three fixed fitting subsets are used. At $K=5$ these select different subsets
+of the same ten case pool. At $K=10$ they reuse all ten cases. All fits share the same
+seven evaluation inputs and trained models, so the three reported selections are
+not independent training replicates. The inverse error mixture has lower
+evaluation error than the fitted mixture at both budgets (Table~\ref{tab:era5}).
+
+Figure~\ref{fig:era5cases} shows the case level changes from the training mean field.
+The inverse error mixture improves six cases and the fitted mixture improves five.
+Neither rule improves every case. We report these observations without
+significance claims from seven shared evaluation inputs. Source and prediction
+hashes were checked for all ten model and control archives. Saved weight hashes
+and per case error files reproduce the reported model and mixture errors. Weights were fixed before evaluation answers were opened by the
+scoring stage.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.88\linewidth]{figures/era5_case_errors.pdf}
+\caption{\textbf{ERA5 gains vary across the seven evaluation cases.} Each point is the
+change in relative $L^2$ error from the training mean field, in percentage points,
+averaged over the three $K=5$ fitting selections. Negative values favor the
+mixture. Case numbers identify archive evaluation rows, not calendar dates.}
+\label{fig:era5cases}
+\end{figure}
+
+\subsection{Label and computation accounting}
+The fine data cost is $N_H^{\rm base}+K$, plus any additional HF labels used for
+model tuning. Final evaluation fields are excluded from model fitting and
+reported separately. Training cost includes every candidate and out of fold
+member. Deployment cost includes every active model and shared coarse stage.
+A small active ensemble does not remove the cost of candidates already trained
+or evaluated during fitting. The available comparisons do not equalize
+these costs, and repeated fitting partitions do not estimate variation
+across independent training seeds.
+
+\subsection{Scope of the climate prediction task}
+The climate inputs describe the supplied simulation drivers. Archive row order
+does not establish calendar years or a forecast origin. The evaluation measures
+relative error on the registered working grid, without area weighting.
+It therefore tests the field emulation pipeline on these inputs and targets.
+Broader claims about climate forecasting or policy use would require verified
+time coordinates, absolute units, and an application specific evaluation.
+
+\section{Relation to the closest prior systems}
+\label{app:prior}
+\begin{table}[h!]
+\centering\small\setlength{\tabcolsep}{3pt}
+\caption{\textbf{How the study relates to existing systems.}
+The table compares questions and problem formulations, not measured performance.
+These systems were not all run on the same field prediction tasks.}
+\begin{tabular}{p{0.22\linewidth}p{0.32\linewidth}p{0.38\linewidth}}
+\toprule
+Predecessor & Established contribution & Scope of the present investigation \\
+\midrule
+Engineering surrogate ensembles \citep{acar2009,viana2009} & Optimize validation based mixtures and compare selection with averaging. & Specified neural field library with several fidelity strategies and counted additional fitting examples. \\
+Functional output benchmark \citep{brunel2025} & A unified implementation and comparison of multifidelity field emulators. & Heterogeneous neural candidates and ensemble fitting from completed field predictions. \\
+Stacking / AutoGluon \citep{wolpert1992,erickson2020} & Library combination and automatic ensemble construction. & Whole field loss and a fixed portfolio of LF use mechanisms. \\
+EL MFS / AQBMF \citep{wang2024elmfs,lee2026aqbmf} & Adaptive LF fusion and MF strategy selection. & Heterogeneous field architectures under parameter only deployment. \\
+MAESTRO \citep{kim2026maestro} & Multiple LF/discrepancy families with screening and LOOCV selection. & Direct target field models plus correction and fine only alternatives. \\
+LANE SI \citep{borisova2024} & Learned combinations of neural and climatological spatial forecasts. & Supplied multifidelity simulations and parametric emulation across problems. \\
+HyperNOs \citep{ghiotto2025} & Automated operator training and hyperparameter search. & Fitting based selection among different fidelity use strategies. \\
+MFRNP / MF DeepONet \citep{niu2024,howard2023} & Multifidelity field architectures and scientific applications. & A common portfolio selection procedure built from several candidate families. \\
+\bottomrule
+\end{tabular}
+\end{table}
+The closest predecessors establish model weighting, automated selection, and
+multifidelity field emulation. The present question is how these components
+behave together when the candidate models use coarse data in different ways.
+The experiments evaluate a common parameter input interface and a counted
+fitting budget. Their contribution is evidence about that integrated
+workflow, while a direct systems comparison would require matched training,
+tuning, and information budgets.
+
+\input{sections/analysis_detail}

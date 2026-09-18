@@ -1,0 +1,115 @@
+{
+  "dataset": "era5",
+  "seed": 71,
+  "models": [
+    "mf_fno_transfer_film",
+    "mf_fno_allpairs",
+    "convnext_unet_film",
+    "fno_fire_distcond",
+    "wno_transfer_film",
+    "mf_deeponet",
+    "st_hf_pod_gp",
+    "uqcorr_transolver_pred",
+    "uqcorr_convnext_pred"
+  ],
+  "roles": {
+    "dataset": "era5",
+    "seed": 71,
+    "calibration_pool": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+    ],
+    "evaluation": [
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16
+    ],
+    "budgets": {
+      "5": [
+        0,
+        1,
+        5,
+        8,
+        9
+      ],
+      "10": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9
+      ]
+    },
+    "input_hashes": [
+      "2ac3630f7cd8e6afcf8262740d3fb7ab4c62242135c41becab0a1db512ad469b",
+      "c576dc5da816b7259c5eab5eb4e4a0fb59bbdb410b2ee22914a7079727c44cf4",
+      "aea746f0fcb16d537d23b4a99f198af41e5325f2da8fdb47a7cc535ae2609ce3",
+      "00c3dc88168d6f71e28b7501af1dcdc5aff05ee9f3455f42bc5241f85b889a5e",
+      "71a6f7af8d0efff05a7a724b3ce259c76974e164d219597daf614cb832c95b7b",
+      "6ad1cc42f4e6386d9ffccb2bb3b1202f93c8816c3d9ed821e5d047a69ec6460f",
+      "f7999139becbcc14d01146ff7a064cc3b2ace625db0840b0283d2d9007879147",
+      "b2a7928fe4c2fbb565a044deec4808ac9cb4a9f2e0ef585a0a08cc4fa16299fd",
+      "32404464533426f5ddf356630003a5e1cd44b74ca0678cf9b029b5d82ab09712",
+      "b494367537f16d6b4c2f6ddd17a4f1346c6be1c5565e839747bcf1b970e0875e",
+      "6fe975f6e516e9945f3071627d35354de75974d50612a781717570d92c400df2",
+      "6f3036fad8255ed6cdfe0693bcad274c4eeb6810ad5c2e6f897d1073dbc394fb",
+      "ad0c76c1ab9eeef0e94283a8e63be534b082d91b5cc13fbe42886897419e22da",
+      "dfe9e6351d0ca87d468201286e79d008de90f8e27eb83b325dfa9020d40d76c3",
+      "5394de2cad7c7c9262fd2c6a80287f0cbfd936d6aa924506dc506e2909ceabfe",
+      "ff1acabb6e59d68d7a84aa5083d43f71bdd895d93766b0c9982ada6b6e399229",
+      "d1cda27b5a75923bfb790ad051e4702bf923dada8524864a61918de55d4f8e49"
+    ],
+    "calibration_sha256": "1308a1ece2306f0672381e58ca6137634f7036e6ad60a6b3ae6ad296cbebfadb",
+    "evaluation_sha256": "6366b9731ff5e9ed9c98d4768e3f9c2b662f666159b17f9178fb7ddff8cdea7c"
+  },
+  "selection": {
+    "5": {
+      "chosen": "full",
+      "leave_one_out_scores": {
+        "selected_single": 0.05362430131111293,
+        "inverse_mse": 0.05123507022264112,
+        "full": 0.04794292072150005
+      }
+    },
+    "10": {
+      "chosen": "full",
+      "leave_one_out_scores": {
+        "selected_single": 0.05470918918857233,
+        "inverse_mse": 0.0519131755328467,
+        "full": 0.048909516862368184
+      }
+    }
+  },
+  "weights_sha256": "661dac969b669617fc6442361c7fc53763b7741fb22a004f6239ec2d14cb32d8",
+  "source_manifest_sha256": "2721959e5d6bc2a7440c1849c9e58eef5e3ba114cd554bfe99951b276f1dcb12",
+  "final_answers_loaded": false,
+  "prediction_sha256": {
+    "mf_fno_transfer_film": "fe24ccd8e8cb1033778b615e9aa72617b68421a5515fae6bf1b83fc16c149a23",
+    "mf_fno_allpairs": "70bd2355690a293ef716f2b641c39838cc359df26934942110467f8ff6efbba1",
+    "convnext_unet_film": "99235a66f2ed9e438d253c3a800047d0e3bb9f10b337b4bf40e69bfb213c44f7",
+    "fno_fire_distcond": "1ac0207a322a7f1f388156485992bf16f17fa57291c82997ffd2e17be26e5f46",
+    "wno_transfer_film": "daca95aabac9c323bbd6cbc608fa38f8f69c543f45015ac3601bb690cb63a617",
+    "mf_deeponet": "672786b6d6e64271eea23bfdfd5642d0c567251659cdee84204f92147496de3d",
+    "st_hf_pod_gp": "8f6fd070f03fa36084c1e624a732d15218e3c1c61c72135bd7128c99bc9c7444",
+    "uqcorr_transolver_pred": "3a257e19cd08c7c1aa6e5fa748f58f213e7ee2d945d83e20499cf43b55df9729",
+    "uqcorr_convnext_pred": "9805a5c33adaa8bfae82341e59a78f876e729f10de974ba224684f42fc0ce9a2",
+    "fno_hf_only_control": "68cca5253990e8524c14da0e5dd165462de45eddfd445af8780f0a84e4bc410d"
+  }
+}

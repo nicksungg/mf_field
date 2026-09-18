@@ -1,0 +1,497 @@
+{
+  "version": 2,
+  "date": "2026-09-13",
+  "datasets": [
+    "darcy_generated",
+    "sharp__euler",
+    "heat_generated",
+    "poisson_generated",
+    "ext__cahn_hilliard_2d",
+    "ext__eikonal_2d",
+    "ext__helmholtz_2d",
+    "ext__pressure_poisson_poiseuille",
+    "ext__rayleigh_benard_2d",
+    "ext__wave_2d",
+    "fluid",
+    "heat_local",
+    "lid_driven_cavity_generated",
+    "lid_driven_cavity_v2",
+    "poisson_generated_v2",
+    "poisson_local",
+    "sharp__burgers_2d",
+    "sharp__helmholtz_2d",
+    "sharp__porous_medium_2d",
+    "sharp__shallow_water_2d"
+  ],
+  "pools": {
+    "seven": [
+      "mf_fno_transfer_film",
+      "mf_fno_allpairs",
+      "convnext_unet_film",
+      "fno_fire_distcond",
+      "wno_transfer_film",
+      "mf_deeponet",
+      "st_hf_pod_gp"
+    ],
+    "nine": [
+      "mf_fno_transfer_film",
+      "mf_fno_allpairs",
+      "convnext_unet_film",
+      "fno_fire_distcond",
+      "wno_transfer_film",
+      "mf_deeponet",
+      "st_hf_pod_gp",
+      "uqcorr_transolver_pred",
+      "uqcorr_convnext_pred"
+    ]
+  },
+  "seeds": [
+    71,
+    172,
+    273
+  ],
+  "steps": 400,
+  "penalties": [
+    0.0,
+    0.01,
+    0.1
+  ],
+  "protocol": "cases",
+  "variants": [
+    "current",
+    "input",
+    "local",
+    "input_local"
+  ],
+  "remote_original_name": "fieldgate_20260912",
+  "remote_matched_name": "fieldgate_matched_20260912",
+  "corrector_sources": {
+    "darcy_generated": {
+      "test_file": "/archive/mf_field/experiments/st_bench/data/core/darcy_generated/test_l3.npz",
+      "coarse_test_file": "/archive/mf_field/experiments/st_bench/data/core/darcy_generated/test_l2.npz",
+      "training_files": [
+        "/archive/mf_field/experiments/st_bench/data/core/darcy_generated/train_l1.npz",
+        "/archive/mf_field/experiments/st_bench/data/core/darcy_generated/train_l2.npz",
+        "/archive/mf_field/experiments/st_bench/data/core/darcy_generated/train_l3.npz"
+      ],
+      "experts": {
+        "uqcorr_transolver_pred": {
+          "backbone": "transolver",
+          "npz": "/archive/mf_field/experiments/uqcorr/preds_corr/transolver-pred__darcy_generated__L2__s42.npz",
+          "json": "/archive/mf_field/experiments/uqcorr/raw_corr/transolver-pred__darcy_generated__L2__s42.json"
+        },
+        "uqcorr_convnext_pred": {
+          "backbone": "convnext",
+          "npz": "/archive/mf_field/experiments/uqcorr/preds_corr/convnext-pred__darcy_generated__L2__s42.npz",
+          "json": "/archive/mf_field/experiments/uqcorr/raw_corr/convnext-pred__darcy_generated__L2__s42.json"
+        }
+      }
+    },
+    "sharp__euler": {
+      "test_file": "/archive/mf_field/experiments/st_bench/data/sharp/euler/test_l3.npz",
+      "coarse_test_file": "/archive/mf_field/experiments/st_bench/data/sharp/euler/test_l2.npz",
+      "training_files": [
+        "/archive/mf_field/experiments/st_bench/data/sharp/euler/train_l1.npz",
+        "/archive/mf_field/experiments/st_bench/data/sharp/euler/train_l2.npz",
+        "/archive/mf_field/experiments/st_bench/data/sharp/euler/train_l3.npz"
+      ],
+      "experts": {
+        "uqcorr_transolver_pred": {
+          "backbone": "transolver",
+          "npz": "/archive/mf_field/experiments/uqcorr/preds_corr/transolver-pred__sharp__euler__L2__s42.npz",
+          "json": "/archive/mf_field/experiments/uqcorr/raw_corr/transolver-pred__sharp__euler__L2__s42.json"
+        },
+        "uqcorr_convnext_pred": {
+          "backbone": "convnext",
+          "npz": "/archive/mf_field/experiments/uqcorr/preds_corr/convnext-pred__sharp__euler__L2__s42.npz",
+          "json": "/archive/mf_field/experiments/uqcorr/raw_corr/convnext-pred__sharp__euler__L2__s42.json"
+        }
+      }
+    },
+    "heat_generated": {
+      "test_file": "/archive/mf_field/experiments/st_bench/data/core/heat_generated/test_l3.npz",
+      "coarse_test_file": "/archive/mf_field/experiments/st_bench/data/core/heat_generated/test_l2.npz",
+      "training_files": [
+        "/archive/mf_field/experiments/st_bench/data/core/heat_generated/train_l1.npz",
+        "/archive/mf_field/experiments/st_bench/data/core/heat_generated/train_l2.npz",
+        "/archive/mf_field/experiments/st_bench/data/core/heat_generated/train_l3.npz"
+      ],
+      "experts": {
+        "uqcorr_transolver_pred": {
+          "backbone": "transolver",
+          "npz": "/archive/mf_field/experiments/uqcorr/preds_corr/transolver-pred__heat_generated__L2__s42.npz",
+          "json": "/archive/mf_field/experiments/uqcorr/raw_corr/transolver-pred__heat_generated__L2__s42.json"
+        },
+        "uqcorr_convnext_pred": {
+          "backbone": "convnext",
+          "npz": "/archive/mf_field/experiments/uqcorr/preds_corr/convnext-pred__heat_generated__L2__s42.npz",
+          "json": "/archive/mf_field/experiments/uqcorr/raw_corr/convnext-pred__heat_generated__L2__s42.json"
+        }
+      }
+    },
+    "poisson_generated": {
+      "test_file": "/archive/mf_field/experiments/st_bench/data/core/poisson_generated/test_l3.npz",
+      "coarse_test_file": "/archive/mf_field/experiments/st_bench/data/core/poisson_generated/test_l2.npz",
+      "training_files": [
+        "/archive/mf_field/experiments/st_bench/data/core/poisson_generated/train_l1.npz",
+        "/archive/mf_field/experiments/st_bench/data/core/poisson_generated/train_l2.npz",
+        "/archive/mf_field/experiments/st_bench/data/core/poisson_generated/train_l3.npz"
+      ],
+      "experts": {
+        "uqcorr_transolver_pred": {
+          "backbone": "transolver",
+          "npz": "/archive/mf_field/experiments/uqcorr/preds_corr/transolver-pred__poisson_generated__L2__s42.npz",
+          "json": "/archive/mf_field/experiments/uqcorr/raw_corr/transolver-pred__poisson_generated__L2__s42.json"
+        },
+        "uqcorr_convnext_pred": {
+          "backbone": "convnext",
+          "npz": "/archive/mf_field/experiments/uqcorr/preds_corr/convnext-pred__poisson_generated__L2__s42.npz",
+          "json": "/archive/mf_field/experiments/uqcorr/raw_corr/convnext-pred__poisson_generated__L2__s42.json"
+        }
+      }
+    },
+    "ext__cahn_hilliard_2d": {
+      "test_file": "/archive/mf_field/experiments/st_bench/data/ext/cahn_hilliard_2d/test_l2.npz",
+      "coarse_test_file": "/archive/mf_field/experiments/st_bench/data/ext/cahn_hilliard_2d/test_l1.npz",
+      "training_files": [
+        "/archive/mf_field/experiments/st_bench/data/ext/cahn_hilliard_2d/train_l1.npz",
+        "/archive/mf_field/experiments/st_bench/data/ext/cahn_hilliard_2d/train_l2.npz"
+      ],
+      "experts": {
+        "uqcorr_transolver_pred": {
+          "backbone": "transolver",
+          "npz": "/archive/mf_field/experiments/uqcorr/preds_corr/transolver-pred__ext__cahn_hilliard_2d__L1__s42.npz",
+          "json": "/archive/mf_field/experiments/uqcorr/raw_corr/transolver-pred__ext__cahn_hilliard_2d__L1__s42.json"
+        },
+        "uqcorr_convnext_pred": {
+          "backbone": "convnext",
+          "npz": "/archive/mf_field/experiments/uqcorr/preds_corr/convnext-pred__ext__cahn_hilliard_2d__L1__s42.npz",
+          "json": "/archive/mf_field/experiments/uqcorr/raw_corr/convnext-pred__ext__cahn_hilliard_2d__L1__s42.json"
+        }
+      }
+    },
+    "ext__eikonal_2d": {
+      "test_file": "/archive/mf_field/experiments/st_bench/data/ext/eikonal_2d/test_l2.npz",
+      "coarse_test_file": "/archive/mf_field/experiments/st_bench/data/ext/eikonal_2d/test_l1.npz",
+      "training_files": [
+        "/archive/mf_field/experiments/st_bench/data/ext/eikonal_2d/train_l1.npz",
+        "/archive/mf_field/experiments/st_bench/data/ext/eikonal_2d/train_l2.npz"
+      ],
+      "experts": {
+        "uqcorr_transolver_pred": {
+          "backbone": "transolver",
+          "npz": "/archive/mf_field/experiments/uqcorr/preds_corr/transolver-pred__ext__eikonal_2d__L1__s42.npz",
+          "json": "/archive/mf_field/experiments/uqcorr/raw_corr/transolver-pred__ext__eikonal_2d__L1__s42.json"
+        },
+        "uqcorr_convnext_pred": {
+          "backbone": "convnext",
+          "npz": "/archive/mf_field/experiments/uqcorr/preds_corr/convnext-pred__ext__eikonal_2d__L1__s42.npz",
+          "json": "/archive/mf_field/experiments/uqcorr/raw_corr/convnext-pred__ext__eikonal_2d__L1__s42.json"
+        }
+      }
+    },
+    "ext__helmholtz_2d": {
+      "test_file": "/archive/mf_field/experiments/st_bench/data/ext/helmholtz_2d/test_l2.npz",
+      "coarse_test_file": "/archive/mf_field/experiments/st_bench/data/ext/helmholtz_2d/test_l1.npz",
+      "training_files": [
+        "/archive/mf_field/experiments/st_bench/data/ext/helmholtz_2d/train_l1.npz",
+        "/archive/mf_field/experiments/st_bench/data/ext/helmholtz_2d/train_l2.npz"
+      ],
+      "experts": {
+        "uqcorr_transolver_pred": {
+          "backbone": "transolver",
+          "npz": "/archive/mf_field/experiments/uqcorr/preds_corr/transolver-pred__ext__helmholtz_2d__L1__s42.npz",
+          "json": "/archive/mf_field/experiments/uqcorr/raw_corr/transolver-pred__ext__helmholtz_2d__L1__s42.json"
+        },
+        "uqcorr_convnext_pred": {
+          "backbone": "convnext",
+          "npz": "/archive/mf_field/experiments/uqcorr/preds_corr/convnext-pred__ext__helmholtz_2d__L1__s42.npz",
+          "json": "/archive/mf_field/experiments/uqcorr/raw_corr/convnext-pred__ext__helmholtz_2d__L1__s42.json"
+        }
+      }
+    },
+    "ext__pressure_poisson_poiseuille": {
+      "test_file": "/archive/mf_field/experiments/st_bench/data/ext/pressure_poisson_poiseuille/test_l4.npz",
+      "coarse_test_file": "/archive/mf_field/experiments/st_bench/data/ext/pressure_poisson_poiseuille/test_l3.npz",
+      "training_files": [
+        "/archive/mf_field/experiments/st_bench/data/ext/pressure_poisson_poiseuille/train_l1.npz",
+        "/archive/mf_field/experiments/st_bench/data/ext/pressure_poisson_poiseuille/train_l2.npz",
+        "/archive/mf_field/experiments/st_bench/data/ext/pressure_poisson_poiseuille/train_l3.npz",
+        "/archive/mf_field/experiments/st_bench/data/ext/pressure_poisson_poiseuille/train_l4.npz"
+      ],
+      "experts": {
+        "uqcorr_transolver_pred": {
+          "backbone": "transolver",
+          "npz": "/archive/mf_field/experiments/uqcorr/preds_corr/transolver-pred__ext__pressure_poisson_poiseuille__L3__s42.npz",
+          "json": "/archive/mf_field/experiments/uqcorr/raw_corr/transolver-pred__ext__pressure_poisson_poiseuille__L3__s42.json"
+        },
+        "uqcorr_convnext_pred": {
+          "backbone": "convnext",
+          "npz": "/archive/mf_field/experiments/uqcorr/preds_corr/convnext-pred__ext__pressure_poisson_poiseuille__L3__s42.npz",
+          "json": "/archive/mf_field/experiments/uqcorr/raw_corr/convnext-pred__ext__pressure_poisson_poiseuille__L3__s42.json"
+        }
+      }
+    },
+    "ext__rayleigh_benard_2d": {
+      "test_file": "/archive/mf_field/experiments/st_bench/data/ext/rayleigh_benard_2d/test_l2.npz",
+      "coarse_test_file": "/archive/mf_field/experiments/st_bench/data/ext/rayleigh_benard_2d/test_l1.npz",
+      "training_files": [
+        "/archive/mf_field/experiments/st_bench/data/ext/rayleigh_benard_2d/train_l1.npz",
+        "/archive/mf_field/experiments/st_bench/data/ext/rayleigh_benard_2d/train_l2.npz"
+      ],
+      "experts": {
+        "uqcorr_transolver_pred": {
+          "backbone": "transolver",
+          "npz": "/archive/mf_field/experiments/uqcorr/preds_corr/transolver-pred__ext__rayleigh_benard_2d__L1__s42.npz",
+          "json": "/archive/mf_field/experiments/uqcorr/raw_corr/transolver-pred__ext__rayleigh_benard_2d__L1__s42.json"
+        },
+        "uqcorr_convnext_pred": {
+          "backbone": "convnext",
+          "npz": "/archive/mf_field/experiments/uqcorr/preds_corr/convnext-pred__ext__rayleigh_benard_2d__L1__s42.npz",
+          "json": "/archive/mf_field/experiments/uqcorr/raw_corr/convnext-pred__ext__rayleigh_benard_2d__L1__s42.json"
+        }
+      }
+    },
+    "ext__wave_2d": {
+      "test_file": "/archive/mf_field/experiments/st_bench/data/ext/wave_2d/test_l2.npz",
+      "coarse_test_file": "/archive/mf_field/experiments/st_bench/data/ext/wave_2d/test_l1.npz",
+      "training_files": [
+        "/archive/mf_field/experiments/st_bench/data/ext/wave_2d/train_l1.npz",
+        "/archive/mf_field/experiments/st_bench/data/ext/wave_2d/train_l2.npz"
+      ],
+      "experts": {
+        "uqcorr_transolver_pred": {
+          "backbone": "transolver",
+          "npz": "/archive/mf_field/experiments/uqcorr/preds_corr/transolver-pred__ext__wave_2d__L1__s42.npz",
+          "json": "/archive/mf_field/experiments/uqcorr/raw_corr/transolver-pred__ext__wave_2d__L1__s42.json"
+        },
+        "uqcorr_convnext_pred": {
+          "backbone": "convnext",
+          "npz": "/archive/mf_field/experiments/uqcorr/preds_corr/convnext-pred__ext__wave_2d__L1__s42.npz",
+          "json": "/archive/mf_field/experiments/uqcorr/raw_corr/convnext-pred__ext__wave_2d__L1__s42.json"
+        }
+      }
+    },
+    "fluid": {
+      "test_file": "/archive/mf_field/experiments/st_bench/data/core/fluid/test_l2.npz",
+      "coarse_test_file": "/archive/mf_field/experiments/st_bench/data/core/fluid/test_l1.npz",
+      "training_files": [
+        "/archive/mf_field/experiments/st_bench/data/core/fluid/train_l1.npz",
+        "/archive/mf_field/experiments/st_bench/data/core/fluid/train_l2.npz"
+      ],
+      "experts": {
+        "uqcorr_transolver_pred": {
+          "backbone": "transolver",
+          "npz": "/archive/mf_field/experiments/uqcorr/preds_corr/transolver-pred__fluid__L1__s42.npz",
+          "json": "/archive/mf_field/experiments/uqcorr/raw_corr/transolver-pred__fluid__L1__s42.json"
+        },
+        "uqcorr_convnext_pred": {
+          "backbone": "convnext",
+          "npz": "/archive/mf_field/experiments/uqcorr/preds_corr/convnext-pred__fluid__L1__s42.npz",
+          "json": "/archive/mf_field/experiments/uqcorr/raw_corr/convnext-pred__fluid__L1__s42.json"
+        }
+      }
+    },
+    "heat_local": {
+      "test_file": "/archive/mf_field/experiments/st_bench/data/core/heat_local/test_l5.npz",
+      "coarse_test_file": "/archive/mf_field/experiments/st_bench/data/core/heat_local/test_l4.npz",
+      "training_files": [
+        "/archive/mf_field/experiments/st_bench/data/core/heat_local/train_l1.npz",
+        "/archive/mf_field/experiments/st_bench/data/core/heat_local/train_l2.npz",
+        "/archive/mf_field/experiments/st_bench/data/core/heat_local/train_l3.npz",
+        "/archive/mf_field/experiments/st_bench/data/core/heat_local/train_l4.npz",
+        "/archive/mf_field/experiments/st_bench/data/core/heat_local/train_l5.npz"
+      ],
+      "experts": {
+        "uqcorr_transolver_pred": {
+          "backbone": "transolver",
+          "npz": "/archive/mf_field/experiments/uqcorr/preds_corr/transolver-pred__heat_local__L4__s42.npz",
+          "json": "/archive/mf_field/experiments/uqcorr/raw_corr/transolver-pred__heat_local__L4__s42.json"
+        },
+        "uqcorr_convnext_pred": {
+          "backbone": "convnext",
+          "npz": "/archive/mf_field/experiments/uqcorr/preds_corr/convnext-pred__heat_local__L4__s42.npz",
+          "json": "/archive/mf_field/experiments/uqcorr/raw_corr/convnext-pred__heat_local__L4__s42.json"
+        }
+      }
+    },
+    "lid_driven_cavity_generated": {
+      "test_file": "/archive/mf_field/experiments/st_bench/data/core/lid_driven_cavity_generated/test_l4.npz",
+      "coarse_test_file": "/archive/mf_field/experiments/st_bench/data/core/lid_driven_cavity_generated/test_l3.npz",
+      "training_files": [
+        "/archive/mf_field/experiments/st_bench/data/core/lid_driven_cavity_generated/train_l1.npz",
+        "/archive/mf_field/experiments/st_bench/data/core/lid_driven_cavity_generated/train_l2.npz",
+        "/archive/mf_field/experiments/st_bench/data/core/lid_driven_cavity_generated/train_l3.npz",
+        "/archive/mf_field/experiments/st_bench/data/core/lid_driven_cavity_generated/train_l4.npz"
+      ],
+      "experts": {
+        "uqcorr_transolver_pred": {
+          "backbone": "transolver",
+          "npz": "/archive/mf_field/experiments/uqcorr/preds_corr/transolver-pred__lid_driven_cavity_generated__L3__s42.npz",
+          "json": "/archive/mf_field/experiments/uqcorr/raw_corr/transolver-pred__lid_driven_cavity_generated__L3__s42.json"
+        },
+        "uqcorr_convnext_pred": {
+          "backbone": "convnext",
+          "npz": "/archive/mf_field/experiments/uqcorr/preds_corr/convnext-pred__lid_driven_cavity_generated__L3__s42.npz",
+          "json": "/archive/mf_field/experiments/uqcorr/raw_corr/convnext-pred__lid_driven_cavity_generated__L3__s42.json"
+        }
+      }
+    },
+    "lid_driven_cavity_v2": {
+      "test_file": "/archive/mf_field/experiments/st_bench/data/core/lid_driven_cavity_v2/test_l4.npz",
+      "coarse_test_file": "/archive/mf_field/experiments/st_bench/data/core/lid_driven_cavity_v2/test_l3.npz",
+      "training_files": [
+        "/archive/mf_field/experiments/st_bench/data/core/lid_driven_cavity_v2/train_l1.npz",
+        "/archive/mf_field/experiments/st_bench/data/core/lid_driven_cavity_v2/train_l2.npz",
+        "/archive/mf_field/experiments/st_bench/data/core/lid_driven_cavity_v2/train_l3.npz",
+        "/archive/mf_field/experiments/st_bench/data/core/lid_driven_cavity_v2/train_l4.npz"
+      ],
+      "experts": {
+        "uqcorr_transolver_pred": {
+          "backbone": "transolver",
+          "npz": "/archive/mf_field/experiments/uqcorr/preds_corr/transolver-pred__lid_driven_cavity_v2__L3__s42.npz",
+          "json": "/archive/mf_field/experiments/uqcorr/raw_corr/transolver-pred__lid_driven_cavity_v2__L3__s42.json"
+        },
+        "uqcorr_convnext_pred": {
+          "backbone": "convnext",
+          "npz": "/archive/mf_field/experiments/uqcorr/preds_corr/convnext-pred__lid_driven_cavity_v2__L3__s42.npz",
+          "json": "/archive/mf_field/experiments/uqcorr/raw_corr/convnext-pred__lid_driven_cavity_v2__L3__s42.json"
+        }
+      }
+    },
+    "poisson_generated_v2": {
+      "test_file": "/archive/mf_field/experiments/st_bench/data/core/poisson_generated_v2/test_l3.npz",
+      "coarse_test_file": "/archive/mf_field/experiments/st_bench/data/core/poisson_generated_v2/test_l2.npz",
+      "training_files": [
+        "/archive/mf_field/experiments/st_bench/data/core/poisson_generated_v2/train_l1.npz",
+        "/archive/mf_field/experiments/st_bench/data/core/poisson_generated_v2/train_l2.npz",
+        "/archive/mf_field/experiments/st_bench/data/core/poisson_generated_v2/train_l3.npz"
+      ],
+      "experts": {
+        "uqcorr_transolver_pred": {
+          "backbone": "transolver",
+          "npz": "/archive/mf_field/experiments/uqcorr/preds_corr/transolver-pred__poisson_generated_v2__L2__s42.npz",
+          "json": "/archive/mf_field/experiments/uqcorr/raw_corr/transolver-pred__poisson_generated_v2__L2__s42.json"
+        },
+        "uqcorr_convnext_pred": {
+          "backbone": "convnext",
+          "npz": "/archive/mf_field/experiments/uqcorr/preds_corr/convnext-pred__poisson_generated_v2__L2__s42.npz",
+          "json": "/archive/mf_field/experiments/uqcorr/raw_corr/convnext-pred__poisson_generated_v2__L2__s42.json"
+        }
+      }
+    },
+    "poisson_local": {
+      "test_file": "/archive/mf_field/experiments/st_bench/data/core/poisson_local/test_l5.npz",
+      "coarse_test_file": "/archive/mf_field/experiments/st_bench/data/core/poisson_local/test_l4.npz",
+      "training_files": [
+        "/archive/mf_field/experiments/st_bench/data/core/poisson_local/train_l1.npz",
+        "/archive/mf_field/experiments/st_bench/data/core/poisson_local/train_l2.npz",
+        "/archive/mf_field/experiments/st_bench/data/core/poisson_local/train_l3.npz",
+        "/archive/mf_field/experiments/st_bench/data/core/poisson_local/train_l4.npz",
+        "/archive/mf_field/experiments/st_bench/data/core/poisson_local/train_l5.npz"
+      ],
+      "experts": {
+        "uqcorr_transolver_pred": {
+          "backbone": "transolver",
+          "npz": "/archive/mf_field/experiments/uqcorr/preds_corr/transolver-pred__poisson_local__L4__s42.npz",
+          "json": "/archive/mf_field/experiments/uqcorr/raw_corr/transolver-pred__poisson_local__L4__s42.json"
+        },
+        "uqcorr_convnext_pred": {
+          "backbone": "convnext",
+          "npz": "/archive/mf_field/experiments/uqcorr/preds_corr/convnext-pred__poisson_local__L4__s42.npz",
+          "json": "/archive/mf_field/experiments/uqcorr/raw_corr/convnext-pred__poisson_local__L4__s42.json"
+        }
+      }
+    },
+    "sharp__burgers_2d": {
+      "test_file": "/archive/mf_field/experiments/st_bench/data/sharp/burgers_2d/test_l3.npz",
+      "coarse_test_file": "/archive/mf_field/experiments/st_bench/data/sharp/burgers_2d/test_l2.npz",
+      "training_files": [
+        "/archive/mf_field/experiments/st_bench/data/sharp/burgers_2d/train_l1.npz",
+        "/archive/mf_field/experiments/st_bench/data/sharp/burgers_2d/train_l2.npz",
+        "/archive/mf_field/experiments/st_bench/data/sharp/burgers_2d/train_l3.npz"
+      ],
+      "experts": {
+        "uqcorr_transolver_pred": {
+          "backbone": "transolver",
+          "npz": "/archive/mf_field/experiments/uqcorr/preds_corr/transolver-pred__sharp__burgers_2d__L2__s42.npz",
+          "json": "/archive/mf_field/experiments/uqcorr/raw_corr/transolver-pred__sharp__burgers_2d__L2__s42.json"
+        },
+        "uqcorr_convnext_pred": {
+          "backbone": "convnext",
+          "npz": "/archive/mf_field/experiments/uqcorr/preds_corr/convnext-pred__sharp__burgers_2d__L2__s42.npz",
+          "json": "/archive/mf_field/experiments/uqcorr/raw_corr/convnext-pred__sharp__burgers_2d__L2__s42.json"
+        }
+      }
+    },
+    "sharp__helmholtz_2d": {
+      "test_file": "/archive/mf_field/experiments/st_bench/data/sharp/helmholtz_2d/test_l3.npz",
+      "coarse_test_file": "/archive/mf_field/experiments/st_bench/data/sharp/helmholtz_2d/test_l2.npz",
+      "training_files": [
+        "/archive/mf_field/experiments/st_bench/data/sharp/helmholtz_2d/train_l1.npz",
+        "/archive/mf_field/experiments/st_bench/data/sharp/helmholtz_2d/train_l2.npz",
+        "/archive/mf_field/experiments/st_bench/data/sharp/helmholtz_2d/train_l3.npz"
+      ],
+      "experts": {
+        "uqcorr_transolver_pred": {
+          "backbone": "transolver",
+          "npz": "/archive/mf_field/experiments/uqcorr/preds_corr/transolver-pred__sharp__helmholtz_2d__L2__s42.npz",
+          "json": "/archive/mf_field/experiments/uqcorr/raw_corr/transolver-pred__sharp__helmholtz_2d__L2__s42.json"
+        },
+        "uqcorr_convnext_pred": {
+          "backbone": "convnext",
+          "npz": "/archive/mf_field/experiments/uqcorr/preds_corr/convnext-pred__sharp__helmholtz_2d__L2__s42.npz",
+          "json": "/archive/mf_field/experiments/uqcorr/raw_corr/convnext-pred__sharp__helmholtz_2d__L2__s42.json"
+        }
+      }
+    },
+    "sharp__porous_medium_2d": {
+      "test_file": "/archive/mf_field/experiments/st_bench/data/sharp/porous_medium_2d/test_l3.npz",
+      "coarse_test_file": "/archive/mf_field/experiments/st_bench/data/sharp/porous_medium_2d/test_l2.npz",
+      "training_files": [
+        "/archive/mf_field/experiments/st_bench/data/sharp/porous_medium_2d/train_l1.npz",
+        "/archive/mf_field/experiments/st_bench/data/sharp/porous_medium_2d/train_l2.npz",
+        "/archive/mf_field/experiments/st_bench/data/sharp/porous_medium_2d/train_l3.npz"
+      ],
+      "experts": {
+        "uqcorr_transolver_pred": {
+          "backbone": "transolver",
+          "npz": "/archive/mf_field/experiments/uqcorr/preds_corr/transolver-pred__sharp__porous_medium_2d__L2__s42.npz",
+          "json": "/archive/mf_field/experiments/uqcorr/raw_corr/transolver-pred__sharp__porous_medium_2d__L2__s42.json"
+        },
+        "uqcorr_convnext_pred": {
+          "backbone": "convnext",
+          "npz": "/archive/mf_field/experiments/uqcorr/preds_corr/convnext-pred__sharp__porous_medium_2d__L2__s42.npz",
+          "json": "/archive/mf_field/experiments/uqcorr/raw_corr/convnext-pred__sharp__porous_medium_2d__L2__s42.json"
+        }
+      }
+    },
+    "sharp__shallow_water_2d": {
+      "test_file": "/archive/mf_field/experiments/st_bench/data/sharp/shallow_water_2d/test_l3.npz",
+      "coarse_test_file": "/archive/mf_field/experiments/st_bench/data/sharp/shallow_water_2d/test_l2.npz",
+      "training_files": [
+        "/archive/mf_field/experiments/st_bench/data/sharp/shallow_water_2d/train_l1.npz",
+        "/archive/mf_field/experiments/st_bench/data/sharp/shallow_water_2d/train_l2.npz",
+        "/archive/mf_field/experiments/st_bench/data/sharp/shallow_water_2d/train_l3.npz"
+      ],
+      "experts": {
+        "uqcorr_transolver_pred": {
+          "backbone": "transolver",
+          "npz": "/archive/mf_field/experiments/uqcorr/preds_corr/transolver-pred__sharp__shallow_water_2d__L2__s42.npz",
+          "json": "/archive/mf_field/experiments/uqcorr/raw_corr/transolver-pred__sharp__shallow_water_2d__L2__s42.json"
+        },
+        "uqcorr_convnext_pred": {
+          "backbone": "convnext",
+          "npz": "/archive/mf_field/experiments/uqcorr/preds_corr/convnext-pred__sharp__shallow_water_2d__L2__s42.npz",
+          "json": "/archive/mf_field/experiments/uqcorr/raw_corr/convnext-pred__sharp__shallow_water_2d__L2__s42.json"
+        }
+      }
+    }
+  },
+  "node_exclusions": [
+    "node2900",
+    "node4200"
+  ],
+  "primary_comparator": "calibration_fixed",
+  "notes": "User requested adding Transolver and ConvNeXt; use solver-free predicted-coarse correctors and matched seven/nine pools before any scientific fit. Historical evaluation reuse."
+}

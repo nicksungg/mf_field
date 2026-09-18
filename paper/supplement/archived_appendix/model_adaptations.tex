@@ -1,0 +1,237 @@
+\subsection{Model sources, adaptations, and rationale}
+\label{app:adaptations}
+Each library member combines a field representation with a training and inference
+procedure. We describe M1 to M9 individually below, identifying the published
+components retained, the changes made for parameter to field prediction, and
+the reason for including each model. Several members combine ideas from more
+than one paper. The resulting library is an integration of adapted models,
+not nine independent reproductions or nine newly proposed architectures.
+All accept parameters alone at deployment. Appendix~\ref{app:experts} gives
+their training budgets and data use. The rationales below motivate the library's
+composition, while the experiments assess its predictions. They do not isolate
+the effect of every architectural change.
+
+\paragraph{M1: FiLM FNO transfer.}
+The starting components are FNO's learned Fourier mixing \citep{li2021fno},
+FiLM's featurewise affine conditioning \citep{perez2018}, and the LF pretraining
+followed by HF finetuning strategy of \citet{lyu2023}. We retain spectral
+convolutions with local residual paths and adapt the input interface to a
+simulation parameter vector. The spatial input contains coordinates only.
+At each block, a parameter network generates a scale and shift applied after
+group normalization, so the parameters influence features throughout the
+network. This differs from our parameter concatenation FNO references, which
+supply parameters as constant spatial channels at the input. The same weights
+are first trained on LF fields and then finetuned on HF fields. This combination
+tests whether repeated parameter conditioning and a coarse initialization
+provide an effective way to generate globally coupled fields.
+
+\paragraph{M2: all pairs FNO.}
+M2 retains M1's FNO and FiLM components \citep{li2021fno,perez2018} and adapts
+the idea of pair enumeration from Poseidon \citep{herde2024}. Poseidon uses
+pairs of states for temporal operator learning. Here the pairs index source
+and target fidelities. We append their normalized labels to the parameter
+vector, pool the corresponding target fields on a common working grid, and
+train one conditional FNO before HF finetuning. The source label specifies a
+training pair, but no source field enters the network. Poseidon's architecture,
+pretrained weights, and temporal operator are not used. For ERA5, exact input
+joins retain each target field with its own parameters. The purpose is to let
+one model share information across fidelity tasks before specializing to the
+fine field. Pair enumeration also repeats targets and changes optimization
+cost, so its effect cannot be attributed to fidelity conditioning alone.
+
+\paragraph{M3: ConvNeXt transfer.}
+ConvNeXt supplies the depthwise spatial convolution, channel expansion, and
+residual block structure \citep{liu2022convnext}. We place these blocks in an
+U shaped encoder and decoder with skip connections \citep{ronneberger2015} and
+a dense field output, adapting the image classification backbone to field
+generation. The model starts from
+coordinates and replaces the usual block normalization with group normalization
+and FiLM conditioning on the simulation parameters \citep{perez2018}. Three
+downsampling stages and a bottleneck process the field at several resolutions,
+with corresponding decoder stages restoring the target grid. LF pretraining
+and HF finetuning follow the transfer principle of \citet{lyu2023}. The
+rationale is to provide local spatial processing alongside M1's Fourier mixing,
+while retaining the same type of parameter conditioning and transfer schedule.
+
+\paragraph{M4: distribution FNO.}
+FIRE conditions a fine correction on summaries of a coarse predictive
+distribution using tabular foundation models and in context inference
+\citep{yu2026fire}. M4 retains the distribution conditioning idea and replaces
+those models with FNOs trained on spatial fields \citep{li2021fno}. Five LF
+members predict a coarse field at the query parameters. Their pointwise mean,
+standard deviation, and 10th, 50th, and 90th percentiles become spatial input
+channels for a residual FNO, together with coordinates and broadcast parameters.
+The residual is added to the coarse mean to predict the fine field. Both stages
+are trained by gradient optimization, so this implementation does not retain
+FIRE's inference without model retraining. The ensemble summaries are features
+of prediction variability, not a guarantee of accurate uncertainty estimates. The
+rationale is to expose coarse disagreement as well as the mean to the
+correction model. This recipe has no out of fold construction and is distinct
+from the coarse ensembles used by M8 and M9.
+
+\paragraph{M5: Wavelet transfer.}
+WNO motivates learning in wavelet coordinates \citep{tripura2022wno}. We
+replace M1's Fourier mixing with a custom single level db4 wavelet transform,
+while retaining its coordinate input, FiLM conditioning \citep{perez2018},
+local residual paths, and LF to HF transfer schedule \citep{lyu2023}. Within
+each wavelet subband, learned weights mix channels at coefficient positions
+inside a capped leading block. Other positions pass through unchanged before
+the inverse transform. These indices describe positions within a subband,
+not a Fourier frequency cutoff. The implementation also handles rectangular
+grids, odd grid sizes, and one dimensional grids. It is a custom wavelet
+representation rather than an exact reproduction of the published WNO.
+Its inclusion tests whether spatially localized wavelet features provide useful
+predictions alongside the spectral and convolutional transfer models.
+
+\paragraph{M6: retrieved field DeepONet.}
+DeepONet supplies the branch and trunk representation \citep{lu2021}, while
+the multifidelity use of a coarse prediction as a reference is motivated by
+\citet{lu2022mf}. We use a Cartesian product DeepONet whose branch receives
+the parameters concatenated with a stored LF training field and whose trunk
+receives target grid coordinates. A nearest neighbour search in standardized
+parameter space selects that field. The network learns a residual relative to
+its interpolated version, which is then added back to form the fine prediction.
+Retrieval is the deployment adaptation: a new query requires parameters only
+and no new coarse solve. The rationale is to exploit a nearby physical field
+without first learning a separate coarse surrogate. If an exact LF match exists
+at a training input, retrieval supplies that match, whereas an unseen query
+uses a neighboring input. This difference in reference quality remains a
+limitation. The implemented residual model is also distinct from the composite
+multifidelity architecture of \citet{howard2023}.
+
+\paragraph{M7: POD GP.}
+Basis emulation represents a large field through a small set of coefficients
+\citep{higdon2008}. M7 retains this principle, constructing a POD basis by
+singular value decomposition of centered HF training fields. A Gaussian process
+maps parameters to each retained coefficient, and the predicted coefficients
+are projected back through the basis and added to the training mean field.
+Our implementation uses an RBF kernel with automatic relevance determination
+and shares covariance hyperparameters across coefficient outputs. It does not
+implement the full Bayesian hierarchy of the cited model. M7 is deliberately
+fine only: no coarse field enters basis construction, fitting, or inference.
+It supplies a compact alternative when the field varies mainly in a few
+directions or when learning a coarse correction is less effective than learning
+the fine coefficients directly.
+
+\paragraph{M8: Slice attention corrector.}
+Transolver motivates grouping spatial cells into learned slice tokens
+\citep{wu2024transolver}. We retain pooled spatial summaries but change the
+attention operation. Original Transolver normalizes each cell's assignments
+across slices, applies attention between slice tokens, and maps back using
+the assignments. Our pooling weights instead normalize across cells, and
+cell queries attend directly to the pooled slice tokens. The model receives
+the current field, coordinates with sinusoidal features, and FiLM conditioning
+on the parameters \citep{perez2018}. A coarse surrogate ensemble supplies its
+initial state, with out of fold predictions for training cases. A head
+initialized to zero predicts additive corrections through six damped updates
+with shared weights. Training penalizes spatial squared error and Fourier
+magnitude discrepancy at each update, plus a nonzero update when started at
+the target field. This encourages an equilibrium without guaranteeing
+contraction. The adaptation tests whether pooled global interactions can
+refine a predicted coarse field using parameters alone at deployment. Its
+attention and iterative recipe differ from the published Transolver.
+
+\paragraph{M9: ConvNeXt corrector.}
+M9 retains ConvNeXt's spatial and channel mixing blocks \citep{liu2022convnext}
+and adapts them to the same correction task as M8. It uses a custom U shaped
+encoder and decoder with skip connections \citep{ronneberger2015}, three
+downsampling stages and a bottleneck,
+and FiLM parameter conditioning \citep{perez2018}. Unlike M3, which generates
+a field from coordinates and parameters after transfer training, M9 receives
+the current coarse estimate as a spatial input and outputs an additive update.
+Its head is initialized to zero, making the initial refinement the identity.
+The coarse ensemble construction, six damped updates, shared weights, and
+spatial, spectral, and target state penalties follow the M8 recipe. The rationale
+is to offer local processing at several resolutions as an alternative to pooled
+attention when correcting the same kind of coarse prediction. This is a
+ConvNeXt based iterative corrector, not the original classification model.
+
+The additional baseline adaptations below use the same distinction between a
+source idea and a complete published method. In particular, B1, B5, and B8 omit
+central probabilistic components of co kriging, DMFAL, and IFC. Their scores
+describe the implemented references, not faithful reproductions of those
+complete methods. Common evaluation cases make the scores comparable while
+leaving architecture and resource effects coupled.
+
+\paragraph{B1, B2, and B11: classical multifidelity field references.}
+B1 applies an autoregressive discrepancy idea \citep{kennedy2000} to POD GP field
+models. It fits one scalar coupling coefficient in field space, constructs a
+separate POD GP for residuals, and combines posterior means at deployment.
+This is a plug in approximation rather than joint probabilistic co kriging.
+B2 introduces nonlinear dependence on LF coefficients \citep{perdikaris2017}.
+Its HF coefficient kernel combines input dependent coupling, an LF coefficient
+kernel, and a discrepancy kernel. It shares covariance hyperparameters across
+HF outputs and propagates marginal LF uncertainty through Monte Carlo samples.
+B11 is a cheaper affine alternative inspired by multifidelity surrogate work
+\citep{zhang2018}. One slope and one intercept are fitted jointly over HF training cases and
+pixels, using observed LF fields when paired and emulated LF fields otherwise.
+They are then applied to the LF POD GP prediction.
+It does not fit an affine mapping separately for each mode. Paired training rows
+can use observed LF fields, whereas deployment uses predicted LF fields.
+
+\paragraph{B3, B4, and B5: neural fusion references.}
+B3 uses the composite correlation idea of \citet{meng2020}. A tanh MLP maps
+parameters and coordinates to an LF value. This stage is frozen before linear
+and nonlinear HF networks are trained on the original inputs and LF prediction,
+with weight decay on the nonlinear branch. B4 follows the composite DeepONet
+idea \citep{howard2023}, predicting fixed coarse sensors with an LF DeepONet and
+feeding parameters plus sensors to linear and nonlinear HF DeepONets. The LF
+stage is frozen and the HF branches are trained jointly in a subsequent stage. B5 takes hierarchical
+latent transfer as inspiration from DMFAL \citep{li2022dmfal}. It uses two encoders
+and linear field decoders, with the second encoder receiving parameters and the
+first latent vector. Joint LF and HF squared losses replace the probabilistic
+objective. Both the variational last layer and active acquisition are omitted.
+The name latent MF network reflects these substantial departures.
+
+\paragraph{B6 and B7: alternative decoder and probabilistic models.}
+B6 uses NOMAD's nonlinear decoding principle \citep{seidman2022}. A parameter MLP
+produces a latent vector and a coordinate conditioned MLP decodes the field.
+The model is implemented independently, with multifidelity learning supplied by
+LF pretraining and HF finetuning. B7 directly imports MFRNP's upstream
+\texttt{MultiFidelityModel} \citep{niu2024}. Its adapter changes data loading,
+normalization, resizing, and training. A scalar mean and standard deviation from
+the first fidelity normalize inputs, while outputs are scaled per fidelity.
+The longest grid side is capped at 256, rectangular grids are supported, and
+bilinear antialiased resizing replaces the upstream transform. Batch size is
+limited by the smallest fidelity, with independent shuffling across fidelities.
+When HF training has at most ten examples, all rows are retained and the context
+fraction range changes from $[0.20,0.25]$ to $[0.40,0.60]$. Hidden width is 128,
+latent width is 64, and there are three hidden layers. Adam uses learning rate
+and epsilon of $10^{-3}$. HF likelihood receives weight two and LF likelihood
+weight one. Latent summaries are saved from the final training batch. These are
+protocol adaptations of an upstream model, rather than a reproduction of its
+published experiment.
+
+\paragraph{B8, B9, and B10: fidelity and transfer FNO references.}
+B8 forms latent spatial channels with an FNO and mixes them with weights predicted
+from $[\ell,\ell^2]$, the fidelity label and its square. These two features
+condition the spatial basis weights on fidelity. It uses maximum absolute scaling
+per fidelity, the nearest registered scaler for an intermediate fidelity, LF
+warm up, and joint LF and HF finetuning. IFC motivates fidelity dependent
+representation \citep{li2022ifc}, but its neural ODE and Gaussian process are
+absent. The descriptive name fidelity basis FNO makes this distinction explicit.
+B9 and B10 are two archived entries for parameter concatenation FNO transfer
+\citep{lyu2023}. In the inspected release, their model files are byte identical
+and their training scripts differ only in repository paths and reported
+identifiers. The labels FNO transfer I and II distinguish saved result entries,
+not independent baseline families. Their different saved scores remain
+unexplained by the inspected source. Both are retained to make the archived
+comparison auditable, but neither their number nor their score difference is
+evidence for architectural diversity or a reproducible recipe difference.
+For ERA5 and the four additional reaction diffusion datasets, the identical
+recipe is fitted once and its predictions are explicitly reused for B10,
+with no additional training cost.
+
+\paragraph{Relation to engineering ensemble frameworks.}
+Optimizing surrogate weights and comparing selection with averaging are
+established engineering procedures \citep{acar2009,viana2009}, while unified
+multifidelity functional output implementations already exist
+\citep{brunel2025}. The present portfolio combines transfer, retrieval,
+distribution features, POD GP prediction, and iterative correction behind one
+field prediction interface. This integration and the fitting experiments
+are the proposed empirical contribution. The archive does not include a
+complete EL MFS, AQBMF, or MAESTRO comparison
+\citep{wang2024elmfs,lee2026aqbmf,kim2026maestro}. The adapted references above
+cannot substitute for those complete workflows. Such a comparison would need
+a documented functional output representation and matched information and
+tuning budgets before it could establish a systems advantage.

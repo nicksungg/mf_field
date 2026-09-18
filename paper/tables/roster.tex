@@ -1,0 +1,28 @@
+\begin{tabular}{lrrrrrll}
+\toprule
+Dataset & $d$ & Levels & $N_{L,\min}$ & $N_H$ & Query & Work grid & Class \\
+\midrule
+Darcy & 16 & 3 & 400 & 400 & 100 & $128\times128$ & Elliptic \\
+Eikonal & 3 & 2 & 400 & 400 & 100 & $64\times64$ & Elliptic \\
+Helmholtz & 2 & 3 & 400 & 400 & 100 & $256\times256$ & Elliptic \\
+Poisson I & 5 & 3 & 400 & 400 & 100 & $64\times64$ & Elliptic \\
+Poisson II \citep{niu2024} & 5 & 5 & 64 & 64 & 512 & $128\times128$ & Elliptic \\
+Pressure Poisson & 2 & 4 & 400 & 400 & 100 & $64\times64$ & Elliptic \\
+Heat I & 3 & 3 & 400 & 400 & 100 & $64\times64$ & Diffusion \\
+Heat II \citep{niu2024} & 3 & 5 & 1024 & 1024 & 512 & $128\times128$ & Diffusion \\
+Cavity & 1 & 4 & 400 & 400 & 100 & $256\times256$ & Convection \\
+Navier Stokes \citep{niu2024} & 2 & 2 & 256 & 256 & 256 & $64\times64$ & Convection \\
+Rayleigh Bénard & 1 & 2 & 400 & 400 & 100 & $64\times64$ & Convection \\
+Burgers & 2 & 3 & 400 & 400 & 100 & $256\times256$ & Shocks \\
+Euler & 7 & 3 & 400 & 400 & 100 & $128\times128$ & Shocks \\
+Porous medium & 2 & 3 & 400 & 400 & 100 & $256\times256$ & Porous flow \\
+Allen Cahn & 19 & 3 & 400 & 400 & 78 & $256\times256$ & Reaction diffusion \\
+Cahn Hilliard I & 2 & 2 & 400 & 400 & 100 & $64\times64$ & Reaction diffusion \\
+Cahn Hilliard II & 19 & 3 & 400 & 400 & 100 & $256\times256$ & Reaction diffusion \\
+Fisher KPP & 50 & 3 & 400 & 400 & 100 & $256\times256$ & Reaction diffusion \\
+Phase field crystal & 18 & 3 & 400 & 400 & 100 & $128\times128$ & Reaction diffusion \\
+Shallow water & 2 & 3 & 400 & 400 & 100 & $128\times128$ & Waves \\
+Wave & 3 & 2 & 400 & 400 & 100 & $80\times80$ & Waves \\
+ERA5 \citep{hersbach2020,niu2024} & 12 & 9 & 313 & 55 & 17 & $128\times256$ & Climate \\
+\bottomrule
+\end{tabular}

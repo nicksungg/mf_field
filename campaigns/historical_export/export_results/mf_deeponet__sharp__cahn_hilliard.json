@@ -1,0 +1,47 @@
+{
+  "task": {
+    "id": "mf_deeponet__sharp__cahn_hilliard",
+    "model": "mf_deeponet",
+    "dataset": "sharp__cahn_hilliard",
+    "rel": "sharp/cahn_hilliard",
+    "seed": 42,
+    "checkpoint": "/archive/mf_field/akash/checkpoints/mf_deeponet/sharp__cahn_hilliard/last.pt",
+    "script": "/archive/mf_field/factory_mffp/references/external_sota/mf_deeponet/smoke_eval.py",
+    "device": "gpu",
+    "checkpoint_bytes": 6329228,
+    "checkpoint_mtime_ns": 1782823420558422871,
+    "script_sha256": "02a2014ffd3beae531b1a88ee0045f2c10e479482b7f5af691b9be4a53d50472"
+  },
+  "seconds": 4.959705591201782,
+  "replay": {
+    "checkpoint_sha256": "f1c763481b41d540c44eb999d9557c0a830fe7caedb709a29d050cab3fb47dbb",
+    "script_sha256": "02a2014ffd3beae531b1a88ee0045f2c10e479482b7f5af691b9be4a53d50472",
+    "epochs": 2500,
+    "loaded_modules": [
+      "DeepONetCartesianProd"
+    ],
+    "device": "NVIDIA L40S",
+    "base_retrained": false,
+    "matmul_tf32": false,
+    "cudnn_tf32": false,
+    "matmul_precision": "highest"
+  },
+  "n": 100,
+  "work_grid": [
+    256,
+    256
+  ],
+  "base_train_overlap": 0,
+  "rel_l2_mean": 0.9691528077964776,
+  "archive_mean": 0.9691526889801025,
+  "prediction_sha256": "a25dae3366d575cc63b42939e68a03335e8d75f68d7673a02b544b55b0d26ebe",
+  "model_metadata": {
+    "n_params": 1580801,
+    "extra": {
+      "device": "cuda",
+      "hf_fidelity": 3,
+      "lf_fidelity": 1,
+      "iterations": 125000
+    }
+  }
+}

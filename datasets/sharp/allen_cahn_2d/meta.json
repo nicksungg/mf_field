@@ -1,0 +1,98 @@
+{
+  "variant": "allen_cahn_2d",
+  "module": "allen_cahn",
+  "ndim": 2,
+  "source": "APEBench (arXiv:2411.00180)",
+  "output_time": 10.0,
+  "ladder": [
+    [
+      64,
+      64
+    ],
+    [
+      128,
+      128
+    ],
+    [
+      256,
+      256
+    ]
+  ],
+  "param_names": [
+    "eps",
+    "mobility",
+    "mean_composition",
+    "ic_c0",
+    "ic_c1",
+    "ic_c2",
+    "ic_c3",
+    "ic_c4",
+    "ic_c5",
+    "ic_c6",
+    "ic_c7",
+    "ic_c8",
+    "ic_c9",
+    "ic_c10",
+    "ic_c11",
+    "ic_c12",
+    "ic_c13",
+    "ic_c14",
+    "ic_c15"
+  ],
+  "n_params": 19,
+  "ntrain": 400,
+  "ntest": 78,
+  "seed": 42,
+  "condition_completeness": {
+    "witness": {
+      "closest_pair": [
+        122,
+        314
+      ],
+      "standardized_condition_distance": 2.74550354586599,
+      "relative_field_difference": 0.31057506846443184,
+      "median_pair_distance": 6.128034694385482
+    },
+    "reconstruction": {
+      "n_samples": 2,
+      "rel_L2_per_sample": [
+        0.0,
+        0.0
+      ],
+      "rel_L2_max": 0.0,
+      "verdict": "COMPLETE"
+    },
+    "verdict": "COMPLETE"
+  },
+  "test_trim_2026_08_06": {
+    "adr": "round3/docs/adr/0003-estimator-integrity-repairs.md D1",
+    "criterion": "per-row canonical copy-LF gap < max(1e-6, 1% of median) = 1.824e-05",
+    "n_before": 100,
+    "n_after": 78,
+    "dropped_indices": [
+      2,
+      6,
+      9,
+      25,
+      37,
+      38,
+      41,
+      43,
+      47,
+      54,
+      57,
+      58,
+      63,
+      64,
+      75,
+      76,
+      77,
+      81,
+      82,
+      96,
+      97,
+      98
+    ],
+    "backup": "_pretrim_backup_2026-08-06"
+  }
+}

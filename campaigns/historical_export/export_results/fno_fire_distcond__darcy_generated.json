@@ -1,0 +1,65 @@
+{
+  "task": {
+    "id": "fno_fire_distcond__darcy_generated",
+    "model": "fno_fire_distcond",
+    "dataset": "darcy_generated",
+    "rel": "core/darcy_generated",
+    "seed": 42,
+    "checkpoint": "/archive/mf_field/akash/checkpoints/fno_fire_distcond/darcy_generated/last.pt",
+    "script": "/archive/mf_field/factory_mffp/models/fno_fire_distcond/smoke_eval.py",
+    "device": "gpu",
+    "checkpoint_bytes": 227873028,
+    "checkpoint_mtime_ns": 1782901677014403400,
+    "script_sha256": "ffb68aeca1db7c9072252fd80b124af41e171926f2e5acb83b6a3c9791b096c5"
+  },
+  "seconds": 3.4183177947998047,
+  "replay": {
+    "checkpoint_sha256": "51b01ab6d3424bb405c66aa7b813bf5a80803be072a64fabf434fd43eb3009d3",
+    "script_sha256": "ffb68aeca1db7c9072252fd80b124af41e171926f2e5acb83b6a3c9791b096c5",
+    "epochs": 2500,
+    "loaded_modules": [
+      "FNO2d",
+      "FNO2d",
+      "FNO2d",
+      "FNO2d",
+      "FNO2d",
+      "FNO2dAug"
+    ],
+    "device": "NVIDIA L40S",
+    "base_retrained": false,
+    "matmul_tf32": false,
+    "cudnn_tf32": false,
+    "matmul_precision": "highest"
+  },
+  "n": 100,
+  "work_grid": [
+    128,
+    128
+  ],
+  "base_train_overlap": 0,
+  "rel_l2_mean": 0.04899110132808774,
+  "archive_mean": 0.04898490011692047,
+  "prediction_sha256": "6f2f434e83c76c925b2580b3a9a8d2251314996ba8eb75e864ac572906a51ea2",
+  "model_metadata": {
+    "n_params": 28447430,
+    "extra": {
+      "device": "cuda",
+      "hf_fidelity": 3,
+      "lf_fidelity": 1,
+      "mf_mechanism": "FIRE_distribution_conditioned_residual_HF=muLF+delta(aug)",
+      "ensemble_size": 5,
+      "aug_channels": [
+        "mu",
+        "sigma",
+        "q10",
+        "q50",
+        "q90"
+      ],
+      "lf_ensemble_gaussian_nll": -3.4436532187945166,
+      "work_grid": [
+        128,
+        128
+      ]
+    }
+  }
+}

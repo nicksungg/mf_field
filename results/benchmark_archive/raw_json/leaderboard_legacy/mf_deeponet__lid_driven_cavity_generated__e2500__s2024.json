@@ -1,0 +1,40 @@
+{
+  "model": "mf_deeponet",
+  "dataset": "lid_driven_cavity_generated",
+  "splits": {
+    "test_hf": {
+      "nRMSE": 0.7020262873188121,
+      "rel_l2_mean": 0.7001297891661294,
+      "rel_l2_ci95_lo": 0.6905873970377906,
+      "rel_l2_ci95_hi": 0.7102507800936391,
+      "rel_l2_std": 0.016914595752552625,
+      "rel_l2_per_sample": [
+        0.6849672279697298,
+        0.7241852718322694,
+        0.7041105792673271,
+        0.6846881214562975,
+        0.7241468691616644,
+        0.7185113305115219,
+        0.6842636552311941,
+        0.6853040978891407,
+        0.7020439995436231,
+        0.6890767387985265
+      ],
+      "n_samples": 10
+    }
+  },
+  "n_params": 789761,
+  "train_seconds": 799.0900452136993,
+  "eval_seconds": 0.0022430419921875,
+  "latency_ms_per_sample": 0.22430419921875,
+  "peak_mem_mb": 483.027968,
+  "work_grid": [
+    256,
+    256
+  ],
+  "eval_protocol": "full_field_on_working_grid",
+  "device": "cuda",
+  "hf_fidelity": 4,
+  "lf_fidelity": 1,
+  "iterations": 125000
+}

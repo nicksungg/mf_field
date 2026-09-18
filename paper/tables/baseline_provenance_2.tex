@@ -1,0 +1,14 @@
+\begin{tabular}{p{.045\linewidth}p{.20\linewidth}p{.23\linewidth}p{.39\linewidth}}
+\toprule
+ID & Implementation & Source & Adaptation and inclusion rationale \\
+\midrule
+B1 & Autoregressive POD GP & \citep{kennedy2000} & KOH inspired scalar field coupling plus a separate residual POD GP. Not joint probabilistic co kriging. \\
+B2 & Nonlinear POD GP & \citep{perdikaris2017} & NARGP inspired coefficient kernel with shared covariance hyperparameters and Monte Carlo LF uncertainty. \\
+B3 & Composite MF MLP & \citep{meng2020} & Meng inspired pointwise LF network and staged linear plus nonlinear HF corrections. \\
+B4 & Composite MF DeepONet & \citep{howard2023} & Howard inspired LF sensor prediction and staged linear plus nonlinear DeepONets. \\
+B5 & Latent MF network & \citep{li2022dmfal} & DMFAL inspires two latent levels. Deterministic MSE replaces the probabilistic objective and acquisition. \\
+B6 & Nonlinear decoder transfer & \citep{seidman2022} & NOMAD motivates a custom nonlinear coordinate decoder. Multifidelity behavior comes from transfer training. \\
+B7 & MFRNP adapter & \citep{niu2024} & Upstream MFRNP model with data, normalization, resize, batching, context, and training adaptations. \\
+B8 & Fidelity basis FNO & \citep{li2022ifc} & IFC inspires fidelity dependence. Spatial basis FNO omits the original neural ODE and GP. \\
+\bottomrule
+\end{tabular}

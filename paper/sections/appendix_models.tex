@@ -1,0 +1,71 @@
+\section{Model adaptations and training}
+\label{app:protocol}
+The library varies both the representation of a field and how coarse data
+enter learning. We first identify the retained published components and our
+adaptations, then give the training settings. The additional baseline
+descriptions use the same distinction between a source idea and a complete
+published method.
+
+\input{sections/model_adaptations}
+
+\subsection{Training settings and data use}
+\label{app:experts}
+Table~\ref{tab:training} summarizes the library schedules. For M1, M2, M3,
+and M5, AdamW uses batch size at most 16, weight decay $10^{-5}$, gradient
+clipping at 1, and cosine decay to $10^{-6}$. Initial learning rates are
+$10^{-3}$ for pretraining and $3\times10^{-4}$ for HF finetuning. The FNO
+recipe uses width 64, four blocks, and up to 12 Fourier modes per direction,
+subject to the grid cap. M4 also uses AdamW but starts both its LF members
+and residual stage at $10^{-3}$. M6 uses width 256 and five affine layers of
+that width in each branch and trunk specification, including the latent output,
+with ReLU and Adam at $10^{-3}$. Detailed grid dependent definitions and fitted
+hyperparameters are retained with the model implementations and metadata.
+
+\begin{table}[h!]
+\centering\small\setlength{\tabcolsep}{4pt}
+\caption{\textbf{Library training schedules.} Epochs count passes through the
+relevant training table. Optimizer steps and repeated refinement steps are
+different quantities. Each final surrogate uses a single seed, with internal
+coarse ensemble initializations prescribed by its recipe.}
+\label{tab:training}
+\begin{tabular}{p{.16\linewidth}p{.72\linewidth}}
+\toprule
+Models & Nominal training procedure \\
+\midrule
+M1, M3, M5 & 2,500 LF epochs, followed by 2,500 HF epochs. \\
+M2 & 2,500 epochs over pooled fidelity pairs, followed by 1,250 HF epochs. \\
+M4 & Five LF FNOs and one HF residual FNO, each trained for 2,500 epochs. \\
+M6 & 125,000 Adam iterations on HF residual targets. \\
+M7 & HF basis construction and coefficient GP fitting, without an epoch schedule. \\
+M8, M9 & Coarse members request 30,000 optimizer steps, rounded to whole epochs.
+Each corrector uses 6,000 optimizer steps and six refinement updates per prediction. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+M1, M3, M4, M5, and M6 use the lowest registered LF level. M2 pools pairs
+across registered fidelities, M8 and M9 predict the finest registered LF
+level, and M7 uses HF fields only. ERA5 consequently uses level one for the
+transfer and retrieval recipes and level eight for the iterative correctors.
+For M8 and M9, five LF folds each contain four members: plain and
+heteroscedastic variants with two initializations each. Training cases receive
+the mean from their held out fold. All query cases use the four members of
+fixed fold zero. Corrector checkpoints are selected using training only
+validation. M7's basis uses only HF base training fields. Its original estimator
+state was not saved, so the common prediction export reconstructs that training
+only fit and restores target scaling.
+
+Baselines use the settings of the evaluated benchmark implementations, with
+the adaptations above. Training, validation allocations, and computation vary
+across recipes. For example, on Darcy, B3 to B5 use 360 fine rows for fitting
+and 40 for internal validation, while B1, B2, and the transfer recipe fit
+400 rows. Both allocations consume 400 fine labels before ensemble fitting.
+The total fine data budget is $N_H^{\rm base}+K$, plus any additional HF labels
+used for tuning, where $N_H^{\rm base}$ counts base training labels and $K$
+counts ensemble fitting examples. Final evaluation labels are separate.
+Computation includes every candidate and coarse member trained or evaluated,
+even if its final weight is zero. Some timing records measure prediction
+export rather than training, preventing a common training cost estimate.
+Thus common evaluation cases do not establish equal resources or isolate a
+multifidelity advantage over a matched fine only ensemble.
+

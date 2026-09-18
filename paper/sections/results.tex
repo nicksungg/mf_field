@@ -1,0 +1,87 @@
+\section{Results: from a surrogate library to a fitted ensemble}
+\label{sec:results}
+\subsection{Different models lead on different datasets}
+The library contains strong individual models, but their relative accuracy
+depends on the prediction task. Seven of its nine members achieve the lowest
+error on at least one PDE dataset. Wavelet transfer leads on Darcy, POD GP on
+the Poisson variants, and distribution FNO on the heat variants, while the
+ConvNeXt corrector leads on Cavity and Euler. The four additional reaction
+diffusion tasks each favor a different library member. This variation motivates keeping
+several ways of using coarse information available: choosing one architecture
+for the entire collection would discard models that are useful on particular
+problems. Table~\ref{tab:allexperts} shows these differences directly, placing
+each individual model beside the ensemble rules and the strongest additional
+baseline for each dataset.
+
+The best library member outperforms the best available additional baseline on
+15 of the 21 PDE datasets. Here the best model in each collection is identified
+after evaluation, so this comparison measures the accuracy available within
+the library. The fitted mixture also achieves lower aggregate error than the
+best additional baseline, while individual baselines remain preferable on
+some datasets (Appendix~\ref{app:headlines}). The next question is whether the
+reserved fitting examples can turn this available accuracy into a useful
+prediction rule. Table~\ref{tab:paperbaselines} summarizes the aggregate
+comparisons and Elo ranking, with individual baseline errors in
+Appendix~\ref{app:matchedbaselines}.
+
+\input{sections/main_comparison_tables}
+
+\subsection{Combining predictions often improves accuracy}
+Using the same five fitting examples, the fitted mixture improves on the
+Selected model on 16 of 22 datasets. It reduces geometric mean relative
+$L^2$ error by 11.6\% across PDE classes and 7.5\% across all datasets.
+Both rules make their decisions before observing the evaluation fields, so
+this comparison tests how effectively they use the available fine solutions.
+The advantage over a best individual model identified retrospectively from
+evaluation answers is much smaller and depends on aggregation
+(Appendix~\ref{app:headlines}). The practical benefit is therefore lower error
+when model choice must be made before the next fine field is known, with
+failures as well as improvements visible in Table~\ref{tab:allexperts}.
+Figure~\ref{fig:fieldcomparison} provides one field example.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{figures/field_comparison_heat.pdf}
+\caption{\textbf{Combining models reduces field error on a Heat I example.}
+Top: ground truth, nine model predictions, and the selected model, inverse error
+mixture, and fitted mixture.
+Bottom: absolute error on a shared logarithmic color scale, with relative $L^2$
+error below each panel. Fields share a linear color scale and a $64\times64$ space and time grid.
+The three rules use five fitting examples. The selected model is M4 here.
+The case is the first evaluation input of the first
+partition. The fitted mixture lowers error by 44.4\% relative to the best
+individual model.}
+\label{fig:fieldcomparison}
+\end{figure}
+
+\subsection{Simple weighting captures most of the benefit}
+The inverse error mixture nearly matches the fitted mixture in aggregate
+accuracy, and the two occupy the highest Elo positions in
+Table~\ref{tab:paperbaselines}. Uniform averaging performs poorly
+(Table~\ref{tab:main}), indicating that which models receive weight
+matters. Yet individual model errors already provide a useful guide to those
+weights, with only a small additional gain from joint fitting. The error
+analysis supports complementary predictions as a source of improvement
+(Appendix~\ref{app:geometry}). Both weighting rules can benefit from that
+complementarity, even though the inverse error mixture does not explicitly
+estimate interactions between model errors.
+
+\subsection{Sensitivity to fitting and evaluation choices}
+The advantage over model selection persists when more fine examples are
+available for fitting. Across the 21 PDE datasets, increasing the allowance
+from five to twenty examples raises the fitted mixture's reduction in
+class aggregated geometric mean relative $L^2$ error from 11.6\% to 13.1\%
+(Appendix~\ref{app:budgets}). Both methods receive the same allowance at each
+budget, and the surrogate models remain fixed. The modest increase supports
+using a small fitting set in these experiments, while leaving the amount
+needed for a new problem to be assessed.
+
+Two diagnostics use the same 17 dataset subset to examine dependence on the
+evaluation design. Repeating the comparisons on fixed dataset subsets preserves the gain over the Selected
+model, while superiority to the best individual model remains sensitive to
+the comparison (Appendix~\ref{app:subsets}). We also minimize the reported mean
+relative $L^2$ error directly, keeping the trained models and fitting examples
+fixed. This gives a modest improvement over fitting squared relative error
+(Table~\ref{tab:losscontrol}), identifying the fitting objective as a useful
+design choice. This retrospective control is reported separately from the
+three main rules.

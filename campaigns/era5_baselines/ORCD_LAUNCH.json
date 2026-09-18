@@ -1,0 +1,106 @@
+{
+  "jobs": [
+    {
+      "id": "22776597",
+      "name": "era5base-cpu-check",
+      "comment": "era5base:86a9c66435004047c5f3:era5base-cpu-check",
+      "command": [
+        "sbatch",
+        "--parsable",
+        "--job-name=era5base-cpu-check",
+        "--comment=era5base:86a9c66435004047c5f3:era5base-cpu-check",
+        "--chdir=/archive/mf_field/experiments/era5_baselines_20260915",
+        "--output=/archive/mf_field/experiments/era5_baselines_20260915/logs/%x_%A_%a.out",
+        "/archive/mf_field/experiments/era5_baselines_20260915/cpu_orcd.sbatch",
+        "preflight.py",
+        "--device",
+        "cpu"
+      ]
+    },
+    {
+      "id": "22776598",
+      "name": "era5base-gpu-check",
+      "comment": "era5base:86a9c66435004047c5f3:era5base-gpu-check",
+      "command": [
+        "sbatch",
+        "--parsable",
+        "--job-name=era5base-gpu-check",
+        "--comment=era5base:86a9c66435004047c5f3:era5base-gpu-check",
+        "--chdir=/archive/mf_field/experiments/era5_baselines_20260915",
+        "--output=/archive/mf_field/experiments/era5_baselines_20260915/logs/%x_%A_%a.out",
+        "--time=03:00:00",
+        "--dependency=afterok:22776597",
+        "--kill-on-invalid-dep=yes",
+        "/archive/mf_field/experiments/era5_baselines_20260915/gpu_orcd.sbatch",
+        "preflight.py",
+        "--device",
+        "gpu"
+      ]
+    },
+    {
+      "id": "22776599",
+      "name": "era5base-cpu",
+      "comment": "era5base:86a9c66435004047c5f3:era5base-cpu",
+      "command": [
+        "sbatch",
+        "--parsable",
+        "--job-name=era5base-cpu",
+        "--comment=era5base:86a9c66435004047c5f3:era5base-cpu",
+        "--chdir=/archive/mf_field/experiments/era5_baselines_20260915",
+        "--output=/archive/mf_field/experiments/era5_baselines_20260915/logs/%x_%A_%a.out",
+        "--array=0-3%4",
+        "--dependency=afterok:22776597",
+        "--kill-on-invalid-dep=yes",
+        "/archive/mf_field/experiments/era5_baselines_20260915/cpu_orcd.sbatch",
+        "array_worker.py",
+        "cpu"
+      ]
+    },
+    {
+      "id": "22776600",
+      "name": "era5base-gpu",
+      "comment": "era5base:86a9c66435004047c5f3:era5base-gpu",
+      "command": [
+        "sbatch",
+        "--parsable",
+        "--job-name=era5base-gpu",
+        "--comment=era5base:86a9c66435004047c5f3:era5base-gpu",
+        "--chdir=/archive/mf_field/experiments/era5_baselines_20260915",
+        "--output=/archive/mf_field/experiments/era5_baselines_20260915/logs/%x_%A_%a.out",
+        "--array=0-6%4",
+        "--dependency=afterok:22776598",
+        "--kill-on-invalid-dep=yes",
+        "/archive/mf_field/experiments/era5_baselines_20260915/gpu_orcd.sbatch",
+        "array_worker.py",
+        "gpu"
+      ]
+    },
+    {
+      "id": "22776601",
+      "name": "era5base-collect",
+      "comment": "era5base:86a9c66435004047c5f3:era5base-collect",
+      "command": [
+        "sbatch",
+        "--parsable",
+        "--job-name=era5base-collect",
+        "--comment=era5base:86a9c66435004047c5f3:era5base-collect",
+        "--chdir=/archive/mf_field/experiments/era5_baselines_20260915",
+        "--output=/archive/mf_field/experiments/era5_baselines_20260915/logs/%x_%A_%a.out",
+        "--dependency=afterok:22776599:22776600",
+        "--kill-on-invalid-dep=yes",
+        "/archive/mf_field/experiments/era5_baselines_20260915/cpu_orcd.sbatch",
+        "collect_baselines.py"
+      ]
+    }
+  ],
+  "source_sha256": "f39dc85b9078b8a41555056666ca704a1dfe2515e9eb8dfba319a7569b0dcaf6",
+  "input_manifest_sha256": "b7071be2fbb0a0e8949ab33a3f855596998382bfed4329654262593f7d0c53b0",
+  "created": 1789445638.967041,
+  "cluster": "ORCD",
+  "independent_fits": 11,
+  "table_entries": 12,
+  "alias": "B10 reuses identical B9 recipe",
+  "max_concurrent_production_gpus": 4,
+  "supercloud_jobs_unchanged": true,
+  "submission_complete": true
+}

@@ -1,0 +1,28 @@
+\begin{tabular}{p{.035\linewidth}p{.22\linewidth}p{.25\linewidth}p{.39\linewidth}}
+\toprule
+ID & Implementation & Source & Adaptation and inclusion rationale \\
+\midrule
+M1 & FiLM FNO transfer & \citep{li2021fno,perez2018,lyu2023} & Coordinate input and parameter FiLM at every FNO block, with LF to HF transfer. Tests repeated conditioning and spectral transfer. \\
+M2 & All pairs FNO & \citep{li2021fno,perez2018,herde2024} & Fidelity labels and repeated target supervision. Poseidon is pair enumeration inspiration only. No source field input. \\
+M3 & ConvNeXt transfer & \citep{liu2022convnext,ronneberger2015,perez2018,lyu2023} & ConvNeXt blocks in a U shaped field decoder, parameter FiLM, and LF to HF transfer. Tests local spatial processing. \\
+M4 & Distribution FNO & \citep{yu2026fire,li2021fno} & FIRE distribution summaries become spatial channels from five LF FNOs. A trained residual FNO replaces foundation model inference. \\
+M5 & Wavelet transfer & \citep{tripura2022wno,perez2018,lyu2023} & WNO motivates a custom single level db4 coefficient mixer with FiLM and transfer training. \\
+M6 & Retrieved field DeepONet & \citep{lu2021,lu2022mf} & Parameters and a nearest neighbour LF training field enter the branch. The residual needs no new coarse solve. \\
+M7 & POD GP & \citep{higdon2008} & HF field SVD and shared coefficient GP hyperparameters. Basis emulation inspiration, not the original Bayesian model. \\
+M8 & Slice attention corrector & \citep{wu2024transolver,perez2018} & Changed pooling and cell to slice attention, parameter FiLM, and six corrections of a predicted coarse field. \\
+M9 & ConvNeXt corrector & \citep{liu2022convnext,ronneberger2015,perez2018} & ConvNeXt blocks in a U shaped corrector with FiLM. Six updates refine a predicted coarse field rather than generating it directly. \\
+B1 & Autoregressive POD GP & \citep{kennedy2000} & KOH inspired scalar field coupling plus a separate residual POD GP. Not joint probabilistic co kriging. \\
+B2 & Nonlinear POD GP & \citep{perdikaris2017} & NARGP inspired coefficient kernel with shared covariance hyperparameters and Monte Carlo LF uncertainty. \\
+B3 & Composite MF MLP & \citep{meng2020} & Meng inspired pointwise LF network and staged linear plus nonlinear HF corrections. \\
+B4 & Composite MF DeepONet & \citep{howard2023} & Howard inspired LF sensor prediction and staged linear plus nonlinear DeepONets. \\
+B5 & Latent MF network & \citep{li2022dmfal} & DMFAL inspires two latent levels. Deterministic MSE replaces the probabilistic objective and acquisition. \\
+B6 & Nonlinear decoder transfer & \citep{seidman2022} & NOMAD motivates a custom nonlinear coordinate decoder. Multifidelity behavior comes from transfer training. \\
+B7 & MFRNP adapter & \citep{niu2024} & Upstream MFRNP model with data, normalization, resize, batching, context, and training adaptations. \\
+B8 & Fidelity basis FNO & \citep{li2022ifc} & IFC inspires fidelity dependence. Spatial basis FNO omits the original neural ODE and GP. \\
+B9 & FNO transfer I & \citep{lyu2023} & Parameters concatenated with coordinates and LF to HF transfer. Same inspected recipe as B10. \\
+B10 & FNO transfer II & \citep{lyu2023} & Separately archived transfer run with the same inspected model and training code as B9. \\
+B11 & Affine POD GP & \citep{zhang2018} & One affine slope and intercept across fields applied to an LF POD GP. Conceptual inspiration only. \\
+B12 & Parameter kNN & Reference / control & Training field nearest neighbor reference. \\
+B13 & Training mean & Reference / control & Input independent fine training mean. \\
+\bottomrule
+\end{tabular}
