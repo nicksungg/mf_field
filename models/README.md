@@ -1,7 +1,16 @@
-# Model source
+# Baselines and surrogate library
 
-The current manuscript uses nine library members and thirteen baseline entries, including two controls. The complete mapping and adaptation rationale are in `../docs/MODELS.md` and `../configs/models.json`.
+Use the model IDs in [the main README](../README.md#what-is-being-compared) or [configs/models.json](../configs/models.json). The grouping describes each model's role in the comparison, while shared implementations remain together in the source tree.
 
-`paper/` contains the operator and transfer model families. `st_bench/` contains classical POD/GP and pointwise neural baselines and their shared loaders. `uqcorr/` contains coarse ensemble fitting and the M8/M9 iterative correctors. `common/` and `data_adapters/` provide shared dependencies.
+| Group | IDs | Source | Entry point |
+|---|---|---|---|
+| Surrogate library | M1–M6 | [operator/transfer families](paper/) | `python scripts/train.py --model M1 ...` |
+| Surrogate library | M7 | [POD GP](st_bench/) | `python scripts/train.py --model M7 ...` |
+| Surrogate library | M8–M9 | [coarse prediction and correction](uqcorr/) | `python scripts/train_corrector.py ...` |
+| Baselines | B1–B5, B11 | [classical and neural baselines](st_bench/) | `python scripts/train.py --model B1 ...` |
+| Baselines | B6–B10 | [operator/transfer families](paper/) | `python scripts/train.py --model B8 ...` |
+| Additional controls | B12–B13 | [kNN and training mean](st_bench/) | `python scripts/train.py --model B13 ...` |
 
-Use `../scripts/train.py` and the campaign-specific instructions in `../docs/TRAINING.md` to retrain. Subdirectory READMEs and comments retain historical experiment context; the release roster, manuscript and frozen per-run records determine which results are reported. A citation to a backbone is not a claim that its multifidelity adaptation is the original paper implementation.
+Commands run from the repository root. The legacy directory name `models/paper/` means literature-based model code; it contains no manuscript. M1–M9 form the mixture. Baselines are evaluated individually and do not enter that mixture.
+
+Read [adaptations and sources](../docs/MODELS.md) and [training instructions](../docs/TRAINING.md). ERA5 and the four later PDE tasks have exact campaign adapters under [campaigns/](../campaigns/). Common utilities remain under `common/` and `data_adapters/`.

@@ -1,66 +1,128 @@
 # AutoMF: Automated ensembles for multifidelity field prediction
 
-Review artifact for the 22-dataset manuscript. This repository bundles the data, dataset generation and preparation code, all nine surrogate implementations, eleven ranked baseline implementations and two additional baseline controls, ensemble fitting, saved experiment results, and the manuscript reproduction scripts.
+AutoMF combines coarse and fine training data to build a library of field surrogates, then uses a small set of separate fine examples to fit ensemble weights. At prediction time, the input is a parameter vector **x** and the output is a fine field **y**.
 
-## Start here
+**22 datasets · 9 surrogate models · 11 baseline implementations · 3 ensemble rules**
 
-1. Read the manuscript at [`paper/main.pdf`](paper/main.pdf).
-2. Check the archive with `python scripts/verify_release.py` (no third-party Python packages required).
-3. Install the analysis environment and reproduce the tables and figures:
+![AutoMF workflow using ERA5 fields, followed by bar charts comparing the ensemble rules, nine surrogates and eleven baselines.](assets/automf_overview.gif)
+
+[Static overview](assets/overview.png) · [Surrogate chart](assets/surrogates.png) · [Baseline chart](assets/baselines.png) · [Results and definitions](docs/RESULTS.md)
+
+## Try it on CPU
+
+Python 3.12 is recommended. The small example is included in the ordinary clone. No GPU or full dataset download is needed.
 
 ```bash
+GIT_LFS_SKIP_SMUDGE=1 git clone --depth 1 https://github.com/nicksungg/mf_field.git
+cd mf_field
 python -m venv .venv
 source .venv/bin/activate
-python -m pip install -r requirements-analysis.txt
-python scripts/reproduce_paper.py
+python -m pip install -r requirements-demo.txt
+python scripts/example_ensemble.py
 ```
 
-To also rebuild and check the PDF, install a LaTeX distribution with `pdflatex`, `bibtex`, `make`, and Poppler's `pdftotext`, then run:
+This fits all three rules using **five Heat I examples**, then predicts and scores **five different examples** using saved M1–M9 predictions. It prints the errors and writes weights, predictions and `metrics.json` to a new directory under `outputs/`. It demonstrates ensemble fitting, without retraining the surrogates. The benchmark uses its own fixed reporting partitions.
+
+To check the reported results and export CSV tables, using the same environment:
 
 ```bash
-python scripts/reproduce_paper.py --pdf
+python scripts/reproduce_results.py
 ```
 
-Replaying the reported numbers uses the saved predictions and error statistics. It does not retrain networks. See [reproduction scope](docs/REPRODUCIBILITY.md), [training](docs/TRAINING.md), [datasets and generators](docs/DATASETS.md), and [model adaptations](docs/MODELS.md).
+Outputs: `outputs/results/comparison.csv` and `per_dataset.csv`. Add `--elo` to recompute the Elo rankings. See [full numerical reproduction](docs/REPRODUCIBILITY.md) for replay from per-case archives.
 
-## Contents
+## What is being compared?
 
-| Directory | Contents |
-|---|---|
-| `datasets/` | All 22 dataset archives and the ERA5 source and reserved target arrays |
-| `generators/` | In-house core, extension, sharp-field and cavity solver code, configurations and checks |
-| `models/` | Nine library members and all baseline implementations, with common data adapters |
-| `ensemble/` | Selected model, inverse error mixture and fitted mixture code |
-| `campaigns/` | Exact later training recipes, prepared inputs, splits, metadata and saved predictions |
-| `results/` | Historical prediction archives and raw benchmark results |
-| `paper/` | Manuscript, per-case scores, Gram matrices, saved weights, tables, figures and replay scripts |
-| `configs/` | The authoritative 22-dataset and 22-model-entry rosters |
-| `verification/` | Integrity, import, compilation, data and reproduction checks |
+### The nine surrogates: M1–M9
 
-The primary ensemble rules are **Selected model**, **Inverse error mixture** and **Fitted mixture**. Historical exploratory controls are retained in archived analysis sources but are not additional claimed methods. Each rule uses fitting examples that are separate from the evaluation examples. The model library and weights are trained separately for each dataset.
+These are the members of the ensemble library. Each produces a fine field from parameters, including any internally predicted or retrieved coarse reference.
 
-## Use the mixture on your own saved predictions
+| ID | Surrogate | How it uses the available data |
+|---|---|---|
+| M1 | FiLM FNO transfer | Parameter conditioning and coarse to fine transfer |
+| M2 | All pairs FNO | Fidelity conditioning and training across fidelity pairs |
+| M3 | ConvNeXt transfer | Convolutional field decoder with coarse to fine transfer |
+| M4 | Distribution FNO | Correction using coarse ensemble distribution summaries |
+| M5 | Wavelet transfer | Wavelet field decoder with coarse to fine transfer |
+| M6 | Retrieved field DeepONet | Correction of a nearest neighbour coarse training field |
+| M7 | POD GP | Fine field basis with Gaussian process coefficients |
+| M8 | Slice attention corrector | Iterative correction of a predicted coarse field |
+| M9 | ConvNeXt corrector | Convolutional correction of a predicted coarse field |
 
-Prepare an NPZ with `predictions` of shape `(N, M, H, W)`, `targets` of shape `(N, H, W)`, and optional `model_names` as a string array of length `M`. Fitting targets must not have been used to train the base models. Query NPZ files contain only predictions and optional model names.
+M7 is a fine-only member. The remaining members use coarse data. These are **adapted implementations**, with their source methods and changes documented in [model adaptations](docs/MODELS.md).
+
+### Baselines: B1–B11
+
+These are comparison methods. They are evaluated individually and are **not included in the M1–M9 mixture**.
+
+| ID | Baseline implementation | Source method or idea |
+|---|---|---|
+| B1 | Autoregressive POD GP | Kennedy–O'Hagan autoregression |
+| B2 | Nonlinear POD GP | Nonlinear autoregressive multifidelity GP |
+| B3 | Composite MF MLP | Composite multifidelity neural network |
+| B4 | Composite MF DeepONet | Composite multifidelity DeepONet |
+| B5 | Latent MF network | Deep multifidelity active learning |
+| B6 | Nonlinear decoder transfer | NOMAD |
+| B7 | MFRNP adapter | Multifidelity residual neural processes |
+| B8 | Fidelity basis FNO | Infinite fidelity coregionalization |
+| B9 | FNO transfer I | Multifidelity FNO transfer |
+| B10 | FNO transfer II | A separately archived FNO transfer entry |
+| B11 | Affine POD GP | Affine calibration of a coarse surrogate |
+
+**Additional controls:** B12 Parameter kNN and B13 Training mean. Source attribution, adaptation details and shared implementation identities are in [the model guide](docs/MODELS.md). A source citation does not imply an unchanged implementation of the original method.
+
+### Ensemble rules
+
+| Rule | CLI name | How the weights are chosen |
+|---|---|---|
+| **Selected model** | `selected` | Choose the M1–M9 model with the lowest mean relative L2 error on the fitting examples |
+| **Inverse error mixture** | `inverse` | Give more weight to models with smaller mean squared relative errors, then normalize |
+| **Fitted mixture** | `fitted` | Jointly fit nonnegative weights that sum to one to minimize combined squared relative error |
+
+Each dataset has its own trained library and weights. **One weight per model applies to every query and spatial cell.** Fitting examples are separate from base-model training and evaluation. Query answers are never used to choose their own prediction weights. The selected model is the reference rule, with all weight on one member.
+
+## Fit an ensemble on your predictions
+
+Prepare `fitting.npz` with `predictions` shaped `(K, M, H, W)` and `targets` shaped `(K, H, W)`. Prepare `queries.npz` with `predictions` shaped `(N, M, H, W)`. Include the same `model_names` string array in both files to check model ordering. The CLI supports any number of models, not just nine.
 
 ```bash
-python ensemble/fit_fields.py fit --help
-python ensemble/fit_fields.py predict --help
+python ensemble/fit_fields.py fit --fitting fitting.npz --rule fitted --output weights.json
+python ensemble/fit_fields.py predict --predictions queries.npz --weights weights.json --output mixed.npz
 ```
 
-See [the ensemble example](docs/ENSEMBLES.md) for a runnable example using the bundled fields.
+The output key is `predictions`. Replace `fitted` with `inverse` or `selected` to change the rule. See [input format and example](docs/ENSEMBLES.md).
 
-## Share through GitHub
+## Train a model
 
-**Extract the ZIP and push this folder. Do not commit the ZIP itself.** The included `.gitattributes` routes large array files through Git LFS. Install Git LFS before adding files:
+Install [Git LFS](https://git-lfs.com/) to download array files. For one Heat I experiment:
 
 ```bash
 git lfs install
-git init
-git add .
-git commit -m "Add AutoMF review artifact"
+git lfs pull --include="datasets/core/heat_generated/**"
+python -m pip install -r requirements-training.txt
+python scripts/train.py --model M1 --dataset heat_generated --epochs 2500
 ```
 
-Then add the intended remote and push both Git and LFS objects. A clone needs `git lfs pull` before running verification. Check the repository's LFS storage and bandwidth allowance against `release_manifest.json`; the datasets and prediction arrays are several GB. For double-blind review, use an anonymous review repository and avoid identifying account names, commit author details, or links in the submitted artifact. No remote repository was created by the packaging process.
+Use a CUDA-compatible PyTorch installation for GPU training. `--model` accepts the IDs above. M8/M9 require coarse-model preparation, and ERA5 uses its unpaired-data adapter. Follow the [training guide](docs/TRAINING.md) for those procedures and exact campaign recipes. To obtain all arrays, run `git lfs pull --include="" --exclude=""` (about 10.4 GB of unique LFS objects).
 
-Source-host paths and account identifiers have been normalized in the release copy. Scientific data and saved prediction arrays retain their original bytes. Third-party attribution and license notices remain in place. See [third-party notices](docs/THIRD_PARTY_NOTICES.md). The original project's public license is not assigned by this packaging operation.
+## Data and code
+
+| Location | Contents |
+|---|---|
+| [datasets/](datasets/) · [dataset guide](docs/DATASETS.md) | 21 PDE datasets across seven classes, plus ERA5 |
+| [generators/](generators/) | Dataset generators, parameter recipes and available verification code |
+| [models/](models/) · [model guide](docs/MODELS.md) | Baselines and nine surrogates, with common adapters |
+| [ensemble/](ensemble/) | Three ensemble rules and fit/predict CLI |
+| [campaigns/](campaigns/) | Exact later training recipes, prepared splits and saved outputs |
+| [results/](results/) | Saved predictions and raw benchmark records |
+| [analysis/](analysis/) | Numerical summaries, per-case archives and reproduction scripts |
+| [configs/](configs/) | Dataset roster and model IDs |
+
+<details>
+<summary>View all 22 datasets</summary>
+
+![Fields from the 22 datasets, arranged by problem class.](assets/dataset_gallery.png)
+
+</details>
+
+The repository contains code, data and results; the manuscript is maintained separately. Saved predictions support numerical replay, and training code supports new fits. Not every historical trained checkpoint is included. See [reproduction scope](docs/REPRODUCIBILITY.md), [results interpretation](docs/RESULTS.md) and [third-party attribution](docs/THIRD_PARTY_NOTICES.md).

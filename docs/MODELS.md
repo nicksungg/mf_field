@@ -1,8 +1,10 @@
-# Surrogate implementations
+# Models and adaptations
 
-These are the adapted implementations used in the experiments. Citations identify sources of components or ideas, not claims of verbatim reproduction. Full references and derivations are in `paper/references.bib` and the manuscript appendix.
+These are the adapted implementations used in the experiments. Citations identify sources of components or ideas, not claims of verbatim reproduction. Full bibliographic entries are in [references.bib](references.bib). Each source key below points to that bibliography. The training interfaces accept the M/B IDs directly.
 
-| ID | Manuscript name | Implementation identifier | Adaptation |
+## Nine surrogate library members
+
+| ID | Model | Implementation identifier | Adaptation |
 |---|---|---|---|
 | M1 | FiLM FNO transfer | `mf_fno_transfer_film` | Coordinate input and parameter FiLM at every FNO block, with LF to HF transfer. Tests repeated conditioning and spectral transfer. Sources: li2021fno,perez2018. |
 | M2 | All pairs FNO | `mf_fno_allpairs` | Fidelity labels and repeated target supervision. Poseidon is pair enumeration inspiration only. No source field input. Sources: li2021fno,herde2024. |
@@ -13,6 +15,13 @@ These are the adapted implementations used in the experiments. Citations identif
 | M7 | POD GP | `st_hf_pod_gp` | HF field SVD and shared coefficient GP hyperparameters. Basis emulation inspiration, not the original Bayesian model. Sources: higdon2008. |
 | M8 | Slice attention corrector | `uqcorr_transolver_pred` | Changed pooling and cell to slice attention, parameter FiLM, and six corrections of a predicted coarse field. Sources: wu2024transolver. |
 | M9 | ConvNeXt corrector | `uqcorr_convnext_pred` | ConvNeXt blocks in a U shaped corrector with FiLM. Six updates refine a predicted coarse field rather than generating it directly. Sources: liu2022convnext. |
+
+## Eleven baseline implementations
+
+These are evaluated individually, outside the ensemble library.
+
+| ID | Model | Implementation identifier | Adaptation |
+|---|---|---|---|
 | B1 | Autoregressive POD GP | `st_koh_pod` | KOH inspired scalar field coupling plus a separate residual POD GP. Not joint probabilistic co kriging. Sources: kennedy2000. |
 | B2 | Nonlinear POD GP | `st_nargp_pod` | NARGP inspired coefficient kernel with shared covariance hyperparameters and Monte Carlo LF uncertainty. Sources: perdikaris2017. |
 | B3 | Composite MF MLP | `st_mfdnn` | Meng inspired pointwise LF network and staged linear plus nonlinear HF corrections. Sources: meng2020. |
@@ -24,8 +33,13 @@ These are the adapted implementations used in the experiments. Citations identif
 | B9 | FNO transfer I | `mf_fno_transfer` | Parameters concatenated with coordinates and LF to HF transfer. Same inspected recipe as B10. Sources: lyu2023. |
 | B10 | FNO transfer II | `mf_fno_transfer_bar` | Separately archived transfer run with the same inspected model and training code as B9. Sources: lyu2023. |
 | B11 | Affine POD GP | `st_lf_affine_pod` | One affine slope and intercept across fields applied to an LF POD GP. Conceptual inspiration only. Sources: zhang2018. |
-| B12 | Parameter kNN | `st_knn` | Training-field nearest-neighbor reference. Sources: . |
-| B13 | Training mean | `st_mean` | Input-independent fine-training mean. Sources: . |
+
+## Additional baseline controls
+
+| ID | Model | Implementation identifier | Description |
+|---|---|---|---|
+| B12 | Parameter kNN | `st_knn` | Training-field nearest-neighbor reference. |
+| B13 | Training mean | `st_mean` | Input-independent fine-training mean. |
 
 ## Code locations
 

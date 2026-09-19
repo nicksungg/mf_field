@@ -14,7 +14,7 @@ The 22 entries in `configs/datasets.json` define the paper roster. The accompany
 | Poisson II, Heat II, Navier Stokes | Imported MFRNP archives (Niu et al., ICML 2024). The exact arrays are included; a new in-house simulator is not substituted for these tasks. |
 | ERA5 | The MFRNP-distributed climate archive, citing Niu et al. (2024) and Hersbach et al. (2020). Original and prepared arrays plus preparation and role records are included. |
 
-The available solver verification and convergence scripts accompany the source. Their scope varies. Links to an established numerical method or benchmark do not certify every parameter draw in this dataset. The manuscript appendix gives the relevant distinctions and citations.
+The available solver verification and convergence scripts accompany the source. Their scope varies. Links to an established numerical method or benchmark do not certify every parameter draw in this dataset. Source metadata, the verification code and [references.bib](references.bib) record the relevant distinctions and citations.
 
 ## Array locations and input roles
 
@@ -23,7 +23,7 @@ The available solver verification and convergence scripts accompany the source. 
 - `datasets/answers/era5/`: actual fitting and evaluation targets on the working grid. The `test_l*.npz` files in prepared ERA5 training directories contain **zero target placeholders**. Do not use those zeros as evaluation answers.
 - `campaigns/four_library/data/sharp/`: prepared versions for the four added PDEs, with reserved query answers withheld from training workers. The corresponding targets and role assignments are in that campaign's `answers/` and `ROLES.json`.
 - `campaigns/era5_library/data/training.npz`: the unpaired LF/HF training arrays and query parameters for the coarse-surrogate/corrector recipe.
-- `paper/data/historical_runs/` and later campaign `ROLES.json`: fixed fitting/evaluation case partitions. The raw archive's query pool is not identical to each reported evaluation subset.
+- `analysis/data/historical_runs/` and later campaign `ROLES.json`: fixed fitting/evaluation case partitions. The raw archive's query pool is not identical to each reported evaluation subset.
 
 ERA5 has 55 fine training examples, a pool of 10 fitting examples and seven evaluation examples. Reserved parameter identities were removed from every fidelity's training pool. The working output grid is 128 by 256; the native fine archive grid is 721 by 1440. Native grids, display interpolation and model working grids are distinct.
 

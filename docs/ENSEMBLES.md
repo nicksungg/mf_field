@@ -1,24 +1,54 @@
 # Fit and apply an ensemble
 
-The primary rules are **Selected model**, **Inverse error mixture**, and **Fitted mixture**. The standalone CLI exposes these three choices as `selected`, `inverse` and `fitted`.
+The public interface exposes exactly three rules:
 
-Run a complete small example using the bundled Heat I predictions:
+| Rule | CLI value | Fitting objective |
+|---|---|---|
+| Selected model | `selected` | Choose the individual model with the lowest mean relative L2 |
+| Inverse error mixture | `inverse` | Normalize inverse mean squared relative errors |
+| Fitted mixture | `fitted` | Jointly minimize mean squared relative error, with nonnegative weights summing to one |
+
+One fixed weight per model is shared by all spatial cells and subsequent query cases. The weights are fitted separately for each dataset. Base-model training and ensemble fitting use different examples. Query answers are needed only to score the final predictions, not to choose their weights.
+
+## Included CPU example
+
+From the repository root:
 
 ```bash
-python scripts/example_ensemble.py --output outputs/ensemble_example
+python -m pip install -r requirements-demo.txt
+python scripts/example_ensemble.py
 ```
 
-This uses five fitting cases and five different query cases, runs each rule, saves the fixed weights, predicts without supplying query answers to the prediction command, then scores the predictions. It is a usage demonstration rather than the paper's reporting partition. Use a fresh output directory for each invocation.
+The example uses saved predictions from all nine Heat I models. Five cases fit the weights and five different cases evaluate them. A new `outputs/ensemble_<timestamp>/` directory contains:
 
-For your own predictions:
+- `fitting.npz`: predictions and known fine answers for fitting.
+- `queries.npz`: model predictions for query cases, without their answers.
+- `selected_weights.json`, `inverse_weights.json`, `fitted_weights.json`: fitted weights and provenance.
+- `<rule>_prediction.npz`: combined fields, model names and weights.
+- `metrics.json`: evaluation errors.
+
+You can set `--output outputs/my_example` to choose a new destination. Existing destinations are not overwritten. The ten-case example is a usage demonstration, not the fixed benchmark reporting partition.
+
+## Your own model predictions
+
+The number of models M can be any positive integer, not necessarily nine. All predictions must use the same target grid and physical units, with the same model and case ordering.
+
+| File | Key | Shape |
+|---|---|---|
+| `fitting.npz` | `predictions` | `(K, M, H, W)` |
+| `fitting.npz` | `targets` | `(K, H, W)` |
+| `queries.npz` | `predictions` | `(N, M, H, W)` |
+| Both | `model_names` | `(M,)`, strings, recommended |
+
+For example, save your arrays with `np.savez_compressed('fitting.npz', predictions=fit_predictions, targets=fit_targets, model_names=names)`, and save query predictions similarly without targets.
 
 ```bash
-python ensemble/fit_fields.py fit --calibration fitting.npz --rule fitted --output weights.json
-python ensemble/fit_fields.py predict --predictions queries.npz --weights weights.json --output predicted_fields.npz
+python ensemble/fit_fields.py fit --fitting fitting.npz --rule fitted --output weights.json
+python ensemble/fit_fields.py predict --predictions queries.npz --weights weights.json --output mixed.npz
 ```
 
-`fitting.npz` must contain `predictions` with shape `(K, M, H, W)` and `targets` with shape `(K, H, W)`. `queries.npz` contains `predictions` with shape `(N, M, H, W)` and no answers are required. Both may include a length-M string array `model_names`; use the same ordering in both files. The output NPZ uses the key `predictions` for the mixed fields and includes the weights and model names.
+The mixed fields are in `np.load('mixed.npz')['predictions']`, shaped `(N, H, W)`. The CLI also accepts other trailing field dimensions `(N, M, ...)`, including multiple channels, provided the targets have shape `(K, ...)`. Names are checked if supplied. Invalid arrays and inconsistent model ordering are rejected. Files are written to new paths to preserve fitted-weight records.
 
-The `--calibration` spelling is retained from the archived API and means the ensemble fitting examples. These examples must be excluded from base-model training. Each fitted weight is shared by all spatial cells and query cases. The rule does not inspect an unknown fine field to choose its weights. Query targets are needed only to evaluate accuracy afterward.
+`--calibration` remains an alias for `--fitting` for compatibility with archived scripts. It denotes the same fitting examples. Historical rule-selection experiments are retained in the analysis archive and are not additional public CLI choices.
 
-For exact manuscript reproduction, use `scripts/reproduce_paper.py`; it loads the archived case partitions rather than this demonstration's first ten query rows.
+For the complete benchmark comparison, use [numerical reproduction](REPRODUCIBILITY.md).

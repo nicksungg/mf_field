@@ -178,7 +178,8 @@ def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     commands = parser.add_subparsers(dest="command", required=True)
     fitter = commands.add_parser("fit", help="fit weights using only known calibration fields")
-    fitter.add_argument("--calibration", type=Path, required=True)
+    fitter.add_argument("--fitting", "--calibration", dest="calibration", type=Path, required=True,
+                        help="NPZ containing fitting predictions and known targets")
     fitter.add_argument("--rule", choices=list(RULE_NAMES), required=True)
     fitter.add_argument("--output", type=Path, required=True)
     predictor = commands.add_parser("predict", help="apply saved weights without query answers")

@@ -2,6 +2,16 @@
 
 Use Python 3.12 for the archived PyTorch 2.5.1 recipes. Install an appropriate CUDA-enabled PyTorch build for the machine, then `pip install -r requirements-training.txt`. Exact recorded environments and hyperparameters are retained in the model environment file and per-run metadata. CPU imports were checked in the release validation environment; long GPU training was not repeated to create this artifact.
 
+## Download the required inputs
+
+Install Git LFS before downloading binary arrays. For a Heat I run:
+
+```bash
+git lfs pull --include="datasets/core/heat_generated/**"
+```
+
+For campaign retraining, download its arrays and the referenced source datasets first. To obtain every required input, use `git lfs pull --include="" --exclude=""`. New runs write to `outputs/` rather than the reference archives.
+
 ## Original PDE model implementations
 
 ```bash

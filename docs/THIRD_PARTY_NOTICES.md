@@ -7,6 +7,5 @@ This is a review artifact. Packaging does not assign a new blanket license to th
 - The sharp-field solver package and extension verification references retain their bundled source notices. No separate license file was found for the local SURF solver source. It is not relabeled as MIT or Apache licensed.
 - The extension verification material includes third-party reference projects. Their license/notice files are retained wherever supplied.
 - ERA5 and the other imported data retain their original provenance. A code repository's software license is not asserted to license the underlying data. See the cited source publications and providers' applicable data terms.
-- ICLR style files, natbib, and fancyhdr in `paper/` retain their original package notices.
 
-Full scientific attribution and the distinction between inspiration, adaptation and vendored implementation appear in `docs/MODELS.md`, `paper/references.bib` and the manuscript appendix. Third-party names and citations are intentionally preserved during account/path cleanup.
+Full scientific attribution and the distinction between inspiration, adaptation and vendored implementation appear in [model adaptations](MODELS.md) and [references.bib](references.bib). Third-party names and citations are intentionally preserved during account/path cleanup.

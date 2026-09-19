@@ -1,31 +1,61 @@
 #!/usr/bin/env python3
-"""Run all three rules on five fitting and five different Heat I query cases.
+"""Fit three ensembles on five Heat I cases and evaluate five different cases.
 
-This is a small CLI demonstration, not the paper's fixed reporting partition.
+CPU only. This demonstration uses saved predictions, not the reporting partition,
+and does not retrain any of the nine surrogates.
 """
+import argparse
+from datetime import datetime, timezone
+import hashlib
+import json
 from pathlib import Path
-import argparse,json,subprocess,sys
+import subprocess
+import sys
+
 import numpy as np
-ROOT=Path(__file__).resolve().parents[1]
-p=argparse.ArgumentParser(description=__doc__);p.add_argument('--output',type=Path,default=ROOT/'outputs/ensemble_example');a=p.parse_args()
-out=a.output.resolve();out.mkdir(parents=True,exist_ok=True)
-models=json.loads((ROOT/'configs/models.json').read_text());names=[models[f'M{i}']['archive_id'] for i in range(1,10)]
-fields=[];target=None
-for i,name in enumerate(names):
- with np.load(ROOT/'results/predictions/historical'/f'{name}__heat_generated.npz',allow_pickle=False) as z:
-  fields.append(z['pred' if i<7 else 'pred_test'][:10].reshape(10,64,64))
-  if target is None:target=z['target'][:10].reshape(10,64,64)
-pred=np.stack(fields,axis=1)
-np.savez_compressed(out/'fitting.npz',predictions=pred[:5],targets=target[:5],model_names=np.array(names))
-np.savez_compressed(out/'queries.npz',predictions=pred[5:],model_names=np.array(names))
-metrics={}
-for rule in ['selected','inverse','fitted']:
- subprocess.run([sys.executable,str(ROOT/'ensemble/fit_fields.py'),'fit','--calibration',str(out/'fitting.npz'),
-                 '--rule',rule,'--output',str(out/f'{rule}_weights.json')],check=True)
- subprocess.run([sys.executable,str(ROOT/'ensemble/fit_fields.py'),'predict','--predictions',str(out/'queries.npz'),
-                 '--weights',str(out/f'{rule}_weights.json'),'--output',str(out/f'{rule}_prediction.npz')],check=True)
- with np.load(out/f'{rule}_prediction.npz') as z:
-  y=z['predictions']
- err=np.linalg.norm((y-target[5:]).reshape(5,-1),axis=1)/np.maximum(np.linalg.norm(target[5:].reshape(5,-1),axis=1),1e-8)
- metrics[rule]={'mean_relative_l2':float(err.mean()),'per_case':err.tolist()}
-(out/'metrics.json').write_text(json.dumps(metrics,indent=2)+'\n');print(json.dumps(metrics,indent=2))
+
+ROOT = Path(__file__).resolve().parents[1]
+RULES = {'selected': 'Selected model', 'inverse': 'Inverse error mixture', 'fitted': 'Fitted mixture'}
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--output', type=Path, help='New output directory, defaults to a timestamped run')
+    args = parser.parse_args()
+    out = args.output or ROOT / 'outputs' / ('ensemble_' + datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S_%f'))
+    out = out.resolve()
+    if out.exists():
+        parser.error(f'Output already exists: {out}. Choose a new directory.')
+    source = ROOT / 'examples/heat_demo.npz'
+    manifest = json.loads(source.with_suffix('.json').read_text())
+    if hashlib.sha256(source.read_bytes()).hexdigest() != manifest['sha256']:
+        parser.error('Example data checksum differs from examples/heat_demo.json')
+    with np.load(source, allow_pickle=False) as z:
+        pred, target, names = z['predictions'], z['targets'], z['model_names']
+    out.mkdir(parents=True)
+    np.savez_compressed(out / 'fitting.npz', predictions=pred[:5], targets=target[:5], model_names=names)
+    # Prediction never receives query targets. They are used only below for scoring.
+    np.savez_compressed(out / 'queries.npz', predictions=pred[5:], model_names=names)
+    metrics = {}
+    for rule in RULES:
+        subprocess.run([sys.executable, str(ROOT / 'ensemble/fit_fields.py'), 'fit', '--fitting',
+                        str(out / 'fitting.npz'), '--rule', rule, '--output', str(out / f'{rule}_weights.json')],
+                       check=True, capture_output=True, text=True)
+        subprocess.run([sys.executable, str(ROOT / 'ensemble/fit_fields.py'), 'predict', '--predictions',
+                        str(out / 'queries.npz'), '--weights', str(out / f'{rule}_weights.json'),
+                        '--output', str(out / f'{rule}_prediction.npz')], check=True, capture_output=True, text=True)
+        with np.load(out / f'{rule}_prediction.npz') as z:
+            y = z['predictions']
+        error = np.linalg.norm((y - target[5:]).reshape(5, -1), axis=1)
+        error /= np.maximum(np.linalg.norm(target[5:].reshape(5, -1), axis=1), 1e-8)
+        metrics[rule] = dict(mean_relative_l2=float(error.mean()), per_case=error.tolist())
+    (out / 'metrics.json').write_text(json.dumps(metrics, indent=2) + '\n')
+    print('Heat I demo: 9 saved surrogates, 5 fitting cases, 5 different query cases.\n')
+    for rule, label in RULES.items():
+        print(f'{label:23s}  relative L2 = {100 * metrics[rule]["mean_relative_l2"]:.6f}%')
+    print(f'\nWeights, predictions and metrics: {out}')
+    print('This usage example is separate from the benchmark comparison.')
+
+
+if __name__ == '__main__':
+    main()
