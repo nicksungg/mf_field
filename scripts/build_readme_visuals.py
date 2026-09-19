@@ -15,6 +15,7 @@ import matplotlib.pyplot as plt
 from matplotlib.patches import FancyArrowPatch, FancyBboxPatch
 import numpy as np
 from PIL import Image
+from scipy.ndimage import zoom
 
 from reproduce_results import ROOT, load_comparison
 
@@ -24,6 +25,16 @@ BLUE = '#317aa2'
 GREEN = '#147d70'
 ORANGE = '#bd754b'
 COLORS = ['#226f9b', '#3a8fbb', '#76a2c0', '#5d8095', '#737baf', '#ac92ba', '#d5a763', '#488f82', '#84b6a2']
+
+
+def prediction_on_fine_grid(arrays):
+    """Interpolate only the display copy; saved predictions and scores stay native."""
+    prediction = arrays['era5_mixture']
+    shape = arrays['era5_training_fine'].shape
+    displayed = zoom(prediction, tuple(t / s for t, s in zip(shape, prediction.shape)),
+                     order=1, prefilter=False)
+    assert displayed.shape == shape and np.isfinite(displayed).all()
+    return displayed
 
 
 def workflow(fig, arrays):
@@ -81,11 +92,15 @@ def workflow(fig, arrays):
     bars.set_facecolor('none')
     bars.spines[['top', 'right', 'left', 'bottom']].set_visible(False)
     fig.text(.493, .595, 'Saved inverse error weights for ERA5', ha='center', fontsize=9, color=MUTED)
-    field([.746, .651, .166, .119], prediction)
+    field([.746, .651, .166, .119], prediction_on_fine_grid(arrays))
     fig.text(.8295, .800, r'New $x$ → nine predictions → mixture', ha='center', fontsize=10, color=MUTED)
     fig.text(.8295, .620, r'$\widehat{y}(x)=\sum_{m=1}^{9}w_m f_m(x)$', ha='center', fontsize=13, color=INK)
-    fig.text(.8295, .591, 'Prediction working grid: 128 × 256', ha='center', fontsize=9, color=MUTED)
+    height, width = fine.shape
+    fig.text(.8295, .591, f'Predicted fine grid: {height} × {width}', ha='center', fontsize=9, color=MUTED)
     fig.text(.04, .548, 'ERA5 training pair at left; a different reserved input at right. No new simulation is needed at prediction time.',
+             fontsize=9, color=MUTED)
+    native_height, native_width = prediction.shape
+    fig.text(.04, .530, f'Display interpolation: {native_height} × {native_width} model output → {height} × {width} fine grid.',
              fontsize=9, color=MUTED)
     return ax
 
@@ -157,7 +172,10 @@ def main():
                  era5_source_sha256=hashlib.sha256(source.read_bytes()).hexdigest(),
                  denominator='Selected model using five fitting examples, evaluated on held-out cases',
                  dataset_count=22, baselines=11, library_models=9, ensemble_rules=3,
-                 field_values_modified=False, displayed_prediction_grid=list(prediction.shape),
+                 saved_field_values_modified=False,
+                 prediction_working_grid=list(prediction.shape),
+                 displayed_prediction_grid=list(prediction_on_fine_grid(arrays).shape),
+                 prediction_display_interpolation='bilinear; visualization only, not used for scoring',
                  bars=[{k: r[k] for k in ['id', 'name', 'group', 'dataset_ratio']} for r in records])
     (out / 'visuals_manifest.json').write_text(json.dumps(check, indent=2) + '\n')
     print(f'Wrote 3-slide GIF and static images in {out}')

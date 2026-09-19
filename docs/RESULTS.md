@@ -28,7 +28,7 @@ Comparisons use corresponding evaluation cases. Training resources, validation p
 
 The [GIF](../assets/automf_overview.gif) holds the ERA5 workflow fixed while cycling through three charts: ensemble rules, nine surrogates and eleven baselines. Every chart uses the dataset ratio above. The dashed line marks 1. Each chart starts at zero and has its own labeled linear scale. Static copies: [overview](../assets/overview.png), [surrogates](../assets/surrogates.png), [baselines](../assets/baselines.png).
 
-The workflow uses actual ERA5 training fields at 192 × 384 and 721 × 1440. Its output illustrates a different reserved input, with saved inverse error weights and the actual 128 × 256 prediction working grid. No smoothing or enlargement changes the underlying field arrays. The aggregate charts use all 22 datasets and are separate from that illustrative ERA5 case.
+The workflow uses actual ERA5 training fields at 192 × 384 and 721 × 1440. Its output illustrates a different reserved input, using saved inverse error weights. For display, the 128 × 256 model output is bilinearly interpolated onto the 721 × 1440 fine grid. This changes only the visualization, not the archived predictions, fitted weights or reported errors. The aggregate charts use all 22 datasets and are separate from that illustrative ERA5 case.
 
 The [visual manifest](../assets/visuals_manifest.json) records the values and source hashes. Regenerate it with:
 
