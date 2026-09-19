@@ -1,0 +1,57 @@
+{
+  "task": {
+    "id": "convnext_unet_film__era5",
+    "model": "convnext_unet_film",
+    "dataset": "era5",
+    "rel": "core/era5",
+    "seed": 42,
+    "checkpoint": "/archive/mf_field/operator_library/checkpoints/convnext_unet_film/era5/last.pt",
+    "script": "/archive/mf_field/operator_library/models/convnext_unet_film/smoke_eval.py",
+    "device": "gpu",
+    "checkpoint_bytes": 21052845,
+    "checkpoint_mtime_ns": 1784679663914311791,
+    "script_sha256": "09e75557618a3041b5d101e75bcc6e684f366f553c24d9bb486263ba52d77909"
+  },
+  "seconds": 10.420908451080322,
+  "replay": {
+    "checkpoint_sha256": "6407455f05e0cefdcf8f389874249ab861bedc39acaedf734f2f9b0103063ecf",
+    "script_sha256": "09e75557618a3041b5d101e75bcc6e684f366f553c24d9bb486263ba52d77909",
+    "epochs": 2500,
+    "loaded_modules": [
+      "ConvNeXtUNet2d"
+    ],
+    "device": "NVIDIA L40S",
+    "base_retrained": false,
+    "matmul_tf32": false,
+    "cudnn_tf32": false,
+    "matmul_precision": "highest"
+  },
+  "n": 7,
+  "work_grid": [
+    128,
+    256
+  ],
+  "base_train_overlap": 7,
+  "rel_l2_mean": 0.05124676453938176,
+  "archive_mean": 0.05124586820602417,
+  "prediction_sha256": "36680e61e7ca0c740c25417726f81758b47601ce345d63462473fbc8e50496d3",
+  "model_metadata": {
+    "n_params": 5184753,
+    "extra": {
+      "device": "cuda",
+      "hf_fidelity": 9,
+      "lf_fidelity": 1,
+      "mf_mechanism": "transfer_learning_pretrain_LF_finetune_HF",
+      "conditioning": "film_on_X_per_block",
+      "backbone": "convnext_unet_3level",
+      "hf_grid_native": [
+        721,
+        1440
+      ],
+      "work_grid": [
+        128,
+        256
+      ]
+    }
+  }
+}

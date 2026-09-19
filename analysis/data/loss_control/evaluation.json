@@ -1,0 +1,858 @@
+{
+  "scope": "Post hoc, previously inspected historical predictions",
+  "n_datasets": 17,
+  "n_partitions": 51,
+  "n_classes": 7,
+  "budget": 5,
+  "locked_weights_sha256": "34769747a1e49c34aeff237b861b085c339ddc91c2b840cbc1d257ce86149555",
+  "records": [
+    {
+      "run": "darcy_generated__s172",
+      "dataset": "darcy_generated",
+      "class_name": "elliptic",
+      "n_evaluation": 20,
+      "errors": {
+        "single_l2": 0.02201723089826647,
+        "inverse_mse": 0.024706466857519704,
+        "full": 0.021067479830802097,
+        "direct_l2": 0.021055551753841373
+      }
+    },
+    {
+      "run": "darcy_generated__s273",
+      "dataset": "darcy_generated",
+      "class_name": "elliptic",
+      "n_evaluation": 20,
+      "errors": {
+        "single_l2": 0.026088089792630165,
+        "inverse_mse": 0.02669472063156118,
+        "full": 0.02553657697603373,
+        "direct_l2": 0.025104632273527522
+      }
+    },
+    {
+      "run": "darcy_generated__s71",
+      "dataset": "darcy_generated",
+      "class_name": "elliptic",
+      "n_evaluation": 20,
+      "errors": {
+        "single_l2": 0.02755526901595572,
+        "inverse_mse": 0.02499757963353425,
+        "full": 0.023383059517645816,
+        "direct_l2": 0.022445823690438307
+      }
+    },
+    {
+      "run": "ext__cahn_hilliard_2d__s172",
+      "dataset": "ext__cahn_hilliard_2d",
+      "class_name": "reaction_diffusion",
+      "n_evaluation": 20,
+      "errors": {
+        "single_l2": 0.11374886784224543,
+        "inverse_mse": 0.10432885732914976,
+        "full": 0.09595204116153304,
+        "direct_l2": 0.08836488196326107
+      }
+    },
+    {
+      "run": "ext__cahn_hilliard_2d__s273",
+      "dataset": "ext__cahn_hilliard_2d",
+      "class_name": "reaction_diffusion",
+      "n_evaluation": 20,
+      "errors": {
+        "single_l2": 0.11119906838736959,
+        "inverse_mse": 0.1082063509512832,
+        "full": 0.09951213248809201,
+        "direct_l2": 0.09884235058509139
+      }
+    },
+    {
+      "run": "ext__cahn_hilliard_2d__s71",
+      "dataset": "ext__cahn_hilliard_2d",
+      "class_name": "reaction_diffusion",
+      "n_evaluation": 20,
+      "errors": {
+        "single_l2": 0.13989330456820545,
+        "inverse_mse": 0.12540152172350952,
+        "full": 0.12436852475908691,
+        "direct_l2": 0.1213184396480104
+      }
+    },
+    {
+      "run": "ext__eikonal_2d__s172",
+      "dataset": "ext__eikonal_2d",
+      "class_name": "elliptic",
+      "n_evaluation": 20,
+      "errors": {
+        "single_l2": 0.019421113308473393,
+        "inverse_mse": 0.018333837481103166,
+        "full": 0.01886806844128349,
+        "direct_l2": 0.01890645839085168
+      }
+    },
+    {
+      "run": "ext__eikonal_2d__s273",
+      "dataset": "ext__eikonal_2d",
+      "class_name": "elliptic",
+      "n_evaluation": 20,
+      "errors": {
+        "single_l2": 0.014410333886202257,
+        "inverse_mse": 0.016262847705316198,
+        "full": 0.014667939980315375,
+        "direct_l2": 0.01476711541004656
+      }
+    },
+    {
+      "run": "ext__eikonal_2d__s71",
+      "dataset": "ext__eikonal_2d",
+      "class_name": "elliptic",
+      "n_evaluation": 20,
+      "errors": {
+        "single_l2": 0.020432928951850293,
+        "inverse_mse": 0.0183513228539163,
+        "full": 0.019382443287526196,
+        "direct_l2": 0.01937925413769431
+      }
+    },
+    {
+      "run": "ext__pressure_poisson_poiseuille__s172",
+      "dataset": "ext__pressure_poisson_poiseuille",
+      "class_name": "elliptic",
+      "n_evaluation": 20,
+      "errors": {
+        "single_l2": 0.001130204104591169,
+        "inverse_mse": 0.0010456563374126,
+        "full": 0.0010632687063710238,
+        "direct_l2": 0.0010620340018249086
+      }
+    },
+    {
+      "run": "ext__pressure_poisson_poiseuille__s273",
+      "dataset": "ext__pressure_poisson_poiseuille",
+      "class_name": "elliptic",
+      "n_evaluation": 20,
+      "errors": {
+        "single_l2": 0.0005654430946118467,
+        "inverse_mse": 0.00045401926131790504,
+        "full": 0.0004606128584085248,
+        "direct_l2": 0.00047702842403771526
+      }
+    },
+    {
+      "run": "ext__pressure_poisson_poiseuille__s71",
+      "dataset": "ext__pressure_poisson_poiseuille",
+      "class_name": "elliptic",
+      "n_evaluation": 20,
+      "errors": {
+        "single_l2": 0.0005049024820634717,
+        "inverse_mse": 0.000806075160881866,
+        "full": 0.0008833463047890346,
+        "direct_l2": 0.0007538554139635123
+      }
+    },
+    {
+      "run": "ext__rayleigh_benard_2d__s172",
+      "dataset": "ext__rayleigh_benard_2d",
+      "class_name": "convection",
+      "n_evaluation": 20,
+      "errors": {
+        "single_l2": 2.989064136468539e-05,
+        "inverse_mse": 2.7769985013688895e-05,
+        "full": 2.5848862584957933e-05,
+        "direct_l2": 2.5800714496078273e-05
+      }
+    },
+    {
+      "run": "ext__rayleigh_benard_2d__s273",
+      "dataset": "ext__rayleigh_benard_2d",
+      "class_name": "convection",
+      "n_evaluation": 20,
+      "errors": {
+        "single_l2": 3.100479806397231e-05,
+        "inverse_mse": 3.001273420422711e-05,
+        "full": 2.854919966873682e-05,
+        "direct_l2": 2.8488235140881815e-05
+      }
+    },
+    {
+      "run": "ext__rayleigh_benard_2d__s71",
+      "dataset": "ext__rayleigh_benard_2d",
+      "class_name": "convection",
+      "n_evaluation": 20,
+      "errors": {
+        "single_l2": 2.937427041751165e-05,
+        "inverse_mse": 2.7941622647329372e-05,
+        "full": 2.6249810997209176e-05,
+        "direct_l2": 2.613139121860718e-05
+      }
+    },
+    {
+      "run": "ext__wave_2d__s172",
+      "dataset": "ext__wave_2d",
+      "class_name": "waves",
+      "n_evaluation": 20,
+      "errors": {
+        "single_l2": 0.05540619397286763,
+        "inverse_mse": 0.04685711169409269,
+        "full": 0.043022825109616095,
+        "direct_l2": 0.04344928124721768
+      }
+    },
+    {
+      "run": "ext__wave_2d__s273",
+      "dataset": "ext__wave_2d",
+      "class_name": "waves",
+      "n_evaluation": 20,
+      "errors": {
+        "single_l2": 0.04386120758132371,
+        "inverse_mse": 0.04334993979524497,
+        "full": 0.04398333979794785,
+        "direct_l2": 0.03954114535731855
+      }
+    },
+    {
+      "run": "ext__wave_2d__s71",
+      "dataset": "ext__wave_2d",
+      "class_name": "waves",
+      "n_evaluation": 20,
+      "errors": {
+        "single_l2": 0.04595464221500719,
+        "inverse_mse": 0.04159829985880383,
+        "full": 0.04123135816186903,
+        "direct_l2": 0.03999969431513612
+      }
+    },
+    {
+      "run": "fluid__s172",
+      "dataset": "fluid",
+      "class_name": "convection",
+      "n_evaluation": 52,
+      "errors": {
+        "single_l2": 0.014633291393984615,
+        "inverse_mse": 0.013819996480106901,
+        "full": 0.014247752859083548,
+        "direct_l2": 0.01419337517172576
+      }
+    },
+    {
+      "run": "fluid__s273",
+      "dataset": "fluid",
+      "class_name": "convection",
+      "n_evaluation": 52,
+      "errors": {
+        "single_l2": 0.016491874017713605,
+        "inverse_mse": 0.015828075287469615,
+        "full": 0.015413858883225554,
+        "direct_l2": 0.015234907613095098
+      }
+    },
+    {
+      "run": "fluid__s71",
+      "dataset": "fluid",
+      "class_name": "convection",
+      "n_evaluation": 52,
+      "errors": {
+        "single_l2": 0.01708190906802252,
+        "inverse_mse": 0.01589379585620411,
+        "full": 0.015238494260489581,
+        "direct_l2": 0.015271078629270672
+      }
+    },
+    {
+      "run": "heat_generated__s172",
+      "dataset": "heat_generated",
+      "class_name": "diffusion",
+      "n_evaluation": 20,
+      "errors": {
+        "single_l2": 0.00010583804343528017,
+        "inverse_mse": 6.577600898986247e-05,
+        "full": 6.714467890761228e-05,
+        "direct_l2": 6.669411597399718e-05
+      }
+    },
+    {
+      "run": "heat_generated__s273",
+      "dataset": "heat_generated",
+      "class_name": "diffusion",
+      "n_evaluation": 20,
+      "errors": {
+        "single_l2": 0.00010952731593424118,
+        "inverse_mse": 6.53646411850911e-05,
+        "full": 7.202680379142938e-05,
+        "direct_l2": 6.411050164208985e-05
+      }
+    },
+    {
+      "run": "heat_generated__s71",
+      "dataset": "heat_generated",
+      "class_name": "diffusion",
+      "n_evaluation": 20,
+      "errors": {
+        "single_l2": 7.612415549274629e-05,
+        "inverse_mse": 4.6630342444452846e-05,
+        "full": 4.692616393129632e-05,
+        "direct_l2": 4.681574420251511e-05
+      }
+    },
+    {
+      "run": "heat_local__s172",
+      "dataset": "heat_local",
+      "class_name": "diffusion",
+      "n_evaluation": 103,
+      "errors": {
+        "single_l2": 6.554642436249024e-05,
+        "inverse_mse": 4.4853872335456846e-05,
+        "full": 4.500660922628102e-05,
+        "direct_l2": 4.388598760255678e-05
+      }
+    },
+    {
+      "run": "heat_local__s273",
+      "dataset": "heat_local",
+      "class_name": "diffusion",
+      "n_evaluation": 103,
+      "errors": {
+        "single_l2": 6.92261102618739e-05,
+        "inverse_mse": 4.445015180093342e-05,
+        "full": 4.4348991239583425e-05,
+        "direct_l2": 4.434384435655682e-05
+      }
+    },
+    {
+      "run": "heat_local__s71",
+      "dataset": "heat_local",
+      "class_name": "diffusion",
+      "n_evaluation": 103,
+      "errors": {
+        "single_l2": 6.382252809102788e-05,
+        "inverse_mse": 4.166847608762657e-05,
+        "full": 4.1169793767774835e-05,
+        "direct_l2": 4.10166842596283e-05
+      }
+    },
+    {
+      "run": "lid_driven_cavity_v2__s172",
+      "dataset": "lid_driven_cavity_v2",
+      "class_name": "convection",
+      "n_evaluation": 20,
+      "errors": {
+        "single_l2": 0.001771033171293735,
+        "inverse_mse": 0.0015912804207836699,
+        "full": 0.0015852771358366429,
+        "direct_l2": 0.0015891960392647026
+      }
+    },
+    {
+      "run": "lid_driven_cavity_v2__s273",
+      "dataset": "lid_driven_cavity_v2",
+      "class_name": "convection",
+      "n_evaluation": 20,
+      "errors": {
+        "single_l2": 0.0016459737760325555,
+        "inverse_mse": 0.0013915943395437882,
+        "full": 0.0013934795808793234,
+        "direct_l2": 0.0013914119758171057
+      }
+    },
+    {
+      "run": "lid_driven_cavity_v2__s71",
+      "dataset": "lid_driven_cavity_v2",
+      "class_name": "convection",
+      "n_evaluation": 20,
+      "errors": {
+        "single_l2": 0.0015118248771583901,
+        "inverse_mse": 0.0012797363218659394,
+        "full": 0.0012721137682105339,
+        "direct_l2": 0.001272119450174493
+      }
+    },
+    {
+      "run": "poisson_generated_v2__s172",
+      "dataset": "poisson_generated_v2",
+      "class_name": "elliptic",
+      "n_evaluation": 20,
+      "errors": {
+        "single_l2": 6.319043625972638e-05,
+        "inverse_mse": 8.42288331213057e-05,
+        "full": 8.524746316298479e-05,
+        "direct_l2": 8.2539827291415e-05
+      }
+    },
+    {
+      "run": "poisson_generated_v2__s273",
+      "dataset": "poisson_generated_v2",
+      "class_name": "elliptic",
+      "n_evaluation": 20,
+      "errors": {
+        "single_l2": 7.485621847820043e-05,
+        "inverse_mse": 8.024484596752537e-05,
+        "full": 7.455034477849729e-05,
+        "direct_l2": 7.34782495516122e-05
+      }
+    },
+    {
+      "run": "poisson_generated_v2__s71",
+      "dataset": "poisson_generated_v2",
+      "class_name": "elliptic",
+      "n_evaluation": 20,
+      "errors": {
+        "single_l2": 6.725583376258827e-05,
+        "inverse_mse": 7.541600584814053e-05,
+        "full": 7.666790954790085e-05,
+        "direct_l2": 7.100508955446629e-05
+      }
+    },
+    {
+      "run": "poisson_local__s172",
+      "dataset": "poisson_local",
+      "class_name": "elliptic",
+      "n_evaluation": 103,
+      "errors": {
+        "single_l2": 0.00011845053033769564,
+        "inverse_mse": 0.00012248104384756403,
+        "full": 0.00011877312934051048,
+        "direct_l2": 0.00011700926972390814
+      }
+    },
+    {
+      "run": "poisson_local__s273",
+      "dataset": "poisson_local",
+      "class_name": "elliptic",
+      "n_evaluation": 103,
+      "errors": {
+        "single_l2": 0.00011439160256177944,
+        "inverse_mse": 0.00011907007807839336,
+        "full": 0.00013866386351339926,
+        "direct_l2": 0.00012018158761284488
+      }
+    },
+    {
+      "run": "poisson_local__s71",
+      "dataset": "poisson_local",
+      "class_name": "elliptic",
+      "n_evaluation": 103,
+      "errors": {
+        "single_l2": 0.00012994790604143905,
+        "inverse_mse": 0.00013346669351148454,
+        "full": 0.00012994790604143905,
+        "direct_l2": 0.0001299479061657619
+      }
+    },
+    {
+      "run": "sharp__burgers_2d__s172",
+      "dataset": "sharp__burgers_2d",
+      "class_name": "shocks",
+      "n_evaluation": 20,
+      "errors": {
+        "single_l2": 0.004880802737313281,
+        "inverse_mse": 0.005038504429029167,
+        "full": 0.004832546501131252,
+        "direct_l2": 0.004834888817011251
+      }
+    },
+    {
+      "run": "sharp__burgers_2d__s273",
+      "dataset": "sharp__burgers_2d",
+      "class_name": "shocks",
+      "n_evaluation": 20,
+      "errors": {
+        "single_l2": 0.0050848768878894515,
+        "inverse_mse": 0.005108388396250373,
+        "full": 0.005032041434183315,
+        "direct_l2": 0.005029207800169711
+      }
+    },
+    {
+      "run": "sharp__burgers_2d__s71",
+      "dataset": "sharp__burgers_2d",
+      "class_name": "shocks",
+      "n_evaluation": 20,
+      "errors": {
+        "single_l2": 0.005519892434470755,
+        "inverse_mse": 0.005230232827553048,
+        "full": 0.005185087311856701,
+        "direct_l2": 0.005181080275041016
+      }
+    },
+    {
+      "run": "sharp__euler__s172",
+      "dataset": "sharp__euler",
+      "class_name": "shocks",
+      "n_evaluation": 20,
+      "errors": {
+        "single_l2": 0.05585987486433036,
+        "inverse_mse": 0.05422027218623103,
+        "full": 0.05278532170785845,
+        "direct_l2": 0.05290718990960293
+      }
+    },
+    {
+      "run": "sharp__euler__s273",
+      "dataset": "sharp__euler",
+      "class_name": "shocks",
+      "n_evaluation": 20,
+      "errors": {
+        "single_l2": 0.06664294044527119,
+        "inverse_mse": 0.05993106193589247,
+        "full": 0.06282842635511794,
+        "direct_l2": 0.06242002033757045
+      }
+    },
+    {
+      "run": "sharp__euler__s71",
+      "dataset": "sharp__euler",
+      "class_name": "shocks",
+      "n_evaluation": 20,
+      "errors": {
+        "single_l2": 0.06028095839290785,
+        "inverse_mse": 0.05508378486793978,
+        "full": 0.05635814337372287,
+        "direct_l2": 0.0557147485328656
+      }
+    },
+    {
+      "run": "sharp__helmholtz_2d__s172",
+      "dataset": "sharp__helmholtz_2d",
+      "class_name": "elliptic",
+      "n_evaluation": 20,
+      "errors": {
+        "single_l2": 0.07007084240554369,
+        "inverse_mse": 0.11709050983540101,
+        "full": 0.10115812072594714,
+        "direct_l2": 0.09961740705131523
+      }
+    },
+    {
+      "run": "sharp__helmholtz_2d__s273",
+      "dataset": "sharp__helmholtz_2d",
+      "class_name": "elliptic",
+      "n_evaluation": 20,
+      "errors": {
+        "single_l2": 0.10979784883492931,
+        "inverse_mse": 0.08425008661669611,
+        "full": 0.08999595171798225,
+        "direct_l2": 0.08442652263198992
+      }
+    },
+    {
+      "run": "sharp__helmholtz_2d__s71",
+      "dataset": "sharp__helmholtz_2d",
+      "class_name": "elliptic",
+      "n_evaluation": 20,
+      "errors": {
+        "single_l2": 0.0075090787190375975,
+        "inverse_mse": 0.005317005236672462,
+        "full": 0.005411795323554833,
+        "direct_l2": 0.005379591265747646
+      }
+    },
+    {
+      "run": "sharp__porous_medium_2d__s172",
+      "dataset": "sharp__porous_medium_2d",
+      "class_name": "porous",
+      "n_evaluation": 20,
+      "errors": {
+        "single_l2": 0.0003333421658951349,
+        "inverse_mse": 0.0002775514793159051,
+        "full": 0.0002862187214860734,
+        "direct_l2": 0.000280645390948477
+      }
+    },
+    {
+      "run": "sharp__porous_medium_2d__s273",
+      "dataset": "sharp__porous_medium_2d",
+      "class_name": "porous",
+      "n_evaluation": 20,
+      "errors": {
+        "single_l2": 0.0003266989991010459,
+        "inverse_mse": 0.00025716372601248963,
+        "full": 0.00025549233317392195,
+        "direct_l2": 0.0002545030599077604
+      }
+    },
+    {
+      "run": "sharp__porous_medium_2d__s71",
+      "dataset": "sharp__porous_medium_2d",
+      "class_name": "porous",
+      "n_evaluation": 20,
+      "errors": {
+        "single_l2": 0.000314878336977846,
+        "inverse_mse": 0.0002517290638582551,
+        "full": 0.00024791509395202734,
+        "direct_l2": 0.0002471225687154074
+      }
+    },
+    {
+      "run": "sharp__shallow_water_2d__s172",
+      "dataset": "sharp__shallow_water_2d",
+      "class_name": "waves",
+      "n_evaluation": 20,
+      "errors": {
+        "single_l2": 0.0037215902010875775,
+        "inverse_mse": 0.003499194679207037,
+        "full": 0.0035674566484489275,
+        "direct_l2": 0.0034994996278585643
+      }
+    },
+    {
+      "run": "sharp__shallow_water_2d__s273",
+      "dataset": "sharp__shallow_water_2d",
+      "class_name": "waves",
+      "n_evaluation": 20,
+      "errors": {
+        "single_l2": 0.003200721109517155,
+        "inverse_mse": 0.003358311229645966,
+        "full": 0.004105544824994025,
+        "direct_l2": 0.004021233343881931
+      }
+    },
+    {
+      "run": "sharp__shallow_water_2d__s71",
+      "dataset": "sharp__shallow_water_2d",
+      "class_name": "waves",
+      "n_evaluation": 20,
+      "errors": {
+        "single_l2": 0.004078463311618491,
+        "inverse_mse": 0.0038664374170546876,
+        "full": 0.003983443856772702,
+        "direct_l2": 0.003980140164075179
+      }
+    }
+  ],
+  "means": {
+    "darcy_generated": {
+      "single_l2": 0.025220196568950786,
+      "inverse_mse": 0.02546625570753838,
+      "full": 0.023329038774827213,
+      "direct_l2": 0.022868669239269068
+    },
+    "ext__eikonal_2d": {
+      "single_l2": 0.018088125382175316,
+      "inverse_mse": 0.017649336013445222,
+      "full": 0.017639483903041688,
+      "direct_l2": 0.017684275979530848
+    },
+    "sharp__helmholtz_2d": {
+      "single_l2": 0.0624592566531702,
+      "inverse_mse": 0.06888586722958986,
+      "full": 0.06552195592249475,
+      "direct_l2": 0.06314117364968426
+    },
+    "poisson_generated_v2": {
+      "single_l2": 6.843416283350502e-05,
+      "inverse_mse": 7.996322831232386e-05,
+      "full": 7.882190582979432e-05,
+      "direct_l2": 7.567438879916449e-05
+    },
+    "poisson_local": {
+      "single_l2": 0.00012093001298030472,
+      "inverse_mse": 0.0001250059384791473,
+      "full": 0.00012912829963178295,
+      "direct_l2": 0.00012237958783417165
+    },
+    "ext__pressure_poisson_poiseuille": {
+      "single_l2": 0.0007335165604221624,
+      "inverse_mse": 0.0007685835865374569,
+      "full": 0.0008024092898561945,
+      "direct_l2": 0.0007643059466087122
+    },
+    "heat_generated": {
+      "single_l2": 9.716317162075589e-05,
+      "inverse_mse": 5.9256997539802134e-05,
+      "full": 6.203254887677932e-05,
+      "direct_l2": 5.920678727286738e-05
+    },
+    "heat_local": {
+      "single_l2": 6.619835423846401e-05,
+      "inverse_mse": 4.3657500074672277e-05,
+      "full": 4.350846474454643e-05,
+      "direct_l2": 4.3082172072913974e-05
+    },
+    "lid_driven_cavity_v2": {
+      "single_l2": 0.0016429439414948936,
+      "inverse_mse": 0.0014208703607311325,
+      "full": 0.0014169568283088334,
+      "direct_l2": 0.0014175758217521003
+    },
+    "fluid": {
+      "single_l2": 0.016069024826573578,
+      "inverse_mse": 0.015180622541260208,
+      "full": 0.014966702000932893,
+      "direct_l2": 0.01489978713803051
+    },
+    "ext__rayleigh_benard_2d": {
+      "single_l2": 3.0089903282056452e-05,
+      "inverse_mse": 2.857478062174846e-05,
+      "full": 2.688262441696798e-05,
+      "direct_l2": 2.6806780285189086e-05
+    },
+    "sharp__burgers_2d": {
+      "single_l2": 0.005161857353224495,
+      "inverse_mse": 0.005125708550944196,
+      "full": 0.005016558415723756,
+      "direct_l2": 0.005015058964073993
+    },
+    "sharp__euler": {
+      "single_l2": 0.06092792456750313,
+      "inverse_mse": 0.05641170633002109,
+      "full": 0.05732396381223309,
+      "direct_l2": 0.05701398626001299
+    },
+    "sharp__porous_medium_2d": {
+      "single_l2": 0.00032497316732467565,
+      "inverse_mse": 0.00026214808972888326,
+      "full": 0.0002632087162040076,
+      "direct_l2": 0.0002607570065238816
+    },
+    "ext__cahn_hilliard_2d": {
+      "single_l2": 0.1216137469326068,
+      "inverse_mse": 0.11264557666798082,
+      "full": 0.10661089946957066,
+      "direct_l2": 0.10284189073212095
+    },
+    "sharp__shallow_water_2d": {
+      "single_l2": 0.0036669248740744073,
+      "inverse_mse": 0.0035746477753025637,
+      "full": 0.0038854817767385516,
+      "direct_l2": 0.0038336243786052243
+    },
+    "ext__wave_2d": {
+      "single_l2": 0.048407347923066175,
+      "inverse_mse": 0.04393511711604717,
+      "full": 0.042745841023144326,
+      "direct_l2": 0.04099670697322411
+    }
+  },
+  "comparisons": {
+    "inverse_mse_vs_single_l2": {
+      "class_ratio": 0.8816720953093773,
+      "dataset_ratio": 0.9239953719939727,
+      "wins": 11,
+      "losses": 4,
+      "neutral": 2,
+      "ratios": {
+        "darcy_generated": 1.0097564322274364,
+        "ext__eikonal_2d": 0.9757415785517225,
+        "sharp__helmholtz_2d": 1.1028928444042485,
+        "poisson_generated_v2": 1.168469445689986,
+        "poisson_local": 1.033704829747322,
+        "ext__pressure_poisson_poiseuille": 1.0478067272197813,
+        "heat_generated": 0.6098709680977903,
+        "heat_local": 0.6594952484378448,
+        "lid_driven_cavity_v2": 0.8648319183905331,
+        "fluid": 0.9447133665607258,
+        "ext__rayleigh_benard_2d": 0.9496468085621429,
+        "sharp__burgers_2d": 0.9929969389297986,
+        "sharp__euler": 0.9258760532294443,
+        "sharp__porous_medium_2d": 0.8066761077137645,
+        "ext__cahn_hilliard_2d": 0.9262569364827171,
+        "sharp__shallow_water_2d": 0.9748352906206905,
+        "ext__wave_2d": 0.9076125629909176
+      }
+    },
+    "full_vs_single_l2": {
+      "class_ratio": 0.876213616360898,
+      "dataset_ratio": 0.9178551776394587,
+      "wins": 12,
+      "losses": 5,
+      "neutral": 0,
+      "ratios": {
+        "darcy_generated": 0.9250141532817462,
+        "ext__eikonal_2d": 0.9751969057238107,
+        "sharp__helmholtz_2d": 1.0490351540097795,
+        "poisson_generated_v2": 1.1517917742569872,
+        "poisson_local": 1.0677936473290006,
+        "ext__pressure_poisson_poiseuille": 1.0939211643625089,
+        "heat_generated": 0.6384368464103121,
+        "heat_local": 0.6572439034936944,
+        "lid_driven_cavity_v2": 0.8624498940721999,
+        "fluid": 0.9314007640452606,
+        "ext__rayleigh_benard_2d": 0.8934101304672164,
+        "sharp__burgers_2d": 0.9718514233234332,
+        "sharp__euler": 0.9408487851694809,
+        "sharp__porous_medium_2d": 0.8099398432518579,
+        "ext__cahn_hilliard_2d": 0.8766352666417713,
+        "sharp__shallow_water_2d": 1.059602230798173,
+        "ext__wave_2d": 0.883044472733361
+      }
+    },
+    "direct_l2_vs_single_l2": {
+      "class_ratio": 0.858954316496708,
+      "dataset_ratio": 0.8982465503434045,
+      "wins": 12,
+      "losses": 5,
+      "neutral": 0,
+      "ratios": {
+        "darcy_generated": 0.9067601506097401,
+        "ext__eikonal_2d": 0.9776732306907583,
+        "sharp__helmholtz_2d": 1.010917789180564,
+        "poisson_generated_v2": 1.1057984150880076,
+        "poisson_local": 1.0119868907489742,
+        "ext__pressure_poisson_poiseuille": 1.0419750389395837,
+        "heat_generated": 0.6093542057680186,
+        "heat_local": 0.6508042770628493,
+        "lid_driven_cavity_v2": 0.8628266527841884,
+        "fluid": 0.9272365497494607,
+        "ext__rayleigh_benard_2d": 0.8908895463673625,
+        "sharp__burgers_2d": 0.9715609364798117,
+        "sharp__euler": 0.9357611746129016,
+        "sharp__porous_medium_2d": 0.8023954982823653,
+        "ext__cahn_hilliard_2d": 0.8456436326159047,
+        "sharp__shallow_water_2d": 1.0454602999121696,
+        "ext__wave_2d": 0.846910825157788
+      }
+    },
+    "direct_l2_vs_full": {
+      "class_ratio": 0.980302406237566,
+      "dataset_ratio": 0.9786364692668797,
+      "wins": 9,
+      "losses": 0,
+      "neutral": 8,
+      "ratios": {
+        "darcy_generated": 0.9802662450004199,
+        "ext__eikonal_2d": 1.0025393076540883,
+        "sharp__helmholtz_2d": 0.9636643589268504,
+        "poisson_generated_v2": 0.9600679912837113,
+        "poisson_local": 0.9477363845349497,
+        "ext__pressure_poisson_poiseuille": 0.9525138308726322,
+        "heat_generated": 0.9544471143765993,
+        "heat_local": 0.9902020750643495,
+        "lid_driven_cavity_v2": 1.0004368470731784,
+        "fluid": 0.9955290843033948,
+        "ext__rayleigh_benard_2d": 0.9971786931736092,
+        "sharp__burgers_2d": 0.9997010995336837,
+        "sharp__euler": 0.994592531088125,
+        "sharp__porous_medium_2d": 0.9906853020846556,
+        "ext__cahn_hilliard_2d": 0.9646470599516378,
+        "sharp__shallow_water_2d": 0.9866535474586999,
+        "ext__wave_2d": 0.9590806027427753
+      }
+    },
+    "direct_l2_vs_inverse_mse": {
+      "class_ratio": 0.9742333017756474,
+      "dataset_ratio": 0.972133170326381,
+      "wins": 10,
+      "losses": 2,
+      "neutral": 5,
+      "ratios": {
+        "darcy_generated": 0.8979988853445625,
+        "ext__eikonal_2d": 1.0019796759526256,
+        "sharp__helmholtz_2d": 0.9166056288329927,
+        "poisson_generated_v2": 0.9463648528995373,
+        "poisson_local": 0.9789901929706022,
+        "ext__pressure_poisson_poiseuille": 0.9944343855324624,
+        "heat_generated": 0.9991526694058195,
+        "heat_local": 0.9868217831810283,
+        "lid_driven_cavity_v2": 0.9976813233141573,
+        "fluid": 0.9815004027360275,
+        "ext__rayleigh_benard_2d": 0.9381272472407457,
+        "sharp__burgers_2d": 0.978412821218674,
+        "sharp__euler": 1.010676506157577,
+        "sharp__porous_medium_2d": 0.9946935214884063,
+        "ext__cahn_hilliard_2d": 0.9129687447492421,
+        "sharp__shallow_water_2d": 1.072448145826267,
+        "ext__wave_2d": 0.933119328325409
+      }
+    }
+  }
+}

@@ -1,0 +1,84 @@
+{
+  "architecture_and_hyperparameters": "Frozen release recipe; optimizer/RNG checkpoint adaptations only",
+  "calibration_answers_loaded": false,
+  "cost": {
+    "eval_seconds": 0.013475179672241211,
+    "n_params": 203137,
+    "peak_gpu_allocated_bytes": 412915200,
+    "train_seconds": 874.7538781166077,
+    "wall_seconds": 875.5347202923149
+  },
+  "cudnn_tf32": false,
+  "dataset": "sharp__phase_field_crystal_2d",
+  "device": "cuda",
+  "device_name": "NVIDIA H200 NVL",
+  "dtype": "float32",
+  "elapsed_seconds": 875.5347202923149,
+  "epochs": 2500,
+  "eval_seconds": 0.013475179672241211,
+  "fit": {
+    "decoder": "nonlinear",
+    "decoder_kind": "nonlinear_manifold_NOMAD",
+    "device": "cuda",
+    "hf_fidelity": 3,
+    "hf_grid_native": [
+      128,
+      128
+    ],
+    "latent_dim": 128,
+    "lf_fidelity": 1,
+    "mf_mechanism": "transfer_learning_pretrain_LF_finetune_HF",
+    "operator": "deeponet",
+    "work_grid": [
+      128,
+      128
+    ]
+  },
+  "identity": {
+    "dataset": "sharp__phase_field_crystal_2d",
+    "input_sha256": {
+      "test_l1.npz": "9cc1a4996f4ebdd4a9132f9064c88e3d2ef3929a21f5e9714f9545a30a4480e5",
+      "test_l2.npz": "6c6b0f3b2b39e90e1577b592fc69f6d699c47a954c8188dd314fe47d784db73b",
+      "test_l3.npz": "75042e982129379d2457820755d5896f8ea620ef83601d2630de94c3ce500535",
+      "train_l1.npz": "b8f5e51779e4fe607530482d99ba8b40cb90f1381a082a103f9f535002b5da21",
+      "train_l2.npz": "5159c1db4e458602d1434f33cd2917e3a4ff96131e96a2c1d183aa4887430154",
+      "train_l3.npz": "3aa286e4d4f9d492857064a3463cffdad402b450c89831ef72397aefbe2ad225"
+    },
+    "model": "nomad_mf",
+    "plan_sha256": "ce030fb65b8608ca9144df105469cfa89b65d80ff17c6d9a46e0a343a7ea0e73",
+    "seed": 42,
+    "smoke": false,
+    "source_sha256": "72eee79a1a26c89135279b00d1dd66309ce1117da66c753ee3fdf98e5eb6098a"
+  },
+  "independent_training": true,
+  "inputs_at_inference": [
+    "theta"
+  ],
+  "loaded_data_paths": [
+    "/archive/mf_field/experiments/four_baselines_20260915/data/sharp__phase_field_crystal_2d/test_l1.npz",
+    "/archive/mf_field/experiments/four_baselines_20260915/data/sharp__phase_field_crystal_2d/test_l2.npz",
+    "/archive/mf_field/experiments/four_baselines_20260915/data/sharp__phase_field_crystal_2d/test_l3.npz",
+    "/archive/mf_field/experiments/four_baselines_20260915/data/sharp__phase_field_crystal_2d/train_l1.npz",
+    "/archive/mf_field/experiments/four_baselines_20260915/data/sharp__phase_field_crystal_2d/train_l2.npz",
+    "/archive/mf_field/experiments/four_baselines_20260915/data/sharp__phase_field_crystal_2d/train_l3.npz"
+  ],
+  "matmul_tf32": false,
+  "model": "nomad_mf",
+  "n_base_hf_train": 400,
+  "n_params": 203137,
+  "n_query": 100,
+  "prediction_path": "predictions/sharp__phase_field_crystal_2d/nomad_mf.npz",
+  "prediction_sha256": "6f81ab576730802729b08ec2cba513bf172473d0edc9f94ff9a00044e1c8f7ad",
+  "query_answers_read": false,
+  "query_sha256": "d19009816a812bfb48744162ba86a68d12e1384002e7ee9a03dbdebb5a63e8b8",
+  "raw_test_answers_loaded": false,
+  "resume_supported": true,
+  "scientific_result": true,
+  "seed": 42,
+  "smoke": false,
+  "train_seconds": 874.7538781166077,
+  "work_grid": [
+    128,
+    128
+  ]
+}

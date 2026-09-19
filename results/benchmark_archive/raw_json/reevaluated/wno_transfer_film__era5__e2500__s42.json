@@ -1,0 +1,45 @@
+{
+  "model": "wno_transfer_film",
+  "dataset": "era5",
+  "splits": {
+    "test_hf": {
+      "nRMSE": 0.06550714899976694,
+      "rel_l2_mean": 0.06532492564901722,
+      "rel_l2_ci95_lo": 0.06196646572124198,
+      "rel_l2_ci95_hi": 0.06956585060329368,
+      "rel_l2_std": 0.005610511873159251,
+      "rel_l2_per_sample": [
+        0.0657011063636269,
+        0.06570311659352408,
+        0.060067473088620066,
+        0.06737302408829604,
+        0.060417176113349715,
+        0.07627114158337064,
+        0.061741441712332985
+      ],
+      "n_samples": 7
+    }
+  },
+  "n_params": 9494849,
+  "train_seconds": 2.384185791015625e-07,
+  "eval_seconds": 0.15247416496276855,
+  "latency_ms_per_sample": 21.782023566109793,
+  "peak_mem_mb": 582.405632,
+  "work_grid": [
+    128,
+    256
+  ],
+  "eval_protocol": "full_field_on_working_grid",
+  "device": "cuda",
+  "hf_fidelity": 9,
+  "lf_fidelity": 1,
+  "mf_mechanism": "transfer_learning_pretrain_LF_finetune_HF",
+  "conditioning": "film_on_X_per_block",
+  "backbone": "wavelet_single_level_WNO",
+  "wavelet": "db4",
+  "dwt_recon_error": 7.152557373046875e-07,
+  "hf_grid_native": [
+    721,
+    1440
+  ]
+}

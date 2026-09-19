@@ -1,0 +1,9 @@
+{
+  "name": "convnext_unet_film",
+  "version": "0.1.0",
+  "description": "ConvNeXt-U-Net with the FiLM-transfer recipe: the benchmark-winning FNO+FiLM-transfer model with the ONLY change being the backbone -- the Fourier/FNO backbone is swapped for a 3-level ConvNeXt-U-Net (encoder-decoder CNN whose residual blocks are ConvNeXt blocks: depthwise 7x7 conv -> FiLMNorm -> pointwise C->4C -> GELU -> pointwise 4C->C, residual add). FiLMNorm (from common.backbone) replaces ConvNeXt's LayerNorm so the condition vector X modulates every block, identical to the winner; the network input is the 2 coordinate channels only (X never concatenated). Encoder channels 48->96->192->384 (bottleneck), U-Net skip concatenations, transposed-conv upsampling. 1-D-safe: down/up-sampling stride is ndim-adaptive (H==1 -> stride (1,2) never touching the height axis; H>1 -> (2,2)), and downsampled axes are replicate-padded to a multiple of 8 then cropped back, so height-1 (sod_1d, grid 1x128) survives all 3 down/up stages. FiLM conditioning on X and the LF-pretrain -> HF-finetune transfer schedule are byte-for-byte the winner, so this is a clean Fourier-vs-ConvNeXt backbone comparison holding conditioning + schedule fixed.",
+  "supports": ["ifc_raw", "npz_l"],
+  "smoke_entrypoint": "smoke_eval.py",
+  "frozen": false,
+  "inspired_by": ["liu2022convnext", "ronneberger2015unet", "perez2018film", "lyu2023mffno"]
+}

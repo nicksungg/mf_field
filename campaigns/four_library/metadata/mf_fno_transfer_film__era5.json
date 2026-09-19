@@ -1,0 +1,52 @@
+{
+  "dataset": "era5",
+  "model": "mf_fno_transfer_film",
+  "smoke": false,
+  "seed": 42,
+  "epochs": 2500,
+  "prediction_sha256": "fe24ccd8e8cb1033778b615e9aa72617b68421a5515fae6bf1b83fc16c149a23",
+  "source_manifest_sha256": "f9accb12a6a2acce6c7865837720db665cb9b562ed59d98f81f4673ffefa4af3",
+  "plan_sha256": "6b77fb5a305fdcd116810af3f6d71d78acde5a0f47464010b7e002be7572a55d",
+  "n_base_hf_train": 55,
+  "elapsed_seconds": 4713.288978099823,
+  "train_seconds": 4703.249283313751,
+  "device": "NVIDIA H200",
+  "matmul_tf32": false,
+  "cudnn_tf32": false,
+  "raw_test_answers_loaded": false,
+  "loaded_data_paths": [
+    "/archive/mf_field/experiments/automl_repair_20260913/data/core/era5/test_l1.npz",
+    "/archive/mf_field/experiments/automl_repair_20260913/data/core/era5/test_l2.npz",
+    "/archive/mf_field/experiments/automl_repair_20260913/data/core/era5/test_l3.npz",
+    "/archive/mf_field/experiments/automl_repair_20260913/data/core/era5/test_l4.npz",
+    "/archive/mf_field/experiments/automl_repair_20260913/data/core/era5/test_l5.npz",
+    "/archive/mf_field/experiments/automl_repair_20260913/data/core/era5/test_l6.npz",
+    "/archive/mf_field/experiments/automl_repair_20260913/data/core/era5/test_l7.npz",
+    "/archive/mf_field/experiments/automl_repair_20260913/data/core/era5/test_l8.npz",
+    "/archive/mf_field/experiments/automl_repair_20260913/data/core/era5/test_l9.npz",
+    "/archive/mf_field/experiments/automl_repair_20260913/data/core/era5/train_l1.npz",
+    "/archive/mf_field/experiments/automl_repair_20260913/data/core/era5/train_l2.npz",
+    "/archive/mf_field/experiments/automl_repair_20260913/data/core/era5/train_l3.npz",
+    "/archive/mf_field/experiments/automl_repair_20260913/data/core/era5/train_l4.npz",
+    "/archive/mf_field/experiments/automl_repair_20260913/data/core/era5/train_l5.npz",
+    "/archive/mf_field/experiments/automl_repair_20260913/data/core/era5/train_l6.npz",
+    "/archive/mf_field/experiments/automl_repair_20260913/data/core/era5/train_l7.npz",
+    "/archive/mf_field/experiments/automl_repair_20260913/data/core/era5/train_l8.npz",
+    "/archive/mf_field/experiments/automl_repair_20260913/data/core/era5/train_l9.npz"
+  ],
+  "extra": {
+    "device": "cuda",
+    "hf_fidelity": 9,
+    "lf_fidelity": 1,
+    "mf_mechanism": "transfer_learning_pretrain_LF_finetune_HF",
+    "conditioning": "film_on_X_per_block",
+    "hf_grid_native": [
+      721,
+      1440
+    ],
+    "work_grid": [
+      128,
+      256
+    ]
+  }
+}

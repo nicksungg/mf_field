@@ -1,0 +1,75 @@
+{
+  "checked_at": "2026-09-14T20:13:40.086588",
+  "reason": "Unreadable PyTorch ZIP checkpoint in failed coarse task 22704276_2",
+  "source_manifest_unchanged": true,
+  "jobs": [
+    {
+      "id": "22769468",
+      "name": "automl-lf-phase-retry",
+      "command": [
+        "sbatch",
+        "--parsable",
+        "--job-name=automl-lf-phase-retry",
+        "--exclude=node2900,node4200,node2901,node4002,node1702,node2119,node2809,node2810,node4004,node4007,node4008,node5003,node5004,node5005,node5101,node5103,node5104,node5106,node5202,node5203,node5204",
+        "--chdir=/archive/mf_field/experiments/automl_repair_20260913",
+        "--array=2",
+        "--time=12:00:00",
+        "/archive/mf_field/experiments/automl_repair_20260913/gpu.sbatch",
+        "array_worker.py",
+        "coarse",
+        "--dataset",
+        "sharp__phase_field_crystal_2d"
+      ]
+    },
+    {
+      "id": "22769469",
+      "name": "automl-oof-phase-retry",
+      "command": [
+        "sbatch",
+        "--parsable",
+        "--job-name=automl-oof-phase-retry",
+        "--exclude=node2900,node4200,node2901,node4002,node1702,node2119,node2809,node2810,node4004,node4007,node4008,node5003,node5004,node5005,node5101,node5103,node5104,node5106,node5202,node5203,node5204",
+        "--chdir=/archive/mf_field/experiments/automl_repair_20260913",
+        "--dependency=afterok:22769468",
+        "--kill-on-invalid-dep=yes",
+        "/archive/mf_field/experiments/automl_repair_20260913/cpu.sbatch",
+        "run_uq.py",
+        "--dataset",
+        "sharp__phase_field_crystal_2d",
+        "--kind",
+        "assemble"
+      ]
+    },
+    {
+      "id": "22769470",
+      "name": "automl-corr-phase-retry",
+      "command": [
+        "sbatch",
+        "--parsable",
+        "--job-name=automl-corr-phase-retry",
+        "--exclude=node2900,node4200,node2901,node4002,node1702,node2119,node2809,node2810,node4004,node4007,node4008,node5003,node5004,node5005,node5101,node5103,node5104,node5106,node5202,node5203,node5204",
+        "--chdir=/archive/mf_field/experiments/automl_repair_20260913",
+        "--array=0-1%1",
+        "--time=12:00:00",
+        "--dependency=afterok:22769469",
+        "--kill-on-invalid-dep=yes",
+        "/archive/mf_field/experiments/automl_repair_20260913/gpu.sbatch",
+        "array_worker.py",
+        "corrector",
+        "--dataset",
+        "sharp__phase_field_crystal_2d"
+      ]
+    }
+  ],
+  "checkpoint": {
+    "original": "/archive/mf_field/experiments/automl_repair_20260913/uqcorr/ck/hetero__sharp__phase_field_crystal_2d__L2__F0of5__s42/last.pt",
+    "preserved": "/archive/mf_field/experiments/automl_repair_20260913/uqcorr/ck/hetero__sharp__phase_field_crystal_2d__L2__F0of5__s42/last.pt.corrupt_20260914",
+    "bytes": 23756288,
+    "sha256": "eae85854054d4f1ee8c2520a6a4d53a73a6054fa9363e71fa1f9255d920bdba5"
+  },
+  "collector_dependency": {
+    "id": "22704283",
+    "dependency": "afterany:22704263_22:22704263_23:22704263_24:22704263_25:22704263_26:22704263_27:22704263_28:22704264_3:22769470"
+  },
+  "complete": true
+}

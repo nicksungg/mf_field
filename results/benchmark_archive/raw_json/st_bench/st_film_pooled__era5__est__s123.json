@@ -1,0 +1,60 @@
+{
+  "model": "st_film_pooled",
+  "dataset": "era5",
+  "splits": {
+    "test_hf": {
+      "nRMSE": 0.09144407353586481,
+      "rel_l2_mean": 0.09119361513615101,
+      "rel_l2_ci95_lo": 0.08569814204524039,
+      "rel_l2_ci95_hi": 0.09657667672648187,
+      "rel_l2_std": 0.00783211814701967,
+      "rel_l2_per_sample": [
+        0.08830054652451048,
+        0.10232605626924819,
+        0.08955471958428979,
+        0.0958061572427896,
+        0.0894310033022354,
+        0.09552456782228902,
+        0.07741225520769456
+      ],
+      "n_samples": 7
+    }
+  },
+  "n_params": 4776257,
+  "train_seconds": 260.306955575943,
+  "eval_seconds": 0.0,
+  "latency_ms_per_sample": null,
+  "peak_mem_mb": 2888.146432,
+  "work_grid": [
+    128,
+    256
+  ],
+  "eval_protocol": "full_field_on_working_grid",
+  "track": "surrogate",
+  "inputs_at_inference": [
+    "theta"
+  ],
+  "conditioning": "film_on_X_per_block",
+  "epochs": 2500,
+  "n_hf_train": 65,
+  "n_test": 7,
+  "hf_grid_native": [
+    721,
+    1440
+  ],
+  "family_script": "/archive/mf_field/factory_mffp/models/mf_fno_transfer_film/smoke_eval.py",
+  "mf_mechanism": "fidelity_blind_pooling",
+  "rows_per_level": {
+    "9": 65,
+    "1": 1222,
+    "2": 815,
+    "3": 1222,
+    "4": 328,
+    "5": 328,
+    "6": 408,
+    "7": 408,
+    "8": 408
+  },
+  "pooled_epochs": 31,
+  "lr": 0.001
+}

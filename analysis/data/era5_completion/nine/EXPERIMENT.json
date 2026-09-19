@@ -1,0 +1,119 @@
+{
+  "version": 1,
+  "dataset": "era5",
+  "models": [
+    "mf_fno_transfer_film",
+    "mf_fno_allpairs",
+    "convnext_unet_film",
+    "fno_fire_distcond",
+    "wno_transfer_film",
+    "mf_deeponet",
+    "st_hf_pod_gp",
+    "uqcorr_transolver_pred",
+    "uqcorr_convnext_pred"
+  ],
+  "coarse_steps": 30000,
+  "corrector_steps": 6000,
+  "corrector_K": 6,
+  "alpha": 0.2,
+  "coarse_grid": [
+    128,
+    256
+  ],
+  "grid": [
+    128,
+    256
+  ],
+  "work_grid": [
+    128,
+    256
+  ],
+  "lf_level": 8,
+  "lf_native_grid": [
+    192,
+    384
+  ],
+  "hf_native_grid": [
+    721,
+    1440
+  ],
+  "base_seed": 42,
+  "n_hf_train": 55,
+  "n_lf_train": 394,
+  "n_query": 17,
+  "calibration_count": 10,
+  "evaluation_count": 7,
+  "budgets": [
+    5,
+    10
+  ],
+  "corrector_split": {
+    "train_rows": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      19,
+      20,
+      21,
+      22,
+      23,
+      25,
+      26,
+      27,
+      29,
+      30,
+      31,
+      32,
+      33,
+      34,
+      35,
+      36,
+      37,
+      38,
+      39,
+      40,
+      41,
+      42,
+      43,
+      44,
+      45,
+      46,
+      47,
+      48,
+      49,
+      51,
+      52,
+      53,
+      54
+    ],
+    "val_rows": [
+      7,
+      17,
+      18,
+      24,
+      28,
+      50
+    ]
+  },
+  "training_sha256": "eccfe741993588cb23376afa9e0d539b3cb9cb296b8563b5bfa3228b6a140db9",
+  "original_plan_sha256": "6b77fb5a305fdcd116810af3f6d71d78acde5a0f47464010b7e002be7572a55d",
+  "roles_sha256": "609704d1abc776ee6db0fbc2d8b1a6dcadfa2b6de52318e882020a7065621de7",
+  "matched_observed_fields_required": false,
+  "preprocessing": "LF level8 and HF level9 bilinear resize to128x256, align_corners=False; fixed array grid",
+  "python": "3.10.14 | packaged by conda-forge | (main, Mar 20 2024, 12:45:18) [GCC 12.3.0]",
+  "torch": "2.5.1",
+  "numpy": "1.26.4"
+}

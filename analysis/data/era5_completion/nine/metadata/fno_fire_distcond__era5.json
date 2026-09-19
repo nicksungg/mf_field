@@ -1,0 +1,56 @@
+{
+  "dataset": "era5",
+  "model": "fno_fire_distcond",
+  "smoke": false,
+  "seed": 42,
+  "epochs": 2500,
+  "prediction_sha256": "1ac0207a322a7f1f388156485992bf16f17fa57291c82997ffd2e17be26e5f46",
+  "source_manifest_sha256": "f9accb12a6a2acce6c7865837720db665cb9b562ed59d98f81f4673ffefa4af3",
+  "plan_sha256": "6b77fb5a305fdcd116810af3f6d71d78acde5a0f47464010b7e002be7572a55d",
+  "n_base_hf_train": 55,
+  "elapsed_seconds": 20767.661542654037,
+  "train_seconds": 20751.867027044296,
+  "device": "NVIDIA H200",
+  "matmul_tf32": false,
+  "cudnn_tf32": false,
+  "raw_test_answers_loaded": false,
+  "loaded_data_paths": [
+    "/archive/mf_field/experiments/automl_repair_20260913/data/core/era5/test_l1.npz",
+    "/archive/mf_field/experiments/automl_repair_20260913/data/core/era5/test_l2.npz",
+    "/archive/mf_field/experiments/automl_repair_20260913/data/core/era5/test_l3.npz",
+    "/archive/mf_field/experiments/automl_repair_20260913/data/core/era5/test_l4.npz",
+    "/archive/mf_field/experiments/automl_repair_20260913/data/core/era5/test_l5.npz",
+    "/archive/mf_field/experiments/automl_repair_20260913/data/core/era5/test_l6.npz",
+    "/archive/mf_field/experiments/automl_repair_20260913/data/core/era5/test_l7.npz",
+    "/archive/mf_field/experiments/automl_repair_20260913/data/core/era5/test_l8.npz",
+    "/archive/mf_field/experiments/automl_repair_20260913/data/core/era5/test_l9.npz",
+    "/archive/mf_field/experiments/automl_repair_20260913/data/core/era5/train_l1.npz",
+    "/archive/mf_field/experiments/automl_repair_20260913/data/core/era5/train_l2.npz",
+    "/archive/mf_field/experiments/automl_repair_20260913/data/core/era5/train_l3.npz",
+    "/archive/mf_field/experiments/automl_repair_20260913/data/core/era5/train_l4.npz",
+    "/archive/mf_field/experiments/automl_repair_20260913/data/core/era5/train_l5.npz",
+    "/archive/mf_field/experiments/automl_repair_20260913/data/core/era5/train_l6.npz",
+    "/archive/mf_field/experiments/automl_repair_20260913/data/core/era5/train_l7.npz",
+    "/archive/mf_field/experiments/automl_repair_20260913/data/core/era5/train_l8.npz",
+    "/archive/mf_field/experiments/automl_repair_20260913/data/core/era5/train_l9.npz"
+  ],
+  "extra": {
+    "device": "cuda",
+    "hf_fidelity": 9,
+    "lf_fidelity": 1,
+    "mf_mechanism": "FIRE_distribution_conditioned_residual_HF=muLF+delta(aug)",
+    "ensemble_size": 5,
+    "aug_channels": [
+      "mu",
+      "sigma",
+      "q10",
+      "q50",
+      "q90"
+    ],
+    "lf_ensemble_gaussian_nll": 2112.8649217531756,
+    "work_grid": [
+      128,
+      256
+    ]
+  }
+}

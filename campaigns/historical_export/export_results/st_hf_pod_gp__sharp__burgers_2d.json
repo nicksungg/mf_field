@@ -1,0 +1,43 @@
+{
+  "task": {
+    "id": "st_hf_pod_gp__sharp__burgers_2d",
+    "model": "st_hf_pod_gp",
+    "dataset": "sharp__burgers_2d",
+    "rel": "sharp/burgers_2d",
+    "seed": 42,
+    "device": "cpu",
+    "note": "Classical estimator state was not saved; reproduce its original training-only fit."
+  },
+  "seconds": 12.992482900619507,
+  "replay": {
+    "device": "cpu",
+    "base_retrained": true,
+    "reason": "POD-GP estimator was not checkpointed",
+    "raw_units_multiplier": 0.34852665662765503,
+    "registration": "periodic_cell"
+  },
+  "n": 100,
+  "work_grid": [
+    256,
+    256
+  ],
+  "base_train_overlap": 0,
+  "rel_l2_mean": 0.024477248721218658,
+  "archive_mean": 0.024477126076817513,
+  "prediction_sha256": "23cdcdf0c22e069dd8856ed2a2d184b98e3b88ca69b90446d387bc7c27303a96",
+  "model_metadata": {
+    "method": "fine-only POD + shared-ARD-RBF GP emulator",
+    "n_hf_train": 400,
+    "fit_seconds": 6.621714115142822,
+    "hf_pod_modes": 19,
+    "hf_pod_energy_captured": 0.9990109063373579,
+    "hf_gp_log_lengthscales": [
+      -1.354487139427601,
+      -3.0
+    ],
+    "hf_gp_log_signal": 0.1455014533453509,
+    "hf_gp_log_noise": -4.712857268485163,
+    "hf_gp_nlml": -20886.111261878457,
+    "hf_gp_converged": true
+  }
+}

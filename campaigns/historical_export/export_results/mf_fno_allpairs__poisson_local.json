@@ -1,0 +1,101 @@
+{
+  "task": {
+    "id": "mf_fno_allpairs__poisson_local",
+    "model": "mf_fno_allpairs",
+    "dataset": "poisson_local",
+    "rel": "core/poisson_local",
+    "seed": 42,
+    "checkpoint": "/archive/mf_field/operator_library/checkpoints/mf_fno_allpairs/poisson_local/last.pt",
+    "script": "/archive/mf_field/operator_library/models/mf_fno_allpairs/smoke_eval.py",
+    "device": "gpu",
+    "checkpoint_bytes": 38116896,
+    "checkpoint_mtime_ns": 1782916252055116532,
+    "script_sha256": "2da0be37c63b22ae95861db2fb70d190e1e1fc21a9b8892bf046097964b913d3"
+  },
+  "seconds": 4.637611150741577,
+  "replay": {
+    "checkpoint_sha256": "881d831d1158bc79dc2678af3f870bce756fd29f75689475682c8f5a8c158e3f",
+    "script_sha256": "2da0be37c63b22ae95861db2fb70d190e1e1fc21a9b8892bf046097964b913d3",
+    "epochs": 2500,
+    "loaded_modules": [
+      "FNO2d"
+    ],
+    "device": "NVIDIA L40S",
+    "base_retrained": false,
+    "matmul_tf32": false,
+    "cudnn_tf32": false,
+    "matmul_precision": "highest"
+  },
+  "n": 512,
+  "work_grid": [
+    128,
+    128
+  ],
+  "base_train_overlap": 0,
+  "rel_l2_mean": 0.005360038676268152,
+  "archive_mean": 0.005358626134693623,
+  "prediction_sha256": "0f0308d45b104dde8b298bd077c2508b35cb00fc228f74be7405f57fba522b82",
+  "model_metadata": {
+    "n_params": 4774977,
+    "extra": {
+      "device": "cuda",
+      "hf_fidelity": 5,
+      "lf_fidelity": 1,
+      "mf_mechanism": "allpairs_joint_train_then_lf2hf_finetune",
+      "conditioning": "film_on_[X,f_src,f_tgt]",
+      "n_pairs": 10,
+      "pairs": [
+        [
+          1,
+          2
+        ],
+        [
+          1,
+          3
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          1,
+          5
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          2,
+          5
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          3,
+          5
+        ],
+        [
+          4,
+          5
+        ]
+      ],
+      "f_lf_norm": 0.0,
+      "f_hf_norm": 1.0,
+      "hf_grid_native": [
+        128,
+        128
+      ],
+      "work_grid": [
+        128,
+        128
+      ]
+    }
+  }
+}

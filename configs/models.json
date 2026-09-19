@@ -1,0 +1,134 @@
+{
+  "M1": {
+    "name": "FiLM FNO transfer",
+    "archive_id": "mf_fno_transfer_film",
+    "citations": "li2021fno,perez2018",
+    "adaptation": "Coordinate input and parameter FiLM at every FNO block, with LF to HF transfer. Tests repeated conditioning and spectral transfer."
+  },
+  "M2": {
+    "name": "All pairs FNO",
+    "archive_id": "mf_fno_allpairs",
+    "citations": "li2021fno,herde2024",
+    "adaptation": "Fidelity labels and repeated target supervision. Poseidon is pair enumeration inspiration only. No source field input."
+  },
+  "M3": {
+    "name": "ConvNeXt transfer",
+    "archive_id": "convnext_unet_film",
+    "citations": "liu2022convnext",
+    "adaptation": "ConvNeXt blocks in a U shaped field decoder, parameter FiLM, and LF to HF transfer. Tests local spatial processing."
+  },
+  "M4": {
+    "name": "Distribution FNO",
+    "archive_id": "fno_fire_distcond",
+    "citations": "yu2026fire",
+    "adaptation": "FIRE distribution summaries become spatial channels from five LF FNOs. A trained residual FNO replaces foundation model inference."
+  },
+  "M5": {
+    "name": "Wavelet transfer",
+    "archive_id": "wno_transfer_film",
+    "citations": "tripura2022wno",
+    "adaptation": "WNO motivates a custom single level db4 coefficient mixer with FiLM and transfer training."
+  },
+  "M6": {
+    "name": "Retrieved field DeepONet",
+    "archive_id": "mf_deeponet",
+    "citations": "lu2022mf",
+    "adaptation": "Parameters and a nearest neighbour LF training field enter the branch. The residual needs no new coarse solve."
+  },
+  "M7": {
+    "name": "POD GP",
+    "archive_id": "st_hf_pod_gp",
+    "citations": "higdon2008",
+    "adaptation": "HF field SVD and shared coefficient GP hyperparameters. Basis emulation inspiration, not the original Bayesian model."
+  },
+  "M8": {
+    "name": "Slice attention corrector",
+    "archive_id": "uqcorr_transolver_pred",
+    "citations": "wu2024transolver",
+    "adaptation": "Changed pooling and cell to slice attention, parameter FiLM, and six corrections of a predicted coarse field."
+  },
+  "M9": {
+    "name": "ConvNeXt corrector",
+    "archive_id": "uqcorr_convnext_pred",
+    "citations": "liu2022convnext",
+    "adaptation": "ConvNeXt blocks in a U shaped corrector with FiLM. Six updates refine a predicted coarse field rather than generating it directly."
+  },
+  "B1": {
+    "name": "Autoregressive POD GP",
+    "archive_id": "st_koh_pod",
+    "citations": "kennedy2000",
+    "adaptation": "KOH inspired scalar field coupling plus a separate residual POD GP. Not joint probabilistic co kriging."
+  },
+  "B2": {
+    "name": "Nonlinear POD GP",
+    "archive_id": "st_nargp_pod",
+    "citations": "perdikaris2017",
+    "adaptation": "NARGP inspired coefficient kernel with shared covariance hyperparameters and Monte Carlo LF uncertainty."
+  },
+  "B3": {
+    "name": "Composite MF MLP",
+    "archive_id": "st_mfdnn",
+    "citations": "meng2020",
+    "adaptation": "Meng inspired pointwise LF network and staged linear plus nonlinear HF corrections."
+  },
+  "B4": {
+    "name": "Composite MF DeepONet",
+    "archive_id": "st_mfdeeponet",
+    "citations": "howard2023",
+    "adaptation": "Howard inspired LF sensor prediction and staged linear plus nonlinear DeepONets."
+  },
+  "B5": {
+    "name": "Latent MF network",
+    "archive_id": "st_dmfal",
+    "citations": "li2022dmfal",
+    "adaptation": "DMFAL inspires two latent levels. Deterministic MSE replaces the probabilistic objective and acquisition."
+  },
+  "B6": {
+    "name": "Nonlinear decoder transfer",
+    "archive_id": "nomad_mf",
+    "citations": "seidman2022",
+    "adaptation": "NOMAD motivates a custom nonlinear coordinate decoder. Multifidelity behavior comes from transfer training."
+  },
+  "B7": {
+    "name": "MFRNP adapter",
+    "archive_id": "mfrnp",
+    "citations": "niu2024",
+    "adaptation": "Upstream MFRNP model with data, normalization, resize, batching, context, and training adaptations."
+  },
+  "B8": {
+    "name": "Fidelity basis FNO",
+    "archive_id": "fno_coregionalization",
+    "citations": "li2022ifc",
+    "adaptation": "IFC inspires fidelity dependence. Spatial basis FNO omits the original neural ODE and GP."
+  },
+  "B9": {
+    "name": "FNO transfer I",
+    "archive_id": "mf_fno_transfer",
+    "citations": "lyu2023",
+    "adaptation": "Parameters concatenated with coordinates and LF to HF transfer. Same inspected recipe as B10."
+  },
+  "B10": {
+    "name": "FNO transfer II",
+    "archive_id": "mf_fno_transfer_bar",
+    "citations": "lyu2023",
+    "adaptation": "Separately archived transfer run with the same inspected model and training code as B9."
+  },
+  "B11": {
+    "name": "Affine POD GP",
+    "archive_id": "st_lf_affine_pod",
+    "citations": "zhang2018",
+    "adaptation": "One affine slope and intercept across fields applied to an LF POD GP. Conceptual inspiration only."
+  },
+  "B12": {
+    "name": "Parameter kNN",
+    "archive_id": "st_knn",
+    "citations": "",
+    "adaptation": "Training-field nearest-neighbor reference."
+  },
+  "B13": {
+    "name": "Training mean",
+    "archive_id": "st_mean",
+    "citations": "",
+    "adaptation": "Input-independent fine-training mean."
+  }
+}

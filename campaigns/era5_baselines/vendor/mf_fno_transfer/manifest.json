@@ -1,0 +1,7 @@
+{
+  "name": "mf_fno_transfer",
+  "description": "Transfer-learning multi-fidelity FNO baseline: one FNO pretrained on low-fidelity data then fine-tuned on high-fidelity data (Lyu et al. 2023 Phys. Fluids arXiv:2304.06972; geological-carbon-storage MF-FNO arXiv:2308.09113). The canonical published 'MF-FNO' paradigm — no per-fidelity networks, residual head, or coregionalization. Shares the in-tree FNO backbone style + fair-eval plumbing (resolve_grid + 256 working-grid cap, full-field eval, per-sample rel-L2 + bootstrap CI) so the comparison isolates the MF mechanism.",
+  "supports": ["ifc_raw", "npz_l"],
+  "external": true,
+  "paper": "Lyu et al. 2023, 'Multi-fidelity prediction of fluid flow and temperature field based on transfer learning using Fourier Neural Operator', Physics of Fluids (arXiv:2304.06972); Jiang et al. 2023, 'Multi-fidelity Fourier Neural Operator for fast modeling of large-scale geological carbon storage' (arXiv:2308.09113)"
+}

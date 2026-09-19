@@ -1,0 +1,49 @@
+{
+  "model": "fno_fire_distcond",
+  "dataset": "lid_driven_cavity_generated",
+  "splits": {
+    "test_hf": {
+      "nRMSE": 0.026566326895253126,
+      "rel_l2_mean": 0.026437476450917312,
+      "rel_l2_ci95_lo": 0.02526559884033848,
+      "rel_l2_ci95_hi": 0.02766401384553535,
+      "rel_l2_std": 0.002078131420354729,
+      "rel_l2_per_sample": [
+        0.024269712984820724,
+        0.028539700613234117,
+        0.024538975490538323,
+        0.02559530947557954,
+        0.0289007357276414,
+        0.027694458199937714,
+        0.02452713812314973,
+        0.026191780582738355,
+        0.02447904988406447,
+        0.029637903427468745
+      ],
+      "n_samples": 10
+    }
+  },
+  "n_params": 28441670,
+  "train_seconds": 2.384185791015625e-07,
+  "eval_seconds": 0.4129321575164795,
+  "latency_ms_per_sample": 41.29321575164795,
+  "peak_mem_mb": 1522.05568,
+  "work_grid": [
+    256,
+    256
+  ],
+  "eval_protocol": "full_field_on_working_grid",
+  "device": "cuda",
+  "hf_fidelity": 4,
+  "lf_fidelity": 1,
+  "mf_mechanism": "FIRE_distribution_conditioned_residual_HF=muLF+delta(aug)",
+  "ensemble_size": 5,
+  "aug_channels": [
+    "mu",
+    "sigma",
+    "q10",
+    "q50",
+    "q90"
+  ],
+  "lf_ensemble_gaussian_nll": 27.28602382968881
+}

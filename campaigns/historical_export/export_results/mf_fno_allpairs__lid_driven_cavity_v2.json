@@ -1,0 +1,85 @@
+{
+  "task": {
+    "id": "mf_fno_allpairs__lid_driven_cavity_v2",
+    "model": "mf_fno_allpairs",
+    "dataset": "lid_driven_cavity_v2",
+    "rel": "core/lid_driven_cavity_v2",
+    "seed": 42,
+    "checkpoint": "/archive/mf_field/experiments/st_bench/ck_lb/mf_fno_allpairs/lid_driven_cavity_v2_s42/last.pt",
+    "script": "/archive/mf_field/operator_library/models/mf_fno_allpairs/smoke_eval.py",
+    "device": "gpu",
+    "checkpoint_bytes": 38506016,
+    "checkpoint_mtime_ns": 1789114160292780538,
+    "script_sha256": "2da0be37c63b22ae95861db2fb70d190e1e1fc21a9b8892bf046097964b913d3"
+  },
+  "seconds": 5.247440338134766,
+  "replay": {
+    "checkpoint_sha256": "20fff3dcbc32dae1935c61555575bbe4374adde610cc4a045d49790249e6ebc6",
+    "script_sha256": "2da0be37c63b22ae95861db2fb70d190e1e1fc21a9b8892bf046097964b913d3",
+    "epochs": 2500,
+    "loaded_modules": [
+      "FNO2d"
+    ],
+    "device": "NVIDIA L40S",
+    "base_retrained": false,
+    "matmul_tf32": false,
+    "cudnn_tf32": false,
+    "matmul_precision": "highest"
+  },
+  "n": 100,
+  "work_grid": [
+    256,
+    256
+  ],
+  "base_train_overlap": 0,
+  "rel_l2_mean": 0.0028698859813357323,
+  "archive_mean": 0.0028850885573774576,
+  "prediction_sha256": "2244750de6fab6408484e8140a13052f73d11310100ed0d5cccb46432f05b127",
+  "model_metadata": {
+    "n_params": 4773953,
+    "extra": {
+      "device": "cuda",
+      "hf_fidelity": 4,
+      "lf_fidelity": 1,
+      "mf_mechanism": "allpairs_joint_train_then_lf2hf_finetune",
+      "conditioning": "film_on_[X,f_src,f_tgt]",
+      "n_pairs": 6,
+      "pairs": [
+        [
+          1,
+          2
+        ],
+        [
+          1,
+          3
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          3,
+          4
+        ]
+      ],
+      "f_lf_norm": 0.0,
+      "f_hf_norm": 1.0,
+      "hf_grid_native": [
+        256,
+        256
+      ],
+      "work_grid": [
+        256,
+        256
+      ]
+    }
+  }
+}

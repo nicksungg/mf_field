@@ -1,0 +1,86 @@
+{
+  "complete": true,
+  "identity": {
+    "experiment_sha256": "b7b330aa186c8d75bb28c4264ef37b347f0968603e257bcc4a953ebcd0eea984",
+    "coarse_plan_sha256": "fe56e8db47db4a0c5a590181346a2b1575470c98a83899080ff4bd2adb472d14",
+    "training_sha256": "eccfe741993588cb23376afa9e0d539b3cb9cb296b8563b5bfa3228b6a140db9",
+    "source_manifest_sha256": "5677e13c438ff872f76451f689ce2a1fc34bf9eca981a2809c149fd798923fc5",
+    "smoke": false
+  },
+  "task": {
+    "fold": 3,
+    "variant": "plain",
+    "seed": 123,
+    "tag": "plain__era5__L8__F3of5__s123"
+  },
+  "masks": {
+    "train_lf_rows_sha256": "8c1349ff381ae5fec00dcd7b93b531781106aff7472706f3fe65578a36a04b11",
+    "hold_hf_rows_sha256": "66aa962ff08823da7d03a02db11bad4eb84eee158a64873e808106076d444aba",
+    "theta_hold_sha256": "104382daea355c0b37fa2fd5242489b6d5bc31e7828df42c0a33991b0cbfdb88",
+    "theta_query_sha256": "217d8174164889990d2d30a0af48d8a89b311b592cf89d6bd3c4a37c5540fb26"
+  },
+  "prediction_sha256": "fe3317b564737f49b3ab3229ac2f7846fd571e35444596a7a461724b5891099f",
+  "n_lf_training": 390,
+  "n_hf_hold": 11,
+  "n_query": 17,
+  "grid": [
+    128,
+    256
+  ],
+  "settings": {
+    "hidden_channels": 64,
+    "n_blocks": 4,
+    "modes_cap": 12,
+    "batch_size": 16,
+    "lr_pretrain": 0.001,
+    "lr_finetune": 0.0003,
+    "weight_decay": 1e-05,
+    "grad_clip": 1.0
+  },
+  "scaler": 61.21554946899414,
+  "xmean": [
+    0.26906660199165344,
+    0.3938339650630951,
+    -0.5326610207557678,
+    -0.017216164618730545,
+    0.3488391637802124,
+    -0.06572713702917099,
+    -0.2784997522830963,
+    -0.03105449117720127,
+    -0.5049416422843933,
+    0.6388990879058838,
+    0.041157953441143036,
+    -0.16853688657283783
+  ],
+  "xstd": [
+    0.21757081151008606,
+    0.23686780035495758,
+    1.022201418876648,
+    0.8870500326156616,
+    1.0330665111541748,
+    0.9747838377952576,
+    1.0804353952407837,
+    0.8075311183929443,
+    1.0331681966781616,
+    0.8907178044319153,
+    0.9909663200378418,
+    1.2409117221832275
+  ],
+  "requested_steps": 30000,
+  "planned_epochs": 1200,
+  "beta": null,
+  "target_keys_read": [
+    "y_lf"
+  ],
+  "query_targets_read": false,
+  "hf_targets_read": false,
+  "torch_version": "2.5.1",
+  "numpy_version": "1.26.4",
+  "gpu": "Tesla V100-PCIE-32GB",
+  "matmul_tf32": false,
+  "cudnn_tf32": false,
+  "optimizer_steps": 30000,
+  "completed_epochs": 1200,
+  "last_scaled_loss": 4.590504977386445e-05,
+  "train_seconds": 2446.451057910919
+}

@@ -1,0 +1,52 @@
+{
+  "model": "st_film_affine",
+  "dataset": "era5",
+  "splits": {
+    "test_hf": {
+      "nRMSE": 0.08940085937771726,
+      "rel_l2_mean": 0.08929132331315759,
+      "rel_l2_ci95_lo": 0.08546207533466758,
+      "rel_l2_ci95_hi": 0.09234354841601423,
+      "rel_l2_std": 0.005180462652573411,
+      "rel_l2_per_sample": [
+        0.09127284686394087,
+        0.09498738542811892,
+        0.08998592552247589,
+        0.09177512523306071,
+        0.08657379614513779,
+        0.09144694603363221,
+        0.07899723796573674
+      ],
+      "n_samples": 7
+    }
+  },
+  "n_params": 4776257,
+  "train_seconds": 1637.2079215049744,
+  "eval_seconds": 0.0,
+  "latency_ms_per_sample": null,
+  "peak_mem_mb": 2888.146432,
+  "work_grid": [
+    128,
+    256
+  ],
+  "eval_protocol": "full_field_on_working_grid",
+  "track": "surrogate",
+  "inputs_at_inference": [
+    "theta"
+  ],
+  "conditioning": "film_on_X_per_block",
+  "epochs": 2500,
+  "n_hf_train": 65,
+  "n_test": 7,
+  "hf_grid_native": [
+    721,
+    1440
+  ],
+  "family_script": "/archive/mf_field/factory_mffp/models/mf_fno_transfer_film/smoke_eval.py",
+  "mf_mechanism": "affine_correction_of_coarse_surrogate",
+  "rho": 0.9952142866729254,
+  "b": 0.42037117599342205,
+  "lf_fidelity": 8,
+  "n_lf_train": 408,
+  "n_fine_rows_for_fit": 65
+}

@@ -1,0 +1,82 @@
+{
+  "dataset": "heat_generated",
+  "grid": [
+    64,
+    64
+  ],
+  "fitting_rows": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "query_rows": [
+    5,
+    6,
+    7,
+    8,
+    9
+  ],
+  "sources": [
+    {
+      "model": "mf_fno_transfer_film",
+      "path": "results/predictions/historical/mf_fno_transfer_film__heat_generated.npz",
+      "array_key": "pred",
+      "sha256": "cb2c92b10af56007f4d7de8bcec28f95f65e77a0a550257a5c1b3d24e4508c2d"
+    },
+    {
+      "model": "mf_fno_allpairs",
+      "path": "results/predictions/historical/mf_fno_allpairs__heat_generated.npz",
+      "array_key": "pred",
+      "sha256": "8c8392edd90ed5f2cd99d1ec6b21a6d44b89b6275c6df3e6c2a9f37b32f3d373"
+    },
+    {
+      "model": "convnext_unet_film",
+      "path": "results/predictions/historical/convnext_unet_film__heat_generated.npz",
+      "array_key": "pred",
+      "sha256": "ce379072fec3c70801484959805902391aa48aa9dee80db5f41d63bcb29df5e3"
+    },
+    {
+      "model": "fno_fire_distcond",
+      "path": "results/predictions/historical/fno_fire_distcond__heat_generated.npz",
+      "array_key": "pred",
+      "sha256": "8e5bb0a3ce61ec5e908353ea66591fdd5e02a9e7a529bb4ec0d4d9abf7e8d62e"
+    },
+    {
+      "model": "wno_transfer_film",
+      "path": "results/predictions/historical/wno_transfer_film__heat_generated.npz",
+      "array_key": "pred",
+      "sha256": "6b802f76e838888f8accc31f76a69951a53c73417a513ecb6b25d1de58a1048b"
+    },
+    {
+      "model": "mf_deeponet",
+      "path": "results/predictions/historical/mf_deeponet__heat_generated.npz",
+      "array_key": "pred",
+      "sha256": "befca9ac918620ac5fa5e58aec50631b7e560be540af490a3912a8ba75072298"
+    },
+    {
+      "model": "st_hf_pod_gp",
+      "path": "results/predictions/historical/st_hf_pod_gp__heat_generated.npz",
+      "array_key": "pred",
+      "sha256": "5cfe5ac17335734c89150a4dc9b51231396ccb0c21685fbd08818d0c93f8e4ed"
+    },
+    {
+      "model": "uqcorr_transolver_pred",
+      "path": "results/predictions/historical/uqcorr_transolver_pred__heat_generated.npz",
+      "array_key": "pred_test",
+      "sha256": "8a30d7e625049133f214e6d0d89e298c47b81e6de09fa536f9de449f38bfeff2"
+    },
+    {
+      "model": "uqcorr_convnext_pred",
+      "path": "results/predictions/historical/uqcorr_convnext_pred__heat_generated.npz",
+      "array_key": "pred_test",
+      "sha256": "d140f0d88d485c3fac559612e704cfbeb816599936e89dda944005ff4ec5f3ef"
+    }
+  ],
+  "bytes": 1467122,
+  "sha256": "4495556f580dda2962282be954dd6663366c835ee3290726c3b57ed00746f0e3",
+  "scope": "Usage example, not the fixed benchmark reporting partition.",
+  "target_source": "M1 export, retained unchanged. Other direct-export targets match within float32 normalization roundoff (rtol=1e-6, atol=1e-7).",
+  "corrector_alignment": "Original test-row ordering, retained from the archived export. Corrector files do not store theta. See analysis/data/field_example_heat_manifest.json and the original export provenance for the alignment audit."
+}

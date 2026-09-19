@@ -1,0 +1,81 @@
+{
+  "exclusions": {
+    "poisson_local": "inherited numerical defects",
+    "ext__cahn_hilliard_2d": "incomplete input conditioning",
+    "ext__pressure_poisson_poiseuille": "synthetic low-fidelity fields"
+  },
+  "results": {
+    "5": {
+      "n_datasets": 14,
+      "n_classes": 6,
+      "methods": {
+        "inverse_mse": {
+          "class_balanced_ratio": 0.8754138293531383,
+          "dataset_balanced_ratio": 0.9082651829841237,
+          "wins": 10,
+          "losses": 2
+        },
+        "full": {
+          "class_balanced_ratio": 0.87341455378376,
+          "dataset_balanced_ratio": 0.8996260713370394,
+          "wins": 11,
+          "losses": 3
+        },
+        "best_pair": {
+          "class_balanced_ratio": 0.9246109873554292,
+          "dataset_balanced_ratio": 0.9375014023708659,
+          "wins": 11,
+          "losses": 3
+        }
+      }
+    },
+    "10": {
+      "n_datasets": 14,
+      "n_classes": 6,
+      "methods": {
+        "inverse_mse": {
+          "class_balanced_ratio": 0.8851613653655629,
+          "dataset_balanced_ratio": 0.9238326501788537,
+          "wins": 10,
+          "losses": 4
+        },
+        "full": {
+          "class_balanced_ratio": 0.8687024022942489,
+          "dataset_balanced_ratio": 0.8959319040065873,
+          "wins": 10,
+          "losses": 2
+        },
+        "best_pair": {
+          "class_balanced_ratio": 0.9253153611921937,
+          "dataset_balanced_ratio": 0.9424493306456876,
+          "wins": 11,
+          "losses": 3
+        }
+      }
+    },
+    "20": {
+      "n_datasets": 14,
+      "n_classes": 6,
+      "methods": {
+        "inverse_mse": {
+          "class_balanced_ratio": 0.8829815743683339,
+          "dataset_balanced_ratio": 0.9195573383932106,
+          "wins": 10,
+          "losses": 4
+        },
+        "full": {
+          "class_balanced_ratio": 0.8616509888993892,
+          "dataset_balanced_ratio": 0.8883555806857678,
+          "wins": 11,
+          "losses": 2
+        },
+        "best_pair": {
+          "class_balanced_ratio": 0.9191276695126781,
+          "dataset_balanced_ratio": 0.9347183670444079,
+          "wins": 10,
+          "losses": 2
+        }
+      }
+    }
+  }
+}

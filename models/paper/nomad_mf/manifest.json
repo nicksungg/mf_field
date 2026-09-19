@@ -1,0 +1,9 @@
+{
+  "name": "nomad_mf",
+  "version": "0.1.0",
+  "description": "NOMAD (nonlinear-manifold-decoder DeepONet, seidman2022nomad) as a multi-fidelity operator, built from scratch in PyTorch. A branch MLP maps the parameter vector X to a latent code beta (cond_dim->256->256->128, GELU); the field is reconstructed on the 256-cap working grid by a decoder. The SHIPPED decoder is NONLINEAR: beta is tiled to every working-grid coordinate and concatenated with that point's (y,x) coords, then a shared MLP (128+2->256->256->1) maps to a scalar per point -- a nonlinear function of the latent code that breaks the linear Kolmogorov-n-width limit of classical DeepONet. --decoder linear flips to the standard LINEAR DeepONet reconstruction (trunk MLP(coords)->128; u = beta . trunk) as a one-flag control, isolating linear-vs-nonlinear decoding. Multi-fidelity = transfer learning (LF-pretrain -> HF-finetune), mirroring the winner mf_fno_transfer_film's schedule and fair-eval plumbing. 1-D safe (height-1 grids); the decoder is chunked along the coordinate axis to bound memory on large grids (e.g. era5 128x256).",
+  "supports": ["ifc_raw", "npz_l"],
+  "smoke_entrypoint": "smoke_eval.py",
+  "frozen": false,
+  "inspired_by": ["seidman2022nomad", "lu2021deeponet", "lyu2023mffno"]
+}

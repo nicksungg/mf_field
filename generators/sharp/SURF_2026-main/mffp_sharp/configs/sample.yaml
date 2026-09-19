@@ -1,0 +1,262 @@
+# Sample-round configuration for the sharp-field MFFP datasets.
+# This is the SMALL batch the researcher reviews before any full-count generation.
+# Values marked (TBD) are provisional defaults to validate in the sample round.
+
+seed: 42
+out_dir: data/sample
+n_samples_per_pde: 24            # ~16-32; small on purpose (TBD with the researcher)
+n_figures: 3                     # one-pager review PNGs per PDE (LF/HF/residual/spectrum)
+
+# Shared fidelity ladder (dyadic, all interpolated up to the HF grid for residuals).
+ladder:
+  resolutions: [32, 64, 128]     # per side; HF = 128 (TBD: could add 256)
+  hf_index: 2                    # index into resolutions that is high-fidelity
+
+# Metric panel (rel-L2 kept for comparison to the deck; the rest see the sharp region).
+metrics: [rel_l2, linf, wasserstein1, interface_position, spectral_band, conservation, ssim]
+
+pdes:
+
+  euler:
+    role: shock
+    module: euler
+    ndim: 2
+    solver: pyclaw               # LF = Classic (1st-order Godunov), HF = SharpClaw (WENO)
+    output_time: 0.25            # T: shocks formed & still sharp (TBD)
+    # Schema = 4 quadrant states (rho,u,v,p) + gamma, sampled around Schulz-Rinne configs.
+    sampling:
+      mode: schulz_rinne_jitter  # sample canonical 2D Riemann configs + jitter (TBD ranges)
+      jitter_frac: 0.10
+      gamma: 1.4
+      domain: [0.0, 1.0, 0.0, 1.0]
+
+  cahn_hilliard:
+    role: interface
+    module: cahn_hilliard
+    ndim: 2
+    solver: py-pde
+    output_time: 5.0             # T: interfaces formed, pre-full-coarsening (TBD)
+    # Schema = interface width eps, mobility, IC params. eps RANGE coupled to ladder:
+    # must under-resolve at 32 but resolve at 128 (validate in sample round).
+    sampling:
+      # eps narrowed 0.02-0.05 -> 0.012-0.018 (TBD-the researcher). The wider range made the
+      # 128^2 HF interface ~3.6-6.4 cells = well-resolved/SMOOTH (spectral slope <= -13,
+      # smoother than the KS control) -> not a high-frequency case. 0.012-0.018 = ~1.5-2.3
+      # cells: sharpest CH that's still resolved at 128^2 (slope ~ -7 to -8). To reach
+      # Euler-level (slope ~ -3) CH needs a finer HF (256^2) ladder. See ch eps sweep.
+      eps_range: [0.012, 0.018]
+      mobility_range: [0.5, 1.5]
+      mean_composition_range: [-0.1, 0.1]
+      domain_size: 1.0
+
+  allen_cahn_2d:
+    role: interface
+    module: allen_cahn
+    ndim: 2
+    output_time: 0.5            # T: interfaces formed, pre-full-relaxation (TBD-box)
+    sampling:
+      eps_range: [0.02, 0.05]   # provisional; couple to ladder in sample round (TBD)
+      mobility_range: [0.5, 1.5]
+      mean_composition_range: [-0.1, 0.1]
+      domain_size: 1.0
+
+  allen_cahn_1d:
+    role: interface
+    module: allen_cahn
+    ndim: 1
+    output_time: 0.5
+    sampling:
+      eps_range: [0.01, 0.03]   # 1D ladder (64/128/256) resolves finer eps (TBD)
+      mobility_range: [0.5, 1.5]
+      mean_composition_range: [-0.1, 0.1]
+      domain_size: 1.0
+
+  fisher_kpp_2d:
+    role: front
+    module: fisher_kpp
+    ndim: 2
+    output_time: 0.05           # T: front developed, pre-domain-fill (TBD-box)
+    sampling:
+      D_range: [1.0e-4, 1.0e-3] # small D/r -> thin front; couple to ladder (TBD)
+      r_range: [5.0, 20.0]
+      domain_size: 1.0
+
+  fisher_kpp_1d:
+    role: front
+    module: fisher_kpp
+    ndim: 1
+    output_time: 0.05
+    sampling:
+      D_range: [1.0e-5, 1.0e-4]
+      r_range: [5.0, 20.0]
+      domain_size: 1.0
+
+  kuramoto_sivashinsky:
+    role: smooth_control
+    module: kuramoto_sivashinsky
+    ndim: 2
+    solver: numpy                # custom semi-implicit Fourier 2D KS (pure numpy)
+    output_time: 15.0            # T in the TRACKING window (TBD-the researcher). NOT 50: KS is
+    # chaotic, so by T~50 the 32^2 and 128^2 runs decorrelate into DIFFERENT chaotic states
+    # (LF-HF gap jumps ~0.22 -> ~1.0) -- that gap is chaos, not frequency, and confounds the
+    # control. T=15 keeps LF/HF on the same trajectory (gap ~0.22 = resolution). See
+    # scripts/explain_ks_chaos.py.
+    # Schema = domain size L, IC seed/amplitude. L chaotic but LF~HF (control).
+    sampling:
+      # L capped at 36 (was 44): the LF grid (32^2) only resolves KS structure
+      # (wavelength ~8.9) up to L~37 (>=~7 pts/wavelength); beyond that res=32
+      # under-resolves and the spectral solve blows up -- AND a control by definition
+      # needs LF to resolve the dynamics. Widen with the researcher if a bigger ladder is used. (TBD)
+      L_range: [22.0, 36.0]
+      ic_amplitude_range: [0.05, 0.2]
+
+  kuramoto_sivashinsky_1d:
+    role: smooth_control
+    module: kuramoto_sivashinsky
+    ndim: 1
+    output_time: 15.0           # tracking window (same rationale as 2D KS; TBD-box)
+    sampling:
+      L_range: [22.0, 100.0]    # 1D ladder (64/128/256) resolves larger L (TBD)
+      ic_amplitude_range: [0.05, 0.2]
+
+  swift_hohenberg_2d:
+    role: pattern
+    module: swift_hohenberg
+    ndim: 2
+    output_time: 50.0           # T: pattern developed (TBD-box)
+    sampling:
+      r_range: [0.1, 0.6]       # above pattern threshold r>0; dt<1/r (TBD)
+      ic_amplitude_range: [0.05, 0.2]
+      domain_size: 32.0
+
+  swift_hohenberg_1d:
+    role: pattern
+    module: swift_hohenberg
+    ndim: 1
+    output_time: 50.0
+    sampling:
+      r_range: [0.1, 0.6]
+      ic_amplitude_range: [0.05, 0.2]
+      domain_size: 64.0
+
+  gray_scott_2d:
+    role: pattern
+    module: gray_scott
+    ndim: 2
+    output_time: 2000.0         # T: pattern developed (TBD-box; GS evolves slowly)
+    sampling:
+      F_range: [0.018, 0.058]   # spans Pearson regimes (spots..worms) (TBD)
+      k_rate_range: [0.051, 0.065]
+      Du: 2.0e-5
+      Dv: 1.0e-5
+      domain_size: 2.0
+
+  kdv_1d:
+    role: dispersive
+    module: kdv
+    ndim: 1
+    output_time: 1.0            # T: soliton train developed (TBD-box)
+    sampling:
+      delta_range: [0.015, 0.04]   # dispersion; classic Zabusky-Kruskal ~0.022 (TBD)
+      ic_amplitude_range: [0.3, 0.7]
+      domain_size: 2.0
+
+  nls_1d:
+    role: dispersive
+    module: nls
+    ndim: 1
+    output_time: 2.0            # T: wavepacket structure developed (TBD-box)
+    sampling:
+      nonlinearity_range: [-1.0, -0.2]   # defocusing / sub-critical (no collapse) (TBD)
+      ic_amplitude_range: [0.2, 0.5]
+      domain_size: 40.0
+
+  sine_gordon_2d:
+    role: dispersive
+    module: sine_gordon
+    ndim: 2
+    output_time: 5.0            # T (TBD-box)
+    sampling:
+      m_range: [0.5, 2.0]
+      ic_amplitude_range: [0.3, 1.5]
+      domain_size: 40.0
+
+  sine_gordon_1d:
+    role: dispersive
+    module: sine_gordon
+    ndim: 1
+    output_time: 5.0
+    sampling:
+      m_range: [0.5, 2.0]
+      ic_amplitude_range: [0.3, 1.5]
+      domain_size: 40.0
+
+  phase_field_crystal_2d:
+    role: pattern
+    module: phase_field_crystal
+    ndim: 2
+    output_time: 200.0          # T: lattice developed (TBD-box)
+    sampling:
+      r_range: [-0.4, -0.1]     # r<0 for patterns (TBD)
+      mean_density_range: [-0.4, -0.2]
+      ic_amplitude: 0.05
+      domain_size: 32.0
+
+  burgers_1d:
+    role: shock
+    module: burgers
+    ndim: 1
+    output_time: 0.3
+    sampling: {ic_amplitude_range: [0.6, 1.0], ic_freq_range: [1, 3]}
+
+  burgers_2d:
+    role: shock
+    module: burgers
+    ndim: 2
+    output_time: 0.3
+    sampling: {ic_amplitude_range: [0.6, 1.0], ic_freq_range: [1, 2]}
+
+  sod_1d:
+    role: shock
+    module: sod
+    ndim: 1
+    output_time: 0.2
+    sampling: {rho_l_range: [0.8, 1.2], p_l_range: [0.8, 1.2], gamma: 1.4}
+
+  shallow_water_1d:
+    role: shock
+    module: shallow_water
+    ndim: 1
+    output_time: 0.5
+    sampling: {inner_height_range: [1.5, 2.5], dam_radius_range: [0.3, 0.7]}
+
+  shallow_water_2d:
+    role: shock
+    module: shallow_water
+    ndim: 2
+    output_time: 0.5
+    sampling: {inner_height_range: [1.5, 2.5], dam_radius_range: [0.3, 0.7]}
+
+  helmholtz_2d:
+    role: oscillatory
+    module: helmholtz
+    ndim: 2
+    output_time: 0.0            # steady; ignored
+    sampling:
+      wavenumber_range: [15.0, 40.0]   # high-k; below HF Nyquist (TBD vs ladder)
+      source_width_range: [0.03, 0.08]
+      domain_size: 1.0
+
+  porous_medium_1d:
+    role: front
+    module: porous_medium
+    ndim: 1
+    output_time: 0.5
+    sampling: {m_range: [1.5, 4.0], ic_amplitude_range: [0.5, 1.5], domain_size: 10.0}
+
+  porous_medium_2d:
+    role: front
+    module: porous_medium
+    ndim: 2
+    output_time: 0.5
+    sampling: {m_range: [1.5, 4.0], ic_amplitude_range: [0.5, 1.5], domain_size: 10.0}

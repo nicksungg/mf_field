@@ -1,0 +1,40 @@
+{
+ "dataset": "poisson_generated_v2",
+ "source_generator": "mf_field/generate_all_datasets.py (solvers copied verbatim)",
+ "poisson_fix": "RHS b = g (original: dx^2 * g)",
+ "levels": [
+  16,
+  32,
+  64
+ ],
+ "seed_paired": 42,
+ "seed_extra": 4242,
+ "n_train": 400,
+ "n_test": 100,
+ "n_lf_train": 400,
+ "nested": "first 400 LF rows == HF rows",
+ "cost_per_solve": {
+  "l1": {
+   "grid": 16,
+   "n_solves": 4100,
+   "mean_s": 0.0009563673180868713,
+   "median_s": 0.0008488645544275641,
+   "total_s": 3.9211060041561723
+  },
+  "l2": {
+   "grid": 32,
+   "n_solves": 4100,
+   "mean_s": 0.002695760092550389,
+   "median_s": 0.0028597319032996893,
+   "total_s": 11.052616379456595
+  },
+  "l3": {
+   "grid": 64,
+   "n_solves": 500,
+   "mean_s": 0.012807907876558602,
+   "median_s": 0.013846248970367014,
+   "total_s": 6.403953938279301
+  }
+ },
+ "generated": "2026-09-06 02:12"
+}

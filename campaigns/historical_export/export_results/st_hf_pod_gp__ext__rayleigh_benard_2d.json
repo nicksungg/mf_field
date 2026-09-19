@@ -1,0 +1,42 @@
+{
+  "task": {
+    "id": "st_hf_pod_gp__ext__rayleigh_benard_2d",
+    "model": "st_hf_pod_gp",
+    "dataset": "ext__rayleigh_benard_2d",
+    "rel": "ext/rayleigh_benard_2d",
+    "seed": 42,
+    "device": "cpu",
+    "note": "Classical estimator state was not saved; reproduce its original training-only fit."
+  },
+  "seconds": 3.1819307804107666,
+  "replay": {
+    "device": "cpu",
+    "base_retrained": true,
+    "reason": "POD-GP estimator was not checkpointed",
+    "raw_units_multiplier": 0.5825833678245544,
+    "registration": "generic"
+  },
+  "n": 100,
+  "work_grid": [
+    64,
+    64
+  ],
+  "base_train_overlap": 0,
+  "rel_l2_mean": 0.0031324134146980603,
+  "archive_mean": 0.0031324136070907116,
+  "prediction_sha256": "c9d9c7ec04f0f1b690c096805011a2293329829f902a8ea9bf0486e9ecb6295f",
+  "model_metadata": {
+    "method": "fine-only POD + shared-ARD-RBF GP emulator",
+    "n_hf_train": 400,
+    "fit_seconds": 2.3853302001953125,
+    "hf_pod_modes": 2,
+    "hf_pod_energy_captured": 0.9991725436482326,
+    "hf_gp_log_lengthscales": [
+      -0.8210172380259115
+    ],
+    "hf_gp_log_signal": 0.6939464715943877,
+    "hf_gp_log_noise": -7.0,
+    "hf_gp_nlml": -4580.490304147074,
+    "hf_gp_converged": true
+  }
+}

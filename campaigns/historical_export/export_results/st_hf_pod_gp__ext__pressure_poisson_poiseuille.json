@@ -1,0 +1,43 @@
+{
+  "task": {
+    "id": "st_hf_pod_gp__ext__pressure_poisson_poiseuille",
+    "model": "st_hf_pod_gp",
+    "dataset": "ext__pressure_poisson_poiseuille",
+    "rel": "ext/pressure_poisson_poiseuille",
+    "seed": 42,
+    "device": "cpu",
+    "note": "Classical estimator state was not saved; reproduce its original training-only fit."
+  },
+  "seconds": 4.711374759674072,
+  "replay": {
+    "device": "cpu",
+    "base_retrained": true,
+    "reason": "POD-GP estimator was not checkpointed",
+    "raw_units_multiplier": 0.5027800798416138,
+    "registration": "generic"
+  },
+  "n": 100,
+  "work_grid": [
+    64,
+    64
+  ],
+  "base_train_overlap": 0,
+  "rel_l2_mean": 0.0009446123712872454,
+  "archive_mean": 0.0009446110343560576,
+  "prediction_sha256": "31d139898f43ca66831198896e21671e7393fb9f9813eeb38ec33d47362c7866",
+  "model_metadata": {
+    "method": "fine-only POD + shared-ARD-RBF GP emulator",
+    "n_hf_train": 400,
+    "fit_seconds": 3.834179401397705,
+    "hf_pod_modes": 12,
+    "hf_pod_energy_captured": 0.9999999999970078,
+    "hf_gp_log_lengthscales": [
+      -2.831941747740261,
+      1.3396535598319967
+    ],
+    "hf_gp_log_signal": -0.0329583227053961,
+    "hf_gp_log_noise": -1.7527350561572452,
+    "hf_gp_nlml": 817.6157720218835,
+    "hf_gp_converged": true
+  }
+}

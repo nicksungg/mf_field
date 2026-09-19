@@ -1,0 +1,9 @@
+{
+  "name": "mf_fno_transfer_film",
+  "version": "0.1.0",
+  "description": "Transfer-learning MF-FNO (pretrain LF -> fine-tune HF; Lyu 2023) with the condition vector X injected via per-block FiLM affine modulation instead of constant-channel concatenation. Identical backbone + transfer schedule to the frozen mf_fno_transfer_bar; the ONLY change is concat->FiLM conditioning, so the comparison isolates the conditioning mechanism. FiLM conditions on X only (m never enters; MF lives in the schedule), distinguishing it from fno_coreg_conditioned (FiLM on m, X still concatenated).",
+  "supports": ["ifc_raw", "npz_l"],
+  "smoke_entrypoint": "smoke_eval.py",
+  "frozen": false,
+  "inspired_by": ["li2020fno", "perez2018film", "beggs2025pdecond", "lyu2023mffno"]
+}

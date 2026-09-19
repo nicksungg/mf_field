@@ -1,0 +1,181 @@
+{
+  "variant": "phase_field_crystal_2d",
+  "module": "phase_field_crystal",
+  "ndim": 2,
+  "source": "Elder & Grant 2004",
+  "output_time": 200.0,
+  "ladder": [
+    [
+      32,
+      32
+    ],
+    [
+      64,
+      64
+    ],
+    [
+      128,
+      128
+    ]
+  ],
+  "param_names": [
+    "r",
+    "mean_density",
+    "ic_c0",
+    "ic_c1",
+    "ic_c2",
+    "ic_c3",
+    "ic_c4",
+    "ic_c5",
+    "ic_c6",
+    "ic_c7",
+    "ic_c8",
+    "ic_c9",
+    "ic_c10",
+    "ic_c11",
+    "ic_c12",
+    "ic_c13",
+    "ic_c14",
+    "ic_c15"
+  ],
+  "n_params": 18,
+  "ntrain": 400,
+  "ntest": 100,
+  "seed": 42,
+  "condition_completeness": {
+    "witness": {
+      "closest_pair": [
+        47,
+        266
+      ],
+      "standardized_condition_distance": 2.1705183616031714,
+      "relative_field_difference": 0.4436199095950113,
+      "median_pair_distance": 5.948165168998072
+    },
+    "reconstruction": {
+      "n_samples": 2,
+      "rel_L2_per_sample": [
+        0.0,
+        0.0
+      ],
+      "rel_L2_max": 0.0,
+      "verdict": "COMPLETE"
+    },
+    "continuity_probe": {
+      "eps_frac": 0.01,
+      "coarse_res": 32,
+      "per_dim": [
+        {
+          "name": "r",
+          "r_eps": 0.001207298608895309,
+          "r_half_eps": 0.0006013033568844629,
+          "class": "SMOOTH"
+        },
+        {
+          "name": "mean_density",
+          "r_eps": 0.000685693176926277,
+          "r_half_eps": 0.00034412054259847673,
+          "class": "SMOOTH"
+        },
+        {
+          "name": "ic_c0",
+          "r_eps": 0.003099711483862724,
+          "r_half_eps": 0.0015277769372326149,
+          "class": "SMOOTH"
+        },
+        {
+          "name": "ic_c1",
+          "r_eps": 0.0028254350452985044,
+          "r_half_eps": 0.0014190493894875463,
+          "class": "SMOOTH"
+        },
+        {
+          "name": "ic_c2",
+          "r_eps": 0.007406524952482472,
+          "r_half_eps": 0.0036109029917784086,
+          "class": "SMOOTH"
+        },
+        {
+          "name": "ic_c3",
+          "r_eps": 0.00285676855212165,
+          "r_half_eps": 0.0014408407014508465,
+          "class": "SMOOTH"
+        },
+        {
+          "name": "ic_c4",
+          "r_eps": 0.0022994883679154565,
+          "r_half_eps": 0.0011442142947723085,
+          "class": "SMOOTH"
+        },
+        {
+          "name": "ic_c5",
+          "r_eps": 0.0018782788602578065,
+          "r_half_eps": 0.000948657243863658,
+          "class": "SMOOTH"
+        },
+        {
+          "name": "ic_c6",
+          "r_eps": 0.0008763489848696627,
+          "r_half_eps": 0.0004391062984893924,
+          "class": "SMOOTH"
+        },
+        {
+          "name": "ic_c7",
+          "r_eps": 0.0011215789974600482,
+          "r_half_eps": 0.0005575600510408027,
+          "class": "SMOOTH"
+        },
+        {
+          "name": "ic_c8",
+          "r_eps": 0.01058585712466645,
+          "r_half_eps": 0.005226016171630264,
+          "class": "SMOOTH"
+        },
+        {
+          "name": "ic_c9",
+          "r_eps": 0.009931593983131636,
+          "r_half_eps": 0.005001756840388454,
+          "class": "SMOOTH"
+        },
+        {
+          "name": "ic_c10",
+          "r_eps": 0.007161432235708889,
+          "r_half_eps": 0.003484285437058979,
+          "class": "SMOOTH"
+        },
+        {
+          "name": "ic_c11",
+          "r_eps": 0.00820698171537865,
+          "r_half_eps": 0.004152993610450995,
+          "class": "SMOOTH"
+        },
+        {
+          "name": "ic_c12",
+          "r_eps": 0.00864925550225244,
+          "r_half_eps": 0.004271974474360812,
+          "class": "SMOOTH"
+        },
+        {
+          "name": "ic_c13",
+          "r_eps": 0.0069002637121799645,
+          "r_half_eps": 0.003444022461013906,
+          "class": "SMOOTH"
+        },
+        {
+          "name": "ic_c14",
+          "r_eps": 0.003957593818363721,
+          "r_half_eps": 0.001984550808386303,
+          "class": "SMOOTH"
+        },
+        {
+          "name": "ic_c15",
+          "r_eps": 0.003713684982013577,
+          "r_half_eps": 0.0018596960614896383,
+          "class": "SMOOTH"
+        }
+      ],
+      "verdict": "SMOOTH"
+    },
+    "verdict": "COMPLETE"
+  }
+}

@@ -1,0 +1,3260 @@
+{
+  "scope": "Post hoc, previously inspected historical predictions",
+  "protocol_sha256": "359386db2f6f3dbf1b3f539df009471601f48b586e77359ab65214836cb38b9f",
+  "script_sha256": "a072c6a327db6b96445497dff9353248b05efbd9805f1d74d29349d8a1b10294",
+  "locked_weights_sha256": "34769747a1e49c34aeff237b861b085c339ddc91c2b840cbc1d257ce86149555",
+  "numpy_version": "2.3.5",
+  "cvxpy_version": "1.9.2",
+  "clarabel_version": "0.11.1",
+  "selfcheck": {
+    "counterexample_optimal_weight": [
+      0.9999999999377388,
+      6.226121273303346e-11
+    ],
+    "counterexample_objective": 1.0000000000062261,
+    "indefinite_gram_rejected": true,
+    "field_identity_passed": true
+  },
+  "runs": {
+    "darcy_generated__s172": {
+      "status": "optimal",
+      "iterations": 16,
+      "objective": 0.02635330151792063,
+      "scale": 0.015283965866945522,
+      "primal_simplex_residual": 5.887183640948368e-12,
+      "primal_cone_residual": 9.6641583624546e-12,
+      "normalized_objective_residual": -1.510486180578141e-11,
+      "psd": [
+        {
+          "min_eigenvalue": 3.469446951953614e-18,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 6.344649734551442e-16
+        },
+        {
+          "min_eigenvalue": -5.383439125273473e-32,
+          "relative_negative_eigenvalue": -1.1889862764035678e-32,
+          "factor_relative_residual": 2.5746403084988734e-16
+        },
+        {
+          "min_eigenvalue": -1.5088596702085848e-34,
+          "relative_negative_eigenvalue": -8.654914761841075e-36,
+          "factor_relative_residual": 6.113577293571874e-16
+        },
+        {
+          "min_eigenvalue": -8.673617379884037e-19,
+          "relative_negative_eigenvalue": -2.342391788693646e-19,
+          "factor_relative_residual": 2.173739579907703e-16
+        },
+        {
+          "min_eigenvalue": 8.673617379776602e-19,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 8.165393689241459e-16
+        }
+      ],
+      "dataset": "darcy_generated",
+      "n_calibration": 5,
+      "source_sha256": {
+        "labels.npz": "ce005f275d4beb11a08a3901d321fbfcdc999c266f2bc35c2f70a13bddd2e057",
+        "features.npz": "02dba6613e8747a3b9ded33b82a82cd764f394cbbc05d694fe33f012d6e0d3ef",
+        "audit.json": "0ddb187f1392117acf33bbf9120e59eea7e4c564f256eaf95482d708f11a1bf4"
+      },
+      "archive_sha256": {
+        "split.json": "6894753f486a9382b174f9ed15c12b92eb55aa8c24e6b9190c5dd91090504c35",
+        "fit.json": "54021d0754f8eb1bc896c9b884ee827ce7ebd08a2ff4e6bb8ed0e6df6b3ecd4c",
+        "locked_weights.npz": "8ee1f85628b4b24b479941af2d778db1c7b638f9fcfdc8c332b9cc44d34a9559"
+      },
+      "calibration_mean_gram_max_absolute_difference": 0.0,
+      "reference_calibration_objectives": {
+        "single_l2": 0.030313288246010466,
+        "inverse_mse": 0.03176479773918446,
+        "full": 0.02637196505905607
+      }
+    },
+    "darcy_generated__s273": {
+      "status": "optimal",
+      "iterations": 17,
+      "objective": 0.03244961749886493,
+      "scale": 0.01877650528260433,
+      "primal_simplex_residual": 2.220446049250313e-16,
+      "primal_cone_residual": -1.3923057151643548e-11,
+      "normalized_objective_residual": -6.017364384547363e-11,
+      "psd": [
+        {
+          "min_eigenvalue": 0.0,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 2.836481889711805e-16
+        },
+        {
+          "min_eigenvalue": 0.0,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 3.6148244898651225e-16
+        },
+        {
+          "min_eigenvalue": 8.6736173798840345e-19,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 4.696327727582129e-16
+        },
+        {
+          "min_eigenvalue": 1.734723475976807e-18,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 1.7435266224478723e-16
+        },
+        {
+          "min_eigenvalue": -2.9178662929173994e-34,
+          "relative_negative_eigenvalue": -1.2643795119814743e-35,
+          "factor_relative_residual": 2.0085320792634719e-16
+        }
+      ],
+      "dataset": "darcy_generated",
+      "n_calibration": 5,
+      "source_sha256": {
+        "labels.npz": "ce005f275d4beb11a08a3901d321fbfcdc999c266f2bc35c2f70a13bddd2e057",
+        "features.npz": "02dba6613e8747a3b9ded33b82a82cd764f394cbbc05d694fe33f012d6e0d3ef",
+        "audit.json": "0ddb187f1392117acf33bbf9120e59eea7e4c564f256eaf95482d708f11a1bf4"
+      },
+      "archive_sha256": {
+        "split.json": "f3721d2a7fe423ab79bd8b0d062e3dec025792e215c49087c8df7b7f3f6351f6",
+        "fit.json": "1ebf9b7a0e326cb5a4e306e42fb27e3ed89ebceff99237220c8b11471d4f3034",
+        "locked_weights.npz": "fdd178bf099b4f7cbbcd0e1a1a38dcfe3255b8033dad7d4cd5ad46df89164be9"
+      },
+      "calibration_mean_gram_max_absolute_difference": 0.0,
+      "reference_calibration_objectives": {
+        "single_l2": 0.033719405771314166,
+        "inverse_mse": 0.03783991118071261,
+        "full": 0.03268026188151307
+      }
+    },
+    "darcy_generated__s71": {
+      "status": "optimal",
+      "iterations": 19,
+      "objective": 0.022763171219004175,
+      "scale": 0.009998746620612675,
+      "primal_simplex_residual": 2.220446049250313e-16,
+      "primal_cone_residual": 3.912037360720433e-12,
+      "normalized_objective_residual": -1.1120188103674877e-11,
+      "psd": [
+        {
+          "min_eigenvalue": 8.6736173798840345e-19,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 4.531396543018128e-16
+        },
+        {
+          "min_eigenvalue": -8.673617379884035e-19,
+          "relative_negative_eigenvalue": -5.961953168436046e-20,
+          "factor_relative_residual": 4.884032035582809e-16
+        },
+        {
+          "min_eigenvalue": -6.938893913035891e-18,
+          "relative_negative_eigenvalue": -1.0409407862937774e-18,
+          "factor_relative_residual": 9.326829432922065e-16
+        },
+        {
+          "min_eigenvalue": -6.517410135394978e-34,
+          "relative_negative_eigenvalue": -5.755567226075415e-35,
+          "factor_relative_residual": 2.5001351702010106e-16
+        },
+        {
+          "min_eigenvalue": -8.673617379957015e-19,
+          "relative_negative_eigenvalue": -3.4227196205209777e-19,
+          "factor_relative_residual": 1.226702711984397e-15
+        }
+      ],
+      "dataset": "darcy_generated",
+      "n_calibration": 5,
+      "source_sha256": {
+        "labels.npz": "ce005f275d4beb11a08a3901d321fbfcdc999c266f2bc35c2f70a13bddd2e057",
+        "features.npz": "02dba6613e8747a3b9ded33b82a82cd764f394cbbc05d694fe33f012d6e0d3ef",
+        "audit.json": "0ddb187f1392117acf33bbf9120e59eea7e4c564f256eaf95482d708f11a1bf4"
+      },
+      "archive_sha256": {
+        "split.json": "e236795417641cd6f77d9825debd9b2c38c1288ddb3acd69ed7f8745b7e1ab8e",
+        "fit.json": "853893fdeedef74e22532fd5e3bae15b66cd5a303fa8344e907f709d7f357900",
+        "locked_weights.npz": "bf0ba9ccaaee628b7b1df4255e26f2cdc72ebf59ea17111c2be1a1abb8b20d75"
+      },
+      "calibration_mean_gram_max_absolute_difference": 0.0,
+      "reference_calibration_objectives": {
+        "single_l2": 0.02638690152257478,
+        "inverse_mse": 0.027360152894710256,
+        "full": 0.02303029915403993
+      }
+    },
+    "ext__cahn_hilliard_2d__s172": {
+      "status": "optimal",
+      "iterations": 14,
+      "objective": 0.11123888673030982,
+      "scale": 0.16841750927081026,
+      "primal_simplex_residual": 0.0,
+      "primal_cone_residual": 3.623734645685772e-11,
+      "normalized_objective_residual": -1.3212320126854138e-11,
+      "psd": [
+        {
+          "min_eigenvalue": 0.12611449150887719,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 3.1708578183886224e-16
+        },
+        {
+          "min_eigenvalue": 0.0681715400518104,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 2.1184175292501532e-16
+        },
+        {
+          "min_eigenvalue": 0.0011744301949130984,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 2.9355979249784766e-16
+        },
+        {
+          "min_eigenvalue": 0.0021086797403735173,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 8.908072472540401e-16
+        },
+        {
+          "min_eigenvalue": 0.0016047662896424906,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 2.8215328939173145e-16
+        }
+      ],
+      "dataset": "ext__cahn_hilliard_2d",
+      "n_calibration": 5,
+      "source_sha256": {
+        "labels.npz": "4573ffa73084a4716d23d3c46cd437ebe32c4f8784fe79ddd642f30221ca3456",
+        "features.npz": "b7156f28a2ab4fecdcb7b3993ad191509729b36084127583ba1a39caa5ac3e74",
+        "audit.json": "3bd9f25b407a2a5ed13787e3f6b9e57053a1bdfaf8d4019ec6e3f4f2c4b8a5e1"
+      },
+      "archive_sha256": {
+        "split.json": "81a82f068476f2ed98e2c915240ff22ac202f3898796f49346eb81e988411281",
+        "fit.json": "5651bf52cda1e8f36c8e4c7027f08fdc48ac6eea7355ed70a86c9c1f5d70c27c",
+        "locked_weights.npz": "895d6ddd3218f531eea0e3f31f5159df0a16e30c600e7b7dd07a123fd9292c39"
+      },
+      "calibration_mean_gram_max_absolute_difference": 0.0,
+      "reference_calibration_objectives": {
+        "single_l2": 0.13067150077504947,
+        "inverse_mse": 0.12439582748923823,
+        "full": 0.11513042105931282
+      }
+    },
+    "ext__cahn_hilliard_2d__s273": {
+      "status": "optimal",
+      "iterations": 14,
+      "objective": 0.07608742678957961,
+      "scale": 0.12884110119817585,
+      "primal_simplex_residual": 0.0,
+      "primal_cone_residual": 2.0906609776716323e-12,
+      "normalized_objective_residual": 4.048150703539477e-13,
+      "psd": [
+        {
+          "min_eigenvalue": 0.0006214044997021096,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 1.6901735885133583e-16
+        },
+        {
+          "min_eigenvalue": 0.12285040134188799,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 3.0406783479559507e-16
+        },
+        {
+          "min_eigenvalue": 0.003353177176493337,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 3.510877178437446e-16
+        },
+        {
+          "min_eigenvalue": 0.0023133234352155966,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 8.270151524677435e-16
+        },
+        {
+          "min_eigenvalue": 0.00236396296266133,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 2.539966724140588e-16
+        }
+      ],
+      "dataset": "ext__cahn_hilliard_2d",
+      "n_calibration": 5,
+      "source_sha256": {
+        "labels.npz": "4573ffa73084a4716d23d3c46cd437ebe32c4f8784fe79ddd642f30221ca3456",
+        "features.npz": "b7156f28a2ab4fecdcb7b3993ad191509729b36084127583ba1a39caa5ac3e74",
+        "audit.json": "3bd9f25b407a2a5ed13787e3f6b9e57053a1bdfaf8d4019ec6e3f4f2c4b8a5e1"
+      },
+      "archive_sha256": {
+        "split.json": "f169bfb5ca885cf8bdb9d4beb34e09f4585b88f5b483bccd2f768c987053e083",
+        "fit.json": "6e1cb813c852de0a33e5ac71bf0c9895082da069fd23e2cfff5c3113d22d67ce",
+        "locked_weights.npz": "92059e5abcbf59b92626f1685201fb7755b189f53d387968bdbc016c5b767f53"
+      },
+      "calibration_mean_gram_max_absolute_difference": 0.0,
+      "reference_calibration_objectives": {
+        "single_l2": 0.08859822463524981,
+        "inverse_mse": 0.08799024801810677,
+        "full": 0.09001239904495281
+      }
+    },
+    "ext__cahn_hilliard_2d__s71": {
+      "status": "optimal",
+      "iterations": 15,
+      "objective": 0.12868406130753476,
+      "scale": 0.18508439306691976,
+      "primal_simplex_residual": 0.0,
+      "primal_cone_residual": 5.309863659874736e-12,
+      "normalized_objective_residual": -8.995248990117943e-12,
+      "psd": [
+        {
+          "min_eigenvalue": 0.0008616545500044067,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 4.377909871885195e-16
+        },
+        {
+          "min_eigenvalue": 0.023353427628778303,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 5.818833920106566e-16
+        },
+        {
+          "min_eigenvalue": 0.0820681453819481,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 1.6690458376081839e-16
+        },
+        {
+          "min_eigenvalue": 0.0010686725388464912,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 6.452219399106383e-16
+        },
+        {
+          "min_eigenvalue": 0.10727098583000087,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 2.726657652083218e-16
+        }
+      ],
+      "dataset": "ext__cahn_hilliard_2d",
+      "n_calibration": 5,
+      "source_sha256": {
+        "labels.npz": "4573ffa73084a4716d23d3c46cd437ebe32c4f8784fe79ddd642f30221ca3456",
+        "features.npz": "b7156f28a2ab4fecdcb7b3993ad191509729b36084127583ba1a39caa5ac3e74",
+        "audit.json": "3bd9f25b407a2a5ed13787e3f6b9e57053a1bdfaf8d4019ec6e3f4f2c4b8a5e1"
+      },
+      "archive_sha256": {
+        "split.json": "99574cd59446644f71edb11dcef3cc9ddb6314a2e92bd5f87c6b0162b75d9ea0",
+        "fit.json": "297809309871ac0322780762cd0528632c64f074032f212c1e9496fc02eac874",
+        "locked_weights.npz": "d264418c5fb02d8729477be36dcbb5bf6d8fff19a2616bc7b8a4300e025da7e5"
+      },
+      "calibration_mean_gram_max_absolute_difference": 0.0,
+      "reference_calibration_objectives": {
+        "single_l2": 0.14158431378478636,
+        "inverse_mse": 0.1429773763293865,
+        "full": 0.12946046321025656
+      }
+    },
+    "ext__eikonal_2d__s172": {
+      "status": "optimal",
+      "iterations": 11,
+      "objective": 0.01529214331814246,
+      "scale": 0.0019973387622803885,
+      "primal_simplex_residual": 1.461245741333318e-11,
+      "primal_cone_residual": 1.7596646362250112e-11,
+      "normalized_objective_residual": -2.717071012625638e-11,
+      "psd": [
+        {
+          "min_eigenvalue": 0.031035391766622324,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 1.1338874245890104e-15
+        },
+        {
+          "min_eigenvalue": 0.0265029100394925,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 5.069197199145523e-16
+        },
+        {
+          "min_eigenvalue": 0.06303179079482255,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 4.579600372934346e-16
+        },
+        {
+          "min_eigenvalue": 0.017544109427200395,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 1.8768239836725138e-16
+        },
+        {
+          "min_eigenvalue": 0.01639341199420735,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 5.878557554270199e-16
+        }
+      ],
+      "dataset": "ext__eikonal_2d",
+      "n_calibration": 5,
+      "source_sha256": {
+        "labels.npz": "c8a01d23919aa256d628c72ea9aca65ed0c42c98f471e99e057c671911fc3703",
+        "features.npz": "0060c767554d77aa35a777e98d0bb7259b2dbc848e8801f575b2a53225ce33c9",
+        "audit.json": "1267e408ad01553b51dcb6f6c6b38b3a7a8f15fee547b2a962ffe0e0c608c001"
+      },
+      "archive_sha256": {
+        "split.json": "752c2063287b625bb37cb4c652783234abb63e31b90ed54c46a65156812cfdc8",
+        "fit.json": "d2658bd181d7a4a6efdad24a97855cd33e9d6d04afc2df239b3602dab28f1193",
+        "locked_weights.npz": "d0c4092999f3cfa377ed0299ec58bdb2c7cb36889d2200458b3eae2d06fb4dc7"
+      },
+      "calibration_mean_gram_max_absolute_difference": 0.0,
+      "reference_calibration_objectives": {
+        "single_l2": 0.01683709086328937,
+        "inverse_mse": 0.01752923632563165,
+        "full": 0.015296865204230537
+      }
+    },
+    "ext__eikonal_2d__s273": {
+      "status": "optimal",
+      "iterations": 12,
+      "objective": 0.016337487766198845,
+      "scale": 0.002060314435432151,
+      "primal_simplex_residual": 4.145014699904802e-11,
+      "primal_cone_residual": 1.1091128016005314e-10,
+      "normalized_objective_residual": 2.720157432634096e-12,
+      "psd": [
+        {
+          "min_eigenvalue": 0.11962228265888943,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 5.593136646343177e-16
+        },
+        {
+          "min_eigenvalue": 0.025692820777623852,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 4.183222340722024e-16
+        },
+        {
+          "min_eigenvalue": 0.022155588993008717,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 5.201914997917779e-16
+        },
+        {
+          "min_eigenvalue": 0.007083302430649511,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 2.3155198690211416e-16
+        },
+        {
+          "min_eigenvalue": 0.00412643701467361,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 4.976142203693552e-16
+        }
+      ],
+      "dataset": "ext__eikonal_2d",
+      "n_calibration": 5,
+      "source_sha256": {
+        "labels.npz": "c8a01d23919aa256d628c72ea9aca65ed0c42c98f471e99e057c671911fc3703",
+        "features.npz": "0060c767554d77aa35a777e98d0bb7259b2dbc848e8801f575b2a53225ce33c9",
+        "audit.json": "1267e408ad01553b51dcb6f6c6b38b3a7a8f15fee547b2a962ffe0e0c608c001"
+      },
+      "archive_sha256": {
+        "split.json": "c3eb92ea8d27b92f9e8fb1a60838e41d74a9e42b16c8e7ca912572030ea64638",
+        "fit.json": "1928bca76a34700ad5758ab96d395728734ca5dc2e8e32535839b47c7490c72c",
+        "locked_weights.npz": "d36cc9d2efbc825204a93b677789b9f23e68ca6aecf25c8f38c683da14810d4a"
+      },
+      "calibration_mean_gram_max_absolute_difference": 0.0,
+      "reference_calibration_objectives": {
+        "single_l2": 0.017837248106199056,
+        "inverse_mse": 0.01983541891807984,
+        "full": 0.01670972157180153
+      }
+    },
+    "ext__eikonal_2d__s71": {
+      "status": "optimal",
+      "iterations": 11,
+      "objective": 0.009497973411783812,
+      "scale": 0.0015408451718478614,
+      "primal_simplex_residual": 3.3306690738754696e-16,
+      "primal_cone_residual": 3.6102953959726847e-11,
+      "normalized_objective_residual": -4.2089109975052e-12,
+      "psd": [
+        {
+          "min_eigenvalue": 0.013423140028871251,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 7.452592713253896e-16
+        },
+        {
+          "min_eigenvalue": 0.020706032904654167,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 2.8287636312434173e-16
+        },
+        {
+          "min_eigenvalue": 0.0400782485819283,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 1.6681500497890715e-16
+        },
+        {
+          "min_eigenvalue": 0.013654605885187398,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 4.608443288823899e-16
+        },
+        {
+          "min_eigenvalue": 0.05218780752993139,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 1.106408220240415e-15
+        }
+      ],
+      "dataset": "ext__eikonal_2d",
+      "n_calibration": 5,
+      "source_sha256": {
+        "labels.npz": "c8a01d23919aa256d628c72ea9aca65ed0c42c98f471e99e057c671911fc3703",
+        "features.npz": "0060c767554d77aa35a777e98d0bb7259b2dbc848e8801f575b2a53225ce33c9",
+        "audit.json": "1267e408ad01553b51dcb6f6c6b38b3a7a8f15fee547b2a962ffe0e0c608c001"
+      },
+      "archive_sha256": {
+        "split.json": "ee791e4685ec5e9dba341040b81aa6ca82b5762e1da55c03fc001117687c610f",
+        "fit.json": "9430c1f7348b91864d684bbcc1dcd4c526b2ed46c21f099f1f7affbfa51b0f01",
+        "locked_weights.npz": "96aff76b942c0598dd34ecc3b3c661f1430ee9db880dc82abf2dfb417c0fa66a"
+      },
+      "calibration_mean_gram_max_absolute_difference": 0.0,
+      "reference_calibration_objectives": {
+        "single_l2": 0.010025493550351677,
+        "inverse_mse": 0.011063677606482756,
+        "full": 0.009506609231592807
+      }
+    },
+    "ext__helmholtz_2d__s172": {
+      "status": "optimal",
+      "iterations": 16,
+      "objective": 0.6548741422762607,
+      "scale": 9.238373377042146,
+      "primal_simplex_residual": 0.0,
+      "primal_cone_residual": 5.384581669432009e-14,
+      "normalized_objective_residual": -1.7525370044069177e-11,
+      "psd": [
+        {
+          "min_eigenvalue": -5.401588494683244e-32,
+          "relative_negative_eigenvalue": -1.8157127006043435e-33,
+          "factor_relative_residual": 2.985560337740578e-16
+        },
+        {
+          "min_eigenvalue": -8.046333042447846e-35,
+          "relative_negative_eigenvalue": -1.175222635910273e-34,
+          "factor_relative_residual": 9.729345448902673e-16
+        },
+        {
+          "min_eigenvalue": 5.421010862422625e-20,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 2.520912501857531e-16
+        },
+        {
+          "min_eigenvalue": -2.7105054312137773e-20,
+          "relative_negative_eigenvalue": -1.2436035186748781e-20,
+          "factor_relative_residual": 2.1011925051530614e-16
+        },
+        {
+          "min_eigenvalue": -1.73472347597681e-18,
+          "relative_negative_eigenvalue": -5.191575142102921e-19,
+          "factor_relative_residual": 1.7277562072918492e-15
+        }
+      ],
+      "dataset": "ext__helmholtz_2d",
+      "n_calibration": 5,
+      "source_sha256": {
+        "labels.npz": "467589bca8059532265d3de8bd5abac54bfe2f8eadc660a756e30c0d8d667b8f",
+        "features.npz": "7508b03d46a0696865a4865dcea29344314cc766b631f701636dde52204060c3",
+        "audit.json": "46c97b78a8d79eeeb245f5ca0e3433748503f1bab8abc8b676e761b411e7ec0c"
+      },
+      "archive_sha256": {
+        "split.json": "80933c1d6dc55746aba0d8a99cc5ebb249724ad3a7fcf50c4fc61f7514f4903f",
+        "fit.json": "f762be91b147f8a0c8203c5646aafcc94d47c43529206a474b0b995013360fa3",
+        "locked_weights.npz": "40a45829dd89c7ac529332b6d997032481d44d785bcd84b8ae9a6e91660e46a8"
+      },
+      "calibration_mean_gram_max_absolute_difference": 0.0,
+      "reference_calibration_objectives": {
+        "single_l2": 0.909823914299562,
+        "inverse_mse": 0.7387855020013845,
+        "full": 0.666923719303296
+      }
+    },
+    "ext__helmholtz_2d__s273": {
+      "status": "optimal",
+      "iterations": 17,
+      "objective": 0.4123335974734065,
+      "scale": 2.126632869739032,
+      "primal_simplex_residual": 2.220446049250313e-16,
+      "primal_cone_residual": 1.84297022087776e-14,
+      "normalized_objective_residual": -2.711997293403101e-12,
+      "psd": [
+        {
+          "min_eigenvalue": -1.7347234759768175e-18,
+          "relative_negative_eigenvalue": -1.3370564144565632e-19,
+          "factor_relative_residual": 5.47658307361405e-16
+        },
+        {
+          "min_eigenvalue": -2.484142696355634e-35,
+          "relative_negative_eigenvalue": -2.611016975683989e-36,
+          "factor_relative_residual": 3.7341637977164037e-16
+        },
+        {
+          "min_eigenvalue": -2.1684043449710093e-19,
+          "relative_negative_eigenvalue": -8.08839713991568e-20,
+          "factor_relative_residual": 1.0767274272655751e-15
+        },
+        {
+          "min_eigenvalue": 1.7347234759768067e-18,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 2.3015160648719283e-16
+        },
+        {
+          "min_eigenvalue": -1.500215598978911e-34,
+          "relative_negative_eigenvalue": -2.0840601993119874e-35,
+          "factor_relative_residual": 3.7015025619878307e-16
+        }
+      ],
+      "dataset": "ext__helmholtz_2d",
+      "n_calibration": 5,
+      "source_sha256": {
+        "labels.npz": "467589bca8059532265d3de8bd5abac54bfe2f8eadc660a756e30c0d8d667b8f",
+        "features.npz": "7508b03d46a0696865a4865dcea29344314cc766b631f701636dde52204060c3",
+        "audit.json": "46c97b78a8d79eeeb245f5ca0e3433748503f1bab8abc8b676e761b411e7ec0c"
+      },
+      "archive_sha256": {
+        "split.json": "dd614843eb284dfc4181bba2ea1f5e903a12debfb875c8275406975ff540b282",
+        "fit.json": "90bc432402b6f5a48f92db632997215e4de52d0e36415fd3a18910fc88f73882",
+        "locked_weights.npz": "e74183546586c213ff3941f771042278128caa4491184c0f01d25e1e3a432838"
+      },
+      "calibration_mean_gram_max_absolute_difference": 0.0,
+      "reference_calibration_objectives": {
+        "single_l2": 0.609891533138424,
+        "inverse_mse": 0.5480716439815195,
+        "full": 0.4156901006291315
+      }
+    },
+    "ext__helmholtz_2d__s71": {
+      "status": "optimal",
+      "iterations": 17,
+      "objective": 0.39293708473361794,
+      "scale": 2.892998482576485,
+      "primal_simplex_residual": 2.220446049250313e-16,
+      "primal_cone_residual": 2.3594598497211905e-12,
+      "normalized_objective_residual": -9.304529369202896e-12,
+      "psd": [
+        {
+          "min_eigenvalue": 4.336808689941909e-19,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 8.124657295214516e-16
+        },
+        {
+          "min_eigenvalue": -4.647765781532145e-34,
+          "relative_negative_eigenvalue": -1.499881617976291e-34,
+          "factor_relative_residual": 2.507962383074867e-16
+        },
+        {
+          "min_eigenvalue": -9.892803841758985e-34,
+          "relative_negative_eigenvalue": -2.216551375639741e-34,
+          "factor_relative_residual": 4.975063514576373e-16
+        },
+        {
+          "min_eigenvalue": -1.3700768254048323e-33,
+          "relative_negative_eigenvalue": -1.284004376611119e-34,
+          "factor_relative_residual": 3.329521255917992e-16
+        },
+        {
+          "min_eigenvalue": -5.082262497971778e-36,
+          "relative_negative_eigenvalue": -3.171031258208743e-37,
+          "factor_relative_residual": 3.3250248677940453e-16
+        }
+      ],
+      "dataset": "ext__helmholtz_2d",
+      "n_calibration": 5,
+      "source_sha256": {
+        "labels.npz": "467589bca8059532265d3de8bd5abac54bfe2f8eadc660a756e30c0d8d667b8f",
+        "features.npz": "7508b03d46a0696865a4865dcea29344314cc766b631f701636dde52204060c3",
+        "audit.json": "46c97b78a8d79eeeb245f5ca0e3433748503f1bab8abc8b676e761b411e7ec0c"
+      },
+      "archive_sha256": {
+        "split.json": "b1e46992aa15bb915146ac285dc80f3427ebb9757a2ce1cdc3962cc8f5b4a010",
+        "fit.json": "b8db40824cc8c3d01fda19f7de757ba2b4faaaa3985dc2640b925e01a3dbb258",
+        "locked_weights.npz": "6d6f3505378825dbe625b30598c6df2a8efa6f54fc94ecc5928cc5a6204ecd35"
+      },
+      "calibration_mean_gram_max_absolute_difference": 0.0,
+      "reference_calibration_objectives": {
+        "single_l2": 0.5443119529639816,
+        "inverse_mse": 0.503178058983918,
+        "full": 0.39417049600654736
+      }
+    },
+    "ext__pressure_poisson_poiseuille__s172": {
+      "status": "optimal",
+      "iterations": 17,
+      "objective": 0.00010963247858412776,
+      "scale": 5.17235298668072e-06,
+      "primal_simplex_residual": 1.1102230246251565e-16,
+      "primal_cone_residual": 3.94469179543222e-12,
+      "normalized_objective_residual": -1.1141226829991524e-11,
+      "psd": [
+        {
+          "min_eigenvalue": 0.0026708209683915627,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 4.0598967743557385e-16
+        },
+        {
+          "min_eigenvalue": 0.0010323789540102831,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 1.0400522993738426e-15
+        },
+        {
+          "min_eigenvalue": 0.005458208937251707,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 5.618563797426648e-16
+        },
+        {
+          "min_eigenvalue": 0.004742272407784608,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 2.091489751917827e-16
+        },
+        {
+          "min_eigenvalue": 0.002139781583017847,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 9.3026726333212e-16
+        }
+      ],
+      "dataset": "ext__pressure_poisson_poiseuille",
+      "n_calibration": 5,
+      "source_sha256": {
+        "labels.npz": "3108893cb08f2d6c35dd5b0d9142966ae63c97c72d8513a52221550909233a6e",
+        "features.npz": "7c8ad08c776b02bea6abbbd8240126fb7678570d42c928e60e9cf457c0f1fee7",
+        "audit.json": "a22e5bd040341c38b791a6a6f48a45c294c659b6c81bf3686a352931345d7c56"
+      },
+      "archive_sha256": {
+        "split.json": "7339c13086fac03b135fcb8057e62a30a18e1623662ece57b22562f385676610",
+        "fit.json": "f991863d32c63e7af39be632d5f85610f69a56849dc97e95bfd475ebf6449879",
+        "locked_weights.npz": "97c4ec7a008037c6708465e468fe26547bc2050ae97af71856c8d1a6f50e8cd6"
+      },
+      "calibration_mean_gram_max_absolute_difference": 0.0,
+      "reference_calibration_objectives": {
+        "single_l2": 0.00016463035874578674,
+        "inverse_mse": 0.00011202866228393152,
+        "full": 0.00010990375409890976
+      }
+    },
+    "ext__pressure_poisson_poiseuille__s273": {
+      "status": "optimal",
+      "iterations": 13,
+      "objective": 7.756792253674972e-05,
+      "scale": 4.699543189733286e-06,
+      "primal_simplex_residual": 0.0,
+      "primal_cone_residual": 5.180890438882813e-13,
+      "normalized_objective_residual": -8.203125678729606e-12,
+      "psd": [
+        {
+          "min_eigenvalue": 0.0004597341768403515,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 3.2305541967088107e-16
+        },
+        {
+          "min_eigenvalue": 0.0006194396034714673,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 7.004149435776843e-16
+        },
+        {
+          "min_eigenvalue": 0.000942074924576804,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 6.517420379231327e-16
+        },
+        {
+          "min_eigenvalue": 0.0059047782098288785,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 6.016638281300222e-16
+        },
+        {
+          "min_eigenvalue": 0.0011711561606826926,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 1.2125301233715972e-15
+        }
+      ],
+      "dataset": "ext__pressure_poisson_poiseuille",
+      "n_calibration": 5,
+      "source_sha256": {
+        "labels.npz": "3108893cb08f2d6c35dd5b0d9142966ae63c97c72d8513a52221550909233a6e",
+        "features.npz": "7c8ad08c776b02bea6abbbd8240126fb7678570d42c928e60e9cf457c0f1fee7",
+        "audit.json": "a22e5bd040341c38b791a6a6f48a45c294c659b6c81bf3686a352931345d7c56"
+      },
+      "archive_sha256": {
+        "split.json": "6ff4ef6112d98b7820551b9078f2021a439b823414d96e97503d6e1b6360fa62",
+        "fit.json": "e9c6ca4d9182443f14093aaefc6e81465532963b2dc3264fa3e9d1952fb96268",
+        "locked_weights.npz": "0918507a9a0db3c1f8974666f61d0ae513822af557e2abad0004082ba7261486"
+      },
+      "calibration_mean_gram_max_absolute_difference": 0.0,
+      "reference_calibration_objectives": {
+        "single_l2": 9.047182989652044e-05,
+        "inverse_mse": 8.021847135971121e-05,
+        "full": 7.851967878407379e-05
+      }
+    },
+    "ext__pressure_poisson_poiseuille__s71": {
+      "status": "optimal",
+      "iterations": 12,
+      "objective": 0.00039629971129377287,
+      "scale": 9.450734946321567e-06,
+      "primal_simplex_residual": 0.0,
+      "primal_cone_residual": 1.522532100395324e-12,
+      "normalized_objective_residual": -3.5831004829844915e-11,
+      "psd": [
+        {
+          "min_eigenvalue": 0.0033153251917440213,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 6.651118421745175e-16
+        },
+        {
+          "min_eigenvalue": 0.00037485997422677354,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 1.8299734566374388e-15
+        },
+        {
+          "min_eigenvalue": 0.0005173877776025069,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 5.356651545104794e-16
+        },
+        {
+          "min_eigenvalue": 0.03608552113138633,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 2.2455234283233674e-16
+        },
+        {
+          "min_eigenvalue": 0.00024364290438900213,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 5.687140135110965e-16
+        }
+      ],
+      "dataset": "ext__pressure_poisson_poiseuille",
+      "n_calibration": 5,
+      "source_sha256": {
+        "labels.npz": "3108893cb08f2d6c35dd5b0d9142966ae63c97c72d8513a52221550909233a6e",
+        "features.npz": "7c8ad08c776b02bea6abbbd8240126fb7678570d42c928e60e9cf457c0f1fee7",
+        "audit.json": "a22e5bd040341c38b791a6a6f48a45c294c659b6c81bf3686a352931345d7c56"
+      },
+      "archive_sha256": {
+        "split.json": "37339869eb5de48086b83e6a2b001f3e8a4d39fbcd47931f4d653c4b8f347f93",
+        "fit.json": "8a047fdc804e554537c7d15017373b9fe9565880b6e71a5f7fc4ea0ee132acf1",
+        "locked_weights.npz": "872736c430b740cf04f7ee0d6095e3b185e4740d2eacb809b56fa3d60b26a14c"
+      },
+      "calibration_mean_gram_max_absolute_difference": 0.0,
+      "reference_calibration_objectives": {
+        "single_l2": 0.0004843895520062512,
+        "inverse_mse": 0.0004736522094270621,
+        "full": 0.00040278229869626745
+      }
+    },
+    "ext__rayleigh_benard_2d__s172": {
+      "status": "optimal",
+      "iterations": 11,
+      "objective": 2.5845032324740528e-05,
+      "scale": 1.7249903605346546e-06,
+      "primal_simplex_residual": 2.220446049250313e-16,
+      "primal_cone_residual": 2.570478552232913e-13,
+      "normalized_objective_residual": -8.932403428030256e-13,
+      "psd": [
+        {
+          "min_eigenvalue": 0.0003650754117756806,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 6.7258104807646295e-16
+        },
+        {
+          "min_eigenvalue": 0.00022295857744605312,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 4.3212321086230176e-16
+        },
+        {
+          "min_eigenvalue": 0.0006188076459890243,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 8.490128728178365e-16
+        },
+        {
+          "min_eigenvalue": 0.0003420741305937972,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 2.6505159254624845e-16
+        },
+        {
+          "min_eigenvalue": 0.0002898419928092108,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 2.4927055509359386e-16
+        }
+      ],
+      "dataset": "ext__rayleigh_benard_2d",
+      "n_calibration": 5,
+      "source_sha256": {
+        "labels.npz": "0b3e0f5d11668fb5f4ed6ad428b148806c2881b62f0b6dfb9a7bc07449f9e681",
+        "features.npz": "b3de59ca4a18a03c3d93b6891582f3ea70e4817a9822c5a4122a5b2f9f8cd6ce",
+        "audit.json": "fd766ff0feecdded93fcefc35098d5930dd167fd2fcfdaaf4e35d2f16c6c35b0"
+      },
+      "archive_sha256": {
+        "split.json": "dc39d5268e57670c4e18db08ad30e02f76e7aaa79bd83f4e7a5f4f0ca692b041",
+        "fit.json": "7c78bbba025e5d215738512a3f9407557d879b7aafea9eedcbd2009e12a495f3",
+        "locked_weights.npz": "d4195b4cb5c895ee27dfecbee2bbce00a702c9f14ed7fe609f134eb5303aabaa"
+      },
+      "calibration_mean_gram_max_absolute_difference": 0.0,
+      "reference_calibration_objectives": {
+        "single_l2": 2.937155152599808e-05,
+        "inverse_mse": 2.7618196861238325e-05,
+        "full": 2.5854130106833896e-05
+      }
+    },
+    "ext__rayleigh_benard_2d__s273": {
+      "status": "optimal",
+      "iterations": 15,
+      "objective": 2.9229181160622495e-05,
+      "scale": 8.457087472614632e-07,
+      "primal_simplex_residual": 1.1102230246251565e-16,
+      "primal_cone_residual": -1.0689865659330167e-11,
+      "normalized_objective_residual": -1.388218012765563e-11,
+      "psd": [
+        {
+          "min_eigenvalue": 0.0008538671891131582,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 1.807494671914121e-16
+        },
+        {
+          "min_eigenvalue": 0.0008288112102751707,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 1.5268469223444724e-15
+        },
+        {
+          "min_eigenvalue": 0.000643403943102766,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 2.733309683676663e-16
+        },
+        {
+          "min_eigenvalue": 0.0004589344301830003,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 9.41674881478684e-16
+        },
+        {
+          "min_eigenvalue": 0.001797512186519041,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 2.9916920279271906e-15
+        }
+      ],
+      "dataset": "ext__rayleigh_benard_2d",
+      "n_calibration": 5,
+      "source_sha256": {
+        "labels.npz": "0b3e0f5d11668fb5f4ed6ad428b148806c2881b62f0b6dfb9a7bc07449f9e681",
+        "features.npz": "b3de59ca4a18a03c3d93b6891582f3ea70e4817a9822c5a4122a5b2f9f8cd6ce",
+        "audit.json": "fd766ff0feecdded93fcefc35098d5930dd167fd2fcfdaaf4e35d2f16c6c35b0"
+      },
+      "archive_sha256": {
+        "split.json": "73c71f970f18ab60d757e1835bc4ac8d8610b8d8922a5da056bf6e47ef8e31a1",
+        "fit.json": "187bf5f573e8cf9000fe9056e2a59f832d52121e73968e1f07e9e3f88b403a44",
+        "locked_weights.npz": "866813ba228b3d840aa439b3f60e1dd65da5a229b0ae6f6786d0c5cbdc065a88"
+      },
+      "calibration_mean_gram_max_absolute_difference": 0.0,
+      "reference_calibration_objectives": {
+        "single_l2": 3.1642174796633344e-05,
+        "inverse_mse": 3.132612596025551e-05,
+        "full": 2.924022911556676e-05
+      }
+    },
+    "ext__rayleigh_benard_2d__s71": {
+      "status": "optimal",
+      "iterations": 12,
+      "objective": 2.7984347142624367e-05,
+      "scale": 1.8545981654508155e-06,
+      "primal_simplex_residual": 0.0,
+      "primal_cone_residual": 1.3307896451486556e-12,
+      "normalized_objective_residual": -1.0115533410903765e-11,
+      "psd": [
+        {
+          "min_eigenvalue": 0.0005384104706468457,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 6.949690668774354e-16
+        },
+        {
+          "min_eigenvalue": 0.0001882822727188197,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 4.315060395630312e-16
+        },
+        {
+          "min_eigenvalue": 0.00037794326739684126,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 1.030246482254805e-15
+        },
+        {
+          "min_eigenvalue": 0.00023387246246180435,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 4.622431964729087e-16
+        },
+        {
+          "min_eigenvalue": 0.00042123421600972024,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 2.0623094722206643e-16
+        }
+      ],
+      "dataset": "ext__rayleigh_benard_2d",
+      "n_calibration": 5,
+      "source_sha256": {
+        "labels.npz": "0b3e0f5d11668fb5f4ed6ad428b148806c2881b62f0b6dfb9a7bc07449f9e681",
+        "features.npz": "b3de59ca4a18a03c3d93b6891582f3ea70e4817a9822c5a4122a5b2f9f8cd6ce",
+        "audit.json": "fd766ff0feecdded93fcefc35098d5930dd167fd2fcfdaaf4e35d2f16c6c35b0"
+      },
+      "archive_sha256": {
+        "split.json": "8f0de3f2ddcee7f9723ae6d13ae584b49befb8c9903405cfece30577e433f8b7",
+        "fit.json": "57804c74d9b424dfd36fdccb0a317078fbcb12bc2e44f9891fa1b95b0f35a85c",
+        "locked_weights.npz": "5a1896bd34468277ba095af062986292e5e5ebf56c6a81fa77e44cd8bb02333a"
+      },
+      "calibration_mean_gram_max_absolute_difference": 0.0,
+      "reference_calibration_objectives": {
+        "single_l2": 3.077266496645972e-05,
+        "inverse_mse": 2.9867229339721944e-05,
+        "full": 2.7997520400920263e-05
+      }
+    },
+    "ext__wave_2d__s172": {
+      "status": "optimal",
+      "iterations": 12,
+      "objective": 0.01826406413898403,
+      "scale": 0.05217001064336053,
+      "primal_simplex_residual": 1.1102230246251565e-16,
+      "primal_cone_residual": 2.8912705563044483e-12,
+      "normalized_objective_residual": -1.1376871666968214e-11,
+      "psd": [
+        {
+          "min_eigenvalue": 0.0023411285356641823,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 4.623582550318235e-16
+        },
+        {
+          "min_eigenvalue": 0.0011280141348022864,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 9.850074372482842e-16
+        },
+        {
+          "min_eigenvalue": 0.0014408918353966257,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 1.0806976631363124e-15
+        },
+        {
+          "min_eigenvalue": 0.0026385237911799235,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 5.091670198035522e-16
+        },
+        {
+          "min_eigenvalue": 0.0012362580215564735,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 1.078856342897213e-15
+        }
+      ],
+      "dataset": "ext__wave_2d",
+      "n_calibration": 5,
+      "source_sha256": {
+        "labels.npz": "2d50bc41f1d425ae1c4eb0ce2e7e13445189bc3248b6512b92562dc40ec103b6",
+        "features.npz": "4d2229728d04ce9101442b7ad4a4945bd6d5e7347d253e655581f9713b6a1d65",
+        "audit.json": "f9089c5ebd90096c40832b509e4f65d1ba499ee9ae8e731de3d73d24e470c257"
+      },
+      "archive_sha256": {
+        "split.json": "77e55045c244494745af2cbc35fae502f9c9b3da077f925f22b8462871c53b41",
+        "fit.json": "885ba3267b45621f9ab235099f5520d6842a8083095f4004b222019337259514",
+        "locked_weights.npz": "1ce27e144cdbb44f446c62c35fe47ab0e4dcfb19db6174c0258e65c571e8d2ac"
+      },
+      "calibration_mean_gram_max_absolute_difference": 0.0,
+      "reference_calibration_objectives": {
+        "single_l2": 0.0206959116587177,
+        "inverse_mse": 0.020357777357935775,
+        "full": 0.0183658153163647
+      }
+    },
+    "ext__wave_2d__s273": {
+      "status": "optimal",
+      "iterations": 11,
+      "objective": 0.0313818487607649,
+      "scale": 0.07745405065403543,
+      "primal_simplex_residual": 0.0,
+      "primal_cone_residual": 9.606718198718056e-12,
+      "normalized_objective_residual": -7.699481330281088e-11,
+      "psd": [
+        {
+          "min_eigenvalue": 0.0033095945352466442,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 1.785620627371168e-16
+        },
+        {
+          "min_eigenvalue": 0.006306629054189943,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 5.791573406974785e-16
+        },
+        {
+          "min_eigenvalue": 0.000575978896206389,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 3.2860426771478274e-16
+        },
+        {
+          "min_eigenvalue": 0.0010140131221996937,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 5.135542092334384e-16
+        },
+        {
+          "min_eigenvalue": 0.0008326949152166505,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 8.008604253737367e-16
+        }
+      ],
+      "dataset": "ext__wave_2d",
+      "n_calibration": 5,
+      "source_sha256": {
+        "labels.npz": "2d50bc41f1d425ae1c4eb0ce2e7e13445189bc3248b6512b92562dc40ec103b6",
+        "features.npz": "4d2229728d04ce9101442b7ad4a4945bd6d5e7347d253e655581f9713b6a1d65",
+        "audit.json": "f9089c5ebd90096c40832b509e4f65d1ba499ee9ae8e731de3d73d24e470c257"
+      },
+      "archive_sha256": {
+        "split.json": "fba5f6d6ed1b70cdc57159b1d2f61a5a74d3f39052ab797e4abcf8e5ac0e4aae",
+        "fit.json": "c94c9051bd01435c2dcdd6792c2ad8f6fce149a2c35ccd73f30831c1bed56869",
+        "locked_weights.npz": "f0bf60bb1e50136e26962dd70f9d64a7a28b2ff3b8b7154af60da83ec04a9b89"
+      },
+      "calibration_mean_gram_max_absolute_difference": 0.0,
+      "reference_calibration_objectives": {
+        "single_l2": 0.03626617027556363,
+        "inverse_mse": 0.0337682931222477,
+        "full": 0.03310604711426698
+      }
+    },
+    "ext__wave_2d__s71": {
+      "status": "optimal",
+      "iterations": 12,
+      "objective": 0.025059599459880472,
+      "scale": 0.07020090449349932,
+      "primal_simplex_residual": 1.1812237927480027e-11,
+      "primal_cone_residual": 1.3020431954835487e-11,
+      "normalized_objective_residual": -1.8068990748076885e-11,
+      "psd": [
+        {
+          "min_eigenvalue": 0.007997933030782929,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 7.351989544048929e-16
+        },
+        {
+          "min_eigenvalue": 0.007871073422936515,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 2.4086788285780536e-16
+        },
+        {
+          "min_eigenvalue": 0.0011102676351855574,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 2.596474029939351e-16
+        },
+        {
+          "min_eigenvalue": 0.0005747736464178611,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 5.502704487119342e-16
+        },
+        {
+          "min_eigenvalue": 0.0011862323485568207,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 9.343254131134726e-16
+        }
+      ],
+      "dataset": "ext__wave_2d",
+      "n_calibration": 5,
+      "source_sha256": {
+        "labels.npz": "2d50bc41f1d425ae1c4eb0ce2e7e13445189bc3248b6512b92562dc40ec103b6",
+        "features.npz": "4d2229728d04ce9101442b7ad4a4945bd6d5e7347d253e655581f9713b6a1d65",
+        "audit.json": "f9089c5ebd90096c40832b509e4f65d1ba499ee9ae8e731de3d73d24e470c257"
+      },
+      "archive_sha256": {
+        "split.json": "16b89d2d57592cd1b7bcf369feb9c0b066f84b0e9f2443a78b888989cf2bf7b3",
+        "fit.json": "4fcd040f371b8c9c7960b390dcd55da93c057a28ef61ef246994a4025724c593",
+        "locked_weights.npz": "af53e39d7534604adb9b9415941e0c94d6978d86391a120465c5e2b17378ab95"
+      },
+      "calibration_mean_gram_max_absolute_difference": 0.0,
+      "reference_calibration_objectives": {
+        "single_l2": 0.027969992905916768,
+        "inverse_mse": 0.029885775132212293,
+        "full": 0.025368189747442225
+      }
+    },
+    "fluid__s172": {
+      "status": "optimal",
+      "iterations": 12,
+      "objective": 0.009872983093833936,
+      "scale": 0.0010335458863602804,
+      "primal_simplex_residual": 0.0,
+      "primal_cone_residual": -1.005359684391749e-11,
+      "normalized_objective_residual": -6.632505655801424e-11,
+      "psd": [
+        {
+          "min_eigenvalue": 0.019079451066549517,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 2.6103017872197645e-16
+        },
+        {
+          "min_eigenvalue": 0.011574339032865602,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 1.4909523092015734e-15
+        },
+        {
+          "min_eigenvalue": 0.0322540936625621,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 2.2483103985033687e-16
+        },
+        {
+          "min_eigenvalue": 0.0215003850198172,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 6.675156071312494e-16
+        },
+        {
+          "min_eigenvalue": 0.01941441629186354,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 3.373212776981978e-16
+        }
+      ],
+      "dataset": "fluid",
+      "n_calibration": 5,
+      "source_sha256": {
+        "labels.npz": "7519307f36cbd8f1486f96c0f59368e29d027ab705ba4c821e5482b609313e54",
+        "features.npz": "0ba07d06c63587b1639a819c369ed89f30b241c6c3ee5eadfa6c2e147dc3167c",
+        "audit.json": "07af32f755dbb51790f6562b23b91adb85d93e3e6669639a7afcb4e6a077f978"
+      },
+      "archive_sha256": {
+        "split.json": "fa8d853ee18fb8f10f65802906e22d43020a3364f54bf61773bb9cc72b4b5e88",
+        "fit.json": "fc5f622eb2ed4e40e66e6e685b7db5743cd07a517c122721266a179e3d0b2907",
+        "locked_weights.npz": "1fae0c97f724972d5fea54f40c263ed063983f0e35f597fa0bbcad5032112079"
+      },
+      "calibration_mean_gram_max_absolute_difference": 0.0,
+      "reference_calibration_objectives": {
+        "single_l2": 0.011637356819582709,
+        "inverse_mse": 0.010759185435904184,
+        "full": 0.009879121072136808
+      }
+    },
+    "fluid__s273": {
+      "status": "optimal",
+      "iterations": 14,
+      "objective": 0.02062802675050617,
+      "scale": 0.0010704271988070868,
+      "primal_simplex_residual": 2.220446049250313e-16,
+      "primal_cone_residual": -9.38082944657026e-12,
+      "normalized_objective_residual": -3.759137445769056e-11,
+      "psd": [
+        {
+          "min_eigenvalue": 0.023179847082043976,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 3.0751010275571436e-16
+        },
+        {
+          "min_eigenvalue": 0.00791119362857757,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 3.3291511213403637e-16
+        },
+        {
+          "min_eigenvalue": 0.011286290665553075,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 4.442724207247527e-16
+        },
+        {
+          "min_eigenvalue": 0.04898485139058828,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 1.4297926462733079e-16
+        },
+        {
+          "min_eigenvalue": 0.013953049581326623,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 4.34869135574217e-16
+        }
+      ],
+      "dataset": "fluid",
+      "n_calibration": 5,
+      "source_sha256": {
+        "labels.npz": "7519307f36cbd8f1486f96c0f59368e29d027ab705ba4c821e5482b609313e54",
+        "features.npz": "0ba07d06c63587b1639a819c369ed89f30b241c6c3ee5eadfa6c2e147dc3167c",
+        "audit.json": "07af32f755dbb51790f6562b23b91adb85d93e3e6669639a7afcb4e6a077f978"
+      },
+      "archive_sha256": {
+        "split.json": "a6e9aef42a809b6c53f0761ac5e9b46d1c4c1969acd07494f415c7bb4ad7084b",
+        "fit.json": "8d6f0aa22f7da4caf1fc581c3ba4d00152f6f25523d1fd0f676d19ac277b7fb7",
+        "locked_weights.npz": "7fa0ad376a10fd555f151257531df0e3a56a8faceeddf2582b94377fccd1d27f"
+      },
+      "calibration_mean_gram_max_absolute_difference": 0.0,
+      "reference_calibration_objectives": {
+        "single_l2": 0.021278979949996137,
+        "inverse_mse": 0.02225141613757598,
+        "full": 0.020767856258126348
+      }
+    },
+    "fluid__s71": {
+      "status": "optimal",
+      "iterations": 12,
+      "objective": 0.011960150457612988,
+      "scale": 0.0005461876960836386,
+      "primal_simplex_residual": 0.0,
+      "primal_cone_residual": -2.1445956122079224e-11,
+      "normalized_objective_residual": -1.1202661021059157e-10,
+      "psd": [
+        {
+          "min_eigenvalue": 0.049155992930026156,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 8.322325148804237e-16
+        },
+        {
+          "min_eigenvalue": 0.03089954882478482,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 1.819499122009286e-15
+        },
+        {
+          "min_eigenvalue": 0.007081477449419523,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 5.391533963013156e-16
+        },
+        {
+          "min_eigenvalue": 0.02734540504161895,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 1.7751430196980352e-16
+        },
+        {
+          "min_eigenvalue": 0.0637890539898847,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 4.306332478634128e-16
+        }
+      ],
+      "dataset": "fluid",
+      "n_calibration": 5,
+      "source_sha256": {
+        "labels.npz": "7519307f36cbd8f1486f96c0f59368e29d027ab705ba4c821e5482b609313e54",
+        "features.npz": "0ba07d06c63587b1639a819c369ed89f30b241c6c3ee5eadfa6c2e147dc3167c",
+        "audit.json": "07af32f755dbb51790f6562b23b91adb85d93e3e6669639a7afcb4e6a077f978"
+      },
+      "archive_sha256": {
+        "split.json": "d1a69614f45b5b7e29766d7599c1a372d9cd9ad97d1dd53804419ce0f2d52ceb",
+        "fit.json": "a579c4feec6882a5ef4e96a27bcc57af95ba74238e435c4f84ae3fdf9029ada1",
+        "locked_weights.npz": "2382f3b7611174c4087fa2882904fef0fe913a3f4c4ecb6a7de3ca6f9fc1a679"
+      },
+      "calibration_mean_gram_max_absolute_difference": 0.0,
+      "reference_calibration_objectives": {
+        "single_l2": 0.013423771652353816,
+        "inverse_mse": 0.012692187059901128,
+        "full": 0.012053703158876569
+      }
+    },
+    "heat_generated__s172": {
+      "status": "optimal",
+      "iterations": 13,
+      "objective": 5.677742410917756e-05,
+      "scale": 0.00010412972885487095,
+      "primal_simplex_residual": 0.0,
+      "primal_cone_residual": -8.215476909878561e-14,
+      "normalized_objective_residual": -3.648435720204901e-13,
+      "psd": [
+        {
+          "min_eigenvalue": 3.1713849398812394e-05,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 7.034086882584015e-16
+        },
+        {
+          "min_eigenvalue": 0.00011561301001002131,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 2.4699540961511596e-16
+        },
+        {
+          "min_eigenvalue": 4.204078216308476e-05,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 8.762340346050128e-16
+        },
+        {
+          "min_eigenvalue": 1.9620246944174682e-05,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 4.4014885481127023e-16
+        },
+        {
+          "min_eigenvalue": 0.00013494788118073757,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 7.444215358515868e-16
+        }
+      ],
+      "dataset": "heat_generated",
+      "n_calibration": 5,
+      "source_sha256": {
+        "labels.npz": "d8c473456873b49b91de56312f582ac47d88f256a85844fbbe95a34fe2074790",
+        "features.npz": "5f142b8a0a7e1a82c17dd3fcb0a4283631ff62f26dfc1a12986009cc917f146b",
+        "audit.json": "5ad2ebfd25b4eec9b21594be633f781eb7debb08c85680724005d88a37debd17"
+      },
+      "archive_sha256": {
+        "split.json": "ff041b66ed0169261f2e7c0a03703351bfb5c69542da53bfa21786fd3c57b227",
+        "fit.json": "a72a26f3ebbff992e0a086c89b5d792416eb4a9a20941e6ab0e931585ffbdf3e",
+        "locked_weights.npz": "1f9298740a135419152ca9f6142a46916b62ad77923b5b30b78b90fa111847be"
+      },
+      "calibration_mean_gram_max_absolute_difference": 0.0,
+      "reference_calibration_objectives": {
+        "single_l2": 8.966711741295918e-05,
+        "inverse_mse": 5.822854069697862e-05,
+        "full": 5.6890256706831606e-05
+      }
+    },
+    "heat_generated__s273": {
+      "status": "optimal",
+      "iterations": 14,
+      "objective": 0.00011329314702814407,
+      "scale": 0.0001402239776412765,
+      "primal_simplex_residual": 4.1642501391883687e-13,
+      "primal_cone_residual": -3.445906754384609e-13,
+      "normalized_objective_residual": -2.760847106486608e-13,
+      "psd": [
+        {
+          "min_eigenvalue": 0.0005856931247945115,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 4.308607671732542e-16
+        },
+        {
+          "min_eigenvalue": 4.007200419968649e-05,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 1.674198536928297e-16
+        },
+        {
+          "min_eigenvalue": 5.752201217336992e-05,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 2.001280413118535e-16
+        },
+        {
+          "min_eigenvalue": 5.6140130108558246e-05,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 4.0331724045547455e-16
+        },
+        {
+          "min_eigenvalue": 3.0329798033204444e-05,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 1.0347974994119661e-15
+        }
+      ],
+      "dataset": "heat_generated",
+      "n_calibration": 5,
+      "source_sha256": {
+        "labels.npz": "d8c473456873b49b91de56312f582ac47d88f256a85844fbbe95a34fe2074790",
+        "features.npz": "5f142b8a0a7e1a82c17dd3fcb0a4283631ff62f26dfc1a12986009cc917f146b",
+        "audit.json": "5ad2ebfd25b4eec9b21594be633f781eb7debb08c85680724005d88a37debd17"
+      },
+      "archive_sha256": {
+        "split.json": "3947ffb3dc0f1e2057221dbcf3cb163caddf8d7d92888fac74a1c43b47e9e285",
+        "fit.json": "745041b47e33e1751e1cabb5ad99c9af0c08f79a3435e4083e624d0618347dc4",
+        "locked_weights.npz": "f78d371482cc7da720ff29bbd1556af58078c6bd8627d9a0a6e416321c20b36b"
+      },
+      "calibration_mean_gram_max_absolute_difference": 0.0,
+      "reference_calibration_objectives": {
+        "single_l2": 0.00017279471185483315,
+        "inverse_mse": 0.00011781885588335226,
+        "full": 0.0001162825480091132
+      }
+    },
+    "heat_generated__s71": {
+      "status": "optimal",
+      "iterations": 14,
+      "objective": 4.517816722493148e-05,
+      "scale": 0.00013506665386218858,
+      "primal_simplex_residual": 1.0390170303214127e-12,
+      "primal_cone_residual": -1.6368677246969554e-13,
+      "normalized_objective_residual": -1.3015881775158e-12,
+      "psd": [
+        {
+          "min_eigenvalue": 2.1555713153363267e-05,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 8.128171877722702e-16
+        },
+        {
+          "min_eigenvalue": 4.335168812912664e-05,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 1.242339429256376e-15
+        },
+        {
+          "min_eigenvalue": 2.313698587323893e-05,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 4.481964115153276e-16
+        },
+        {
+          "min_eigenvalue": 4.881421434778833e-05,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 8.190058164234112e-16
+        },
+        {
+          "min_eigenvalue": 2.3508154218358772e-05,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 8.709933442337244e-16
+        }
+      ],
+      "dataset": "heat_generated",
+      "n_calibration": 5,
+      "source_sha256": {
+        "labels.npz": "d8c473456873b49b91de56312f582ac47d88f256a85844fbbe95a34fe2074790",
+        "features.npz": "5f142b8a0a7e1a82c17dd3fcb0a4283631ff62f26dfc1a12986009cc917f146b",
+        "audit.json": "5ad2ebfd25b4eec9b21594be633f781eb7debb08c85680724005d88a37debd17"
+      },
+      "archive_sha256": {
+        "split.json": "4cc04fd7affd0218639eab4064f97172c46466c73a608544d3745c36e5b8ddca",
+        "fit.json": "dd41708f5baa26882accf5a2360b16a359fcaa2886924be2d00ca06386f8b90b",
+        "locked_weights.npz": "f39825c1118e66f98aa8dc6c69b18a602675e47d7ddb52add12b2165cb5d9209"
+      },
+      "calibration_mean_gram_max_absolute_difference": 0.0,
+      "reference_calibration_objectives": {
+        "single_l2": 7.300854256909278e-05,
+        "inverse_mse": 4.554399930777404e-05,
+        "full": 4.5191898298558275e-05
+      }
+    },
+    "heat_local__s172": {
+      "status": "optimal",
+      "iterations": 13,
+      "objective": 4.2334936541852017e-05,
+      "scale": 1.2810534803719296e-05,
+      "primal_simplex_residual": 0.0,
+      "primal_cone_residual": -2.5722479701784096e-14,
+      "normalized_objective_residual": -1.0569774222535244e-12,
+      "psd": [
+        {
+          "min_eigenvalue": 0.0004079382679813308,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 1.7653898724746905e-15
+        },
+        {
+          "min_eigenvalue": 0.00028411927787185676,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 3.977107102959351e-16
+        },
+        {
+          "min_eigenvalue": 0.00015330888761726702,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 1.7036834241366646e-15
+        },
+        {
+          "min_eigenvalue": 0.00022254987252214237,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 2.4565600803776723e-16
+        },
+        {
+          "min_eigenvalue": 0.00034033800857691693,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 4.2247641031396523e-16
+        }
+      ],
+      "dataset": "heat_local",
+      "n_calibration": 5,
+      "source_sha256": {
+        "labels.npz": "431dec2c2b6e8a3f4bf57183957e2d2a70b0bff0fd224b02c57d03cada9fd57a",
+        "features.npz": "84d71a463cf82c62802017042531289a33663969ed201224a0043bea30380657",
+        "audit.json": "ac2b4d432cf2340f6b04438cbafaab7b4de94ef07da1d604ad2ffc76623e600c"
+      },
+      "archive_sha256": {
+        "split.json": "ac947ca48dbcd76560758f607623714bc54f263872313a657992021d5497e78e",
+        "fit.json": "5b95028f42624090b39b6eee59514127893ef731fa5a70581c23070b7293294e",
+        "locked_weights.npz": "d9eaa983720058b73e505d75d6fb6e44da575c2db5d177a6aedcc3ad849291da"
+      },
+      "calibration_mean_gram_max_absolute_difference": 0.0,
+      "reference_calibration_objectives": {
+        "single_l2": 7.059587805951095e-05,
+        "inverse_mse": 4.293087474527895e-05,
+        "full": 4.2497792008393686e-05
+      }
+    },
+    "heat_local__s273": {
+      "status": "optimal",
+      "iterations": 16,
+      "objective": 3.222369769506253e-05,
+      "scale": 1.704024413911473e-05,
+      "primal_simplex_residual": 2.220446049250313e-16,
+      "primal_cone_residual": 3.83026943495679e-14,
+      "normalized_objective_residual": -1.5217323928728987e-12,
+      "psd": [
+        {
+          "min_eigenvalue": 0.00016305430037837543,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 1.3057382405176587e-16
+        },
+        {
+          "min_eigenvalue": 0.00022896587264715373,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 3.623660385955193e-16
+        },
+        {
+          "min_eigenvalue": 0.0001253567278497234,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 5.92003106928808e-16
+        },
+        {
+          "min_eigenvalue": 0.00011754966591020115,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 8.5645938459002e-16
+        },
+        {
+          "min_eigenvalue": 0.00015032166789269387,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 1.1077811501218005e-15
+        }
+      ],
+      "dataset": "heat_local",
+      "n_calibration": 5,
+      "source_sha256": {
+        "labels.npz": "431dec2c2b6e8a3f4bf57183957e2d2a70b0bff0fd224b02c57d03cada9fd57a",
+        "features.npz": "84d71a463cf82c62802017042531289a33663969ed201224a0043bea30380657",
+        "audit.json": "ac2b4d432cf2340f6b04438cbafaab7b4de94ef07da1d604ad2ffc76623e600c"
+      },
+      "archive_sha256": {
+        "split.json": "588f28272b39e6ca31233635ca85f31c6d8f92c45db4d160526feaa3306d7fbf",
+        "fit.json": "fa2bc8e545f190c1f0cb8a0d055d59c2588d566ce44b2892f49dfb80aa996c13",
+        "locked_weights.npz": "2eaebd070313542f4ffb41ce912a99bd98544d826321decc1d65f11325c13192"
+      },
+      "calibration_mean_gram_max_absolute_difference": 0.0,
+      "reference_calibration_objectives": {
+        "single_l2": 5.34080849205928e-05,
+        "inverse_mse": 3.264548777936442e-05,
+        "full": 3.222555513665834e-05
+      }
+    },
+    "heat_local__s71": {
+      "status": "optimal",
+      "iterations": 12,
+      "objective": 4.344042568920831e-05,
+      "scale": 1.6488013988549013e-05,
+      "primal_simplex_residual": 0.0,
+      "primal_cone_residual": 6.958496279185766e-14,
+      "normalized_objective_residual": -2.3108303465191327e-12,
+      "psd": [
+        {
+          "min_eigenvalue": 0.0004734166735934642,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 2.964767740224645e-16
+        },
+        {
+          "min_eigenvalue": 0.00012996631192733996,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 3.913733737554481e-16
+        },
+        {
+          "min_eigenvalue": 0.0001910615482240831,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 1.0336741961318261e-16
+        },
+        {
+          "min_eigenvalue": 0.0005176761785922562,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 5.25867630761776e-16
+        },
+        {
+          "min_eigenvalue": 0.00019686804034566423,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 8.627369355905508e-16
+        }
+      ],
+      "dataset": "heat_local",
+      "n_calibration": 5,
+      "source_sha256": {
+        "labels.npz": "431dec2c2b6e8a3f4bf57183957e2d2a70b0bff0fd224b02c57d03cada9fd57a",
+        "features.npz": "84d71a463cf82c62802017042531289a33663969ed201224a0043bea30380657",
+        "audit.json": "ac2b4d432cf2340f6b04438cbafaab7b4de94ef07da1d604ad2ffc76623e600c"
+      },
+      "archive_sha256": {
+        "split.json": "43e987f70a8abae283128fc9f0f89b1b5582a761393f8e3af9ebcef6637d8067",
+        "fit.json": "76dbe737d489d2a3b552075e6240578b0fa57e15c192a5cd322945b9c0761bfc",
+        "locked_weights.npz": "b38627ff5d3e2a7e43d648323d0bd61da267da6fc891b2b6dd203229559c9214"
+      },
+      "calibration_mean_gram_max_absolute_difference": 0.0,
+      "reference_calibration_objectives": {
+        "single_l2": 7.18817700506192e-05,
+        "inverse_mse": 4.4551723141343485e-05,
+        "full": 4.3456498829547e-05
+      }
+    },
+    "lid_driven_cavity_generated__s172": {
+      "status": "optimal",
+      "iterations": 13,
+      "objective": 0.0012573192058074503,
+      "scale": 0.009394713012102705,
+      "primal_simplex_residual": 0.0,
+      "primal_cone_residual": -3.4187912917316154e-12,
+      "normalized_objective_residual": -9.231320569069723e-12,
+      "psd": [
+        {
+          "min_eigenvalue": 0.00021522854844628826,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 4.1143528896549564e-16
+        },
+        {
+          "min_eigenvalue": 0.00017395219926929286,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 9.714032595988851e-16
+        },
+        {
+          "min_eigenvalue": 0.000184798322869761,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 4.1070111346468306e-16
+        },
+        {
+          "min_eigenvalue": 0.00022700080742049948,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 9.002384887052596e-16
+        },
+        {
+          "min_eigenvalue": 0.00015903775286071832,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 2.1850565453241016e-16
+        }
+      ],
+      "dataset": "lid_driven_cavity_generated",
+      "n_calibration": 5,
+      "source_sha256": {
+        "labels.npz": "fced6c286efcd64e2087dce66edaf90b662993cb241bf37b8b79dcc1bfcae0ae",
+        "features.npz": "f8a935706899f0608dfa4d07b33f7c47b12e986ccb610b729c8bd850a4ecb6f3",
+        "audit.json": "7df45aa76ae0c8ea2f14250ac8e997ba45c1e204019c41a039bb99375dfe7ad0"
+      },
+      "archive_sha256": {
+        "split.json": "ad13b7c51d1bfa69efb9aeeaabb5775b710b0d984a3d3f989b21352db7729998",
+        "fit.json": "4532b04acb2df879149a03bdb6a6ff9ba0811a95fb6f352bc75a20d17f1884b1",
+        "locked_weights.npz": "74f9927b3ac94c8b62f90b9ce600bc875d9750fc09a639f94664c83b9e1037ee"
+      },
+      "calibration_mean_gram_max_absolute_difference": 0.0,
+      "reference_calibration_objectives": {
+        "single_l2": 0.0013616238416277943,
+        "inverse_mse": 0.001261116700850677,
+        "full": 0.0012573461672969301
+      }
+    },
+    "lid_driven_cavity_generated__s273": {
+      "status": "optimal",
+      "iterations": 14,
+      "objective": 0.0013021072365157456,
+      "scale": 0.007293840353096255,
+      "primal_simplex_residual": 0.0,
+      "primal_cone_residual": 8.895245651174832e-13,
+      "normalized_objective_residual": -1.593442391922828e-12,
+      "psd": [
+        {
+          "min_eigenvalue": 0.00029730711164725396,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 1.7631023427953822e-15
+        },
+        {
+          "min_eigenvalue": 0.00027727407914348787,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 1.0051997139648888e-15
+        },
+        {
+          "min_eigenvalue": 0.0002973721331138375,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 3.2061648126810314e-16
+        },
+        {
+          "min_eigenvalue": 0.0002240563147595306,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 3.770876388062109e-16
+        },
+        {
+          "min_eigenvalue": 0.00029238471586862905,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 1.39784915363991e-16
+        }
+      ],
+      "dataset": "lid_driven_cavity_generated",
+      "n_calibration": 5,
+      "source_sha256": {
+        "labels.npz": "fced6c286efcd64e2087dce66edaf90b662993cb241bf37b8b79dcc1bfcae0ae",
+        "features.npz": "f8a935706899f0608dfa4d07b33f7c47b12e986ccb610b729c8bd850a4ecb6f3",
+        "audit.json": "7df45aa76ae0c8ea2f14250ac8e997ba45c1e204019c41a039bb99375dfe7ad0"
+      },
+      "archive_sha256": {
+        "split.json": "601006e119cf63aac7691d66da400f17b71f2fa2720a9ba841ba3248342b6244",
+        "fit.json": "1b703d45a7cc1dafeec24718959eb01a97499fc896c5994c3cf82925505bd82b",
+        "locked_weights.npz": "97c04c0435a7d66556083b741aa4b8db3301470798d71220eda051d96cc5f070"
+      },
+      "calibration_mean_gram_max_absolute_difference": 0.0,
+      "reference_calibration_objectives": {
+        "single_l2": 0.0014377289460007728,
+        "inverse_mse": 0.0013060009490845146,
+        "full": 0.0013023772024829605
+      }
+    },
+    "lid_driven_cavity_generated__s71": {
+      "status": "optimal",
+      "iterations": 12,
+      "objective": 0.0012375756472888238,
+      "scale": 0.010184866920406287,
+      "primal_simplex_residual": 0.0,
+      "primal_cone_residual": 2.2597496790455196e-12,
+      "normalized_objective_residual": -6.564514556939294e-12,
+      "psd": [
+        {
+          "min_eigenvalue": 0.00019856841362083402,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 3.3837416980800166e-16
+        },
+        {
+          "min_eigenvalue": 0.0001751194479553649,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 3.253858920262359e-16
+        },
+        {
+          "min_eigenvalue": 0.00016045678384709754,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 1.053104327116552e-15
+        },
+        {
+          "min_eigenvalue": 0.00017046145247129452,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 3.1384382482592624e-16
+        },
+        {
+          "min_eigenvalue": 0.00014669941766471138,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 5.716462103309404e-16
+        }
+      ],
+      "dataset": "lid_driven_cavity_generated",
+      "n_calibration": 5,
+      "source_sha256": {
+        "labels.npz": "fced6c286efcd64e2087dce66edaf90b662993cb241bf37b8b79dcc1bfcae0ae",
+        "features.npz": "f8a935706899f0608dfa4d07b33f7c47b12e986ccb610b729c8bd850a4ecb6f3",
+        "audit.json": "7df45aa76ae0c8ea2f14250ac8e997ba45c1e204019c41a039bb99375dfe7ad0"
+      },
+      "archive_sha256": {
+        "split.json": "425f80b35ed04e7deb246a9d15d3a0e16204b5e090a871c133f63de8b9a26d72",
+        "fit.json": "4a7efa9cea2ac7f9af23dbde5148635d72f92945da28c5e5a5ebecd2c768f78c",
+        "locked_weights.npz": "12fb7669a816681c051ee856670e761c08f9258d9bc83b3a74220fa0e524e2a9"
+      },
+      "calibration_mean_gram_max_absolute_difference": 0.0,
+      "reference_calibration_objectives": {
+        "single_l2": 0.001342711903792836,
+        "inverse_mse": 0.0012428323185929573,
+        "full": 0.00123758916776043
+      }
+    },
+    "lid_driven_cavity_v2__s172": {
+      "status": "optimal",
+      "iterations": 16,
+      "objective": 0.001206587007159761,
+      "scale": 0.2705269573965282,
+      "primal_simplex_residual": 0.0,
+      "primal_cone_residual": -5.296197508330991e-13,
+      "normalized_objective_residual": -6.332759837357482e-13,
+      "psd": [
+        {
+          "min_eigenvalue": 1.3060748698645533e-08,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 2.7199646790557787e-16
+        },
+        {
+          "min_eigenvalue": 1.8650791255314612e-08,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 1.3930652137698319e-16
+        },
+        {
+          "min_eigenvalue": 1.4757222710344e-08,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 4.993373446991549e-16
+        },
+        {
+          "min_eigenvalue": 1.7563890872491646e-08,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 1.6791209137253275e-16
+        },
+        {
+          "min_eigenvalue": 1.6932640675415054e-08,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 4.480463717821114e-16
+        }
+      ],
+      "dataset": "lid_driven_cavity_v2",
+      "n_calibration": 5,
+      "source_sha256": {
+        "labels.npz": "677ff22dbae4ac2ad59e53d16bcfae89bc2c9c692868786d7a76174ade7e9bfb",
+        "features.npz": "a74e048acb47dfdf8195ee4befcdd220869cb42ed2d58f15e895c77e3552b60c",
+        "audit.json": "aebe2a4ca43dfc1654fcae72797da3daaaabd93e9cf6552b3526db90c694768f"
+      },
+      "archive_sha256": {
+        "split.json": "da386fcbb9b52e67d6c2dbd24253aecf4c5ab5606508a750e9fabfd91fe78353",
+        "fit.json": "4ec209bea150440d59f6c5bbf8c7695d2b5772a833b2c460ba1be95b4c6be900",
+        "locked_weights.npz": "28ae7fac962a464c8bca9e440d5dd05cac455cb1844c7a607ca70d28188addeb"
+      },
+      "calibration_mean_gram_max_absolute_difference": 0.0,
+      "reference_calibration_objectives": {
+        "single_l2": 0.0015733839148190597,
+        "inverse_mse": 0.001210789449994912,
+        "full": 0.001206623416744744
+      }
+    },
+    "lid_driven_cavity_v2__s273": {
+      "status": "optimal",
+      "iterations": 15,
+      "objective": 0.0013275266741918006,
+      "scale": 0.2684317613189463,
+      "primal_simplex_residual": 0.0,
+      "primal_cone_residual": -1.0206505779430941e-13,
+      "normalized_objective_residual": -4.197657846316538e-13,
+      "psd": [
+        {
+          "min_eigenvalue": 1.923707535920164e-08,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 7.172290443862016e-16
+        },
+        {
+          "min_eigenvalue": 1.8668737273676437e-08,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 3.318811637095258e-16
+        },
+        {
+          "min_eigenvalue": 1.781850443263609e-08,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 2.283229700407544e-16
+        },
+        {
+          "min_eigenvalue": 1.915933298388125e-08,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 1.1041911650817691e-16
+        },
+        {
+          "min_eigenvalue": 1.5336484291559684e-08,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 1.7100081367643662e-16
+        }
+      ],
+      "dataset": "lid_driven_cavity_v2",
+      "n_calibration": 5,
+      "source_sha256": {
+        "labels.npz": "677ff22dbae4ac2ad59e53d16bcfae89bc2c9c692868786d7a76174ade7e9bfb",
+        "features.npz": "a74e048acb47dfdf8195ee4befcdd220869cb42ed2d58f15e895c77e3552b60c",
+        "audit.json": "aebe2a4ca43dfc1654fcae72797da3daaaabd93e9cf6552b3526db90c694768f"
+      },
+      "archive_sha256": {
+        "split.json": "b67a16ccd054452e266ed7851bffaa7d4344af40dc6255a441cb4cbdeea30768",
+        "fit.json": "5c328e578dba92bc04aef51fbc41bba430a0f1ac98571003e1e6c1461cee3fe3",
+        "locked_weights.npz": "73efedd2850724acab7297df1a46bab9b84f63fa349b47aecb64702155550f88"
+      },
+      "calibration_mean_gram_max_absolute_difference": 0.0,
+      "reference_calibration_objectives": {
+        "single_l2": 0.0015425221021627361,
+        "inverse_mse": 0.0013301743210494968,
+        "full": 0.0013278874338961434
+      }
+    },
+    "lid_driven_cavity_v2__s71": {
+      "status": "optimal",
+      "iterations": 14,
+      "objective": 0.0012615881484248346,
+      "scale": 0.27058331696164023,
+      "primal_simplex_residual": 0.0,
+      "primal_cone_residual": -1.5963359106807573e-14,
+      "normalized_objective_residual": -2.2476985550579087e-13,
+      "psd": [
+        {
+          "min_eigenvalue": 1.8361454130375007e-08,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 5.578978307855435e-16
+        },
+        {
+          "min_eigenvalue": 1.3934861595706919e-08,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 4.403596701073518e-16
+        },
+        {
+          "min_eigenvalue": 1.3653526555769765e-08,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 2.7423512928816656e-16
+        },
+        {
+          "min_eigenvalue": 1.6658972857902297e-08,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 6.719890662285288e-16
+        },
+        {
+          "min_eigenvalue": 1.7314932293356605e-08,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 3.9216065913451637e-16
+        }
+      ],
+      "dataset": "lid_driven_cavity_v2",
+      "n_calibration": 5,
+      "source_sha256": {
+        "labels.npz": "677ff22dbae4ac2ad59e53d16bcfae89bc2c9c692868786d7a76174ade7e9bfb",
+        "features.npz": "a74e048acb47dfdf8195ee4befcdd220869cb42ed2d58f15e895c77e3552b60c",
+        "audit.json": "aebe2a4ca43dfc1654fcae72797da3daaaabd93e9cf6552b3526db90c694768f"
+      },
+      "archive_sha256": {
+        "split.json": "16117f612a25ab3396adf3e9fc92c858462c0244d85ba4de3a27b084c373baa7",
+        "fit.json": "3a6b4ddc28361588e5bc0fba191eae14a2c3e67a174ab5f68769bb16d4d556a9",
+        "locked_weights.npz": "0e700ca709091120b8b56a4fb967659b8f7bda9fd1f2b75d3830225705e9eba8"
+      },
+      "calibration_mean_gram_max_absolute_difference": 0.0,
+      "reference_calibration_objectives": {
+        "single_l2": 0.0014913007514722498,
+        "inverse_mse": 0.0012700700519003782,
+        "full": 0.0012616426397504005
+      }
+    },
+    "poisson_generated__s172": {
+      "status": "optimal",
+      "iterations": 16,
+      "objective": 3.188484339221909e-05,
+      "scale": 0.0013385036653030926,
+      "primal_simplex_residual": 0.0,
+      "primal_cone_residual": -1.7741862666509345e-13,
+      "normalized_objective_residual": -5.668911520761988e-13,
+      "psd": [
+        {
+          "min_eigenvalue": 4.0679344324982633e-08,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 1.6798065398437484e-16
+        },
+        {
+          "min_eigenvalue": 7.112247689766398e-08,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 1.2179131393983892e-15
+        },
+        {
+          "min_eigenvalue": 2.4353729854399824e-07,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 2.9632139612951515e-16
+        },
+        {
+          "min_eigenvalue": 2.366230786803638e-06,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 6.307815638050884e-16
+        },
+        {
+          "min_eigenvalue": 7.525186077655892e-07,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 5.2840575564360885e-16
+        }
+      ],
+      "dataset": "poisson_generated",
+      "n_calibration": 5,
+      "source_sha256": {
+        "labels.npz": "2c36d2830150745e203afa33f0034d7f8212260761d1d27a6100523624c7dd13",
+        "features.npz": "595dddb47afb856de134f10e56078cde20ca5a928542bf7aeb5615d10796790c",
+        "audit.json": "9fd583ed56147b5985845d99a14ae1b91fefe0584fb5d89333f4638ec70999ca"
+      },
+      "archive_sha256": {
+        "split.json": "f0a4dbf61395de6a3c94eee40fac4b11e4a15951572555c96ee67a895af6e265",
+        "fit.json": "bf6f5901858e3f76af755c44fa2e63e2845518ae7f585c51a74c095cf9e7a463",
+        "locked_weights.npz": "7990516d4a7b46b70ece8306f9cf86e71bb4a5cbfd805d42d13b3911d538eb8a"
+      },
+      "calibration_mean_gram_max_absolute_difference": 0.0,
+      "reference_calibration_objectives": {
+        "single_l2": 3.4154584495101264e-05,
+        "inverse_mse": 3.276763958059973e-05,
+        "full": 3.307540051462271e-05
+      }
+    },
+    "poisson_generated__s273": {
+      "status": "optimal",
+      "iterations": 14,
+      "objective": 2.779642181493875e-05,
+      "scale": 0.0011338584867157818,
+      "primal_simplex_residual": 0.0,
+      "primal_cone_residual": -1.6785227721638485e-13,
+      "normalized_objective_residual": -4.097360471744249e-13,
+      "psd": [
+        {
+          "min_eigenvalue": 1.0537372399602e-07,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 1.1568887051685101e-15
+        },
+        {
+          "min_eigenvalue": 8.480349458295774e-07,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 1.2085539878072558e-15
+        },
+        {
+          "min_eigenvalue": 2.866203546031205e-07,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 3.1702835013237273e-16
+        },
+        {
+          "min_eigenvalue": 8.883374129563381e-07,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 2.9841151030408377e-16
+        },
+        {
+          "min_eigenvalue": 6.482093821434777e-07,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 3.397046577908885e-16
+        }
+      ],
+      "dataset": "poisson_generated",
+      "n_calibration": 5,
+      "source_sha256": {
+        "labels.npz": "2c36d2830150745e203afa33f0034d7f8212260761d1d27a6100523624c7dd13",
+        "features.npz": "595dddb47afb856de134f10e56078cde20ca5a928542bf7aeb5615d10796790c",
+        "audit.json": "9fd583ed56147b5985845d99a14ae1b91fefe0584fb5d89333f4638ec70999ca"
+      },
+      "archive_sha256": {
+        "split.json": "57746df3a0ec883cc2809951de650f4951940146fde468d6a189b6337b47f68a",
+        "fit.json": "0e94b277525fe6fea3df5abf6ef18f052c96d939b16cc3bd2e51df84cbb35258",
+        "locked_weights.npz": "655f1b43438af9e5d31c2c68e85126cb7e77599481c2e108759c64e9f01e7380"
+      },
+      "calibration_mean_gram_max_absolute_difference": 0.0,
+      "reference_calibration_objectives": {
+        "single_l2": 2.8011876972887992e-05,
+        "inverse_mse": 2.840534791308188e-05,
+        "full": 2.7832412099900805e-05
+      }
+    },
+    "poisson_generated__s71": {
+      "status": "optimal",
+      "iterations": 14,
+      "objective": 2.7777112984752747e-05,
+      "scale": 0.0013296538200455793,
+      "primal_simplex_residual": 0.0,
+      "primal_cone_residual": -7.881277011220766e-14,
+      "normalized_objective_residual": -1.3658695485405103e-12,
+      "psd": [
+        {
+          "min_eigenvalue": 7.040457415258529e-07,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 1.7586931265457228e-16
+        },
+        {
+          "min_eigenvalue": 1.1962488729442902e-07,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 1.112715317831025e-15
+        },
+        {
+          "min_eigenvalue": 6.569225142739382e-07,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 9.168879822324398e-16
+        },
+        {
+          "min_eigenvalue": 1.3459002348970037e-07,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 1.220677053496611e-15
+        },
+        {
+          "min_eigenvalue": 4.6467485146705234e-07,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 2.618062929926946e-16
+        }
+      ],
+      "dataset": "poisson_generated",
+      "n_calibration": 5,
+      "source_sha256": {
+        "labels.npz": "2c36d2830150745e203afa33f0034d7f8212260761d1d27a6100523624c7dd13",
+        "features.npz": "595dddb47afb856de134f10e56078cde20ca5a928542bf7aeb5615d10796790c",
+        "audit.json": "9fd583ed56147b5985845d99a14ae1b91fefe0584fb5d89333f4638ec70999ca"
+      },
+      "archive_sha256": {
+        "split.json": "069d44fb6869d32e1f4ba3bd0f15744c72a37ccdb278c83f7a8e9957c4cea45b",
+        "fit.json": "52a37a3865269e1005a7f3a0b235739ce5a7316f9312620285d4b75616bc9e00",
+        "locked_weights.npz": "8343960e687df30e2176d63b093a924cee2a43940c617bbadde33a8432d1e831"
+      },
+      "calibration_mean_gram_max_absolute_difference": 0.0,
+      "reference_calibration_objectives": {
+        "single_l2": 2.8517898607612395e-05,
+        "inverse_mse": 2.8091876906069438e-05,
+        "full": 2.7904802118481383e-05
+      }
+    },
+    "poisson_generated_v2__s172": {
+      "status": "optimal",
+      "iterations": 15,
+      "objective": 6.0524318868893765e-05,
+      "scale": 0.0012971171604065856,
+      "primal_simplex_residual": 0.0,
+      "primal_cone_residual": -7.623247736190941e-13,
+      "normalized_objective_residual": -8.686463007223644e-13,
+      "psd": [
+        {
+          "min_eigenvalue": 1.726561787874392e-07,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 7.950097020140996e-16
+        },
+        {
+          "min_eigenvalue": 2.8561172734577176e-07,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 5.105752876798497e-16
+        },
+        {
+          "min_eigenvalue": 7.7506443916609e-07,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 3.1497416493744423e-16
+        },
+        {
+          "min_eigenvalue": 4.417935990628701e-06,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 4.202589517208053e-16
+        },
+        {
+          "min_eigenvalue": 1.8627209054529446e-06,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 5.324194622273249e-16
+        }
+      ],
+      "dataset": "poisson_generated_v2",
+      "n_calibration": 5,
+      "source_sha256": {
+        "labels.npz": "a2e1513dbe04462c41e4ea6d50115828a327aca8935d5e43685485c49e4e3e26",
+        "features.npz": "89af3bc1d54517c13cabfc6f095792a7d75b7641b9764436cc46fd8761433256",
+        "audit.json": "9f461dfac1eb87c65a8a39259b342be6fa7378a36d1b1946c8932e8ec352c9df"
+      },
+      "archive_sha256": {
+        "split.json": "2e18ef724e4478188d8c6feb0c609963044f2719199e7223e204771806e1502a",
+        "fit.json": "8b0e3f4e235dc5cb7ccb0d2151b0b6df0de771459f76d125812217d7c91d9ad9",
+        "locked_weights.npz": "7943a9eb6b2a7f46ca7853e016399dcbb808b6f8a8e660a7d2675288d30273b2"
+      },
+      "calibration_mean_gram_max_absolute_difference": 0.0,
+      "reference_calibration_objectives": {
+        "single_l2": 7.179998652565619e-05,
+        "inverse_mse": 6.388368692599148e-05,
+        "full": 6.175170830652611e-05
+      }
+    },
+    "poisson_generated_v2__s273": {
+      "status": "optimal",
+      "iterations": 15,
+      "objective": 4.449245524658556e-05,
+      "scale": 0.0009080577909960645,
+      "primal_simplex_residual": 2.220446049250313e-16,
+      "primal_cone_residual": -1.123276818781882e-14,
+      "normalized_objective_residual": -1.6893669622930485e-13,
+      "psd": [
+        {
+          "min_eigenvalue": 3.4038607200988804e-08,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 3.0498625647021647e-16
+        },
+        {
+          "min_eigenvalue": 1.2163977529901269e-06,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 5.12526579032717e-16
+        },
+        {
+          "min_eigenvalue": 1.5301163232737005e-06,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 4.855008699350262e-16
+        },
+        {
+          "min_eigenvalue": 2.6608077982158597e-06,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 1.118174183900041e-15
+        },
+        {
+          "min_eigenvalue": 1.6062181475371259e-06,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 5.015678020717423e-16
+        }
+      ],
+      "dataset": "poisson_generated_v2",
+      "n_calibration": 5,
+      "source_sha256": {
+        "labels.npz": "a2e1513dbe04462c41e4ea6d50115828a327aca8935d5e43685485c49e4e3e26",
+        "features.npz": "89af3bc1d54517c13cabfc6f095792a7d75b7641b9764436cc46fd8761433256",
+        "audit.json": "9f461dfac1eb87c65a8a39259b342be6fa7378a36d1b1946c8932e8ec352c9df"
+      },
+      "archive_sha256": {
+        "split.json": "23e2bb7012f7071e12fead4a58be653c346aa8aea803faea4b6ee9cebb2034c9",
+        "fit.json": "b9a1ab6f721b4c52a73d42d6c01168633db794534f5bee534acb76dda93f2de3",
+        "locked_weights.npz": "3b7079e8a141aac50c552f2580be1ac14472b272ebcc4bb240da1f4c2dff79d9"
+      },
+      "calibration_mean_gram_max_absolute_difference": 0.0,
+      "reference_calibration_objectives": {
+        "single_l2": 4.577146087754132e-05,
+        "inverse_mse": 4.855180977112617e-05,
+        "full": 4.507867383940594e-05
+      }
+    },
+    "poisson_generated_v2__s71": {
+      "status": "optimal",
+      "iterations": 14,
+      "objective": 4.6285730322889764e-05,
+      "scale": 0.0008018691615999428,
+      "primal_simplex_residual": 2.135635600831401e-13,
+      "primal_cone_residual": -7.869310671843044e-13,
+      "normalized_objective_residual": -9.647582212279904e-13,
+      "psd": [
+        {
+          "min_eigenvalue": 4.4734864804136465e-06,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 3.555694225582167e-16
+        },
+        {
+          "min_eigenvalue": 2.5548808790067387e-07,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 1.506044479966068e-16
+        },
+        {
+          "min_eigenvalue": 1.2066264571911357e-06,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 5.892808574735312e-16
+        },
+        {
+          "min_eigenvalue": 4.40347160796503e-07,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 1.3331689075438207e-16
+        },
+        {
+          "min_eigenvalue": 4.2774000910950485e-06,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 5.180973560451538e-17
+        }
+      ],
+      "dataset": "poisson_generated_v2",
+      "n_calibration": 5,
+      "source_sha256": {
+        "labels.npz": "a2e1513dbe04462c41e4ea6d50115828a327aca8935d5e43685485c49e4e3e26",
+        "features.npz": "89af3bc1d54517c13cabfc6f095792a7d75b7641b9764436cc46fd8761433256",
+        "audit.json": "9f461dfac1eb87c65a8a39259b342be6fa7378a36d1b1946c8932e8ec352c9df"
+      },
+      "archive_sha256": {
+        "split.json": "54e2d25650abb81ceb879c4e7b3d887dd00a0c058089e9dfa95f9ac7d4f2f1d6",
+        "fit.json": "7d24a9f2f62ff17392691fa5f6defa8d5a6f8661ab1dbb0ef5f9c36987e79ea3",
+        "locked_weights.npz": "4578d73933d5d876e5acca0d1378c311b3e92b0d6aaef0fde3fc0ad60aa929fa"
+      },
+      "calibration_mean_gram_max_absolute_difference": 0.0,
+      "reference_calibration_objectives": {
+        "single_l2": 4.8468419526198636e-05,
+        "inverse_mse": 4.776825515494861e-05,
+        "full": 4.6905313578155886e-05
+      }
+    },
+    "poisson_local__s172": {
+      "status": "optimal",
+      "iterations": 15,
+      "objective": 6.985930467984019e-05,
+      "scale": 0.008494481112203663,
+      "primal_simplex_residual": 0.0,
+      "primal_cone_residual": -2.761269132182248e-14,
+      "normalized_objective_residual": 1.9410135391334515e-13,
+      "psd": [
+        {
+          "min_eigenvalue": 7.122654933838778e-08,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 9.36747108216401e-16
+        },
+        {
+          "min_eigenvalue": 2.2712683112989273e-08,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 2.445306910364432e-16
+        },
+        {
+          "min_eigenvalue": 1.557874468388402e-08,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 1.3120526165756382e-15
+        },
+        {
+          "min_eigenvalue": 1.0637640299155796e-08,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 2.7241616610382397e-16
+        },
+        {
+          "min_eigenvalue": 5.105943051676835e-07,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 1.1314142248502407e-15
+        }
+      ],
+      "dataset": "poisson_local",
+      "n_calibration": 5,
+      "source_sha256": {
+        "labels.npz": "8b7879863a3b82ee8dd553754fc7c34f1d6366010674a04cf1d4c5d5ad7352f8",
+        "features.npz": "3b9e5277567163cb91fdaedfaedaaab2a1e56db1e5772a36b2ceb40b84291d9f",
+        "audit.json": "e97f697fe70bfd44240411a6d4d33e74390d0b2412a9a4916b3d836e70bb5c96"
+      },
+      "archive_sha256": {
+        "split.json": "71a867e854eb324618426c0524a46fd576894d3909f2259fc0250bc697c2e6ca",
+        "fit.json": "a5c2e3369cb9724a833e6833a3410114d60555298a2bfc6ddbe02cd744738652",
+        "locked_weights.npz": "283a76e4a5d50319e68362caf1733543e73a1c86b83e247c2b99aefc8999b930"
+      },
+      "calibration_mean_gram_max_absolute_difference": 0.0,
+      "reference_calibration_objectives": {
+        "single_l2": 7.017858116336539e-05,
+        "inverse_mse": 7.574003856576053e-05,
+        "full": 8.015547943560512e-05
+      }
+    },
+    "poisson_local__s273": {
+      "status": "optimal",
+      "iterations": 17,
+      "objective": 0.00011328960307808407,
+      "scale": 0.02331775846076756,
+      "primal_simplex_residual": 4.242868900610276e-15,
+      "primal_cone_residual": -3.620972337074757e-14,
+      "normalized_objective_residual": -5.899406397419371e-13,
+      "psd": [
+        {
+          "min_eigenvalue": 1.037520676662455e-07,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 4.114170876909713e-16
+        },
+        {
+          "min_eigenvalue": 3.673118537951022e-08,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 1.3957622294953186e-15
+        },
+        {
+          "min_eigenvalue": 5.293883876699322e-07,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 3.968647254000655e-16
+        },
+        {
+          "min_eigenvalue": 6.24517387368484e-08,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 6.409035234041378e-16
+        },
+        {
+          "min_eigenvalue": 2.7948942633459644e-08,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 1.7514244191579202e-16
+        }
+      ],
+      "dataset": "poisson_local",
+      "n_calibration": 5,
+      "source_sha256": {
+        "labels.npz": "8b7879863a3b82ee8dd553754fc7c34f1d6366010674a04cf1d4c5d5ad7352f8",
+        "features.npz": "3b9e5277567163cb91fdaedfaedaaab2a1e56db1e5772a36b2ceb40b84291d9f",
+        "audit.json": "e97f697fe70bfd44240411a6d4d33e74390d0b2412a9a4916b3d836e70bb5c96"
+      },
+      "archive_sha256": {
+        "split.json": "570f9c664963237bfa3bd476eb3920b5ec420821712ed193caddb574c0aeda2d",
+        "fit.json": "4b26e1523d3bf56fb5185858875541cad01764cc4163e55e7021728a5882a5e0",
+        "locked_weights.npz": "03d9a93933f8f6b468cdc78ef4022be3b8c3e0d63366bc6a89162a1048721725"
+      },
+      "calibration_mean_gram_max_absolute_difference": 0.0,
+      "reference_calibration_objectives": {
+        "single_l2": 0.00011666368087733707,
+        "inverse_mse": 0.0001199627034212213,
+        "full": 0.00011810679607541334
+      }
+    },
+    "poisson_local__s71": {
+      "status": "optimal",
+      "iterations": 19,
+      "objective": 5.09386960563265e-05,
+      "scale": 0.011440823015480214,
+      "primal_simplex_residual": 9.898654809056336e-14,
+      "primal_cone_residual": -2.1442076629865636e-14,
+      "normalized_objective_residual": -4.5994078771288693e-14,
+      "psd": [
+        {
+          "min_eigenvalue": 3.1375592254519244e-08,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 9.401288684583697e-16
+        },
+        {
+          "min_eigenvalue": 4.638749072181227e-08,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 1.1849208854995962e-15
+        },
+        {
+          "min_eigenvalue": 5.997207935473141e-08,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 4.603517742733274e-16
+        },
+        {
+          "min_eigenvalue": 2.2940737240191577e-07,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 1.688865328903141e-16
+        },
+        {
+          "min_eigenvalue": 2.9042091695441266e-08,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 2.485965367274997e-16
+        }
+      ],
+      "dataset": "poisson_local",
+      "n_calibration": 5,
+      "source_sha256": {
+        "labels.npz": "8b7879863a3b82ee8dd553754fc7c34f1d6366010674a04cf1d4c5d5ad7352f8",
+        "features.npz": "3b9e5277567163cb91fdaedfaedaaab2a1e56db1e5772a36b2ceb40b84291d9f",
+        "audit.json": "e97f697fe70bfd44240411a6d4d33e74390d0b2412a9a4916b3d836e70bb5c96"
+      },
+      "archive_sha256": {
+        "split.json": "192368d7f3d2609f9b871f0094227705e185fcb69dd9135463744aacaaad357e",
+        "fit.json": "733f1138fa90609c9ac3282639e108c1bcf86d062d61733e6f0be9c56bbf8abd",
+        "locked_weights.npz": "3b72097de57b06185b29b51b311ae675752cf027b87a4fe15f489430b2cf3f2d"
+      },
+      "calibration_mean_gram_max_absolute_difference": 0.0,
+      "reference_calibration_objectives": {
+        "single_l2": 5.0938696007002404e-05,
+        "inverse_mse": 5.1956252172392494e-05,
+        "full": 5.0938696007002404e-05
+      }
+    },
+    "sharp__burgers_2d__s172": {
+      "status": "optimal",
+      "iterations": 14,
+      "objective": 0.00439343711605879,
+      "scale": 0.11141911196505977,
+      "primal_simplex_residual": 2.220446049250313e-16,
+      "primal_cone_residual": -1.0664706964758075e-12,
+      "normalized_objective_residual": -3.863015810012804e-12,
+      "psd": [
+        {
+          "min_eigenvalue": 1.5396662693168854e-05,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 7.916765619618874e-16
+        },
+        {
+          "min_eigenvalue": 7.831375323714347e-06,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 1.1710718379694473e-16
+        },
+        {
+          "min_eigenvalue": 7.518964396827443e-06,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 5.937598753094512e-16
+        },
+        {
+          "min_eigenvalue": 6.816636763824911e-06,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 1.9791998418816968e-16
+        },
+        {
+          "min_eigenvalue": 9.099449805583456e-06,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 9.895928796725551e-16
+        }
+      ],
+      "dataset": "sharp__burgers_2d",
+      "n_calibration": 5,
+      "source_sha256": {
+        "labels.npz": "3161b8640a4cfa866dfb25054f42975370c8446b5c147447ac8e4cdcd5e96af1",
+        "features.npz": "676a0eea0ac279644a9d32cd939e7b7277cce9a0cbaea83a1fbe852d40a97ef4",
+        "audit.json": "b9809309fcde911ef8cfbfe1232ee6c1bd903f17b23ee2560ad7c57ab540d839"
+      },
+      "archive_sha256": {
+        "split.json": "c1a0eaf61dac1369cd107dbb78b1c4a3e377460ee685c4328f431294d68f45a9",
+        "fit.json": "311d99ef4a626f2f2f00610b55e6c86764c1712cf084d9439ac0ed2210326457",
+        "locked_weights.npz": "9011545e39fc823aaceb7ced1ca60e48e4da3d82d01babdee28264e12c01dc53"
+      },
+      "calibration_mean_gram_max_absolute_difference": 0.0,
+      "reference_calibration_objectives": {
+        "single_l2": 0.0044288146445929915,
+        "inverse_mse": 0.004548148220096409,
+        "full": 0.004393955185544314
+      }
+    },
+    "sharp__burgers_2d__s273": {
+      "status": "optimal",
+      "iterations": 14,
+      "objective": 0.004461405790993101,
+      "scale": 0.11152316506007917,
+      "primal_simplex_residual": 0.0,
+      "primal_cone_residual": 2.0027382530152238e-14,
+      "normalized_objective_residual": -1.2939926907762356e-12,
+      "psd": [
+        {
+          "min_eigenvalue": 1.7789147321358704e-05,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 5.958460431502892e-17
+        },
+        {
+          "min_eigenvalue": 6.594685276306639e-06,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 9.905201483763647e-16
+        },
+        {
+          "min_eigenvalue": 3.729285312093217e-05,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 1.981005260984404e-16
+        },
+        {
+          "min_eigenvalue": 1.1877643312654205e-05,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 1.9810467437365088e-16
+        },
+        {
+          "min_eigenvalue": 1.9312597011885374e-05,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 9.904784301585085e-16
+        }
+      ],
+      "dataset": "sharp__burgers_2d",
+      "n_calibration": 5,
+      "source_sha256": {
+        "labels.npz": "3161b8640a4cfa866dfb25054f42975370c8446b5c147447ac8e4cdcd5e96af1",
+        "features.npz": "676a0eea0ac279644a9d32cd939e7b7277cce9a0cbaea83a1fbe852d40a97ef4",
+        "audit.json": "b9809309fcde911ef8cfbfe1232ee6c1bd903f17b23ee2560ad7c57ab540d839"
+      },
+      "archive_sha256": {
+        "split.json": "8d503d3fccc6c162ebecc48d16682fbe62b60da04c8be19e74b77eb9e7ec0f09",
+        "fit.json": "a020d1da212c97550cfcc11abb8dfe04ae28b198fb9288121fc3065718fab636",
+        "locked_weights.npz": "a4f26c7ff898ba7af6797a85a809924f1d1b0a57028356aaa56963590e75171f"
+      },
+      "calibration_mean_gram_max_absolute_difference": 0.0,
+      "reference_calibration_objectives": {
+        "single_l2": 0.0045509623517345985,
+        "inverse_mse": 0.00457003152988423,
+        "full": 0.0044632157486633964
+      }
+    },
+    "sharp__burgers_2d__s71": {
+      "status": "optimal",
+      "iterations": 14,
+      "objective": 0.005022824280516895,
+      "scale": 0.11187608021871662,
+      "primal_simplex_residual": 2.220446049250313e-16,
+      "primal_cone_residual": 1.3562762024577069e-13,
+      "normalized_objective_residual": -4.454740396009349e-12,
+      "psd": [
+        {
+          "min_eigenvalue": 1.1863747447443447e-05,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 3.9745722359127444e-16
+        },
+        {
+          "min_eigenvalue": 2.505776280309908e-05,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 1.9873072306454737e-16
+        },
+        {
+          "min_eigenvalue": 6.573882220057986e-06,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 9.936546502989862e-16
+        },
+        {
+          "min_eigenvalue": 1.1840175067725589e-05,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 9.936578839916212e-16
+        },
+        {
+          "min_eigenvalue": 0.0001554054306284464,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 5.961095173556832e-16
+        }
+      ],
+      "dataset": "sharp__burgers_2d",
+      "n_calibration": 5,
+      "source_sha256": {
+        "labels.npz": "3161b8640a4cfa866dfb25054f42975370c8446b5c147447ac8e4cdcd5e96af1",
+        "features.npz": "676a0eea0ac279644a9d32cd939e7b7277cce9a0cbaea83a1fbe852d40a97ef4",
+        "audit.json": "b9809309fcde911ef8cfbfe1232ee6c1bd903f17b23ee2560ad7c57ab540d839"
+      },
+      "archive_sha256": {
+        "split.json": "d843b623b7e9e8b20c9cdf36228c51f330495e78640e1f11454b53256b6a8096",
+        "fit.json": "097991a307cf5b828414390b889e613989c72888076811a9360d9f42744ae1e4",
+        "locked_weights.npz": "3acb0a03b6518880beae944702bfc6d6fc8289c3ff3fa1ca0ab84f35df8b6b4b"
+      },
+      "calibration_mean_gram_max_absolute_difference": 0.0,
+      "reference_calibration_objectives": {
+        "single_l2": 0.005298175072160032,
+        "inverse_mse": 0.0051672601162141155,
+        "full": 0.005026809414332367
+      }
+    },
+    "sharp__euler__s172": {
+      "status": "optimal",
+      "iterations": 11,
+      "objective": 0.031022924908887122,
+      "scale": 0.001707169031588023,
+      "primal_simplex_residual": 0.0,
+      "primal_cone_residual": 4.164535383210932e-11,
+      "normalized_objective_residual": -4.5699999340342856e-11,
+      "psd": [
+        {
+          "min_eigenvalue": 0.0257406522799152,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 2.2096357210587276e-16
+        },
+        {
+          "min_eigenvalue": 0.033181238130746686,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 1.5328633612891926e-16
+        },
+        {
+          "min_eigenvalue": 0.035200798390852155,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 1.2238432561908523e-16
+        },
+        {
+          "min_eigenvalue": 0.03376200356133001,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 2.408056741188057e-16
+        },
+        {
+          "min_eigenvalue": 0.040000608036827055,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 3.907710353151444e-16
+        }
+      ],
+      "dataset": "sharp__euler",
+      "n_calibration": 5,
+      "source_sha256": {
+        "labels.npz": "b13077b9c7dc3bae37d42673a97e811d608b7a64346c9586a6bc147448955f5a",
+        "features.npz": "293d27921495002e7cdd915022cca6531bb9b5ab7841bc89da9efdeb433cb870",
+        "audit.json": "4afb2bee1fad9364d2d8d19652546c72aa12806f5551cf3900673f8e696d07f5"
+      },
+      "archive_sha256": {
+        "split.json": "b2201c87e4464efb607558f75d898794198331db7c49b1bb0d6d104e302a70e9",
+        "fit.json": "ecb0fc8a185db638a604c38ea311274dca90a3eecca215bf76c841007caa1f99",
+        "locked_weights.npz": "8f39368e6952e9fe8b471fcec033ac1af30471a8755935957249545b27c42744"
+      },
+      "calibration_mean_gram_max_absolute_difference": 0.0,
+      "reference_calibration_objectives": {
+        "single_l2": 0.032835827841395895,
+        "inverse_mse": 0.031913090694584215,
+        "full": 0.031098666622084898
+      }
+    },
+    "sharp__euler__s273": {
+      "status": "optimal",
+      "iterations": 10,
+      "objective": 0.03235393798659397,
+      "scale": 0.0019360940131109491,
+      "primal_simplex_residual": 0.0,
+      "primal_cone_residual": 6.823031029057347e-11,
+      "normalized_objective_residual": -2.5298430017528517e-11,
+      "psd": [
+        {
+          "min_eigenvalue": 0.03635651377108878,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 1.8157528368069068e-16
+        },
+        {
+          "min_eigenvalue": 0.023542134386800324,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 5.508337506463562e-16
+        },
+        {
+          "min_eigenvalue": 0.04430203982411988,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 2.6030303610574358e-16
+        },
+        {
+          "min_eigenvalue": 0.033944246055225266,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 1.4356995782122166e-16
+        },
+        {
+          "min_eigenvalue": 0.02457616304004609,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 1.3604339389036662e-16
+        }
+      ],
+      "dataset": "sharp__euler",
+      "n_calibration": 5,
+      "source_sha256": {
+        "labels.npz": "b13077b9c7dc3bae37d42673a97e811d608b7a64346c9586a6bc147448955f5a",
+        "features.npz": "293d27921495002e7cdd915022cca6531bb9b5ab7841bc89da9efdeb433cb870",
+        "audit.json": "4afb2bee1fad9364d2d8d19652546c72aa12806f5551cf3900673f8e696d07f5"
+      },
+      "archive_sha256": {
+        "split.json": "9a27539d88c5732e91586be8b23b176878caa56b3eec475a53c830ae286ee4c6",
+        "fit.json": "8a1da9e96674e47ca2ea13f86174918eede3cb50a39971159741eef0c1afc8fb",
+        "locked_weights.npz": "b10fac4dccc7f97c163e516ef892d21b39f9bbb41986a372760a9a160d08ca44"
+      },
+      "calibration_mean_gram_max_absolute_difference": 0.0,
+      "reference_calibration_objectives": {
+        "single_l2": 0.03367350479155974,
+        "inverse_mse": 0.03558591667346354,
+        "full": 0.032367534810333345
+      }
+    },
+    "sharp__euler__s71": {
+      "status": "optimal",
+      "iterations": 14,
+      "objective": 0.04299360464407893,
+      "scale": 0.0044253513982986,
+      "primal_simplex_residual": 0.0,
+      "primal_cone_residual": -3.65427688109321e-11,
+      "normalized_objective_residual": -5.191402863147232e-11,
+      "psd": [
+        {
+          "min_eigenvalue": 0.048413501124118005,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 2.361118983939262e-16
+        },
+        {
+          "min_eigenvalue": 0.12033778621496992,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 2.310799958224241e-16
+        },
+        {
+          "min_eigenvalue": 0.012625687686749324,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 5.091401289550586e-16
+        },
+        {
+          "min_eigenvalue": 0.021891361383062097,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 6.879407071702765e-16
+        },
+        {
+          "min_eigenvalue": 0.010752086748493029,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 2.591299024845445e-16
+        }
+      ],
+      "dataset": "sharp__euler",
+      "n_calibration": 5,
+      "source_sha256": {
+        "labels.npz": "b13077b9c7dc3bae37d42673a97e811d608b7a64346c9586a6bc147448955f5a",
+        "features.npz": "293d27921495002e7cdd915022cca6531bb9b5ab7841bc89da9efdeb433cb870",
+        "audit.json": "4afb2bee1fad9364d2d8d19652546c72aa12806f5551cf3900673f8e696d07f5"
+      },
+      "archive_sha256": {
+        "split.json": "6a23bd0c3cbfe8d6ee02d94d064504d8d839c2a9d6a502b6feaa5f848d4e3327",
+        "fit.json": "1e2793e1c625f030451fd1a3d2f666f3a992722bde1fef5438dc301642ed2f68",
+        "locked_weights.npz": "7558ca08a8f2ec2202e1e50c44f752f7df149e7a654bf4b92ac40724eedf8621"
+      },
+      "calibration_mean_gram_max_absolute_difference": 0.0,
+      "reference_calibration_objectives": {
+        "single_l2": 0.04683362557054775,
+        "inverse_mse": 0.046855168808867684,
+        "full": 0.04334941335155905
+      }
+    },
+    "sharp__helmholtz_2d__s172": {
+      "status": "optimal",
+      "iterations": 10,
+      "objective": 0.012502486741805017,
+      "scale": 0.011311356393115523,
+      "primal_simplex_residual": 0.0,
+      "primal_cone_residual": 2.467415161078179e-12,
+      "normalized_objective_residual": -4.08546807495469e-12,
+      "psd": [
+        {
+          "min_eigenvalue": 0.002849933329719815,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 5.807413160000205e-16
+        },
+        {
+          "min_eigenvalue": 0.0032069386347489993,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 5.930260562122741e-16
+        },
+        {
+          "min_eigenvalue": 0.0008392365326143747,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 5.981731325849321e-16
+        },
+        {
+          "min_eigenvalue": 0.0008478666945002895,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 1.3098965412053176e-15
+        },
+        {
+          "min_eigenvalue": 0.002748852467524709,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 1.5385233984102382e-16
+        }
+      ],
+      "dataset": "sharp__helmholtz_2d",
+      "n_calibration": 5,
+      "source_sha256": {
+        "labels.npz": "da8808981f6dcfbf0ef13df57e2d91c49101f4a07fc8b6427316afed7c11fbdc",
+        "features.npz": "3af336547d30ef277575afa0358e4fd2b65aeb160ae04706c204593a2f7d1d23",
+        "audit.json": "b27f572a58a8c58aec85fb59acd01c7d45699ad4abecc3a274df74d1de540d85"
+      },
+      "archive_sha256": {
+        "split.json": "fe895baa12f539c13624f85f1f97fe4236bf809ad62bd8478c8f2415e6108855",
+        "fit.json": "bd7766133b1eab9e70d9b702c7bb8e7700726bf7432b57280b5504845774c070",
+        "locked_weights.npz": "e9846b9169fb296f09ef791b85fa87c57b312583de563f81e3a2075b11056fd2"
+      },
+      "calibration_mean_gram_max_absolute_difference": 0.0,
+      "reference_calibration_objectives": {
+        "single_l2": 0.020734315734284504,
+        "inverse_mse": 0.015018319118290888,
+        "full": 0.012577483670094702
+      }
+    },
+    "sharp__helmholtz_2d__s273": {
+      "status": "optimal",
+      "iterations": 12,
+      "objective": 0.008121033431606091,
+      "scale": 0.0035992073328738098,
+      "primal_simplex_residual": 2.220446049250313e-16,
+      "primal_cone_residual": -2.690167533181409e-12,
+      "normalized_objective_residual": -6.42077502277516e-11,
+      "psd": [
+        {
+          "min_eigenvalue": 0.004948945288594613,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 1.060624631171977e-15
+        },
+        {
+          "min_eigenvalue": 0.003471231556158245,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 4.1351647849858185e-16
+        },
+        {
+          "min_eigenvalue": 0.010578568803394799,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 9.751766917215726e-16
+        },
+        {
+          "min_eigenvalue": 0.003736012150982404,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 1.304570494056018e-15
+        },
+        {
+          "min_eigenvalue": 0.006168878820022376,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 9.970141496360744e-16
+        }
+      ],
+      "dataset": "sharp__helmholtz_2d",
+      "n_calibration": 5,
+      "source_sha256": {
+        "labels.npz": "da8808981f6dcfbf0ef13df57e2d91c49101f4a07fc8b6427316afed7c11fbdc",
+        "features.npz": "3af336547d30ef277575afa0358e4fd2b65aeb160ae04706c204593a2f7d1d23",
+        "audit.json": "b27f572a58a8c58aec85fb59acd01c7d45699ad4abecc3a274df74d1de540d85"
+      },
+      "archive_sha256": {
+        "split.json": "ad872e7af8fa8129c8b23311ce262acb5ed11f60a4808705126668d74c10c591",
+        "fit.json": "d8a0fa2d06dc510ed493cbda1b6085d80ac964139b2283829763c3fca1e14381",
+        "locked_weights.npz": "d168facfc0d941d5e1e0e1e2636817ee9674adac3d7af93ea1028bbdcbe7c4da"
+      },
+      "calibration_mean_gram_max_absolute_difference": 0.0,
+      "reference_calibration_objectives": {
+        "single_l2": 0.0114265102894832,
+        "inverse_mse": 0.008932643251492806,
+        "full": 0.008342562833042338
+      }
+    },
+    "sharp__helmholtz_2d__s71": {
+      "status": "optimal",
+      "iterations": 11,
+      "objective": 0.004536157886149425,
+      "scale": 0.0019769830375132606,
+      "primal_simplex_residual": 2.220446049250313e-16,
+      "primal_cone_residual": 1.5090165228492936e-11,
+      "normalized_objective_residual": -6.069186819779304e-12,
+      "psd": [
+        {
+          "min_eigenvalue": 0.02377610298741129,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 1.1079738271278024e-15
+        },
+        {
+          "min_eigenvalue": 0.008814420060130992,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 7.066509695430041e-16
+        },
+        {
+          "min_eigenvalue": 0.00978039143320975,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 3.8044913689035144e-16
+        },
+        {
+          "min_eigenvalue": 0.015926455501678018,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 5.419155425577925e-16
+        },
+        {
+          "min_eigenvalue": 0.021160153479358453,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 4.3672461838019604e-16
+        }
+      ],
+      "dataset": "sharp__helmholtz_2d",
+      "n_calibration": 5,
+      "source_sha256": {
+        "labels.npz": "da8808981f6dcfbf0ef13df57e2d91c49101f4a07fc8b6427316afed7c11fbdc",
+        "features.npz": "3af336547d30ef277575afa0358e4fd2b65aeb160ae04706c204593a2f7d1d23",
+        "audit.json": "b27f572a58a8c58aec85fb59acd01c7d45699ad4abecc3a274df74d1de540d85"
+      },
+      "archive_sha256": {
+        "split.json": "81221b1c4b7af3e575e7c28a244df67b48a7e78598ef725f74f25ff06fa6dee9",
+        "fit.json": "afdb926ec5961e82a6c2007d35f3e1c793b53feee35fee1624dd47b5af26ddb9",
+        "locked_weights.npz": "7a4dce585db153d0e459b2011fffe01c5b7582fbd343924f4fd8eae2c8641b5b"
+      },
+      "calibration_mean_gram_max_absolute_difference": 0.0,
+      "reference_calibration_objectives": {
+        "single_l2": 0.00655253943147526,
+        "inverse_mse": 0.004860731929947147,
+        "full": 0.004539400118827634
+      }
+    },
+    "sharp__porous_medium_2d__s172": {
+      "status": "optimal",
+      "iterations": 13,
+      "objective": 0.0002897682698427277,
+      "scale": 0.00023582318462530427,
+      "primal_simplex_residual": 0.0,
+      "primal_cone_residual": 2.7243832190215755e-14,
+      "normalized_objective_residual": -9.298464775930881e-12,
+      "psd": [
+        {
+          "min_eigenvalue": 0.00022623518766490283,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 3.8980404773414625e-16
+        },
+        {
+          "min_eigenvalue": 0.00017117365336332858,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 1.4923793982297335e-15
+        },
+        {
+          "min_eigenvalue": 0.000452971943328618,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 3.57448829670858e-16
+        },
+        {
+          "min_eigenvalue": 0.0002704738331767943,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 6.0403328889636365e-16
+        },
+        {
+          "min_eigenvalue": 0.00171628057887044,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 1.9892512320419143e-16
+        }
+      ],
+      "dataset": "sharp__porous_medium_2d",
+      "n_calibration": 5,
+      "source_sha256": {
+        "labels.npz": "70d66326f23bbb0990ee659a56cdf5eb1b141078306e82f3c76a8bcc37c5c5be",
+        "features.npz": "dd49764d376ab1130d192ffe4a870e08db2ec8135d3f4fb723e7aa443d5c3e1d",
+        "audit.json": "aa8979bb63b21969cede415fd0063cb368abe4e47cd81f7162bc5aec437ad6d5"
+      },
+      "archive_sha256": {
+        "split.json": "f9b660653cdd9c4a454c98c260ae632da82084db64aa6303013ae72916861eb7",
+        "fit.json": "99f665806c6269181efd366c9e5e5cbe23eeee4b689b172e0c7742b5b5514a65",
+        "locked_weights.npz": "abff935e9b4dab7c915958ca4b14e70e342b43cf6b68059312a721ae48ce016d"
+      },
+      "calibration_mean_gram_max_absolute_difference": 0.0,
+      "reference_calibration_objectives": {
+        "single_l2": 0.00042330263115988094,
+        "inverse_mse": 0.00029830847255332113,
+        "full": 0.0002905510406528287
+      }
+    },
+    "sharp__porous_medium_2d__s273": {
+      "status": "optimal",
+      "iterations": 12,
+      "objective": 0.00025852926600390745,
+      "scale": 0.0001615058002779303,
+      "primal_simplex_residual": 0.0,
+      "primal_cone_residual": -4.923665641864972e-13,
+      "normalized_objective_residual": -1.0340929501584384e-12,
+      "psd": [
+        {
+          "min_eigenvalue": 0.0002499397296593546,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 1.5724162113064924e-15
+        },
+        {
+          "min_eigenvalue": 0.0007790265034408341,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 1.9526337792095501e-16
+        },
+        {
+          "min_eigenvalue": 0.000548273145045802,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 2.2000725675570074e-16
+        },
+        {
+          "min_eigenvalue": 0.0005549052056119369,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 1.0428852924011176e-15
+        },
+        {
+          "min_eigenvalue": 0.0002502606838356059,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 1.1835770105102865e-15
+        }
+      ],
+      "dataset": "sharp__porous_medium_2d",
+      "n_calibration": 5,
+      "source_sha256": {
+        "labels.npz": "70d66326f23bbb0990ee659a56cdf5eb1b141078306e82f3c76a8bcc37c5c5be",
+        "features.npz": "dd49764d376ab1130d192ffe4a870e08db2ec8135d3f4fb723e7aa443d5c3e1d",
+        "audit.json": "aa8979bb63b21969cede415fd0063cb368abe4e47cd81f7162bc5aec437ad6d5"
+      },
+      "archive_sha256": {
+        "split.json": "f3cdb2a5572c6b78276b5059ecb7e278d3687c3a63ad121a34e0240c542aa4db",
+        "fit.json": "982dbe16f7036806e91374ab34a57af5116513048e9b4c648960f7d49bbf597e",
+        "locked_weights.npz": "722e212513bc28425423c57a93d7b1093e169c72893e6735c8f338cf99bdace4"
+      },
+      "calibration_mean_gram_max_absolute_difference": 0.0,
+      "reference_calibration_objectives": {
+        "single_l2": 0.00031989243873278497,
+        "inverse_mse": 0.00026719919338012634,
+        "full": 0.0002586711799317847
+      }
+    },
+    "sharp__porous_medium_2d__s71": {
+      "status": "optimal",
+      "iterations": 14,
+      "objective": 0.00026927357206821284,
+      "scale": 0.00010352149004539253,
+      "primal_simplex_residual": 2.220446049250313e-16,
+      "primal_cone_residual": -1.2738005095158655e-12,
+      "normalized_objective_residual": -2.0916844645224586e-12,
+      "psd": [
+        {
+          "min_eigenvalue": 0.0006597731282192556,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 2.1857954286175211e-16
+        },
+        {
+          "min_eigenvalue": 0.0007174798983804961,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 3.410192434888763e-16
+        },
+        {
+          "min_eigenvalue": 0.00046953946099843717,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 5.156725383662233e-16
+        },
+        {
+          "min_eigenvalue": 0.0005787533208970153,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 1.0576656603720898e-15
+        },
+        {
+          "min_eigenvalue": 0.002946122851811796,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 1.016094888195414e-15
+        }
+      ],
+      "dataset": "sharp__porous_medium_2d",
+      "n_calibration": 5,
+      "source_sha256": {
+        "labels.npz": "70d66326f23bbb0990ee659a56cdf5eb1b141078306e82f3c76a8bcc37c5c5be",
+        "features.npz": "dd49764d376ab1130d192ffe4a870e08db2ec8135d3f4fb723e7aa443d5c3e1d",
+        "audit.json": "aa8979bb63b21969cede415fd0063cb368abe4e47cd81f7162bc5aec437ad6d5"
+      },
+      "archive_sha256": {
+        "split.json": "5be6216258066892ec6b451d9817b0cb4df12713a308a28cdb49e944b8fef2ea",
+        "fit.json": "c80fd443d9699d0571ba82fd6cbafbf16062770a8bc71cd4b8948a6ac710b4d6",
+        "locked_weights.npz": "be80c53bcbb0394dc3efd1d0021b89d3343b86598b0161464bcefad0138ecd53"
+      },
+      "calibration_mean_gram_max_absolute_difference": 0.0,
+      "reference_calibration_objectives": {
+        "single_l2": 0.0003729516048503865,
+        "inverse_mse": 0.0002813598013626848,
+        "full": 0.000269527337343527
+      }
+    },
+    "sharp__shallow_water_2d__s172": {
+      "status": "optimal",
+      "iterations": 12,
+      "objective": 0.0020110218665074764,
+      "scale": 0.0002006310438629029,
+      "primal_simplex_residual": 1.1102230246251565e-16,
+      "primal_cone_residual": -3.2773644909056543e-12,
+      "normalized_objective_residual": -9.03591090839484e-12,
+      "psd": [
+        {
+          "min_eigenvalue": 0.007052054980071514,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 1.1066922165314808e-15
+        },
+        {
+          "min_eigenvalue": 0.005138574599855233,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 5.191037905029809e-16
+        },
+        {
+          "min_eigenvalue": 0.0014341425775848888,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 3.4851282029068346e-16
+        },
+        {
+          "min_eigenvalue": 0.0012337327712320795,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 4.51228667698952e-16
+        },
+        {
+          "min_eigenvalue": 0.003684691797537614,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 7.482079868591382e-16
+        }
+      ],
+      "dataset": "sharp__shallow_water_2d",
+      "n_calibration": 5,
+      "source_sha256": {
+        "labels.npz": "2d7b499224843a48df09896932c712e238a018204eb0d55567828be01631e367",
+        "features.npz": "84b246f5dfa74e2275b9269275670a99d7d9e74e6f081700928345a7e9c836c3",
+        "audit.json": "7cce4c4be71351c0b9a48f5bce07a97b8c8eab7d786847b1b48d8364838a9afd"
+      },
+      "archive_sha256": {
+        "split.json": "1cc3988377f49563f4366a72180074bb336828f501245a4501c5aba340c1f236",
+        "fit.json": "2369ad7edff28a4a6024524bc2cbf472aa38616e65a32058fc624a10559a962b",
+        "locked_weights.npz": "dd638ed5d52ca9388a09d0925208102bd74bae0e1dfad03ad2ddd2ad59ab6c28"
+      },
+      "calibration_mean_gram_max_absolute_difference": 0.0,
+      "reference_calibration_objectives": {
+        "single_l2": 0.002339270881259088,
+        "inverse_mse": 0.0022388025752744433,
+        "full": 0.0020246665963435952
+      }
+    },
+    "sharp__shallow_water_2d__s273": {
+      "status": "optimal",
+      "iterations": 13,
+      "objective": 0.0022858183191585414,
+      "scale": 2.485751911693505e-05,
+      "primal_simplex_residual": 2.220446049250313e-16,
+      "primal_cone_residual": 4.227285188562746e-12,
+      "normalized_objective_residual": -4.782724216667589e-11,
+      "psd": [
+        {
+          "min_eigenvalue": 0.009088794956236148,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 3.1773470986488014e-16
+        },
+        {
+          "min_eigenvalue": 0.012902888609110083,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 1.0088122788336293e-16
+        },
+        {
+          "min_eigenvalue": 0.010680816313237081,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 1.0408938651160195e-15
+        },
+        {
+          "min_eigenvalue": 0.009957755340577247,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 3.5779668047304885e-16
+        },
+        {
+          "min_eigenvalue": 0.034965516023809984,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 2.717647466722583e-16
+        }
+      ],
+      "dataset": "sharp__shallow_water_2d",
+      "n_calibration": 5,
+      "source_sha256": {
+        "labels.npz": "2d7b499224843a48df09896932c712e238a018204eb0d55567828be01631e367",
+        "features.npz": "84b246f5dfa74e2275b9269275670a99d7d9e74e6f081700928345a7e9c836c3",
+        "audit.json": "7cce4c4be71351c0b9a48f5bce07a97b8c8eab7d786847b1b48d8364838a9afd"
+      },
+      "archive_sha256": {
+        "split.json": "1fff8ccd3bd4f01f687e9846a6de0aac17ee59983fc70f526181e8affc2f54f9",
+        "fit.json": "962559f3e519e5c8b9b4c44e0521ab8f7366060598fdcc3302a15d3c27c4002c",
+        "locked_weights.npz": "de985c8ad4c4d504c2682788fd6e6b46d3531037e7ec93a0a685ef3f68623bbd"
+      },
+      "calibration_mean_gram_max_absolute_difference": 0.0,
+      "reference_calibration_objectives": {
+        "single_l2": 0.0024607137405532153,
+        "inverse_mse": 0.002719807078239432,
+        "full": 0.002287636524295526
+      }
+    },
+    "sharp__shallow_water_2d__s71": {
+      "status": "optimal",
+      "iterations": 12,
+      "objective": 0.0019758794088018555,
+      "scale": 2.3522916499816234e-05,
+      "primal_simplex_residual": 2.220446049250313e-16,
+      "primal_cone_residual": 1.1475120853532417e-10,
+      "normalized_objective_residual": -1.2106332603067926e-10,
+      "psd": [
+        {
+          "min_eigenvalue": 0.024975263261075055,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 4.241407316745348e-16
+        },
+        {
+          "min_eigenvalue": 0.021038050913103765,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 3.277773696870665e-16
+        },
+        {
+          "min_eigenvalue": 0.01743943514158599,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 6.891551659306297e-16
+        },
+        {
+          "min_eigenvalue": 0.00718271251386403,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 1.0902965681467106e-15
+        },
+        {
+          "min_eigenvalue": 0.01744123001995721,
+          "relative_negative_eigenvalue": 0.0,
+          "factor_relative_residual": 8.272014578120335e-16
+        }
+      ],
+      "dataset": "sharp__shallow_water_2d",
+      "n_calibration": 5,
+      "source_sha256": {
+        "labels.npz": "2d7b499224843a48df09896932c712e238a018204eb0d55567828be01631e367",
+        "features.npz": "84b246f5dfa74e2275b9269275670a99d7d9e74e6f081700928345a7e9c836c3",
+        "audit.json": "7cce4c4be71351c0b9a48f5bce07a97b8c8eab7d786847b1b48d8364838a9afd"
+      },
+      "archive_sha256": {
+        "split.json": "525e5c51edc4a7f99e10d38eaa1187e249eea8c7d42dabd249b9c64364074560",
+        "fit.json": "87edef08b31eba40aa236cdfcfe29b6a731a51f5dc7a3841504702e78ca89672",
+        "locked_weights.npz": "010166e2cd27b3d6a1310443b8648520445a594105d9ed3d38c7cb97db8fd20b"
+      },
+      "calibration_mean_gram_max_absolute_difference": 0.0,
+      "reference_calibration_objectives": {
+        "single_l2": 0.002056939579100269,
+        "inverse_mse": 0.002095945871545678,
+        "full": 0.001980292653009497
+      }
+    }
+  }
+}

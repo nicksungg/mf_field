@@ -1,0 +1,43 @@
+{
+  "task": {
+    "id": "st_hf_pod_gp__sharp__porous_medium_2d",
+    "model": "st_hf_pod_gp",
+    "dataset": "sharp__porous_medium_2d",
+    "rel": "sharp/porous_medium_2d",
+    "seed": 42,
+    "device": "cpu",
+    "note": "Classical estimator state was not saved; reproduce its original training-only fit."
+  },
+  "seconds": 14.179454803466797,
+  "replay": {
+    "device": "cpu",
+    "base_retrained": true,
+    "reason": "POD-GP estimator was not checkpointed",
+    "raw_units_multiplier": 0.06802330911159515,
+    "registration": "periodic_node"
+  },
+  "n": 100,
+  "work_grid": [
+    256,
+    256
+  ],
+  "base_train_overlap": 0,
+  "rel_l2_mean": 0.011410556566826113,
+  "archive_mean": 0.011410555802285671,
+  "prediction_sha256": "b19bf3803feb391160cbb8f7550f2ef1c7347438a49a5b1764bc9d3d2e714006",
+  "model_metadata": {
+    "method": "fine-only POD + shared-ARD-RBF GP emulator",
+    "n_hf_train": 400,
+    "fit_seconds": 9.784096717834473,
+    "hf_pod_modes": 15,
+    "hf_pod_energy_captured": 0.9991761072112189,
+    "hf_gp_log_lengthscales": [
+      -1.6466256601148441,
+      -1.2618727219904573
+    ],
+    "hf_gp_log_signal": 0.008718233957678564,
+    "hf_gp_log_noise": -6.6117027357957445,
+    "hf_gp_nlml": -4212.074328274398,
+    "hf_gp_converged": true
+  }
+}

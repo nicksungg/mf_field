@@ -1,0 +1,44 @@
+{
+  "task": {
+    "id": "st_hf_pod_gp__ext__eikonal_2d",
+    "model": "st_hf_pod_gp",
+    "dataset": "ext__eikonal_2d",
+    "rel": "ext/eikonal_2d",
+    "seed": 42,
+    "device": "cpu",
+    "note": "Classical estimator state was not saved; reproduce its original training-only fit."
+  },
+  "seconds": 9.13288140296936,
+  "replay": {
+    "device": "cpu",
+    "base_retrained": true,
+    "reason": "POD-GP estimator was not checkpointed",
+    "raw_units_multiplier": 0.4478905200958252,
+    "registration": "periodic_cell"
+  },
+  "n": 100,
+  "work_grid": [
+    64,
+    64
+  ],
+  "base_train_overlap": 0,
+  "rel_l2_mean": 0.03573182851449193,
+  "archive_mean": 0.03573182225227356,
+  "prediction_sha256": "5781bb592d97de55616eb18cf36ee7dbaa358c67922f77791ff62573ea61eb00",
+  "model_metadata": {
+    "method": "fine-only POD + shared-ARD-RBF GP emulator",
+    "n_hf_train": 400,
+    "fit_seconds": 7.8328022956848145,
+    "hf_pod_modes": 48,
+    "hf_pod_energy_captured": 0.9990377790857226,
+    "hf_gp_log_lengthscales": [
+      -1.0852747570157197,
+      -1.0796311999755708,
+      -0.33987958740005253
+    ],
+    "hf_gp_log_signal": 0.0018318300101304184,
+    "hf_gp_log_noise": -1.7815654978034372,
+    "hf_gp_nlml": 15197.911208180152,
+    "hf_gp_converged": true
+  }
+}

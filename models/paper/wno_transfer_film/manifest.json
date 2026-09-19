@@ -1,0 +1,9 @@
+{
+  "name": "wno_transfer_film",
+  "version": "0.1.0",
+  "description": "Wavelet Neural Operator with the FiLM-transfer recipe: the benchmark-winning FNO+FiLM-transfer model with the ONLY change being the backbone -- the Fourier spectral conv is swapped for a native, differentiable single-level 2-D discrete wavelet convolution (WaveletConv2d, db4 with Haar fallback). Analysis=periodic correlation-downsample, synthesis=upsample-convolution with the same orthonormal filters (perfect reconstruction, verified <1e-4 via a mandatory DWT->IDWT assert). 1-D-safe (H==1 -> transform along W only), odd-size safe (circular pad to even, crop back). Each subband (LL,LH,HL,HH; L,H in 1-D) carries its own per-coefficient-position weight (in_ch,out_ch,m1,m2) applied up to a mode cap via einsum bixy,ioxy->boxy, with higher positions passed through. FiLM conditioning on X and the LF-pretrain -> HF-finetune transfer schedule are byte-for-byte the winner, so this is a clean Fourier-vs-wavelet backbone comparison holding conditioning + schedule fixed. Single-level WNO (official tripura2023wno is multi-level on the coarsest band).",
+  "supports": ["ifc_raw", "npz_l"],
+  "smoke_entrypoint": "smoke_eval.py",
+  "frozen": false,
+  "inspired_by": ["tripura2023wno", "li2020fno", "perez2018film", "lyu2023mffno"]
+}

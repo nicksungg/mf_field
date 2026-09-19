@@ -1,0 +1,43 @@
+{
+  "model": "convnext_unet_film",
+  "dataset": "era5",
+  "splits": {
+    "test_hf": {
+      "nRMSE": 0.05196061544347109,
+      "rel_l2_mean": 0.05124586919739369,
+      "rel_l2_ci95_lo": 0.045415648826907136,
+      "rel_l2_ci95_hi": 0.05837271898626346,
+      "rel_l2_std": 0.00953292099668569,
+      "rel_l2_per_sample": [
+        0.04307384888202811,
+        0.050559820367696275,
+        0.04112088417595645,
+        0.049813416722430344,
+        0.05598812719078464,
+        0.06976250529804888,
+        0.048402481744811134
+      ],
+      "n_samples": 7
+    }
+  },
+  "n_params": 5184753,
+  "train_seconds": 12675.031455993652,
+  "eval_seconds": 0.029157638549804688,
+  "latency_ms_per_sample": 4.165376935686384,
+  "peak_mem_mb": 643.003904,
+  "work_grid": [
+    128,
+    256
+  ],
+  "eval_protocol": "full_field_on_working_grid",
+  "device": "cuda",
+  "hf_fidelity": 9,
+  "lf_fidelity": 1,
+  "mf_mechanism": "transfer_learning_pretrain_LF_finetune_HF",
+  "conditioning": "film_on_X_per_block",
+  "backbone": "convnext_unet_3level",
+  "hf_grid_native": [
+    721,
+    1440
+  ]
+}
