@@ -1,6 +1,26 @@
-# Small CPU example
+# Examples
 
-`heat_demo.npz` contains ten unchanged saved prediction rows for all nine Heat I surrogates on a 64 × 64 grid. It is stored in ordinary Git, so no LFS download is needed. `heat_demo.json` records source hashes and row identities.
+## Train on new arrays
+
+`fit_new_dataset.py` generates smooth scalar fields from three parameters, trains the requested models, fits their weights on reserved examples, and predicts new fields. It evaluates and reloads the saved predictor as well.
+
+```bash
+python -m pip install -e .
+python examples/fit_new_dataset.py
+```
+
+The default uses M7 on CPU and needs no downloaded dataset. To check all nine model adapters:
+
+```bash
+python -m pip install -e '.[neural]'
+python examples/fit_new_dataset.py --models all --presets smoke --epochs 2
+```
+
+These synthetic fields and short training runs demonstrate the interface. They are not numerical PDE solutions or benchmark accuracy results. See [the new dataset guide](../docs/NEW_DATASET.md) to replace them with your arrays.
+
+## Fit weights on saved predictions
+
+`heat_demo.npz` contains ten unchanged saved prediction rows for all nine Heat I surrogates on a 64 × 64 grid. It is included in the review package, so no companion download is needed. `heat_demo.json` records source hashes and row identities.
 
 ```bash
 python scripts/example_ensemble.py

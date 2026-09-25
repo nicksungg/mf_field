@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "automf-fields"
+version = "0.1.0"
+description = "Fit and combine multifidelity field surrogates from parameter and field arrays"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = ["numpy>=1.26,<3", "scipy>=1.12,<2", "cloudpickle>=3"]
+
+[project.optional-dependencies]
+neural = ["torch>=2.5,<3", "deepxde>=1.15,<2", "PyWavelets>=1.6"]
+test = ["pytest>=8"]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["automf*", "ensemble", "models.paper.mf_fno_transfer_film", "models.paper.fno_fire_distcond"]
+namespaces = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
