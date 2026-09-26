@@ -4,9 +4,9 @@ AutoMF combines coarse and fine training data to build a library of field surrog
 
 **22 datasets · 9 surrogate models · 11 baseline implementations · 3 ensemble rules**
 
-![AutoMF workflow using ERA5 fields, followed by bar charts comparing the ensemble rules, nine surrogates and eleven baselines.](assets/automf_overview.gif)
+![The paper graphical abstract, showing surrogate training, ensemble fitting and prediction, above bar charts for the ensemble rules, nine surrogates and eleven baselines.](assets/automf_overview.gif)
 
-[Static overview](assets/overview.png) · [Surrogate chart](assets/surrogates.png) · [Baseline chart](assets/baselines.png) · [Results and definitions](docs/RESULTS.md)
+[Graphical abstract](assets/graphical_abstract.png) · [Static overview](assets/overview.png) · [Surrogate chart](assets/surrogates.png) · [Baseline chart](assets/baselines.png) · [Results and definitions](docs/RESULTS.md)
 
 ## Fit on a new dataset
 
